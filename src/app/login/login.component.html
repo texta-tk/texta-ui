@@ -1,0 +1,39 @@
+<h1 mat-dialog-title>Login</h1>
+<div class="dialog-content-wrapper" mat-dialog-content>
+  <form class="flex-col" [formGroup]="profileForm" (ngSubmit)="onSubmit(profileForm.value)">
+    <mat-form-field>
+      <input matInput placeholder="Username" autocomplete="username email" formControlName="emailFormControl"
+             [errorStateMatcher]="matcher">
+
+      <mat-error *ngIf="profileForm.get('emailFormControl').hasError('required')">
+        Email is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput placeholder="Enter your password" autocomplete="current-password"
+             formControlName="passwordFormControl"
+             [type]="hide ? 'password' : 'text'" [errorStateMatcher]="matcher">
+      <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+      <mat-error *ngIf="profileForm.get('passwordFormControl').hasError('required')">
+        Password is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <div class="flex-col">
+      <div class="flex-row">
+        <div class="flex-item-left">
+          <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">No Thanks</button>
+        </div>
+        <div class="flex-item-right">
+          <button type="submit" [disabled]="!profileForm.valid || makingRequest" mat-button>Login</button>
+        </div>
+      </div>
+      <mat-error align="center" *ngIf="loginError">
+        <small>{{loginError}}</small>
+      </mat-error>
+    </div>
+
+
+  </form>
+</div>
+
