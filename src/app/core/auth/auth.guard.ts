@@ -16,13 +16,15 @@ import {UserService} from '../user.service';
 import {map, mergeMap, take} from 'rxjs/operators';
 import {UserProfile} from '../../../shared/types/UserProfile';
 import {HttpErrorResponse} from '@angular/common/http';
+import {MatDialog} from "@angular/material";
+import {LoginComponent} from "../../login/login.component";
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
-  constructor(private userStore: UserStore, private userService: UserService, private localStorageService: LocalstorageService) {
+  constructor(private userStore: UserStore, private dialog: MatDialog, private userService: UserService, private localStorageService: LocalstorageService) {
 
   }
 
@@ -35,11 +37,19 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
         return of(true);
       } else {
         // get with token no state in store
+        // token added by interceptor if it exists
         return this.userService.getUserProfile().pipe(map((user: UserProfile | HttpErrorResponse) => {
           if (user instanceof HttpErrorResponse) {
             // expired
             this.localStorageService.deleteUser();
+            this.dialog.open(LoginComponent, {
+              height: '285px',
+              width: '400px',
+              data: {returnUrl: state.url}
+            });
             return false;
+
+
           } else if (user) {
             // still valid
             this.userStore.setCurrentUser(user);

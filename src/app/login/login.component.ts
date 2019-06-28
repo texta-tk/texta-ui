@@ -1,6 +1,6 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {MatDialogRef} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {CustomErrorStateMatcher} from '../../shared/CustomErrorStateMatcher';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LocalstorageService} from '../core/util/localstorage.service';
@@ -39,6 +39,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private localStorageService: LocalstorageService,
     private userStore: UserStore,
+    @Inject(MAT_DIALOG_DATA) public data: { returnUrl: string },
     private router: Router) {
 
 
@@ -52,29 +53,30 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(formData) {
-    // todo
+    this.loginError = '';
     this.makingRequest = true;
     this.userService.authenticate(formData.emailFormControl, formData.passwordFormControl).pipe(
       mergeMap((response: UserAuth | HttpErrorResponse) => {
-        this.loginError = '';
         this.makingRequest = false;
         if (response instanceof HttpErrorResponse) {
-          // temp todo
+          // blink effect with timeout
           setTimeout(() => this.loginError = response.error.non_field_errors, 100);
           return of(null);
         } else {
-          // save token
+          // success, save token
           this.localStorageService.setUser(response);
-          // get profile on logging in
+          // return getprofile observable
           return this.userService.getUserProfile();
         }
+      })).subscribe((resp: UserProfile | HttpErrorResponse) => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.userStore.setCurrentUser(resp);
+        if (this.data.returnUrl) {
+          this.router.navigate([this.data.returnUrl]).finally((() => this.closeDialog()));
+        } else {
+          this.closeDialog();
+        }
 
-      })).subscribe(resp => {
-      if (resp) {
-        this.userStore.setCurrentUser(resp as UserProfile);
-        // temp todo navigate to real url
-        this.closeDialog();
-        this.router.navigateByUrl('/settings');
       }
 
 

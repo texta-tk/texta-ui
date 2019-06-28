@@ -4,11 +4,7 @@ import {UserSettingsComponent} from './user-settings/user-settings.component';
 import {AuthGuard} from './core/auth/auth.guard';
 
 const routes: Routes = [
-  {
-    path: '',
-    redirectTo: '/settings', pathMatch: 'full'
-
-  }, {
+ {
     path: 'settings',
     canActivate: [AuthGuard],
     component: UserSettingsComponent,
