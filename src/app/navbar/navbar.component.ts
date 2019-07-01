@@ -1,8 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material';
-import {UserStore} from '../core/user.store';
+import {UserStore} from '../core/users/user.store';
 import {LoginComponent} from '../login/login.component';
 import {UserProfile} from '../../shared/types/UserProfile';
+import {UserService} from '../core/users/user.service';
+import {LocalstorageService} from '../core/util/localstorage.service';
 
 @Component({
   selector: 'app-navbar',
@@ -11,7 +13,11 @@ import {UserProfile} from '../../shared/types/UserProfile';
 })
 export class NavbarComponent implements OnInit {
   user: UserProfile;
-  constructor(public dialog: MatDialog, private userStore: UserStore) {
+
+  constructor(public dialog: MatDialog,
+              private userStore: UserStore,
+              private userService: UserService,
+              private localStorageService: LocalstorageService) {
 
   }
 
@@ -28,5 +34,16 @@ export class NavbarComponent implements OnInit {
       height: '285px',
       width: '400px',
     });
+  }
+
+  logout() {
+    this.userService.logout().subscribe(
+      next => console.log(next),
+      error => console.log(error),
+      () => {
+        this.localStorageService.deleteUser();
+        this.userStore.setCurrentUser(null);
+        location.reload();
+      });
   }
 }

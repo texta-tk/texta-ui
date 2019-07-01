@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {UserProfile} from '../../shared/types/UserProfile';
+import {UserProfile} from '../../../shared/types/UserProfile';
+
 
 @Injectable({
   providedIn: 'root'

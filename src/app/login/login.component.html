@@ -2,11 +2,11 @@
 <div class="dialog-content-wrapper" mat-dialog-content>
   <form class="flex-col" [formGroup]="profileForm" (ngSubmit)="onSubmit(profileForm.value)">
     <mat-form-field>
-      <input matInput placeholder="Username" autocomplete="username email" formControlName="emailFormControl"
+      <input matInput placeholder="Username" autocomplete="username" formControlName="usernameFormControl"
              [errorStateMatcher]="matcher">
 
-      <mat-error *ngIf="profileForm.get('emailFormControl').hasError('required')">
-        Email is <strong>required</strong>
+      <mat-error *ngIf="profileForm.get('usernameFormControl').hasError('required')">
+        Username is <strong>required</strong>
       </mat-error>
     </mat-form-field>
 

@@ -1,11 +1,14 @@
 <mat-toolbar color="primary">
   <mat-toolbar-row>
-    <span>Texta</span>
+    <span [routerLink]="['']">Texta</span>
     <div class="flex-item-right login" *ngIf="!user">
-      <button mat-raised-button color="accent" (click)="openDialog()">Login</button>
+      <button mat-raised-button (click)="openDialog()">Login</button>
     </div>
     <div class="flex-item-right user-name" *ngIf="user">
-      <small>{{user.username}}</small>
+      <div class="flex-row">
+        <small [routerLink]="['settings']">{{user.username}}</small>
+        <button mat-raised-button (click)="logout()">Logout</button>
+      </div>
     </div>
   </mat-toolbar-row>
 </mat-toolbar>

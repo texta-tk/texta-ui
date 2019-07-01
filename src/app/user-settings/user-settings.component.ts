@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { UserProfile } from '../../shared/types/UserProfile';
-import { UserStore } from '../core/user.store';
+import { UserStore } from '../core/users/user.store';
 import { Subscription } from 'rxjs';
 
 @Component({

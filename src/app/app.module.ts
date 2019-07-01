@@ -10,13 +10,15 @@ import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {HttpAuthInterceptor} from './core/auth/http-auth.interceptor';
 import { NavbarComponent } from './navbar/navbar.component';
 import { UserSettingsComponent } from './user-settings/user-settings.component';
+import { HomeComponent } from './home/home.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     NavbarComponent,
-    UserSettingsComponent
+    UserSettingsComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,

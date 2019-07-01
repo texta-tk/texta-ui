@@ -4,8 +4,8 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {CustomErrorStateMatcher} from '../../shared/CustomErrorStateMatcher';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LocalstorageService} from '../core/util/localstorage.service';
-import {UserStore} from '../core/user.store';
-import {UserService} from '../core/user.service';
+import {UserStore} from '../core/users/user.store';
+import {UserService} from '../core/users/user.service';
 import {of} from 'rxjs';
 import {mergeMap} from 'rxjs/operators';
 import {UserProfile} from '../../shared/types/UserProfile';
@@ -21,7 +21,7 @@ import {UserAuth} from '../../shared/types/UserAuth';
 export class LoginComponent implements OnInit, OnDestroy {
 
   profileForm = new FormGroup({
-    emailFormControl: new FormControl('', [
+    usernameFormControl: new FormControl('', [
       Validators.required,
     ]),
     passwordFormControl: new FormControl('', [
@@ -55,7 +55,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   onSubmit(formData) {
     this.loginError = '';
     this.makingRequest = true;
-    this.userService.authenticate(formData.emailFormControl, formData.passwordFormControl).pipe(
+    this.userService.authenticate(formData.usernameFormControl, formData.passwordFormControl).pipe(
       mergeMap((response: UserAuth | HttpErrorResponse) => {
         this.makingRequest = false;
         if (response instanceof HttpErrorResponse) {
@@ -71,10 +71,13 @@ export class LoginComponent implements OnInit, OnDestroy {
       })).subscribe((resp: UserProfile | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.userStore.setCurrentUser(resp);
-        if (this.data.returnUrl) {
+        if (this.data) {
+          // user wanted to access settings for example, so direct to settings
           this.router.navigate([this.data.returnUrl]).finally((() => this.closeDialog()));
         } else {
-          this.closeDialog();
+          // navigate to home page
+          this.router.navigate(['']).finally((() => this.closeDialog()));
+
         }
 
       }

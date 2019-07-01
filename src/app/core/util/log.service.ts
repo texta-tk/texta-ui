@@ -20,6 +20,6 @@ export class LogService {
 
   // todo!
   public logStatus(val, msg) {
-    console.log(msg);
+    console.warn(msg, val);
   }
 }

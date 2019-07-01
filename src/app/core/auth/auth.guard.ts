@@ -10,9 +10,9 @@ import {
   UrlTree
 } from '@angular/router';
 import {Observable, of} from 'rxjs';
-import {UserStore} from '../user.store';
+import {UserStore} from '../users/user.store';
 import {LocalstorageService} from '../util/localstorage.service';
-import {UserService} from '../user.service';
+import {UserService} from '../users/user.service';
 import {map, mergeMap, take} from 'rxjs/operators';
 import {UserProfile} from '../../../shared/types/UserProfile';
 import {HttpErrorResponse} from '@angular/common/http';
