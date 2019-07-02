@@ -31,14 +31,14 @@ export class UserService {
     return this.http.get<UserProfile>(
       this.apiUrl + '/rest-auth/user/',
     ).pipe(
-      tap(e => this.logService.logStatus(e, 'get userProfile')),
+      tap(e => this.logService.logStatus(e, 'userProfile')),
       catchError(this.logService.handleError<UserProfile>('getUserProfile')));
   }
 
   logout(): Observable<unknown> {
     return this.http.post<unknown>(
       this.apiUrl + '/rest-auth/logout/', {}).pipe(
-      tap(e => this.logService.logStatus(e, 'post logout')),
+      tap(e => this.logService.logStatus(e, 'logout')),
       catchError(this.logService.handleError<unknown>('logout')));
 
   }

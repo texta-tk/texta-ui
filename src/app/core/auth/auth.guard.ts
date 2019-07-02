@@ -7,24 +7,24 @@ import {
   UrlSegment,
   ActivatedRouteSnapshot,
   RouterStateSnapshot,
-  UrlTree
+  UrlTree, Router
 } from '@angular/router';
 import {Observable, of} from 'rxjs';
 import {UserStore} from '../users/user.store';
-import {LocalstorageService} from '../util/localstorage.service';
-import {UserService} from '../users/user.service';
-import {map, mergeMap, take} from 'rxjs/operators';
+import {map, mergeMap, take, takeUntil} from 'rxjs/operators';
 import {UserProfile} from '../../../shared/types/UserProfile';
 import {HttpErrorResponse} from '@angular/common/http';
-import {MatDialog} from "@angular/material";
-import {LoginComponent} from "../../login/login.component";
+import {MatDialog} from '@angular/material';
+import {LoginComponent} from '../../../shared/dialogs/login/login.component';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
-  constructor(private userStore: UserStore, private dialog: MatDialog, private userService: UserService, private localStorageService: LocalstorageService) {
+  constructor(private userStore: UserStore,
+              private dialog: MatDialog,
+              private router: Router) {
 
   }
 
@@ -37,25 +37,20 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
         return of(true);
       } else {
         // get with token no state in store
-        // token added by interceptor if it exists
-        return this.userService.getUserProfile().pipe(map((user: UserProfile | HttpErrorResponse) => {
-          if (user instanceof HttpErrorResponse) {
-            // expired
-            this.localStorageService.deleteUser();
-            this.dialog.open(LoginComponent, {
-              height: '285px',
-              width: '400px',
-              data: {returnUrl: state.url}
-            });
-            return false;
-
-
-          } else if (user) {
-            // still valid
-            this.userStore.setCurrentUser(user);
-            return true;
+        return this.userStore.getUserAuthObservable().pipe(map((tokenCheckResponse: UserProfile | HttpErrorResponse) => {
+            if (tokenCheckResponse && !(tokenCheckResponse instanceof HttpErrorResponse)) {
+              return true;
+            } else if (tokenCheckResponse) {
+              this.dialog.open(LoginComponent, {
+                height: '285px',
+                width: '400px',
+                data: {returnUrl: state.url}
+              });
+              this.router.navigate(['']);
+              return false;
+            }
           }
-        })) as Observable<boolean>;
+        ));
       }
     }));
   }

@@ -25,9 +25,11 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {ScrollingModule} from '@angular/cdk/scrolling';
 import {MatExpansionModule} from '@angular/material/expansion';
 
+import {LoginComponent} from './dialogs/login/login.component';
+
 
 @NgModule({
-  declarations: [],
+  declarations: [LoginComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -82,7 +84,8 @@ import {MatExpansionModule} from '@angular/material/expansion';
     MatTabsModule,
     MatProgressBarModule,
     MatExpansionModule,
-  ]
+  ],
+  entryComponents: [LoginComponent],
 })
 export class SharedModule {
 }

@@ -9,13 +9,18 @@ import {
 } from '@angular/common/http';
 
 import {Observable, of, throwError} from 'rxjs';
-import {map, catchError} from 'rxjs/operators';
+import {map, catchError, take} from 'rxjs/operators';
 import {LocalstorageService} from '../util/localstorage.service';
+import {MatDialog} from '@angular/material';
+import {Router} from '@angular/router';
 
 
 @Injectable()
 export class HttpAuthInterceptor implements HttpInterceptor {
-  constructor(private localStorageService: LocalstorageService) {
+  constructor(private localStorageService: LocalstorageService,
+              private dialog: MatDialog,
+              private router: Router,
+  ) {
   }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -23,6 +28,8 @@ export class HttpAuthInterceptor implements HttpInterceptor {
 
     if (token) {
       request = request.clone({headers: request.headers.set('Authorization', 'Token ' + token.key)});
+    } else {
+
     }
 
     return next.handle(request).pipe(
@@ -30,8 +37,8 @@ export class HttpAuthInterceptor implements HttpInterceptor {
         return event;
       }),
       catchError((error: HttpErrorResponse) => {
-        if (error && error.status === 401) {
-          // todo
+        if (error && error.status === 403) {
+
         }
         return throwError(error);
       }));

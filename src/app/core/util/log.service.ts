@@ -5,14 +5,13 @@ import {Observable, of} from 'rxjs';
   providedIn: 'root'
 })
 export class LogService {
-
   constructor() {
   }
 
   public handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
       // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+      console.warn(error); // log to console instead
 
       return of(error);
     };

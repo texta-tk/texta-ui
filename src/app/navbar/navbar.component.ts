@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material';
 import {UserStore} from '../core/users/user.store';
-import {LoginComponent} from '../login/login.component';
+import {LoginComponent} from '../../shared/dialogs/login/login.component';
 import {UserProfile} from '../../shared/types/UserProfile';
 import {UserService} from '../core/users/user.service';
 import {LocalstorageService} from '../core/util/localstorage.service';

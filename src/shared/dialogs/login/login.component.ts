@@ -1,16 +1,16 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
-import {CustomErrorStateMatcher} from '../../shared/CustomErrorStateMatcher';
+import {CustomErrorStateMatcher} from '../../CustomErrorStateMatcher';
 import {HttpErrorResponse} from '@angular/common/http';
-import {LocalstorageService} from '../core/util/localstorage.service';
-import {UserStore} from '../core/users/user.store';
-import {UserService} from '../core/users/user.service';
+import {LocalstorageService} from '../../../app/core/util/localstorage.service';
+import {UserStore} from '../../../app/core/users/user.store';
+import {UserService} from '../../../app/core/users/user.service';
 import {of} from 'rxjs';
 import {mergeMap} from 'rxjs/operators';
-import {UserProfile} from '../../shared/types/UserProfile';
+import {UserProfile} from '../../types/UserProfile';
 import {Router} from '@angular/router';
-import {UserAuth} from '../../shared/types/UserAuth';
+import {UserAuth} from '../../types/UserAuth';
 
 
 @Component({

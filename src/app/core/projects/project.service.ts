@@ -21,7 +21,7 @@ export class ProjectService {
     return this.http.get<Project[]>(
       this.apiUrl + '/projects/',
     ).pipe(
-      tap(e => this.logService.logStatus(e, 'get getProjects')),
+      tap(e => this.logService.logStatus(e, 'getProjects')),
       catchError(this.logService.handleError<Project[]>('getProjects')));
   }
 }
