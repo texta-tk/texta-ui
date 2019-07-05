@@ -4,7 +4,7 @@ import {UserAuth} from '../../../shared/types/UserAuth';
 @Injectable({
   providedIn: 'root'
 })
-export class LocalstorageService {
+export class LocalStorageService {
 
   constructor() {
   }
