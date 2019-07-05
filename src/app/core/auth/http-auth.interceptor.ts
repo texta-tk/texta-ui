@@ -10,14 +10,14 @@ import {
 
 import {Observable, of, throwError} from 'rxjs';
 import {map, catchError, take} from 'rxjs/operators';
-import {LocalstorageService} from '../util/localstorage.service';
+import {LocalStorageService} from '../util/local-storage.service';
 import {MatDialog} from '@angular/material';
 import {Router} from '@angular/router';
 
 
 @Injectable()
 export class HttpAuthInterceptor implements HttpInterceptor {
-  constructor(private localStorageService: LocalstorageService,
+  constructor(private localStorageService: LocalStorageService,
               private dialog: MatDialog,
               private router: Router,
   ) {

@@ -2,6 +2,7 @@
   <mat-toolbar-row>
     <a [routerLink]="['projects']">Projects</a>
     <a [routerLink]="['']">Landing</a>
+    <a [routerLink]="['embeddings']">Embeddings</a>
     <div class="flex-item-right login" *ngIf="!user">
       <button mat-raised-button (click)="openDialog()">Login</button>
     </div>

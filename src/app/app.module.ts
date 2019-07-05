@@ -10,7 +10,8 @@ import {HttpAuthInterceptor} from './core/auth/http-auth.interceptor';
 import {NavbarComponent} from './navbar/navbar.component';
 import {UserSettingsComponent} from './user-settings/user-settings.component';
 import {HomeComponent} from './home/home.component';
-import { ProjectComponent } from './project/project.component';
+import {ProjectComponent} from './project/project.component';
+import {EmbeddingComponent} from './embedding/embedding.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { ProjectComponent } from './project/project.component';
     NavbarComponent,
     UserSettingsComponent,
     HomeComponent,
-    ProjectComponent
+    ProjectComponent,
+    EmbeddingComponent
   ],
   imports: [
     BrowserModule,

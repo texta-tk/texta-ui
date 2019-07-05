@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
-import {LocalstorageService} from '../util/localstorage.service';
+import {LocalStorageService} from '../util/local-storage.service';
 import {LogService} from '../util/log.service';
 import {Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
@@ -14,7 +14,7 @@ import {UserAuth} from '../../../shared/types/UserAuth';
 export class UserService {
   apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient, private localStorageService: LocalstorageService,
+  constructor(private http: HttpClient, private localStorageService: LocalStorageService,
               private logService: LogService) {
   }
 

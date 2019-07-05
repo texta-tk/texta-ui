@@ -3,7 +3,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {CustomErrorStateMatcher} from '../../CustomErrorStateMatcher';
 import {HttpErrorResponse} from '@angular/common/http';
-import {LocalstorageService} from '../../../app/core/util/localstorage.service';
+import {LocalStorageService} from '../../../app/core/util/local-storage.service';
 import {UserStore} from '../../../app/core/users/user.store';
 import {UserService} from '../../../app/core/users/user.service';
 import {of} from 'rxjs';
@@ -37,7 +37,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   constructor(
     public dialogRef: MatDialogRef<LoginComponent>,
     private userService: UserService,
-    private localStorageService: LocalstorageService,
+    private localStorageService: LocalStorageService,
     private userStore: UserStore,
     @Inject(MAT_DIALOG_DATA) public data: { returnUrl: string },
     private router: Router) {

@@ -4,7 +4,7 @@ import {UserStore} from '../core/users/user.store';
 import {LoginComponent} from '../../shared/dialogs/login/login.component';
 import {UserProfile} from '../../shared/types/UserProfile';
 import {UserService} from '../core/users/user.service';
-import {LocalstorageService} from '../core/util/localstorage.service';
+import {LocalStorageService} from '../core/util/local-storage.service';
 
 @Component({
   selector: 'app-navbar',
@@ -17,7 +17,7 @@ export class NavbarComponent implements OnInit {
   constructor(public dialog: MatDialog,
               private userStore: UserStore,
               private userService: UserService,
-              private localStorageService: LocalstorageService) {
+              private localStorageService: LocalStorageService) {
 
   }
 

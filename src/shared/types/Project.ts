@@ -1,10 +1,12 @@
-import {UserProfile} from './UserProfile';
+import { UserProfile } from './UserProfile';
 
 export class Project {
   url = '';
   id: number;
   title = '';
-  owner = '';
+  // ??? todo
+  owner: UserProfile;
+
   users: UserProfile[];
   indices: string[];
 }

@@ -4,4 +4,6 @@ export class UserProfile {
   lastName = '';
   pk: number;
   username = '';
+  // only sometimes?? nullable
+  active_project?: '';
 }

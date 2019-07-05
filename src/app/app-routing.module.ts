@@ -4,6 +4,7 @@ import {UserSettingsComponent} from './user-settings/user-settings.component';
 import {AuthGuard} from './core/auth/auth.guard';
 import {HomeComponent} from './home/home.component';
 import {ProjectComponent} from './project/project.component';
+import {EmbeddingComponent} from './embedding/embedding.component';
 
 const routes: Routes = [
   {
@@ -15,6 +16,11 @@ const routes: Routes = [
     path: 'projects',
     canActivate: [AuthGuard],
     component: ProjectComponent,
+  },
+  {
+    path: 'embeddings',
+    canActivate: [AuthGuard],
+    component: EmbeddingComponent,
   },
   {
     path: 'settings',
