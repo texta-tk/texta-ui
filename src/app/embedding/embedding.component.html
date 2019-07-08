@@ -1,1 +1,2 @@
-<pre>{{embeddings | json}}</pre>
+<button mat-flat-button (click)="openCreateDialog()">New Embedding</button>
+<app-generic-table [dataSource]="embeddings"></app-generic-table>

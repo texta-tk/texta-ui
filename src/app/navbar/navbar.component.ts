@@ -5,6 +5,13 @@ import {LoginComponent} from '../../shared/dialogs/login/login.component';
 import {UserProfile} from '../../shared/types/UserProfile';
 import {UserService} from '../core/users/user.service';
 import {LocalStorageService} from '../core/util/local-storage.service';
+import {mergeMap} from 'rxjs/operators';
+import {ProjectService} from '../core/projects/project.service';
+import {Project} from '../../shared/types/Project';
+import {HttpErrorResponse} from '@angular/common/http';
+import {FormControl} from '@angular/forms';
+import {ProjectStore} from '../core/projects/project.store';
+import {of} from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -13,20 +20,36 @@ import {LocalStorageService} from '../core/util/local-storage.service';
 })
 export class NavbarComponent implements OnInit {
   user: UserProfile;
+  projects: Project[];
+  projectControl = new FormControl();
 
   constructor(public dialog: MatDialog,
               private userStore: UserStore,
               private userService: UserService,
-              private localStorageService: LocalStorageService) {
+              private localStorageService: LocalStorageService,
+              private projectService: ProjectService,
+              private projectStore: ProjectStore) {
 
   }
 
   ngOnInit() {
-    this.userStore.getCurrentUser().subscribe(resp => {
+    this.userStore.getCurrentUser().pipe(mergeMap(resp => {
       if (resp) {
         this.user = resp;
+        return this.projectService.getProjects();
+      }
+      return of(null);
+    })).subscribe((resp: Project[] | HttpErrorResponse) => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.projects = resp;
+        this.projectControl.setValue(resp[0]);
+        this.projectStore.setCurrentProject(resp[0]);
       }
     });
+  }
+
+  public selectProject(selectedOption: Project) {
+    this.projectStore.setCurrentProject(selectedOption);
   }
 
   openDialog() {

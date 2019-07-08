@@ -1,16 +1,33 @@
 <mat-toolbar color="primary">
   <mat-toolbar-row>
-    <a [routerLink]="['projects']">Projects</a>
-    <a [routerLink]="['']">Landing</a>
-    <a [routerLink]="['embeddings']">Embeddings</a>
+    <a routerLinkActive="is-active" [routerLink]="['projects']">Projects</a>
+    <a routerLinkActive="is-active" [routerLink]="['']" [routerLinkActiveOptions]="{exact:true}">Landing</a>
+    <a routerLinkActive="is-active" [routerLink]="['embeddings']">Embeddings</a>
+
     <div class="flex-item-right login" *ngIf="!user">
       <button mat-raised-button (click)="openDialog()">Login</button>
     </div>
-    <div class="flex-item-right user-name" *ngIf="user">
-      <div class="flex-row">
-        <a [routerLink]="['settings']">{{user.username}}</a>
-        <button mat-raised-button (click)="logout()">Logout</button>
+
+    <div class="flex-item-right flex-row user-name" *ngIf="user">
+      <ng-select class="" [items]="projects"
+                 [clearable]="false"
+                 (change)="selectProject($event)"
+                 bindLabel="title"
+                 [formControl]="projectControl"
+      ></ng-select>
+      <div class="flex-row logout">
+        <button mat-flat-button [matMenuTriggerFor]="menu"><span>{{user.username}}
+        </span>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item routerLinkActive="is-active"
+                  [routerLink]="['settings']">Settings
+          </button>
+          <button mat-menu-item (click)="logout()">Logout</button>
+        </mat-menu>
       </div>
+
     </div>
+
   </mat-toolbar-row>
 </mat-toolbar>

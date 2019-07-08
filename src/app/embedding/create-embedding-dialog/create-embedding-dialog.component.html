@@ -1,0 +1,48 @@
+<h1 mat-dialog-title>New Embedding</h1>
+<div mat-dialog-content>
+  <form class="flex-col" [formGroup]="embeddingForm" (ngSubmit)="onSubmit(embeddingForm.value)">
+    <mat-form-field>
+      <input matInput placeholder="Description" autocomplete="off" formControlName="descriptionFormControl"
+             [errorStateMatcher]="matcher">
+
+      <mat-error *ngIf="embeddingForm.get('descriptionFormControl').hasError('required')">
+        Description is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <textarea matInput placeholder="Query" formControlName="queryFormControl"></textarea>
+    </mat-form-field>
+    <mat-form-field>
+      <input type="text" placeholder="Pick one" aria-label="Number" matInput formControlName="fieldsFormControl"
+             [matAutocomplete]="auto">
+      <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+          {{option.display_name}}
+        </mat-option>
+      </mat-autocomplete>
+      <mat-error *ngIf="embeddingForm.get('fieldsFormControl').hasError('required')">
+        Field is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput placeholder="Number of Dimensions" formControlName="dimensionsFormControl">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput placeholder="Minimum frequency" formControlName="frequencyFormControl">
+    </mat-form-field>
+    <div class="flex-col">
+      <div class="flex-row">
+        <div class="flex-item-left">
+          <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">No Thanks</button>
+        </div>
+        <div class="flex-item-right">
+          <button type="submit" [disabled]="!embeddingForm.valid" mat-button>Create Embedding</button>
+        </div>
+      </div>
+
+    </div>
+
+
+  </form>
+</div>
+

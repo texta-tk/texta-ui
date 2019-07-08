@@ -1,5 +1,30 @@
 a {
   padding: 5px;
   color: white;
-  font-size: 90%;
+}
+
+mat-toolbar {
+  height: 72px;
+  mat-toolbar-row {
+    height: 100%;
+    .user-name {
+      line-height: 24px;
+      ng-select {
+        width: 100px;
+        font-size: 16px;
+
+      }
+      .logout {
+        align-self: center;
+        height: 36px;
+        button {
+          margin-left: 5px;
+        }
+      }
+    }
+  }
+}
+
+.is-active {
+  color: red;
 }

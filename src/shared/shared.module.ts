@@ -26,10 +26,12 @@ import {ScrollingModule} from '@angular/cdk/scrolling';
 import {MatExpansionModule} from '@angular/material/expansion';
 
 import {LoginComponent} from './dialogs/login/login.component';
+import {NgSelectModule} from '@ng-select/ng-select';
+import {GenericTableComponent} from './components/generic-table/generic-table.component';
 
 
 @NgModule({
-  declarations: [LoginComponent],
+  declarations: [LoginComponent, GenericTableComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -56,6 +58,7 @@ import {LoginComponent} from './dialogs/login/login.component';
     MatTabsModule,
     MatProgressBarModule,
     MatExpansionModule,
+    NgSelectModule,
   ],
   exports: [
     CommonModule,
@@ -84,6 +87,9 @@ import {LoginComponent} from './dialogs/login/login.component';
     MatTabsModule,
     MatProgressBarModule,
     MatExpansionModule,
+    NgSelectModule,
+
+    GenericTableComponent
   ],
   entryComponents: [LoginComponent],
 })

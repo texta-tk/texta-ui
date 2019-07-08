@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {LocalStorageService} from '../util/local-storage.service';
 import {LogService} from '../util/log.service';
 import {Observable} from 'rxjs';
@@ -17,7 +17,7 @@ export class ProjectService {
               private logService: LogService) {
   }
 
-  getProjects(): Observable<Project[]> {
+  getProjects(): Observable<Project[] | HttpErrorResponse> {
     return this.http.get<Project[]>(
       this.apiUrl + '/projects/',
     ).pipe(

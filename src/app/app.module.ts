@@ -12,6 +12,7 @@ import {UserSettingsComponent} from './user-settings/user-settings.component';
 import {HomeComponent} from './home/home.component';
 import {ProjectComponent} from './project/project.component';
 import {EmbeddingComponent} from './embedding/embedding.component';
+import {CreateEmbeddingDialogComponent} from './embedding/create-embedding-dialog/create-embedding-dialog.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import {EmbeddingComponent} from './embedding/embedding.component';
     UserSettingsComponent,
     HomeComponent,
     ProjectComponent,
-    EmbeddingComponent
+    EmbeddingComponent,
+    CreateEmbeddingDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -30,6 +32,7 @@ import {EmbeddingComponent} from './embedding/embedding.component';
     SharedModule
   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: HttpAuthInterceptor, multi: true}],
+  entryComponents: [CreateEmbeddingDialogComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule {
