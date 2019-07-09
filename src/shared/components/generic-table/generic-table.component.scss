@@ -1,11 +1,11 @@
 
-table {
+.table {
   width: 100%;
 }
 
 .table-container {
   position: relative;
-
+  max-height: calc(100vh - 200px);
   overflow: auto;
 }
 
@@ -24,5 +24,4 @@ table {
 
 .mat-cell {
   word-break: break-word;
-
 }

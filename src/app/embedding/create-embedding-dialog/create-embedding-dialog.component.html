@@ -11,29 +11,30 @@
     </mat-form-field>
     <mat-form-field>
       <textarea matInput placeholder="Query" formControlName="queryFormControl"></textarea>
+      <mat-hint>Default: {{defaultQuery}}</mat-hint>
     </mat-form-field>
-    <mat-form-field>
-      <input type="text" placeholder="Pick one" aria-label="Number" matInput formControlName="fieldsFormControl"
-             [matAutocomplete]="auto">
-      <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-          {{option.display_name}}
-        </mat-option>
-      </mat-autocomplete>
-      <mat-error *ngIf="embeddingForm.get('fieldsFormControl').hasError('required')">
+    <ng-select class="form-ng-select" multiple="true" placeholder="Fields" appendTo="body" [items]="fields"
+               bindLabel="path"
+               formControlName="fieldsFormControl"></ng-select>
+    <div class="form-ng-select-error">
+      <span
+        [ngClass]="{'in-view':
+        embeddingForm.get('fieldsFormControl').hasError('required') &&
+        embeddingForm.get('fieldsFormControl').touched}">
         Field is <strong>required</strong>
-      </mat-error>
+      </span>
+    </div>
+
+    <mat-form-field>
+      <input matInput type="number" placeholder="Number of Dimensions" formControlName="dimensionsFormControl">
     </mat-form-field>
     <mat-form-field>
-      <input matInput placeholder="Number of Dimensions" formControlName="dimensionsFormControl">
-    </mat-form-field>
-    <mat-form-field>
-      <input matInput placeholder="Minimum frequency" formControlName="frequencyFormControl">
+      <input matInput type="number" placeholder="Minimum frequency" formControlName="frequencyFormControl">
     </mat-form-field>
     <div class="flex-col">
       <div class="flex-row">
         <div class="flex-item-left">
-          <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">No Thanks</button>
+          <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Close</button>
         </div>
         <div class="flex-item-right">
           <button type="submit" [disabled]="!embeddingForm.valid" mat-button>Create Embedding</button>

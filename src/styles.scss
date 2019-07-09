@@ -1,6 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 @import "~@ng-select/ng-select/themes/material.theme.css";
+@import "ng-select-improvements";
 
 html, body {
   height: 100%;
@@ -13,28 +14,6 @@ a {
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
-}
-
-// navbar formatting hack
-.user-name {
-  // ng-deep going to be deprecated soon so do this in global styles
-  .ng-select .ng-select-container .ng-value-container .ng-placeholder {
-    color: white;
-  }
-  .ng-select.ng-select-single .ng-select-container .ng-value-container .ng-value {
-    margin: 0;
-    color: white;
-  }
-  .ng-select .ng-arrow-wrapper .ng-arrow {
-    color: white;
-  }
-  .ng-select .ng-select-container:after {
-    border-bottom: 1px solid white;
-  }
-  .ng-select .ng-select-container .ng-value-container .ng-input > input {
-    margin-top: 4px;
-    color: white;
-  }
 }
 
 .flex {

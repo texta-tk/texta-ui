@@ -1,0 +1,68 @@
+.ng-select .ng-select-container .ng-value-container .ng-input > input {
+  margin-top: 4px;
+}
+
+.ng-select .ng-select-container .ng-value-container .ng-value {
+  margin-top: 4px;
+}
+
+.ng-select .ng-select-container .ng-value-container .ng-placeholder {
+  margin-top: 4px;
+}
+
+// navbar formatting hack
+.user-name {
+  // ng-deep going to be deprecated soon so do this in global styles
+  .ng-select .ng-select-container .ng-value-container .ng-placeholder {
+    color: white;
+  }
+  .ng-select.ng-select-single .ng-select-container .ng-value-container .ng-value {
+    margin: 0;
+    color: white;
+  }
+  .ng-select .ng-arrow-wrapper .ng-arrow {
+    color: white;
+  }
+  .ng-select .ng-select-container:after {
+    border-bottom: 1px solid white;
+  }
+  .ng-select .ng-select-container .ng-value-container .ng-input > input {
+    margin-top: 4px;
+    color: white;
+  }
+}
+
+// mimic mat form field with error
+ng-select.form-ng-select.ng-invalid.ng-touched .ng-select-container:after {
+  border-bottom: 1px solid #f44336;
+}
+
+ng-select.form-ng-select.ng-invalid.ng-touched .ng-select-container .ng-placeholder {
+  color: #f44336;
+}
+
+ng-select.form-ng-select.ng-invalid.ng-touched .ng-arrow-wrapper .ng-arrow {
+  color: #f44336;
+}
+
+.form-ng-select-error {
+  color: #f44336;
+  font-size: 12px;
+  position: relative;
+  min-height: 14px;
+  max-height: 14px;
+  overflow: hidden;
+  top: -15px;
+
+  span {
+    position: absolute;
+    top: -15px;
+  }
+  span.in-view {
+    transition-property: top;
+    transition-duration: 0.25s;
+    transition-timing-function: ease-in;
+    top: 0;
+  }
+
+}
