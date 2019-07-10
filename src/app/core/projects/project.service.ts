@@ -6,7 +6,7 @@ import {LogService} from '../util/log.service';
 import {Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
 import {Project} from '../../../shared/types/Project';
-import {Field} from '../../../shared/types/Field';
+import {ProjectFields} from '../../../shared/types/ProjectFields';
 
 @Injectable({
   providedIn: 'root'
@@ -34,11 +34,11 @@ export class ProjectService {
       catchError(this.logService.handleError<Project>('getProject')));
   }
 
-  getProjectFields(id: number): Observable<Field[] | HttpErrorResponse> {
-    return this.http.get<Field[]>(
+  getProjectFields(id: number): Observable<ProjectFields | HttpErrorResponse> {
+    return this.http.get<ProjectFields>(
       this.apiUrl + '/projects/' + id + '/get_fields/',
     ).pipe(
       tap(e => this.logService.logStatus(e, 'get Project Fields')),
-      catchError(this.logService.handleError<Field[]>('getProjectFields')));
+      catchError(this.logService.handleError<ProjectFields>('getProjectFields')));
   }
 }

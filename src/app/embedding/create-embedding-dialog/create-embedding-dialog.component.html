@@ -13,9 +13,22 @@
       <textarea matInput placeholder="Query" formControlName="queryFormControl"></textarea>
       <mat-hint>Default: {{defaultQuery}}</mat-hint>
     </mat-form-field>
-    <ng-select class="form-ng-select" multiple="true" placeholder="Fields" appendTo="body" [items]="fields"
+    <ng-select class="form-ng-select"
+               multiple="true"
+               placeholder="Fields"
+               appendTo="body"
+               [items]="projectFields"
                bindLabel="path"
-               formControlName="fieldsFormControl"></ng-select>
+               groupBy="fields"
+               [closeOnSelect]="false"
+               formControlName="fieldsFormControl">
+      <ng-template ng-optgroup-tmp let-item="item">
+        {{item.index}}
+      </ng-template>
+      <ng-template ng-option-tmp let-item="item">
+        {{item.path}}
+      </ng-template>
+    </ng-select>
     <div class="form-ng-select-error">
       <span
         [ngClass]="{'in-view':

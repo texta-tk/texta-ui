@@ -9,7 +9,7 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {ProjectStore} from '../../core/projects/project.store';
 import {Project} from '../../../shared/types/Project';
 import {ProjectService} from '../../core/projects/project.service';
-import {Field} from '../../../shared/types/Field';
+import {Field, ProjectFields} from '../../../shared/types/ProjectFields';
 import {Embedding} from '../../../shared/types/Embedding';
 
 @Component({
@@ -31,8 +31,7 @@ export class CreateEmbeddingDialogComponent implements OnInit {
   });
   defaultQuery = '{"query": {"match_all": {}}}';
   matcher: ErrorStateMatcher = new CustomErrorStateMatcher();
-  fields: Field[];
-  filteredOptions: Observable<Field[]>;
+  projectFields: ProjectFields;
 
   constructor(private dialogRef: MatDialogRef<CreateEmbeddingDialogComponent>,
               private projectService: ProjectService,
@@ -47,14 +46,9 @@ export class CreateEmbeddingDialogComponent implements OnInit {
       } else {
         return of(null);
       }
-    })).subscribe((resp: Field[] | HttpErrorResponse) => {
+    })).subscribe((resp: ProjectFields | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.fields = resp;
-        this.filteredOptions = this.embeddingForm.get('fieldsFormControl').valueChanges
-          .pipe(debounceTime(150),
-            startWith(''),
-            map(value => this._filter(value))
-          );
+        this.projectFields = resp;
       } else if (resp instanceof HttpErrorResponse) {
         this.dialogRef.close(resp);
       }
@@ -86,10 +80,10 @@ export class CreateEmbeddingDialogComponent implements OnInit {
     });
   }
 
-  generateFieldsFormat(fields) {
+  generateFieldsFormat(fields: Field[]) {
     const output = [];
     for (const field of fields) {
-      output.push({path: field.path});
+      output.push(field.path);
     }
     return output;
   }
@@ -97,16 +91,5 @@ export class CreateEmbeddingDialogComponent implements OnInit {
 
   closeDialog(): void {
     this.dialogRef.close();
-  }
-
-
-  private _filter(value: Field): Field[] {
-    let filterValue = '';
-    if (typeof value === 'object') {
-      filterValue = value.path;
-    }
-
-    filterValue = filterValue.toLowerCase();
-    return this.fields.filter(option => option.path.toLowerCase().includes(filterValue));
   }
 }

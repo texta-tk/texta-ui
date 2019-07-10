@@ -1,4 +1,4 @@
-interface Field {
+export interface Field {
   path: string;
   type: string;
 }
