@@ -42,7 +42,7 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
               return true;
             } else if (tokenCheckResponse) {
               this.dialog.open(LoginComponent, {
-                height: '285px',
+                height: '295px',
                 width: '400px',
                 data: {returnUrl: state.url}
               });

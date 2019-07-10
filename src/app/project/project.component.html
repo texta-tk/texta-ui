@@ -1,1 +1,2 @@
-<pre *ngFor="let project of projects">{{project | json}}</pre>
+<button mat-flat-button (click)="openCreateDialog()">New Project</button>
+<app-generic-table [dataSource]="projects"></app-generic-table>

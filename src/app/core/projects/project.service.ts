@@ -26,6 +26,15 @@ export class ProjectService {
       catchError(this.logService.handleError<Project[]>('getProjects')));
   }
 
+  makeProject(body: {}): Observable<Project | HttpErrorResponse> {
+    return this.http.post<Project>(
+      this.apiUrl + '/projects/',
+      body
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'getProjects')),
+      catchError(this.logService.handleError<Project>('getProjects')));
+  }
+
   getProjectById(id: number): Observable<Project | HttpErrorResponse> {
     return this.http.get<Project>(
       this.apiUrl + '/projects/' + id,
@@ -40,5 +49,14 @@ export class ProjectService {
     ).pipe(
       tap(e => this.logService.logStatus(e, 'get Project Fields')),
       catchError(this.logService.handleError<ProjectFields>('getProjectFields')));
+  }
+
+  // todo seperate endpoint
+  getProjectOptions(): Observable<any> {
+    return this.http.options<any>(
+      this.apiUrl + '/projects/'
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'get Project Fields')),
+      catchError(this.logService.handleError<any>('getProjectFields')));
   }
 }

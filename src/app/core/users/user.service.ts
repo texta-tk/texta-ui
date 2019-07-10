@@ -40,7 +40,14 @@ export class UserService {
       this.apiUrl + '/rest-auth/logout/', {}).pipe(
       tap(e => this.logService.logStatus(e, 'logout')),
       catchError(this.logService.handleError<unknown>('logout')));
+  }
 
+  getAllUsers(): Observable<UserProfile[]> {
+    return this.http.get<UserProfile[]>(
+      this.apiUrl + '/users/',
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'userProfile')),
+      catchError(this.logService.handleError<UserProfile[]>('getUserProfile')));
   }
 
 }

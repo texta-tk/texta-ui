@@ -1,0 +1,67 @@
+<h1 mat-dialog-title>New Project</h1>
+<div mat-dialog-content>
+  <form class="flex-col" [formGroup]="projectForm" (ngSubmit)="onSubmit(projectForm.value)">
+    <mat-form-field>
+      <input matInput placeholder="Title" autocomplete="off" formControlName="titleFormControl"
+             [errorStateMatcher]="matcher">
+
+      <mat-error *ngIf="projectForm.get('titleFormControl').hasError('required')">
+        Title is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <ng-select class="form-ng-select"
+               multiple="true"
+               placeholder="Users"
+               appendTo="body"
+               [closeOnSelect]="false"
+               [items]="users"
+               bindLabel="username"
+               bindValue="url"
+               formControlName="usersFormControl">
+
+    </ng-select>
+    <div class="form-ng-select-error">
+      <span
+        [ngClass]="{'in-view':
+        projectForm.get('usersFormControl').hasError('required') &&
+        projectForm.get('usersFormControl').touched}">
+        User is <strong>required</strong>
+      </span>
+    </div>
+
+    <ng-select class="form-ng-select"
+               multiple="true"
+               placeholder="Indices"
+               appendTo="body"
+               [closeOnSelect]="false"
+               [items]="indices"
+               bindLabel="display_name"
+               bindValue="value"
+               formControlName="indicesFormControl">
+
+    </ng-select>
+    <div class="form-ng-select-error">
+      <span
+        [ngClass]="{'in-view':
+        projectForm.get('indicesFormControl').hasError('required') &&
+        projectForm.get('indicesFormControl').touched}">
+        Index is <strong>required</strong>
+      </span>
+    </div>
+    <div class="flex-col">
+      <div class="flex-row">
+        <div class="flex-item-left">
+          <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Close</button>
+        </div>
+        <div class="flex-item-right">
+          <button type="submit" [disabled]="!projectForm.valid" mat-button>Create Project</button>
+        </div>
+      </div>
+
+    </div>
+
+
+  </form>
+</div>
+

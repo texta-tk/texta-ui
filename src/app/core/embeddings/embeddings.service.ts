@@ -36,11 +36,4 @@ export class EmbeddingsService {
 
   }
 
-  /*  getEmbeddingsOptions(): Observable<unknown[] | HttpErrorResponse> {
-      return this.http.options<unknown[]>(
-        this.apiUrl + '/projects/' + 1 + '/embeddings/',
-      ).pipe(
-        tap(e => this.logService.logStatus(e, 'getEmbeddings')),
-        catchError(this.logService.handleError<unknown[]>('getEmbeddings')));
-    }*/
 }
