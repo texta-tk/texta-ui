@@ -19,6 +19,11 @@ const routes: Routes = [
     component: ProjectComponent,
   },
   {
+    path: 'taggers',
+    canActivate: [AuthGuard],
+    component: TaggerComponent,
+  },
+  {
     path: 'embeddings',
     canActivate: [AuthGuard],
     component: EmbeddingComponent,

@@ -6,7 +6,7 @@ import {LogService} from '../util/log.service';
 import {Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
 import {Project} from '../../../shared/types/Project';
-import {ProjectFields} from '../../../shared/types/ProjectFields';
+import {ProjectField} from '../../../shared/types/ProjectField';
 
 @Injectable({
   providedIn: 'root'
@@ -26,7 +26,7 @@ export class ProjectService {
       catchError(this.logService.handleError<Project[]>('getProjects')));
   }
 
-  makeProject(body: {}): Observable<Project | HttpErrorResponse> {
+  createProject(body: {}): Observable<Project | HttpErrorResponse> {
     return this.http.post<Project>(
       this.apiUrl + '/projects/',
       body
@@ -43,12 +43,12 @@ export class ProjectService {
       catchError(this.logService.handleError<Project>('getProject')));
   }
 
-  getProjectFields(id: number): Observable<ProjectFields | HttpErrorResponse> {
-    return this.http.get<ProjectFields>(
+  getProjectFields(id: number): Observable<ProjectField[] | HttpErrorResponse> {
+    return this.http.get<ProjectField[]>(
       this.apiUrl + '/projects/' + id + '/get_fields/',
     ).pipe(
       tap(e => this.logService.logStatus(e, 'get Project Fields')),
-      catchError(this.logService.handleError<ProjectFields>('getProjectFields')));
+      catchError(this.logService.handleError<ProjectField[]>('getProjectFields')));
   }
 
   // todo seperate endpoint

@@ -15,6 +15,7 @@ import {EmbeddingComponent} from './embedding/embedding.component';
 import {CreateEmbeddingDialogComponent} from './embedding/create-embedding-dialog/create-embedding-dialog.component';
 import {TaggerComponent} from './tagger/tagger.component';
 import {CreateProjectDialogComponent} from './project/create-project-dialog/create-project-dialog.component';
+import {CreateTaggerDialogComponent} from './tagger/create-tagger-dialog/create-tagger-dialog.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import {CreateProjectDialogComponent} from './project/create-project-dialog/crea
     EmbeddingComponent,
     CreateEmbeddingDialogComponent,
     TaggerComponent,
-    CreateProjectDialogComponent
+    CreateProjectDialogComponent,
+    CreateTaggerDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -36,7 +38,7 @@ import {CreateProjectDialogComponent} from './project/create-project-dialog/crea
     SharedModule
   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: HttpAuthInterceptor, multi: true}],
-  entryComponents: [CreateEmbeddingDialogComponent, CreateProjectDialogComponent],
+  entryComponents: [CreateEmbeddingDialogComponent, CreateProjectDialogComponent, CreateTaggerDialogComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule {

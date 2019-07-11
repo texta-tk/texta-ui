@@ -9,7 +9,7 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {ProjectStore} from '../../core/projects/project.store';
 import {Project} from '../../../shared/types/Project';
 import {ProjectService} from '../../core/projects/project.service';
-import {Field, ProjectFields} from '../../../shared/types/ProjectFields';
+import {Field, ProjectField} from '../../../shared/types/ProjectField';
 import {Embedding} from '../../../shared/types/Embedding';
 
 @Component({
@@ -31,7 +31,7 @@ export class CreateEmbeddingDialogComponent implements OnInit {
   });
   defaultQuery = '{"query": {"match_all": {}}}';
   matcher: ErrorStateMatcher = new CustomErrorStateMatcher();
-  projectFields: ProjectFields;
+  projectFields: ProjectField;
 
   constructor(private dialogRef: MatDialogRef<CreateEmbeddingDialogComponent>,
               private projectService: ProjectService,
@@ -46,7 +46,7 @@ export class CreateEmbeddingDialogComponent implements OnInit {
       } else {
         return of(null);
       }
-    })).subscribe((resp: ProjectFields | HttpErrorResponse) => {
+    })).subscribe((resp: ProjectField | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.projectFields = resp;
       } else if (resp instanceof HttpErrorResponse) {

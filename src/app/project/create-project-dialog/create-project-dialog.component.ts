@@ -1,13 +1,13 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ErrorStateMatcher, MatDialogRef} from '@angular/material';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {CustomErrorStateMatcher} from '../../../shared/CustomErrorStateMatcher';
 import {ProjectService} from '../../core/projects/project.service';
-import {Field} from '../../../shared/types/ProjectFields';
+import {Field} from '../../../shared/types/ProjectField';
 import {UserService} from '../../core/users/user.service';
 import {UserProfile} from '../../../shared/types/UserProfile';
-import {Project} from "../../../shared/types/Project";
-import {HttpErrorResponse} from "@angular/common/http";
+import {Project} from '../../../shared/types/Project';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-create-embedding-dialog',
@@ -49,7 +49,7 @@ export class CreateProjectDialogComponent implements OnInit {
       users: formData.usersFormControl,
       title: formData.titleFormControl
     };
-    this.projectService.makeProject(body).subscribe((resp: Project | HttpErrorResponse) => {
+    this.projectService.createProject(body).subscribe((resp: Project | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.dialogRef.close(resp);
       } else if (resp instanceof HttpErrorResponse) {
@@ -57,15 +57,6 @@ export class CreateProjectDialogComponent implements OnInit {
       }
     });
   }
-
-  generateFieldsFormat(fields: Field[]) {
-    const output = [];
-    for (const field of fields) {
-      output.push(field.path);
-    }
-    return output;
-  }
-
 
   closeDialog(): void {
     this.dialogRef.close();

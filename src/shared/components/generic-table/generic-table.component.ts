@@ -7,7 +7,7 @@ import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
   styleUrls: ['./generic-table.component.scss']
 })
 export class GenericTableComponent implements OnInit {
-  private tableData: MatTableDataSource<any>;
+  public tableData: MatTableDataSource<any>;
   public displayedColumns: string[];
   public isLoadingResults = true;
 
@@ -15,7 +15,7 @@ export class GenericTableComponent implements OnInit {
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
   @Input() set dataSource(data: any[]) {
-    if (data.length > 0) {
+    if (data.length >= 0) {
       this.displayedColumns = this.makeColumns(data);
       this.tableData = new MatTableDataSource(data);
       this.tableData.sort = this.sort;
@@ -34,8 +34,10 @@ export class GenericTableComponent implements OnInit {
 
   makeColumns<T>(data: T[]): string[] {
     const columns: string[] = [];
-    for (const key of Object.keys(data[0])) {
-      columns.push(key);
+    if (data.length > 0) {
+      for (const key of Object.keys(data[0])) {
+        columns.push(key);
+      }
     }
     return columns;
   }

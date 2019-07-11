@@ -1,0 +1,131 @@
+<h1 mat-dialog-title>New Tagger</h1>
+<div mat-dialog-content>
+  <form class="flex-col" [formGroup]="taggerForm" (ngSubmit)="onSubmit(taggerForm.value)">
+    <mat-form-field>
+      <input matInput placeholder="Description" autocomplete="off" formControlName="descriptionFormControl"
+             [errorStateMatcher]="matcher">
+
+      <mat-error *ngIf="taggerForm.get('descriptionFormControl').hasError('required')">
+        Description is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <ng-select class="form-ng-select"
+               multiple="true"
+               placeholder="Fields"
+               appendTo="body"
+               [items]="projectFields"
+               bindLabel="path"
+               bindValue="path"
+               groupBy="fields"
+               [closeOnSelect]="false"
+               formControlName="fieldsFormControl">
+      <ng-template ng-optgroup-tmp let-item="item">
+        {{item.index}}
+      </ng-template>
+      <ng-template ng-option-tmp let-item="item">
+        {{item.path}}
+      </ng-template>
+    </ng-select>
+    <div class="form-ng-select-error">
+      <span
+        [ngClass]="{'in-view':
+        taggerForm.get('fieldsFormControl').hasError('required') &&
+        taggerForm.get('fieldsFormControl').touched}">
+        Field is <strong>required</strong>
+      </span>
+    </div>
+    <ng-select class="form-ng-select"
+               placeholder="Embedding"
+               appendTo="body"
+               [clearable]="true"
+               [closeOnSelect]="true"
+               [items]="embeddings"
+               bindLabel="description"
+               formControlName="embeddingFormControl">
+
+    </ng-select>
+    <div class="form-ng-select-error">
+      <span
+        [ngClass]="{'in-view':
+        taggerForm.get('embeddingFormControl').hasError('required') &&
+        taggerForm.get('embeddingFormControl').touched}">
+        Embedding is <strong>required</strong>
+      </span>
+    </div>
+    <ng-select class="form-ng-select"
+               placeholder="Vectorizer"
+               appendTo="body"
+               [clearable]="false"
+               [closeOnSelect]="true"
+               [items]="taggerOptions.actions.POST.vectorizer.choices"
+               bindLabel="display_name"
+               formControlName="vectorizerFormControl">
+
+    </ng-select>
+    <div class="form-ng-select-error">
+      <span
+        [ngClass]="{'in-view':
+        taggerForm.get('vectorizerFormControl').hasError('required') &&
+        taggerForm.get('vectorizerFormControl').touched}">
+        Vectorizer is <strong>required</strong>
+      </span>
+    </div>
+    <ng-select class="form-ng-select"
+               placeholder="Classifier"
+               appendTo="body"
+               [clearable]="false"
+               [closeOnSelect]="true"
+               [items]="taggerOptions.actions.POST.classifier.choices"
+               bindLabel="display_name"
+               formControlName="classifierFormControl">
+
+    </ng-select>
+    <div class="form-ng-select-error">
+      <span
+        [ngClass]="{'in-view':
+        taggerForm.get('classifierFormControl').hasError('required') &&
+        taggerForm.get('classifierFormControl').touched}">
+        Classifier is <strong>required</strong>
+      </span>
+    </div>
+    <ng-select class="form-ng-select"
+               placeholder="Feature selector"
+               appendTo="body"
+               [closeOnSelect]="true"
+               [clearable]="false"
+               [items]="taggerOptions.actions.POST.feature_selector.choices"
+               bindLabel="display_name"
+               formControlName="featureSelectorFormControl">
+
+    </ng-select>
+    <div class="form-ng-select-error">
+      <span
+        [ngClass]="{'in-view':
+        taggerForm.get('featureSelectorFormControl').hasError('required') &&
+        taggerForm.get('featureSelectorFormControl').touched}">
+        Feature Selector is <strong>required</strong>
+      </span>
+    </div>
+
+    <mat-form-field>
+      <input matInput type="number" placeholder="Number of Dimensions" formControlName="sampleSizeFormControl">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="number" placeholder="Minimum frequency" formControlName="negativeMultiplierFormControl">
+    </mat-form-field>
+    <div class="flex-col">
+      <div class="flex-row">
+        <div class="flex-item-left">
+          <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Close</button>
+        </div>
+        <div class="flex-item-right">
+          <button type="submit" [disabled]="!taggerForm.valid" mat-button>Create Tagger</button>
+        </div>
+      </div>
+
+    </div>
+
+
+  </form>
+</div>
+

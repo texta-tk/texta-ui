@@ -3,6 +3,7 @@
     <a routerLinkActive="is-active" [routerLink]="['projects']">Projects</a>
     <a routerLinkActive="is-active" [routerLink]="['']" [routerLinkActiveOptions]="{exact:true}">Landing</a>
     <a routerLinkActive="is-active" [routerLink]="['embeddings']">Embeddings</a>
+    <a routerLinkActive="is-active" [routerLink]="['taggers']">Taggers</a>
 
     <div class="flex-item-right login" *ngIf="!user">
       <button mat-raised-button (click)="openDialog()">Login</button>
