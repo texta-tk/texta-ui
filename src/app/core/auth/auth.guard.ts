@@ -12,10 +12,10 @@ import {
 import {Observable, of} from 'rxjs';
 import {UserStore} from '../users/user.store';
 import {map, mergeMap, take, takeUntil} from 'rxjs/operators';
-import {UserProfile} from '../../../shared/types/UserProfile';
+import {UserProfile} from '../../shared/types/UserProfile';
 import {HttpErrorResponse} from '@angular/common/http';
 import {MatDialog} from '@angular/material';
-import {LoginComponent} from '../../../shared/dialogs/login/login.component';
+import {LoginDialogComponent} from '../../shared/components/dialogs/login/login-dialog.component';
 
 
 @Injectable({
@@ -41,7 +41,7 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
             if (tokenCheckResponse && !(tokenCheckResponse instanceof HttpErrorResponse)) {
               return true;
             } else if (tokenCheckResponse) {
-              this.dialog.open(LoginComponent, {
+              this.dialog.open(LoginDialogComponent, {
                 height: '295px',
                 width: '400px',
                 data: {returnUrl: state.url}

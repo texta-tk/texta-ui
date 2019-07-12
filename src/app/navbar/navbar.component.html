@@ -6,8 +6,10 @@
     <a routerLinkActive="is-active" [routerLink]="['taggers']">Taggers</a>
 
     <div class="flex-item-right login" *ngIf="!user">
-      <button mat-raised-button (click)="openDialog()">Login</button>
+      <button mat-raised-button (click)="registerDialog()">Register</button>
+      <button mat-raised-button (click)="loginDialog()">Login</button>
     </div>
+
 
     <div class="flex-item-right flex-row user-name" *ngIf="user">
       <ng-select class="" [items]="projects"

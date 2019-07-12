@@ -5,8 +5,8 @@ import {LocalStorageService} from '../util/local-storage.service';
 import {LogService} from '../util/log.service';
 import {Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
-import {UserProfile} from '../../../shared/types/UserProfile';
-import {UserAuth} from '../../../shared/types/UserAuth';
+import {UserProfile} from '../../shared/types/UserProfile';
+import {UserAuth} from '../../shared/types/UserAuth';
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +25,13 @@ export class UserService {
       this.apiUrl + '/rest-auth/login/',
       body).pipe(tap(e => this.logService.logStatus(e, 'authenticate')),
       catchError(this.logService.handleError<UserAuth>('authenticate')));
+  }
+
+  register(body: {}): Observable<UserAuth | HttpErrorResponse> {
+    return this.http.post<UserAuth>(
+      this.apiUrl + '/rest-auth/registration/',
+      body).pipe(tap(e => this.logService.logStatus(e, 'register')),
+      catchError(this.logService.handleError<UserAuth>('register')));
   }
 
   getUserProfile(): Observable<UserProfile> {

@@ -1,19 +1,19 @@
 import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ErrorStateMatcher, MatDialogRef} from '@angular/material';
-import {CustomErrorStateMatcher} from '../../../shared/CustomErrorStateMatcher';
+import {LiveErrorStateMatcher} from '../../shared/CustomerErrorStateMatchers';
 import {ProjectService} from '../../core/projects/project.service';
 import {HttpErrorResponse} from '@angular/common/http';
-import {Field, ProjectField} from '../../../shared/types/ProjectField';
+import {Field, ProjectField} from '../../shared/types/ProjectField';
 import {TaggerService} from '../../core/taggers/tagger.service';
 import {ProjectStore} from '../../core/projects/project.store';
 import {mergeMap, take} from 'rxjs/operators';
 import {merge, of} from 'rxjs';
-import {TaggerOptions} from '../../../shared/types/TaggerOptions';
+import {TaggerOptions} from '../../shared/types/TaggerOptions';
 import {LogService} from '../../core/util/log.service';
-import {Embedding} from '../../../shared/types/Embedding';
+import {Embedding} from '../../shared/types/Embedding';
 import {EmbeddingsService} from '../../core/embeddings/embeddings.service';
-import {Tagger} from '../../../shared/types/Tagger';
+import {Tagger} from '../../shared/types/Tagger';
 
 @Component({
   selector: 'app-create-tagger-dialog',
@@ -36,7 +36,7 @@ export class CreateTaggerDialogComponent implements OnInit {
 
   });
 
-  matcher: ErrorStateMatcher = new CustomErrorStateMatcher();
+  matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   taggerOptions: TaggerOptions = TaggerOptions.createEmpty();
   embeddings: Embedding[];
   projectFields: ProjectField[];

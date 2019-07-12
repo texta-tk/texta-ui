@@ -3,7 +3,7 @@
   <form class="flex-col" [formGroup]="projectForm" (ngSubmit)="onSubmit(projectForm.value)">
     <mat-form-field>
       <input matInput placeholder="Title" autocomplete="off" formControlName="titleFormControl"
-             [errorStateMatcher]="matcher">
+             [errorStateMatcher]="matcher" required>
 
       <mat-error *ngIf="projectForm.get('titleFormControl').hasError('required')">
         Title is <strong>required</strong>
@@ -12,7 +12,7 @@
 
     <ng-select class="form-ng-select"
                multiple="true"
-               placeholder="Users"
+               placeholder="Users *"
                appendTo="body"
                [closeOnSelect]="false"
                [items]="users"
@@ -32,7 +32,7 @@
 
     <ng-select class="form-ng-select"
                multiple="true"
-               placeholder="Indices"
+               placeholder="Indices *"
                appendTo="body"
                [closeOnSelect]="false"
                [items]="indices"

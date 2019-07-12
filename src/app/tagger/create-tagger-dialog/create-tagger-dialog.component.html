@@ -3,7 +3,7 @@
   <form class="flex-col" [formGroup]="taggerForm" (ngSubmit)="onSubmit(taggerForm.value)">
     <mat-form-field>
       <input matInput placeholder="Description" autocomplete="off" formControlName="descriptionFormControl"
-             [errorStateMatcher]="matcher">
+             [errorStateMatcher]="matcher" required>
 
       <mat-error *ngIf="taggerForm.get('descriptionFormControl').hasError('required')">
         Description is <strong>required</strong>
@@ -11,7 +11,7 @@
     </mat-form-field>
     <ng-select class="form-ng-select"
                multiple="true"
-               placeholder="Fields"
+               placeholder="Fields *"
                appendTo="body"
                [items]="projectFields"
                bindLabel="path"

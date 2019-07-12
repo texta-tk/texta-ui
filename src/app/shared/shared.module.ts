@@ -25,13 +25,14 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {ScrollingModule} from '@angular/cdk/scrolling';
 import {MatExpansionModule} from '@angular/material/expansion';
 
-import {LoginComponent} from './dialogs/login/login.component';
+import {LoginDialogComponent} from './components/dialogs/login/login-dialog.component';
 import {NgSelectModule} from '@ng-select/ng-select';
 import {GenericTableComponent} from './components/generic-table/generic-table.component';
+import {RegistrationDialogComponent} from './components/dialogs/registration/registration-dialog.component';
 
 
 @NgModule({
-  declarations: [LoginComponent, GenericTableComponent],
+  declarations: [LoginDialogComponent, GenericTableComponent, RegistrationDialogComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -91,7 +92,7 @@ import {GenericTableComponent} from './components/generic-table/generic-table.co
 
     GenericTableComponent
   ],
-  entryComponents: [LoginComponent],
+  entryComponents: [LoginDialogComponent, RegistrationDialogComponent],
 })
 export class SharedModule {
 }

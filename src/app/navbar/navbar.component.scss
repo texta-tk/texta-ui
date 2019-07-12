@@ -7,6 +7,12 @@ mat-toolbar {
   height: 72px;
   mat-toolbar-row {
     height: 100%;
+
+    .login {
+      button {
+        margin-left: 5px;
+      }
+    }
     .user-name {
       line-height: 24px;
       ng-select {

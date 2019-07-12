@@ -1,24 +1,24 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
-import {CustomErrorStateMatcher} from '../../CustomErrorStateMatcher';
+import {LiveErrorStateMatcher} from '../../../CustomerErrorStateMatchers';
 import {HttpErrorResponse} from '@angular/common/http';
-import {LocalStorageService} from '../../../app/core/util/local-storage.service';
-import {UserStore} from '../../../app/core/users/user.store';
-import {UserService} from '../../../app/core/users/user.service';
+import {LocalStorageService} from '../../../../core/util/local-storage.service';
+import {UserStore} from '../../../../core/users/user.store';
+import {UserService} from '../../../../core/users/user.service';
 import {of} from 'rxjs';
 import {mergeMap} from 'rxjs/operators';
-import {UserProfile} from '../../types/UserProfile';
+import {UserProfile} from '../../../types/UserProfile';
 import {Router} from '@angular/router';
-import {UserAuth} from '../../types/UserAuth';
+import {UserAuth} from '../../../types/UserAuth';
 
 
 @Component({
   selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  templateUrl: './login-dialog.component.html',
+  styleUrls: ['./login-dialog.component.scss']
 })
-export class LoginComponent implements OnInit, OnDestroy {
+export class LoginDialogComponent implements OnInit, OnDestroy {
 
   profileForm = new FormGroup({
     usernameFormControl: new FormControl('', [
@@ -29,20 +29,18 @@ export class LoginComponent implements OnInit, OnDestroy {
     ])
   });
   public hide = true;
-  matcher = new CustomErrorStateMatcher();
+  matcher = new LiveErrorStateMatcher();
   loginError = undefined;
   makingRequest = false;
 
 
   constructor(
-    public dialogRef: MatDialogRef<LoginComponent>,
+    public dialogRef: MatDialogRef<LoginDialogComponent>,
     private userService: UserService,
     private localStorageService: LocalStorageService,
     private userStore: UserStore,
     @Inject(MAT_DIALOG_DATA) public data: { returnUrl: string },
     private router: Router) {
-
-
   }
 
   closeDialog(): void {
@@ -65,7 +63,6 @@ export class LoginComponent implements OnInit, OnDestroy {
         } else {
           // success, save token
           this.localStorageService.setUser(response);
-          // return getprofile observable
           return this.userService.getUserProfile();
         }
       })).subscribe((resp: UserProfile | HttpErrorResponse) => {

@@ -2,15 +2,15 @@ import {Component, OnInit} from '@angular/core';
 import {ErrorStateMatcher, MatDialogRef} from '@angular/material';
 import {EmbeddingsService} from '../../core/embeddings/embeddings.service';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {CustomErrorStateMatcher} from '../../../shared/CustomErrorStateMatcher';
+import {LiveErrorStateMatcher} from '../../shared/CustomerErrorStateMatchers';
 import {debounceTime, map, mergeMap, startWith, take} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ProjectStore} from '../../core/projects/project.store';
-import {Project} from '../../../shared/types/Project';
+import {Project} from '../../shared/types/Project';
 import {ProjectService} from '../../core/projects/project.service';
-import {Field, ProjectField} from '../../../shared/types/ProjectField';
-import {Embedding} from '../../../shared/types/Embedding';
+import {Field, ProjectField} from '../../shared/types/ProjectField';
+import {Embedding} from '../../shared/types/Embedding';
 
 @Component({
   selector: 'app-create-embedding-dialog',
@@ -30,7 +30,7 @@ export class CreateEmbeddingDialogComponent implements OnInit {
 
   });
   defaultQuery = '{"query": {"match_all": {}}}';
-  matcher: ErrorStateMatcher = new CustomErrorStateMatcher();
+  matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   projectFields: ProjectField;
 
   constructor(private dialogRef: MatDialogRef<CreateEmbeddingDialogComponent>,

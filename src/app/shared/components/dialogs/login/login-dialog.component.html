@@ -28,12 +28,14 @@
           <button type="submit" [disabled]="!profileForm.valid || makingRequest" mat-button>Login</button>
         </div>
       </div>
-      <mat-error align="center" *ngIf="loginError">
-        <small>{{loginError}}</small>
-      </mat-error>
     </div>
 
-
   </form>
+
+</div>
+<div mat-dialog-actions>
+  <mat-error align="center" *ngIf="loginError">
+    <small>{{loginError}}</small>
+  </mat-error>
 </div>
 

@@ -1,9 +1,9 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {EmbeddingsService} from '../core/embeddings/embeddings.service';
 import {HttpErrorResponse} from '@angular/common/http';
-import {Embedding} from '../../shared/types/Embedding';
+import {Embedding} from '../shared/types/Embedding';
 import {ProjectStore} from '../core/projects/project.store';
-import {Project} from '../../shared/types/Project';
+import {Project} from '../shared/types/Project';
 import {mergeMap, take} from 'rxjs/operators';
 import {of, Subscription} from 'rxjs';
 import {MatDialog} from '@angular/material';

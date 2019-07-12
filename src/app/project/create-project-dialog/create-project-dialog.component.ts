@@ -1,12 +1,12 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ErrorStateMatcher, MatDialogRef} from '@angular/material';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {CustomErrorStateMatcher} from '../../../shared/CustomErrorStateMatcher';
+import {LiveErrorStateMatcher} from '../../shared/CustomerErrorStateMatchers';
 import {ProjectService} from '../../core/projects/project.service';
-import {Field} from '../../../shared/types/ProjectField';
+import {Field} from '../../shared/types/ProjectField';
 import {UserService} from '../../core/users/user.service';
-import {UserProfile} from '../../../shared/types/UserProfile';
-import {Project} from '../../../shared/types/Project';
+import {UserProfile} from '../../shared/types/UserProfile';
+import {Project} from '../../shared/types/Project';
 import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
@@ -24,7 +24,7 @@ export class CreateProjectDialogComponent implements OnInit {
     indicesFormControl: new FormControl([], [Validators.required]),
   });
 
-  matcher: ErrorStateMatcher = new CustomErrorStateMatcher();
+  matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   users: UserProfile[];
   indices = [];
 

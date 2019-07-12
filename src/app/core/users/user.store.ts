@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {UserProfile} from '../../../shared/types/UserProfile';
+import {UserProfile} from '../../shared/types/UserProfile';
 import {UserService} from './user.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {shareReplay} from 'rxjs/operators';

@@ -5,8 +5,8 @@ import {LocalStorageService} from '../util/local-storage.service';
 import {LogService} from '../util/log.service';
 import {Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
-import {Project} from '../../../shared/types/Project';
-import {ProjectField} from '../../../shared/types/ProjectField';
+import {Project} from '../../shared/types/Project';
+import {ProjectField} from '../../shared/types/ProjectField';
 
 @Injectable({
   providedIn: 'root'
@@ -31,8 +31,8 @@ export class ProjectService {
       this.apiUrl + '/projects/',
       body
     ).pipe(
-      tap(e => this.logService.logStatus(e, 'getProjects')),
-      catchError(this.logService.handleError<Project>('getProjects')));
+      tap(e => this.logService.logStatus(e, 'createProject')),
+      catchError(this.logService.handleError<Project>('createProject')));
   }
 
   getProjectById(id: number): Observable<Project | HttpErrorResponse> {
@@ -56,7 +56,7 @@ export class ProjectService {
     return this.http.options<any>(
       this.apiUrl + '/projects/'
     ).pipe(
-      tap(e => this.logService.logStatus(e, 'get Project Fields')),
-      catchError(this.logService.handleError<any>('getProjectFields')));
+      tap(e => this.logService.logStatus(e, 'get Project Options')),
+      catchError(this.logService.handleError<any>('getProjectOptions')));
   }
 }
