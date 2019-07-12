@@ -31,7 +31,7 @@ export class CreateEmbeddingDialogComponent implements OnInit {
   });
   defaultQuery = '{"query": {"match_all": {}}}';
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
-  projectFields: ProjectField;
+  projectFields: ProjectField[];
 
   constructor(private dialogRef: MatDialogRef<CreateEmbeddingDialogComponent>,
               private projectService: ProjectService,
@@ -46,9 +46,9 @@ export class CreateEmbeddingDialogComponent implements OnInit {
       } else {
         return of(null);
       }
-    })).subscribe((resp: ProjectField | HttpErrorResponse) => {
+    })).subscribe((resp: ProjectField[] | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.projectFields = resp;
+        this.projectFields = ProjectField.cleanProjectFields(resp);
       } else if (resp instanceof HttpErrorResponse) {
         this.dialogRef.close(resp);
       }

@@ -57,4 +57,12 @@ export class UserService {
       catchError(this.logService.handleError<UserProfile[]>('getUserProfile')));
   }
 
+  getUserByUrl(url: string): Observable<UserProfile> {
+    return this.http.get<UserProfile>(
+      url,
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'getbyurl')),
+      catchError(this.logService.handleError<UserProfile>('getbyurl')));
+  }
+
 }

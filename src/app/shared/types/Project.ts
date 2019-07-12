@@ -5,7 +5,7 @@ export class Project {
   id: number;
   title = '';
   owner: number;
-  users: UserProfile[];
+  users: string[];
   indices: string[];
   resources: {
     embeddings: number[];

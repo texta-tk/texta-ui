@@ -6,6 +6,7 @@ import {HomeComponent} from './home/home.component';
 import {ProjectComponent} from './project/project.component';
 import {EmbeddingComponent} from './embedding/embedding.component';
 import {TaggerComponent} from './tagger/tagger.component';
+import {UsersComponent} from './users/users.component';
 
 const routes: Routes = [
   {
@@ -32,6 +33,11 @@ const routes: Routes = [
     path: 'tagger',
     canActivate: [AuthGuard],
     component: TaggerComponent,
+  },
+  {
+    path: 'users',
+    canActivate: [AuthGuard],
+    component: UsersComponent,
   },
   {
     path: 'settings',

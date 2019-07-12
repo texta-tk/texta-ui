@@ -16,6 +16,7 @@ import {CreateEmbeddingDialogComponent} from './embedding/create-embedding-dialo
 import {TaggerComponent} from './tagger/tagger.component';
 import {CreateProjectDialogComponent} from './project/create-project-dialog/create-project-dialog.component';
 import {CreateTaggerDialogComponent} from './tagger/create-tagger-dialog/create-tagger-dialog.component';
+import { UsersComponent } from './users/users.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import {CreateTaggerDialogComponent} from './tagger/create-tagger-dialog/create-
     CreateEmbeddingDialogComponent,
     TaggerComponent,
     CreateProjectDialogComponent,
-    CreateTaggerDialogComponent
+    CreateTaggerDialogComponent,
+    UsersComponent
   ],
   imports: [
     BrowserModule,
