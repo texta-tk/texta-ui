@@ -1,2 +1,93 @@
 <button mat-flat-button (click)="openCreateDialog()">New Tagger</button>
-<app-generic-table [dataSource]="taggers"></app-generic-table>
+<div class="wrapper mat-elevation-z8">
+
+
+  <div class="table-container">
+    <!--
+        <div class="loading-shade" *ngIf="isLoadingResults ">
+          <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+        </div>-->
+    <table mat-table [dataSource]="tableData" matSort multiTemplateDataRows>
+
+      <!--      <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>{{column}}</th>
+              <td mat-cell *matCellDef="let row">
+                <span *ngIf="checkIfObject(row[column])"><pre>{{row[column] | json}}</pre></span>
+                <span *ngIf="!checkIfObject(row[column])">{{row[column]}}</span></td>
+            </ng-container>-->
+      <ng-container matColumnDef="Description">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Description</th>
+        <td mat-cell *matCellDef="let element"> {{element.description}}</td>
+      </ng-container>
+      <ng-container matColumnDef="time_started">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> time_started</th>
+        <td mat-cell *matCellDef="let element"> {{element.task.time_started | date:['MMM d, h:mm:ss a']}}</td>
+      </ng-container>
+      <ng-container matColumnDef="time_completed">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> time_completed</th>
+        <td mat-cell *matCellDef="let element">
+          <span *ngIf="element.task.time_completed">{{element.task.time_completed | date:['MMM d, h:mm:ss a']}}</span>
+          <span *ngIf="!element.task.time_completed">Null</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="fields_parsed">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> fields_parsed</th>
+        <td mat-cell *matCellDef="let element"> {{element.fields_parsed}}</td>
+      </ng-container>
+      <ng-container matColumnDef="Task">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> task</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-progress-bar
+            mode="determinate"
+            [value]="element.task.progress">
+          </mat-progress-bar>
+          <mat-hint>{{element.task.status}} / {{element.task.step}}</mat-hint>
+        </td>
+      </ng-container>
+
+
+      <ng-container matColumnDef="expandedDetail">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+          <div class="element-detail"
+               [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+            <div class="flex-row element-detail-plot-fields">
+              <div *ngIf="element.plot"><img class="element-plot" [src]="element.plot"></div>
+              <div class="flex-col">
+                <pre> Fields Parsed: {{element.fields_parsed | json}}</pre>
+                <pre>{{element.query | json}}</pre>
+                <pre>{{element.task | json}}</pre>
+              </div>
+              <div class="flex-col ">
+                <span> Maximum Sample Size: {{element.maximum_sample_size}}</span>
+                <span> Negative Multiplier: {{element.negative_multiplier}}</span>
+                <span> Number Of Features: {{element.num_features}}</span>
+                <span> Precision: {{element.precision}}</span>
+                <span> Recall: {{element.recall}}</span>
+                <span> Classifier: {{element.classifier}}</span>
+                <span> Vectorizer: {{element.vectorizer}}</span>
+                <span> Feature Selector: {{element.feature_selector}}</span>
+              </div>
+
+            </div>
+
+
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row *matRowDef="let element; columns: displayedColumns;"
+          class="element-row"
+          [class.expanded-row]="expandedElement === element"
+          (click)="expandedElement = expandedElement === element ? null : element"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
+
+    </table>
+
+  </div>
+
+  <mat-paginator [pageSizeOptions]="[15, 50, 100]" showFirstLastButtons>
+
+  </mat-paginator>
+
+</div>

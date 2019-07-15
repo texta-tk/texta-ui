@@ -35,6 +35,15 @@ export class ProjectService {
       catchError(this.logService.handleError<Project>('createProject')));
   }
 
+  editProject(body: {}, projectId): Observable<Project | HttpErrorResponse> {
+    return this.http.put<Project>(
+      this.apiUrl + '/projects/' + projectId + '/',
+      body
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'createProject')),
+      catchError(this.logService.handleError<Project>('createProject')));
+  }
+
   getProjectById(id: number): Observable<Project | HttpErrorResponse> {
     return this.http.get<Project>(
       this.apiUrl + '/projects/' + id,

@@ -48,6 +48,7 @@ export class CreateEmbeddingDialogComponent implements OnInit {
       }
     })).subscribe((resp: ProjectField[] | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
+        console.log(resp);
         this.projectFields = ProjectField.cleanProjectFields(resp);
       } else if (resp instanceof HttpErrorResponse) {
         this.dialogRef.close(resp);

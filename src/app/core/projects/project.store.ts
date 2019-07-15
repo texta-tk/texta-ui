@@ -15,7 +15,9 @@ export class ProjectStore {
   private selectedProject$: BehaviorSubject<Project> = new BehaviorSubject(null);
   private projects$: BehaviorSubject<Project[]> = new BehaviorSubject(null);
 
-  constructor(private projectService: ProjectService, private logService: LogService, private userStore: UserStore) {
+  constructor(private projectService: ProjectService,
+              private logService: LogService,
+              private userStore: UserStore) {
     this.userStore.getCurrentUser().subscribe(currentUser => {
       if (currentUser) {
         this.refreshProjects();

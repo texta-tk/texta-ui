@@ -1,7 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {UserService} from '../core/users/user.service';
 import {UserProfile} from '../shared/types/UserProfile';
-import {HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../core/util/log.service';
 import {ProjectStore} from '../core/projects/project.store';
 import {flatMap, mergeMap} from 'rxjs/operators';
