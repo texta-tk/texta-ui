@@ -8,7 +8,7 @@ export class ProjectField {
   fields: Field[];
 
   static isProjectFields(object): object is ProjectField | ProjectField[] {
-    if (Array.isArray(object)) {
+    if (Array.isArray(object) && object.length > 0) {
       return ((object[0] as ProjectField).index !== undefined && (object[0] as ProjectField).fields !== undefined);
     } else {
       return (object as ProjectField).index !== undefined && (object as ProjectField).fields !== undefined;

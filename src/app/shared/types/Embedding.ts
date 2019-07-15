@@ -12,10 +12,10 @@ export class Embedding {
   task: { id: 0; status: ''; progress: 0.0; step: ''; errors: ''; time_started: ''; last_update: null; time_completed: null; };
 
   static isEmbedding(object): object is Embedding | Embedding[] {
-    if (Array.isArray(object)) {
-      return ((object[0] as Embedding).fields_parsed !== undefined && (object[0] as Embedding).description !== undefined);
+    if (Array.isArray(object) && object.length > 0) {
+      return ((object[0] as Embedding).vocab_size !== undefined && (object[0] as Embedding).vocab_size !== undefined);
     } else {
-      return (object as Embedding).fields_parsed !== undefined && (object as Embedding).description !== undefined;
+      return (object as Embedding).vocab_size !== undefined && (object as Embedding).vocab_size !== undefined;
     }
   }
 }

@@ -34,6 +34,20 @@ export class UserService {
       catchError(this.logService.handleError<UserAuth>('register')));
   }
 
+  resetPassword(mail: string): Observable<any> {
+    return this.http.post<any>(
+      this.apiUrl + '/rest-auth/password/reset/',
+      {email: mail}).pipe(tap(e => this.logService.logStatus(e, 'reset password')),
+      catchError(this.logService.handleError<any>('reset password')));
+  }
+
+  changePassword(body: {}): Observable<any> {
+    return this.http.post<any>(
+      this.apiUrl + '/rest-auth/password/change/',
+      body).pipe(tap(e => this.logService.logStatus(e, 'change password')),
+      catchError(this.logService.handleError<any>('change password')));
+  }
+
   getUserProfile(): Observable<UserProfile> {
     return this.http.get<UserProfile>(
       this.apiUrl + '/rest-auth/user/',
