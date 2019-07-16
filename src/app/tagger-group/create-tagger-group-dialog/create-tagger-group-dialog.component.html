@@ -1,14 +1,23 @@
-<h1 mat-dialog-title>New Tagger</h1>
+<h1 mat-dialog-title>New Tagger Group</h1>
 <div mat-dialog-content>
-  <form class="flex-col" [formGroup]="taggerForm" (ngSubmit)="onSubmit(taggerForm.value)">
+  <form class="flex-col" [formGroup]="taggerGroupForm" (ngSubmit)="onSubmit(taggerGroupForm.value)">
     <mat-form-field>
       <input matInput placeholder="Description" autocomplete="off" formControlName="descriptionFormControl"
              [errorStateMatcher]="matcher" required>
 
-      <mat-error *ngIf="taggerForm.get('descriptionFormControl').hasError('required')">
+      <mat-error *ngIf="taggerGroupForm.get('descriptionFormControl').hasError('required')">
         Description is <strong>required</strong>
       </mat-error>
     </mat-form-field>
+    <mat-form-field>
+      <input matInput placeholder="Fact name" autocomplete="off" formControlName="factNameFormControl"
+             [errorStateMatcher]="matcher">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="number" placeholder="Minimum sample size" formControlName="taggerGroupSampleSizeFormControl">
+    </mat-form-field>
+  <div class="flex-col" formGroupName="taggerForm" >
+    <h3>Tagger</h3>
     <ng-select class="form-ng-select"
                multiple="true"
                placeholder="Fields *"
@@ -29,8 +38,8 @@
     <div class="form-ng-select-error">
       <span
         [ngClass]="{'in-view':
-        taggerForm.get('fieldsFormControl').hasError('required') &&
-        taggerForm.get('fieldsFormControl').touched}">
+        taggerGroupForm.get('taggerForm').get('fieldsFormControl').hasError('required') &&
+        taggerGroupForm.get('taggerForm').get('fieldsFormControl').touched}">
         Field is <strong>required</strong>
       </span>
     </div>
@@ -47,8 +56,8 @@
     <div class="form-ng-select-error">
       <span
         [ngClass]="{'in-view':
-        taggerForm.get('embeddingFormControl').hasError('required') &&
-        taggerForm.get('embeddingFormControl').touched}">
+        taggerGroupForm.get('taggerForm').get('embeddingFormControl').hasError('required') &&
+        taggerGroupForm.get('taggerForm').get('embeddingFormControl').touched}">
         Embedding is <strong>required</strong>
       </span>
     </div>
@@ -65,8 +74,8 @@
     <div class="form-ng-select-error">
       <span
         [ngClass]="{'in-view':
-        taggerForm.get('vectorizerFormControl').hasError('required') &&
-        taggerForm.get('vectorizerFormControl').touched}">
+        taggerGroupForm.get('taggerForm').get('vectorizerFormControl').hasError('required') &&
+        taggerGroupForm.get('taggerForm').get('vectorizerFormControl').touched}">
         Vectorizer is <strong>required</strong>
       </span>
     </div>
@@ -83,8 +92,8 @@
     <div class="form-ng-select-error">
       <span
         [ngClass]="{'in-view':
-        taggerForm.get('classifierFormControl').hasError('required') &&
-        taggerForm.get('classifierFormControl').touched}">
+        taggerGroupForm.get('taggerForm').get('classifierFormControl').hasError('required') &&
+        taggerGroupForm.get('taggerForm').get('classifierFormControl').touched}">
         Classifier is <strong>required</strong>
       </span>
     </div>
@@ -101,8 +110,8 @@
     <div class="form-ng-select-error">
       <span
         [ngClass]="{'in-view':
-        taggerForm.get('featureSelectorFormControl').hasError('required') &&
-        taggerForm.get('featureSelectorFormControl').touched}">
+        taggerGroupForm.get('taggerForm').get('featureSelectorFormControl').hasError('required') &&
+        taggerGroupForm.get('taggerForm').get('featureSelectorFormControl').touched}">
         Feature Selector is <strong>required</strong>
       </span>
     </div>
@@ -111,21 +120,23 @@
       <input matInput type="number" placeholder="Maximum sample size" formControlName="sampleSizeFormControl">
     </mat-form-field>
     <mat-form-field>
-      <input matInput type="number" placeholder="Negative Multiplier" formControlName="negativeMultiplierFormControl">
+      <input matInput type="number" placeholder="Negative multiplier" formControlName="negativeMultiplierFormControl">
     </mat-form-field>
+
+
+
+  </div>
     <div class="flex-col">
       <div class="flex-row">
         <div class="flex-item-left">
           <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Close</button>
         </div>
         <div class="flex-item-right">
-          <button type="submit" [disabled]="!taggerForm.valid" mat-button>Create Tagger</button>
+          <button type="submit" [disabled]="!taggerGroupForm.valid" mat-button>Create Tagger Group</button>
         </div>
       </div>
 
     </div>
-
-
   </form>
 </div>
 

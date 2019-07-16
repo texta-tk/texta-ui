@@ -7,6 +7,9 @@ import {LogService} from '../core/util/log.service';
 import {CreateProjectDialogComponent} from './create-project-dialog/create-project-dialog.component';
 import {ProjectStore} from '../core/projects/project.store';
 import {EditProjectDialogComponent} from './edit-project-dialog/edit-project-dialog.component';
+import {UserProfile} from '../shared/types/UserProfile';
+import {mergeMap, toArray} from 'rxjs/operators';
+import {UserService} from '../core/users/user.service';
 
 @Component({
   selector: 'app-project',
@@ -17,11 +20,11 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
   dialogAfterClosedSubscription: Subscription;
   projectSubscription: Subscription;
-  /*   // users
-    private urlsToRequest: Subject<string[]> = new Subject();
-    public usersObservable: Observable<UserProfile[]>;*/
+
+  private urlsToRequest: Subject<string[]> = new Subject();
+  public projectUsers$: Observable<UserProfile[]>;
   public tableData: MatTableDataSource<Project>;
-  public displayedColumns = ['Id', 'Owner', 'Title', 'Indices', /* 'Users',*/ 'Modify'];
+  public displayedColumns = ['Id', 'Owner', 'Title', 'Indices', 'Users', 'Modify'];
   public isLoadingResults = true;
 
   @ViewChild(MatSort, {static: true}) sort: MatSort;
@@ -29,6 +32,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
   constructor(
     private projectStore: ProjectStore,
+    private userService: UserService,
     public dialog: MatDialog,
     public logService: LogService) {
   }
@@ -42,7 +46,12 @@ export class ProjectComponent implements OnInit, OnDestroy {
         this.isLoadingResults = false;
       }
     });
-    /*    this.getElementUsers();*/
+    this.projectUsers$ = this.urlsToRequest.pipe(mergeMap((urls) => {
+        return from(urls).pipe(mergeMap(url => {
+          return this.userService.getUserByUrl(url);
+        }), toArray());
+      }
+    ));
   }
 
   ngOnDestroy() {
@@ -54,16 +63,9 @@ export class ProjectComponent implements OnInit, OnDestroy {
     }
   }
 
-  /*selectUserElement(urls) {
+  selectUserElement(urls) {
     this.urlsToRequest.next(urls);
   }
-*/
-
-  /*  getElementUsers() {
-      this.urlsToRequest.subscribe(urls => {
-        this.usersObservable = from(urls).pipe(mergeMap((url: string) => this.userService.getUserByUrl(url)), toArray());
-      });
-    }*/
 
   edit(project) {
     this.dialog.open(EditProjectDialogComponent, {

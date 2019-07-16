@@ -18,6 +18,10 @@ import {CreateProjectDialogComponent} from './project/create-project-dialog/crea
 import {CreateTaggerDialogComponent} from './tagger/create-tagger-dialog/create-tagger-dialog.component';
 import {UsersComponent} from './users/users.component';
 import {EditProjectDialogComponent} from './project/edit-project-dialog/edit-project-dialog.component';
+import {TaggerGroupComponent} from './tagger-group/tagger-group.component';
+import {EmbeddingGroupComponent} from './embedding-group/embedding-group.component';
+import {CreateEmbeddingGroupDialogComponent} from './embedding-group/create-embedding-group-dialog/create-embedding-group-dialog.component';
+import {CreateTaggerGroupDialogComponent} from './tagger-group/create-tagger-group-dialog/create-tagger-group-dialog.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +36,11 @@ import {EditProjectDialogComponent} from './project/edit-project-dialog/edit-pro
     CreateProjectDialogComponent,
     CreateTaggerDialogComponent,
     UsersComponent,
-    EditProjectDialogComponent
+    EditProjectDialogComponent,
+    TaggerGroupComponent,
+    EmbeddingGroupComponent,
+    CreateEmbeddingGroupDialogComponent,
+    CreateTaggerGroupDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -44,9 +52,12 @@ import {EditProjectDialogComponent} from './project/edit-project-dialog/edit-pro
   providers: [{provide: HTTP_INTERCEPTORS, useClass: HttpAuthInterceptor, multi: true}],
   entryComponents: [
     CreateEmbeddingDialogComponent,
+    CreateTaggerDialogComponent,
     CreateProjectDialogComponent,
     EditProjectDialogComponent,
-    CreateTaggerDialogComponent],
+    CreateEmbeddingGroupDialogComponent,
+    CreateTaggerGroupDialogComponent,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {
