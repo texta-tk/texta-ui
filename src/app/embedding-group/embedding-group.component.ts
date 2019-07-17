@@ -8,6 +8,7 @@ import {CreateEmbeddingDialogComponent} from '../embedding/create-embedding-dial
 import {mergeMap} from 'rxjs/operators';
 import {Project} from '../shared/types/Project';
 import {of, Subscription} from 'rxjs';
+import {CreateEmbeddingGroupDialogComponent} from './create-embedding-group-dialog/create-embedding-group-dialog.component';
 
 @Component({
   selector: 'app-embedding-group',
@@ -27,6 +28,7 @@ export class EmbeddingGroupComponent implements OnInit, OnDestroy {
     this.projectSubscription = this.projectStore.getCurrentProject().pipe(mergeMap((currentProject: Project) => {
       if (currentProject) {
         // todo
+        return of(null);
       } else {
         return of(null);
       }
@@ -50,8 +52,8 @@ export class EmbeddingGroupComponent implements OnInit, OnDestroy {
   }
 
   openCreateDialog() {
-    const dialogRef = this.dialog.open(CreateEmbeddingDialogComponent, {
-      height: '500px',
+    const dialogRef = this.dialog.open(CreateEmbeddingGroupDialogComponent, {
+      height: '350px',
       width: '700px',
     });
     this.dialogAfterClosedSubscription = dialogRef.afterClosed().subscribe((resp: Embedding | HttpErrorResponse) => {

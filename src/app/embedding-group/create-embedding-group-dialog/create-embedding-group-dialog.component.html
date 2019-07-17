@@ -1,1 +1,43 @@
-<p>create-embedding-group-dialog works!</p>
+<h1 mat-dialog-title>Embedding Group</h1>
+
+<div class="dialog-content-wrapper" mat-dialog-content>
+  <form class="flex-col" [formGroup]="embeddingForm" (ngSubmit)="onSubmit(embeddingForm.value)">
+    <mat-form-field>
+      <input matInput placeholder="Description" formControlName="descriptionFormControl"
+             [errorStateMatcher]="matcher" required>
+
+      <mat-error *ngIf="embeddingForm.get('descriptionFormControl').hasError('required')">
+        Description is <strong>required</strong>
+      </mat-error>
+    </mat-form-field><!--
+   todo refactor ng-select-->
+<!--    <app-error-ng-select
+
+      [items]="embeddings"
+      formControlName="embeddingFormControl"></app-error-ng-select>-->
+    <!--<div class="form-ng-select-error">
+      <span
+        [ngClass]="{'in-view':
+        embeddingForm.get('embeddingFormControl').hasError('required') &&
+        embeddingForm.get('embeddingFormControl').touched}">
+        Embedding is <strong>required</strong>
+      </span>
+    </div>-->
+    <mat-form-field>
+      <input matInput type="number" placeholder="Number of clusters" formControlName="clustersFormControl">
+    </mat-form-field>
+    <div class="flex-col">
+      <div class="flex-row">
+        <div class="flex-item-left">
+          <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">No Thanks</button>
+        </div>
+        <div class="flex-item-right">
+          <button type="submit" mat-button [disabled]="!embeddingForm.valid">Create embedding group</button>
+        </div>
+      </div>
+    </div>
+
+
+  </form>
+</div>
+

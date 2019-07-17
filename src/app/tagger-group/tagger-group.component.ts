@@ -28,6 +28,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy {
     this.projectSubscription = this.projectStore.getCurrentProject().pipe(mergeMap((currentProject: Project) => {
       if (currentProject) {
         // todo
+        return of(null);
       } else {
         return of(null);
       }
