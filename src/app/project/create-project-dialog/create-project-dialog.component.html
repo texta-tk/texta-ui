@@ -9,46 +9,30 @@
         Title is <strong>required</strong>
       </mat-error>
     </mat-form-field>
-
-    <ng-select class="form-ng-select"
-               multiple="true"
-               placeholder="Users *"
-               appendTo="body"
-               [closeOnSelect]="false"
-               [items]="users"
-               bindLabel="username"
-               bindValue="url"
-               formControlName="usersFormControl">
-
-    </ng-select>
-    <div class="form-ng-select-error">
-      <span
-        [ngClass]="{'in-view':
-        projectForm.get('usersFormControl').hasError('required') &&
-        projectForm.get('usersFormControl').touched}">
+    <mat-form-field>
+      <mat-label>Select Users</mat-label>
+      <mat-select formControlName="usersFormControl" multiple required>
+        <mat-option *ngFor="let item of users" [value]="item.url">
+          {{item.username}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="projectForm.get('usersFormControl').hasError('required')">
         User is <strong>required</strong>
-      </span>
-    </div>
+      </mat-error>
+    </mat-form-field>
 
-    <ng-select class="form-ng-select"
-               multiple="true"
-               placeholder="Indices *"
-               appendTo="body"
-               [closeOnSelect]="false"
-               [items]="indices"
-               bindLabel="display_name"
-               bindValue="value"
-               formControlName="indicesFormControl">
-
-    </ng-select>
-    <div class="form-ng-select-error">
-      <span
-        [ngClass]="{'in-view':
-        projectForm.get('indicesFormControl').hasError('required') &&
-        projectForm.get('indicesFormControl').touched}">
+    <mat-form-field>
+      <mat-label>Select Indices</mat-label>
+      <mat-select formControlName="indicesFormControl" multiple required>
+        <mat-option *ngFor="let item of indices" [value]="item.value">
+          {{item.display_name}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="projectForm.get('indicesFormControl').hasError('required')">
         Index is <strong>required</strong>
-      </span>
-    </div>
+      </mat-error>
+    </mat-form-field>
+
     <div class="flex-col">
       <div class="flex-row">
         <div class="flex-item-left">

@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {LiveErrorStateMatcher} from '../../shared/CustomerErrorStateMatchers';
-import {ErrorStateMatcher} from '@angular/material';
+import {ErrorStateMatcher, MatDialogRef} from '@angular/material';
 import {HttpErrorResponse} from '@angular/common/http';
 import {of} from 'rxjs';
 import {Embedding} from '../../shared/types/Embedding';
@@ -10,6 +10,9 @@ import {ProjectService} from '../../core/projects/project.service';
 import {EmbeddingsService} from '../../core/embeddings/embeddings.service';
 import {ProjectStore} from '../../core/projects/project.store';
 import {LogService} from '../../core/util/log.service';
+import {CreateEmbeddingDialogComponent} from '../../embedding/create-embedding-dialog/create-embedding-dialog.component';
+import {EmbeddingsGroupService} from '../../core/embeddings/embeddings-group.service';
+import {EmbeddingCluster} from '../../shared/types/EmbeddingCluster';
 
 @Component({
   selector: 'app-create-embedding-group-dialog',
@@ -28,10 +31,13 @@ export class CreateEmbeddingGroupDialogComponent implements OnInit {
   });
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   embeddings: Embedding[] = [];
-  constructor(private projectService: ProjectService,
-              private projectStore: ProjectStore,
-              private logService: LogService,
-              private embeddingService: EmbeddingsService) {
+
+  constructor(
+    private dialogRef: MatDialogRef<CreateEmbeddingGroupDialogComponent>,
+    private projectStore: ProjectStore,
+    private logService: LogService,
+    private embeddingService: EmbeddingsService,
+    private embeddingGroupService: EmbeddingsGroupService) {
   }
 
   ngOnInit() {
@@ -49,8 +55,29 @@ export class CreateEmbeddingGroupDialogComponent implements OnInit {
       }
     });
   }
-  ifError(){
-    console.log(this.embeddingForm.get('embeddingFormControl'));
-    return this.embeddingForm.get('embeddingFormControl').touched && this.embeddingForm.get('embeddingFormControl').hasError('required');
+
+  onSubmit(formData) {
+    const body = {
+      description: formData.descriptionFormControl,
+      embedding: formData.embeddingFormControl.id,
+      num_clusters: formData.clustersFormControl,
+    };
+    console.log(body);
+    this.projectStore.getCurrentProject().pipe(take(1), mergeMap(currentProject => {
+      if (currentProject) {
+        return this.embeddingGroupService.createEmbeddingGroup(body, currentProject.id);
+      } else {
+        return of(null);
+      }
+    })).subscribe((resp: EmbeddingCluster | HttpErrorResponse) => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.dialogRef.close(resp);
+      } else if (resp instanceof HttpErrorResponse) {
+        this.dialogRef.close(resp);
+      }
+    });
+  }
+  closeDialog(): void {
+    this.dialogRef.close();
   }
 }

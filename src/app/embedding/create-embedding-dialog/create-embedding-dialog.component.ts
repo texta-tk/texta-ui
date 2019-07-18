@@ -3,8 +3,8 @@ import {ErrorStateMatcher, MatDialogRef} from '@angular/material';
 import {EmbeddingsService} from '../../core/embeddings/embeddings.service';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {LiveErrorStateMatcher} from '../../shared/CustomerErrorStateMatchers';
-import {debounceTime, map, mergeMap, startWith, take} from 'rxjs/operators';
-import {Observable, of} from 'rxjs';
+import {mergeMap, take} from 'rxjs/operators';
+import {of} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ProjectStore} from '../../core/projects/project.store';
 import {Project} from '../../shared/types/Project';
@@ -93,4 +93,5 @@ export class CreateEmbeddingDialogComponent implements OnInit {
   closeDialog(): void {
     this.dialogRef.close();
   }
+
 }

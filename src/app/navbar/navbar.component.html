@@ -16,12 +16,14 @@
 
 
     <div class="flex-item-right flex-row user-name" *ngIf="user">
-      <ng-select class="" [items]="projects"
-                 [clearable]="false"
-                 (change)="selectProject($event)"
-                 bindLabel="title"
-                 [formControl]="projectControl"
-      ></ng-select>
+      <mat-form-field>
+        <mat-select [formControl]="projectControl" (selectionChange)="selectProject($event.value)">
+          <mat-option *ngFor="let item of projects" [value]="item">
+            {{item.title}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
       <div class="flex-row logout">
         <button mat-flat-button [matMenuTriggerFor]="menu"><span>{{user.username}}
         </span>

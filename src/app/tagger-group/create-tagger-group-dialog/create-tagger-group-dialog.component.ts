@@ -9,12 +9,11 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ProjectService} from '../../core/projects/project.service';
 import {ProjectStore} from '../../core/projects/project.store';
 import {LiveErrorStateMatcher} from '../../shared/CustomerErrorStateMatchers';
-import {CreateTaggerDialogComponent} from '../../tagger/create-tagger-dialog/create-tagger-dialog.component';
 import {EmbeddingsService} from '../../core/embeddings/embeddings.service';
 import {Embedding} from '../../shared/types/Embedding';
-import {Tagger} from '../../shared/types/Tagger';
 import {TaggerService} from '../../core/taggers/tagger.service';
 import {merge, of} from 'rxjs';
+import {TaggerGroupService} from '../../core/taggers/tagger-group.service';
 
 @Component({
   selector: 'app-create-tagger-group-dialog',
@@ -27,7 +26,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
     descriptionFormControl: new FormControl('', [
       Validators.required,
     ]),
-    factNameFormControl: new FormControl(''),
+    factNameFormControl: new FormControl('TEEMA', Validators.required),
     taggerGroupSampleSizeFormControl: new FormControl(10000, [Validators.required]),
     taggerForm: new FormGroup({
 
@@ -47,8 +46,9 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
   embeddings: Embedding[];
   projectFields: ProjectField[];
 
-  constructor(private dialogRef: MatDialogRef<CreateTaggerDialogComponent>,
+  constructor(private dialogRef: MatDialogRef<CreateTaggerGroupDialogComponent>,
               private taggerService: TaggerService,
+              private taggerGroupService: TaggerGroupService,
               private logService: LogService,
               private projectService: ProjectService,
               private embeddingService: EmbeddingsService,
@@ -81,25 +81,31 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
   }
 
 
-  onSubmit(formData) {
+  onSubmit() {
+    console.log(this.taggerGroupForm.value);
+    const formData = this.taggerGroupForm.value;
     const body = {
       description: formData.descriptionFormControl,
-      fields: formData.fieldsFormControl,
-      embedding: (formData.embeddingFormControl as Embedding) ? (formData.embeddingFormControl as Embedding).id : null,
-      vectorizer: formData.vectorizerFormControl.value,
-      classifier: formData.classifierFormControl.value,
-      feature_selector: formData.featureSelectorFormControl.value,
-      maximum_sample_size: formData.sampleSizeFormControl,
-      negative_multiplier: formData.negativeMultiplierFormControl
-
+      fact_name: formData.factNameFormControl,
+      minimum_sample_size: formData.taggerGroupSampleSizeFormControl,
+      tagger: {
+        embedding: formData.taggerForm.embeddingFormControl.id,
+        fields: formData.taggerForm.fieldsFormControl,
+        vectorizer: formData.taggerForm.vectorizerFormControl.value,
+        classifier: formData.taggerForm.classifierFormControl.value,
+        feature_selector: formData.taggerForm.featureSelectorFormControl.value,
+        maximum_sample_size: formData.taggerForm.sampleSizeFormControl,
+        negative_multiplier: formData.taggerForm.negativeMultiplierFormControl,
+      }
     };
+    console.log(body);
     this.projectStore.getCurrentProject().pipe(take(1), mergeMap(currentProject => {
       if (currentProject) {
-        return this.taggerService.createTagger(body, currentProject.id);
+        return this.taggerGroupService.createTaggerGroup(body, currentProject.id);
       } else {
         return of(null);
       }
-    })).subscribe((resp: Tagger | HttpErrorResponse) => {
+    })).subscribe((resp: any | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.dialogRef.close(resp);
       } else if (resp instanceof HttpErrorResponse) {

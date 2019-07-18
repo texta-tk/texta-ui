@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>New Tagger Group</h1>
 <div mat-dialog-content>
-  <form class="flex-col" [formGroup]="taggerGroupForm" (ngSubmit)="onSubmit(taggerGroupForm.value)">
+  <form class="flex-col" [formGroup]="taggerGroupForm" (ngSubmit)="onSubmit()">
     <mat-form-field>
       <input matInput placeholder="Description" autocomplete="off" formControlName="descriptionFormControl"
              [errorStateMatcher]="matcher" required>
@@ -11,121 +11,82 @@
     </mat-form-field>
     <mat-form-field>
       <input matInput placeholder="Fact name" autocomplete="off" formControlName="factNameFormControl"
-             [errorStateMatcher]="matcher">
+             [errorStateMatcher]="matcher" required>
     </mat-form-field>
     <mat-form-field>
-      <input matInput type="number" placeholder="Minimum sample size" formControlName="taggerGroupSampleSizeFormControl">
+      <input matInput type="number" placeholder="Minimum sample size"
+             formControlName="taggerGroupSampleSizeFormControl">
     </mat-form-field>
-  <div class="flex-col" formGroupName="taggerForm" >
-    <h3>Tagger</h3>
-    <ng-select class="form-ng-select"
-               multiple="true"
-               placeholder="Fields *"
-               appendTo="body"
-               [items]="projectFields"
-               bindLabel="path"
-               bindValue="path"
-               groupBy="fields"
-               [closeOnSelect]="false"
-               formControlName="fieldsFormControl">
-      <ng-template ng-optgroup-tmp let-item="item">
-        {{item.index}}
-      </ng-template>
-      <ng-template ng-option-tmp let-item="item">
-        {{item.path}}
-      </ng-template>
-    </ng-select>
-    <div class="form-ng-select-error">
-      <span
-        [ngClass]="{'in-view':
-        taggerGroupForm.get('taggerForm').get('fieldsFormControl').hasError('required') &&
-        taggerGroupForm.get('taggerForm').get('fieldsFormControl').touched}">
-        Field is <strong>required</strong>
-      </span>
+    <div class="flex-col" formGroupName="taggerForm">
+      <h3>Tagger</h3>
+      <mat-form-field>
+        <mat-label>Select Fields</mat-label>
+        <mat-select formControlName="fieldsFormControl" multiple required>
+          <mat-optgroup *ngFor="let group of projectFields" [label]="group.index">
+            <mat-option *ngFor="let fields of group.fields" [value]="fields.path">
+              {{fields.path}}
+            </mat-option>
+          </mat-optgroup>
+        </mat-select>
+        <mat-error *ngIf="taggerGroupForm.get('taggerForm').get('fieldsFormControl').hasError('required')">
+          Field is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Select Embedding</mat-label>
+        <mat-select formControlName="embeddingFormControl" required>
+          <mat-option *ngFor="let item of embeddings" [value]="item">
+            {{item.description}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="taggerGroupForm.get('taggerForm').get('embeddingFormControl').hasError('required')">
+          Embedding is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Vectorizer</mat-label>
+        <mat-select formControlName="vectorizerFormControl" required>
+          <mat-option *ngFor="let item of taggerOptions.actions.POST.vectorizer.choices" [value]="item">
+            {{item.display_name}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="taggerGroupForm.get('taggerForm').get('vectorizerFormControl').hasError('required')">
+          Vectorizer is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Classifier</mat-label>
+        <mat-select formControlName="classifierFormControl" required>
+          <mat-option *ngFor="let item of taggerOptions.actions.POST.classifier.choices" [value]="item">
+            {{item.display_name}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="taggerGroupForm.get('taggerForm').get('classifierFormControl').hasError('required')">
+          Classifier is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Feature selector</mat-label>
+        <mat-select formControlName="featureSelectorFormControl" required>
+          <mat-option *ngFor="let item of taggerOptions.actions.POST.feature_selector.choices" [value]="item">
+            {{item.display_name}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="taggerGroupForm.get('taggerForm').get('featureSelectorFormControl').hasError('required')">
+          Feature selector is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput type="number" placeholder="Maximum sample size" formControlName="sampleSizeFormControl">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput type="number" placeholder="Negative multiplier" formControlName="negativeMultiplierFormControl">
+      </mat-form-field>
+
+
     </div>
-    <ng-select class="form-ng-select"
-               placeholder="Embedding"
-               appendTo="body"
-               [clearable]="true"
-               [closeOnSelect]="true"
-               [items]="embeddings"
-               bindLabel="description"
-               formControlName="embeddingFormControl">
-
-    </ng-select>
-    <div class="form-ng-select-error">
-      <span
-        [ngClass]="{'in-view':
-        taggerGroupForm.get('taggerForm').get('embeddingFormControl').hasError('required') &&
-        taggerGroupForm.get('taggerForm').get('embeddingFormControl').touched}">
-        Embedding is <strong>required</strong>
-      </span>
-    </div>
-    <ng-select class="form-ng-select"
-               placeholder="Vectorizer"
-               appendTo="body"
-               [clearable]="false"
-               [closeOnSelect]="true"
-               [items]="taggerOptions.actions.POST.vectorizer.choices"
-               bindLabel="display_name"
-               formControlName="vectorizerFormControl">
-
-    </ng-select>
-    <div class="form-ng-select-error">
-      <span
-        [ngClass]="{'in-view':
-        taggerGroupForm.get('taggerForm').get('vectorizerFormControl').hasError('required') &&
-        taggerGroupForm.get('taggerForm').get('vectorizerFormControl').touched}">
-        Vectorizer is <strong>required</strong>
-      </span>
-    </div>
-    <ng-select class="form-ng-select"
-               placeholder="Classifier"
-               appendTo="body"
-               [clearable]="false"
-               [closeOnSelect]="true"
-               [items]="taggerOptions.actions.POST.classifier.choices"
-               bindLabel="display_name"
-               formControlName="classifierFormControl">
-
-    </ng-select>
-    <div class="form-ng-select-error">
-      <span
-        [ngClass]="{'in-view':
-        taggerGroupForm.get('taggerForm').get('classifierFormControl').hasError('required') &&
-        taggerGroupForm.get('taggerForm').get('classifierFormControl').touched}">
-        Classifier is <strong>required</strong>
-      </span>
-    </div>
-    <ng-select class="form-ng-select"
-               placeholder="Feature selector"
-               appendTo="body"
-               [closeOnSelect]="true"
-               [clearable]="false"
-               [items]="taggerOptions.actions.POST.feature_selector.choices"
-               bindLabel="display_name"
-               formControlName="featureSelectorFormControl">
-
-    </ng-select>
-    <div class="form-ng-select-error">
-      <span
-        [ngClass]="{'in-view':
-        taggerGroupForm.get('taggerForm').get('featureSelectorFormControl').hasError('required') &&
-        taggerGroupForm.get('taggerForm').get('featureSelectorFormControl').touched}">
-        Feature Selector is <strong>required</strong>
-      </span>
-    </div>
-
-    <mat-form-field>
-      <input matInput type="number" placeholder="Maximum sample size" formControlName="sampleSizeFormControl">
-    </mat-form-field>
-    <mat-form-field>
-      <input matInput type="number" placeholder="Negative multiplier" formControlName="negativeMultiplierFormControl">
-    </mat-form-field>
-
-
-
-  </div>
     <div class="flex-col">
       <div class="flex-row">
         <div class="flex-item-left">

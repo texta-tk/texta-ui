@@ -26,7 +26,6 @@ import {ScrollingModule} from '@angular/cdk/scrolling';
 import {MatExpansionModule} from '@angular/material/expansion';
 
 import {LoginDialogComponent} from './components/dialogs/login/login-dialog.component';
-import {NgSelectModule} from '@ng-select/ng-select';
 import {GenericTableComponent} from './components/generic-table/generic-table.component';
 import {RegistrationDialogComponent} from './components/dialogs/registration/registration-dialog.component';
 
@@ -59,7 +58,6 @@ import {RegistrationDialogComponent} from './components/dialogs/registration/reg
     MatTabsModule,
     MatProgressBarModule,
     MatExpansionModule,
-    NgSelectModule,
   ],
   exports: [
     CommonModule,
@@ -88,7 +86,6 @@ import {RegistrationDialogComponent} from './components/dialogs/registration/reg
     MatTabsModule,
     MatProgressBarModule,
     MatExpansionModule,
-    NgSelectModule,
 
     GenericTableComponent
   ],

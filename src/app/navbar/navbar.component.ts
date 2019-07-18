@@ -5,10 +5,8 @@ import {LoginDialogComponent} from '../shared/components/dialogs/login/login-dia
 import {UserProfile} from '../shared/types/UserProfile';
 import {UserService} from '../core/users/user.service';
 import {LocalStorageService} from '../core/util/local-storage.service';
-import {mergeMap} from 'rxjs/operators';
 import {ProjectService} from '../core/projects/project.service';
 import {Project} from '../shared/types/Project';
-import {HttpErrorResponse} from '@angular/common/http';
 import {FormControl} from '@angular/forms';
 import {ProjectStore} from '../core/projects/project.store';
 import {of} from 'rxjs';
@@ -44,7 +42,12 @@ export class NavbarComponent implements OnInit {
       if (projects) {
         this.projects = projects;
         // dont select first when already have something selected
-        if (!this.projectControl.value) {
+        const cachedProject = !!this.localStorageService.getCurrentlySelectedProject() ?
+          this.projects.find(x => x.id === this.localStorageService.getCurrentlySelectedProject().id) : null;
+        if (cachedProject) {
+          this.projectControl.setValue(cachedProject);
+          this.projectStore.setCurrentProject(cachedProject);
+        } else {
           this.projectControl.setValue(projects[0]);
           this.projectStore.setCurrentProject(projects[0]);
         }
@@ -53,6 +56,7 @@ export class NavbarComponent implements OnInit {
   }
 
   public selectProject(selectedOption: Project) {
+    this.localStorageService.setCurrentlySelectedProject(selectedOption);
     this.projectStore.setCurrentProject(selectedOption);
   }
 

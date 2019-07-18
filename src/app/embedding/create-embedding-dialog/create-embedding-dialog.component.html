@@ -13,31 +13,19 @@
       <textarea matInput placeholder="Query" formControlName="queryFormControl"></textarea>
       <mat-hint>Default: {{defaultQuery}}</mat-hint>
     </mat-form-field>
-    <ng-select class="form-ng-select"
-               multiple="true"
-               placeholder="Fields *"
-               appendTo="body"
-               [items]="projectFields"
-               bindLabel="path"
-               groupBy="fields"
-               [closeOnSelect]="false"
-               formControlName="fieldsFormControl">
-      <ng-template ng-optgroup-tmp let-item="item">
-        {{item.index}}
-      </ng-template>
-      <ng-template ng-option-tmp let-item="item">
-        {{item.path}}
-      </ng-template>
-    </ng-select>
-    <div class="form-ng-select-error">
-      <span
-        [ngClass]="{'in-view':
-        embeddingForm.get('fieldsFormControl').hasError('required') &&
-        embeddingForm.get('fieldsFormControl').touched}">
+    <mat-form-field>
+      <mat-label>Select Fields</mat-label>
+      <mat-select formControlName="fieldsFormControl" multiple required>
+        <mat-optgroup *ngFor="let group of projectFields" [label]="group.index">
+          <mat-option *ngFor="let fields of group.fields" [value]="fields">
+            {{fields.path}}
+          </mat-option>
+        </mat-optgroup>
+      </mat-select>
+      <mat-error *ngIf="embeddingForm.get('fieldsFormControl').hasError('required')">
         Field is <strong>required</strong>
-      </span>
-    </div>
-
+      </mat-error>
+    </mat-form-field>
     <mat-form-field>
       <input matInput type="number" placeholder="Number of Dimensions" formControlName="dimensionsFormControl">
     </mat-form-field>

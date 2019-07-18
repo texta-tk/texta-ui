@@ -1,30 +1,17 @@
 <h1 mat-dialog-title>Edit</h1>
 <form class="flex-col" [formGroup]="projectForm" (ngSubmit)="onSubmit(projectForm.value)">
   <div class="dialog-content-wrapper" mat-dialog-content>
-
-    <ng-select
-      class="form-ng-select"
-      [items]="indices"
-      [multiple]="true"
-      [virtualScroll]="true"
-      [closeOnSelect]="false"
-      [hideSelected]="true"
-      appendTo="body"
-      bindLabel="display_name"
-      bindValue="value"
-      placeholder="Select Indices"
-      formControlName="indicesFormControl">
-    </ng-select>
-    <div class="form-ng-select-error">
-      <span
-        [ngClass]="{'in-view':
-        projectForm.get('indicesFormControl').hasError('required') &&
-        projectForm.get('indicesFormControl').touched}">
+    <mat-form-field class="max-width">
+      <mat-label>Select Indices</mat-label>
+      <mat-select formControlName="indicesFormControl" required multiple>
+        <mat-option *ngFor="let item of indices" [value]="item.value">
+          {{item.display_name}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="projectForm.get('indicesFormControl').hasError('required')">
         Select at least 1 index
-      </span>
-    </div>
-
-
+      </mat-error>
+    </mat-form-field>
   </div>
 
 

@@ -9,20 +9,19 @@
       <mat-error *ngIf="embeddingForm.get('descriptionFormControl').hasError('required')">
         Description is <strong>required</strong>
       </mat-error>
-    </mat-form-field><!--
-   todo refactor ng-select-->
-<!--    <app-error-ng-select
-
-      [items]="embeddings"
-      formControlName="embeddingFormControl"></app-error-ng-select>-->
-    <!--<div class="form-ng-select-error">
-      <span
-        [ngClass]="{'in-view':
-        embeddingForm.get('embeddingFormControl').hasError('required') &&
-        embeddingForm.get('embeddingFormControl').touched}">
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Select Embedding</mat-label>
+      <mat-select formControlName="embeddingFormControl" required>
+        <mat-option *ngFor="let item of embeddings" [value]="item">
+          {{item.description}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="embeddingForm.get('embeddingFormControl').hasError('required')">
         Embedding is <strong>required</strong>
-      </span>
-    </div>-->
+      </mat-error>
+    </mat-form-field>
+
     <mat-form-field>
       <input matInput type="number" placeholder="Number of clusters" formControlName="clustersFormControl">
     </mat-form-field>

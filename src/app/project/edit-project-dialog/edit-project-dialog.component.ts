@@ -1,5 +1,5 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef, MatSnackBar} from '@angular/material';
+import {AfterViewInit, Component, Inject, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {Project} from '../../shared/types/Project';
 import {ProjectStore} from '../../core/projects/project.store';
 import {ProjectService} from '../../core/projects/project.service';
@@ -14,7 +14,7 @@ import {LogService} from '../../core/util/log.service';
 })
 export class EditProjectDialogComponent implements OnInit {
 
-  indices: string[];
+  indices: string[] = [];
   projectForm = new FormGroup({
     indicesFormControl: new FormControl([], Validators.required)
   });
@@ -31,6 +31,8 @@ export class EditProjectDialogComponent implements OnInit {
     this.projectService.getProjectOptions().subscribe(resp => {
       this.indices = resp.actions.POST.indices.choices;
     });
+
+
   }
 
   onSubmit(formData) {
@@ -44,6 +46,5 @@ export class EditProjectDialogComponent implements OnInit {
       }
     });
   }
-
 
 }
