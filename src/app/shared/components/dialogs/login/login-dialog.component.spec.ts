@@ -5,7 +5,8 @@ import {SharedModule} from '../../../shared.module';
 import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MatDialogRef} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import {Project} from '../../../types/Project';
 
 describe('LoginDialogComponent', () => {
   let component: LoginDialogComponent;
@@ -13,14 +14,19 @@ describe('LoginDialogComponent', () => {
   const mockDialogRef = {
     close: jasmine.createSpy('close')
   };
+  const data = { returnUrl: '' };
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [LoginDialogComponent],
+
       imports: [SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule],
       providers: [
         {
           provide: MatDialogRef,
           useValue: mockDialogRef
+        },
+        {
+          provide: MAT_DIALOG_DATA,
+          useValue: data
         }
       ]
     })

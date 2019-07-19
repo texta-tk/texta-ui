@@ -66,15 +66,17 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
         return of(null);
       }
     })).subscribe((resp: TaggerOptions | ProjectField[] | Embedding[] | HttpErrorResponse) => {
-      if ((resp as TaggerOptions).actions !== undefined) {
-        this.taggerOptions = resp as TaggerOptions;
-        this.setDefaultFormValues(this.taggerOptions);
-      } else if (resp instanceof HttpErrorResponse) {
-        this.logService.snackBarError(resp, 5000);
-      } else if (Embedding.isEmbedding(resp)) {
-        this.embeddings = resp;
-      } else if (ProjectField.isProjectFields(resp)) {
-        this.projectFields = ProjectField.cleanProjectFields(resp);
+      if (resp) {
+        if ((resp as TaggerOptions).actions !== undefined) {
+          this.taggerOptions = resp as TaggerOptions;
+          this.setDefaultFormValues(this.taggerOptions);
+        } else if (resp instanceof HttpErrorResponse) {
+          this.logService.snackBarError(resp, 5000);
+        } else if (Embedding.isEmbedding(resp)) {
+          this.embeddings = resp;
+        } else if (ProjectField.isProjectFields(resp)) {
+          this.projectFields = ProjectField.cleanProjectFields(resp);
+        }
       }
     });
 

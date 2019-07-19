@@ -72,8 +72,6 @@ export class UserService {
   }
 
   getUserByUrl(url: string): Observable<UserProfile> {
-    console.log('f')
-    console.log(url);
     return this.http.get<UserProfile>(
       url,
     ).pipe(

@@ -12,6 +12,17 @@
         Select at least 1 index
       </mat-error>
     </mat-form-field>
+    <mat-form-field class="max-width">
+      <mat-label>Select Users</mat-label>
+      <mat-select formControlName="usersFormControl" required multiple>
+        <mat-option *ngFor="let item of users" [value]="item.url">
+          {{item.username}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="projectForm.get('usersFormControl').hasError('required')">
+        Select at least 1 user
+      </mat-error>
+    </mat-form-field>
   </div>
 
 

@@ -41,11 +41,11 @@
                             mode="determinate"
                             [value]="element.task.progress">
           </mat-progress-bar>
-          <mat-progress-bar *ngIf="element.task.step === 'training'"
+          <mat-progress-bar *ngIf="element.task.step === 'training' && element.task.status !== 'failed'"
                             mode="indeterminate"
                             [value]="element.task.progress">
           </mat-progress-bar>
-          <mat-hint>{{element.task.status}} / {{element.task.step}}</mat-hint>
+          <mat-hint>{{element.task.status}}  {{element.task.step}}</mat-hint>
         </td>
       </ng-container>
 

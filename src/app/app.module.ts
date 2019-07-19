@@ -44,10 +44,10 @@ import {CreateTaggerGroupDialogComponent} from './tagger-group/create-tagger-gro
   ],
   imports: [
     BrowserModule,
-    HttpClientModule,
-    AppRoutingModule,
     BrowserAnimationsModule,
-    SharedModule
+    SharedModule,
+    AppRoutingModule,
+    HttpClientModule,
   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: HttpAuthInterceptor, multi: true}],
   entryComponents: [

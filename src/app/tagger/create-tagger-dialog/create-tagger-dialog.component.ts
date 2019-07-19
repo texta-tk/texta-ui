@@ -4,7 +4,7 @@ import {ErrorStateMatcher, MatDialogRef} from '@angular/material';
 import {LiveErrorStateMatcher} from '../../shared/CustomerErrorStateMatchers';
 import {ProjectService} from '../../core/projects/project.service';
 import {HttpErrorResponse} from '@angular/common/http';
-import {Field, ProjectField} from '../../shared/types/ProjectField';
+import {ProjectField} from '../../shared/types/ProjectField';
 import {TaggerService} from '../../core/taggers/tagger.service';
 import {ProjectStore} from '../../core/projects/project.store';
 import {mergeMap, take} from 'rxjs/operators';
@@ -60,15 +60,17 @@ export class CreateTaggerDialogComponent implements OnInit {
         return of(null);
       }
     })).subscribe((resp: TaggerOptions | ProjectField[] | Embedding[] | HttpErrorResponse) => {
-      if ((resp as TaggerOptions).actions !== undefined) {
-        this.taggerOptions = resp as TaggerOptions;
-        this.setDefaultFormValues(this.taggerOptions);
-      } else if (resp instanceof HttpErrorResponse) {
-        this.logService.snackBarError(resp, 5000);
-      } else if (Embedding.isEmbedding(resp)) {
-        this.embeddings = resp;
-      } else if (ProjectField.isProjectFields(resp)) {
-        this.projectFields = ProjectField.cleanProjectFields(resp);
+      if (resp) {
+        if ((resp as TaggerOptions).actions !== undefined) {
+          this.taggerOptions = resp as TaggerOptions;
+          this.setDefaultFormValues(this.taggerOptions);
+        } else if (resp instanceof HttpErrorResponse) {
+          this.logService.snackBarError(resp, 5000);
+        } else if (Embedding.isEmbedding(resp)) {
+          this.embeddings = resp;
+        } else if (ProjectField.isProjectFields(resp)) {
+          this.projectFields = ProjectField.cleanProjectFields(resp);
+        }
       }
     });
 
