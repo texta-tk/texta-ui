@@ -9,6 +9,7 @@ import {TaggerComponent} from './tagger/tagger.component';
 import {UsersComponent} from './users/users.component';
 import {TaggerGroupComponent} from './tagger-group/tagger-group.component';
 import {EmbeddingGroupComponent} from './embedding-group/embedding-group.component';
+import {LexiconMinerComponent} from './lexicon-miner/lexicon-miner.component';
 
 const routes: Routes = [
   {
@@ -50,6 +51,11 @@ const routes: Routes = [
     path: 'embedding-group',
     canActivate: [AuthGuard],
     component: EmbeddingGroupComponent,
+  },
+  {
+    path: 'lexicon-miner',
+    canActivate: [AuthGuard],
+    component: LexiconMinerComponent,
   },
   {
     path: 'settings',

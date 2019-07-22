@@ -22,6 +22,7 @@ import {TaggerGroupComponent} from './tagger-group/tagger-group.component';
 import {EmbeddingGroupComponent} from './embedding-group/embedding-group.component';
 import {CreateEmbeddingGroupDialogComponent} from './embedding-group/create-embedding-group-dialog/create-embedding-group-dialog.component';
 import {CreateTaggerGroupDialogComponent} from './tagger-group/create-tagger-group-dialog/create-tagger-group-dialog.component';
+import { LexiconMinerComponent } from './lexicon-miner/lexicon-miner.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import {CreateTaggerGroupDialogComponent} from './tagger-group/create-tagger-gro
     TaggerGroupComponent,
     EmbeddingGroupComponent,
     CreateEmbeddingGroupDialogComponent,
-    CreateTaggerGroupDialogComponent
+    CreateTaggerGroupDialogComponent,
+    LexiconMinerComponent
   ],
   imports: [
     BrowserModule,

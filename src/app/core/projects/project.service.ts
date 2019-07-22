@@ -60,7 +60,7 @@ export class ProjectService {
       catchError(this.logService.handleError<ProjectField[]>('getProjectFields')));
   }
 
-  // todo seperate endpoint
+  // todo backend seperate endpoint
   getProjectOptions(): Observable<any> {
     return this.http.options<any>(
       this.apiUrl + '/projects/'

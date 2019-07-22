@@ -7,8 +7,7 @@
     <a routerLinkActive="is-active" [routerLink]="['users']">Users</a>
     <a routerLinkActive="is-active" [routerLink]="['embedding-group']">Embedding Group</a>
     <a routerLinkActive="is-active" [routerLink]="['tagger-group']">Tagger Group</a>
-
-
+    <a routerLinkActive="is-active" [routerLink]="['lexicon-miner']">Lexicon Miner</a>
     <div class="flex-item-right login" *ngIf="!user">
       <button mat-raised-button (click)="registerDialog()">Register</button>
       <button mat-raised-button (click)="loginDialog()">Login</button>

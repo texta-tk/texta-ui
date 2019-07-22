@@ -44,7 +44,7 @@ export class TaggerService {
       catchError(this.logService.handleError<Tagger>('getTaggerById')));
   }
 
-  // todo seperate endpoint
+  // todo backend seperate endpoint
   getTaggerOptions(projectId: number): Observable<TaggerOptions | HttpErrorResponse> {
     return this.http.options<TaggerOptions>(
       this.apiUrl + '/projects/' + projectId + '/taggers/'
