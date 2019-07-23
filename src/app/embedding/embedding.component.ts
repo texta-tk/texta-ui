@@ -73,7 +73,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy {
 
   openCreateDialog() {
     const dialogRef = this.dialog.open(CreateEmbeddingDialogComponent, {
-      height: '500px',
+      height: '490px',
       width: '700px',
     });
     this.dialogAfterClosedSubscription = dialogRef.afterClosed().subscribe((resp: Embedding | HttpErrorResponse) => {

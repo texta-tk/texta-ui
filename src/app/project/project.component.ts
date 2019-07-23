@@ -76,7 +76,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
   openCreateDialog() {
     const dialogRef = this.dialog.open(CreateProjectDialogComponent, {
-      height: '350px',
+      height: '340px',
       width: '700px',
     });
     this.dialogAfterClosedSubscription = dialogRef.afterClosed().subscribe((resp: Project | HttpErrorResponse) => {

@@ -57,7 +57,7 @@ export class EmbeddingGroupComponent implements OnInit, OnDestroy {
 
   openCreateDialog() {
     const dialogRef = this.dialog.open(CreateEmbeddingGroupDialogComponent, {
-      height: '350px',
+      height: '340px',
       width: '700px',
     });
     this.dialogAfterClosedSubscription = dialogRef.afterClosed().subscribe((resp: EmbeddingCluster | HttpErrorResponse) => {

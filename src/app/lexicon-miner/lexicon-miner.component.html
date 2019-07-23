@@ -1,1 +1,48 @@
-<p>lexicon-miner works!</p>
+<mat-form-field>
+  <mat-label>Select Embedding</mat-label>
+  <mat-select [formControl]="embeddingFormControl" (selectionChange)="embeddingSelected($event.value)" required>
+    <mat-option *ngFor="let item of embeddings" [value]="item">
+      {{item.description}}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<mat-form-field class="max-width">
+  <input matInput placeholder="Add new word" autocomplete="off"
+         [formControl]="textFormControl"
+         (keydown.enter)="addPositive(textFormControl.value)">
+</mat-form-field>
+<!--
+<mat-form-field>
+  <input matInput placeholder="Word" autocomplete="off" [formControl]="textFormControl">
+</mat-form-field>-->
+<div class="flex-row">
+
+  <mat-selection-list #predictedWords class="max-width">
+    <mat-list-option *ngFor="let item of predictions" [value]="item">
+      {{item.phrase}}
+    </mat-list-option>
+  </mat-selection-list>
+  <div class="max-width">
+    <mat-list class="max-width">
+      <mat-list-item *ngFor="let item of positives">
+        <span matLine >{{item.phrase}}</span>
+        <button mat-icon-button (click)="removePositive(item)">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </mat-list-item>
+    </mat-list>
+
+    <button mat-stroked-button class="max-width" color="accent"
+            (click)="onNewPredictionsClick(predictedWords.selectedOptions.selected)">Get new suggestions
+    </button>
+  </div>
+  <mat-list class="max-width">
+    <mat-list-item *ngFor="let item of negatives">
+      <span matLine >{{item.phrase}}</span>
+      <button mat-icon-button (click)="removeNegative(item)">
+        <mat-icon>clear</mat-icon>
+      </button>
+    </mat-list-item>
+  </mat-list>
+</div>

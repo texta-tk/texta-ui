@@ -53,7 +53,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy {
 
   openCreateDialog() {
     const dialogRef = this.dialog.open(CreateTaggerGroupDialogComponent, {
-      height: '890px',
+      height: '860px',
       width: '700px',
     });
     this.dialogAfterClosedSubscription = dialogRef.afterClosed().subscribe((resp: Tagger | HttpErrorResponse) => {

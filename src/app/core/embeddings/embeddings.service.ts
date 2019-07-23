@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {catchError, mergeMap, take, tap} from 'rxjs/operators';
+import {catchError, tap} from 'rxjs/operators';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {LocalStorageService} from '../util/local-storage.service';
 import {LogService} from '../util/log.service';
@@ -24,7 +24,6 @@ export class EmbeddingsService {
     ).pipe(
       tap(e => this.logService.logStatus(e, 'getEmbeddings')),
       catchError(this.logService.handleError<Embedding[]>('getEmbeddings')));
-
   }
 
   createEmbedding(body, projectId): Observable<Embedding | HttpErrorResponse> {
@@ -33,7 +32,14 @@ export class EmbeddingsService {
     ).pipe(
       tap(e => this.logService.logStatus(e, 'getEmbeddings')),
       catchError(this.logService.handleError<Embedding>('getEmbeddings')));
+  }
 
+  predict(body, projectId, embeddingId): Observable<unknown | HttpErrorResponse> {
+    return this.http.post<Embedding>(
+      this.apiUrl + '/projects/' + projectId + '/embeddings/' + embeddingId + '/predict/', body
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'predict')),
+      catchError(this.logService.handleError<Embedding>('predict')));
   }
 
 }
