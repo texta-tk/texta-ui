@@ -17,7 +17,7 @@
                 <span *ngIf="checkIfObject(row[column])"><pre>{{row[column] | json}}</pre></span>
                 <span *ngIf="!checkIfObject(row[column])">{{row[column]}}</span></td>
             </ng-container>-->
-      <ng-container matColumnDef="Description">
+      <ng-container matColumnDef="description">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Description</th>
         <td mat-cell *matCellDef="let element"> {{element.description}}</td>
       </ng-container>

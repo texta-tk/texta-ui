@@ -8,6 +8,7 @@ import {Embedding} from '../shared/types/Embedding';
 import {FormControl} from '@angular/forms';
 import {HttpErrorResponse} from '@angular/common/http';
 import {MatListOption} from '@angular/material';
+import {LogService} from "../core/util/log.service";
 
 @Component({
   selector: 'app-lexicon-miner',
@@ -24,7 +25,8 @@ export class LexiconMinerComponent implements OnInit, OnDestroy {
   negatives: any[] = [];
   textFormControl: FormControl = new FormControl();
 
-  constructor(private embeddingsService: EmbeddingsService, private projectStore: ProjectStore) {
+  constructor(private embeddingsService: EmbeddingsService, private projectStore: ProjectStore,
+              private logService: LogService) {
   }
 
   ngOnInit() {
@@ -58,14 +60,21 @@ export class LexiconMinerComponent implements OnInit, OnDestroy {
   addPositive(x) {
     console.log(x);
     this.positives.push({phrase: x});
+    this.textFormControl.setValue('');
   }
 
-  removePositive(x) {
-    console.log(x);
+  removePositive(item) {
+    console.log(item);
+    this.positives = this.positives.filter((x: any) => {
+      return x.phrase !== item.phrase;
+    });
   }
 
-  removeNegative(x) {
-    console.log(x);
+  removeNegative(item) {
+    console.log(item);
+    this.negatives = this.negatives.filter((x: any) => {
+      return x.phrase !== item.phrase;
+    });
   }
 
   onNewPredictionsClick(value: MatListOption[]) {
@@ -91,9 +100,13 @@ export class LexiconMinerComponent implements OnInit, OnDestroy {
         }
         return of(null);
       }));
-    })).subscribe(resp => {
-      if (!(resp instanceof HttpErrorResponse)) {
-        this.predictions = resp;
+    })).subscribe((resp: any) => {
+      if (resp) {
+        if (resp instanceof HttpErrorResponse) {
+          this.logService.snackBarError(resp, 5000);
+        } else {
+          this.predictions = resp;
+        }
       }
     });
   }
