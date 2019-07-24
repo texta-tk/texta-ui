@@ -115,6 +115,7 @@ export class TaggerComponent implements OnInit, OnDestroy {
     if (this.currentProjectSubscription) {
       this.currentProjectSubscription.unsubscribe();
     }
+    this.updateDestroy$.next(true);
   }
 
   openCreateDialog() {

@@ -96,6 +96,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy {
     if (this.dialogAfterClosedSubscription) {
       this.dialogAfterClosedSubscription.unsubscribe();
     }
+    this.updateDestroy$.next(true);
   }
 
   openCreateDialog() {
