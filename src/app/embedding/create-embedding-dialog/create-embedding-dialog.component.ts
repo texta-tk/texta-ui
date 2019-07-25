@@ -74,6 +74,7 @@ export class CreateEmbeddingDialogComponent implements OnInit {
       return of(null);
     })).subscribe((resp: Embedding | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
+        console.log(resp);
         this.dialogRef.close(resp);
       } else if (resp instanceof HttpErrorResponse) {
         this.dialogRef.close(resp);

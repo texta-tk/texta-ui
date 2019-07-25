@@ -7,13 +7,20 @@
   </mat-select>
 </mat-form-field>
 
-
+<div class="flex-row">
+  <div class="max-width"></div>
+  <button mat-stroked-button class="max-width" color="accent"
+          (click)="onNewPredictionsClick(predictedWords.selectedOptions.selected)">Get new suggestions
+  </button>
+  <div class="max-width"></div>
+</div>
 <!--
 <mat-form-field>
   <input matInput placeholder="Word" autocomplete="off" [formControl]="textFormControl">
 </mat-form-field>-->
 <div class="flex-row">
   <div class="max-width">
+    <h3>Predictions</h3>
     <mat-selection-list #predictedWords class="max-width">
       <mat-list-option *ngFor="let item of predictions" [value]="item">
         {{item.phrase}}
@@ -21,12 +28,19 @@
     </mat-selection-list>
   </div>
   <div class="max-width">
-    <mat-form-field floatLabel="never" class="max-width">
-      <input matInput placeholder="Add new word" autocomplete="off"
-             [formControl]="textFormControl"
-             (keydown.enter)="addPositive(textFormControl.value)">
-    </mat-form-field>
+    <div class="flex-row">
+      <h3>
+        Positives
+      </h3>
+      <button mat-icon-button class="add-prediction" (click)="addNewItem()">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
     <mat-list class="max-width">
+      <mat-list-item *ngIf="newItem">
+        <input matInput #itemValue placeholder="New item...">
+        <button mat-button (click)="addPositive(itemValue.value)">Save</button>
+      </mat-list-item>
       <mat-list-item *ngFor="let item of positives">
         <span matLine>{{item.phrase}}</span>
         <button mat-icon-button (click)="removePositive(item)">
@@ -35,11 +49,9 @@
       </mat-list-item>
     </mat-list>
 
-    <button mat-stroked-button class="max-width" color="accent"
-            (click)="onNewPredictionsClick(predictedWords.selectedOptions.selected)">Get new suggestions
-    </button>
   </div>
   <div class="max-width">
+    <h3>Negatives</h3>
     <mat-list class="max-width">
       <mat-list-item *ngFor="let item of negatives">
         <span matLine>{{item.phrase}}</span>

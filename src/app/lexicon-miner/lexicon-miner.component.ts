@@ -8,7 +8,7 @@ import {Embedding} from '../shared/types/Embedding';
 import {FormControl} from '@angular/forms';
 import {HttpErrorResponse} from '@angular/common/http';
 import {MatListOption} from '@angular/material';
-import {LogService} from "../core/util/log.service";
+import {LogService} from '../core/util/log.service';
 
 @Component({
   selector: 'app-lexicon-miner',
@@ -24,6 +24,7 @@ export class LexiconMinerComponent implements OnInit, OnDestroy {
   positives: any[] = [];
   negatives: any[] = [];
   textFormControl: FormControl = new FormControl();
+  newItem = false;
 
   constructor(private embeddingsService: EmbeddingsService, private projectStore: ProjectStore,
               private logService: LogService) {
@@ -57,10 +58,13 @@ export class LexiconMinerComponent implements OnInit, OnDestroy {
        });*/
   }
 
+  addNewItem() {
+    this.newItem = true;
+  }
+
   addPositive(x) {
-    console.log(x);
-    this.positives.push({phrase: x});
-    this.textFormControl.setValue('');
+    this.positives.unshift({phrase: x});
+    this.newItem = false;
   }
 
   removePositive(item) {

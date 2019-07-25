@@ -10,6 +10,7 @@ import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/mat
 import {CreateEmbeddingDialogComponent} from './create-embedding-dialog/create-embedding-dialog.component';
 import {LogService} from '../core/util/log.service';
 import {animate, state, style, transition, trigger} from '@angular/animations';
+import {Tagger} from '../shared/types/Tagger';
 
 @Component({
   selector: 'app-embedding',
@@ -26,7 +27,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy {
 
   private projectSubscription: Subscription;
   private dialogAfterClosedSubscription: Subscription;
-
+  private updateEmbeddingsSubscription: Subscription;
   expandedElement: Embedding | null;
   public tableData: MatTableDataSource<Embedding> = new MatTableDataSource();
   public displayedColumns = ['description', 'fields_parsed', 'time_started', 'time_completed', 'Task'];
@@ -34,7 +35,6 @@ export class EmbeddingComponent implements OnInit, OnDestroy {
 
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-  updateDestroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(private projectStore: ProjectStore,
               private embeddingsService: EmbeddingsService,
@@ -48,7 +48,6 @@ export class EmbeddingComponent implements OnInit, OnDestroy {
 
     this.projectSubscription = this.projectStore.getCurrentProject().pipe(switchMap((currentProject: Project) => {
       if (currentProject) {
-
         return this.embeddingsService.getEmbeddings(currentProject.id);
       } else {
         return of(null);
@@ -56,38 +55,27 @@ export class EmbeddingComponent implements OnInit, OnDestroy {
     })).subscribe((resp: Embedding[] | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.tableData.data = resp;
-        this.updateEmbeddingsTraining();
         this.isLoadingResults = false;
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
         this.isLoadingResults = false;
       }
     });
-
-  }
-
-  updateEmbeddingsTraining() {
-    // uhh refactor pls todo
-    this.updateDestroy$.next(true);
-
-    this.projectStore.getCurrentProject().pipe(take(1), switchMap((currentProject: Project) => {
-      return timer(30000, 30000).pipe(takeUntil(this.updateDestroy$), concatMap(_ => this.embeddingsService.getEmbeddings(currentProject.id)));
-    })).subscribe((embeddings: Embedding[] | HttpErrorResponse) => {
-      if (embeddings && !(embeddings instanceof HttpErrorResponse)) {
-        const embeddingsRunning = embeddings.filter((x: Embedding) => x.task.status === 'running');
-        if (embeddingsRunning.length > 0) {
-          embeddingsRunning.map(item => {
-            const indx = this.tableData.data.findIndex(x => x.id === item.id);
-            this.tableData.data[indx].task = item.task;
+    // check for updates after 30s every 30s
+    this.updateEmbeddingsSubscription = this.projectStore.getCurrentProject().pipe(switchMap((currentProject: Project) => {
+      return timer(30000, 30000).pipe(switchMap(_ => this.embeddingsService.getEmbeddings(currentProject.id)));
+    })).subscribe((resp: Embedding[] | HttpErrorResponse) => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        if (resp.length > 0) {
+          resp.map(embedding => {
+            const indx = this.tableData.data.findIndex(x => x.id === embedding.id);
+            this.tableData.data[indx].task = embedding.task;
           });
-        } else {
-          this.updateDestroy$.next(true);
         }
       }
     });
 
   }
-
 
   ngOnDestroy() {
     if (this.projectSubscription) {
@@ -96,7 +84,9 @@ export class EmbeddingComponent implements OnInit, OnDestroy {
     if (this.dialogAfterClosedSubscription) {
       this.dialogAfterClosedSubscription.unsubscribe();
     }
-    this.updateDestroy$.next(true);
+    if (this.updateEmbeddingsSubscription) {
+      this.updateEmbeddingsSubscription.unsubscribe();
+    }
   }
 
   openCreateDialog() {
@@ -107,7 +97,6 @@ export class EmbeddingComponent implements OnInit, OnDestroy {
     this.dialogAfterClosedSubscription = dialogRef.afterClosed().subscribe((resp: Embedding | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.tableData.data = [...this.tableData.data, resp];
-        this.updateEmbeddingsTraining();
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       }

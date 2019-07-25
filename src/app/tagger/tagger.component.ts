@@ -1,12 +1,12 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {interval, of, Subject, Subscription, timer} from 'rxjs';
+import {of, Subscription, timer} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import {LogService} from '../core/util/log.service';
 import {TaggerService} from '../core/taggers/tagger.service';
 import {ProjectStore} from '../core/projects/project.store';
 import {Tagger} from '../shared/types/Tagger';
-import {concatMap, delay, map, mergeMap, repeat, switchMap, take, takeUntil} from 'rxjs/operators';
+import {concatMap, delay, mergeMap, switchMap, take} from 'rxjs/operators';
 import {CreateTaggerDialogComponent} from './create-tagger-dialog/create-tagger-dialog.component';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {Project} from '../shared/types/Project';
@@ -24,9 +24,9 @@ import {Project} from '../shared/types/Project';
 })
 export class TaggerComponent implements OnInit, OnDestroy {
 
-  dialogAfterClosedSubscription: Subscription;
-  currentProjectSubscription: Subscription;
-
+  private dialogAfterClosedSubscription: Subscription;
+  private currentProjectSubscription: Subscription;
+  private updateTaggersSubscription: Subscription;
 
   expandedElement: Tagger | null;
   public tableData: MatTableDataSource<Tagger> = new MatTableDataSource();
@@ -35,7 +35,7 @@ export class TaggerComponent implements OnInit, OnDestroy {
 
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-  updateDestroy$: Subject<boolean> = new Subject<boolean>();
+
 
   constructor(private projectStore: ProjectStore,
               private taggerService: TaggerService,
@@ -46,10 +46,8 @@ export class TaggerComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
-    /*    this.updateTaggersTraining();*/
     this.currentProjectSubscription = this.projectStore.getCurrentProject().pipe(switchMap(currentProject => {
       if (currentProject) {
-
         return this.taggerService.getTaggers(currentProject.id);
       } else {
         return of(null);
@@ -57,41 +55,28 @@ export class TaggerComponent implements OnInit, OnDestroy {
     })).subscribe((resp: Tagger[] | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.tableData.data = resp;
-        this.updateTaggersTraining();
         this.isLoadingResults = false;
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
         this.isLoadingResults = false;
       }
     });
-  }
-
-
-  updateTaggersTraining() {
-    // uhh refactor pls todo
-    this.updateDestroy$.next(true);
-
-    this.projectStore.getCurrentProject().pipe(take(1), switchMap((currentProject: Project) => {
-      return timer(30000, 30000).pipe(takeUntil(this.updateDestroy$), concatMap(_ => this.taggerService.getTaggers(currentProject.id)));
-    })).subscribe((taggers: Tagger[] | HttpErrorResponse) => {
-      if (taggers && !(taggers instanceof HttpErrorResponse)) {
-        const taggersRunning = taggers.filter((x: Tagger) => x.task.status === 'running');
-        if (taggersRunning.length > 0) {
-          taggersRunning.map(item => {
-            const indx = this.tableData.data.findIndex(x => x.id === item.id);
-            this.tableData.data[indx].task = item.task;
+    // check for updates after 30s every 30s
+    this.updateTaggersSubscription = this.projectStore.getCurrentProject().pipe(switchMap((currentProject: Project) => {
+      return timer(30000, 30000).pipe(switchMap(_ => this.taggerService.getTaggers(currentProject.id)));
+    })).subscribe((resp: Tagger[] | HttpErrorResponse) => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        if (resp.length > 0) {
+          resp.map(tagger => {
+            const indx = this.tableData.data.findIndex(x => x.id === tagger.id);
+            this.tableData.data[indx].task = tagger.task;
           });
-        } else {
-          this.updateDestroy$.next(true);
         }
       }
     });
-
   }
 
-
   retrainTagger(value) {
-    console.log(value);
     this.projectStore.getCurrentProject().pipe(take(1), mergeMap(currentProject => {
       if (currentProject) {
         return this.taggerService.retrainTagger(currentProject.id, value.id);
@@ -115,7 +100,9 @@ export class TaggerComponent implements OnInit, OnDestroy {
     if (this.currentProjectSubscription) {
       this.currentProjectSubscription.unsubscribe();
     }
-    this.updateDestroy$.next(true);
+    if (this.updateTaggersSubscription) {
+      this.updateTaggersSubscription.unsubscribe();
+    }
   }
 
   openCreateDialog() {
@@ -126,7 +113,6 @@ export class TaggerComponent implements OnInit, OnDestroy {
     this.dialogAfterClosedSubscription = dialogRef.afterClosed().subscribe((resp: Tagger | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.tableData.data = [...this.tableData.data, resp];
-        this.updateTaggersTraining();
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       }
