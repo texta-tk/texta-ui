@@ -1,18 +1,16 @@
 import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {LiveErrorStateMatcher} from '../../shared/CustomerErrorStateMatchers';
+import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {ErrorStateMatcher, MatDialogRef} from '@angular/material';
 import {HttpErrorResponse} from '@angular/common/http';
 import {of} from 'rxjs';
-import {Embedding} from '../../shared/types/Embedding';
+import {Embedding} from '../../../shared/types/tasks/Embedding';
 import {mergeMap, take} from 'rxjs/operators';
-import {ProjectService} from '../../core/projects/project.service';
-import {EmbeddingsService} from '../../core/embeddings/embeddings.service';
-import {ProjectStore} from '../../core/projects/project.store';
-import {LogService} from '../../core/util/log.service';
-import {CreateEmbeddingDialogComponent} from '../../embedding/embedding/create-embedding-dialog/create-embedding-dialog.component';
-import {EmbeddingsGroupService} from '../../core/embeddings/embeddings-group.service';
-import {EmbeddingCluster} from '../../shared/types/EmbeddingCluster';
+import {EmbeddingsService} from '../../../core/embeddings/embeddings.service';
+import {ProjectStore} from '../../../core/projects/project.store';
+import {LogService} from '../../../core/util/log.service';
+import {EmbeddingsGroupService} from '../../../core/embeddings/embeddings-group.service';
+import {EmbeddingCluster} from '../../../shared/types/tasks/EmbeddingCluster';
 
 @Component({
   selector: 'app-create-embedding-group-dialog',

@@ -1,19 +1,19 @@
 import {Component, OnInit} from '@angular/core';
-import {ProjectField} from '../../shared/types/ProjectField';
+import {ProjectField} from '../../../shared/types/ProjectField';
 import {mergeMap, take} from 'rxjs/operators';
-import {LogService} from '../../core/util/log.service';
-import {TaggerOptions} from '../../shared/types/TaggerOptions';
+import {LogService} from '../../../core/util/log.service';
+import {TaggerOptions} from '../../../shared/types/tasks/TaggerOptions';
 import {ErrorStateMatcher, MatDialogRef} from '@angular/material';
 import {HttpErrorResponse} from '@angular/common/http';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {ProjectService} from '../../core/projects/project.service';
-import {ProjectStore} from '../../core/projects/project.store';
-import {LiveErrorStateMatcher} from '../../shared/CustomerErrorStateMatchers';
-import {EmbeddingsService} from '../../core/embeddings/embeddings.service';
-import {Embedding} from '../../shared/types/Embedding';
-import {TaggerService} from '../../core/taggers/tagger.service';
+import {ProjectService} from '../../../core/projects/project.service';
+import {ProjectStore} from '../../../core/projects/project.store';
+import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
+import {EmbeddingsService} from '../../../core/embeddings/embeddings.service';
+import {Embedding} from '../../../shared/types/tasks/Embedding';
+import {TaggerService} from '../../../core/taggers/tagger.service';
 import {merge, of} from 'rxjs';
-import {TaggerGroupService} from '../../core/taggers/tagger-group.service';
+import {TaggerGroupService} from '../../../core/taggers/tagger-group.service';
 
 @Component({
   selector: 'app-create-tagger-group-dialog',

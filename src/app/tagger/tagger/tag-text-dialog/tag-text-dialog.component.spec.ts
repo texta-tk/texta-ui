@@ -1,25 +1,24 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CreateTaggerDialogComponent } from './create-tagger-dialog.component';
-import {MatDialogRef} from '@angular/material';
-import {SharedModule} from '../../../shared/shared.module';
-import {HttpClientTestingModule} from '@angular/common/http/testing';
+import { TagTextDialogComponent } from './tag-text-dialog.component';
 import {RouterTestingModule} from '@angular/router/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {SharedModule} from '../../../shared/shared.module';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {MatDialogRef} from '@angular/material';
 
-describe('CreateTaggerDialogComponent', () => {
-  let component: CreateTaggerDialogComponent;
-  let fixture: ComponentFixture<CreateTaggerDialogComponent>;
+describe('TagTextDialogComponent', () => {
+  let component: TagTextDialogComponent;
+  let fixture: ComponentFixture<TagTextDialogComponent>;
   const mockDialogRef = {
     close: jasmine.createSpy('close')
   };
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      declarations: [ TagTextDialogComponent ],
       imports: [
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule
-      ],
-      declarations: [ CreateTaggerDialogComponent ],
-      providers: [
+      ], providers: [
         {
           provide: MatDialogRef,
           useValue: mockDialogRef
@@ -29,7 +28,7 @@ describe('CreateTaggerDialogComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CreateTaggerDialogComponent);
+    fixture = TestBed.createComponent(TagTextDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

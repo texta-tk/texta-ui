@@ -1,16 +1,15 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {EmbeddingsService} from '../../core/embeddings/embeddings.service';
 import {HttpErrorResponse} from '@angular/common/http';
-import {Embedding} from '../../shared/types/Embedding';
+import {Embedding} from '../../shared/types/tasks/Embedding';
 import {ProjectStore} from '../../core/projects/project.store';
 import {Project} from '../../shared/types/Project';
-import {concatMap, mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
-import {of, Subject, Subscription, timer} from 'rxjs';
+import {switchMap} from 'rxjs/operators';
+import {of, Subscription, timer} from 'rxjs';
 import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
-import {CreateEmbeddingDialogComponent} from '../create-embedding-dialog/create-embedding-dialog.component';
+import {CreateEmbeddingDialogComponent} from './create-embedding-dialog/create-embedding-dialog.component';
 import {LogService} from '../../core/util/log.service';
 import {animate, state, style, transition, trigger} from '@angular/animations';
-import {Tagger} from '../../shared/types/Tagger';
 
 @Component({
   selector: 'app-embedding',

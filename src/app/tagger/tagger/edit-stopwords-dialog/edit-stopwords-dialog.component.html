@@ -1,0 +1,17 @@
+<mat-form-field class="max-width">
+  <textarea matInput
+            cdkTextareaAutosize
+            cdkAutosizeMinRows="1"
+            cdkAutosizeMaxRows="10" placeholder="Stopwords"></textarea>
+</mat-form-field>
+<div class="flex-col">
+  <div class="flex-row">
+    <div class="flex-item-left">
+      <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Close</button>
+    </div>
+    <div class="flex-item-right">
+      <button type="submit" mat-button (click)="onSubmit()">Save</button>
+    </div>
+  </div>
+
+</div>

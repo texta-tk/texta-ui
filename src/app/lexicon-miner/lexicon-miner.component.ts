@@ -4,7 +4,7 @@ import {ProjectStore} from '../core/projects/project.store';
 import {switchMap, take} from 'rxjs/operators';
 import {Project} from '../shared/types/Project';
 import {BehaviorSubject, of, Subscription} from 'rxjs';
-import {Embedding} from '../shared/types/Embedding';
+import {Embedding} from '../shared/types/tasks/Embedding';
 import {FormControl} from '@angular/forms';
 import {HttpErrorResponse} from '@angular/common/http';
 import {MatListOption} from '@angular/material';

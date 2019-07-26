@@ -5,8 +5,8 @@ import {LocalStorageService} from '../util/local-storage.service';
 import {LogService} from '../util/log.service';
 import {Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
-import {Tagger} from '../../shared/types/Tagger';
-import {TaggerOptions} from '../../shared/types/TaggerOptions';
+import {Tagger} from '../../shared/types/tasks/Tagger';
+import {TaggerOptions} from '../../shared/types/tasks/TaggerOptions';
 
 
 @Injectable({

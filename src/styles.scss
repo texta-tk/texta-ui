@@ -14,6 +14,10 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
+pre {
+  white-space: pre-wrap;
+}
+
 .flex {
   display: flex;
   &-col {

@@ -1,24 +1,26 @@
-<mat-form-field>
-  <mat-label>Select Embedding</mat-label>
-  <mat-select [formControl]="embeddingFormControl" (selectionChange)="embeddingSelected($event.value)" required>
-    <mat-option *ngFor="let item of embeddings" [value]="item">
-      {{item.description}}
-    </mat-option>
-  </mat-select>
-</mat-form-field>
-
 <div class="flex-row">
   <div class="max-width"></div>
-  <button mat-stroked-button class="max-width" color="accent"
-          (click)="onNewPredictionsClick(predictedWords.selectedOptions.selected)">Get new suggestions
-  </button>
+  <div class="max-width flex-col">
+    <mat-form-field>
+      <mat-label>Select Embedding</mat-label>
+      <mat-select [formControl]="embeddingFormControl" (selectionChange)="embeddingSelected($event.value)" required>
+        <mat-option *ngFor="let item of embeddings" [value]="item">
+          {{item.description}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button *ngIf="positives.length>0" mat-stroked-button class="max-width" color="accent"
+            (click)="onNewPredictionsClick(predictedWords.selectedOptions.selected)">Get new suggestions
+    </button>
+  </div>
+
   <div class="max-width"></div>
 </div>
 <!--
 <mat-form-field>
   <input matInput placeholder="Word" autocomplete="off" [formControl]="textFormControl">
 </mat-form-field>-->
-<div class="flex-row">
+<div class="flex-row" [ngClass]="{'hidden': !selectedEmbedding.getValue()}">
   <div class="max-width">
     <h3>Predictions</h3>
     <mat-selection-list #predictedWords class="max-width">

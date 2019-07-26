@@ -1,15 +1,14 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {LogService} from '../core/util/log.service';
-import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
-import {ProjectStore} from '../core/projects/project.store';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {LogService} from '../../core/util/log.service';
+import {MatDialog} from '@angular/material';
+import {ProjectStore} from '../../core/projects/project.store';
 import {HttpErrorResponse} from '@angular/common/http';
-import {Embedding} from '../shared/types/Embedding';
 import {mergeMap} from 'rxjs/operators';
-import {Project} from '../shared/types/Project';
+import {Project} from '../../shared/types/Project';
 import {of, Subscription} from 'rxjs';
 import {CreateEmbeddingGroupDialogComponent} from './create-embedding-group-dialog/create-embedding-group-dialog.component';
-import {EmbeddingsGroupService} from '../core/embeddings/embeddings-group.service';
-import {EmbeddingCluster} from '../shared/types/EmbeddingCluster';
+import {EmbeddingsGroupService} from '../../core/embeddings/embeddings-group.service';
+import {EmbeddingCluster} from '../../shared/types/tasks/EmbeddingCluster';
 
 @Component({
   selector: 'app-embedding-group',

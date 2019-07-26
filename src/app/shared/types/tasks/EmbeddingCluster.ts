@@ -10,5 +10,4 @@ export class EmbeddingCluster {
   vocab_size = 0;
   location = null;
   task: TaskStatus;
-
 }

@@ -1,10 +1,14 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {UserProfile} from '../shared/types/UserProfile';
 import {UserStore} from '../core/users/user.store';
 import {Subscription} from 'rxjs';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {UserService} from '../core/users/user.service';
 import {CrossFieldErrorMatcher, LiveErrorStateMatcher} from '../shared/CustomerErrorStateMatchers';
+import {catchError, tap} from 'rxjs/operators';
+import {HttpClient} from '@angular/common/http';
+import {LogService} from '../core/util/log.service';
+import {environment} from '../../environments/environment';
 
 function passwordMatchValidator(g: FormGroup) {
   return g.get('passwordFormControl').value === g.get('passwordConfirmFormControl').value
@@ -17,6 +21,7 @@ function passwordMatchValidator(g: FormGroup) {
   styleUrls: ['./user-settings.component.scss']
 })
 export class UserSettingsComponent implements OnInit, OnDestroy {
+  apiUrl = environment.apiUrl;
   user: UserProfile;
   userSubscription: Subscription;
   detail: string;
@@ -25,6 +30,7 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
       Validators.required, Validators.email
     ]),
   });
+  healthStatus: any;
 
   passwordResetForm = new FormGroup({
     passwordForm: new FormGroup({
@@ -40,7 +46,8 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
   matcher = new LiveErrorStateMatcher();
   crossFieldMatcher = new CrossFieldErrorMatcher();
 
-  constructor(private userStore: UserStore, private userService: UserService) {
+  constructor(private userStore: UserStore, private userService: UserService, private http: HttpClient,
+              private logService: LogService) {
 
   }
 
@@ -69,6 +76,13 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
       if (resp) {
         this.user = resp;
       }
+    });
+    this.http.get<any>(
+      this.apiUrl + '/health/',
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'getHealth')),
+      catchError(this.logService.handleError<any>('getHealth'))).subscribe(resp => {
+      this.healthStatus = resp;
     });
   }
 

@@ -5,7 +5,7 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {LocalStorageService} from '../util/local-storage.service';
 import {LogService} from '../util/log.service';
 import {environment} from '../../../environments/environment';
-import {Embedding} from '../../shared/types/Embedding';
+import {Embedding} from '../../shared/types/tasks/Embedding';
 
 
 @Injectable({

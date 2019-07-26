@@ -1,16 +1,16 @@
 import {Component, OnInit} from '@angular/core';
 import {ErrorStateMatcher, MatDialogRef} from '@angular/material';
-import {EmbeddingsService} from '../../core/embeddings/embeddings.service';
+import {EmbeddingsService} from '../../../core/embeddings/embeddings.service';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {LiveErrorStateMatcher} from '../../shared/CustomerErrorStateMatchers';
+import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {mergeMap, take} from 'rxjs/operators';
 import {of} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
-import {ProjectStore} from '../../core/projects/project.store';
-import {Project} from '../../shared/types/Project';
-import {ProjectService} from '../../core/projects/project.service';
-import {Field, ProjectField} from '../../shared/types/ProjectField';
-import {Embedding} from '../../shared/types/Embedding';
+import {ProjectStore} from '../../../core/projects/project.store';
+import {Project} from '../../../shared/types/Project';
+import {ProjectService} from '../../../core/projects/project.service';
+import {Field, ProjectField} from '../../../shared/types/ProjectField';
+import {Embedding} from '../../../shared/types/tasks/Embedding';
 
 @Component({
   selector: 'app-create-embedding-dialog',

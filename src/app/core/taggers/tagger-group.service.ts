@@ -3,7 +3,7 @@ import {environment} from '../../../environments/environment';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {catchError, tap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
-import {Tagger} from '../../shared/types/Tagger';
+import {Tagger} from '../../shared/types/tasks/Tagger';
 import {LocalStorageService} from '../util/local-storage.service';
 import {LogService} from '../util/log.service';
 
