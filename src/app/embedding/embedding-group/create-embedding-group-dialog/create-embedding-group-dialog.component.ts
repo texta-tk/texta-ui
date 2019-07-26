@@ -10,7 +10,7 @@ import {ProjectService} from '../../core/projects/project.service';
 import {EmbeddingsService} from '../../core/embeddings/embeddings.service';
 import {ProjectStore} from '../../core/projects/project.store';
 import {LogService} from '../../core/util/log.service';
-import {CreateEmbeddingDialogComponent} from '../../embedding/create-embedding-dialog/create-embedding-dialog.component';
+import {CreateEmbeddingDialogComponent} from '../../embedding/embedding/create-embedding-dialog/create-embedding-dialog.component';
 import {EmbeddingsGroupService} from '../../core/embeddings/embeddings-group.service';
 import {EmbeddingCluster} from '../../shared/types/EmbeddingCluster';
 

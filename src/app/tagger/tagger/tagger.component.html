@@ -92,19 +92,13 @@
             <button mat-menu-item (click)="retrainTagger(element)">
               Retrain tagger
             </button>
-            <button mat-menu-item>
-              Stop word add
+            <button mat-menu-item (click)="editStopwordsDialog(element)">
+              Stopword list
             </button>
-            <button mat-menu-item>
-              Stop word list
-            </button>
-            <button mat-menu-item>
-              Stop word remove
-            </button>
-            <button mat-menu-item>
+            <button mat-menu-item (click)="tagTextDialog(element)">
               Tag doc
             </button>
-            <button mat-menu-item>
+            <button mat-menu-item (click)="tagDocDialog(element)">
               Tag text
             </button>
           </mat-menu>

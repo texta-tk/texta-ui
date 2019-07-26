@@ -1,3 +1,5 @@
+import {TaskStatus} from './TaskStatus';
+
 export class Tagger {
   url: string;
   id: number;
@@ -18,5 +20,5 @@ export class Tagger {
   f1_score: number;
   num_features: number;
   plot: unknown;
-  task: { id: 0; status: string; progress: 0.0; step: ''; errors: ''; time_started: ''; last_update: null; time_completed: null; };
+  task: TaskStatus;
 }

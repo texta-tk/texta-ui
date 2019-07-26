@@ -18,7 +18,7 @@ tr.detail-row {
 }
 
 tr.element-row:not(.expanded-row):hover {
-  background: #b7b7b7;
+  background: #eeeeee;
 }
 
 tr.element-row:not(.expanded-row):active {
@@ -33,4 +33,23 @@ tr.element-row:not(.expanded-row):active {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+
+}
+
+.element-plot {
+  object-fit: cover;
+  border: 2px solid black;
+  padding: 8px;
+  margin: 8px 0;
+}
+
+.element-detail-plot-fields {
+  flex-wrap: wrap;
+}
+.mat-column-Modify {
+  width: 60px;
+  text-align: center;
+}
+.mat-column-Task {
+  max-width: 160px;
 }

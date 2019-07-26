@@ -10,6 +10,9 @@ import {concatMap, delay, mergeMap, switchMap, take} from 'rxjs/operators';
 import {CreateTaggerDialogComponent} from './create-tagger-dialog/create-tagger-dialog.component';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {Project} from '../shared/types/Project';
+import {EditStopwordsDialogComponent} from './edit-stopwords-dialog/edit-stopwords-dialog.component';
+import {TagTextDialogComponent} from './tag-text-dialog/tag-text-dialog.component';
+import {TagDocDialogComponent} from './tag-doc-dialog/tag-doc-dialog.component';
 
 @Component({
   selector: 'app-tagger',
@@ -116,6 +119,24 @@ export class TaggerComponent implements OnInit, OnDestroy {
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       }
+    });
+  }
+  editStopwordsDialog(element) {
+    const dialogRef = this.dialog.open(EditStopwordsDialogComponent, {
+      maxHeight: '665px',
+      width: '700px',
+    });
+  }
+  tagTextDialog(element) {
+    const dialogRef = this.dialog.open(TagTextDialogComponent, {
+      maxHeight: '665px',
+      width: '700px',
+    });
+  }
+  tagDocDialog(element) {
+    const dialogRef = this.dialog.open(TagDocDialogComponent, {
+      maxHeight: '665px',
+      width: '700px',
     });
   }
 }
