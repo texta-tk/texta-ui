@@ -1,3 +1,4 @@
+///<reference path="components/svg/chart/axis/axis.component.ts"/>
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -28,10 +29,30 @@ import {MatExpansionModule} from '@angular/material/expansion';
 import {LoginDialogComponent} from './components/dialogs/login/login-dialog.component';
 import {GenericTableComponent} from './components/generic-table/generic-table.component';
 import {RegistrationDialogComponent} from './components/dialogs/registration/registration-dialog.component';
-
+import {TimelineComponent} from './components/svg/timeline/timeline.component';
+import {ScatterComponent} from './components/svg/scatter/scatter.component';
+import {HistogramComponent} from './components/svg/histogram/histogram.component';
+import {ChartComponent} from './components/svg/chart/chart.component';
+import {AxisComponent} from './components/svg/chart/axis/axis.component';
+import {GradientComponent} from './components/svg/chart/gradient/gradient.component';
+import {BarsComponent} from './components/svg/chart/bars/bars.component';
+import {CirclesComponent} from './components/svg/chart/circles/circles.component';
+import {LineComponent} from './components/svg/chart/line/line.component';
 
 @NgModule({
-  declarations: [LoginDialogComponent, GenericTableComponent, RegistrationDialogComponent],
+  declarations: [LoginDialogComponent, GenericTableComponent,
+    RegistrationDialogComponent,
+
+    TimelineComponent,
+    ScatterComponent,
+    HistogramComponent,
+    ChartComponent,
+    AxisComponent,
+    LineComponent,
+    CirclesComponent,
+    BarsComponent,
+    GradientComponent
+  ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -87,7 +108,17 @@ import {RegistrationDialogComponent} from './components/dialogs/registration/reg
     MatProgressBarModule,
     MatExpansionModule,
 
-    GenericTableComponent
+    GenericTableComponent,
+
+    TimelineComponent,
+    ScatterComponent,
+    HistogramComponent,
+    ChartComponent,
+    AxisComponent,
+    LineComponent,
+    CirclesComponent,
+    BarsComponent,
+    GradientComponent
   ],
   entryComponents: [LoginDialogComponent, RegistrationDialogComponent],
 })
