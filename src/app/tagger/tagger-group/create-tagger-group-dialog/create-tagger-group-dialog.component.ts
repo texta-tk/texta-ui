@@ -14,6 +14,7 @@ import {Embedding} from '../../../shared/types/tasks/Embedding';
 import {TaggerService} from '../../../core/taggers/tagger.service';
 import {merge, of} from 'rxjs';
 import {TaggerGroupService} from '../../../core/taggers/tagger-group.service';
+import {TaggerGroup} from '../../../shared/types/tasks/Tagger';
 
 @Component({
   selector: 'app-create-tagger-group-dialog',
@@ -27,9 +28,8 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
       Validators.required,
     ]),
     factNameFormControl: new FormControl('TEEMA', Validators.required),
-    taggerGroupSampleSizeFormControl: new FormControl(10000, [Validators.required]),
+    taggerGroupSampleSizeFormControl: new FormControl(50, [Validators.required]),
     taggerForm: new FormGroup({
-
       fieldsFormControl: new FormControl([], [Validators.required]),
       embeddingFormControl: new FormControl(),
       vectorizerFormControl: new FormControl([Validators.required]),
@@ -107,7 +107,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
       } else {
         return of(null);
       }
-    })).subscribe((resp: any | HttpErrorResponse) => {
+    })).subscribe((resp: TaggerGroup | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.dialogRef.close(resp);
       } else if (resp instanceof HttpErrorResponse) {

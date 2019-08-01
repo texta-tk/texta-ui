@@ -6,7 +6,7 @@ import {LocalStorageService} from '../util/local-storage.service';
 import {Observable} from 'rxjs';
 import {LogService} from '../util/log.service';
 import {Tagger} from '../../shared/types/tasks/Tagger';
-import {EmbeddingCluster} from '../../shared/types/tasks/EmbeddingCluster';
+import {EmbeddingCluster} from '../../shared/types/tasks/Embedding';
 
 @Injectable({
   providedIn: 'root'

@@ -29,4 +29,9 @@ export class LogService {
       duration: time,
     });
   }
+  public snackBarMessage(msg: string, time: number) {
+    this.snackBar.open(msg, 'Close', {
+      duration: time,
+    });
+  }
 }

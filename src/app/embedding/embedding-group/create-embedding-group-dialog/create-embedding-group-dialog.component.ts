@@ -10,7 +10,7 @@ import {EmbeddingsService} from '../../../core/embeddings/embeddings.service';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {LogService} from '../../../core/util/log.service';
 import {EmbeddingsGroupService} from '../../../core/embeddings/embeddings-group.service';
-import {EmbeddingCluster} from '../../../shared/types/tasks/EmbeddingCluster';
+import {EmbeddingCluster} from '../../../shared/types/tasks/Embedding';
 
 @Component({
   selector: 'app-create-embedding-group-dialog',

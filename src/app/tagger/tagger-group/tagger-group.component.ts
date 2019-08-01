@@ -7,8 +7,9 @@ import {of, Subscription} from 'rxjs';
 import {ProjectStore} from '../../core/projects/project.store';
 import {CreateEmbeddingDialogComponent} from '../../embedding/embedding/create-embedding-dialog/create-embedding-dialog.component';
 import {MatDialog} from '@angular/material';
-import {Tagger} from '../../shared/types/tasks/Tagger';
+import {Tagger, TaggerGroup} from '../../shared/types/tasks/Tagger';
 import {CreateTaggerGroupDialogComponent} from './create-tagger-group-dialog/create-tagger-group-dialog.component';
+import {TaggerGroupService} from '../../core/taggers/tagger-group.service';
 
 @Component({
   selector: 'app-tagger-group',
@@ -18,23 +19,25 @@ import {CreateTaggerGroupDialogComponent} from './create-tagger-group-dialog/cre
 export class TaggerGroupComponent implements OnInit, OnDestroy {
   private projectSubscription: Subscription;
   private dialogAfterClosedSubscription: Subscription;
+  public tableData: TaggerGroup[] = [];
+
 
   constructor(public dialog: MatDialog,
               private projectStore: ProjectStore,
+              private taggerGroupService: TaggerGroupService,
               private logService: LogService) {
   }
 
   ngOnInit() {
     this.projectSubscription = this.projectStore.getCurrentProject().pipe(mergeMap((currentProject: Project) => {
       if (currentProject) {
-        // todo
-        return of(null);
+        return this.taggerGroupService.getTaggerGroups(currentProject.id);
       } else {
         return of(null);
       }
-    })).subscribe((resp: Tagger[] | HttpErrorResponse) => {
+    })).subscribe((resp: TaggerGroup[] | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        // todo
+        this.tableData = resp;
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
         // todo
@@ -56,9 +59,9 @@ export class TaggerGroupComponent implements OnInit, OnDestroy {
       height: '860px',
       width: '700px',
     });
-    this.dialogAfterClosedSubscription = dialogRef.afterClosed().subscribe((resp: Tagger | HttpErrorResponse) => {
+    this.dialogAfterClosedSubscription = dialogRef.afterClosed().subscribe((resp: TaggerGroup | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        // todo
+        this.tableData = [...this.tableData, resp];
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       }

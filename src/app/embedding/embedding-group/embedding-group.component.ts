@@ -8,7 +8,7 @@ import {Project} from '../../shared/types/Project';
 import {of, Subscription} from 'rxjs';
 import {CreateEmbeddingGroupDialogComponent} from './create-embedding-group-dialog/create-embedding-group-dialog.component';
 import {EmbeddingsGroupService} from '../../core/embeddings/embeddings-group.service';
-import {EmbeddingCluster} from '../../shared/types/tasks/EmbeddingCluster';
+import {EmbeddingCluster} from '../../shared/types/tasks/Embedding';
 
 @Component({
   selector: 'app-embedding-group',
