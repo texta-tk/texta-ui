@@ -34,6 +34,18 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header> fields_parsed</th>
         <td mat-cell *matCellDef="let element"> {{element.fields_parsed}}</td>
       </ng-container>
+      <ng-container matColumnDef="f1_score">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> f1_score</th>
+        <td mat-cell *matCellDef="let element"> {{element.f1_score | number:'0.2-2'}}</td>
+      </ng-container>
+      <ng-container matColumnDef="precision">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> precision</th>
+        <td mat-cell *matCellDef="let element"> {{element.precision | number:'0.2-2'}}</td>
+      </ng-container>
+      <ng-container matColumnDef="recall">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> recall</th>
+        <td mat-cell *matCellDef="let element"> {{element.recall | number:'0.2-2' }}</td>
+      </ng-container>
       <ng-container matColumnDef="Task">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> task</th>
         <td mat-cell *matCellDef="let element">

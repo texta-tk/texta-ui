@@ -26,7 +26,7 @@ export class LexiconService {
   }
 
 
-  deleteLexicons(projectId: number, lexiconId: number): Observable<Lexicon | HttpErrorResponse> {
+  deleteLexicon(projectId: number, lexiconId: number): Observable<Lexicon | HttpErrorResponse> {
     return this.http.delete<Lexicon>(
       this.apiUrl + '/projects/' + projectId + '/lexicons/' + lexiconId + '/'
     ).pipe(
@@ -34,7 +34,7 @@ export class LexiconService {
       catchError(this.logService.handleError<Lexicon>('deleteLexicons')));
   }
 
-  addLexicon(body: {}, projectId: number): Observable<Lexicon | HttpErrorResponse> {
+  createLexicon(body: {}, projectId: number): Observable<Lexicon | HttpErrorResponse> {
     return this.http.post<Lexicon>(
       this.apiUrl + '/projects/' + projectId + '/lexicons/',
       body
@@ -44,7 +44,7 @@ export class LexiconService {
   }
 
   updateLexicon(body: {}, projectId: number, lexiconId: number): Observable<Lexicon | HttpErrorResponse> {
-    return this.http.put<Lexicon>(
+    return this.http.patch<Lexicon>(
       this.apiUrl + '/projects/' + projectId + '/lexicons/' + lexiconId + '/',
       body
     ).pipe(

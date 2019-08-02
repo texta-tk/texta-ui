@@ -1,66 +1,24 @@
-<div class="flex-row">
-  <div class="max-width"></div>
-  <div class="max-width flex-col">
-    <mat-form-field>
-      <mat-label>Select Embedding</mat-label>
-      <mat-select [formControl]="embeddingFormControl" (selectionChange)="embeddingSelected($event.value)" required>
-        <mat-option *ngFor="let item of embeddings" [value]="item">
-          {{item.description}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <button *ngIf="positives.length>0" mat-stroked-button class="max-width" color="accent"
-            (click)="onNewPredictionsClick(predictedWords.selectedOptions.selected)">Get new suggestions
-    </button>
-  </div>
-
-  <div class="max-width"></div>
-</div>
-<!--
-<mat-form-field>
-  <input matInput placeholder="Word" autocomplete="off" [formControl]="textFormControl">
-</mat-form-field>-->
-<div class="flex-row" [ngClass]="{'hidden': !selectedEmbedding.getValue()}">
-  <div class="max-width">
-    <h3>Predictions</h3>
-    <mat-selection-list #predictedWords class="max-width">
-      <mat-list-option *ngFor="let item of predictions" [value]="item">
-        {{item.phrase}}
-      </mat-list-option>
-    </mat-selection-list>
-  </div>
-  <div class="max-width">
+<div class="flex-row max-width">
+  <div class="flex-col lexicons">
     <div class="flex-row">
-      <h3>
-        Positives
-      </h3>
-      <button mat-icon-button class="add-prediction" (click)="addNewItem()">
-        <mat-icon>add</mat-icon>
-      </button>
+      <h3>Lexicons</h3>
     </div>
-    <mat-list class="max-width">
-      <mat-list-item *ngIf="newItem">
-        <input matInput #itemValue placeholder="New item...">
-        <button mat-button (click)="addPositive(itemValue.value)">Save</button>
-      </mat-list-item>
-      <mat-list-item *ngFor="let item of positives">
-        <span matLine>{{item.phrase}}</span>
-        <button mat-icon-button (click)="removePositive(item)">
-          <mat-icon>clear</mat-icon>
+    <mat-action-list>
+      <mat-list-item disableRipple="true">
+        <input matInput type="text" placeholder="New lexicon..." [(ngModel)]="newLexiconDescription">
+        <button mat-button *ngIf="newLexiconDescription" matSuffix aria-label="Add" (click)="createNewLexicon()">Add
         </button>
       </mat-list-item>
-    </mat-list>
 
-  </div>
-  <div class="max-width">
-    <h3>Negatives</h3>
-    <mat-list class="max-width">
-      <mat-list-item *ngFor="let item of negatives">
-        <span matLine>{{item.phrase}}</span>
-        <button mat-icon-button (click)="removeNegative(item)">
+      <mat-list-item *ngFor="let item of lexicons" (click)="selectLexicon(item)">
+        <span matLine>{{item.description}}</span>
+        <button mat-icon-button (mousedown)="$event.stopPropagation();"
+                (click)="deleteLexicon(item);">
           <mat-icon>clear</mat-icon>
         </button>
       </mat-list-item>
-    </mat-list>
+    </mat-action-list>
   </div>
+
+  <app-lexicon-builder [lexicon]="selectedLexicon"></app-lexicon-builder>
 </div>

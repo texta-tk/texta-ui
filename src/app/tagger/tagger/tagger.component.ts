@@ -33,7 +33,8 @@ export class TaggerComponent implements OnInit, OnDestroy {
 
   expandedElement: Tagger | null;
   public tableData: MatTableDataSource<Tagger> = new MatTableDataSource();
-  public displayedColumns = ['description', 'fields_parsed', 'time_started', 'time_completed', 'Task', 'Modify'];
+  public displayedColumns = ['description', 'fields_parsed', 'time_started',
+    'time_completed', 'f1_score', 'precision', 'recall', 'Task', 'Modify'];
   public isLoadingResults = true;
 
   @ViewChild(MatSort, {static: true}) sort: MatSort;
@@ -121,18 +122,21 @@ export class TaggerComponent implements OnInit, OnDestroy {
       }
     });
   }
+
   editStopwordsDialog(element) {
     const dialogRef = this.dialog.open(EditStopwordsDialogComponent, {
       maxHeight: '665px',
       width: '700px',
     });
   }
+
   tagTextDialog(element) {
     const dialogRef = this.dialog.open(TagTextDialogComponent, {
       maxHeight: '665px',
       width: '700px',
     });
   }
+
   tagDocDialog(element) {
     const dialogRef = this.dialog.open(TagDocDialogComponent, {
       maxHeight: '665px',

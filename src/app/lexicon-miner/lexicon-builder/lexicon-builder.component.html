@@ -1,0 +1,30 @@
+<pre *ngIf="_lexicon">{{_lexicon.description}}</pre>
+<mat-form-field>
+  <mat-label>Select Embedding</mat-label>
+  <mat-select [(value)]="selectedEmbedding">
+    <mat-option *ngFor="let embedding of embeddings" [value]="embedding">
+      {{embedding.description}}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+<div class="flex-row">
+  <div class="positives">
+    <mat-form-field floatLabel="never">
+  <textarea matInput
+            placeholder="Enter words here"
+            [(ngModel)]="positives"
+            cdkTextareaAutosize></textarea>
+    </mat-form-field>
+    <button mat-raised-button color="primary" (click)="saveLexicon(_lexicon)">Save</button>
+  </div>
+  <div class="predictions">
+    <mat-selection-list>
+      <mat-list-option *ngFor="let prediction of predictions">
+        {{prediction.phrase}}
+      </mat-list-option>
+    </mat-selection-list>
+    <button mat-raised-button color="accent" (click)="getNewSuggestions()">New words</button>
+  </div>
+</div>
+
+

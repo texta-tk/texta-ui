@@ -1,14 +1,15 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {EmbeddingsService} from '../core/embeddings/embeddings.service';
-import {ProjectStore} from '../core/projects/project.store';
-import {switchMap, take} from 'rxjs/operators';
-import {Project} from '../shared/types/Project';
-import {BehaviorSubject, of, Subscription} from 'rxjs';
-import {Embedding} from '../shared/types/tasks/Embedding';
-import {FormControl} from '@angular/forms';
-import {HttpErrorResponse} from '@angular/common/http';
-import {MatListOption} from '@angular/material';
+import {forkJoin, of, Subject} from 'rxjs';
+import {Lexicon} from '../shared/types/Lexicon';
 import {LogService} from '../core/util/log.service';
+import {LexiconService} from '../core/lexicon/lexicon.service';
+import {ProjectStore} from '../core/projects/project.store';
+import {switchMap, take, takeUntil} from 'rxjs/operators';
+import {Project} from '../shared/types/Project';
+import {EmbeddingsService} from '../core/embeddings/embeddings.service';
+import {Embedding} from '../shared/types/tasks/Embedding';
+import {HttpErrorResponse} from '@angular/common/http';
+
 
 @Component({
   selector: 'app-lexicon-miner',
@@ -16,113 +17,81 @@ import {LogService} from '../core/util/log.service';
   styleUrls: ['./lexicon-miner.component.scss']
 })
 export class LexiconMinerComponent implements OnInit, OnDestroy {
-  projectSubscription: Subscription;
-  selectedEmbedding: BehaviorSubject<Embedding> = new BehaviorSubject(null);
-  embeddings: Embedding[] = [];
-  embeddingFormControl: FormControl = new FormControl();
-  predictions: any[] = [];
-  positives: any[] = [];
-  negatives: any[] = [];
-  textFormControl: FormControl = new FormControl();
-  newItem = false;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+  lexicons: Lexicon[];
+  embeddings: Embedding[];
+  newLexiconDescription = '';
+  selectedLexicon: Lexicon;
 
-  constructor(private embeddingsService: EmbeddingsService, private projectStore: ProjectStore,
-              private logService: LogService) {
+  constructor(private logService: LogService, private embeddingService: EmbeddingsService,
+              private lexiconService: LexiconService, private projectStore: ProjectStore) {
   }
 
   ngOnInit() {
-    this.projectSubscription = this.projectStore.getCurrentProject().pipe(switchMap((project: Project) => {
-      if (project) {
-        return this.embeddingsService.getEmbeddings(project.id);
+    // you need both lexicons and embeddings to use lexicon miner, so just forkjoin if one of them errors cant do anything
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$), switchMap((currentProject: Project) => {
+      if (currentProject) {
+        return this.lexiconService.getLexicons(currentProject.id);
       }
       return of(null);
-    })).subscribe(resp => {
-      if (!(resp instanceof HttpErrorResponse)) {
-        this.embeddings = resp;
-      }
-    });
-    // hmm
-    /*   this.textFormControl.valueChanges.pipe(debounceTime(250), switchMap(value => {
-         return this.projectStore.getCurrentProject().pipe(switchMap((project: Project) => {
-           return this.selectedEmbedding.pipe(switchMap((embedding: Embedding) => {
-             if (embedding) {
-               return this.embeddingsService.predict({positives: [value]}, project.id, embedding.id);
-             }
-             return of(null);
-           }));
-         }));
-       })).subscribe((resp: any | HttpErrorResponse) => {
-         if (!(resp instanceof HttpErrorResponse)) {
-           this.predictions = resp;
-         }
-       });*/
-  }
-
-  addNewItem() {
-    this.newItem = true;
-  }
-
-  addPositive(x) {
-    this.positives.unshift({phrase: x});
-    this.newItem = false;
-  }
-
-  removePositive(item) {
-    console.log(item);
-    this.positives = this.positives.filter((x: any) => {
-      return x.phrase !== item.phrase;
-    });
-  }
-
-  removeNegative(item) {
-    console.log(item);
-    this.negatives = this.negatives.filter((x: any) => {
-      return x.phrase !== item.phrase;
-    });
-  }
-
-  onNewPredictionsClick(value: MatListOption[]) {
-    value.map((item: any) => {
-      // getting negatives (the ones user didnt select)
-      this.predictions = this.predictions.filter((x: any) => {
-        return x.phrase !== item.value.phrase;
-      });
-      return this.positives.push(item.value);
-    });
-    this.negatives = [...this.negatives, ...this.predictions];
-    this.getNewPredictions();
-  }
-
-  getNewPredictions() {
-    this.projectStore.getCurrentProject().pipe(take(1), switchMap((project: Project) => {
-      return this.selectedEmbedding.pipe(take(1), switchMap((embedding: Embedding) => {
-        if (embedding) {
-          return this.embeddingsService.predict({
-            positives: this.positives.map(x => x.phrase),
-            negatives: this.negatives.map(y => y.phrase)
-          }, project.id, embedding.id);
+    })).subscribe((resp: Lexicon[] | HttpErrorResponse) => {
+        if (resp) {
+          if (resp instanceof HttpErrorResponse) {
+            this.logService.snackBarError(resp, 5000);
+          } else {
+            this.lexicons = resp;
+          }
         }
-        return of(null);
-      }));
-    })).subscribe((resp: any) => {
+      }
+    );
+  }
+
+  ngOnDestroy() {
+    // will complete all observables aswell when using takeUntil, takeWhile etc
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
+
+  createNewLexicon() {
+    this.projectStore.getCurrentProject().pipe(take(1), switchMap(currentProject => {
+      if (currentProject) {
+        return this.lexiconService.createLexicon({
+          description: this.newLexiconDescription,
+          phrases: []
+        }, currentProject.id);
+      }
+      return of(null);
+    })).subscribe((resp: Lexicon | HttpErrorResponse) => {
       if (resp) {
         if (resp instanceof HttpErrorResponse) {
           this.logService.snackBarError(resp, 5000);
         } else {
-          this.predictions = resp;
+          this.lexicons.push(resp);
         }
+        this.newLexiconDescription = '';
       }
     });
   }
 
-  embeddingSelected(value: Embedding) {
-    this.selectedEmbedding.next(value);
+  deleteLexicon(lexicon: Lexicon) {
+    this.projectStore.getCurrentProject().pipe(take(1), switchMap(currentProject => {
+      if (currentProject) {
+        return this.lexiconService.deleteLexicon(currentProject.id, lexicon.id);
+      }
+      return of(null);
+    })).subscribe((resp: Lexicon | HttpErrorResponse) => {
+      if (resp instanceof HttpErrorResponse) {
+        this.logService.snackBarError(resp, 5000);
+      } else {
+        const position = this.lexicons.findIndex(x => x.id === lexicon.id);
+        this.lexicons.splice(position, 1);
+      }
+    });
   }
 
-  ngOnDestroy() {
-    if (this.projectSubscription) {
-      this.projectSubscription.unsubscribe();
-    }
+  selectLexicon(lexicon: Lexicon) {
+    this.selectedLexicon = lexicon;
   }
+
 
 }

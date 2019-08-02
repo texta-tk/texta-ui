@@ -15,6 +15,7 @@ import {LexiconMinerComponent} from './lexicon-miner/lexicon-miner.component';
 import {TaggerModule} from './tagger/tagger.module';
 import {EmbeddingModule} from './embedding/embedding.module';
 import {ProjectModule} from './project/project.module';
+import { LexiconBuilderComponent } from './lexicon-miner/lexicon-builder/lexicon-builder.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import {ProjectModule} from './project/project.module';
     HomeComponent,
     UsersComponent,
     LexiconMinerComponent,
+    LexiconBuilderComponent,
   ],
   imports: [
     BrowserModule,
