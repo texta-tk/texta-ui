@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {forkJoin, of, Subject} from 'rxjs';
+import {of, Subject} from 'rxjs';
 import {Lexicon} from '../shared/types/Lexicon';
 import {LogService} from '../core/util/log.service';
 import {LexiconService} from '../core/lexicon/lexicon.service';
@@ -9,6 +9,7 @@ import {Project} from '../shared/types/Project';
 import {EmbeddingsService} from '../core/embeddings/embeddings.service';
 import {Embedding} from '../shared/types/tasks/Embedding';
 import {HttpErrorResponse} from '@angular/common/http';
+import {MatDialog} from '@angular/material';
 
 
 @Component({
@@ -23,7 +24,9 @@ export class LexiconMinerComponent implements OnInit, OnDestroy {
   newLexiconDescription = '';
   selectedLexicon: Lexicon;
 
-  constructor(private logService: LogService, private embeddingService: EmbeddingsService,
+  constructor(private logService: LogService,
+              private dialog: MatDialog,
+              private embeddingService: EmbeddingsService,
               private lexiconService: LexiconService, private projectStore: ProjectStore) {
   }
 
@@ -39,6 +42,7 @@ export class LexiconMinerComponent implements OnInit, OnDestroy {
           if (resp instanceof HttpErrorResponse) {
             this.logService.snackBarError(resp, 5000);
           } else {
+            this.selectedLexicon = null;
             this.lexicons = resp;
           }
         }
@@ -90,8 +94,11 @@ export class LexiconMinerComponent implements OnInit, OnDestroy {
   }
 
   selectLexicon(lexicon: Lexicon) {
+    if (this.selectedLexicon && this.selectedLexicon === lexicon) {
+      // if selecting same lexicon do nothing
+      return true;
+    }
     this.selectedLexicon = lexicon;
   }
-
 
 }

@@ -1,16 +1,18 @@
-<div class="flex-row max-width">
-  <div class="flex-col lexicons">
+<div class="flex-row max-width wrapper">
+  <div class="flex-col lexicons mat-elevation-z3">
     <div class="flex-row">
       <h3>Lexicons</h3>
     </div>
-    <mat-action-list>
+    <mat-action-list class="overflow-auto">
       <mat-list-item disableRipple="true">
         <input matInput type="text" placeholder="New lexicon..." [(ngModel)]="newLexiconDescription">
         <button mat-button *ngIf="newLexiconDescription" matSuffix aria-label="Add" (click)="createNewLexicon()">Add
         </button>
       </mat-list-item>
 
-      <mat-list-item *ngFor="let item of lexicons" (click)="selectLexicon(item)">
+      <mat-list-item [ngClass]="{'active-lexicon': selectedLexicon? item.id === selectedLexicon.id : false}"
+                     *ngFor="let item of lexicons"
+                     (click)="selectLexicon(item)">
         <span matLine>{{item.description}}</span>
         <button mat-icon-button (mousedown)="$event.stopPropagation();"
                 (click)="deleteLexicon(item);">
@@ -20,5 +22,5 @@
     </mat-action-list>
   </div>
 
-  <app-lexicon-builder [lexicon]="selectedLexicon"></app-lexicon-builder>
+  <app-lexicon-builder class="lexicon-builder" [lexicon]="selectedLexicon"></app-lexicon-builder>
 </div>

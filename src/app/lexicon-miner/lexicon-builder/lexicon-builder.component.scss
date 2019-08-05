@@ -1,0 +1,48 @@
+.embedding-row {
+  align-items: center;
+  button {
+    margin-left: 10px;
+    max-height: 36px;
+  }
+}
+
+.textarea {
+  overflow: auto;
+}
+
+.wrapper {
+  .positives {
+    margin-left: 20px;
+    height: 605px;
+    padding: 0 16px;
+    width: 450px;
+    max-width: 450px;
+
+  }
+  .predictions {
+    margin-left: 20px;
+    height: 605px;
+    max-height: 605px;
+    width: 450px;
+    max-width: 450px;
+    h3 {
+      padding: 0 16px 16px;
+    }
+
+  }
+}
+
+@media only screen and (max-width: 1450px) {
+  .wrapper {
+    flex-wrap: wrap;
+    width: 100%;
+    .positives {
+      max-width: unset;
+      width: 100%;
+    }
+    .predictions {
+      max-width: unset;
+      width: 100%;
+    }
+  }
+}

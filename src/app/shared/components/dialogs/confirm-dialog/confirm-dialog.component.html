@@ -1,0 +1,17 @@
+<h1 mat-dialog-title>{{title}}</h1>
+<div class="dialog-content-wrapper" mat-dialog-content>
+  <p>{{mainText}}</p>
+
+  <div class="flex-col">
+    <div class="flex-row">
+      <div class="flex-item-left">
+        <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">{{cancelText}}</button>
+      </div>
+      <div class="flex-item-right">
+        <button type="submit" mat-button (click)="closeDialogConfirm()">{{confirmText}}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+

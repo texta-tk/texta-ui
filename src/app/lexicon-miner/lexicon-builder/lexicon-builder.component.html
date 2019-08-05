@@ -1,29 +1,47 @@
-<pre *ngIf="_lexicon">{{_lexicon.description}}</pre>
-<mat-form-field>
-  <mat-label>Select Embedding</mat-label>
-  <mat-select [(value)]="selectedEmbedding">
-    <mat-option *ngFor="let embedding of embeddings" [value]="embedding">
-      {{embedding.description}}
-    </mat-option>
-  </mat-select>
-</mat-form-field>
-<div class="flex-row">
-  <div class="positives">
-    <mat-form-field floatLabel="never">
-  <textarea matInput
+<div class="flex-row wrapper">
+  <div class="positives mat-elevation-z3 flex-col">
+    <h3>Lexicon words</h3>
+    <ng-container *ngIf="!!_lexicon">
+      <div class="flex-col">
+        <div class="flex-row embedding-row">
+          <mat-form-field>
+            <mat-label>Select Embedding</mat-label>
+            <mat-select [(value)]="selectedEmbedding">
+              <mat-option *ngFor="let embedding of embeddings" [value]="embedding">
+                {{embedding.description}}
+              </mat-option>
+            </mat-select>
+
+          </mat-form-field>
+          <div [ngClass]="{'hidden':!selectedEmbedding}">
+            <button mat-stroked-button color="accent"
+                    (click)="getNewSuggestions(predictedWords.selectedOptions.selected)">
+              New
+              words
+            </button>
+            <button mat-stroked-button color="primary" (click)="saveLexicon()">Save</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="max-width textarea" [ngClass]="{'hidden':!selectedEmbedding}">
+        <mat-form-field floatLabel="never" class="max-width">
+  <textarea matInput class="max-width"
             placeholder="Enter words here"
             [(ngModel)]="positives"
             cdkTextareaAutosize></textarea>
-    </mat-form-field>
-    <button mat-raised-button color="primary" (click)="saveLexicon(_lexicon)">Save</button>
+        </mat-form-field>
+      </div>
+    </ng-container>
   </div>
-  <div class="predictions">
-    <mat-selection-list>
-      <mat-list-option *ngFor="let prediction of predictions">
+
+  <div class="max-width predictions mat-elevation-z3">
+    <h3>Suggestions</h3>
+    <mat-selection-list #predictedWords>
+      <mat-list-option *ngFor="let prediction of predictions" [value]="prediction">
         {{prediction.phrase}}
       </mat-list-option>
     </mat-selection-list>
-    <button mat-raised-button color="accent" (click)="getNewSuggestions()">New words</button>
   </div>
 </div>
 

@@ -1,6 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
+* {
+  box-sizing: border-box;
+}
+
 html, body {
   height: 100%;
 }
@@ -57,4 +61,11 @@ pre {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.overflow-auto{
+  overflow:auto;
+}
+
+.hidden {
+  display: none;
 }

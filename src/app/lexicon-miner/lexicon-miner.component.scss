@@ -3,6 +3,33 @@ mat-list {
   overflow: auto;
 }
 
+.wrapper {
+  justify-content: center;
+  margin-top: 20px;
+}
+
 .lexicons {
-  max-width: 350px;
+  max-width: 450px;
+  min-width: 450px;
+  max-height: 605px;
+}
+
+.active-lexicon {
+  color: red;
+}
+
+h3 {
+  padding-left: 16px;
+}
+
+@media only screen and (max-width: 1450px) {
+  .lexicon-builder {
+    width: 100%;
+    margin-right: 20px;
+  }
+  .lexicons {
+    margin-left: 20px;
+    max-height: unset;
+    min-width: unset;
+  }
 }

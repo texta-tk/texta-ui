@@ -9,6 +9,7 @@ import {EmbeddingsService} from '../../core/embeddings/embeddings.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Embedding} from '../../shared/types/tasks/Embedding';
 import {LogService} from '../../core/util/log.service';
+import {MatListOption} from '@angular/material';
 
 @Component({
   selector: 'app-lexicon-builder',
@@ -18,7 +19,8 @@ import {LogService} from '../../core/util/log.service';
 export class LexiconBuilderComponent implements OnInit, OnDestroy {
   _lexicon: Lexicon;
   positives: string;
-  predictions: any[];
+  predictions: any[] = [];
+  negatives: any[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
   embeddings: Embedding[];
   selectedEmbedding: Embedding;
@@ -27,6 +29,10 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
     if (value) {
       this._lexicon = value;
       this.positives = this.stringListToString(value.phrases_parsed);
+      this.predictions = [];
+      // todo temp values
+      /*this._lexicon.discarded_phrases_parsed = ['tere', 'hey', 'vangla'];
+      this._lexicon.discarded_phrases_parsed.map(x => this.negatives.push({phrase: x}));*/
     }
   }
 
@@ -57,14 +63,15 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
     this.destroy$.unsubscribe();
   }
 
-  getNewSuggestions() {
-    // was doing stuff here todo (assign positives and get new predictions)
-    console.log(this.selectedEmbedding)
+  getNewSuggestions(value: MatListOption[]) {
+
+    this.updateLexicon(value);
+
     this.projectStore.getCurrentProject().pipe(take(1), switchMap((currentProject: Project) => {
       if (currentProject) {
         return this.embeddingService.predict({
           positives: this.newLineStringToList(this.positives),
-          negatives: []
+          negatives: this.negatives.map(y => y.phrase)
         }, currentProject.id, this.selectedEmbedding.id);
       }
     })).subscribe((resp: any | HttpErrorResponse) => {
@@ -72,26 +79,45 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
         if (resp instanceof HttpErrorResponse) {
           this.logService.snackBarError(resp, 5000);
         } else {
-          console.log(resp);
           this.predictions = resp;
+          if (this.predictions.length === 0) {
+            this.logService.snackBarMessage('No words found', 5000);
+          }
         }
       }
     });
   }
 
-  saveLexicon(lexicon: Lexicon) {
+  saveLexicon() {
     const requestBody = {
-      description: lexicon.description,
-      phrases: this.newLineStringToList(this.positives)
+      description: this._lexicon.description,
+      phrases: this.newLineStringToList(this.positives),
+      negative_phrases: this.negatives.map(y => y.phrase),
     };
     this.projectStore.getCurrentProject().pipe(take(1), mergeMap((currentProject: Project) => {
       if (currentProject) {
-        return this.lexiconService.updateLexicon(requestBody, currentProject.id, lexicon.id);
+        return this.lexiconService.updateLexicon(requestBody, currentProject.id, this._lexicon.id);
       }
       return of(null);
     })).subscribe((x: any) => {
       console.log(x);
     });
+  }
+
+  updateLexicon(value: MatListOption[]) {
+    console.log(value);
+    value.map((item: any) => {
+      // remove selected item from predictions list
+      this.predictions = this.predictions.filter((x: any) => {
+        return x.phrase !== item.value.phrase;
+      });
+      return this.positives += this.positives.endsWith('\n') ? item.value.phrase + '\n' : '\n' + item.value.phrase;
+    });
+    // predictions filtered out to only contain negatives
+    this.negatives = [...this.negatives, ...this.predictions];
+    // update lexicon object so when changing lexicons it saves state
+    this._lexicon.discarded_phrases_parsed = this.negatives.map(y => y.phrase);
+    this._lexicon.phrases_parsed = this.newLineStringToList(this.positives);
   }
 
   stringListToString(stringList: string[]): string {

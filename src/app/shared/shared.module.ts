@@ -38,6 +38,7 @@ import {GradientComponent} from './components/svg/chart/gradient/gradient.compon
 import {BarsComponent} from './components/svg/chart/bars/bars.component';
 import {CirclesComponent} from './components/svg/chart/circles/circles.component';
 import {LineComponent} from './components/svg/chart/line/line.component';
+import {ConfirmDialogComponent} from './components/dialogs/confirm-dialog/confirm-dialog.component';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
@@ -51,7 +52,8 @@ import {LineComponent} from './components/svg/chart/line/line.component';
     LineComponent,
     CirclesComponent,
     BarsComponent,
-    GradientComponent
+    GradientComponent,
+    ConfirmDialogComponent
   ],
   imports: [
     CommonModule,
@@ -120,7 +122,7 @@ import {LineComponent} from './components/svg/chart/line/line.component';
     BarsComponent,
     GradientComponent
   ],
-  entryComponents: [LoginDialogComponent, RegistrationDialogComponent],
+  entryComponents: [LoginDialogComponent, RegistrationDialogComponent, ConfirmDialogComponent],
 })
 export class SharedModule {
 }
