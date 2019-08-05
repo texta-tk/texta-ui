@@ -33,6 +33,12 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
       // todo temp values
       /*this._lexicon.discarded_phrases_parsed = ['tere', 'hey', 'vangla'];
       this._lexicon.discarded_phrases_parsed.map(x => this.negatives.push({phrase: x}));*/
+    } else {
+      this._lexicon = null;
+      this.predictions = [];
+      this.positives = '';
+      this.selectedEmbedding = null;
+      this.negatives = [];
     }
   }
 
