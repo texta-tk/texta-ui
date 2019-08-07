@@ -1,5 +1,5 @@
 <div class="flex-row wrapper">
-  <div class="positives mat-elevation-z3 flex-col">
+  <div class="positives mat-elevation-z2 flex-col">
     <h3>Lexicon words</h3>
     <ng-container *ngIf="!!_lexicon">
       <div class="flex-col">
@@ -24,7 +24,7 @@
         </div>
       </div>
 
-      <div class="max-width textarea" [ngClass]="{'hidden':!selectedEmbedding}">
+      <div class="max-width  overflow-auto" [ngClass]="{'hidden':!selectedEmbedding}">
         <mat-form-field floatLabel="never" class="max-width">
   <textarea matInput class="max-width"
             placeholder="Enter words here"
@@ -35,7 +35,7 @@
     </ng-container>
   </div>
 
-  <div class="max-width predictions mat-elevation-z3">
+  <div class="max-width predictions mat-elevation-z2">
     <h3>Suggestions</h3>
     <mat-selection-list #predictedWords>
       <mat-list-option *ngFor="let prediction of predictions" [value]="prediction">

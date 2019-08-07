@@ -61,11 +61,11 @@ export class ProjectService {
   }
 
   // todo backend seperate endpoint
-  getProjectOptions(): Observable<any> {
-    return this.http.options<any>(
+  getProjectOptions(): Observable<unknown> {
+    return this.http.options<unknown>(
       this.apiUrl + '/projects/'
     ).pipe(
       tap(e => this.logService.logStatus(e, 'get Project Options')),
-      catchError(this.logService.handleError<any>('getProjectOptions')));
+      catchError(this.logService.handleError<unknown>('getProjectOptions')));
   }
 }

@@ -5,7 +5,7 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {LocalStorageService} from '../util/local-storage.service';
 import {LogService} from '../util/log.service';
 import {environment} from '../../../environments/environment';
-import {Embedding} from '../../shared/types/tasks/Embedding';
+import {Embedding, EmbeddingPrediction} from '../../shared/types/tasks/Embedding';
 
 
 @Injectable({
@@ -34,12 +34,12 @@ export class EmbeddingsService {
       catchError(this.logService.handleError<Embedding>('getEmbeddings')));
   }
 
-  predict(body, projectId, embeddingId): Observable<unknown | HttpErrorResponse> {
-    return this.http.post<Embedding>(
+  predict(body, projectId, embeddingId): Observable<EmbeddingPrediction[] | HttpErrorResponse> {
+    return this.http.post<EmbeddingPrediction[]>(
       this.apiUrl + '/projects/' + projectId + '/embeddings/' + embeddingId + '/predict/', body
     ).pipe(
       tap(e => this.logService.logStatus(e, 'predict')),
-      catchError(this.logService.handleError<Embedding>('predict')));
+      catchError(this.logService.handleError<EmbeddingPrediction[]>('predict')));
   }
 
 }

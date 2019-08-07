@@ -22,6 +22,12 @@ export class Embedding {
   }
 }
 
+export class EmbeddingPrediction {
+  phrase: string;
+  score: number;
+  model: string;
+}
+
 export class EmbeddingCluster {
   // todo
   url = '';

@@ -1,9 +1,8 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ErrorStateMatcher, MatDialogRef} from '@angular/material';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {LiveErrorStateMatcher} from '../../shared/CustomerErrorStateMatchers';
 import {ProjectService} from '../../core/projects/project.service';
-import {Field} from '../../shared/types/ProjectField';
 import {UserService} from '../../core/users/user.service';
 import {UserProfile} from '../../shared/types/UserProfile';
 import {Project} from '../../shared/types/Project';
@@ -26,7 +25,7 @@ export class CreateProjectDialogComponent implements OnInit {
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   users: UserProfile[];
-  indices = [];
+  indices: unknown[] = [];
 
   constructor(private dialogRef: MatDialogRef<CreateProjectDialogComponent>,
               private projectService: ProjectService,
@@ -37,7 +36,7 @@ export class CreateProjectDialogComponent implements OnInit {
     this.userService.getAllUsers().subscribe(resp => {
       this.users = resp;
     });
-    this.projectService.getProjectOptions().subscribe(resp => {
+    this.projectService.getProjectOptions().subscribe((resp: any) => {
       this.indices = resp.actions.POST.indices.choices;
     });
 

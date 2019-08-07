@@ -7,7 +7,7 @@ import {Project} from '../../shared/types/Project';
 import {of, Subject} from 'rxjs';
 import {EmbeddingsService} from '../../core/embeddings/embeddings.service';
 import {HttpErrorResponse} from '@angular/common/http';
-import {Embedding} from '../../shared/types/tasks/Embedding';
+import {Embedding, EmbeddingPrediction} from '../../shared/types/tasks/Embedding';
 import {LogService} from '../../core/util/log.service';
 import {MatListOption} from '@angular/material';
 
@@ -19,7 +19,7 @@ import {MatListOption} from '@angular/material';
 export class LexiconBuilderComponent implements OnInit, OnDestroy {
   _lexicon: Lexicon;
   positives: string;
-  predictions: any[] = [];
+  predictions: EmbeddingPrediction[] = [];
   negatives: any[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
   embeddings: Embedding[];
@@ -80,7 +80,7 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
           negatives: this.negatives.map(y => y.phrase)
         }, currentProject.id, this.selectedEmbedding.id);
       }
-    })).subscribe((resp: any | HttpErrorResponse) => {
+    })).subscribe((resp: EmbeddingPrediction[] | HttpErrorResponse) => {
       if (resp) {
         if (resp instanceof HttpErrorResponse) {
           this.logService.snackBarError(resp, 5000);
@@ -98,21 +98,21 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
     const requestBody = {
       description: this._lexicon.description,
       phrases: this.newLineStringToList(this.positives),
-      negative_phrases: this.negatives.map(y => y.phrase),
+      discarded_phrases: this.negatives.map(y => y.phrase),
     };
     this.projectStore.getCurrentProject().pipe(take(1), mergeMap((currentProject: Project) => {
       if (currentProject) {
         return this.lexiconService.updateLexicon(requestBody, currentProject.id, this._lexicon.id);
       }
       return of(null);
-    })).subscribe((x: any) => {
-      console.log(x);
+    })).subscribe((resp: Lexicon | HttpErrorResponse) => {
+      console.log(resp);
     });
   }
 
   updateLexicon(value: MatListOption[]) {
     console.log(value);
-    value.map((item: any) => {
+    value.map((item: MatListOption) => {
       // remove selected item from predictions list
       this.predictions = this.predictions.filter((x: any) => {
         return x.phrase !== item.value.phrase;

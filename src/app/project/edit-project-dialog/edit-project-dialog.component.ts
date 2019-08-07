@@ -44,7 +44,7 @@ export class EditProjectDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.projectService.getProjectOptions().subscribe(resp => {
+    this.projectService.getProjectOptions().subscribe((resp: any) => {
       this.indices = resp.actions.POST.indices.choices;
     });
     this.userService.getAllUsers().subscribe(resp => {

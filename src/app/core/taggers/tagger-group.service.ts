@@ -25,12 +25,12 @@ export class TaggerGroupService {
   }
 
   // todo
-  createTaggerGroup(body: {}, projectId: number): Observable<any | HttpErrorResponse> {
-    return this.http.post<any>(
+  createTaggerGroup(body: {}, projectId: number): Observable<TaggerGroup | HttpErrorResponse> {
+    return this.http.post<TaggerGroup>(
       this.apiUrl + '/projects/' + projectId + '/tagger_groups/',
       body
     ).pipe(
       tap(e => this.logService.logStatus(e, 'makeTagger')),
-      catchError(this.logService.handleError<any>('makeTagger')));
+      catchError(this.logService.handleError<TaggerGroup>('makeTagger')));
   }
 }

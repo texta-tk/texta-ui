@@ -6,10 +6,6 @@
   }
 }
 
-.textarea {
-  overflow: auto;
-}
-
 .wrapper {
   .positives {
     margin-left: 20px;
@@ -39,10 +35,20 @@
     .positives {
       max-width: unset;
       width: 100%;
+      height: 42vh;
     }
     .predictions {
       max-width: unset;
       width: 100%;
+      height: 42vh;
+      flex-wrap: wrap-reverse;
+      .mat-selection-list {
+        display: flex;
+        flex-wrap: wrap-reverse;
+        .mat-list-item {
+          max-width: 400px;
+        }
+      }
     }
   }
 }
