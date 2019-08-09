@@ -60,4 +60,29 @@ export class TaggerService {
       tap(e => this.logService.logStatus(e, 'getTaggerOptions')),
       catchError(this.logService.handleError<TaggerOptions>('getTaggerOptions')));
   }
+
+  tagDocument(body: {}, projectId: number, taggerId): Observable<unknown | HttpErrorResponse> {
+    return this.http.post<unknown>(
+      this.apiUrl + '/projects/' + projectId + '/taggers/' + taggerId + '/tag_doc/',
+      body
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'tagDocument')),
+      catchError(this.logService.handleError<unknown>('tagDocument')));
+  }
+  tagText(body: {}, projectId: number, taggerId): Observable<unknown | HttpErrorResponse> {
+    return this.http.post<unknown>(
+      this.apiUrl + '/projects/' + projectId + '/taggers/' + taggerId + '/tag_text/',
+      body
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'tagText')),
+      catchError(this.logService.handleError<unknown>('tagText')));
+  }
+  taggerListFeatures(body: {}, projectId: number, taggerId): Observable<unknown | HttpErrorResponse> {
+    return this.http.post<unknown>(
+      this.apiUrl + '/projects/' + projectId + '/taggers/' + taggerId + '/list_features/',
+      body
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'taggerListFeatures')),
+      catchError(this.logService.handleError<unknown>('taggerListFeatures')));
+  }
 }

@@ -1,1 +1,14 @@
-<p>tag-text-dialog works!</p>
+<mat-form-field class="max-width">
+  <input matInput placeholder="Tag text">
+</mat-form-field>
+<div class="flex-col">
+  <div class="flex-row">
+    <div class="flex-item-left">
+      <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Close</button>
+    </div>
+    <div class="flex-item-right">
+      <button type="submit" mat-button (click)="onSubmit()">Save</button>
+    </div>
+  </div>
+
+</div>
