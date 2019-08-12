@@ -1,0 +1,31 @@
+<div class="wrapper flex-col">
+  <div class="searcher-panel">
+    <mat-tab-group mat-stretch-tabs dynamicHeight>
+      <mat-tab>
+        <ng-template class="test" mat-tab-label>
+          Build<br>
+          Search
+        </ng-template>
+        <div>
+          <app-build-search [projectFields]="projectFields"></app-build-search>
+        </div>
+      </mat-tab>
+      <mat-tab>
+        <ng-template class="test" mat-tab-label>
+          Expand<br>
+          Search
+        </ng-template>
+        Content 1
+      </mat-tab>
+      <mat-tab>
+        <ng-template class="test" mat-tab-label>
+          Cluster<br>
+          Search
+        </ng-template>
+        Content 1
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+  <div class="saved-searches-panel"></div>
+  <div class="aggregations-panel"></div>
+</div>

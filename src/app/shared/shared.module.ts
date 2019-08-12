@@ -1,4 +1,3 @@
-///<reference path="components/svg/chart/axis/axis.component.ts"/>
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -39,6 +38,8 @@ import {BarsComponent} from './components/svg/chart/bars/bars.component';
 import {CirclesComponent} from './components/svg/chart/circles/circles.component';
 import {LineComponent} from './components/svg/chart/line/line.component';
 import {ConfirmDialogComponent} from './components/dialogs/confirm-dialog/confirm-dialog.component';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatNativeDateModule} from '@angular/material';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
@@ -81,6 +82,9 @@ import {ConfirmDialogComponent} from './components/dialogs/confirm-dialog/confir
     MatTabsModule,
     MatProgressBarModule,
     MatExpansionModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+
   ],
   exports: [
     CommonModule,
@@ -109,6 +113,8 @@ import {ConfirmDialogComponent} from './components/dialogs/confirm-dialog/confir
     MatTabsModule,
     MatProgressBarModule,
     MatExpansionModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
 
     GenericTableComponent,
 

@@ -17,6 +17,9 @@ import {EmbeddingModule} from './embedding/embedding.module';
 import {ProjectModule} from './project/project.module';
 import { LexiconBuilderComponent } from './lexicon-miner/lexicon-builder/lexicon-builder.component';
 import { SearcherComponent } from './searcher/searcher.component';
+import { SearcherSidebarComponent } from './searcher/searcher-sidebar/searcher-sidebar.component';
+import { SearcherTableComponent } from './searcher/searcher-table/searcher-table.component';
+import { BuildSearchComponent } from './searcher/searcher-sidebar/build-search/build-search.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +31,9 @@ import { SearcherComponent } from './searcher/searcher.component';
     LexiconMinerComponent,
     LexiconBuilderComponent,
     SearcherComponent,
+    SearcherSidebarComponent,
+    SearcherTableComponent,
+    BuildSearchComponent,
   ],
   imports: [
     BrowserModule,

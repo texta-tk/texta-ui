@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>Embedding Group</h1>
+<h1 mat-dialog-title>Embedding Cluster</h1>
 
 <div class="dialog-content-wrapper" mat-dialog-content>
   <form class="flex-col" [formGroup]="embeddingForm" (ngSubmit)="onSubmit(embeddingForm.value)">
@@ -31,7 +31,7 @@
           <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">No Thanks</button>
         </div>
         <div class="flex-item-right">
-          <button type="submit" mat-button [disabled]="!embeddingForm.valid">Create embedding group</button>
+          <button type="submit" mat-button [disabled]="!embeddingForm.valid">Create embedding cluster</button>
         </div>
       </div>
     </div>

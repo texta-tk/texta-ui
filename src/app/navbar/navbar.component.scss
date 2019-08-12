@@ -1,6 +1,6 @@
-
+@import "../../variables/variables";
 mat-toolbar {
-  height: 72px;
+  height: $navbar-height;
   mat-toolbar-row {
     height: 100%;
     a {

@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import "library-overrides";
 // might be problematic todo
 div {
   box-sizing: border-box;
@@ -46,6 +47,18 @@ pre {
   }
 }
 
+.flex-1 {
+  flex: 1;
+}
+
+.flex-2 {
+  flex: 2;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
 .max-width {
   width: 100%;
 }
@@ -62,13 +75,15 @@ pre {
   align-items: center;
   justify-content: center;
 }
-.overflow-auto{
-  overflow:auto;
+
+.overflow-auto {
+  overflow: auto;
 }
 
 .hidden {
   display: none;
 }
-.pointer{
-  cursor:pointer;
+
+.pointer {
+  cursor: pointer;
 }
