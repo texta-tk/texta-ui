@@ -1,13 +1,20 @@
-a {
-  padding: 5px;
-  color: white;
-}
 
 mat-toolbar {
   height: 72px;
   mat-toolbar-row {
     height: 100%;
+    a {
+      padding: 5px;
+      color: white;
+    }
 
+    mat-menu {
+      a {
+        color: black;
+
+      }
+
+    }
     .login {
       button {
         margin-left: 5px;
@@ -33,4 +40,7 @@ mat-toolbar {
 
 .is-active {
   color: red;
+}
+.mat-icon {
+  vertical-align: middle;
 }

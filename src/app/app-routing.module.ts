@@ -5,6 +5,7 @@ import {AuthGuard} from './core/auth/auth.guard';
 import {HomeComponent} from './home/home.component';
 import {UsersComponent} from './users/users.component';
 import {LexiconMinerComponent} from './lexicon-miner/lexicon-miner.component';
+import {SearcherComponent} from './searcher/searcher.component';
 
 const routes: Routes = [
   {
@@ -26,6 +27,11 @@ const routes: Routes = [
     path: 'settings',
     canActivate: [AuthGuard],
     component: UserSettingsComponent,
+  },
+  {
+    path: 'searcher',
+    canActivate: [AuthGuard],
+    component: SearcherComponent,
   },
 ];
 
