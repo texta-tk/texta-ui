@@ -1,56 +1,62 @@
-<mat-form-field class="max-width">
-  <mat-label>Select Fields</mat-label>
-  <mat-select [formControl]="fieldsFormControl" multiple (openedChange)="onOpenedChange($event)">
-    <mat-optgroup *ngFor="let group of projectFields" [label]="group.index">
-      <mat-option *ngFor="let fields of group.fields" [value]="fields">
-        {{fields.path}}
-      </mat-option>
-    </mat-optgroup>
-  </mat-select>
-</mat-form-field>
-<div *ngFor="let searchFilter of filtersList; let i = index;" class="filters bg-grey">
-  <div class="flex-row header">
-    <div class="flex-row field-titles">
-      <h4 *ngFor="let filter of searchFilter">{{filter.path}};</h4>
+<div class="wrapper">
+  <mat-form-field appearance="outline" class="max-width select-fields">
+    <mat-label>Select Fields</mat-label>
+    <mat-select [formControl]="fieldsFormControl" multiple (openedChange)="onOpenedChange($event)">
+      <mat-optgroup *ngFor="let group of projectFields" [label]="group.index">
+        <mat-option *ngFor="let fields of group.fields" [value]="fields">
+          {{fields.path}}
+        </mat-option>
+      </mat-optgroup>
+    </mat-select>
+  </mat-form-field>
+  <div *ngFor="let searchFilter of filtersList; let i = index;" class="filters bg-grey">
+    <div class="flex-row header">
+      <div class="flex-row field-titles">
+        <h4 *ngFor="let field of searchFilter.fields">{{field.path}};</h4>
+      </div>
+      <div class="flex-item-right close-panel">
+        <button mat-icon-button aria-label="Close" (click)="removeFilter(i,searchFilter)">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
     </div>
-    <div class="flex-item-right close-panel">
-      <button mat-icon-button aria-label="Close" (click)="removeFilter(i)">
-        <mat-icon>close</mat-icon>
-      </button>
+    <div class="content" *ngIf="isTextTypeForm(searchFilter.formType)">
+      <ng-container *ngTemplateOutlet="textFilterTemplate;context:{'searchFilter':searchFilter}"></ng-container>
+    </div>
+    <div class="content" *ngIf="isDateTypeForm(searchFilter.formType)">
+      <ng-container *ngTemplateOutlet="dateFilterTemplate;context:{'searchFilter':searchFilter}"></ng-container>
     </div>
   </div>
-  <div class="content" *ngIf="searchFilter[0].type =='text'">
-    <ng-container *ngTemplateOutlet="textFilterTemplate;context:{'searchFilter':searchFilter}"></ng-container>
+  <div class=" flex-col bg-grey search-options">
+    <h4 class="flex-item-center">Search options</h4>
+    <mat-selection-list dense>
+      <mat-list-option>Show short version:</mat-list-option>
+      <mat-list-option selected="true ">Search as you type:</mat-list-option>
+      <mat-list-option>Disable html stripping:</mat-list-option>
+    </mat-selection-list>
   </div>
-  <div class="content" *ngIf="searchFilter[0].type =='date'">
-    <ng-container *ngTemplateOutlet="dateFilterTemplate;context:{'searchFilter':searchFilter}"></ng-container>
+  <div class="max-width">
+    <button class="max-width" mat-stroked-button>Search</button>
   </div>
 </div>
-<div class=" flex-col bg-grey search-options">
-  <h4 class="flex-item-center">Search options</h4>
-  <mat-selection-list>
-    <mat-list-option>Show short version:</mat-list-option>
-    <mat-list-option selected="true ">Search as you type:</mat-list-option>
-    <mat-list-option>Disable html stripping:</mat-list-option>
-  </mat-selection-list>
-</div>
-<div class="max-width">
-  <button class="max-width" mat-stroked-button>Search</button>
-</div>
+
+
+<pre>{{elasticQuery | json}}</pre>
+<!--TEXT FORM-->
 <ng-template #textFilterTemplate let-searchFilter="searchFilter">
   <div class="flex-col">
     <div class="flex-row text-filter">
       <mat-form-field class="operator">
         <mat-label>Operator</mat-label>
-        <mat-select>
-          <mat-option selected value="and">and</mat-option>
-          <mat-option value="or">or</mat-option>
-          <mat-option value="not">not</mat-option>
+        <mat-select [formControl]="searchFilter.formType.operatorFormControl">
+          <mat-option value="must">and</mat-option>
+          <mat-option value="should">or</mat-option>
+          <mat-option value="must_not">not</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field class="match">
         <mat-label>Match</mat-label>
-        <mat-select>
+        <mat-select [formControl]="searchFilter.formType.matchFormControl">
           <mat-option value="phrase_prefix">Phrase prefix</mat-option>
           <mat-option value="word">word</mat-option>
           <mat-option value="phrase">phrase</mat-option>
@@ -59,7 +65,7 @@
       </mat-form-field>
       <mat-form-field class="slop">
         <mat-label>Slop</mat-label>
-        <mat-select>
+        <mat-select [formControl]="searchFilter.formType.slopFormControl">
           <mat-option value="0">0</mat-option>
           <mat-option value="1">1</mat-option>
           <mat-option value="2">2</mat-option>
@@ -72,20 +78,24 @@
     <div>
       <mat-form-field floatLabel="never" class="max-width">
   <textarea matInput class="max-width"
+            [formControl]="searchFilter.formType.textAreaFormControl"
             placeholder="Type here"></textarea>
       </mat-form-field>
     </div>
   </div>
 </ng-template>
+
+<!--DATE FORM-->
 <ng-template #dateFilterTemplate let-searchFilter="searchFilter">
   <div class="flex-col">
     <mat-form-field>
-      <input matInput [matDatepicker]="from" placeholder="From">
+      <input matInput [matDatepicker]="from" placeholder="From"
+             [formControl]="searchFilter.formType.dateFromFormControl">
       <mat-datepicker-toggle matSuffix [for]="from"></mat-datepicker-toggle>
       <mat-datepicker #from></mat-datepicker>
     </mat-form-field>
     <mat-form-field>
-      <input matInput [matDatepicker]="to" placeholder="To">
+      <input matInput [matDatepicker]="to" placeholder="To" [formControl]="searchFilter.formType.dateToFormControl">
       <mat-datepicker-toggle matSuffix [for]="to"></mat-datepicker-toggle>
       <mat-datepicker #to></mat-datepicker>
     </mat-form-field>
