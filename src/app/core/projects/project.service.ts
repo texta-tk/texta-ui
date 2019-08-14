@@ -5,8 +5,7 @@ import {LocalStorageService} from '../util/local-storage.service';
 import {LogService} from '../util/log.service';
 import {Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
-import {Project} from '../../shared/types/Project';
-import {ProjectField} from '../../shared/types/ProjectField';
+import {Project, ProjectFact, ProjectField} from '../../shared/types/Project';
 
 @Injectable({
   providedIn: 'root'
@@ -58,6 +57,14 @@ export class ProjectService {
     ).pipe(
       tap(e => this.logService.logStatus(e, 'get Project Fields')),
       catchError(this.logService.handleError<ProjectField[]>('getProjectFields')));
+  }
+
+  getProjectFacts(id: number): Observable<ProjectFact[] | HttpErrorResponse> {
+    return this.http.get<ProjectFact[]>(
+      this.apiUrl + '/projects/' + id + '/get_facts/',
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'get Project Facts')),
+      catchError(this.logService.handleError<ProjectFact[]>('getProjectFacts')));
   }
 
   // todo backend seperate endpoint

@@ -1,7 +1,10 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Field, ProjectField} from '../../../shared/types/ProjectField';
+import {Field, Project, ProjectFact, ProjectField} from '../../../shared/types/Project';
 import {FormControl} from '@angular/forms';
-import {Subject} from 'rxjs';
+import {of, Subject} from 'rxjs';
+import {switchMap, take} from 'rxjs/operators';
+import {ProjectService} from '../../../core/projects/project.service';
+import {ProjectStore} from '../../../core/projects/project.store';
 
 export class TextTypeForm {
   textAreaFormControl = new FormControl();
@@ -15,9 +18,14 @@ export class DateTypeForm {
   dateToFormControl = new FormControl();
 }
 
+export class FactNameTypeForm {
+  factNameOperatorFormControl = new FormControl();
+  factNameFormControl = new FormControl();
+}
+
 export class FilterForm {
   fields: Field[];
-  formType: DateTypeForm | TextTypeForm;
+  formType: DateTypeForm | TextTypeForm | FactNameTypeForm;
   deleted$: Subject<boolean>;
 }
 
@@ -57,12 +65,23 @@ export class BuildSearchComponent implements OnInit {
   fieldsFormControl = new FormControl();
   filtersList: FilterForm[] = [];
   elasticQuery: ElasticsearchQuery;
+  factNames: ProjectFact[] = [];
 
-  constructor() {
+  constructor(private projectService: ProjectService, private projectStore: ProjectStore) {
     this.elasticQuery = new ElasticsearchQuery();
   }
 
   ngOnInit() {
+    this.projectStore.getCurrentProject().pipe(switchMap((x: Project) => {
+      if (x) {
+        return this.projectService.getProjectFacts(x.id);
+      }
+      return of(null);
+    })).subscribe(resp => {
+      if (resp) {
+        this.factNames = resp;
+      }
+    });
   }
 
   onOpenedChange(opened) {
@@ -76,9 +95,12 @@ export class BuildSearchComponent implements OnInit {
       if (filterForm.fields[0].type === 'text') {
         filterForm.formType = new TextTypeForm();
         this.textTypeFormListeners(filterForm);
-      } else {
+      } else if (filterForm.fields[0].type === 'date') {
         filterForm.formType = new DateTypeForm();
         this.dateTypeFormListeners(filterForm);
+      } else {
+        filterForm.formType = new FactNameTypeForm();
+        this.factNameTypeFormListeners(filterForm);
       }
       this.filtersList.push(filterForm);
       this.fieldsFormControl.reset();
@@ -95,14 +117,17 @@ export class BuildSearchComponent implements OnInit {
   textTypeFormListeners(filterForm: FilterForm) {
     // using javascript object identifier to delete cause everything is a shallow copy
     const formType = filterForm.formType as TextTypeForm;
+    formType.slopFormControl.setValue('0');
+    formType.matchFormControl.setValue('phrase_prefix');
+    formType.operatorFormControl.setValue('must');
     const formQuery = {
       bool: {
         should: {
           multi_match: {
             query: '',
             fields: filterForm.fields.map(x => x.path),
-            type: '',
-            slop: 0
+            type: formType.matchFormControl.value,
+            slop: formType.slopFormControl.value
           }
         }
       }
@@ -113,7 +138,7 @@ export class BuildSearchComponent implements OnInit {
       bool: {}
     };
     // avoid linter error
-    elasticQueryShould.bool = {should: formQueries};
+    elasticQueryShould.bool = {[formType.operatorFormControl.value]: formQueries};
     this.elasticQuery.query.bool.should.push(elasticQueryShould);
 
     formType.textAreaFormControl.valueChanges.subscribe(f => {
@@ -136,9 +161,8 @@ export class BuildSearchComponent implements OnInit {
         this.buildTextareaMultiMatchQuery(formQueries, formQuery, formType.textAreaFormControl.value);
       }
     });
-    // possible memory leak havent checked yet
     // using javascript object identifier to delete cause everything is a shallow copy
-    filterForm.deleted$.subscribe(f => {
+    filterForm.deleted$.pipe(take(1)).subscribe(f => {
       const index = this.elasticQuery.query.bool.should.indexOf(elasticQueryShould, 0);
       console.log(index);
       if (index > -1) {
@@ -169,8 +193,8 @@ export class BuildSearchComponent implements OnInit {
     const accessor: string = fieldPaths.join(',');
     const fromDate = {gte: ''};
     const toDate = {lte: ''};
-    const fromDateAccessor = {[accessor]: fromDate};
-    const toDateAccessor = {[accessor]: toDate};
+    const fromDateAccessor = {range: {[accessor]: fromDate}};
+    const toDateAccessor = {range: {[accessor]: toDate}};
 
     this.elasticQuery.query.bool.must.push(fromDateAccessor);
     this.elasticQuery.query.bool.must.push(toDateAccessor);
@@ -181,9 +205,8 @@ export class BuildSearchComponent implements OnInit {
     formType.dateToFormControl.valueChanges.subscribe(f => {
       toDate.lte = f;
     });
-    // possible memory leak havent checked yet
     // using javascript object identifier to delete cause everything is a shallow copy
-    filterForm.deleted$.subscribe(f => {
+    filterForm.deleted$.pipe(take(1)).subscribe(f => {
       let index = this.elasticQuery.query.bool.must.indexOf(fromDateAccessor, 0);
       console.log(index);
       if (index > -1) {
@@ -198,12 +221,64 @@ export class BuildSearchComponent implements OnInit {
 
   }
 
+  factNameTypeFormListeners(filterForm: FilterForm) {
+    const formType = filterForm.formType as FactNameTypeForm;
+    const fieldPaths = filterForm.fields.map(x => x.path);
+    formType.factNameOperatorFormControl.setValue('must');
+    const selection = {
+      'texta_facts.fact': formType.factNameFormControl.value
+    };
+    const formQuery = {
+      nested: {
+        query: {
+          bool: {
+            must: [
+              {
+                term: {
+                  'texta_facts.doc_path': fieldPaths
+                }
+              },
+              {
+                term: selection
+              }
+            ]
+          }
+        }
+      }
+    };
+    const query = {
+      bool: {}
+    };
+    query.bool = {[formType.factNameOperatorFormControl.value]: formQuery};
+    this.elasticQuery.query.bool.must.push(query);
+    formType.factNameOperatorFormControl.valueChanges.subscribe((f: string) => {
+      query.bool = {[f]: formQuery};
+    });
+    formType.factNameFormControl.valueChanges.subscribe((f: string) => {
+      // selection['texta_facts.fact'] = f;
 
-  isTextTypeForm(formType: DateTypeForm | TextTypeForm) {
+    });
+
+    filterForm.deleted$.pipe(take(1)).subscribe(f => {
+      const index = this.elasticQuery.query.bool.must.indexOf(query, 0);
+      console.log(index);
+      if (index > -1) {
+        this.elasticQuery.query.bool.must.splice(index, 1);
+      }
+      console.log(query);
+    });
+
+  }
+
+  isFactNameTypeForm(formType: DateTypeForm | TextTypeForm | FactNameTypeForm) {
+    return formType instanceof FactNameTypeForm;
+  }
+
+  isTextTypeForm(formType: DateTypeForm | TextTypeForm | FactNameTypeForm) {
     return formType instanceof TextTypeForm;
   }
 
-  isDateTypeForm(formType: DateTypeForm | TextTypeForm) {
+  isDateTypeForm(formType: DateTypeForm | TextTypeForm | FactNameTypeForm) {
     return formType instanceof DateTypeForm;
   }
 
@@ -212,4 +287,5 @@ export class BuildSearchComponent implements OnInit {
     // filter out empty values
     return stringList.filter(x => x !== '');
   }
+
 }

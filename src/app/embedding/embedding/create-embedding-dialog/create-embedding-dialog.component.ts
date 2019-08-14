@@ -7,9 +7,8 @@ import {mergeMap, take} from 'rxjs/operators';
 import {of} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ProjectStore} from '../../../core/projects/project.store';
-import {Project} from '../../../shared/types/Project';
+import {Field, Project, ProjectField} from '../../../shared/types/Project';
 import {ProjectService} from '../../../core/projects/project.service';
-import {Field, ProjectField} from '../../../shared/types/ProjectField';
 import {Embedding} from '../../../shared/types/tasks/Embedding';
 
 @Component({

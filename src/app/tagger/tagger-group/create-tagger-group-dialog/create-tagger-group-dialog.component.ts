@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ProjectField} from '../../../shared/types/ProjectField';
+import {ProjectField} from '../../../shared/types/Project';
 import {mergeMap, take} from 'rxjs/operators';
 import {LogService} from '../../../core/util/log.service';
 import {TaggerOptions} from '../../../shared/types/tasks/TaggerOptions';

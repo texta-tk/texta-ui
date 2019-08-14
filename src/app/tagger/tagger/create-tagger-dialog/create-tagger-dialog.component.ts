@@ -4,7 +4,7 @@ import {ErrorStateMatcher, MatDialogRef} from '@angular/material';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {ProjectService} from '../../../core/projects/project.service';
 import {HttpErrorResponse} from '@angular/common/http';
-import {ProjectField} from '../../../shared/types/ProjectField';
+import {ProjectField} from '../../../shared/types/Project';
 import {TaggerService} from '../../../core/taggers/tagger.service';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {mergeMap, take} from 'rxjs/operators';
