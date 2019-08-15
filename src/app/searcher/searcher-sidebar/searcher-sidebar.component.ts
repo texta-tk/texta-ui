@@ -1,10 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ProjectField} from '../../shared/types/Project';
-import {mergeMap} from 'rxjs/operators';
+import {switchMap, takeUntil} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ProjectStore} from '../../core/projects/project.store';
 import {ProjectService} from '../../core/projects/project.service';
-import {of} from 'rxjs';
+import {of, Subject} from 'rxjs';
 import {LogService} from '../../core/util/log.service';
 
 @Component({
@@ -12,14 +12,15 @@ import {LogService} from '../../core/util/log.service';
   templateUrl: './searcher-sidebar.component.html',
   styleUrls: ['./searcher-sidebar.component.scss']
 })
-export class SearcherSidebarComponent implements OnInit {
+export class SearcherSidebarComponent implements OnInit, OnDestroy {
   projectFields: ProjectField[];
+  destroy$: Subject<boolean> = new Subject();
 
   constructor(private projectStore: ProjectStore, private projectService: ProjectService, private logService: LogService) {
   }
 
   ngOnInit() {
-    this.projectStore.getCurrentProject().pipe(mergeMap(currentProject => {
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$), switchMap(currentProject => {
       if (currentProject) {
         return this.projectService.getProjectFields(currentProject.id);
       } else {
@@ -32,6 +33,11 @@ export class SearcherSidebarComponent implements OnInit {
         this.logService.snackBarError(resp, 5000);
       }
     });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 
 }
