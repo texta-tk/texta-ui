@@ -76,7 +76,9 @@ export class TextTypeForm {
 
   // every newline in textarea is a new multi_match clause
   private buildTextareaMultiMatchQuery(formQueries, formQuery, formValue) {
+    // reset
     formQueries.splice(0, formQueries.length);
+
     const stringList = formValue.split('\n');
     // filter out empty values
     const newlineString = stringList.filter(x => x !== '');
@@ -152,40 +154,48 @@ export class FactNameTypeForm {
     this.initFormListeners();
   }
 
-  // todo support multiple facts, havent imported a dataset yet, refactor
+  // todo test this, refactor
   private initFormListeners() {
     const fieldPaths = this.fields.map(x => x.path);
-    const selection = {
-      'texta_facts.fact': this.factNameFormControl.value
-    };
+
     const formQuery = {
       nested: {
         query: {
           bool: {
-            must: [
-              {
-                term: {
-                  'texta_facts.doc_path': fieldPaths
-                }
-              },
-              {
-                term: selection
-              }
-            ]
+            must: []
           }
+        },
+        path: fieldPaths,
+        inner_hits: {
+          size: 100,
+          name: '??' // todo
         }
       }
     };
+    const formQueries = [];
     const query = {
       bool: {}
     };
-    query.bool = {[this.factNameOperatorFormControl.value]: formQuery};
+    query.bool = {[this.factNameOperatorFormControl.value]: formQueries};
     this.elasticQuery.query.bool.must.push(query);
     this.factNameOperatorFormControl.valueChanges.subscribe((value: string) => {
-      query.bool = {[value]: formQuery};
+      query.bool = {[value]: formQueries};
     });
-    this.factNameFormControl.valueChanges.subscribe((f: string) => {
-      // selection['texta_facts.fact'] = f;
+    this.factNameFormControl.valueChanges.subscribe((f: string[]) => {
+      formQueries.splice(0, formQueries.length);
+
+      console.log(formQueries);
+      // filter out empty values
+      const newlineString = f.filter(x => x !== '');
+      if (newlineString.length > 0) {
+        for (const line of newlineString) {
+          // json for deep copy
+          const newFormQuery = JSON.parse(JSON.stringify(formQuery));
+          newFormQuery.nested.query.bool.must.push({term: {'texta_facts.doc_path': fieldPaths}});
+          newFormQuery.nested.query.bool.must.push({term: {'texta_facts.fact': line}});
+          formQueries.push(newFormQuery);
+        }
+      }
 
     });
 
