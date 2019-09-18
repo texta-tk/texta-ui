@@ -156,7 +156,7 @@ export class FactNameTypeForm {
 
   // todo test this, refactor
   private initFormListeners() {
-    const fieldPaths = this.fields.map(x => x.path);
+    const fieldPaths = this.fields.map(x => x.path).join(',');
 
     const formQuery = {
       nested: {
