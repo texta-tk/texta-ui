@@ -21,6 +21,7 @@ export class Tagger {
   num_features: number;
   plot: unknown;
   task: TaskStatus;
+  fields_parsed: string[];
 }
 
 export class TaggerGroup {

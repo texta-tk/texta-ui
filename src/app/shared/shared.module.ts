@@ -2,6 +2,7 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
+import { FlexLayoutModule } from '@angular/flex-layout';
 import {MatIconModule} from '@angular/material/icon';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatInputModule} from '@angular/material/input';
@@ -24,6 +25,7 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {ScrollingModule} from '@angular/cdk/scrolling';
 import {MatExpansionModule} from '@angular/material/expansion';
+import {MatCheckboxModule} from '@angular/material/checkbox'; 
 
 import {LoginDialogComponent} from './components/dialogs/login/login-dialog.component';
 import {GenericTableComponent} from './components/generic-table/generic-table.component';
@@ -60,7 +62,8 @@ import {MatNativeDateModule} from '@angular/material';
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
-
+    FlexLayoutModule,
+    MatCheckboxModule,
     MatFormFieldModule,
     MatInputModule,
     MatToolbarModule,
@@ -93,6 +96,7 @@ import {MatNativeDateModule} from '@angular/material';
 
     ScrollingModule,
     MatFormFieldModule,
+    MatCheckboxModule,
     MatInputModule,
     MatToolbarModule,
     MatSnackBarModule,

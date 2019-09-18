@@ -1,14 +1,16 @@
 <mat-form-field class="max-width">
-  <input matInput placeholder="Tag text">
+  <input matInput placeholder="Tag text" #textInput>
 </mat-form-field>
+<mat-checkbox [(ngModel)]="lemmatize">Lemmatize</mat-checkbox>
+<div *ngIf="result" style="margin-top: 10px">
+ <span class="mat-body-strong">Result: </span>{{result.result}}
+ <br>
+ <span class="mat-body-strong">Probability:</span> {{result.probability}}
+</div>
 <div class="flex-col">
   <div class="flex-row">
-    <div class="flex-item-left">
-      <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Close</button>
-    </div>
     <div class="flex-item-right">
-      <button type="submit" mat-button (click)="onSubmit()">Save</button>
+      <button type="submit" mat-button (click)="onSubmit(textInput.value)">Post</button>
     </div>
   </div>
-
 </div>

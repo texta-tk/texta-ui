@@ -35,7 +35,7 @@
 
       <mat-form-field>
         <mat-label>Select Embedding</mat-label>
-        <mat-select formControlName="embeddingFormControl" required>
+        <mat-select formControlName="embeddingFormControl">
           <mat-option *ngFor="let item of embeddings" [value]="item">
             {{item.description}}
           </mat-option>
@@ -66,17 +66,6 @@
           Classifier is <strong>required</strong>
         </mat-error>
       </mat-form-field>
-      <mat-form-field>
-        <mat-label>Feature selector</mat-label>
-        <mat-select formControlName="featureSelectorFormControl" required>
-          <mat-option *ngFor="let item of taggerOptions.actions.POST.feature_selector.choices" [value]="item">
-            {{item.display_name}}
-          </mat-option>
-        </mat-select>
-        <mat-error *ngIf="taggerGroupForm.get('taggerForm').get('featureSelectorFormControl').hasError('required')">
-          Feature selector is <strong>required</strong>
-        </mat-error>
-      </mat-form-field>
 
       <mat-form-field>
         <input matInput type="number" placeholder="Maximum sample size" formControlName="sampleSizeFormControl">
@@ -100,4 +89,3 @@
     </div>
   </form>
 </div>
-

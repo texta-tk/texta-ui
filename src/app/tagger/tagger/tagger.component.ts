@@ -6,7 +6,7 @@ import {LogService} from '../../core/util/log.service';
 import {TaggerService} from '../../core/taggers/tagger.service';
 import {ProjectStore} from '../../core/projects/project.store';
 import {Tagger} from '../../shared/types/tasks/Tagger';
-import {concatMap, delay, mergeMap, switchMap, take} from 'rxjs/operators';
+import {switchMap, take} from 'rxjs/operators';
 import {CreateTaggerDialogComponent} from './create-tagger-dialog/create-tagger-dialog.component';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {Project} from '../../shared/types/Project';
@@ -40,6 +40,8 @@ export class TaggerComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
+  currentProject: Project;
+
 
   constructor(private projectStore: ProjectStore,
               private taggerService: TaggerService,
@@ -52,7 +54,8 @@ export class TaggerComponent implements OnInit, OnDestroy {
     this.tableData.paginator = this.paginator;
     this.currentProjectSubscription = this.projectStore.getCurrentProject().pipe(switchMap(currentProject => {
       if (currentProject) {
-        return this.taggerService.getTaggers(currentProject.id);
+        this.currentProject = currentProject;
+        return this.taggerService.getTaggers(this.currentProject.id);
       } else {
         return of(null);
       }
@@ -66,9 +69,8 @@ export class TaggerComponent implements OnInit, OnDestroy {
       }
     });
     // check for updates after 30s every 30s
-    this.updateTaggersSubscription = this.projectStore.getCurrentProject().pipe(switchMap((currentProject: Project) => {
-      return timer(30000, 30000).pipe(switchMap(_ => this.taggerService.getTaggers(currentProject.id)));
-    })).subscribe((resp: Tagger[] | HttpErrorResponse) => {
+    this.updateTaggersSubscription = timer(30000, 30000).pipe(switchMap(_ => this.taggerService.getTaggers(this.currentProject.id)))
+    .subscribe((resp: Tagger[] | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         if (resp.length > 0) {
           resp.map(tagger => {
@@ -81,20 +83,11 @@ export class TaggerComponent implements OnInit, OnDestroy {
   }
 
   retrainTagger(value) {
-    this.projectStore.getCurrentProject().pipe(take(1), mergeMap(currentProject => {
-      if (currentProject) {
-        return this.taggerService.retrainTagger(currentProject.id, value.id);
+      if (this.currentProject) {
+        return this.taggerService.retrainTagger(this.currentProject.id, value.id);
       } else {
         return null;
       }
-    })).pipe(delay(1000)).subscribe(resp => { // delay cause getting a response doesnt actually do anything?
-      if (value) {
-        this.projectStore.getCurrentProject().pipe(take(1)).subscribe(currentProject => {
-          // refresh
-          this.projectStore.setCurrentProject(currentProject);
-        });
-      }
-    });
   }
 
   ngOnDestroy() {
@@ -130,17 +123,27 @@ export class TaggerComponent implements OnInit, OnDestroy {
     });
   }
 
-  tagTextDialog(element) {
+  tagTextDialog(tagger: Tagger) {
     const dialogRef = this.dialog.open(TagTextDialogComponent, {
+      data: {taggerId: tagger.id, currentProjectId: this.currentProject.id },
       maxHeight: '665px',
       width: '700px',
     });
   }
 
-  tagDocDialog(element) {
+  tagDocDialog(tagger: Tagger) {
     const dialogRef = this.dialog.open(TagDocDialogComponent, {
+      data: {tagger: tagger, currentProjectId: this.currentProject.id },
       maxHeight: '665px',
       width: '700px',
     });
+  }
+
+  onDelete(tagger: Tagger, index: number) {
+    this.taggerService.deleteTagger(this.currentProject.id, tagger.id).pipe(take(1)).subscribe(() => {
+      this.logService.snackBarMessage(`Tagger ${tagger.id}: ${tagger.description} deleted`, 2000);
+      this.tableData.data.splice(index, 1);
+      this.tableData.data = [...this.tableData.data]
+    })
   }
 }
