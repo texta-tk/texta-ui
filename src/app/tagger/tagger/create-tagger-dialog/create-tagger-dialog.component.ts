@@ -21,19 +21,19 @@ import {Tagger} from '../../../shared/types/tasks/Tagger';
   styleUrls: ['./create-tagger-dialog.component.scss']
 })
 export class CreateTaggerDialogComponent implements OnInit {
+  defaultQuery = '{"query": {"match_all": {}}}';
 
   taggerForm = new FormGroup({
     descriptionFormControl: new FormControl('', [
       Validators.required,
     ]),
+    queryFormControl: new FormControl('', []),
     fieldsFormControl: new FormControl([], [Validators.required]),
     embeddingFormControl: new FormControl(),
     vectorizerFormControl: new FormControl([Validators.required]),
     classifierFormControl: new FormControl([Validators.required]),
-    featureSelectorFormControl: new FormControl([Validators.required]),
     sampleSizeFormControl: new FormControl(10000, [Validators.required]),
     negativeMultiplierFormControl: new FormControl(1.0, [Validators.required]),
-
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
@@ -84,11 +84,14 @@ export class CreateTaggerDialogComponent implements OnInit {
       embedding: (formData.embeddingFormControl as Embedding) ? (formData.embeddingFormControl as Embedding).id : null,
       vectorizer: formData.vectorizerFormControl.value,
       classifier: formData.classifierFormControl.value,
-      feature_selector: formData.featureSelectorFormControl.value,
       maximum_sample_size: formData.sampleSizeFormControl,
       negative_multiplier: formData.negativeMultiplierFormControl
-
     };
+
+    if (formData.queryFormControl) {
+      body['query'] = formData.queryFormControl;
+    }
+
     this.projectStore.getCurrentProject().pipe(take(1), mergeMap(currentProject => {
       if (currentProject) {
         return this.taggerService.createTagger(body, currentProject.id);
@@ -107,7 +110,6 @@ export class CreateTaggerDialogComponent implements OnInit {
   setDefaultFormValues(options: TaggerOptions) {
     this.taggerForm.get('vectorizerFormControl').setValue(options.actions.POST.vectorizer.choices[0]);
     this.taggerForm.get('classifierFormControl').setValue(options.actions.POST.classifier.choices[0]);
-    this.taggerForm.get('featureSelectorFormControl').setValue(options.actions.POST.feature_selector.choices[0]);
   }
 
 
