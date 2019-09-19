@@ -1,5 +1,10 @@
-<div fxLayout="column" class="wrapper">
-  <div>
+<mat-accordion [multi]="true"> <!--[displayMode]="flat"-->
+  <mat-expansion-panel [expanded]="true">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Current Search
+      </mat-panel-title>
+    </mat-expansion-panel-header>
     <mat-tab-group mat-stretch-tabs dynamicHeight>
       <mat-tab>
         <ng-template class="test" mat-tab-label>
@@ -25,7 +30,14 @@
         Content 1
       </mat-tab>
     </mat-tab-group>
-  </div>
+  </mat-expansion-panel>
+  <mat-expansion-panel [expanded]="true">
+    <mat-expansion-panel-header>
+      Saved Searches
+    </mat-expansion-panel-header>
+    <div>
+      <app-saved-searches></app-saved-searches>
+    </div>
+  </mat-expansion-panel>
   <div></div>
-  <div></div>
-</div>
+</mat-accordion>

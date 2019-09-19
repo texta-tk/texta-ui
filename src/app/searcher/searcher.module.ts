@@ -10,6 +10,7 @@ import {SearcherComponent} from './searcher.component';
 import {SearcherSidebarComponent} from './searcher-sidebar/searcher-sidebar.component';
 import {SearcherTableComponent} from './searcher-table/searcher-table.component';
 import {BuildSearchComponent} from './searcher-sidebar/build-search/build-search.component';
+import { SavedSearchesComponent } from './searcher-sidebar/saved-searches/saved-searches.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import {BuildSearchComponent} from './searcher-sidebar/build-search/build-search
     DateConstraintsComponent,
     FactConstraintsComponent,
     FactTextConstraintsComponent,
+    SavedSearchesComponent,
   ],
   imports: [
     SharedModule,
