@@ -2,7 +2,6 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
-import { FlexLayoutModule } from '@angular/flex-layout';
 import {MatIconModule} from '@angular/material/icon';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatInputModule} from '@angular/material/input';
@@ -25,7 +24,10 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {ScrollingModule} from '@angular/cdk/scrolling';
 import {MatExpansionModule} from '@angular/material/expansion';
-import {MatCheckboxModule} from '@angular/material/checkbox'; 
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatNativeDateModule} from '@angular/material';
+import {FlexLayoutModule} from '@angular/flex-layout';
 
 import {LoginDialogComponent} from './components/dialogs/login/login-dialog.component';
 import {GenericTableComponent} from './components/generic-table/generic-table.component';
@@ -40,9 +42,7 @@ import {BarsComponent} from './components/svg/chart/bars/bars.component';
 import {CirclesComponent} from './components/svg/chart/circles/circles.component';
 import {LineComponent} from './components/svg/chart/line/line.component';
 import {ConfirmDialogComponent} from './components/dialogs/confirm-dialog/confirm-dialog.component';
-import {MatDatepickerModule} from '@angular/material/datepicker';
-import {MatNativeDateModule} from '@angular/material';
-import {FlexLayoutModule} from '@angular/flex-layout';
+
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
     RegistrationDialogComponent,
