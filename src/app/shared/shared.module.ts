@@ -40,7 +40,7 @@ import {LineComponent} from './components/svg/chart/line/line.component';
 import {ConfirmDialogComponent} from './components/dialogs/confirm-dialog/confirm-dialog.component';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatNativeDateModule} from '@angular/material';
-
+import {FlexLayoutModule} from '@angular/flex-layout';
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
     RegistrationDialogComponent,
@@ -60,7 +60,7 @@ import {MatNativeDateModule} from '@angular/material';
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
-
+    FlexLayoutModule,
     MatFormFieldModule,
     MatInputModule,
     MatToolbarModule,
@@ -90,7 +90,7 @@ import {MatNativeDateModule} from '@angular/material';
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
-
+    FlexLayoutModule,
     ScrollingModule,
     MatFormFieldModule,
     MatInputModule,

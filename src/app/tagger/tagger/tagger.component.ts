@@ -6,7 +6,7 @@ import {LogService} from '../../core/util/log.service';
 import {TaggerService} from '../../core/taggers/tagger.service';
 import {ProjectStore} from '../../core/projects/project.store';
 import {Tagger} from '../../shared/types/tasks/Tagger';
-import {concatMap, delay, mergeMap, switchMap, take} from 'rxjs/operators';
+import {delay, mergeMap, switchMap, take} from 'rxjs/operators';
 import {CreateTaggerDialogComponent} from './create-tagger-dialog/create-tagger-dialog.component';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {Project} from '../../shared/types/Project';

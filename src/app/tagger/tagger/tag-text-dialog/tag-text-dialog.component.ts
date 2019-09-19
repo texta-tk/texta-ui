@@ -3,7 +3,6 @@ import {LogService} from '../../../core/util/log.service';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {TaggerService} from '../../../core/taggers/tagger.service';
 import {MatDialogRef} from '@angular/material';
-import {TagDocDialogComponent} from '../tag-doc-dialog/tag-doc-dialog.component';
 
 @Component({
   selector: 'app-tag-text-dialog',

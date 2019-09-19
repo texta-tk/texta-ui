@@ -2,14 +2,13 @@ import {Injectable} from '@angular/core';
 import {
   HttpInterceptor,
   HttpRequest,
-  HttpResponse,
   HttpHandler,
   HttpEvent,
   HttpErrorResponse
 } from '@angular/common/http';
 
-import {Observable, of, throwError} from 'rxjs';
-import {map, catchError, take} from 'rxjs/operators';
+import {Observable, throwError} from 'rxjs';
+import {map, catchError} from 'rxjs/operators';
 import {LocalStorageService} from '../util/local-storage.service';
 
 

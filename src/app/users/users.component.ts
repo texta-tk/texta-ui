@@ -3,8 +3,8 @@ import {UserService} from '../core/users/user.service';
 import {UserProfile} from '../shared/types/UserProfile';
 import {LogService} from '../core/util/log.service';
 import {ProjectStore} from '../core/projects/project.store';
-import {flatMap, mergeMap} from 'rxjs/operators';
-import {from, Observable, of, Subscription} from 'rxjs';
+import {mergeMap} from 'rxjs/operators';
+import {from, of, Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-users',

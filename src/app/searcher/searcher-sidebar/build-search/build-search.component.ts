@@ -5,8 +5,12 @@ import {of, Subject} from 'rxjs';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {ProjectService} from '../../../core/projects/project.service';
 import {ProjectStore} from '../../../core/projects/project.store';
-import {DateTypeForm, ElasticsearchQuery, FactNameTypeForm, TextTypeForm} from './FormTypes';
-
+import {
+  Constraint, DateConstraint,
+  ElasticsearchQuery, FactConstraint, FactTextConstraint,
+  TextConstraint
+} from './Constraints';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-build-search',
@@ -16,13 +20,14 @@ import {DateTypeForm, ElasticsearchQuery, FactNameTypeForm, TextTypeForm} from '
 export class BuildSearchComponent implements OnInit, OnDestroy {
   @Input() projectFields: ProjectField[] = [];
   fieldsFormControl = new FormControl();
-  filterFormsList: (DateTypeForm | TextTypeForm | FactNameTypeForm)[] = [];
+  filterFormsList: (Constraint)[] = [];
   factNames: ProjectFact[] = [];
   destroy$: Subject<boolean> = new Subject();
   // building whole query onto this
   elasticQuery: ElasticsearchQuery = new ElasticsearchQuery();
 
   constructor(private projectService: ProjectService, private projectStore: ProjectStore) {
+    console.log(this.projectFields);
   }
 
   ngOnInit() {
@@ -31,8 +36,10 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
         return this.projectService.getProjectFacts(currentProject.id);
       }
       return of(null);
-    })).subscribe(resp => {
-      if (resp) {
+    })).subscribe((resp: ProjectFact[] | HttpErrorResponse) => {
+      if (!(resp instanceof HttpErrorResponse)) {
+        this.filterFormsList = [];
+        this.elasticQuery = new ElasticsearchQuery();
         this.factNames = resp;
       }
     });
@@ -48,33 +55,39 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     if (!opened && (this.fieldsFormControl.value && this.fieldsFormControl.value.length > 0)) {
       const formFields: Field[] = this.fieldsFormControl.value;
       if (formFields[0].type === 'text') {
-        this.filterFormsList.push(new TextTypeForm(formFields, this.elasticQuery));
+        this.filterFormsList.push(new TextConstraint(formFields, this.elasticQuery));
       } else if (formFields[0].type === 'date') {
-        this.filterFormsList.push(new DateTypeForm(formFields, this.elasticQuery));
+        this.filterFormsList.push(new DateConstraint(formFields, this.elasticQuery));
+      } else if (formFields[0].type === 'keyword') { // temp for fact_text_values
+        this.filterFormsList.push(new FactTextConstraint(formFields, this.elasticQuery, this.factNames));
       } else {
-        this.filterFormsList.push(new FactNameTypeForm(formFields, this.elasticQuery));
+        this.filterFormsList.push(new FactConstraint(formFields, this.elasticQuery, this.factNames));
       }
       this.fieldsFormControl.reset();
       console.log(this.filterFormsList);
     }
   }
 
-  removeFilter(index, filterForm: DateTypeForm | TextTypeForm | FactNameTypeForm) {
+  removeFilter(index, filterForm: Constraint) {
     filterForm.deleted$.next(true);
     this.filterFormsList.splice(index, 1);
   }
 
 
-  isFactNameTypeForm(formType: DateTypeForm | TextTypeForm | FactNameTypeForm) {
-    return formType instanceof FactNameTypeForm;
+  isFactNameTypeForm(formType: Constraint) {
+    return formType instanceof FactConstraint;
   }
 
-  isTextTypeForm(formType: DateTypeForm | TextTypeForm | FactNameTypeForm) {
-    return formType instanceof TextTypeForm;
+  isTextTypeForm(formType: Constraint) {
+    return formType instanceof TextConstraint;
   }
 
-  isDateTypeForm(formType: DateTypeForm | TextTypeForm | FactNameTypeForm) {
-    return formType instanceof DateTypeForm;
+  isDateTypeForm(formType: Constraint) {
+    return formType instanceof DateConstraint;
+  }
+
+  isFactTextTypeForm(formType: Constraint) {
+    return formType instanceof FactTextConstraint;
   }
 
 

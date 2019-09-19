@@ -11,7 +11,7 @@ import {
 } from '@angular/router';
 import {Observable, of} from 'rxjs';
 import {UserStore} from '../users/user.store';
-import {map, mergeMap, take, takeUntil} from 'rxjs/operators';
+import {map, mergeMap, take} from 'rxjs/operators';
 import {UserProfile} from '../../shared/types/UserProfile';
 import {HttpErrorResponse} from '@angular/common/http';
 import {MatDialog} from '@angular/material';

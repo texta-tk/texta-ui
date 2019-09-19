@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {AsyncSubject, BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 
 import {Project} from '../../shared/types/Project';
 import {ProjectService} from './project.service';

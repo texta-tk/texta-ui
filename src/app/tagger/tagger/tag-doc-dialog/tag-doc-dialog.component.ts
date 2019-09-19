@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import {EditStopwordsDialogComponent} from '../edit-stopwords-dialog/edit-stopwords-dialog.component';
 import {LogService} from '../../../core/util/log.service';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {TaggerService} from '../../../core/taggers/tagger.service';

@@ -5,9 +5,8 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {Project} from '../../shared/types/Project';
 import {of, Subscription} from 'rxjs';
 import {ProjectStore} from '../../core/projects/project.store';
-import {CreateEmbeddingDialogComponent} from '../../embedding/embedding/create-embedding-dialog/create-embedding-dialog.component';
 import {MatDialog} from '@angular/material';
-import {Tagger, TaggerGroup} from '../../shared/types/tasks/Tagger';
+import {TaggerGroup} from '../../shared/types/tasks/Tagger';
 import {CreateTaggerGroupDialogComponent} from './create-tagger-group-dialog/create-tagger-group-dialog.component';
 import {TaggerGroupService} from '../../core/taggers/tagger-group.service';
 

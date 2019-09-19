@@ -28,11 +28,6 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     component: UserSettingsComponent,
   },
-  {
-    path: 'searcher',
-    canActivate: [AuthGuard],
-    component: SearcherComponent,
-  },
 ];
 
 @NgModule({

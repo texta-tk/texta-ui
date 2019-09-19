@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {LogService} from '../../../core/util/log.service';
-import {CreateTaggerDialogComponent} from '../create-tagger-dialog/create-tagger-dialog.component';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {TaggerService} from '../../../core/taggers/tagger.service';
 import {MatDialogRef} from '@angular/material';

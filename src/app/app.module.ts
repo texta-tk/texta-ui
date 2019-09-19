@@ -15,11 +15,9 @@ import {LexiconMinerComponent} from './lexicon-miner/lexicon-miner.component';
 import {TaggerModule} from './tagger/tagger.module';
 import {EmbeddingModule} from './embedding/embedding.module';
 import {ProjectModule} from './project/project.module';
-import { LexiconBuilderComponent } from './lexicon-miner/lexicon-builder/lexicon-builder.component';
-import { SearcherComponent } from './searcher/searcher.component';
-import { SearcherSidebarComponent } from './searcher/searcher-sidebar/searcher-sidebar.component';
-import { SearcherTableComponent } from './searcher/searcher-table/searcher-table.component';
-import { BuildSearchComponent } from './searcher/searcher-sidebar/build-search/build-search.component';
+import {LexiconBuilderComponent} from './lexicon-miner/lexicon-builder/lexicon-builder.component';
+import {SearcherModule} from './searcher/searcher.module';
+
 
 @NgModule({
   declarations: [
@@ -30,10 +28,6 @@ import { BuildSearchComponent } from './searcher/searcher-sidebar/build-search/b
     UsersComponent,
     LexiconMinerComponent,
     LexiconBuilderComponent,
-    SearcherComponent,
-    SearcherSidebarComponent,
-    SearcherTableComponent,
-    BuildSearchComponent,
   ],
   imports: [
     BrowserModule,
@@ -43,7 +37,8 @@ import { BuildSearchComponent } from './searcher/searcher-sidebar/build-search/b
     HttpClientModule,
     TaggerModule,
     EmbeddingModule,
-    ProjectModule
+    ProjectModule,
+    SearcherModule
   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: HttpAuthInterceptor, multi: true}],
 

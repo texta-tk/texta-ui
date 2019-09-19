@@ -20,13 +20,13 @@ import {Component, Input, OnChanges, SimpleChanges} from '@angular/core'
   `,
 })
 export class GradientComponent implements OnChanges {
-  @Input() id: string
-  @Input() colors: string[]
-  @Input() x1?: string[]
-  @Input() x2?: string[]
-  @Input() y1?: string[]
-  @Input() y2?: string[]
-  colorStops: object[]
+  @Input() id: string;
+  @Input() colors: string[];
+  @Input() x1?: string[];
+  @Input() x2?: string[];
+  @Input() y1?: string[];
+  @Input() y2?: string[];
+  colorStops: object[];
 
   ngOnChanges(changes: SimpleChanges): void {
     this.updateColorStops()

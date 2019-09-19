@@ -1,6 +1,6 @@
 export const useAccessor = (accessor, d, i) => (
   typeof accessor == "function" ? accessor(d, i) : accessor
-)
+);
 
 export interface DimensionsType {
   marginTop: number
@@ -13,8 +13,8 @@ export interface DimensionsType {
   boundedWidth?: number
 }
 
-let lastId = 0
+let lastId = 0;
 export const getUniqueId = (prefix="") => {
-  lastId++
+  lastId++;
   return [prefix, lastId].join("-")
-}
+};

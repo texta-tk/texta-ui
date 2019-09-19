@@ -1,4 +1,4 @@
-.wrapper{
+.wrapper {
   font-size: 14px;
 }
 
@@ -7,32 +7,12 @@
   margin-bottom: 5px;
   .header {
     .field-titles {
-      flex-wrap: wrap;
       h4 {
         margin: 0.25em 0 0;
         word-break: break-all;
       }
     }
-    .close-panel {
-      button {
-        height: 30px;
-        width: 30px;
-        line-height: 1;
-      }
-    }
-  }
-  .text-filter {
-    .operator {
-      width: 30%;
-    }
-    .match {
-      width: 48%;
-      margin-left: 1%;
-      margin-right: 1%;
-    }
-    .slop {
-      width: 20%;
-    }
+
   }
 }
 
@@ -40,10 +20,15 @@
   h4 {
     margin: 0.25em 0 0;
   }
-
   margin-bottom: 5px;
 }
 
 .bg-grey {
   background-color: #EFEFEF;
+}
+
+.mat-icon-button {
+  height: 30px;
+  width: 30px;
+  line-height: 1;
 }
