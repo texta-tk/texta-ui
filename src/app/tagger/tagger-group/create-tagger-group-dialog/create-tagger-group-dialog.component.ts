@@ -27,14 +27,13 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
     descriptionFormControl: new FormControl('', [
       Validators.required,
     ]),
-    factNameFormControl: new FormControl('TEEMA', Validators.required),
+    factNameFormControl: new FormControl('', Validators.required),
     taggerGroupSampleSizeFormControl: new FormControl(50, [Validators.required]),
     taggerForm: new FormGroup({
       fieldsFormControl: new FormControl([], [Validators.required]),
       embeddingFormControl: new FormControl(),
       vectorizerFormControl: new FormControl([Validators.required]),
       classifierFormControl: new FormControl([Validators.required]),
-      featureSelectorFormControl: new FormControl([Validators.required]),
       sampleSizeFormControl: new FormControl(10000, [Validators.required]),
       negativeMultiplierFormControl: new FormControl(1.0, [Validators.required]),
 
@@ -86,20 +85,25 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
   onSubmit() {
     console.log(this.taggerGroupForm.value);
     const formData = this.taggerGroupForm.value;
+    const tagger_body = {
+      fields: formData.taggerForm.fieldsFormControl,
+      vectorizer: formData.taggerForm.vectorizerFormControl.value,
+      classifier: formData.taggerForm.classifierFormControl.value,
+      maximum_sample_size: formData.taggerForm.sampleSizeFormControl,
+      negative_multiplier: formData.taggerForm.negativeMultiplierFormControl,
+    }
+
+    if (formData.taggerForm.embeddingFormControl) {
+      tagger_body['embedding'] = formData.taggerForm.embeddingFormControl.id
+    }
+
     const body = {
       description: formData.descriptionFormControl,
       fact_name: formData.factNameFormControl,
       minimum_sample_size: formData.taggerGroupSampleSizeFormControl,
-      tagger: {
-        embedding: formData.taggerForm.embeddingFormControl.id,
-        fields: formData.taggerForm.fieldsFormControl,
-        vectorizer: formData.taggerForm.vectorizerFormControl.value,
-        classifier: formData.taggerForm.classifierFormControl.value,
-        feature_selector: formData.taggerForm.featureSelectorFormControl.value,
-        maximum_sample_size: formData.taggerForm.sampleSizeFormControl,
-        negative_multiplier: formData.taggerForm.negativeMultiplierFormControl,
-      }
+      tagger: tagger_body
     };
+
     console.log(body);
     this.projectStore.getCurrentProject().pipe(take(1), mergeMap(currentProject => {
       if (currentProject) {
@@ -119,7 +123,6 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
   setDefaultFormValues(options: TaggerOptions) {
     this.taggerGroupForm.get('taggerForm').get('vectorizerFormControl').setValue(options.actions.POST.vectorizer.choices[0]);
     this.taggerGroupForm.get('taggerForm').get('classifierFormControl').setValue(options.actions.POST.classifier.choices[0]);
-    this.taggerGroupForm.get('taggerForm').get('featureSelectorFormControl').setValue(options.actions.POST.feature_selector.choices[0]);
   }
 
 

@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, Inject} from '@angular/core';
 import {LogService} from '../../../core/util/log.service';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {TaggerService} from '../../../core/taggers/tagger.service';
-import {MatDialogRef} from '@angular/material';
+import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
+import {take} from 'rxjs/operators';
+import {Tagger} from 'src/app/shared/types/tasks/Tagger';
 
 @Component({
   selector: 'app-tag-doc-dialog',
@@ -10,24 +12,25 @@ import {MatDialogRef} from '@angular/material';
   styleUrls: ['./tag-doc-dialog.component.scss']
 })
 export class TagDocDialogComponent implements OnInit {
+  lemmatize: boolean;
+  defaultDoc;
+  result: { result: boolean, probability: number };
 
-
-
-  constructor(private dialogRef: MatDialogRef<TagDocDialogComponent>,
-              private taggerService: TaggerService,
-              private logService: LogService,
-              private projectStore: ProjectStore) {
+  constructor(private taggerService: TaggerService,
+              @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, tagger: Tagger; }) {
   }
 
-  ngOnInit() {
-    // get stopwords
+  ngOnInit(): void {
+    this.defaultDoc = `{ "${this.data.tagger.fields_parsed[0]}": " " }`;
   }
 
-  onSubmit() {
-    // post stopwords
-  }
-
-  closeDialog(): void {
-    this.dialogRef.close();
+  onSubmit(doc) {
+    this.taggerService.tagDocument({
+      doc: JSON.parse(doc),
+      lemmatize: this.lemmatize
+    }, this.data.currentProjectId, this.data.tagger.id)
+      .pipe(take(1)).subscribe((resp: { result: boolean, probability: number }) => {
+      this.result = resp;
+    });
   }
 }
