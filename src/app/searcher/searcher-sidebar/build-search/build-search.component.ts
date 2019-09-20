@@ -5,12 +5,9 @@ import {of, Subject} from 'rxjs';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {ProjectService} from '../../../core/projects/project.service';
 import {ProjectStore} from '../../../core/projects/project.store';
-import {
-  Constraint, DateConstraint,
-  ElasticsearchQuery, FactConstraint, FactTextConstraint,
-  TextConstraint
-} from './Constraints';
+import {Constraint, DateConstraint, ElasticsearchQuery, FactConstraint, FactTextConstraint, TextConstraint} from './Constraints';
 import {HttpErrorResponse} from '@angular/common/http';
+import {SearcherService} from '../../../core/searcher/searcher.service';
 
 @Component({
   selector: 'app-build-search',
@@ -26,7 +23,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
   // building whole query onto this
   elasticQuery: ElasticsearchQuery = new ElasticsearchQuery();
 
-  constructor(private projectService: ProjectService, private projectStore: ProjectStore) {
+  constructor(private projectService: ProjectService, private projectStore: ProjectStore, private searcherService: SearcherService) {
     console.log(this.projectFields);
   }
 
@@ -38,6 +35,9 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
       return of(null);
     })).subscribe((resp: ProjectFact[] | HttpErrorResponse) => {
       if (!(resp instanceof HttpErrorResponse)) {
+        for (const constraint of this.filterFormsList) {
+          constraint.deleted$.next(true);
+        }
         this.filterFormsList = [];
         this.elasticQuery = new ElasticsearchQuery();
         this.factNames = resp;
@@ -55,17 +55,26 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     if (!opened && (this.fieldsFormControl.value && this.fieldsFormControl.value.length > 0)) {
       const formFields: Field[] = this.fieldsFormControl.value;
       if (formFields[0].type === 'text') {
-        this.filterFormsList.push(new TextConstraint(formFields, this.elasticQuery));
+        this.filterFormsList.push(new TextConstraint(formFields));
       } else if (formFields[0].type === 'date') {
-        this.filterFormsList.push(new DateConstraint(formFields, this.elasticQuery));
+        this.filterFormsList.push(new DateConstraint(formFields));
       } else if (formFields[0].type === 'keyword') { // temp for fact_text_values
-        this.filterFormsList.push(new FactTextConstraint(formFields, this.elasticQuery, this.factNames));
+        this.filterFormsList.push(new FactTextConstraint(formFields));
       } else {
-        this.filterFormsList.push(new FactConstraint(formFields, this.elasticQuery, this.factNames));
+        this.filterFormsList.push(new FactConstraint(formFields));
       }
       this.fieldsFormControl.reset();
       console.log(this.filterFormsList);
     }
+  }
+
+  buildSearch(id: number) {
+    for (const constraint of this.filterFormsList) {
+      constraint.deleted$.next(true);
+    }
+    this.filterFormsList.splice(0, this.filterFormsList.length);
+    console.log(this.filterFormsList);
+    this.filterFormsList.push(this.searcherService.getSavedSearchById(id, id));
   }
 
   removeFilter(index, filterForm: Constraint) {

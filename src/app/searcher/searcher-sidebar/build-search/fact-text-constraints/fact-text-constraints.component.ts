@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FactTextConstraint} from '../Constraints';
+import {ElasticsearchQuery, FactTextConstraint} from '../Constraints';
 import {FormControl} from '@angular/forms';
+import {ProjectFact} from '../../../../shared/types/Project';
 
 export class FactTextInputGroup {
   factTextOperatorFormControl = new FormControl();
@@ -21,6 +22,8 @@ export class FactTextInputGroup {
 
 export class FactTextConstraintsComponent implements OnInit {
   @Input() factTextConstraint: FactTextConstraint;
+  @Input() elasticSearchQuery: ElasticsearchQuery;
+  @Input() projectFacts: ProjectFact[];
   inputGroupArray: FactTextInputGroup[] = [];
   factTextTypeOperatorFormControl = new FormControl();
 

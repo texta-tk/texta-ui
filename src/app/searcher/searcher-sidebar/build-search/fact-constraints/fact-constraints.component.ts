@@ -1,7 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FactConstraint} from '../Constraints';
+import {ElasticsearchQuery, FactConstraint} from '../Constraints';
 import {FormControl} from '@angular/forms';
 import {take, takeUntil} from 'rxjs/operators';
+import {ProjectFact} from '../../../../shared/types/Project';
 
 @Component({
   selector: 'app-fact-constraints',
@@ -10,6 +11,8 @@ import {take, takeUntil} from 'rxjs/operators';
 })
 export class FactConstraintsComponent implements OnInit {
   @Input() factConstraint: FactConstraint;
+  @Input() elasticSearchQuery: ElasticsearchQuery;
+  @Input() projectFacts: ProjectFact[];
   factNameOperatorFormControl = new FormControl();
   factNameFormControl = new FormControl();
 
@@ -39,7 +42,7 @@ export class FactConstraintsComponent implements OnInit {
       bool: {}
     };
     query.bool = {[this.factNameOperatorFormControl.value]: formQueries};
-    this.factConstraint.elasticQuery.query.bool.must.push(query);
+    this.elasticSearchQuery.query.bool.must.push(query);
     this.factNameOperatorFormControl.valueChanges.pipe(takeUntil(this.factConstraint.deleted$)).subscribe((value: string) => {
       query.bool = {[value]: formQueries};
     });
@@ -62,10 +65,10 @@ export class FactConstraintsComponent implements OnInit {
     });
 
     this.factConstraint.deleted$.pipe(take(1)).subscribe(f => {
-      const index = this.factConstraint.elasticQuery.query.bool.must.indexOf(query, 0);
+      const index = this.elasticSearchQuery.query.bool.must.indexOf(query, 0);
       console.log(index);
       if (index > -1) {
-        this.factConstraint.elasticQuery.query.bool.must.splice(index, 1);
+        this.elasticSearchQuery.query.bool.must.splice(index, 1);
       }
       console.log(query);
     });

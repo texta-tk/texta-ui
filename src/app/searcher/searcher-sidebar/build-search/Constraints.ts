@@ -4,16 +4,19 @@ import {Field, ProjectFact} from '../../../shared/types/Project';
 export class Constraint {
   fields: Field[];
   deleted$: Subject<boolean> = new Subject<boolean>();
-  elasticQuery: ElasticsearchQuery;
 
-  constructor(fields: Field[], elasticSearchQuery: ElasticsearchQuery) {
+
+  constructor(fields: Field[]) {
     this.fields = fields;
-    this.elasticQuery = elasticSearchQuery;
   }
 }
 
-// for type checking, maybe need to add something specific to constraint in the future>?
+
 export class TextConstraint extends Constraint {
+
+  constructor(fields: Field[], public phrasePrefix?, public text?, public operator?) {
+    super(fields);
+  }
 
 }
 
@@ -24,18 +27,16 @@ export class DateConstraint extends Constraint {
 export class FactConstraint extends Constraint {
   projectFacts: ProjectFact[];
 
-  constructor(fields: Field[], elasticSearchQuery: ElasticsearchQuery, projectFacts: ProjectFact[]) {
-    super(fields, elasticSearchQuery);
-    this.projectFacts = projectFacts;
+  constructor(fields: Field[]) {
+    super(fields);
   }
 }
 
 export class FactTextConstraint extends Constraint {
   projectFacts: ProjectFact[];
 
-  constructor(fields: Field[], elasticSearchQuery: ElasticsearchQuery, projectFacts: ProjectFact[]) {
-    super(fields, elasticSearchQuery);
-    this.projectFacts = projectFacts;
+  constructor(fields: Field[]) {
+    super(fields);
   }
 }
 

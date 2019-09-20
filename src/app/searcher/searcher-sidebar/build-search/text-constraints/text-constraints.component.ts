@@ -1,5 +1,5 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {TextConstraint} from '../Constraints';
+import {AfterViewChecked, AfterViewInit, Component, Input, OnInit} from '@angular/core';
+import {ElasticsearchQuery, TextConstraint} from '../Constraints';
 import {FormControl} from '@angular/forms';
 import {take, takeUntil} from 'rxjs/operators';
 
@@ -10,6 +10,7 @@ import {take, takeUntil} from 'rxjs/operators';
 })
 export class TextConstraintsComponent implements OnInit {
   @Input() textConstraint: TextConstraint;
+  @Input() elasticSearchQuery: ElasticsearchQuery;
   textAreaFormControl = new FormControl();
   slopFormControl = new FormControl();
   matchFormControl = new FormControl();
@@ -19,6 +20,7 @@ export class TextConstraintsComponent implements OnInit {
     this.slopFormControl.setValue('0');
     this.matchFormControl.setValue('phrase_prefix');
     this.operatorFormControl.setValue('must');
+
   }
 
   ngOnInit() {
@@ -42,7 +44,7 @@ export class TextConstraintsComponent implements OnInit {
       }
     };
     formQuery.bool.should.push(multiMatchBlueprint);
-    this.textConstraint.elasticQuery.query.bool.should.push(elasticQueryShould);
+    this.elasticSearchQuery.query.bool.should.push(elasticQueryShould);
 
     this.textAreaFormControl.valueChanges.pipe(takeUntil(this.textConstraint.deleted$)).subscribe(value => {
       this.buildTextareaMultiMatchQuery(formQueries, value, multiMatchBlueprint);
@@ -66,12 +68,20 @@ export class TextConstraintsComponent implements OnInit {
     });
     // using javascript object identifier to delete cause everything is a shallow copy
     this.textConstraint.deleted$.pipe(take(1)).subscribe(f => {
-      const index = this.textConstraint.elasticQuery.query.bool.should.indexOf(elasticQueryShould, 0);
+      const index = this.elasticSearchQuery.query.bool.should.indexOf(elasticQueryShould, 0);
       if (index > -1) {
-        this.textConstraint.elasticQuery.query.bool.should.splice(index, 1);
+        this.elasticSearchQuery.query.bool.should.splice(index, 1);
       }
     });
+    // todo
+    if (this.textConstraint.operator && this.textConstraint.phrasePrefix && this.textConstraint.text) {
+      this.operatorFormControl.setValue(this.textConstraint.operator);
+      this.matchFormControl.setValue(this.textConstraint.phrasePrefix);
+      this.textAreaFormControl.setValue(this.textConstraint.text);
+    }
   }
+
+
 
   // every newline in textarea is a new multi_match clause
   private buildTextareaMultiMatchQuery(formQueries, formValue, multiMatchBlueprint) {

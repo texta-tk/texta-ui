@@ -21,16 +21,19 @@
       </div>
     </div>
     <div class="content" *ngIf="isTextTypeForm(searchFilter)">
-      <app-text-constraints [textConstraint]="searchFilter"></app-text-constraints>
+      <app-text-constraints [textConstraint]="searchFilter" [elasticSearchQuery]="elasticQuery"></app-text-constraints>
     </div>
     <div class="content" *ngIf="isDateTypeForm(searchFilter)">
-      <app-date-constraints [dateConstraint]="searchFilter"></app-date-constraints>
+      <app-date-constraints [dateConstraint]="searchFilter" [elasticSearchQuery]="elasticQuery"></app-date-constraints>
     </div>
     <div class="content" *ngIf="isFactNameTypeForm(searchFilter)">
-      <app-fact-constraints [factConstraint]="searchFilter"></app-fact-constraints>
+      <app-fact-constraints [factConstraint]="searchFilter" [elasticSearchQuery]="elasticQuery"
+                            [projectFacts]="factNames"></app-fact-constraints>
     </div>
     <div class="content" *ngIf="isFactTextTypeForm(searchFilter)">
-      <app-fact-text-constraints [factTextConstraint]="searchFilter"></app-fact-text-constraints>
+      <app-fact-text-constraints [factTextConstraint]="searchFilter"
+                                 [elasticSearchQuery]="elasticQuery"
+                                 [projectFacts]="factNames"></app-fact-text-constraints>
     </div>
   </div>
   <div fxLayout="column" class="bg-grey search-options">

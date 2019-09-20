@@ -1,6 +1,7 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatTableDataSource} from '@angular/material';
+import {SearcherService} from '../../../core/searcher/searcher.service';
 
 @Component({
   selector: 'app-saved-searches',
@@ -8,12 +9,13 @@ import {MatTableDataSource} from '@angular/material';
   styleUrls: ['./saved-searches.component.scss']
 })
 export class SavedSearchesComponent implements OnInit {
-  displayedColumns: string[] = ['select', 'name', 'url' ];
+  @Output() onSearchClicked = new EventEmitter<number>(); // search object future todo
+  displayedColumns: string[] = ['select', 'name', 'url'];
   selection = new SelectionModel<any>(true, []);
   mockData =
     [
       {
-        id: 1,
+        id: 0,
         name: 'search: 1',
       },
       {
@@ -34,6 +36,10 @@ export class SavedSearchesComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  displaySavedSearch(id) {
+    this.onSearchClicked.emit(id);
   }
 
 
