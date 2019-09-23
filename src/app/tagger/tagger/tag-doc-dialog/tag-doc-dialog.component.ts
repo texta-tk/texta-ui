@@ -21,7 +21,9 @@ export class TagDocDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.defaultDoc = `{ "${this.data.tagger.fields_parsed[0]}": " " }`;
+    if (this.data.tagger.fields_parsed && this.data.tagger.fields_parsed.length > 0) {
+      this.defaultDoc = `{ "${this.data.tagger.fields_parsed[0]}": " " }`;
+    }
   }
 
   onSubmit(doc) {

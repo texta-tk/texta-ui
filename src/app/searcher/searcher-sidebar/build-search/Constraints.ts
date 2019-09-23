@@ -1,10 +1,7 @@
-import {Subject} from 'rxjs';
 import {Field, ProjectFact} from '../../../shared/types/Project';
 
 export class Constraint {
   fields: Field[];
-  deleted$: Subject<boolean> = new Subject<boolean>();
-
 
   constructor(fields: Field[]) {
     this.fields = fields;
@@ -25,7 +22,6 @@ export class DateConstraint extends Constraint {
 }
 
 export class FactConstraint extends Constraint {
-  projectFacts: ProjectFact[];
 
   constructor(fields: Field[]) {
     super(fields);
@@ -33,7 +29,6 @@ export class FactConstraint extends Constraint {
 }
 
 export class FactTextConstraint extends Constraint {
-  projectFacts: ProjectFact[];
 
   constructor(fields: Field[]) {
     super(fields);

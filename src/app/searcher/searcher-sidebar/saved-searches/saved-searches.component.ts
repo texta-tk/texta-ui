@@ -9,7 +9,7 @@ import {SearcherService} from '../../../core/searcher/searcher.service';
   styleUrls: ['./saved-searches.component.scss']
 })
 export class SavedSearchesComponent implements OnInit {
-  @Output() onSearchClicked = new EventEmitter<number>(); // search object future todo
+  @Output() savedSearchClick = new EventEmitter<number>(); // search object future todo
   displayedColumns: string[] = ['select', 'name', 'url'];
   selection = new SelectionModel<any>(true, []);
   mockData =
@@ -39,7 +39,7 @@ export class SavedSearchesComponent implements OnInit {
   }
 
   displaySavedSearch(id) {
-    this.onSearchClicked.emit(id);
+    this.savedSearchClick.emit(id);
   }
 
 
