@@ -13,7 +13,7 @@ import {Subject} from "rxjs";
 export class FactConstraintsComponent implements OnInit, OnDestroy {
   @Input() factConstraint: FactConstraint;
   @Input() elasticSearchQuery: ElasticsearchQuery;
-  @Input() projectFacts: ProjectFact[];
+  @Input() projectFacts: ProjectFact[] = [];
   factNameOperatorFormControl = new FormControl();
   factNameFormControl = new FormControl();
   destroyed$: Subject<boolean> = new Subject<boolean>();
@@ -24,48 +24,50 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    const fieldPaths = this.factConstraint.fields.map(x => x.path).join(',');
+    if (this.factConstraint) {
+      const fieldPaths = this.factConstraint.fields.map(x => x.path).join(',');
 
-    const formQuery = {
-      nested: {
-        query: {
-          bool: {
-            must: []
+      const formQuery = {
+        nested: {
+          query: {
+            bool: {
+              must: []
+            }
+          },
+          path: fieldPaths,
+          inner_hits: {
+            size: 100,
+            name: '??' // todo
           }
-        },
-        path: fieldPaths,
-        inner_hits: {
-          size: 100,
-          name: '??' // todo
         }
-      }
-    };
-    const formQueries = [];
-    this.constraintQuery = {
-      bool: {}
-    };
-    this.constraintQuery.bool = {[this.factNameOperatorFormControl.value]: formQueries};
-    this.elasticSearchQuery.query.bool.must.push(this.constraintQuery);
-    this.factNameOperatorFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((value: string) => {
-      this.constraintQuery.bool = {[value]: formQueries};
-    });
-    this.factNameFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((f: string[]) => {
-      formQueries.splice(0, formQueries.length);
+      };
+      const formQueries = [];
+      this.constraintQuery = {
+        bool: {}
+      };
+      this.constraintQuery.bool = {[this.factNameOperatorFormControl.value]: formQueries};
+      this.elasticSearchQuery.query.bool.must.push(this.constraintQuery);
+      this.factNameOperatorFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((value: string) => {
+        this.constraintQuery.bool = {[value]: formQueries};
+      });
+      this.factNameFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((f: string[]) => {
+        formQueries.splice(0, formQueries.length);
 
-      console.log(formQueries);
-      // filter out empty values
-      const newlineString = f.filter(x => x !== '');
-      if (newlineString.length > 0) {
-        for (const line of newlineString) {
-          // json for deep copy
-          const newFormQuery = JSON.parse(JSON.stringify(formQuery));
-          newFormQuery.nested.query.bool.must.push({term: {'texta_facts.doc_path': fieldPaths}});
-          newFormQuery.nested.query.bool.must.push({term: {'texta_facts.fact': line}});
-          formQueries.push(newFormQuery);
+        console.log(formQueries);
+        // filter out empty values
+        const newlineString = f.filter(x => x !== '');
+        if (newlineString.length > 0) {
+          for (const line of newlineString) {
+            // json for deep copy
+            const newFormQuery = JSON.parse(JSON.stringify(formQuery));
+            newFormQuery.nested.query.bool.must.push({term: {'texta_facts.doc_path': fieldPaths}});
+            newFormQuery.nested.query.bool.must.push({term: {'texta_facts.fact': line}});
+            formQueries.push(newFormQuery);
+          }
         }
-      }
 
-    });
+      });
+    }
 
   }
 

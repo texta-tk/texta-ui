@@ -1,7 +1,7 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Field, Project, ProjectFact, ProjectField} from '../../../shared/types/Project';
 import {FormControl} from '@angular/forms';
-import {of, Subject} from 'rxjs';
+import {forkJoin, of, Subject} from 'rxjs';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {ProjectService} from '../../../core/projects/project.service';
 import {ProjectStore} from '../../../core/projects/project.store';
@@ -22,7 +22,7 @@ import {SearcherService} from '../../../core/searcher/searcher.service';
   styleUrls: ['./build-search.component.scss']
 })
 export class BuildSearchComponent implements OnInit, OnDestroy {
-  @Input() projectFields: ProjectField[] = [];
+  projectFields: ProjectField[] = [];
   fieldsFormControl = new FormControl();
   constraintList: (Constraint)[] = [];
   projectFacts: ProjectFact[] = [];
@@ -36,14 +36,22 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$), switchMap((currentProject: Project) => {
       if (currentProject) {
-        return this.projectService.getProjectFacts(currentProject.id);
+        return forkJoin({
+          facts: this.projectService.getProjectFacts(currentProject.id),
+          fields: this.projectService.getProjectFields(currentProject.id)
+        });
       }
       return of(null);
-    })).subscribe((resp: ProjectFact[] | HttpErrorResponse) => {
-      if (!(resp instanceof HttpErrorResponse)) {
+    })).subscribe((resp: { facts: ProjectFact[], fields: ProjectField[] } | HttpErrorResponse) => {
+      if (!(resp instanceof HttpErrorResponse) && resp) {
         this.constraintList = [];
         this.elasticQuery = new ElasticsearchQuery();
-        this.projectFacts = resp;
+        if (resp.facts) {
+          this.projectFacts = resp.facts;
+        }
+        if (resp.fields) {
+          this.projectFields = resp.fields;
+        }
       }
     });
   }
@@ -71,24 +79,24 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     this.constraintList.push(this.searcherService.getSavedSearchById(id, id));
   }
 
-  removeFilter(index) {
+  removeConstraint(index) {
     this.constraintList.splice(index, 1);
   }
 
-  isFactNameTypeForm(formType: Constraint) {
-    return formType instanceof FactConstraint;
+  isFactNameConstraint(constraintType: Constraint) {
+    return constraintType instanceof FactConstraint;
   }
 
-  isTextTypeForm(formType: Constraint) {
-    return formType instanceof TextConstraint;
+  isTextConstraint(constraintType: Constraint) {
+    return constraintType instanceof TextConstraint;
   }
 
-  isDateTypeForm(formType: Constraint) {
-    return formType instanceof DateConstraint;
+  isDateConstraint(constraintType: Constraint) {
+    return constraintType instanceof DateConstraint;
   }
 
-  isFactTextTypeForm(formType: Constraint) {
-    return formType instanceof FactTextConstraint;
+  isFactTextConstraint(constraintType: Constraint) {
+    return constraintType instanceof FactTextConstraint;
   }
 
   ngOnDestroy() {

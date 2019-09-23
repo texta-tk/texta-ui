@@ -9,29 +9,29 @@
       </mat-optgroup>
     </mat-select>
   </mat-form-field>
-  <div *ngFor="let searchFilter of constraintList; let i = index;" class="filters bg-grey">
+  <div *ngFor="let constraint of constraintList; let i = index;" class="filters bg-grey">
     <div fxLayout="row" class="header">
       <div fxLayout="row wrap" class="field-titles">
-        <h4 *ngFor="let field of searchFilter.fields">{{field.path}};</h4>
+        <h4 *ngFor="let field of constraint.fields">{{field.path}};</h4>
       </div>
       <div fxFlex fxLayoutAlign="end">
-        <button mat-icon-button aria-label="Close" (click)="removeFilter(i,searchFilter)" class="mat-icon-button">
+        <button mat-icon-button aria-label="Close" (click)="removeConstraint(i,constraint)" class="mat-icon-button">
           <mat-icon>close</mat-icon>
         </button>
       </div>
     </div>
-    <div class="content" *ngIf="isTextTypeForm(searchFilter)">
-      <app-text-constraints [textConstraint]="searchFilter" [elasticSearchQuery]="elasticQuery"></app-text-constraints>
+    <div class="content" *ngIf="isTextConstraint(constraint)">
+      <app-text-constraints [textConstraint]="constraint" [elasticSearchQuery]="elasticQuery"></app-text-constraints>
     </div>
-    <div class="content" *ngIf="isDateTypeForm(searchFilter)">
-      <app-date-constraints [dateConstraint]="searchFilter" [elasticSearchQuery]="elasticQuery"></app-date-constraints>
+    <div class="content" *ngIf="isDateConstraint(constraint)">
+      <app-date-constraints [dateConstraint]="constraint" [elasticSearchQuery]="elasticQuery"></app-date-constraints>
     </div>
-    <div class="content" *ngIf="isFactNameTypeForm(searchFilter)">
-      <app-fact-constraints [factConstraint]="searchFilter" [elasticSearchQuery]="elasticQuery"
+    <div class="content" *ngIf="isFactNameConstraint(constraint)">
+      <app-fact-constraints [factConstraint]="constraint" [elasticSearchQuery]="elasticQuery"
                             [projectFacts]="projectFacts"></app-fact-constraints>
     </div>
-    <div class="content" *ngIf="isFactTextTypeForm(searchFilter)">
-      <app-fact-text-constraints [factTextConstraint]="searchFilter"
+    <div class="content" *ngIf="isFactTextConstraint(constraint)">
+      <app-fact-text-constraints [factTextConstraint]="constraint"
                                  [elasticSearchQuery]="elasticQuery"
                                  [projectFacts]="projectFacts"></app-fact-text-constraints>
     </div>

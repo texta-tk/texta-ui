@@ -12,7 +12,7 @@
           Search
         </ng-template>
         <div>
-          <app-build-search [projectFields]="projectFields"></app-build-search>
+          <app-build-search></app-build-search>
         </div>
       </mat-tab>
       <mat-tab>
@@ -36,7 +36,7 @@
       Saved Searches
     </mat-expansion-panel-header>
     <div>
-      <app-saved-searches (onSearchClicked)="notifyBuildSearch($event)"></app-saved-searches>
+      <app-saved-searches (savedSearchClick)="notifyBuildSearch($event)"></app-saved-searches>
     </div>
   </mat-expansion-panel>
   <div></div>

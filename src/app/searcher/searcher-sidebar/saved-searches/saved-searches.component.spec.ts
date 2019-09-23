@@ -1,6 +1,10 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { SavedSearchesComponent } from './saved-searches.component';
+import {SavedSearchesComponent} from './saved-searches.component';
+import {SharedModule} from '../../../shared/shared.module';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {RouterTestingModule} from '@angular/router/testing';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 describe('SavedSearchesComponent', () => {
   let component: SavedSearchesComponent;
@@ -8,9 +12,12 @@ describe('SavedSearchesComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SavedSearchesComponent ]
+      imports: [
+        SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule
+      ],
+      declarations: [SavedSearchesComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

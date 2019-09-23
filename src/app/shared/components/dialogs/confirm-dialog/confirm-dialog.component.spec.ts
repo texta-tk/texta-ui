@@ -1,16 +1,35 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ConfirmDialogComponent } from './confirm-dialog.component';
+import {ConfirmDialogComponent} from './confirm-dialog.component';
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material";
 
 describe('ConfirmDialogComponent', () => {
   let component: ConfirmDialogComponent;
   let fixture: ComponentFixture<ConfirmDialogComponent>;
-
+  const mockDialogRef = {
+    close: jasmine.createSpy('close')
+  };
+  const data: { confirmText: string, cancelText: string, mainText: string, title: string } = {
+    confirmText: 'test',
+    cancelText: 'test',
+    mainText: 'test',
+    title: 'test'
+  };
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ConfirmDialogComponent ]
+      declarations: [ConfirmDialogComponent],
+      providers: [
+        {
+          provide: MatDialogRef,
+          useValue: mockDialogRef
+        },
+        {
+          provide: MAT_DIALOG_DATA,
+          useValue: data
+        }]
+
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

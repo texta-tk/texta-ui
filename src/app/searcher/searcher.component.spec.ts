@@ -1,6 +1,18 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { SearcherComponent } from './searcher.component';
+import {SearcherComponent} from './searcher.component';
+import {SharedModule} from '../shared/shared.module';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {RouterTestingModule} from '@angular/router/testing';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {SearcherTableComponent} from './searcher-table/searcher-table.component';
+import {SearcherSidebarComponent} from './searcher-sidebar/searcher-sidebar.component';
+import {BuildSearchComponent} from './searcher-sidebar/build-search/build-search.component';
+import {SavedSearchesComponent} from './searcher-sidebar/saved-searches/saved-searches.component';
+import {TextConstraintsComponent} from './searcher-sidebar/build-search/text-constraints/text-constraints.component';
+import {DateConstraintsComponent} from './searcher-sidebar/build-search/date-constraints/date-constraints.component';
+import {FactConstraintsComponent} from './searcher-sidebar/build-search/fact-constraints/fact-constraints.component';
+import {FactTextConstraintsComponent} from './searcher-sidebar/build-search/fact-text-constraints/fact-text-constraints.component';
 
 describe('SearcherComponent', () => {
   let component: SearcherComponent;
@@ -8,9 +20,14 @@ describe('SearcherComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SearcherComponent ]
+      imports: [
+        SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule,
+      ],
+      declarations: [SearcherComponent, SearcherTableComponent, SearcherSidebarComponent,
+        BuildSearchComponent, SavedSearchesComponent, TextConstraintsComponent,
+        DateConstraintsComponent, FactConstraintsComponent, FactTextConstraintsComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

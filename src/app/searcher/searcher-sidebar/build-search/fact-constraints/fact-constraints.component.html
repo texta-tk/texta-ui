@@ -10,7 +10,7 @@
   <mat-form-field fxFlex>
     <mat-label>Fact name</mat-label>
     <mat-select [formControl]="factNameFormControl" multiple>
-      <mat-option *ngFor="let fact of factConstraint.projectFacts" [value]="fact.name">
+      <mat-option *ngFor="let fact of projectFacts" [value]="fact.name">
         {{fact.name}}
       </mat-option>
     </mat-select>

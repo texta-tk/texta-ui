@@ -2,7 +2,7 @@ import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {DateConstraint, ElasticsearchQuery} from '../Constraints';
 import {FormControl} from '@angular/forms';
 import {take, takeUntil} from 'rxjs/operators';
-import {Subject} from "rxjs";
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'app-date-constraints',
@@ -15,34 +15,36 @@ export class DateConstraintsComponent implements OnInit, OnDestroy {
   dateFromFormControl = new FormControl();
   dateToFormControl = new FormControl();
   destroyed$: Subject<boolean> = new Subject<boolean>();
-  constraintQueryFromtDate;
+  constraintQueryFromDate;
   constraintQueryToDate;
 
   constructor() {
   }
 
   ngOnInit() {
-    const fieldPaths = this.dateConstraint.fields.map(x => x.path);
-    const accessor: string = fieldPaths.join(',');
-    const fromDate = {gte: ''};
-    const toDate = {lte: ''};
-    this.constraintQueryFromtDate = {range: {[accessor]: fromDate}};
-    this.constraintQueryToDate = {range: {[accessor]: toDate}};
+    if (this.dateConstraint) {
+      const fieldPaths = this.dateConstraint.fields.map(x => x.path);
+      const accessor: string = fieldPaths.join(',');
+      const fromDate = {gte: ''};
+      const toDate = {lte: ''};
+      this.constraintQueryFromDate = {range: {[accessor]: fromDate}};
+      this.constraintQueryToDate = {range: {[accessor]: toDate}};
 
-    this.elasticSearchQuery.query.bool.must.push(this.constraintQueryFromtDate);
-    this.elasticSearchQuery.query.bool.must.push(this.constraintQueryToDate);
-    this.dateFromFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(value => {
-      fromDate.gte = value;
-    });
-    this.dateToFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(value => {
-      toDate.lte = value;
-    });
+      this.elasticSearchQuery.query.bool.must.push(this.constraintQueryFromDate);
+      this.elasticSearchQuery.query.bool.must.push(this.constraintQueryToDate);
+      this.dateFromFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(value => {
+        fromDate.gte = value;
+      });
+      this.dateToFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(value => {
+        toDate.lte = value;
+      });
+    }
     // using javascript object identifier to delete cause everything is a shallow copy
   }
 
   ngOnDestroy() {
     console.log('destroy date-constraint');
-    let index = this.elasticSearchQuery.query.bool.must.indexOf(this.constraintQueryFromtDate, 0);
+    let index = this.elasticSearchQuery.query.bool.must.indexOf(this.constraintQueryFromDate, 0);
     if (index > -1) {
       this.elasticSearchQuery.query.bool.must.splice(index, 1);
     }

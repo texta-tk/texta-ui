@@ -22,7 +22,6 @@ export class DateConstraint extends Constraint {
 }
 
 export class FactConstraint extends Constraint {
-  projectFacts: ProjectFact[];
 
   constructor(fields: Field[]) {
     super(fields);
@@ -30,7 +29,6 @@ export class FactConstraint extends Constraint {
 }
 
 export class FactTextConstraint extends Constraint {
-  projectFacts: ProjectFact[];
 
   constructor(fields: Field[]) {
     super(fields);
