@@ -10,6 +10,7 @@ import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/mat
 import {CreateEmbeddingDialogComponent} from './create-embedding-dialog/create-embedding-dialog.component';
 import {LogService} from '../../core/util/log.service';
 import {animate, state, style, transition, trigger} from '@angular/animations';
+import { PhraseDialogComponent } from '../phrase-dialog/phrase-dialog.component';
 
 @Component({
   selector: 'app-embedding',
@@ -29,11 +30,12 @@ export class EmbeddingComponent implements OnInit, OnDestroy {
   private updateEmbeddingsSubscription: Subscription;
   expandedElement: Embedding | null;
   public tableData: MatTableDataSource<Embedding> = new MatTableDataSource();
-  public displayedColumns = ['description', 'fields_parsed', 'time_started', 'time_completed', 'Task'];
+  public displayedColumns = ['description', 'fields_parsed', 'time_started', 'time_completed', 'Task', 'Modify'];
   public isLoadingResults = true;
 
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  currentProject: Project;
 
   constructor(private projectStore: ProjectStore,
               private embeddingsService: EmbeddingsService,
@@ -47,6 +49,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy {
 
     this.projectSubscription = this.projectStore.getCurrentProject().pipe(switchMap((currentProject: Project) => {
       if (currentProject) {
+        this.currentProject = currentProject;
         return this.embeddingsService.getEmbeddings(currentProject.id);
       } else {
         return of(null);
@@ -61,9 +64,8 @@ export class EmbeddingComponent implements OnInit, OnDestroy {
       }
     });
     // check for updates after 30s every 30s
-    this.updateEmbeddingsSubscription = this.projectStore.getCurrentProject().pipe(switchMap((currentProject: Project) => {
-      return timer(30000, 30000).pipe(switchMap(_ => this.embeddingsService.getEmbeddings(currentProject.id)));
-    })).subscribe((resp: Embedding[] | HttpErrorResponse) => {
+    this.updateEmbeddingsSubscription = timer(30000, 30000).pipe(switchMap(_ => this.embeddingsService.getEmbeddings(this.currentProject.id)))
+    .subscribe((resp: Embedding[] | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         if (resp.length > 0) {
           resp.map(embedding => {
@@ -75,6 +77,15 @@ export class EmbeddingComponent implements OnInit, OnDestroy {
     });
 
   }
+
+  phrase(embedding: Embedding) {
+    const dialogRef = this.dialog.open(PhraseDialogComponent, {
+      data: {embeddingId: embedding.id, currentProjectId: this.currentProject.id },
+      maxHeight: '665px',
+      width: '700px',
+    });
+  }
+
 
   ngOnDestroy() {
     if (this.projectSubscription) {

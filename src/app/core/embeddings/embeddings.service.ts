@@ -42,4 +42,9 @@ export class EmbeddingsService {
       catchError(this.logService.handleError<EmbeddingPrediction[]>('predict')));
   }
 
+  phrase(body: {text: string}, currentProjectId: number, embeddingId: number) {
+    return this.http.post<Embedding>(`${this.apiUrl}/projects/${currentProjectId}/embeddings/${embeddingId}/phrase/`, body).pipe(
+      tap(e => this.logService.logStatus(e, 'phrase')),
+      catchError(this.logService.handleError('phrase')));
+  }
 }
