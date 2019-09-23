@@ -13,6 +13,7 @@ import {Project} from '../../shared/types/Project';
 import {EditStopwordsDialogComponent} from './edit-stopwords-dialog/edit-stopwords-dialog.component';
 import {TagTextDialogComponent} from './tag-text-dialog/tag-text-dialog.component';
 import {TagDocDialogComponent} from './tag-doc-dialog/tag-doc-dialog.component';
+import { TagRandomDocDialogComponent } from './tag-random-doc-dialog/tag-random-doc-dialog.component';
 
 @Component({
   selector: 'app-tagger',
@@ -136,6 +137,15 @@ export class TaggerComponent implements OnInit, OnDestroy {
       data: {tagger: tagger, currentProjectId: this.currentProject.id },
       maxHeight: '665px',
       width: '700px',
+    });
+  }
+
+
+  tagRandomDocDialog(tagger: Tagger) {
+    const dialogRef = this.dialog.open(TagRandomDocDialogComponent, {
+      data: {tagger: tagger, currentProjectId: this.currentProject.id },
+      maxHeight: '665px',
+      maxWidth: '1200px',
     });
   }
 

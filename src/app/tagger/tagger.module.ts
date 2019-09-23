@@ -8,6 +8,7 @@ import {CreateTaggerDialogComponent} from './tagger/create-tagger-dialog/create-
 import {TaggerComponent} from './tagger/tagger.component';
 import {CreateTaggerGroupDialogComponent} from './tagger-group/create-tagger-group-dialog/create-tagger-group-dialog.component';
 import {TaggerGroupComponent} from './tagger-group/tagger-group.component';
+import { TagRandomDocDialogComponent } from './tagger/tag-random-doc-dialog/tag-random-doc-dialog.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import {TaggerGroupComponent} from './tagger-group/tagger-group.component';
 
     TaggerGroupComponent,
     CreateTaggerGroupDialogComponent,
+    TagRandomDocDialogComponent,
   ],
   imports: [
     SharedModule,
@@ -29,6 +31,7 @@ import {TaggerGroupComponent} from './tagger-group/tagger-group.component';
     EditStopwordsDialogComponent,
     TagTextDialogComponent,
     TagDocDialogComponent,
+    TagRandomDocDialogComponent,
 
     CreateTaggerGroupDialogComponent,
   ]
