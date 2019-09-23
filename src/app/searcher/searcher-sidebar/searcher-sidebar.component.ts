@@ -43,9 +43,9 @@ export class SearcherSidebarComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  notifyBuildSearch(event: number) { // todo object
-    console.log(event);
-    this.buildSearchComponent.buildSearch(event);
+  notifyBuildSearch(savedSearch: number) { // todo object
+    console.log(savedSearch);
+    this.buildSearchComponent.buildSavedSearch(savedSearch);
   }
 
 }

@@ -1,20 +1,23 @@
-import {AfterViewChecked, AfterViewInit, Component, Input, OnInit} from '@angular/core';
+import {AfterViewChecked, AfterViewInit, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {ElasticsearchQuery, TextConstraint} from '../Constraints';
 import {FormControl} from '@angular/forms';
 import {take, takeUntil} from 'rxjs/operators';
+import {Subject} from "rxjs";
 
 @Component({
   selector: 'app-text-constraints',
   templateUrl: './text-constraints.component.html',
   styleUrls: ['./text-constraints.component.scss']
 })
-export class TextConstraintsComponent implements OnInit {
+export class TextConstraintsComponent implements OnInit, OnDestroy {
   @Input() textConstraint: TextConstraint;
   @Input() elasticSearchQuery: ElasticsearchQuery;
   textAreaFormControl = new FormControl();
   slopFormControl = new FormControl();
   matchFormControl = new FormControl();
   operatorFormControl = new FormControl();
+  destroyed$: Subject<boolean> = new Subject<boolean>();
+  constraintQuery;
 
   constructor() {
     this.slopFormControl.setValue('0');
@@ -38,41 +41,35 @@ export class TextConstraintsComponent implements OnInit {
         fields: this.textConstraint.fields.map(x => x.path)
       }
     };
-    const elasticQueryShould = {
+    this.constraintQuery = {
       bool: {
         [this.operatorFormControl.value]: formQueries
       }
     };
     formQuery.bool.should.push(multiMatchBlueprint);
-    this.elasticSearchQuery.query.bool.should.push(elasticQueryShould);
+    this.elasticSearchQuery.query.bool.should.push(this.constraintQuery);
 
-    this.textAreaFormControl.valueChanges.pipe(takeUntil(this.textConstraint.deleted$)).subscribe(value => {
+    this.textAreaFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(value => {
       this.buildTextareaMultiMatchQuery(formQueries, value, multiMatchBlueprint);
     });
-    this.matchFormControl.valueChanges.pipe(takeUntil(this.textConstraint.deleted$)).subscribe(value => {
+    this.matchFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(value => {
       multiMatchBlueprint.multi_match.type = value;
       // update deep copy multi_match clauses
       if (this.textAreaFormControl.value && this.textAreaFormControl.value.length > 0) {
         this.buildTextareaMultiMatchQuery(formQueries, this.textAreaFormControl.value, multiMatchBlueprint);
       }
     });
-    this.operatorFormControl.valueChanges.pipe(takeUntil(this.textConstraint.deleted$)).subscribe((value: string) => {
-      elasticQueryShould.bool = {[value]: formQueries};
+    this.operatorFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((value: string) => {
+      this.constraintQuery.bool = {[value]: formQueries};
     });
-    this.slopFormControl.valueChanges.pipe(takeUntil(this.textConstraint.deleted$)).subscribe(value => {
+    this.slopFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(value => {
       multiMatchBlueprint.multi_match.slop = value;
       // update slop
       if (this.textAreaFormControl.value && this.textAreaFormControl.value.length > 0) {
         this.buildTextareaMultiMatchQuery(formQueries, this.textAreaFormControl.value, multiMatchBlueprint);
       }
     });
-    // using javascript object identifier to delete cause everything is a shallow copy
-    this.textConstraint.deleted$.pipe(take(1)).subscribe(f => {
-      const index = this.elasticSearchQuery.query.bool.should.indexOf(elasticQueryShould, 0);
-      if (index > -1) {
-        this.elasticSearchQuery.query.bool.should.splice(index, 1);
-      }
-    });
+
     // todo
     if (this.textConstraint.operator && this.textConstraint.phrasePrefix && this.textConstraint.text) {
       this.operatorFormControl.setValue(this.textConstraint.operator);
@@ -80,7 +77,6 @@ export class TextConstraintsComponent implements OnInit {
       this.textAreaFormControl.setValue(this.textConstraint.text);
     }
   }
-
 
 
   // every newline in textarea is a new multi_match clause
@@ -105,6 +101,16 @@ export class TextConstraintsComponent implements OnInit {
         formQueries.push(newFormQuery);
       }
     }
+  }
+
+  ngOnDestroy() {
+    console.log('destroy text-constraint');
+    const index = this.elasticSearchQuery.query.bool.should.indexOf(this.constraintQuery, 0);
+    if (index > -1) {
+      this.elasticSearchQuery.query.bool.should.splice(index, 1);
+    }
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
   }
 
 }

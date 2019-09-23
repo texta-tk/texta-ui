@@ -1,20 +1,23 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {ElasticsearchQuery, FactConstraint} from '../Constraints';
 import {FormControl} from '@angular/forms';
 import {take, takeUntil} from 'rxjs/operators';
 import {ProjectFact} from '../../../../shared/types/Project';
+import {Subject} from "rxjs";
 
 @Component({
   selector: 'app-fact-constraints',
   templateUrl: './fact-constraints.component.html',
   styleUrls: ['./fact-constraints.component.scss']
 })
-export class FactConstraintsComponent implements OnInit {
+export class FactConstraintsComponent implements OnInit, OnDestroy {
   @Input() factConstraint: FactConstraint;
   @Input() elasticSearchQuery: ElasticsearchQuery;
   @Input() projectFacts: ProjectFact[];
   factNameOperatorFormControl = new FormControl();
   factNameFormControl = new FormControl();
+  destroyed$: Subject<boolean> = new Subject<boolean>();
+  constraintQuery;
 
   constructor() {
     this.factNameOperatorFormControl.setValue('must');
@@ -38,15 +41,15 @@ export class FactConstraintsComponent implements OnInit {
       }
     };
     const formQueries = [];
-    const query = {
+    this.constraintQuery = {
       bool: {}
     };
-    query.bool = {[this.factNameOperatorFormControl.value]: formQueries};
-    this.elasticSearchQuery.query.bool.must.push(query);
-    this.factNameOperatorFormControl.valueChanges.pipe(takeUntil(this.factConstraint.deleted$)).subscribe((value: string) => {
-      query.bool = {[value]: formQueries};
+    this.constraintQuery.bool = {[this.factNameOperatorFormControl.value]: formQueries};
+    this.elasticSearchQuery.query.bool.must.push(this.constraintQuery);
+    this.factNameOperatorFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((value: string) => {
+      this.constraintQuery.bool = {[value]: formQueries};
     });
-    this.factNameFormControl.valueChanges.pipe(takeUntil(this.factConstraint.deleted$)).subscribe((f: string[]) => {
+    this.factNameFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((f: string[]) => {
       formQueries.splice(0, formQueries.length);
 
       console.log(formQueries);
@@ -64,14 +67,15 @@ export class FactConstraintsComponent implements OnInit {
 
     });
 
-    this.factConstraint.deleted$.pipe(take(1)).subscribe(f => {
-      const index = this.elasticSearchQuery.query.bool.must.indexOf(query, 0);
-      console.log(index);
-      if (index > -1) {
-        this.elasticSearchQuery.query.bool.must.splice(index, 1);
-      }
-      console.log(query);
-    });
   }
 
+  ngOnDestroy() {
+    console.log('destroy fact-constraint');
+    const index = this.elasticSearchQuery.query.bool.must.indexOf(this.constraintQuery, 0);
+    if (index > -1) {
+      this.elasticSearchQuery.query.bool.must.splice(index, 1);
+    }
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
+  }
 }

@@ -9,7 +9,7 @@
       </mat-optgroup>
     </mat-select>
   </mat-form-field>
-  <div *ngFor="let searchFilter of filterFormsList; let i = index;" class="filters bg-grey">
+  <div *ngFor="let searchFilter of constraintList; let i = index;" class="filters bg-grey">
     <div fxLayout="row" class="header">
       <div fxLayout="row wrap" class="field-titles">
         <h4 *ngFor="let field of searchFilter.fields">{{field.path}};</h4>
@@ -28,12 +28,12 @@
     </div>
     <div class="content" *ngIf="isFactNameTypeForm(searchFilter)">
       <app-fact-constraints [factConstraint]="searchFilter" [elasticSearchQuery]="elasticQuery"
-                            [projectFacts]="factNames"></app-fact-constraints>
+                            [projectFacts]="projectFacts"></app-fact-constraints>
     </div>
     <div class="content" *ngIf="isFactTextTypeForm(searchFilter)">
       <app-fact-text-constraints [factTextConstraint]="searchFilter"
                                  [elasticSearchQuery]="elasticQuery"
-                                 [projectFacts]="factNames"></app-fact-text-constraints>
+                                 [projectFacts]="projectFacts"></app-fact-text-constraints>
     </div>
   </div>
   <div fxLayout="column" class="bg-grey search-options">

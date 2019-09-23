@@ -1,10 +1,7 @@
-import {Subject} from 'rxjs';
 import {Field, ProjectFact} from '../../../shared/types/Project';
 
 export class Constraint {
   fields: Field[];
-  deleted$: Subject<boolean> = new Subject<boolean>();
-
 
   constructor(fields: Field[]) {
     this.fields = fields;
