@@ -23,6 +23,7 @@ import {MatSelectChange} from '@angular/material';
   styleUrls: ['./build-search.component.scss']
 })
 export class BuildSearchComponent implements OnInit, OnDestroy {
+  currentProject: Project;
   projectFields: ProjectField[] = [];
   projectFieldsFiltered: ProjectField[] = [];
   fieldsFormControl = new FormControl();
@@ -38,9 +39,10 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$), switchMap((currentProject: Project) => {
       if (currentProject) {
+        this.currentProject = currentProject;
         return forkJoin({
-          facts: this.projectService.getProjectFacts(currentProject.id),
-          fields: this.projectService.getProjectFields(currentProject.id)
+          facts: this.projectService.getProjectFacts(this.currentProject.id),
+          fields: this.projectService.getProjectFields(this.currentProject.id)
         });
       }
       return of(null);
@@ -127,6 +129,12 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();
+  }
+
+  onSearch() {
+    this.searcherService.search({ query: this.elasticQuery }, this.currentProject.id).subscribe(result => {
+      console.log('result', result);
+    })
   }
 
 }
