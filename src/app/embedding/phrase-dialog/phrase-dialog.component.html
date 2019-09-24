@@ -1,0 +1,13 @@
+<mat-form-field class="max-width">
+  <input matInput placeholder="Phrase text" #textInput>
+</mat-form-field>
+<div *ngIf="result" style="margin-top: 10px">
+  <span class="mat-body-strong">Result: </span>{{result}}
+</div>
+<div class="flex-col">
+  <div class="flex-row">
+    <div class="flex-item-right">
+      <button type="submit" mat-button (click)="onSubmit(textInput.value)">Post</button>
+    </div>
+  </div>
+</div>

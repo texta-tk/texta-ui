@@ -61,6 +61,12 @@ export class TaggerService {
       catchError(this.logService.handleError<TaggerOptions>('getTaggerOptions')));
   }
 
+  tagRandomDocument(projectId: number, taggerId): Observable<unknown | HttpErrorResponse> {
+    return this.http.get(`${this.apiUrl}/projects/${projectId}/taggers/${taggerId}/tag_random_doc/`
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'tagRandomDocument')),
+      catchError(this.logService.handleError('tagRandomDocument')));
+  }
   tagDocument(body: {}, projectId: number, taggerId): Observable<unknown | HttpErrorResponse> {
     return this.http.post<unknown>(
       this.apiUrl + '/projects/' + projectId + '/taggers/' + taggerId + '/tag_doc/',
