@@ -15,6 +15,7 @@ import {
 } from './Constraints';
 import {HttpErrorResponse} from '@angular/common/http';
 import {SearcherService} from '../../../core/searcher/searcher.service';
+import {MatSelectChange} from '@angular/material';
 
 @Component({
   selector: 'app-build-search',
@@ -23,6 +24,7 @@ import {SearcherService} from '../../../core/searcher/searcher.service';
 })
 export class BuildSearchComponent implements OnInit, OnDestroy {
   projectFields: ProjectField[] = [];
+  projectFieldsFiltered: ProjectField[] = [];
   fieldsFormControl = new FormControl();
   constraintList: (Constraint)[] = [];
   projectFacts: ProjectFact[] = [];
@@ -51,6 +53,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
         }
         if (resp.fields) {
           this.projectFields = resp.fields;
+          this.projectFieldsFiltered = this.projectFields;
         }
       }
     });
@@ -69,8 +72,30 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
       } else {
         this.constraintList.push(new FactConstraint(formFields));
       }
+      // reset field selection
       this.fieldsFormControl.reset();
+      this.projectFieldsFiltered = this.projectFields; // remove field filter
+
       console.log(this.constraintList);
+    }
+  }
+
+  onSelectionChange(event: MatSelectChange) {
+    console.log(event.value);
+    if (event.value.length > 0 && event.value[0].type) {
+      this.filterFieldsByConstraintType(event.value[0].type);
+    } else {
+      this.projectFieldsFiltered = this.projectFields; // no selection remove field filter
+    }
+  }
+
+  filterFieldsByConstraintType(constraintType: string) {
+    this.projectFieldsFiltered = [];
+    for (const index of this.projectFields) {
+      const filteredFields = index.fields.filter((field) => field.type === constraintType);
+      const filteredIndex = {...index}; // deep copy, shallow would change the original projectFields
+      filteredIndex.fields = filteredFields;
+      this.projectFieldsFiltered.push(filteredIndex);
     }
   }
 
