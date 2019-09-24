@@ -14,6 +14,7 @@ import {EditStopwordsDialogComponent} from './edit-stopwords-dialog/edit-stopwor
 import {TagTextDialogComponent} from './tag-text-dialog/tag-text-dialog.component';
 import {TagDocDialogComponent} from './tag-doc-dialog/tag-doc-dialog.component';
 import { TagRandomDocDialogComponent } from './tag-random-doc-dialog/tag-random-doc-dialog.component';
+import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
   selector: 'app-tagger',
@@ -34,7 +35,8 @@ export class TaggerComponent implements OnInit, OnDestroy {
 
   expandedElement: Tagger | null;
   public tableData: MatTableDataSource<Tagger> = new MatTableDataSource();
-  public displayedColumns = ['description', 'fields_parsed', 'time_started',
+  selectedTaggers = new SelectionModel<Tagger>(true, []);
+  public displayedColumns = ['select', 'description', 'fields_parsed', 'time_started',
     'time_completed', 'f1_score', 'precision', 'recall', 'Task', 'Modify'];
   public isLoadingResults = true;
 
@@ -155,5 +157,29 @@ export class TaggerComponent implements OnInit, OnDestroy {
       this.tableData.data.splice(index, 1);
       this.tableData.data = [...this.tableData.data]
     })
+  }
+
+
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selectedTaggers.selected.length;
+    const numRows = this.tableData.data.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterToggle() {
+    this.isAllSelected() ?
+        this.selectedTaggers.clear() :
+        this.tableData.data.forEach(row => this.selectedTaggers.select(row));
+  }
+
+  /** The label for the checkbox on the passed row */
+  checkboxLabel(row?: Tagger): string {
+    if (!row) {
+      return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
+    }
+    return `${this.selectedTaggers.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
   }
 }

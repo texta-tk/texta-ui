@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
-@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import "./custom-theme.scss";
+@import "./variables/variables";
 @import "library-overrides";
 // might be problematic todo
 div {
@@ -113,6 +114,17 @@ pre {
   cursor: pointer;
 }
 
-.new-resource-btn {
-  margin: 5px 0px !important;
+
+.table-actions-wrapper {
+  background-color: $foreground;
+
+  border-top-left-radius: 8.5px;
+  border-top-right-radius: 8.5px;
+
+  display: inline-block;
+  left: 0px;
+
+  position: relative;
+  border-bottom: 0px;
+  box-shadow: 0 5px 5px -3px rgba(0,0,0,.2),0 8px 10px 1px rgba(0,0,0,.14),0 3px 14px 2px rgba(0,0,0,.12);
 }
