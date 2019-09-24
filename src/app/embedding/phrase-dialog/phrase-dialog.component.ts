@@ -17,7 +17,7 @@ export class PhraseDialogComponent {
 
   onSubmit(value) {
     this.embeddingService.phrase({ text: value }, this.data.currentProjectId, this.data.embeddingId)
-      .pipe(take(1)).subscribe((resp: string) => {
+    .subscribe((resp: string) => {
       this.result = resp;
     });
   }

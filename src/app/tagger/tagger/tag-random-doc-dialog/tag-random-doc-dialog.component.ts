@@ -21,8 +21,8 @@ export class TagRandomDocDialogComponent implements OnInit {
   }
 
   onSubmit() {
-    this.taggerService.tagRandomDocument(this.data.currentProjectId, this.data.tagger.id).pipe(take(1)).subscribe((result: any) => {
-      console.log(result)
+    this.taggerService.tagRandomDocument(this.data.currentProjectId, this.data.tagger.id)
+    .subscribe((result: any) => {
       this.result = result;
     })
   }

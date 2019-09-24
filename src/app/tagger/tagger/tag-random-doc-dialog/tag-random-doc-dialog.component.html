@@ -1,6 +1,6 @@
   <div mat-dialog-content>
 
-    <div *ngIf="result" style="margin-top: 10px"><span class="mat-body-strong">Result: </span>
+    <div *ngIf="result" class="m-top-10"><span class="mat-body-strong">Result: </span>
       <div class="code-wrapper">
         <code>
           <pre>
@@ -12,7 +12,7 @@
     </div>
   </div>
   <div mat-dialog-actions fxLayout="row" fxLayoutAlign="space-between center">
-    <div style="float: left" *ngIf="result" fxFlex>
+    <div *ngIf="result" fxFlex>
       <span class="mat-body-strong">Result: </span> {{result.prediction.result}}
       <br>
       <span class="mat-body-strong">Probability:</span> {{result.prediction.probability}}

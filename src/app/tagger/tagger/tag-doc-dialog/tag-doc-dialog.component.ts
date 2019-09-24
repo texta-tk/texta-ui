@@ -31,7 +31,7 @@ export class TagDocDialogComponent implements OnInit {
       doc: JSON.parse(doc),
       lemmatize: this.lemmatize
     }, this.data.currentProjectId, this.data.tagger.id)
-      .pipe(take(1)).subscribe((resp: { result: boolean, probability: number }) => {
+    .subscribe((resp: { result: boolean, probability: number }) => {
       this.result = resp;
     });
   }

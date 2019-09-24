@@ -19,7 +19,7 @@ export class TagTextDialogComponent {
 
   onSubmit(value) {
     this.taggerService.tagText({text: value, lemmatize: this.lemmatize}, this.data.currentProjectId, this.data.taggerId)
-      .pipe(take(1)).subscribe((resp: { result: boolean, probability: number }) => {
+      .subscribe((resp: { result: boolean, probability: number }) => {
       this.result = resp;
     });
   }

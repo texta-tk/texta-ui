@@ -2,7 +2,7 @@
   <input matInput placeholder="Tag text" #textInput>
 </mat-form-field>
 <mat-checkbox [(ngModel)]="lemmatize">Lemmatize</mat-checkbox>
-<div *ngIf="result" style="margin-top: 10px">
+<div *ngIf="result" class="m-top-10">
  <span class="mat-body-strong">Result: </span>{{result.result}}
  <br>
  <span class="mat-body-strong">Probability:</span> {{result.probability}}

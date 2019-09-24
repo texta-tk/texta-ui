@@ -150,7 +150,7 @@ export class TaggerComponent implements OnInit, OnDestroy {
   }
 
   onDelete(tagger: Tagger, index: number) {
-    this.taggerService.deleteTagger(this.currentProject.id, tagger.id).pipe(take(1)).subscribe(() => {
+    this.taggerService.deleteTagger(this.currentProject.id, tagger.id).subscribe(() => {
       this.logService.snackBarMessage(`Tagger ${tagger.id}: ${tagger.description} deleted`, 2000);
       this.tableData.data.splice(index, 1);
       this.tableData.data = [...this.tableData.data]
