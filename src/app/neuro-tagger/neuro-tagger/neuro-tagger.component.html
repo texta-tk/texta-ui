@@ -1,0 +1,116 @@
+<button class="new-resource-btn" mat-raised-button color="primary" (click)="openCreateDialog()">New Neuro Tagger</button>
+<div class="wrapper mat-elevation-z8">
+
+
+  <div class="table-container">
+    <!--
+        <div class="loading-shade" *ngIf="isLoadingResults ">
+          <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+        </div>-->
+    <table mat-table [dataSource]="tableData" matSort multiTemplateDataRows>
+
+      <!--      <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>{{column}}</th>
+              <td mat-cell *matCellDef="let row">
+                <span *ngIf="checkIfObject(row[column])"><pre>{{row[column] | json}}</pre></span>
+                <span *ngIf="!checkIfObject(row[column])">{{row[column]}}</span></td>
+            </ng-container>-->
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Description</th>
+        <td mat-cell *matCellDef="let element"> {{element.description}}</td>
+      </ng-container>
+      <ng-container matColumnDef="time_started">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> time_started</th>
+        <td mat-cell *matCellDef="let element"><span *ngIf="element.task">{{element.task.time_started | date:['MMM d, h:mm:ss a']}}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="time_completed">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> time_completed</th>
+        <td mat-cell *matCellDef="let element">
+          <span *ngIf="element.task && element.task.time_completed">{{element.task.time_completed | date:['MMM d, h:mm:ss a']}}</span>
+          <span *ngIf="element.task && !element.task.time_completed">Null</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="fields_parsed">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> fields_parsed</th>
+        <td mat-cell *matCellDef="let element"> {{element.fields_parsed}}</td>
+      </ng-container>
+      <ng-container matColumnDef="f1_score">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> f1_score</th>
+        <td mat-cell *matCellDef="let element"> {{element.f1_score | number:'0.2-2'}}</td>
+      </ng-container>
+      <ng-container matColumnDef="precision">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> precision</th>
+        <td mat-cell *matCellDef="let element"> {{element.precision | number:'0.2-2'}}</td>
+      </ng-container>
+      <ng-container matColumnDef="recall">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> recall</th>
+        <td mat-cell *matCellDef="let element"> {{element.recall | number:'0.2-2' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="Task">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> task</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-progress-bar *ngIf="element.task && element.task.step !== 'training'"
+                            mode="determinate"
+                            [value]="element.task.progress">
+          </mat-progress-bar>
+          <mat-progress-bar *ngIf="element.task && element.task.step === 'training' && element.task.status !== 'failed'"
+                            mode="indeterminate"
+                            [value]="element.task.progress">
+          </mat-progress-bar>
+          <mat-hint *ngIf="element.task">{{element.task.status}} {{element.task.step}}</mat-hint>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="Modify">
+        <th mat-header-cell class="center-header-cell" *matHeaderCellDef>Edit</th>
+        <td mat-cell *matCellDef="let element; let i = dataIndex" (click)="$event.stopPropagation();">
+
+          <button mat-icon-button color="primary" [matMenuTriggerFor]="editMenu">
+            <mat-icon aria-label="Edit Options">more_vert</mat-icon>
+          </button>
+          <mat-menu #editMenu="matMenu">
+            <div *ngIf="element.task.status === 'failed'"><!--todo 'completed'-->
+              <button mat-menu-item (click)="tagTextDialog(element)">
+                Tag text
+              </button>
+              <button mat-menu-item (click)="tagDocDialog(element)">
+                Tag doc
+              </button>
+              <button mat-menu-item (click)="tagRandomDocDialog(element)">
+                Tag random doc
+              </button>
+            </div>
+
+          </mat-menu>
+
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="expandedDetail">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+          <div class="element-detail"
+               [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+
+
+            :)
+          </div>
+        </td>
+      </ng-container>
+
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row *matRowDef="let element; columns: displayedColumns;"
+          class="element-row"
+          [class.expanded-row]="expandedElement === element"
+          (click)="expandedElement = expandedElement === element ? null : element"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
+
+    </table>
+
+  </div>
+
+  <mat-paginator [pageSizeOptions]="[15, 50, 100]" showFirstLastButtons>
+
+  </mat-paginator>
+
+</div>

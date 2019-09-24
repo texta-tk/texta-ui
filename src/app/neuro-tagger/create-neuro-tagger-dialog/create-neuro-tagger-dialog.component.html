@@ -1,0 +1,84 @@
+<h1 mat-dialog-title>New Neuro Tagger</h1>
+<div mat-dialog-content>
+  <form class="flex-col" [formGroup]="taggerForm" (ngSubmit)="onSubmit(taggerForm.value)">
+    <mat-form-field>
+      <input matInput placeholder="Description" autocomplete="off" formControlName="descriptionFormControl"
+             [errorStateMatcher]="matcher" required>
+
+      <mat-error *ngIf="taggerForm.get('descriptionFormControl').hasError('required')">
+        Description is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="number" placeholder="Validation split" formControlName="validationSplitFormControl">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="number" placeholder="Score threshold" formControlName="scoreThresholdFormControl">
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Select Fields</mat-label>
+      <mat-select formControlName="fieldsFormControl" multiple required>
+        <mat-optgroup *ngFor="let group of projectFields" [label]="group.index">
+          <mat-option *ngFor="let fields of group.fields" [value]="fields.path">
+            {{fields.path}}
+          </mat-option>
+        </mat-optgroup>
+      </mat-select>
+      <mat-error *ngIf="taggerForm.get('fieldsFormControl').hasError('required')">
+        Field is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Model architecture</mat-label>
+      <mat-select formControlName="modelArchitectureFormControl" required>
+        <mat-option *ngFor="let item of neuroTaggerOptions.actions.POST.model_architecture.choices" [value]="item">
+          {{item.display_name}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="taggerForm.get('modelArchitectureFormControl').hasError('required')">
+        Model architecture is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="number" placeholder="Sequence length" formControlName="seqLenFormControl">
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput type="number" placeholder="Maximum sample size" formControlName="sampleSizeFormControl">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="number" placeholder="Negative Multiplier" formControlName="negativeMultiplierFormControl">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="number" placeholder="Num Epochs" formControlName="epochNumberFormControl">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="number" placeholder="Vocab size" formControlName="vocabSizeFormControl">
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Fact name</mat-label>
+      <mat-select formControlName="factNameFormControl" multiple>
+        <mat-option *ngFor="let fact of projectFacts" [value]="fact.name">
+          {{fact.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="number" placeholder="Min fact doc count" formControlName="minFactDocCountFormControl">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="number" placeholder="Max fact doc count" formControlName="maxFactDocCountFormControl">
+    </mat-form-field>
+    <div class="flex-col">
+      <div class="flex-row">
+        <div class="flex-item-left">
+          <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Close</button>
+        </div>
+        <div class="flex-item-right">
+          <button type="submit" [disabled]="!taggerForm.valid" mat-button>Create Tagger</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

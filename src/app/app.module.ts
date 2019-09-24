@@ -17,6 +17,7 @@ import {EmbeddingModule} from './embedding/embedding.module';
 import {ProjectModule} from './project/project.module';
 import {LexiconBuilderComponent} from './lexicon-miner/lexicon-builder/lexicon-builder.component';
 import {SearcherModule} from './searcher/searcher.module';
+import {NeuroTaggerModule} from './neuro-tagger/neuro-tagger.module';
 
 
 @NgModule({
@@ -38,7 +39,8 @@ import {SearcherModule} from './searcher/searcher.module';
     TaggerModule,
     EmbeddingModule,
     ProjectModule,
-    SearcherModule
+    SearcherModule,
+    NeuroTaggerModule
   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: HttpAuthInterceptor, multi: true}],
 
