@@ -17,7 +17,6 @@ import { TagRandomDocDialogComponent } from './tagger/tag-random-doc-dialog/tag-
     TagTextDialogComponent,
     TagDocDialogComponent,
     TaggerComponent,
-
     TaggerGroupComponent,
     CreateTaggerGroupDialogComponent,
     TagRandomDocDialogComponent,
@@ -32,7 +31,6 @@ import { TagRandomDocDialogComponent } from './tagger/tag-random-doc-dialog/tag-
     TagTextDialogComponent,
     TagDocDialogComponent,
     TagRandomDocDialogComponent,
-
     CreateTaggerGroupDialogComponent,
   ]
 })

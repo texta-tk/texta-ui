@@ -1,4 +1,4 @@
-<button class="new-resource-btn" mat-raised-button color="primary" (click)="openCreateDialog()">New Tagger</button>
+<button class="new-resource-btn" mat-raised-button color="primary" (click)="openCreateDialog()">New Neuro Tagger</button>
 <div class="wrapper mat-elevation-z8">
 
 
@@ -62,35 +62,6 @@
         </td>
       </ng-container>
 
-
-      <ng-container matColumnDef="expandedDetail">
-        <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
-          <div class="element-detail"
-               [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-            <div class="flex-row element-detail-plot-fields">
-              <div *ngIf="element.plot"><img class="element-plot" [src]="element.plot"></div>
-              <div class="flex-col">
-                <pre> Fields Parsed: {{element.fields_parsed | json}}</pre>
-                <pre>{{element.query | json}}</pre>
-                <pre>{{element.task | json}}</pre>
-              </div>
-              <div class="flex-col ">
-                <span> Maximum Sample Size: {{element.maximum_sample_size}}</span>
-                <span> Negative Multiplier: {{element.negative_multiplier}}</span>
-                <span> Number Of Features: {{element.num_features}}</span>
-                <span> Precision: {{element.precision}}</span>
-                <span> Recall: {{element.recall}}</span>
-                <span> Classifier: {{element.classifier}}</span>
-                <span> Vectorizer: {{element.vectorizer}}</span>
-                <span> Feature Selector: {{element.feature_selector}}</span>
-              </div>
-
-            </div>
-
-
-          </div>
-        </td>
-      </ng-container>
       <ng-container matColumnDef="Modify">
         <th mat-header-cell class="center-header-cell" *matHeaderCellDef>Edit</th>
         <td mat-cell *matCellDef="let element; let i = dataIndex" (click)="$event.stopPropagation();">
@@ -99,13 +70,7 @@
             <mat-icon aria-label="Edit Options">more_vert</mat-icon>
           </button>
           <mat-menu #editMenu="matMenu">
-            <div *ngIf="element.task.status === 'completed'">
-              <button mat-menu-item (click)="retrainTagger(element)">
-                Retrain tagger
-              </button>
-              <button mat-menu-item (click)="editStopwordsDialog(element)">
-                Stopword list
-              </button>
+            <div *ngIf="element.task.status === 'failed'"><!--todo 'completed'-->
               <button mat-menu-item (click)="tagTextDialog(element)">
                 Tag text
               </button>
@@ -115,15 +80,23 @@
               <button mat-menu-item (click)="tagRandomDocDialog(element)">
                 Tag random doc
               </button>
-              <mat-divider></mat-divider>
             </div>
-            <button mat-menu-item (click)="onDelete(element, i)">
-                Delete
-            </button>
+
           </mat-menu>
 
         </td>
       </ng-container>
+      <ng-container matColumnDef="expandedDetail">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+          <div class="element-detail"
+               [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+
+
+            :)
+          </div>
+        </td>
+      </ng-container>
+
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
       <tr mat-row *matRowDef="let element; columns: displayedColumns;"
