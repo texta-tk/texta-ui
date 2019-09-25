@@ -1,0 +1,10 @@
+.table-container {
+  max-width: calc(100vw - #{420px});
+  max-height: 500px;
+  overflow: auto;
+}
+
+.paginator-column-toggle {
+  position: absolute;
+  margin-left: 10px;
+}

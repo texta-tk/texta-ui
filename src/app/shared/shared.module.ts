@@ -42,6 +42,7 @@ import {BarsComponent} from './components/svg/chart/bars/bars.component';
 import {CirclesComponent} from './components/svg/chart/circles/circles.component';
 import {LineComponent} from './components/svg/chart/line/line.component';
 import {ConfirmDialogComponent} from './components/dialogs/confirm-dialog/confirm-dialog.component';
+import {MatOptionSelectAllComponent} from "./components/mat-option-select-all.component";
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
@@ -56,7 +57,8 @@ import {ConfirmDialogComponent} from './components/dialogs/confirm-dialog/confir
     CirclesComponent,
     BarsComponent,
     GradientComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    MatOptionSelectAllComponent
   ],
   imports: [
     CommonModule,
@@ -130,7 +132,8 @@ import {ConfirmDialogComponent} from './components/dialogs/confirm-dialog/confir
     LineComponent,
     CirclesComponent,
     BarsComponent,
-    GradientComponent
+    GradientComponent,
+    MatOptionSelectAllComponent
   ],
   entryComponents: [LoginDialogComponent, RegistrationDialogComponent, ConfirmDialogComponent],
 })

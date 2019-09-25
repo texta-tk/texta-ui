@@ -1,4 +1,10 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import {Field, Project, ProjectFact, ProjectField} from '../../../shared/types/Project';
 import {FormControl} from '@angular/forms';
 import {forkJoin, of, Subject} from 'rxjs';
@@ -16,6 +22,8 @@ import {
 import {HttpErrorResponse} from '@angular/common/http';
 import {SearcherService} from '../../../core/searcher/searcher.service';
 import {MatSelectChange} from '@angular/material';
+import {Search} from '../../../shared/types/Search';
+import {SearchService} from '../../services/search.service';
 
 @Component({
   selector: 'app-build-search',
@@ -23,6 +31,7 @@ import {MatSelectChange} from '@angular/material';
   styleUrls: ['./build-search.component.scss']
 })
 export class BuildSearchComponent implements OnInit, OnDestroy {
+  @Output() searchButtonClick = new EventEmitter<Search>();
   currentProject: Project;
   projectFields: ProjectField[] = [];
   projectFieldsFiltered: ProjectField[] = [];
@@ -32,8 +41,12 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject();
   // building the whole search query onto this
   elasticQuery: ElasticsearchQuery = new ElasticsearchQuery();
+  searcherOptions: string[] = ['live_search'];
 
-  constructor(private projectService: ProjectService, private projectStore: ProjectStore, private searcherService: SearcherService) {
+  constructor(private projectService: ProjectService,
+              private projectStore: ProjectStore,
+              private searcherService: SearcherService,
+              private searchService: SearchService) {
   }
 
   ngOnInit() {
@@ -46,14 +59,14 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
         });
       }
       return of(null);
-    })).subscribe((resp: { facts: ProjectFact[], fields: ProjectField[] } | HttpErrorResponse) => {
-      if (!(resp instanceof HttpErrorResponse) && resp) {
+    })).subscribe((resp: { facts: ProjectFact[] | HttpErrorResponse, fields: ProjectField[] | HttpErrorResponse }) => {
+      if (resp) {
         this.constraintList = [];
         this.elasticQuery = new ElasticsearchQuery();
-        if (resp.facts) {
+        if (!(resp.facts instanceof HttpErrorResponse)) {
           this.projectFacts = resp.facts;
         }
-        if (resp.fields) {
+        if (!(resp.fields instanceof HttpErrorResponse)) {
           this.projectFields = resp.fields;
           this.projectFieldsFiltered = this.projectFields;
         }
@@ -131,10 +144,22 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  onSearch() {
-    this.searcherService.search({ query: this.elasticQuery }, this.currentProject.id).subscribe(result => {
-      console.log('result', result);
-    })
+  getSearch() {// implement previous query cancellation todo
+    this.searcherService.search({query: this.elasticQuery}, this.currentProject.id).subscribe(
+      (result: any[] | HttpErrorResponse) => {
+        if (result && !(result instanceof HttpErrorResponse)) {
+          this.searchService.nextSearch(new Search(result, false, false));
+        }
+      });
   }
+
+  searchOnChange(event) {
+    // dont want left focus events
+    console.log(event);
+    if (event === this.elasticQuery && this.searcherOptions.includes('live_search')) {
+      this.getSearch();
+    }
+  }
+
 
 }
