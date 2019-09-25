@@ -5,7 +5,7 @@ import {NeuroTaggerComponent} from './neuro-tagger/neuro-tagger.component';
 
 const routes: Routes = [
   {
-    path: 'neuro-tagger',
+    path: 'neurotagger',
     canActivate: [AuthGuard],
     component: NeuroTaggerComponent,
   },
