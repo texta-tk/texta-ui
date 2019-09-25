@@ -10,6 +10,13 @@ import {NeuroTaggerService} from '../../core/neuro-tagger/neuro-tagger.service';
 import {ProjectStore} from '../../core/projects/project.store';
 import {LogService} from '../../core/util/log.service';
 import {CreateNeuroTaggerDialogComponent} from '../create-neuro-tagger-dialog/create-neuro-tagger-dialog.component';
+import { TagTextDialogComponent } from 'src/app/tagger/tagger/tag-text-dialog/tag-text-dialog.component';
+import { TagDocDialogComponent } from 'src/app/tagger/tagger/tag-doc-dialog/tag-doc-dialog.component';
+import { Tagger } from 'src/app/shared/types/tasks/Tagger';
+import { TagRandomDocDialogComponent } from 'src/app/tagger/tagger/tag-random-doc-dialog/tag-random-doc-dialog.component';
+import { NeurotagTextDialogComponent } from '../neurotag-text-dialog/neurotag-text-dialog.component';
+import { NeurotagDocDialogComponent } from '../neurotag-doc-dialog/neurotag-doc-dialog.component';
+import { NeurotagRandomDocDialogComponent } from '../neurotag-random-doc-dialog/neurotag-random-doc-dialog.component';
 
 @Component({
   selector: 'app-neuro-tagger',
@@ -75,18 +82,18 @@ export class NeuroTaggerComponent implements OnInit {
       }
     });
   }
-/*
 
-  tagTextDialog(tagger: Tagger) {
-    const dialogRef = this.dialog.open(TagTextDialogComponent, {
+
+  tagTextDialog(tagger: NeuroTagger) {
+    const dialogRef = this.dialog.open(NeurotagTextDialogComponent, {
       data: {taggerId: tagger.id, currentProjectId: this.currentProject.id},
       maxHeight: '665px',
       width: '700px',
     });
   }
 
-  tagDocDialog(tagger: Tagger) {
-    const dialogRef = this.dialog.open(TagDocDialogComponent, {
+  tagDocDialog(tagger: NeuroTagger) {
+    const dialogRef = this.dialog.open(NeurotagDocDialogComponent, {
       data: {tagger: tagger, currentProjectId: this.currentProject.id},
       maxHeight: '665px',
       width: '700px',
@@ -94,13 +101,19 @@ export class NeuroTaggerComponent implements OnInit {
   }
 
 
-  tagRandomDocDialog(tagger: Tagger) {
-    const dialogRef = this.dialog.open(TagRandomDocDialogComponent, {
-      data: {tagger: tagger, currentProjectId: this.currentProject.id},
+  tagRandomDocDialog(tagger: NeuroTagger) {
+    const dialogRef = this.dialog.open(NeurotagRandomDocDialogComponent, {
+      data: {neurotagger: tagger, currentProjectId: this.currentProject.id},
       maxHeight: '665px',
       maxWidth: '1200px',
     });
   }
-*/
 
+  onDelete(neurotagger: NeuroTagger, index: number) {
+    this.neuroTaggerService.deleteNeuroTagger(this.currentProject.id, neurotagger.id).subscribe(() => {
+      this.logService.snackBarMessage(`Tagger ${neurotagger.id}: ${neurotagger.description} deleted`, 2000);
+      this.tableData.data.splice(index, 1);
+      this.tableData.data = [...this.tableData.data]
+    })
+  }
 }
