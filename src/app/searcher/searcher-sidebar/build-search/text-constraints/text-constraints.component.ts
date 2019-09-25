@@ -1,8 +1,15 @@
-import {AfterViewChecked, AfterViewInit, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output
+} from '@angular/core';
 import {ElasticsearchQuery, TextConstraint} from '../Constraints';
 import {FormControl} from '@angular/forms';
-import {take, takeUntil} from 'rxjs/operators';
-import {Subject} from "rxjs";
+import {takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'app-text-constraints',
@@ -12,6 +19,7 @@ import {Subject} from "rxjs";
 export class TextConstraintsComponent implements OnInit, OnDestroy {
   @Input() textConstraint: TextConstraint;
   @Input() elasticSearchQuery: ElasticsearchQuery;
+  @Output() change = new EventEmitter<ElasticsearchQuery>(); // search as you type, emit changes
   textAreaFormControl = new FormControl();
   slopFormControl = new FormControl();
   matchFormControl = new FormControl();
@@ -54,9 +62,11 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
 
       this.textAreaFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(value => {
         this.buildTextareaMultiMatchQuery(formQueries, value, multiMatchBlueprint);
+        this.change.emit(this.elasticSearchQuery);
       });
       this.matchFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(value => {
         multiMatchBlueprint.multi_match.type = value;
+        this.change.emit(this.elasticSearchQuery);
         // update deep copy multi_match clauses
         if (this.textAreaFormControl.value && this.textAreaFormControl.value.length > 0) {
           this.buildTextareaMultiMatchQuery(formQueries, this.textAreaFormControl.value, multiMatchBlueprint);
@@ -64,8 +74,10 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
       });
       this.operatorFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((value: string) => {
         this.constraintQuery.bool = {[value]: formQueries};
+        this.change.emit(this.elasticSearchQuery);
       });
       this.slopFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(value => {
+        this.change.emit(this.elasticSearchQuery);
         multiMatchBlueprint.multi_match.slop = value;
         // update slop
         if (this.textAreaFormControl.value && this.textAreaFormControl.value.length > 0) {

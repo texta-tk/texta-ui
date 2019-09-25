@@ -1,15 +1,5 @@
 @import "../../variables/variables";
 
-.searcher-wrapper {
-  display: flex;
-  max-height: calc(100vh - #{$navbar-height});
-  height: 100%;
-  align-items: stretch;
-  .sidebar {
-    min-width: 370px;
-    max-width: 370px;
-  }
-  .table {
-    width: 100%;
-  }
+#table {
+  padding-left: 10px;
 }
