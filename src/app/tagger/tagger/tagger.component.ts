@@ -175,11 +175,4 @@ export class TaggerComponent implements OnInit, OnDestroy {
         this.tableData.data.forEach(row => this.selectedTaggers.select(row));
   }
 
-  /** The label for the checkbox on the passed row */
-  checkboxLabel(row?: Tagger): string {
-    if (!row) {
-      return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
-    }
-    return `${this.selectedTaggers.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
-  }
 }
