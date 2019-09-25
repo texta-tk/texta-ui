@@ -1,6 +1,6 @@
-<h1 mat-dialog-title>New Neuro Tagger</h1>
+<h1 mat-dialog-title>New NeuroTagger</h1>
 <div mat-dialog-content>
-  <form class="flex-col" [formGroup]="taggerForm" (ngSubmit)="onSubmit(taggerForm.value)">
+  <form id="neuroTaggerForm" fxLayout="column" [formGroup]="taggerForm" (ngSubmit)="onSubmit(taggerForm.value)">
     <mat-form-field>
       <input matInput placeholder="Description" autocomplete="off" formControlName="descriptionFormControl"
              [errorStateMatcher]="matcher" required>
@@ -70,15 +70,10 @@
     <mat-form-field>
       <input matInput type="number" placeholder="Max fact doc count" formControlName="maxFactDocCountFormControl">
     </mat-form-field>
-    <div class="flex-col">
-      <div class="flex-row">
-        <div class="flex-item-left">
-          <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Close</button>
-        </div>
-        <div class="flex-item-right">
-          <button type="submit" [disabled]="!taggerForm.valid" mat-button>Create Tagger</button>
-        </div>
-      </div>
-    </div>
+
   </form>
+</div>
+<div mat-dialog-actions fxLayout="row">
+  <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Close</button>
+  <button form="neuroTaggerForm" type="submit" class="flex-item-right"  [disabled]="!taggerForm.valid" mat-button>Create</button>
 </div>
