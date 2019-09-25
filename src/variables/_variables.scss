@@ -6,5 +6,5 @@ $primary: mat-color($texta-primary);
 $accent: mat-color($texta-accent);
 $warn: mat-color($texta-warn);
 
-$foreground: mat-color(map-get($texta-theme, foreground));
-$background: mat-color(map-get($texta-theme, background));
+$foreground: map-get($texta-theme, foreground);
+$background: map-get($texta-theme, background);

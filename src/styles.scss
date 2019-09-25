@@ -116,7 +116,7 @@ pre {
 
 
 .table-actions-wrapper {
-  background-color: $foreground;
+  background-color: map-get($background, card);
 
   border-top-left-radius: 8.5px;
   border-top-right-radius: 8.5px;
