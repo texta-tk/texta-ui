@@ -1,7 +1,7 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {DateConstraint, ElasticsearchQuery} from '../Constraints';
 import {FormControl} from '@angular/forms';
-import {take, takeUntil} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 
 @Component({
@@ -12,6 +12,7 @@ import {Subject} from 'rxjs';
 export class DateConstraintsComponent implements OnInit, OnDestroy {
   @Input() dateConstraint: DateConstraint;
   @Input() elasticSearchQuery: ElasticsearchQuery;
+  @Output() change = new EventEmitter<ElasticsearchQuery>(); // search as you type, emit changes
   dateFromFormControl = new FormControl();
   dateToFormControl = new FormControl();
   destroyed$: Subject<boolean> = new Subject<boolean>();
@@ -32,11 +33,17 @@ export class DateConstraintsComponent implements OnInit, OnDestroy {
 
       this.elasticSearchQuery.query.bool.must.push(this.constraintQueryFromDate);
       this.elasticSearchQuery.query.bool.must.push(this.constraintQueryToDate);
-      this.dateFromFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(value => {
+      this.dateFromFormControl.valueChanges.pipe(takeUntil(this.destroyed$), distinctUntilChanged(), debounceTime(200)).subscribe(value => {
         fromDate.gte = value;
+        if (toDate.lte) {
+          this.change.emit(this.elasticSearchQuery);
+        }
       });
-      this.dateToFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(value => {
+      this.dateToFormControl.valueChanges.pipe(takeUntil(this.destroyed$), distinctUntilChanged(), debounceTime(200)).subscribe(value => {
         toDate.lte = value;
+        if (fromDate.gte) {
+          this.change.emit(this.elasticSearchQuery);
+        }
       });
     }
     // using javascript object identifier to delete cause everything is a shallow copy

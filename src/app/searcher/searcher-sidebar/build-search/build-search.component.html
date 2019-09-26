@@ -22,14 +22,16 @@
       </div>
     </div>
     <div class="content" *ngIf="isTextConstraint(constraint)">
-      <app-text-constraints [textConstraint]="constraint" [elasticSearchQuery]="elasticQuery" (change)="searchOnChange($event)"></app-text-constraints>
+      <app-text-constraints [textConstraint]="constraint" [elasticSearchQuery]="elasticQuery"
+                            (change)="searchOnChange($event)"></app-text-constraints>
     </div>
     <div class="content" *ngIf="isDateConstraint(constraint)">
-      <app-date-constraints [dateConstraint]="constraint" [elasticSearchQuery]="elasticQuery"></app-date-constraints>
+      <app-date-constraints [dateConstraint]="constraint" [elasticSearchQuery]="elasticQuery"
+                            (change)="searchOnChange($event)"></app-date-constraints>
     </div>
     <div class="content" *ngIf="isFactNameConstraint(constraint)">
       <app-fact-constraints [factConstraint]="constraint" [elasticSearchQuery]="elasticQuery"
-                            [projectFacts]="projectFacts"></app-fact-constraints>
+                            [projectFacts]="projectFacts" (change)="searchOnChange($event)"></app-fact-constraints>
     </div>
     <div class="content" *ngIf="isFactTextConstraint(constraint)">
       <app-fact-text-constraints [factTextConstraint]="constraint"

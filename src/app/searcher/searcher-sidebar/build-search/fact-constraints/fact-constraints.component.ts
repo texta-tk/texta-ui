@@ -1,9 +1,9 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {ElasticsearchQuery, FactConstraint} from '../Constraints';
 import {FormControl} from '@angular/forms';
-import {take, takeUntil} from 'rxjs/operators';
+import {takeUntil} from 'rxjs/operators';
 import {ProjectFact} from '../../../../shared/types/Project';
-import {Subject} from "rxjs";
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'app-fact-constraints',
@@ -11,15 +11,19 @@ import {Subject} from "rxjs";
   styleUrls: ['./fact-constraints.component.scss']
 })
 export class FactConstraintsComponent implements OnInit, OnDestroy {
+  // fact name counter
+  static componentCount = 0;
   @Input() factConstraint: FactConstraint;
   @Input() elasticSearchQuery: ElasticsearchQuery;
   @Input() projectFacts: ProjectFact[] = [];
+  @Output() change = new EventEmitter<ElasticsearchQuery>(); // search as you type, emit changes
   factNameOperatorFormControl = new FormControl();
   factNameFormControl = new FormControl();
   destroyed$: Subject<boolean> = new Subject<boolean>();
   constraintQuery;
 
   constructor() {
+    FactConstraintsComponent.componentCount += 1;
     this.factNameOperatorFormControl.setValue('must');
   }
 
@@ -37,7 +41,7 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
           path: fieldPaths,
           inner_hits: {
             size: 100,
-            name: '??' // todo
+            name: '??' // todo, redundant property?
           }
         }
       };
@@ -49,6 +53,7 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
       this.elasticSearchQuery.query.bool.must.push(this.constraintQuery);
       this.factNameOperatorFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((value: string) => {
         this.constraintQuery.bool = {[value]: formQueries};
+        this.change.emit(this.elasticSearchQuery);
       });
       this.factNameFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((f: string[]) => {
         formQueries.splice(0, formQueries.length);
@@ -60,11 +65,13 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
           for (const line of newlineString) {
             // json for deep copy
             const newFormQuery = JSON.parse(JSON.stringify(formQuery));
+            newFormQuery.nested.inner_hits.name = `${FactConstraintsComponent.componentCount}_${line}`;
             newFormQuery.nested.query.bool.must.push({term: {'texta_facts.doc_path': fieldPaths}});
             newFormQuery.nested.query.bool.must.push({term: {'texta_facts.fact': line}});
             formQueries.push(newFormQuery);
           }
         }
+        this.change.emit(this.elasticSearchQuery);
 
       });
     }
