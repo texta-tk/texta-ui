@@ -28,7 +28,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     this.searchService.getSearch().pipe(takeUntil(this.destroy$)).subscribe((resp: Search) => {
       if (resp) {
         this.displayedColumns = this.makeColumns(resp.searchContent);
-        console.log(this.displayedColumns.length);
+        console.log(`columns: ${this.displayedColumns.length}`);
         // first search || no search results
         if (this.columnsToDisplay.length === 0 || this.displayedColumns.length === 0) {
           this.columnsToDisplay = this.displayedColumns.slice();
@@ -46,7 +46,6 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
 
     this.columnFormControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(value => {
       this.columnsToDisplay = value;
-      console.log(this.columnsToDisplay);
     });
   }
 

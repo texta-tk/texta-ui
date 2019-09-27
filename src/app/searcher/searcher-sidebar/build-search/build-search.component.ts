@@ -62,7 +62,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     });
   }
 
-  onOpenedChange(opened) {
+  public onOpenedChange(opened) {
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && (this.fieldsFormControl.value && this.fieldsFormControl.value.length > 0)) {
       const formFields: Field[] = this.fieldsFormControl.value;
@@ -106,9 +106,10 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     //need backend
   }
 
-  buildSavedSearch(id: number) {
+  buildSavedSearch(savedSearch: any) {
     this.constraintList.splice(0, this.constraintList.length);
-    this.constraintList.push(this.searcherService.getSavedSearchById(id, id));
+    // console.log(this.searcherService.getSavedSearchById(id, id));
+    this.constraintList = [...savedSearch.constraints];
   }
 
   removeConstraint(index) {
@@ -151,6 +152,10 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     if (event === this.elasticQuery && this.searcherOptions.includes('live_search')) {
       this.getSearch();
     }
+  }
+
+  saveSearch(description: string) {
+    this.searcherService.saveSearch([...this.constraintList], this.elasticQuery, description);
   }
 
 

@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {ElasticsearchQuery, TextConstraint} from '../Constraints';
 import {FormControl} from '@angular/forms';
-import {debounceTime, distinctUntilChanged, takeUntil} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, startWith, takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 
 @Component({
@@ -10,25 +10,34 @@ import {Subject} from 'rxjs';
   styleUrls: ['./text-constraints.component.scss']
 })
 export class TextConstraintsComponent implements OnInit, OnDestroy {
-  @Input() textConstraint: TextConstraint;
+  public _textConstraint: TextConstraint;
+  @Input() set textConstraint(value: TextConstraint) {
+    if (value) {
+      this._textConstraint = value;
+      this.textAreaFormControl = this._textConstraint.textAreaFormControl;
+      this.slopFormControl = this._textConstraint.slopFormControl;
+      this.matchFormControl = this._textConstraint.matchFormControl;
+      this.operatorFormControl = this._textConstraint.operatorFormControl;
+    }
+  }
+
   @Input() elasticSearchQuery: ElasticsearchQuery;
   @Output() change = new EventEmitter<ElasticsearchQuery>(); // search as you type, emit changes
-  textAreaFormControl = new FormControl();
-  slopFormControl = new FormControl();
-  matchFormControl = new FormControl();
-  operatorFormControl = new FormControl();
+
   destroyed$: Subject<boolean> = new Subject<boolean>();
   constraintQuery;
+  // so i dont have to rename everything if i decide to refactor something
+  textAreaFormControl: FormControl;
+  slopFormControl: FormControl;
+  matchFormControl: FormControl;
+  operatorFormControl: FormControl;
 
   constructor() {
-    this.slopFormControl.setValue('0');
-    this.matchFormControl.setValue('phrase_prefix');
-    this.operatorFormControl.setValue('must');
 
   }
 
   ngOnInit() {
-    if (this.textConstraint) {
+    if (this._textConstraint) {
       // multi line textarea, 1 formequery entry for each line
       const formQueries = [];
       const multiMatchBlueprint = {
@@ -36,7 +45,7 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
           query: '',
           type: this.matchFormControl.value,
           slop: this.slopFormControl.value,
-          fields: this.textConstraint.fields.map(x => x.path)
+          fields: this._textConstraint.fields.map(x => x.path)
         }
       };
 
@@ -48,9 +57,13 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
 
       this.elasticSearchQuery.query.bool.should.push(this.constraintQuery);
 
-      this.textAreaFormControl.valueChanges.pipe(takeUntil(this.destroyed$), distinctUntilChanged(), debounceTime(200)).subscribe(value => {
+      this.textAreaFormControl.valueChanges.pipe(
+        takeUntil(this.destroyed$),
+        startWith(this.textAreaFormControl.value as object),
+        distinctUntilChanged(),
+        debounceTime(200)).subscribe(value => {
         if (this.matchFormControl.value === 'regexp') {
-          this.buildRegexQuery(formQueries, value, this.textConstraint.fields.map(x => x.path));
+          this.buildRegexQuery(formQueries, value, this._textConstraint.fields.map(x => x.path));
         } else {
           this.buildTextareaMultiMatchQuery(formQueries, value, multiMatchBlueprint);
         }
@@ -62,7 +75,7 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
         // update deep copy multi_match clauses
         if (this.textAreaFormControl.value && this.textAreaFormControl.value.length > 0) {
           if (value === 'regexp') {
-            this.buildRegexQuery(formQueries, this.textAreaFormControl.value, this.textConstraint.fields.map(x => x.path));
+            this.buildRegexQuery(formQueries, this.textAreaFormControl.value, this._textConstraint.fields.map(x => x.path));
           } else {
             this.buildTextareaMultiMatchQuery(formQueries, this.textAreaFormControl.value, multiMatchBlueprint);
           }
@@ -85,11 +98,7 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
       });
 
       // todo
-      if (this.textConstraint.operator && this.textConstraint.phrasePrefix && this.textConstraint.text) {
-        this.operatorFormControl.setValue(this.textConstraint.operator);
-        this.matchFormControl.setValue(this.textConstraint.phrasePrefix);
-        this.textAreaFormControl.setValue(this.textConstraint.text);
-      }
+
     }
   }
 
