@@ -5,12 +5,15 @@ import {ProjectService} from '../../core/projects/project.service';
 import {ProjectStore} from '../../core/projects/project.store';
 import {NeuroTaggerService} from '../../core/neuro-tagger/neuro-tagger.service';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {TaggerOptions} from '../../shared/types/tasks/TaggerOptions';
-import {mergeMap, switchMap, take} from "rxjs/operators";
-import {forkJoin, merge, of} from "rxjs";
+import {mergeMap, take} from "rxjs/operators";
+import {forkJoin, of} from "rxjs";
 import {ProjectFact, ProjectField} from "../../shared/types/Project";
-import {Embedding} from "../../shared/types/tasks/Embedding";
 import {HttpErrorResponse} from "@angular/common/http";
+import { NeuroTagger } from 'src/app/shared/types/tasks/NeuroTagger';
+
+interface NeuroTaggerOptions {
+  actions: { POST: { model_architecture: { choices: [''] } } };
+}
 
 @Component({
   selector: 'app-create-neuro-tagger-dialog',
@@ -38,11 +41,10 @@ export class CreateNeuroTaggerDialogComponent implements OnInit {
   });
   projectFields: ProjectField[] = [];
   projectFacts: ProjectFact[] = [];
-  neuroTaggerOptions: { actions: { POST: { model_architecture: { choices: [''] } } } } = {actions: {POST: {model_architecture: {choices: ['']}}}};
+  neuroTaggerOptions: NeuroTaggerOptions = {actions: {POST: {model_architecture: {choices: ['']}}}};
 
   constructor(private dialogRef: MatDialogRef<CreateNeuroTaggerDialogComponent>,
               private neuroTaggerService: NeuroTaggerService,
-              private logService: LogService,
               private projectService: ProjectService,
               private projectStore: ProjectStore) {
   }
@@ -73,16 +75,50 @@ export class CreateNeuroTaggerDialogComponent implements OnInit {
         }
         if (!(resp.neuroTaggerOptions instanceof HttpErrorResponse)) {
           this.neuroTaggerOptions = resp.neuroTaggerOptions;
+          this.setDefaultFormValues(this.neuroTaggerOptions);
         }
       }
     });
   }
 
-  setDefaultFormValues(options: TaggerOptions) {
-    this.taggerForm.get('vectorizerFormControl').setValue(options.actions.POST.vectorizer.choices[0]);
-    this.taggerForm.get('classifierFormControl').setValue(options.actions.POST.classifier.choices[0]);
+  setDefaultFormValues(options) {
+    console.log(options);
+    this.taggerForm.get('modelArchitectureFormControl').setValue(options.actions.POST.model_architecture.choices[0].value);
   }
 
+  onSubmit(formData) {
+    console.log(formData);
+    console.log(formData.modelArchitectureFormControl);
+    const body = {
+      description: formData.descriptionFormControl,
+      fields: formData.fieldsFormControl,
+      max_fact_doc_count: formData.maxFactDocCountFormControl,
+      negative_multiplier: formData.negativeMultiplierFormControl,
+      score_threshold: formData.scoreThresholdFormControl,
+      model_architecture: formData.modelArchitectureFormControl,
+      seq_len: formData.seqLenFormControl,
+      maximum_sample_size: formData.sampleSizeFormControl,
+      num_epochs: formData.epochNumberFormControl,
+      validation_split: formData.validationSplitFormControl,
+      vocab_size: formData.vocabSizeFormControl,
+      fact_name: formData.factNameFormControl,
+      min_fact_doc_count: formData.minFactDocCountFormControl,
+    };
+
+    this.projectStore.getCurrentProject().pipe(take(1), mergeMap(currentProject => {
+      if (currentProject) {
+        return this.neuroTaggerService.createNeuroTagger(body, currentProject.id);
+      } else {
+        return of(null);
+      }
+    })).subscribe((resp: NeuroTagger | HttpErrorResponse) => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.dialogRef.close(resp);
+      } else if (resp instanceof HttpErrorResponse) {
+        this.dialogRef.close(resp);
+      }
+    });
+  }
 
   closeDialog(): void {
     this.dialogRef.close();
