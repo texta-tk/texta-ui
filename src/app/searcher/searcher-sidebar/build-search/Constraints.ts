@@ -1,4 +1,5 @@
-import {Field, ProjectFact} from '../../../shared/types/Project';
+import {Field} from '../../../shared/types/Project';
+import {FormControl} from '@angular/forms';
 
 export class Constraint {
   fields: Field[];
@@ -10,21 +11,39 @@ export class Constraint {
 
 
 export class TextConstraint extends Constraint {
+  textAreaFormControl = new FormControl();
+  slopFormControl = new FormControl();
+  matchFormControl = new FormControl();
+  operatorFormControl = new FormControl();
 
-  constructor(fields: Field[], public phrasePrefix?, public text?, public operator?) {
+  constructor(fields: Field[], match?, text?, operator?, slop?) {
     super(fields);
+    this.operatorFormControl.setValue(operator ? operator : 'must');
+    this.matchFormControl.setValue(match ? match : 'phrase_prefix');
+    this.slopFormControl.setValue(slop ? slop : '0');
+    this.textAreaFormControl.setValue(text ? text : '');
   }
 
 }
 
 export class DateConstraint extends Constraint {
+  dateFromFormControl = new FormControl();
+  dateToFormControl = new FormControl();
 
+  constructor(fields: Field[], dateFrom?, dateTo?) {
+    super(fields);
+    this.dateFromFormControl.setValue(dateFrom ? dateFrom : '');
+    this.dateToFormControl.setValue(dateTo ? dateTo : '');
+  }
 }
 
 export class FactConstraint extends Constraint {
-
-  constructor(fields: Field[]) {
+  factNameOperatorFormControl = new FormControl();
+  factNameFormControl = new FormControl();
+  constructor(fields: Field[], factNameOperator?, factName?) {
     super(fields);
+    this.factNameOperatorFormControl.setValue(factNameOperator ? factNameOperator : 'must');
+    this.factNameFormControl.setValue(factName ? factName : '');
   }
 }
 

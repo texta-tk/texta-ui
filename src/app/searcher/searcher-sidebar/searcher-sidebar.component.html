@@ -1,9 +1,16 @@
 <mat-accordion [multi]="true"> <!--[displayMode]="flat"-->
-  <mat-expansion-panel [expanded]="true">
-    <mat-expansion-panel-header>
+  <mat-expansion-panel
+    [expanded]="buildSearchExpanded" #buildSearchPanel>
+    <mat-expansion-panel-header (click)="expandPanel($event)">
       <mat-panel-title>
-        Current Search
+        <span (click)="expandBuildSearchPanel()">Current Search</span>
       </mat-panel-title>
+      <mat-panel-description fxLayoutAlign="end start">
+        <button mat-icon-button class="flex-item-right panel-button" aria-label="save search"
+                (click)="openSaveSearchDialog()">
+          <mat-icon>save</mat-icon>
+        </button>
+      </mat-panel-description>
     </mat-expansion-panel-header>
     <mat-tab-group mat-stretch-tabs dynamicHeight>
       <mat-tab>
@@ -24,9 +31,11 @@
       </mat-tab>
     </mat-tab-group>
   </mat-expansion-panel>
-  <mat-expansion-panel [expanded]="true">
-    <mat-expansion-panel-header>
-      Saved Searches
+  <mat-expansion-panel [expanded]="savedSearchesExpanded" #savedSearchesPanel>
+    <mat-expansion-panel-header (click)="expandPanel($event)">
+      <mat-panel-title>
+        <span (click)="expandSavedSearchesPanel()"> Saved Searches </span>
+      </mat-panel-title>
     </mat-expansion-panel-header>
     <div>
       <app-saved-searches (savedSearchClick)="notifyBuildSearch($event)"></app-saved-searches>

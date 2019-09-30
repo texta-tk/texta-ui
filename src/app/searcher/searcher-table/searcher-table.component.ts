@@ -28,11 +28,14 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     this.searchService.getSearch().pipe(takeUntil(this.destroy$)).subscribe((resp: Search) => {
       if (resp) {
         this.displayedColumns = this.makeColumns(resp.searchContent);
-        console.log(this.displayedColumns);
+        console.log(`columns: ${this.displayedColumns.length}`);
         // first search || no search results
         if (this.columnsToDisplay.length === 0 || this.displayedColumns.length === 0) {
           this.columnsToDisplay = this.displayedColumns.slice();
           this.columnFormControl.setValue(this.columnsToDisplay);
+        } else {
+          // sometimes response adds columns based on user input, so need to updated columns selection
+          this.validateColumnSelect();
         }
         this.tableData = new MatTableDataSource<any>(resp.searchContent);
         this.tableData.sort = this.sort;
@@ -45,6 +48,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
       this.columnsToDisplay = value;
     });
   }
+
   // temp functions for testing todo
   makeColumns<T>(data: T[]): string[] {
     const columns: string[] = [];
@@ -60,6 +64,21 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     if (value) {
       // hacky way to check if object with properties
       return value.toString() === '[object Object]';
+    }
+  }
+
+  validateColumnSelect() {
+    for (const item of [...this.columnsToDisplay]) {
+      if (!(this.displayedColumns.includes(item))) {
+        const index = this.columnsToDisplay.indexOf(item);
+        if (index > -1) {
+          this.columnsToDisplay.splice(index, 1);
+        }
+      }
+      if (this.columnsToDisplay.length === 0) {
+        this.columnsToDisplay = this.displayedColumns.slice();
+        this.columnFormControl.setValue(this.columnsToDisplay);
+      }
     }
   }
 

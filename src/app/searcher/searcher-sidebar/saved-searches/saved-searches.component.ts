@@ -1,45 +1,42 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatTableDataSource} from '@angular/material';
 import {SearcherService} from '../../../core/searcher/searcher.service';
+import {takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'app-saved-searches',
   templateUrl: './saved-searches.component.html',
   styleUrls: ['./saved-searches.component.scss']
 })
-export class SavedSearchesComponent implements OnInit {
+export class SavedSearchesComponent implements OnInit, OnDestroy {
   @Output() savedSearchClick = new EventEmitter<number>(); // search object future todo
   displayedColumns: string[] = ['select', 'name', 'url'];
   selection = new SelectionModel<any>(true, []);
-  mockData =
-    [
-      {
-        id: 0,
-        name: 'search: 1',
-      },
-      {
-        id: 2,
-        name: 'search: 2',
-      },
-      {
-        id: 3,
-        name: 'search: 3',
-      },
-      {
-        id: 4,
-        name: 'search: 4',
-      }];
-  dataSource = new MatTableDataSource<any>(this.mockData);
 
-  constructor() {
+  dataSource: MatTableDataSource<any>;
+  destroyed$: Subject<boolean> = new Subject<boolean>();
+
+  constructor(private searcherService: SearcherService) {
   }
 
   ngOnInit() {
+    this.searcherService.getSavedSearches().pipe(takeUntil(this.destroyed$)).subscribe(searches => {
+      if (searches) {
+        console.log(searches);
+        this.dataSource = new MatTableDataSource<any>(searches);
+      }
+    });
   }
 
-  displaySavedSearch(id) {
-    this.savedSearchClick.emit(id);
+  displaySavedSearch(element) {
+    this.savedSearchClick.emit(element);
+  }
+
+  ngOnDestroy() {
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
   }
 
 

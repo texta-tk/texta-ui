@@ -1,5 +1,4 @@
 import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
 import {SharedModule} from '../shared/shared.module';
 import {SearcherRoutingModule} from './searcher-routing.module';
 import {TextConstraintsComponent} from './searcher-sidebar/build-search/text-constraints/text-constraints.component';
@@ -10,7 +9,8 @@ import {SearcherComponent} from './searcher.component';
 import {SearcherSidebarComponent} from './searcher-sidebar/searcher-sidebar.component';
 import {SearcherTableComponent} from './searcher-table/searcher-table.component';
 import {BuildSearchComponent} from './searcher-sidebar/build-search/build-search.component';
-import { SavedSearchesComponent } from './searcher-sidebar/saved-searches/saved-searches.component';
+import {SavedSearchesComponent} from './searcher-sidebar/saved-searches/saved-searches.component';
+import {SaveSearchDialogComponent} from './searcher-sidebar/dialogs/save-search-dialog/save-search-dialog.component';
 
 @NgModule({
   declarations: [
@@ -23,11 +23,13 @@ import { SavedSearchesComponent } from './searcher-sidebar/saved-searches/saved-
     FactConstraintsComponent,
     FactTextConstraintsComponent,
     SavedSearchesComponent,
+    SaveSearchDialogComponent,
   ],
   imports: [
     SharedModule,
     SearcherRoutingModule
-  ]
+  ],
+  entryComponents: [SaveSearchDialogComponent]
 })
 export class SearcherModule {
   constructor() {

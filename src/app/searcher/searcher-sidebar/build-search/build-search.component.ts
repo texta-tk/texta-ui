@@ -1,24 +1,11 @@
-import {
-  Component,
-  EventEmitter,
-  OnDestroy,
-  OnInit,
-  Output,
-} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit, Output,} from '@angular/core';
 import {Field, Project, ProjectFact, ProjectField} from '../../../shared/types/Project';
 import {FormControl} from '@angular/forms';
 import {forkJoin, of, Subject} from 'rxjs';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {ProjectService} from '../../../core/projects/project.service';
 import {ProjectStore} from '../../../core/projects/project.store';
-import {
-  Constraint,
-  DateConstraint,
-  ElasticsearchQuery,
-  FactConstraint,
-  FactTextConstraint,
-  TextConstraint
-} from './Constraints';
+import {Constraint, DateConstraint, ElasticsearchQuery, FactConstraint, FactTextConstraint, TextConstraint} from './Constraints';
 import {HttpErrorResponse} from '@angular/common/http';
 import {SearcherService} from '../../../core/searcher/searcher.service';
 import {MatSelectChange} from '@angular/material';
@@ -68,13 +55,14 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
         }
         if (!(resp.fields instanceof HttpErrorResponse)) {
           this.projectFields = resp.fields;
+          this.makeFactFields(this.projectFields);
           this.projectFieldsFiltered = this.projectFields;
         }
       }
     });
   }
 
-  onOpenedChange(opened) {
+  public onOpenedChange(opened) {
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && (this.fieldsFormControl.value && this.fieldsFormControl.value.length > 0)) {
       const formFields: Field[] = this.fieldsFormControl.value;
@@ -114,9 +102,14 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     }
   }
 
-  buildSavedSearch(id: number) {
+  makeFactFields(projectFields: ProjectField[]) {
+    //need backend
+  }
+
+  buildSavedSearch(savedSearch: any) {
     this.constraintList.splice(0, this.constraintList.length);
-    this.constraintList.push(this.searcherService.getSavedSearchById(id, id));
+    // console.log(this.searcherService.getSavedSearchById(id, id));
+    this.constraintList = [...savedSearch.constraints];
   }
 
   removeConstraint(index) {
@@ -159,6 +152,10 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     if (event === this.elasticQuery && this.searcherOptions.includes('live_search')) {
       this.getSearch();
     }
+  }
+
+  saveSearch(description: string) {
+    this.searcherService.saveSearch([...this.constraintList], this.elasticQuery, description);
   }
 
 
