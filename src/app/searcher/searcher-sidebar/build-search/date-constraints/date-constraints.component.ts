@@ -24,30 +24,23 @@ export class DateConstraintsComponent implements OnInit, OnDestroy {
   dateFromFormControl: FormControl;
   dateToFormControl: FormControl;
   destroyed$: Subject<boolean> = new Subject<boolean>();
-  constraintQueryFromDate;
-  constraintQueryToDate;
+  constraintQuery = {bool: {must: []}};
 
   constructor() {
   }
 
   ngOnInit() {
+
     if (this._dateConstraint) {
       const fieldPaths = this._dateConstraint.fields.map(x => x.path);
-      const accessor: string = fieldPaths.join(',');
-      const fromDate = {gte: ''};
-      const toDate = {lte: ''};
-      this.constraintQueryFromDate = {range: {[accessor]: fromDate}};
-      this.constraintQueryToDate = {range: {[accessor]: toDate}};
-
-      this.elasticSearchQuery.query.bool.must.push(this.constraintQueryFromDate);
-      this.elasticSearchQuery.query.bool.must.push(this.constraintQueryToDate);
+      this.elasticSearchQuery.query.bool.must.push(this.constraintQuery);
       this.dateFromFormControl.valueChanges.pipe(
         takeUntil(this.destroyed$),
         startWith(this.dateFromFormControl.value as object),
         distinctUntilChanged(),
         debounceTime(200)).subscribe(value => {
-        fromDate.gte = value;
-        if (toDate.lte) {
+        this.makeDateQuery(fieldPaths, this.dateFromFormControl.value, this.dateToFormControl.value);
+        if (this.dateToFormControl.value) {
           this.change.emit(this.elasticSearchQuery);
         }
       });
@@ -56,20 +49,26 @@ export class DateConstraintsComponent implements OnInit, OnDestroy {
         startWith(this.dateToFormControl.value as object),
         distinctUntilChanged(),
         debounceTime(200)).subscribe(value => {
-        toDate.lte = value;
-        if (fromDate.gte) {
+        this.makeDateQuery(fieldPaths, this.dateFromFormControl.value, this.dateToFormControl.value);
+        if (this.dateFromFormControl.value) {
           this.change.emit(this.elasticSearchQuery);
         }
       });
     }
   }
 
-  ngOnDestroy() {
-    let index = this.elasticSearchQuery.query.bool.must.indexOf(this.constraintQueryFromDate, 0);
-    if (index > -1) {
-      this.elasticSearchQuery.query.bool.must.splice(index, 1);
+  makeDateQuery(fieldPaths: string[], fromValue, toValue) {
+    this.constraintQuery.bool.must.splice(0, this.constraintQuery.bool.must.length);
+    const fromDate = {gte: fromValue};
+    const toDate = {lte: toValue};
+    for (const field of fieldPaths) {
+      this.constraintQuery.bool.must.push({range: {[field]: fromDate}});
+      this.constraintQuery.bool.must.push({range: {[field]: toDate}});
     }
-    index = this.elasticSearchQuery.query.bool.must.indexOf(this.constraintQueryToDate, 0);
+  }
+
+  ngOnDestroy() {
+    const index = this.elasticSearchQuery.query.bool.must.indexOf(this.constraintQuery, 0);
     if (index > -1) {
       this.elasticSearchQuery.query.bool.must.splice(index, 1);
     }
