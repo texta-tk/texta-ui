@@ -69,4 +69,16 @@ export class NeuroTaggerService {
       catchError(this.logService.handleError('tagRandomDoc')));
   }
 
+  createNeuroTagger(body: {}, projectId: number): Observable<NeuroTagger | HttpErrorResponse> {
+    return this.http.post<NeuroTagger>(`${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/`, body).pipe(
+      tap(e => this.logService.logStatus(e, 'createNeuroTagger')),
+      catchError(this.logService.handleError<NeuroTagger>('createNeuroTagger')));
+  }
+
+  bulkDeleteNeuroTaggers(projectId: number, body) {
+    return this.http.post<{"num_deleted": number, "deleted_types": {string: number}[] }>
+    (`${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/bulk_delete/`, body).pipe(
+      tap(e => this.logService.logStatus(e, 'bulkDeleteNeuroTaggers')),
+      catchError(this.logService.handleError<unknown>('bulkDeleteNeuroTaggers')));
+  }
 }

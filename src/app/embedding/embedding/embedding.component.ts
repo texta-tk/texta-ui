@@ -11,6 +11,7 @@ import {CreateEmbeddingDialogComponent} from './create-embedding-dialog/create-e
 import {LogService} from '../../core/util/log.service';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import { PhraseDialogComponent } from '../phrase-dialog/phrase-dialog.component';
+import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
   selector: 'app-embedding',
@@ -30,7 +31,8 @@ export class EmbeddingComponent implements OnInit, OnDestroy {
   private updateEmbeddingsSubscription: Subscription;
   expandedElement: Embedding | null;
   public tableData: MatTableDataSource<Embedding> = new MatTableDataSource();
-  public displayedColumns = ['description', 'fields_parsed', 'time_started', 'time_completed', 'Task', 'Modify'];
+  public displayedColumns = ['select', 'description', 'fields_parsed', 'time_started', 'time_completed', 'Task', 'Modify'];
+  selectedRows = new SelectionModel<Embedding>(true, []);
   public isLoadingResults = true;
 
   @ViewChild(MatSort, {static: true}) sort: MatSort;
@@ -111,5 +113,44 @@ export class EmbeddingComponent implements OnInit, OnDestroy {
         this.logService.snackBarError(resp, 5000);
       }
     });
+  }
+
+   
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selectedRows.selected.length;
+    const numRows = this.tableData.data.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterToggle() {
+    this.isAllSelected() ?
+        this.selectedRows.clear() :
+        this.tableData.data.forEach(row => this.selectedRows.select(row));
+  }
+
+
+  onDelteAllSelected() {
+    if (this.selectedRows.selected.length > 0) {
+      // Delete selected taggers
+      const ids_to_delete = this.selectedRows.selected.map((tagger: Embedding) => { return tagger.id });
+      const body = {"ids": ids_to_delete}
+      // Refresh taggers
+      this.embeddingsService.bulkDeleteEmbeddings(this.currentProject.id, body).subscribe(() => {
+        this.logService.snackBarMessage(`${this.selectedRows.selected.length} Embeddings deleted`, 2000);
+        this.removeSelectedRows();
+      });
+    }
+  }
+
+  removeSelectedRows() {
+    this.selectedRows.selected.forEach((selected_tagger: Embedding) => {
+       const index: number = this.tableData.data.findIndex(tagger => tagger.id === selected_tagger.id);
+        this.tableData.data.splice(index, 1);
+        this.tableData.data = [...this.tableData.data];
+     });
+     this.selectedRows.clear();
   }
 }

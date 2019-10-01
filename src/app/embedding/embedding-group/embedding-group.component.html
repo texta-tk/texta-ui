@@ -1,5 +1,9 @@
 <div class="table-actions-wrapper">
     <button class="new-resource-btn" mat-icon-button color="primary" (click)="openCreateDialog()"><mat-icon>add</mat-icon></button>
-    <button class="new-resource-btn" mat-icon-button color="warn" (click)="openCreateDialog()" matTooltip="Delete selected"><mat-icon>delete</mat-icon></button>
+    <!-- <button class="new-resource-btn" mat-icon-button color="warn" (click)="openCreateDialog()" matTooltip="Delete selected"><mat-icon>delete</mat-icon></button> -->
   </div>
-<app-generic-table [dataSource]="tableData"></app-generic-table>
+<div class="wrapper mat-elevation-z8">
+  <div class="table-container">
+    <app-generic-table [dataSource]="tableData"></app-generic-table>
+  </div>
+</div>

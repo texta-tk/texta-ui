@@ -1,10 +1,23 @@
 <div class="table-actions-wrapper">
   <button class="new-resource-btn" mat-icon-button color="primary" (click)="openCreateDialog()"><mat-icon>add</mat-icon></button>
-  <button class="new-resource-btn" mat-icon-button color="warn" (click)="openCreateDialog()" matTooltip="Delete selected"><mat-icon>delete</mat-icon></button>
+  <button class="new-resource-btn" mat-icon-button color="warn" (click)="onDelteAllSelected()" [disabled]="selectedRows.selected.length < 1" matTooltip="Delete selected"><mat-icon>delete</mat-icon></button>
 </div>
 <div class="wrapper mat-elevation-z8">
   <div class="table-container">
     <table mat-table [dataSource]="tableData" matSort multiTemplateDataRows>
+      <ng-container matColumnDef="select">
+          <th mat-header-cell *matHeaderCellDef>
+            <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selectedRows.hasValue() && isAllSelected()"
+              [indeterminate]="selectedRows.hasValue() && !isAllSelected()">
+            </mat-checkbox>
+          </th>
+          <td mat-cell *matCellDef="let row">
+            <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selectedRows.toggle(row) : null"
+              [checked]="selectedRows.isSelected(row)">
+            </mat-checkbox>
+          </td>
+        </ng-container>
+        
       <ng-container matColumnDef="description">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Description</th>
         <td mat-cell *matCellDef="let element"> {{element.description}}</td>

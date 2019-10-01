@@ -35,7 +35,7 @@ export class TaggerComponent implements OnInit, OnDestroy {
 
   expandedElement: Tagger | null;
   public tableData: MatTableDataSource<Tagger> = new MatTableDataSource();
-  selectedTaggers = new SelectionModel<Tagger>(true, []);
+  selectedRows = new SelectionModel<Tagger>(true, []);
   public displayedColumns = ['select', 'description', 'fields_parsed', 'time_started',
     'time_completed', 'f1_score', 'precision', 'recall', 'Task', 'Modify'];
   public isLoadingResults = true;
@@ -74,15 +74,19 @@ export class TaggerComponent implements OnInit, OnDestroy {
     // check for updates after 30s every 30s
     this.updateTaggersSubscription = timer(30000, 30000).pipe(switchMap(_ => this.taggerService.getTaggers(this.currentProject.id)))
     .subscribe((resp: Tagger[] | HttpErrorResponse) => {
-      if (resp && !(resp instanceof HttpErrorResponse)) {
-        if (resp.length > 0) {
-          resp.map(tagger => {
-            const indx = this.tableData.data.findIndex(x => x.id === tagger.id);
-            this.tableData.data[indx].task = tagger.task;
-          });
-        }
-      }
+      this.refreshTaggers(resp);
     });
+  }
+
+  refreshTaggers(resp: Tagger[] | HttpErrorResponse) {
+    if (resp && !(resp instanceof HttpErrorResponse)) {
+      if (resp.length > 0) {
+        resp.map(tagger => {
+          const indx = this.tableData.data.findIndex(x => x.id === tagger.id);
+          this.tableData.data[indx].task = tagger.task;
+        });
+      }
+    }
   }
 
   retrainTagger(value) {
@@ -163,7 +167,7 @@ export class TaggerComponent implements OnInit, OnDestroy {
 
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
-    const numSelected = this.selectedTaggers.selected.length;
+    const numSelected = this.selectedRows.selected.length;
     const numRows = this.tableData.data.length;
     return numSelected === numRows;
   }
@@ -171,8 +175,30 @@ export class TaggerComponent implements OnInit, OnDestroy {
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
     this.isAllSelected() ?
-        this.selectedTaggers.clear() :
-        this.tableData.data.forEach(row => this.selectedTaggers.select(row));
+        this.selectedRows.clear() :
+        this.tableData.data.forEach(row => this.selectedRows.select(row));
   }
 
+
+  onDelteAllSelected() {
+    if (this.selectedRows.selected.length > 0) {
+      // Delete selected taggers
+      const ids_to_delete = this.selectedRows.selected.map((tagger: Tagger) => { return tagger.id });
+      const body = {"ids": ids_to_delete}
+      // Refresh taggers
+      this.taggerService.bulkDeleteTaggers(this.currentProject.id, body).subscribe(() => {
+        this.logService.snackBarMessage(`${this.selectedRows.selected.length} Taggers deleted`, 2000);
+        this.removeSelectedRows();
+      });
+    }
+  }
+
+  removeSelectedRows() {
+    this.selectedRows.selected.forEach((selected_tagger: Tagger) => {
+       const index: number = this.tableData.data.findIndex(tagger => tagger.id === selected_tagger.id);
+        this.tableData.data.splice(index, 1);
+        this.tableData.data = [...this.tableData.data];
+     });
+     this.selectedRows.clear();
+  }
 }

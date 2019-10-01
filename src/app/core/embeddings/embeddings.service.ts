@@ -47,4 +47,11 @@ export class EmbeddingsService {
       tap(e => this.logService.logStatus(e, 'phrase')),
       catchError(this.logService.handleError('phrase')));
   }
+
+  bulkDeleteEmbeddings(projectId: number, body) {
+    return this.http.post<{"num_deleted": number, "deleted_types": {string: number}[] }>
+    (`${this.apiUrl}/projects/${projectId}/embeddings/bulk_delete/`, body).pipe(
+      tap(e => this.logService.logStatus(e, 'bulkDeleteEmbeddings')),
+      catchError(this.logService.handleError<unknown>('bulkDeleteEmbeddings')));
+  }
 }
