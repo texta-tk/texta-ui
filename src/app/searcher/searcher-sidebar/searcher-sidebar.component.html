@@ -1,13 +1,13 @@
 <mat-accordion [multi]="true"> <!--[displayMode]="flat"-->
   <mat-expansion-panel
     [expanded]="buildSearchExpanded" #buildSearchPanel>
-    <mat-expansion-panel-header (click)="expandPanel($event)">
+    <mat-expansion-panel-header (click)="expandBuildSearchPanel($event)">
       <mat-panel-title>
-        <span (click)="expandBuildSearchPanel()">Current Search</span>
+        <span>Current Search</span>
       </mat-panel-title>
       <mat-panel-description fxLayoutAlign="end start">
         <button mat-icon-button class="flex-item-right panel-button" aria-label="save search"
-                (click)="openSaveSearchDialog()">
+                (click)="openSaveSearchDialog();$event.preventDefault();$event.stopPropagation()">
           <mat-icon>save</mat-icon>
         </button>
       </mat-panel-description>
@@ -32,9 +32,9 @@
     </mat-tab-group>
   </mat-expansion-panel>
   <mat-expansion-panel [expanded]="savedSearchesExpanded" #savedSearchesPanel>
-    <mat-expansion-panel-header (click)="expandPanel($event)">
+    <mat-expansion-panel-header (click)="expandSavedSearchesPanel($event)">
       <mat-panel-title>
-        <span (click)="expandSavedSearchesPanel()"> Saved Searches </span>
+        <span> Saved Searches </span>
       </mat-panel-title>
     </mat-expansion-panel-header>
     <div>

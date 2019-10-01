@@ -26,7 +26,7 @@ import {ScrollingModule} from '@angular/cdk/scrolling';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatDatepickerModule} from '@angular/material/datepicker';
-import {MatNativeDateModule} from '@angular/material';
+import {MatNativeDateModule, MatTooltipModule} from '@angular/material';
 import {FlexLayoutModule} from '@angular/flex-layout';
 
 import {LoginDialogComponent} from './components/dialogs/login/login-dialog.component';
@@ -89,6 +89,7 @@ import {MatOptionSelectAllComponent} from "./components/mat-option-select-all.co
     MatExpansionModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatTooltipModule,
 
   ],
   exports: [
@@ -121,6 +122,7 @@ import {MatOptionSelectAllComponent} from "./components/mat-option-select-all.co
     MatExpansionModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatTooltipModule,
 
     GenericTableComponent,
 

@@ -31,16 +31,6 @@ export class SearcherSidebarComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  expandPanel(event): void {
-    event.stopPropagation(); // Preventing event bubbling
-
-    if (this.buildSearchExpanded) {
-      this.buildSearchPanel.open(); // Here's the magic
-    } else {
-      this.buildSearchPanel.close();
-    }
-  }
-
   expandBuildSearchPanel() {
     this.buildSearchExpanded = !this.buildSearchExpanded;
   }

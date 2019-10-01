@@ -5,7 +5,14 @@ import {forkJoin, of, Subject} from 'rxjs';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {ProjectService} from '../../../core/projects/project.service';
 import {ProjectStore} from '../../../core/projects/project.store';
-import {Constraint, DateConstraint, ElasticsearchQuery, FactConstraint, FactTextConstraint, TextConstraint} from './Constraints';
+import {
+  Constraint,
+  DateConstraint,
+  ElasticsearchQuery,
+  FactConstraint,
+  FactTextConstraint,
+  TextConstraint
+} from './Constraints';
 import {HttpErrorResponse} from '@angular/common/http';
 import {SearcherService} from '../../../core/searcher/searcher.service';
 import {MatSelectChange} from '@angular/material';
@@ -70,10 +77,14 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
         this.constraintList.push(new TextConstraint(formFields));
       } else if (formFields[0].type === 'date') {
         this.constraintList.push(new DateConstraint(formFields));
-      } else if (formFields[0].type === 'keyword') { // temp for fact_text_values
-        this.constraintList.push(new FactTextConstraint(formFields));
       } else {
         this.constraintList.push(new FactConstraint(formFields));
+      }
+      // need this for fact search to work standalone
+      if (this.constraintList.some(x => x instanceof FactConstraint) && this.constraintList.length === 1) {
+        this.elasticQuery.query.bool.minimum_should_match = 0; // nested query is seperate search so need this at 0
+      } else {
+        this.elasticQuery.query.bool.minimum_should_match = 1; // back to normal
       }
       // reset field selection
       this.fieldsFormControl.reset();
@@ -106,7 +117,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     //need backend
   }
 
-  buildSavedSearch(savedSearch: any) {
+  buildSavedSearch(savedSearch: any) { // todo type
     this.constraintList.splice(0, this.constraintList.length);
     // console.log(this.searcherService.getSavedSearchById(id, id));
     this.constraintList = [...savedSearch.constraints];

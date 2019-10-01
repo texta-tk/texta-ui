@@ -78,8 +78,7 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
               // json for deep copy
               const newFormQuery = JSON.parse(JSON.stringify(formQuery));
               newFormQuery.nested.inner_hits.name = `${FactConstraintsComponent.componentCount}_${line}`;
-              newFormQuery.nested.query.bool.must.push({term: {'texta_facts.doc_path': fieldPaths}});
-              newFormQuery.nested.query.bool.must.push({term: {'texta_facts.fact': line}});
+              newFormQuery.nested.query.bool.must.push({match: {'texta_facts.fact': line}});
               formQueries.push(newFormQuery);
             }
           }

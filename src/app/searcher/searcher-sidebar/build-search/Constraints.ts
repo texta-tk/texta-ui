@@ -61,7 +61,7 @@ export class ElasticsearchQuery {
       filter: any[],
       must_not: any[],
       should: any[],
-      minimum_should_match: 1,
+      minimum_should_match: number,
       boost: 1.0
     }
   };
@@ -73,7 +73,7 @@ export class ElasticsearchQuery {
         filter: [],
         must_not: [],
         should: [],
-        minimum_should_match: 1,
+        minimum_should_match: 0,
         boost: 1.0
       }
     };

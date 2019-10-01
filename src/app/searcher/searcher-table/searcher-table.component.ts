@@ -62,8 +62,9 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
 
   checkIfObject(value) {
     if (value) {
+      const stringValue = value.toString().split(',');
       // hacky way to check if object with properties
-      return value.toString() === '[object Object]';
+      return stringValue[0] === '[object Object]';
     }
   }
 
