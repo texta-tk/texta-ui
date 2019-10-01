@@ -81,10 +81,10 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
         this.constraintList.push(new FactConstraint(formFields));
       }
       // need this for fact search to work standalone
-      if (this.constraintList.some(x => x instanceof FactConstraint) && this.constraintList.length === 1) {
-        this.elasticQuery.query.bool.minimum_should_match = 0; // nested query is seperate search so need this at 0
+      if (this.constraintList.some(x => (x instanceof TextConstraint))) {
+        this.elasticQuery.query.bool.minimum_should_match = 1; // nested query is seperate search so need this at 0
       } else {
-        this.elasticQuery.query.bool.minimum_should_match = 1; // back to normal
+        this.elasticQuery.query.bool.minimum_should_match = 0; // back to normal
       }
       // reset field selection
       this.fieldsFormControl.reset();
