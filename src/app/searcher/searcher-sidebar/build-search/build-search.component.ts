@@ -80,12 +80,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
       } else {
         this.constraintList.push(new FactConstraint(formFields));
       }
-      // need this for fact search to work standalone
-      if (this.constraintList.some(x => (x instanceof TextConstraint))) {
-        this.elasticQuery.query.bool.minimum_should_match = 1; // nested query is seperate search so need this at 0
-      } else {
-        this.elasticQuery.query.bool.minimum_should_match = 0; // back to normal
-      }
+      this.checkMinimumMatch();
       // reset field selection
       this.fieldsFormControl.reset();
       this.projectFieldsFiltered = this.projectFields; // remove field filter
@@ -121,10 +116,12 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     this.constraintList.splice(0, this.constraintList.length);
     // console.log(this.searcherService.getSavedSearchById(id, id));
     this.constraintList = [...savedSearch.constraints];
+    this.checkMinimumMatch();
   }
 
   removeConstraint(index) {
     this.constraintList.splice(index, 1);
+    this.checkMinimumMatch();
   }
 
   isFactNameConstraint(constraintType: Constraint) {
@@ -169,5 +166,13 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     this.searcherService.saveSearch([...this.constraintList], this.elasticQuery, description);
   }
 
+  checkMinimumMatch() {
+    // need this for fact search to work standalone
+    if (this.constraintList.some(x => (x instanceof TextConstraint))) {
+      this.elasticQuery.query.bool.minimum_should_match = 1; // nested query is seperate search so need this at 0
+    } else {
+      this.elasticQuery.query.bool.minimum_should_match = 0; // back to normal
+    }
+  }
 
 }
