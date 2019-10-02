@@ -174,9 +174,8 @@ export class NeuroTaggerComponent implements OnInit, OnDestroy {
   }
 
   openGenericDialog(data: string) {
-    data = JSON.parse(data);
     const dialogRef = this.dialog.open(GenericDialogComponent, {
-      data: {data: data},
+      data: {data:  data},
       maxHeight: '665px',
       width: '700px',
     });    

@@ -10,8 +10,13 @@
 
       <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>{{column}}</th>
-        <td mat-cell *matCellDef="let row">
-          <span *ngIf="checkIfObject(row[column])"><pre>{{row[column] | json}}</pre></span>
+        <td mat-cell *matCellDef="let row" class="table-row">
+            <table class="simple-table" *ngIf="checkIfObject(row[column])">
+                <tr *ngFor="let key of getKeys(row[column])">
+                  <th class="mat-body-strong">{{key}}</th>
+                  <td>{{row[column][key]}}</td>
+                </tr>
+            </table>
           <span *ngIf="!checkIfObject(row[column])">{{row[column]}}</span></td>
       </ng-container>
 

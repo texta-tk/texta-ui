@@ -1,10 +1,7 @@
 .mat-expansion-panel-header:not([aria-disabled=true]) {
-  cursor: default !important;
+  cursor: pointer !important;
 }
 
-.mat-expansion-panel-header-title{
-  cursor: pointer
-}
 
 .panel-button{
   width:24px;
