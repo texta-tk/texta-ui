@@ -18,6 +18,7 @@ import {ProjectModule} from './project/project.module';
 import {LexiconBuilderComponent} from './lexicon-miner/lexicon-builder/lexicon-builder.component';
 import {SearcherModule} from './searcher/searcher.module';
 import {NeuroTaggerModule} from './neuro-tagger/neuro-tagger.module';
+import {MAT_HAMMER_OPTIONS} from '@angular/material';
 
 
 @NgModule({
@@ -42,7 +43,10 @@ import {NeuroTaggerModule} from './neuro-tagger/neuro-tagger.module';
     SearcherModule,
     NeuroTaggerModule
   ],
-  providers: [{provide: HTTP_INTERCEPTORS, useClass: HttpAuthInterceptor, multi: true}],
+  providers: [
+    {provide: HTTP_INTERCEPTORS, useClass: HttpAuthInterceptor, multi: true},
+    {provide: MAT_HAMMER_OPTIONS, useValue: {cssProps: {userSelect: true}}}
+  ],
 
   bootstrap: [AppComponent]
 })
