@@ -8,7 +8,7 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>{{column}}</th>
         <td mat-cell *matCellDef="let row" class="table-row">
           <span *ngIf="checkIfObject(row[column])"><pre>{{row[column] | json}}</pre></span>
-          <span *ngIf="!checkIfObject(row[column])"><app-highlight [JsonResponse]="row" [currentColumn]="column"></app-highlight></span></td>
+          <span *ngIf="!checkIfObject(row[column])"><app-highlight searchTerm="laste" [JsonResponse]="row" [currentColumn]="column"></app-highlight></span></td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
