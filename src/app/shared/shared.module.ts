@@ -43,6 +43,8 @@ import {CirclesComponent} from './components/svg/chart/circles/circles.component
 import {LineComponent} from './components/svg/chart/line/line.component';
 import {ConfirmDialogComponent} from './components/dialogs/confirm-dialog/confirm-dialog.component';
 import {MatOptionSelectAllComponent} from "./components/mat-option-select-all.component";
+import { QueryDialogComponent } from './components/dialogs/query-dialog/query-dialog.component';
+import { GenericDialogComponent } from './components/dialogs/generic-dialog/generic-dialog.component';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
@@ -58,7 +60,9 @@ import {MatOptionSelectAllComponent} from "./components/mat-option-select-all.co
     BarsComponent,
     GradientComponent,
     ConfirmDialogComponent,
-    MatOptionSelectAllComponent
+    MatOptionSelectAllComponent,
+    QueryDialogComponent,
+    GenericDialogComponent
   ],
   imports: [
     CommonModule,
@@ -137,7 +141,7 @@ import {MatOptionSelectAllComponent} from "./components/mat-option-select-all.co
     GradientComponent,
     MatOptionSelectAllComponent
   ],
-  entryComponents: [LoginDialogComponent, RegistrationDialogComponent, ConfirmDialogComponent],
+  entryComponents: [LoginDialogComponent, RegistrationDialogComponent, ConfirmDialogComponent, QueryDialogComponent, GenericDialogComponent],
 })
 export class SharedModule {
 }

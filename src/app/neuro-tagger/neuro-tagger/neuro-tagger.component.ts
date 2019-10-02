@@ -14,6 +14,7 @@ import { NeurotagTextDialogComponent } from '../neurotag-text-dialog/neurotag-te
 import { NeurotagDocDialogComponent } from '../neurotag-doc-dialog/neurotag-doc-dialog.component';
 import { NeurotagRandomDocDialogComponent } from '../neurotag-random-doc-dialog/neurotag-random-doc-dialog.component';
 import { SelectionModel } from '@angular/cdk/collections';
+import { GenericDialogComponent } from 'src/app/shared/components/dialogs/generic-dialog/generic-dialog.component';
 
 @Component({
   selector: 'app-neuro-tagger',
@@ -170,5 +171,14 @@ export class NeuroTaggerComponent implements OnInit, OnDestroy {
         this.tableData.data = [...this.tableData.data];
      });
      this.selectedRows.clear();
+  }
+
+  openGenericDialog(data: string) {
+    data = JSON.parse(data);
+    const dialogRef = this.dialog.open(GenericDialogComponent, {
+      data: {data: data},
+      maxHeight: '665px',
+      width: '700px',
+    });    
   }
 }
