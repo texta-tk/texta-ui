@@ -58,7 +58,7 @@ export class HighlightComponent implements OnInit {
   }
 
   private makeHighLights(originalText: string, facts: TextaFact[], factColors: Map<string, string>): HighlightObject[] {
-    if (!facts) {
+    if (facts.length === 0) {
       return [{text: originalText, highlighted: false}];
     }
 
