@@ -12,6 +12,11 @@
     <a class="pointer" [matMenuTriggerFor]="models">Language stuff<mat-icon>arrow_drop_down</mat-icon></a>
 
     <mat-menu #models="matMenu">
+      <button mat-menu-item>Get Facts</button>
+      <button mat-menu-item>Get Fields</button>
+    </mat-menu>
+
+    <mat-menu #models="matMenu">
       <a mat-menu-item routerLinkActive="is-active" [routerLink]="['embedding-group']">Embedding Cluster</a>
       <a mat-menu-item routerLinkActive="is-active" [routerLink]="['tagger-group']">Tagger Group</a>
       <a mat-menu-item routerLinkActive="is-active" [routerLink]="['embeddings']">Embeddings</a>

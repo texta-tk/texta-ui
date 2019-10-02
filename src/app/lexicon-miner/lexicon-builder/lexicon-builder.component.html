@@ -13,30 +13,35 @@
             </mat-select>
 
           </mat-form-field>
-          <div [ngClass]="{'hidden':!selectedEmbedding}">
-            <button mat-stroked-button color="accent"
-                    (click)="getNewSuggestions(predictedWords.selectedOptions.selected)">
-              New
-              words
-            </button>
-            <button mat-stroked-button color="primary" (click)="saveLexicon()">Save</button>
-          </div>
+
         </div>
       </div>
 
       <div class="max-width  overflow-auto" [ngClass]="{'hidden':!selectedEmbedding}">
         <mat-form-field floatLabel="never" class="max-width">
-  <textarea matInput class="max-width"
-            placeholder="Enter words here"
-            [(ngModel)]="positives"
+          <textarea matInput class="max-width" placeholder="Enter words here" [(ngModel)]="positives"
             cdkTextareaAutosize></textarea>
         </mat-form-field>
+      </div>
+
+      <div *ngIf="selectedEmbedding" fxLayout="row" fxLayoutGap="5px">
+          <button mat-stroked-button color="accent" fxFlex
+          (click)="getNewSuggestions(predictedWords.selectedOptions.selected)">
+          New Suggestions
+        </button>
+        <button mat-stroked-button color="primary" (click)="saveLexicon()" fxFlex>Save</button>
       </div>
     </ng-container>
   </div>
 
-  <div class="max-width predictions mat-elevation-z2">
-    <h3>Suggestions</h3>
+  <div class="predictions mat-elevation-z2">
+    <h3>Suggestions
+
+      
+      <button mat-button color="primary"
+      (click)="updateLexicon(predictedWords.selectedOptions.selected)"
+      *ngIf="predictedWords.selectedOptions.selected.length > 0">Add selected</button>
+    </h3>
     <mat-selection-list #predictedWords>
       <mat-list-option *ngFor="let prediction of predictions" [value]="prediction">
         {{prediction.phrase}}
@@ -44,5 +49,3 @@
     </mat-selection-list>
   </div>
 </div>
-
-
