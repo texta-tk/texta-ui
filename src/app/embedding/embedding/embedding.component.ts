@@ -12,6 +12,7 @@ import {LogService} from '../../core/util/log.service';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import { PhraseDialogComponent } from '../phrase-dialog/phrase-dialog.component';
 import { SelectionModel } from '@angular/cdk/collections';
+import { QueryDialogComponent } from 'src/app/shared/components/dialogs/query-dialog/query-dialog.component';
 
 @Component({
   selector: 'app-embedding',
@@ -152,5 +153,14 @@ export class EmbeddingComponent implements OnInit, OnDestroy {
         this.tableData.data = [...this.tableData.data];
      });
      this.selectedRows.clear();
+  }
+
+
+  openQueryDialog(query: string) {
+    const dialogRef = this.dialog.open(QueryDialogComponent, {
+      data: { query: query },
+      maxHeight: '665px',
+      width: '700px',
+    });
   }
 }

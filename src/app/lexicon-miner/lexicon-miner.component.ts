@@ -20,13 +20,10 @@ import {MatDialog} from '@angular/material';
 export class LexiconMinerComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   lexicons: Lexicon[];
-  embeddings: Embedding[];
   newLexiconDescription = '';
   selectedLexicon: Lexicon;
 
   constructor(private logService: LogService,
-              private dialog: MatDialog,
-              private embeddingService: EmbeddingsService,
               private lexiconService: LexiconService, private projectStore: ProjectStore) {
   }
 

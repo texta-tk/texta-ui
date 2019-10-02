@@ -43,7 +43,8 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
   }
 
   constructor(private logService: LogService,
-              private lexiconService: LexiconService, private embeddingService: EmbeddingsService,
+              private lexiconService: LexiconService,
+              private embeddingService: EmbeddingsService,
               private projectStore: ProjectStore) {
   }
 
@@ -58,7 +59,9 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
         if (resp instanceof HttpErrorResponse) {
           this.logService.snackBarError(resp, 5000);
         } else {
-          this.embeddings = resp;
+          this.embeddings = resp.filter((embedding: Embedding) => {
+            return embedding.task.status === 'completed';
+          });
         }
       }
     });

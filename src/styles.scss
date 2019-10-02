@@ -81,10 +81,12 @@ pre {
   margin-right: 5px;
 }
 
-.margin-left-right {
+.m-l-r-5 {
   margin-left: 5px;
   margin-right: 5px;
 }
+
+.inline-block {}
 
 .w-10 {
   width: 10%;
@@ -98,8 +100,21 @@ pre {
   width: 40%;
 }
 
+.m-top-5 {
+  margin-top: 5px;
+}
+
 .m-top-10 {
   margin-top: 10px;
+}
+
+
+.action-text {
+  color: $primary;
+}
+
+.action-text:hover {
+  text-decoration: underline;
 }
 
 .overflow-auto {
@@ -127,4 +142,18 @@ pre {
   position: relative;
   border-bottom: 0px;
   box-shadow: 0 5px 5px -3px rgba(0,0,0,.2),0 8px 10px 1px rgba(0,0,0,.14),0 3px 14px 2px rgba(0,0,0,.12);
+}
+
+
+.simple-table {
+  margin: 5px;
+  font-family: arial, sans-serif;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.simple-table td, .simple-table th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
 }

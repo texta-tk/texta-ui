@@ -15,6 +15,7 @@ import {TagTextDialogComponent} from './tag-text-dialog/tag-text-dialog.componen
 import {TagDocDialogComponent} from './tag-doc-dialog/tag-doc-dialog.component';
 import { TagRandomDocDialogComponent } from './tag-random-doc-dialog/tag-random-doc-dialog.component';
 import { SelectionModel } from '@angular/cdk/collections';
+import { QueryDialogComponent } from 'src/app/shared/components/dialogs/query-dialog/query-dialog.component';
 
 @Component({
   selector: 'app-tagger',
@@ -200,5 +201,14 @@ export class TaggerComponent implements OnInit, OnDestroy {
         this.tableData.data = [...this.tableData.data];
      });
      this.selectedRows.clear();
+  }
+
+
+  openQueryDialog(query: string) {
+    const dialogRef = this.dialog.open(QueryDialogComponent, {
+      data: { query: query },
+      maxHeight: '665px',
+      width: '700px',
+    });
   }
 }
