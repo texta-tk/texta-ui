@@ -40,6 +40,7 @@ export class DateConstraint extends Constraint {
 export class FactConstraint extends Constraint {
   factNameOperatorFormControl = new FormControl();
   factNameFormControl = new FormControl();
+
   constructor(fields: Field[], factNameOperator?, factName?) {
     super(fields);
     this.factNameOperatorFormControl.setValue(factNameOperator ? factNameOperator : 'must');
@@ -65,6 +66,13 @@ export class ElasticsearchQuery {
       boost: 1.0
     }
   };
+  // todo highlight query here?
+  highlight = {
+    fields: {
+      kysimus_ja_vastus: {pre_tags: ['<em>'], post_tags: ['</em>']},
+    }
+  };
+  elasticsearchQuery;
 
   constructor() {
     this.query = {
@@ -76,6 +84,10 @@ export class ElasticsearchQuery {
         minimum_should_match: 0,
         boost: 1.0
       }
+    };
+    this.elasticsearchQuery = {
+      query: this.query,
+      highlight: this.highlight
     };
   }
 }

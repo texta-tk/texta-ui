@@ -27,10 +27,10 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
   destroyed$: Subject<boolean> = new Subject<boolean>();
   constraintQuery;
   // so i dont have to rename everything if i decide to refactor something
-  textAreaFormControl: FormControl;
-  slopFormControl: FormControl;
-  matchFormControl: FormControl;
-  operatorFormControl: FormControl;
+  textAreaFormControl: FormControl = new FormControl();
+  slopFormControl: FormControl = new FormControl();
+  matchFormControl: FormControl = new FormControl();
+  operatorFormControl: FormControl = new FormControl();
 
   constructor() {
 

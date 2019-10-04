@@ -11,6 +11,10 @@ import {TextConstraintsComponent} from './build-search/text-constraints/text-con
 import {DateConstraintsComponent} from './build-search/date-constraints/date-constraints.component';
 import {FactConstraintsComponent} from './build-search/fact-constraints/fact-constraints.component';
 import {FactTextConstraintsComponent} from './build-search/fact-text-constraints/fact-text-constraints.component';
+import {Search} from '../../shared/types/Search';
+import {BehaviorSubject} from 'rxjs';
+import {SearchService} from '../services/search.service';
+import {SearchServiceSpy} from '../services/search.service.spec';
 
 describe('SearcherSidebarComponent', () => {
   let component: SearcherSidebarComponent;
@@ -23,6 +27,12 @@ describe('SearcherSidebarComponent', () => {
       ],
       declarations: [SearcherSidebarComponent, BuildSearchComponent, SavedSearchesComponent, TextConstraintsComponent,
         DateConstraintsComponent, FactConstraintsComponent, FactTextConstraintsComponent]
+    }).overrideComponent(BuildSearchComponent, {
+      set: {
+        providers: [
+          {provide: SearchService, useClass: SearchServiceSpy}
+        ]
+      }
     })
       .compileComponents();
   }));

@@ -146,7 +146,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
   }
 
   getSearch() {// implement previous query cancellation todo
-    this.searcherService.search({query: this.elasticQuery}, this.currentProject.id).subscribe(
+    this.searcherService.search({query: this.elasticQuery.elasticsearchQuery}, this.currentProject.id).subscribe(
       (result: any[] | HttpErrorResponse) => {
         if (result && !(result instanceof HttpErrorResponse)) {
           this.searchService.nextSearch(new Search(result, false, false));

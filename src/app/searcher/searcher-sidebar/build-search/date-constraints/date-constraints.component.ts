@@ -21,8 +21,8 @@ export class DateConstraintsComponent implements OnInit, OnDestroy {
 
   @Input() elasticSearchQuery: ElasticsearchQuery;
   @Output() change = new EventEmitter<ElasticsearchQuery>(); // search as you type, emit changes
-  dateFromFormControl: FormControl;
-  dateToFormControl: FormControl;
+  dateFromFormControl: FormControl = new FormControl();
+  dateToFormControl: FormControl = new FormControl();
   destroyed$: Subject<boolean> = new Subject<boolean>();
   constraintQuery = {bool: {must: []}};
 

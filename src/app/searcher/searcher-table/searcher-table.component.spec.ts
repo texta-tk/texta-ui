@@ -5,6 +5,10 @@ import {SharedModule} from '../../shared/shared.module';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {HighlightComponent} from './highlight/highlight.component';
+import {SearchServiceSpy} from '../services/search.service.spec';
+import {SearchService} from '../services/search.service';
+import {BuildSearchComponent} from '../searcher-sidebar/build-search/build-search.component';
 
 describe('SearcherTableComponent', () => {
   let component: SearcherTableComponent;
@@ -15,7 +19,13 @@ describe('SearcherTableComponent', () => {
       imports: [
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule,
       ],
-      declarations: [ SearcherTableComponent ]
+      declarations: [ SearcherTableComponent, HighlightComponent ]
+    }).overrideComponent(SearcherTableComponent, {
+      set: {
+        providers: [
+          {provide: SearchService, useClass: SearchServiceSpy}
+        ]
+      }
     })
     .compileComponents();
   }));

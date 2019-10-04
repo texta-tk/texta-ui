@@ -25,8 +25,8 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
   @Input() elasticSearchQuery: ElasticsearchQuery;
   @Input() projectFacts: ProjectFact[] = [];
   @Output() change = new EventEmitter<ElasticsearchQuery>(); // search as you type, emit changes
-  factNameOperatorFormControl: FormControl;
-  factNameFormControl: FormControl;
+  factNameOperatorFormControl: FormControl = new FormControl();
+  factNameFormControl: FormControl = new FormControl();
   destroyed$: Subject<boolean> = new Subject<boolean>();
   constraintQuery;
 

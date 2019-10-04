@@ -1,5 +1,5 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material';
+import {Component, Inject, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA} from '@angular/material';
 
 @Component({
   selector: 'app-query-dialog',
@@ -7,9 +7,10 @@ import { MAT_DIALOG_DATA } from '@angular/material';
   styleUrls: ['./query-dialog.component.scss']
 })
 export class QueryDialogComponent implements OnInit {
-  query: unknown;
+  query: {} = {};
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: { query: string; }) { }
+  constructor(@Inject(MAT_DIALOG_DATA) public data: { query: string; }) {
+  }
 
   ngOnInit() {
     this.query = JSON.parse(this.data.query);

@@ -19,7 +19,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   destroy$: Subject<boolean> = new Subject();
-
+  searchTerm = 'tere'; // todo temp testing
   constructor(private searchService: SearchService) {
   }
 

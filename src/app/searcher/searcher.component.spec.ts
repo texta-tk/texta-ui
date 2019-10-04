@@ -13,6 +13,7 @@ import {TextConstraintsComponent} from './searcher-sidebar/build-search/text-con
 import {DateConstraintsComponent} from './searcher-sidebar/build-search/date-constraints/date-constraints.component';
 import {FactConstraintsComponent} from './searcher-sidebar/build-search/fact-constraints/fact-constraints.component';
 import {FactTextConstraintsComponent} from './searcher-sidebar/build-search/fact-text-constraints/fact-text-constraints.component';
+import {HighlightComponent} from './searcher-table/highlight/highlight.component';
 
 describe('SearcherComponent', () => {
   let component: SearcherComponent;
@@ -25,7 +26,7 @@ describe('SearcherComponent', () => {
       ],
       declarations: [SearcherComponent, SearcherTableComponent, SearcherSidebarComponent,
         BuildSearchComponent, SavedSearchesComponent, TextConstraintsComponent,
-        DateConstraintsComponent, FactConstraintsComponent, FactTextConstraintsComponent]
+        DateConstraintsComponent, FactConstraintsComponent, FactTextConstraintsComponent, HighlightComponent]
     })
       .compileComponents();
   }));
