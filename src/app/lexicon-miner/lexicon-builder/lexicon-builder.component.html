@@ -18,7 +18,8 @@
       </div>
 
       <div class="max-width  overflow-auto" [ngClass]="{'hidden':!selectedEmbedding}">
-        <mat-form-field floatLabel="never" class="max-width">
+        <mat-form-field floatLabel="never" class="max-width" appearance="outline">
+          <mat-label>Enter words here</mat-label>
           <textarea matInput class="max-width" placeholder="Enter words here" [(ngModel)]="positives"
             cdkTextareaAutosize></textarea>
         </mat-form-field>

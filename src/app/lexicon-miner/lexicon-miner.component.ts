@@ -84,6 +84,7 @@ export class LexiconMinerComponent implements OnInit, OnDestroy {
       if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       } else {
+        this.logService.snackBarMessage(`Lexicon ${lexicon.description} deleted.`, 3000);
         const position = this.lexicons.findIndex(x => x.id === lexicon.id);
         this.lexicons.splice(position, 1);
       }

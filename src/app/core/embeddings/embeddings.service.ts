@@ -36,7 +36,7 @@ export class EmbeddingsService {
 
   predict(body, projectId, embeddingId): Observable<EmbeddingPrediction[] | HttpErrorResponse> {
     return this.http.post<EmbeddingPrediction[]>(
-      this.apiUrl + '/projects/' + projectId + '/embeddings/' + embeddingId + '/predict/', body
+      this.apiUrl + '/projects/' + projectId + '/embeddings/' + embeddingId + '/predict_similar/', body
     ).pipe(
       tap(e => this.logService.logStatus(e, 'predict')),
       catchError(this.logService.handleError<EmbeddingPrediction[]>('predict')));

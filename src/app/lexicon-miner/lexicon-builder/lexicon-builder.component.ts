@@ -109,7 +109,11 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
       }
       return of(null);
     })).subscribe((resp: Lexicon | HttpErrorResponse) => {
-      console.log(resp);
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.logService.snackBarMessage('Lexicon saved', 3000);
+      } else if (resp instanceof HttpErrorResponse) {
+        this.logService.snackBarMessage('There was an error savin the lexicon', 3000);
+      }
     });
   }
 
