@@ -3,7 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {LogService} from '../util/log.service';
 import {environment} from '../../../environments/environment';
 import {LocalStorageService} from '../util/local-storage.service';
-import {Constraint, ElasticsearchQuery, TextConstraint} from '../../searcher/searcher-sidebar/build-search/Constraints';
+import {Constraint, ElasticsearchQuery, FactConstraint, TextConstraint} from '../../searcher/searcher-sidebar/build-search/Constraints';
 import {Field} from '../../shared/types/Project';
 import {catchError, tap} from 'rxjs/operators';
 import {BehaviorSubject, Observable} from 'rxjs';
@@ -25,8 +25,12 @@ export class SearcherService {
               private logService: LogService) {
     this._searches.push({
       id: 0,
-      constraints: [new TextConstraint([{path: 'body', type: 'body'} as Field], 'phrase', 'tere \nkere', 'must', '0')],
-      description: 'hardcodedsearch'
+      constraints: [new FactConstraint([{path: 'texta_facts', type: 'fact'} as Field], 'must', ['ORG', 'LOC', 'PER']),
+        new TextConstraint([{
+          path: 'kysimus_ja_vastus_mlp.text',
+          type: 'text'
+        }], 'phrase_prefix', 'Pöördusin murega perearsti juurde', 'must', '0')],
+      description: 'kliinik dataset hardcoded'
     });
     this.searches$.next(this._searches);
   }

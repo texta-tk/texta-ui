@@ -7,6 +7,7 @@ export interface TextaFact {
   spans: string | number[];
   str_val: string;
   id?: number;
+  searcherHighlight?: boolean;
 }
 
 
@@ -23,11 +24,39 @@ export class HighlightComponent implements OnInit {
   // json at root level is: [text, texta_facts], text is the defaultentrypoint
   // doc_path text.[columnName]
   @Input() currentColumn: string;
+  @Input() searchTerm: string;
 
-  @Input() set JsonResponse(mlpData: any) {
-    const currentFieldFacts = this.getFactsByField(mlpData, this.currentColumn);
-    const colors = this.generateColorsForFacts(currentFieldFacts);
-    this.highlightArray = this.makeHighLights(mlpData[this.currentColumn], currentFieldFacts, colors);
+  @Input() set JsonResponse(data: any) { // todo data
+    const textaFieldFacts = this.getFactsByField(data, this.currentColumn);
+    const highlightTerms = [
+      ...this.makeSearcherHighlightFacts(data[this.currentColumn], this.searchTerm, this.currentColumn),
+      ...textaFieldFacts];
+    const colors = this.generateColorsForFacts(highlightTerms);
+    this.highlightArray = this.makeHighLights(data[this.currentColumn], highlightTerms, colors);
+  }
+
+
+  makeSearcherHighlightFacts(columnData: any, searchTerm: string, column: string) { // todo this whole function is TEMP
+    const searcherHighLights: TextaFact[] = [];
+    let start = 0;
+    if (searchTerm) {
+      while (start < columnData.length) {
+        const termStart = columnData.toLowerCase().indexOf(searchTerm.toLowerCase(), start);
+        if (termStart === -1) {
+          break;
+        }
+        const termEnd = termStart + searchTerm.length;
+        start = termEnd;
+        const f: TextaFact = {} as TextaFact;
+        f.doc_path = column;
+        f.fact = '';
+        f.searcherHighlight = true;
+        f.spans = `[[${termStart}, ${termEnd}]]`;
+        f.str_val = 'searcher highlight';
+        searcherHighLights.push(f);
+      }
+    }
+    return searcherHighLights;
   }
 
   constructor() {
@@ -64,7 +93,7 @@ export class HighlightComponent implements OnInit {
 
     // spans are strings, convert them to 2d array and flatten
     facts.forEach(fact => {
-      (<number[]>fact.spans) = JSON.parse(<string>fact.spans).flat();
+      (fact.spans) = JSON.parse(fact.spans as string).flat();
     });
     // need this sort for fact priority
     facts.sort(this.sortByStart);
@@ -138,17 +167,18 @@ export class HighlightComponent implements OnInit {
 
     const nestedFacts: TextaFact[] = overLappingFacts.get(rootFact);
     // highest span value in nestedfacts
-    const highestSpanValue = Math.max.apply(null, nestedFacts.map(function (o) {
-      return Math.max.apply(Math, o.spans);
-    }));
-
+    const highestSpanValue = new Map<TextaFact, number>();
+    for (const factNested of nestedFacts) {
+      highestSpanValue.set(factNested, Math.max.apply(Math, factNested.spans));
+    }
     let highlightObject: HighlightObject;
     let factText = '';
-    let previousFact;
-
+    let previousFact: TextaFact;
+    debugger
     for (let i = loopIndex; i <= originalText.length; i++) {
 
       let factCurrentIndex = nestedFacts.find(e => (e.spans[0] === i));
+
       if (factCurrentIndex) {
         // first fact is rootfact, push the currently parsed text into it,
         // since the end of rootfact is the start of a new fact then we need to use previousFact
@@ -172,7 +202,7 @@ export class HighlightComponent implements OnInit {
         }
       }
       // no more nested facts
-      if (highestSpanValue === i) {
+      if (highestSpanValue.get(previousFact) === i) {
         if (factText !== '') {
           factCurrentIndex = nestedFacts.find(e => (e.spans[1] === i));
           highlightObject = this.makeFactNestedHighlightRecursive(highlightObject, factCurrentIndex,
@@ -186,6 +216,8 @@ export class HighlightComponent implements OnInit {
           highlightArray.push(highlightObject);
           // - 1 because loop is escaped
           return i - 1;
+        } else {
+          previousFact = rootFact;
         }
       }
       // loop til you hit the end of the rootfact
