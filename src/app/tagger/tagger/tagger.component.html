@@ -1,6 +1,6 @@
 <div class="table-actions-wrapper">
   <button class="new-resource-btn" mat-icon-button color="primary" (click)="openCreateDialog()"><mat-icon>add</mat-icon></button>
-  <button class="new-resource-btn" mat-icon-button color="warn" (click)="onDelteAllSelected()" matTooltip="Delete selected" [disabled]="selectedRows.selected.length < 1"><mat-icon>delete</mat-icon></button>
+  <button class="new-resource-btn" mat-icon-button color="warn" (click)="onDeleteAllSelected()" matTooltip="Delete selected" [disabled]="selectedRows.selected.length < 1"><mat-icon>delete</mat-icon></button>
 </div>
 
 <div class="wrapper mat-elevation-z8">
@@ -210,7 +210,7 @@
 
   </div>
 
-  <mat-paginator [pageSizeOptions]="[15, 50, 100]" showFirstLastButtons>
+  <mat-paginator [pageSizeOptions]="[15, 50, 100]" showFirstLastButtons [length]="resultsLength">
 
   </mat-paginator>
 

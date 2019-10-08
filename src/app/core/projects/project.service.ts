@@ -17,12 +17,12 @@ export class ProjectService {
               private logService: LogService) {
   }
 
-  getProjects(): Observable<Project[] | HttpErrorResponse> {
-    return this.http.get<Project[]>(
+  getProjects(): Observable<{count: number, results: Project[]} | HttpErrorResponse> {
+    return this.http.get<{count: number, results: Project[]}>(
       this.apiUrl + '/projects/',
     ).pipe(
       tap(e => this.logService.logStatus(e, 'getProjects')),
-      catchError(this.logService.handleError<Project[]>('getProjects')));
+      catchError(this.logService.handleError<{count: number, results: Project[]}>('getProjects')));
   }
 
   createProject(body: {}): Observable<Project | HttpErrorResponse> {
