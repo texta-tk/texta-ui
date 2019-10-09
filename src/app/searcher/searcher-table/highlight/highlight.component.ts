@@ -44,7 +44,7 @@ export class HighlightComponent implements OnInit {
     this.highlightArray = this.makeHighLights(data[this.currentColumn], highlightTerms, colors);
   }
 
-  // todo temp, searcher highlight 
+  // todo temp, searcher highlight
   makeSearcherHighlightFacts(columnData: any, searchTerm: string, column: string) { // todo this whole function is TEMP
     const searcherHighLights: TextaFact[] = [];
     let start = 0;
@@ -165,6 +165,7 @@ export class HighlightComponent implements OnInit {
     }
     return highlightObject;
   }
+
   // need to write tests to see if this works, might refactor
   private makeFactNested(
     highlightArray: HighlightObject[],
@@ -286,8 +287,17 @@ export class HighlightComponent implements OnInit {
         for (const fact of facts) {
           if (fact.searcherHighlight) {
             return fact;
+          } else if (previousFact) {
+            if (previousFact.searcherHighlight && previousFact.spans[1] > fact.spans[0]) {
+              if (fact.spans[1] <= previousFact.spans[1]) {
+                nestedFacts.splice(nestedFacts.indexOf(fact, 0), 1);
+              } else {
+                (fact.spans as number[])[0] = previousFact.spans[1] as number;
+              }
+            }
           }
         }
+        return undefined;
       } else if (previousFact) {
         if (previousFact.searcherHighlight && previousFact.spans[1] > facts[0].spans[0]) {
           if (facts[0].spans[1] <= previousFact.spans[1]) {
@@ -337,7 +347,7 @@ export class HighlightComponent implements OnInit {
 
   private detectOverLappingFactsDrill(factRoot: TextaFact, facts: TextaFact[], endSpan: number,
                                       index: number, nestedArray?: Map<TextaFact, TextaFact[]>): Map<TextaFact, TextaFact[]> {
-    // endSpan = previous facts span ending so we can make long chains of nested facts 
+    // endSpan = previous facts span ending so we can make long chains of nested facts
     if (index < facts.length) {
       if (facts[index].spans[0] < endSpan) {
         endSpan = facts[index].spans[1] as number > endSpan ? facts[index].spans[1] as number : endSpan;
