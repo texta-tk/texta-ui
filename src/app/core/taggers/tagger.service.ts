@@ -19,8 +19,8 @@ export class TaggerService {
               private logService: LogService) {
   }
 
-  getTaggers(projectId: number, pagination = ''): Observable<{count: number, results: Tagger[]} | HttpErrorResponse> {
-    return this.http.get<{count: number, results: Tagger[]}>(`${this.apiUrl}/projects/${projectId}/taggers/?${pagination}`,
+  getTaggers(projectId: number, params = ''): Observable<{count: number, results: Tagger[]} | HttpErrorResponse> {
+    return this.http.get<{count: number, results: Tagger[]}>(`${this.apiUrl}/projects/${projectId}/taggers/?${params}`,
     ).pipe(
       tap(e => this.logService.logStatus(e, 'getTaggers')),
       catchError(this.logService.handleError<{count: number, results: Tagger[]}>('getTaggers')));

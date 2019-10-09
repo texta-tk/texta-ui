@@ -6,10 +6,7 @@ import {LexiconService} from '../core/lexicon/lexicon.service';
 import {ProjectStore} from '../core/projects/project.store';
 import {switchMap, take, takeUntil} from 'rxjs/operators';
 import {Project} from '../shared/types/Project';
-import {EmbeddingsService} from '../core/embeddings/embeddings.service';
-import {Embedding} from '../shared/types/tasks/Embedding';
 import {HttpErrorResponse} from '@angular/common/http';
-import {MatDialog} from '@angular/material';
 
 
 @Component({
@@ -19,9 +16,12 @@ import {MatDialog} from '@angular/material';
 })
 export class LexiconMinerComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
-  lexicons: Lexicon[];
+  lexicons: Lexicon[] = [];
   newLexiconDescription = '';
   selectedLexicon: Lexicon;
+  currentProject: Project;
+  pageSize = 30;
+  totalLexicons: number;
 
   constructor(private logService: LogService,
               private lexiconService: LexiconService, private projectStore: ProjectStore) {
@@ -31,16 +31,21 @@ export class LexiconMinerComponent implements OnInit, OnDestroy {
     // you need both lexicons and embeddings to use lexicon miner, so just forkjoin if one of them errors cant do anything
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$), switchMap((currentProject: Project) => {
       if (currentProject) {
-        return this.lexiconService.getLexicons(currentProject.id);
+        this.currentProject = currentProject;
+        return this.lexiconService.getLexicons(
+          currentProject.id,
+          `page=1&page_size=${this.pageSize}`
+        );
       }
       return of(null);
-    })).subscribe((resp: Lexicon[] | HttpErrorResponse) => {
+    })).subscribe((resp: {count: number, results: Lexicon[]} | HttpErrorResponse) => {
         if (resp) {
           if (resp instanceof HttpErrorResponse) {
             this.logService.snackBarError(resp, 5000);
           } else {
             this.selectedLexicon = null;
-            this.lexicons = resp;
+            this.totalLexicons = resp.count;
+            this.lexicons = resp.results;
           }
         }
       }
@@ -54,15 +59,12 @@ export class LexiconMinerComponent implements OnInit, OnDestroy {
   }
 
   createNewLexicon() {
-    this.projectStore.getCurrentProject().pipe(take(1), switchMap(currentProject => {
-      if (currentProject) {
-        return this.lexiconService.createLexicon({
+    if (this.currentProject) {
+      this.lexiconService.createLexicon({
           description: this.newLexiconDescription,
           phrases: []
-        }, currentProject.id);
-      }
-      return of(null);
-    })).subscribe((resp: Lexicon | HttpErrorResponse) => {
+      }, this.currentProject.id
+      ).subscribe((resp: Lexicon | HttpErrorResponse) => {
       if (resp) {
         if (resp instanceof HttpErrorResponse) {
           this.logService.snackBarError(resp, 5000);
@@ -73,14 +75,11 @@ export class LexiconMinerComponent implements OnInit, OnDestroy {
       }
     });
   }
+}
 
   deleteLexicon(lexicon: Lexicon) {
-    this.projectStore.getCurrentProject().pipe(take(1), switchMap(currentProject => {
-      if (currentProject) {
-        return this.lexiconService.deleteLexicon(currentProject.id, lexicon.id);
-      }
-      return of(null);
-    })).subscribe((resp: Lexicon | HttpErrorResponse) => {
+    return this.lexiconService.deleteLexicon(this.currentProject.id, lexicon.id)
+    .subscribe((resp: Lexicon | HttpErrorResponse) => {
       if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       } else {
@@ -99,4 +98,15 @@ export class LexiconMinerComponent implements OnInit, OnDestroy {
     this.selectedLexicon = lexicon;
   }
 
+  onScrollLexicons($event) {
+    if (this.currentProject && this.lexicons.length < this.totalLexicons) {
+      this.lexiconService.getLexicons(
+        this.currentProject.id,
+        `page=${Math.round(this.lexicons.length / this.pageSize) + 1}&page_size=${this.pageSize}`)
+        .subscribe((resp: {count: number, results: Lexicon[]}) => {
+          this.totalLexicons = resp.count;
+          this.lexicons = [...this.lexicons, ...resp.results];
+        });
+    }
+  }
 }

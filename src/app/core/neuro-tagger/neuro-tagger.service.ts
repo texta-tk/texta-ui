@@ -18,11 +18,11 @@ export class NeuroTaggerService {
               private logService: LogService) {
   }
 
-  getNeuroTaggers(projectId: number): Observable<NeuroTagger[] | HttpErrorResponse> {
-    return this.http.get<NeuroTagger[]>(`${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/`,
+  getNeuroTaggers(projectId: number, params = ''): Observable<{count: number, results: NeuroTagger[]} | HttpErrorResponse> {
+    return this.http.get<{count: number, results: NeuroTagger[]}>(`${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/?${params}`,
     ).pipe(
       tap(e => this.logService.logStatus(e, 'getNeuroTaggers')),
-      catchError(this.logService.handleError<NeuroTagger[]>('getNeuroTaggers')));
+      catchError(this.logService.handleError<{count: number, results: NeuroTagger[]}>('getNeuroTaggers')));
   }
 
   getNeuroTaggerOptions(projectId: number): Observable<any | HttpErrorResponse> {

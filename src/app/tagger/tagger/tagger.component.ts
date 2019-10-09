@@ -28,7 +28,7 @@ import { QueryDialogComponent } from 'src/app/shared/components/dialogs/query-di
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ])]
 })
-export class TaggerComponent implements OnInit, OnDestroy {
+export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private dialogAfterClosedSubscription: Subscription;
   private currentProjectSubscription: Subscription;
@@ -57,16 +57,7 @@ export class TaggerComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
-    this.currentProjectSubscription = this.projectStore.getCurrentProject().subscribe(
-      (resp: HttpErrorResponse | Project) => {
-      if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.currentProject = resp;
-        this.setUpPaginator();
-      } else if (resp instanceof HttpErrorResponse) {
-        this.logService.snackBarError(resp, 5000);
-        this.isLoadingResults = false;
-      }
-    });
+
     // check for updates after 30s every 30s
     this.updateTaggersSubscription = timer(30000, 30000).pipe(switchMap(_ =>
         this.taggerService.getTaggers(this.currentProject.id,
@@ -78,6 +69,19 @@ export class TaggerComponent implements OnInit, OnDestroy {
     });
   }
 
+  ngAfterViewInit() {
+    this.currentProjectSubscription = this.projectStore.getCurrentProject().subscribe(
+      (resp: HttpErrorResponse | Project) => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.currentProject = resp;
+        this.setUpPaginator();
+      } else if (resp instanceof HttpErrorResponse) {
+        this.logService.snackBarError(resp, 5000);
+        this.isLoadingResults = false;
+      }
+    });
+  }
+
   setUpPaginator() {
     this.paginator.page.pipe(startWith({}), switchMap(() => {
       this.isLoadingResults = true;
@@ -85,7 +89,7 @@ export class TaggerComponent implements OnInit, OnDestroy {
         this.currentProject.id,
         // Add 1 to to index because Material paginator starts from 0 and DRF paginator from 1
         `page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`
-      );
+        );
     })).subscribe((data: {count: number, results: Tagger[]}) => {
       // Flip flag to show that loading has finished.
       this.isLoadingResults = false;

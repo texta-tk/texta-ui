@@ -30,9 +30,9 @@ export class ProjectStore {
   }
 
   refreshProjects() {
-    this.projectService.getProjects().subscribe((resp: {count: number, results: Project[]} | HttpErrorResponse) => {
+    this.projectService.getProjects().subscribe((resp: Project[] | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.projects$.next(resp.results);
+        this.projects$.next(resp);
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       }

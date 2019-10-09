@@ -16,12 +16,12 @@ export class TaggerGroupService {
   constructor(private http: HttpClient, private localStorageService: LocalStorageService,
               private logService: LogService) {
   }
-  getTaggerGroups(projectId: number): Observable<TaggerGroup[] | HttpErrorResponse> {
-    return this.http.get<TaggerGroup[]>(
+  getTaggerGroups(projectId: number): Observable<{count: number, results: TaggerGroup[]} | HttpErrorResponse> {
+    return this.http.get<{count: number, results: TaggerGroup[]}>(
       this.apiUrl + '/projects/' + projectId + '/tagger_groups/',
     ).pipe(
       tap(e => this.logService.logStatus(e, 'getTaggerGroups')),
-      catchError(this.logService.handleError<TaggerGroup[]>('getTaggerGroups')));
+      catchError(this.logService.handleError<{count: number, results: TaggerGroup[]}>('getTaggerGroups')));
   }
 
   // todo
