@@ -1,6 +1,6 @@
-<div class="wrapper mat-elevation-z2">
+<div class="wrapper" *ngIf="displayedColumns">
 
-  <div class="table-container" >
+  <div class="table-container">
 
     <table mat-table [dataSource]="tableData" class="generic-table" matSort>
 
@@ -8,7 +8,9 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>{{column}}</th>
         <td mat-cell *matCellDef="let row" class="table-row">
           <span *ngIf="checkIfObject(row[column])"><pre>{{row[column] | json}}</pre></span>
-          <span *ngIf="!checkIfObject(row[column])"><app-highlight [JsonResponse]="row" [currentColumn]="column" [searchTerm]="searchTerm" ></app-highlight></span></td>
+          <span *ngIf="!checkIfObject(row[column])"><app-highlight [JsonResponse]="row" [currentColumn]="column"
+                                                                   [searchTerm]="searchTerm"></app-highlight></span>
+        </td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
@@ -19,8 +21,8 @@
 
   </div>
 
-  <div class="paginator-column-toggle" *ngIf="displayedColumns">
-    <mat-form-field>
+  <div class="paginator-column-toggle" >
+    <mat-form-field class="margin-right">
       <mat-label>Toggle Columns</mat-label>
       <mat-select [formControl]="columnFormControl" multiple>
         <app-mat-option-select-all></app-mat-option-select-all>
@@ -29,10 +31,14 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
+    <mat-form-field class="margin-right">
+      <input matInput [(ngModel)]="searchTerm">
+    </mat-form-field>
+    <button mat-stroked-button (click)="drawerToggle.emit(true)">Toggle drawer</button>
   </div>
   <mat-paginator [pageSizeOptions]="[15, 50, 100]" showFirstLastButtons>
 
   </mat-paginator>
 
 </div>
-<input [(ngModel)]="searchTerm" >
+

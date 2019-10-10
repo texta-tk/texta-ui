@@ -1,8 +1,9 @@
-<div fxLayout="row">
-  <div fxFlex="370px">
+<mat-drawer-container class="example-container">
+  <mat-drawer #drawer mode="side" opened>
     <app-searcher-sidebar></app-searcher-sidebar>
-  </div>
-  <div fxFlex id="table">
-    <app-searcher-table></app-searcher-table>
-  </div>
-</div>
+  </mat-drawer>
+  <mat-drawer-content>
+    <app-searcher-table (drawerToggle)="drawer.toggle()"></app-searcher-table>
+  </mat-drawer-content>
+</mat-drawer-container>
+

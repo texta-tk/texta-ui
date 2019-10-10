@@ -1,12 +1,16 @@
 .table-container {
-  max-width: calc(100vw - #{420px});
-  max-height: 600px;
+  max-height: calc(100vh - 72px - 56px);
+  min-height: calc(100vh - 72px - 56px);;
   overflow: auto;
 }
 
 .paginator-column-toggle {
   position: absolute;
-  margin-left: 10px;
+  margin: 6px 4px 0 4px;
+  font-size: 12px;
+  button {
+    font-size: 12px;
+  }
 }
 
 .table-row {

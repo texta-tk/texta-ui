@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {SearchService} from '../services/search.service';
 import {Search} from '../../shared/types/Search';
 import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
@@ -20,6 +20,8 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   destroy$: Subject<boolean> = new Subject();
   searchTerm = 'tere'; // todo temp testing
+  @Output() drawerToggle = new EventEmitter<boolean>();
+
   constructor(private searchService: SearchService) {
   }
 
