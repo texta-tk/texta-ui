@@ -54,12 +54,12 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
         return this.embeddingService.getEmbeddings(currentProject.id);
       }
       return of(null);
-    })).subscribe((resp: Embedding[] | HttpErrorResponse) => {
+    })).subscribe((resp: {count: number, results: Embedding[]} | HttpErrorResponse) => {
       if (resp) {
         if (resp instanceof HttpErrorResponse) {
           this.logService.snackBarError(resp, 5000);
         } else {
-          this.embeddings = resp.filter((embedding: Embedding) => {
+          this.embeddings = resp.results.filter((embedding: Embedding) => {
             return embedding.task.status === 'completed';
           });
         }
@@ -109,7 +109,11 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
       }
       return of(null);
     })).subscribe((resp: Lexicon | HttpErrorResponse) => {
-      console.log(resp);
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.logService.snackBarMessage('Lexicon saved', 3000);
+      } else if (resp instanceof HttpErrorResponse) {
+        this.logService.snackBarMessage('There was an error savin the lexicon', 3000);
+      }
     });
   }
 

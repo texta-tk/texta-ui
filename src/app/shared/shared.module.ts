@@ -42,9 +42,10 @@ import {BarsComponent} from './components/svg/chart/bars/bars.component';
 import {CirclesComponent} from './components/svg/chart/circles/circles.component';
 import {LineComponent} from './components/svg/chart/line/line.component';
 import {ConfirmDialogComponent} from './components/dialogs/confirm-dialog/confirm-dialog.component';
-import {MatOptionSelectAllComponent} from "./components/mat-option-select-all.component";
+import {MatOptionSelectAllComponent} from './components/mat-option-select-all.component';
 import { QueryDialogComponent } from './components/dialogs/query-dialog/query-dialog.component';
 import { GenericDialogComponent } from './components/dialogs/generic-dialog/generic-dialog.component';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
@@ -95,6 +96,7 @@ import { GenericDialogComponent } from './components/dialogs/generic-dialog/gene
     MatNativeDateModule,
     MatTooltipModule,
 
+    InfiniteScrollModule,
   ],
   exports: [
     CommonModule,
@@ -139,9 +141,17 @@ import { GenericDialogComponent } from './components/dialogs/generic-dialog/gene
     CirclesComponent,
     BarsComponent,
     GradientComponent,
-    MatOptionSelectAllComponent
+    MatOptionSelectAllComponent,
+
+    InfiniteScrollModule,
   ],
-  entryComponents: [LoginDialogComponent, RegistrationDialogComponent, ConfirmDialogComponent, QueryDialogComponent, GenericDialogComponent],
+  entryComponents: [
+    LoginDialogComponent,
+    RegistrationDialogComponent,
+    ConfirmDialogComponent,
+    QueryDialogComponent,
+    GenericDialogComponent
+  ],
 })
 export class SharedModule {
 }

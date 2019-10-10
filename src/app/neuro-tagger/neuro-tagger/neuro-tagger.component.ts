@@ -1,9 +1,9 @@
-import {Component, OnInit, ViewChild, OnDestroy} from '@angular/core';
+import {Component, OnInit, ViewChild, OnDestroy, AfterViewInit} from '@angular/core';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import {Project} from '../../shared/types/Project';
 import {NeuroTagger} from '../../shared/types/tasks/NeuroTagger';
-import {switchMap, takeUntil} from 'rxjs/operators';
+import {switchMap, takeUntil, startWith} from 'rxjs/operators';
 import {of, Subject, timer, Subscription} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {NeuroTaggerService} from '../../core/neuro-tagger/neuro-tagger.service';
@@ -27,7 +27,7 @@ import { GenericDialogComponent } from 'src/app/shared/components/dialogs/generi
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ])]
 })
-export class NeuroTaggerComponent implements OnInit, OnDestroy {
+export class NeuroTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: NeuroTagger | null;
   public tableData: MatTableDataSource<NeuroTagger> = new MatTableDataSource();
   public displayedColumns = ['select', 'description', 'fields_parsed', 'time_started', 'time_completed', 'Task', 'Modify'];
@@ -36,10 +36,11 @@ export class NeuroTaggerComponent implements OnInit, OnDestroy {
 
   destroyed$: Subject<boolean> = new Subject<boolean>();
   @ViewChild(MatSort, {static: true}) sort: MatSort;
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
 
   currentProject: Project;
   updateTaggersSubscription: Subscription;
+  resultsLength: number;
 
   constructor(private projectStore: ProjectStore,
               public dialog: MatDialog,
@@ -50,29 +51,15 @@ export class NeuroTaggerComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
-    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), switchMap(currentProject => {
-      if (currentProject) {
-        this.currentProject = currentProject;
-        return this.neuroTaggerService.getNeuroTaggers(this.currentProject.id);
-      } else {
-        return of(null);
-      }
-    })).subscribe((resp: NeuroTagger[] | HttpErrorResponse) => {
-      if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.tableData.data = resp;
-        this.isLoadingResults = false;
-      } else if (resp instanceof HttpErrorResponse) {
-        this.logService.snackBarError(resp, 5000);
-        this.isLoadingResults = false;
-      }
-    });
 
     // check for updates after 30s every 30s
-    timer(30000, 30000).pipe(takeUntil(this.destroyed$), switchMap(_ => this.neuroTaggerService.getNeuroTaggers(this.currentProject.id)))
-    .subscribe((resp: NeuroTagger[] | HttpErrorResponse) => {
+    timer(30000, 30000).pipe(takeUntil(this.destroyed$), switchMap(_ =>
+      this.neuroTaggerService.getNeuroTaggers(this.currentProject.id,
+        `page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`)))
+    .subscribe((resp: {count: number, results: NeuroTagger[]} | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        if (resp.length > 0) {
-          resp.map(tagger => {
+        if (resp.results.length > 0) {
+          resp.results.map(tagger => {
             const indx = this.tableData.data.findIndex(x => x.id === tagger.id);
             this.tableData.data[indx].task = tagger.task;
           });
@@ -80,6 +67,36 @@ export class NeuroTaggerComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  ngAfterViewInit() {
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(
+      (resp: HttpErrorResponse | Project) => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.currentProject = resp;
+        this.setUpPaginator();
+      } else if (resp instanceof HttpErrorResponse) {
+        this.logService.snackBarError(resp, 5000);
+        this.isLoadingResults = false;
+      }
+    });
+  }
+
+  setUpPaginator() {
+    this.paginator.page.pipe(startWith({}), switchMap(() => {
+      this.isLoadingResults = true;
+      return this.neuroTaggerService.getNeuroTaggers(
+        this.currentProject.id,
+        // Add 1 to to index because Material paginator starts from 0 and DRF paginator from 1
+        `page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`
+        );
+    })).subscribe((data: {count: number, results: NeuroTagger[]}) => {
+      // Flip flag to show that loading has finished.
+      this.isLoadingResults = false;
+      this.resultsLength = data.count;
+      this.tableData.data = data.results;
+    });
+  }
+
 
   openCreateDialog() {
     const dialogRef = this.dialog.open(CreateNeuroTaggerDialogComponent, {
@@ -106,7 +123,7 @@ export class NeuroTaggerComponent implements OnInit, OnDestroy {
 
   tagDocDialog(tagger: NeuroTagger) {
     const dialogRef = this.dialog.open(NeurotagDocDialogComponent, {
-      data: {tagger: tagger, currentProjectId: this.currentProject.id},
+      data: {tagger, currentProjectId: this.currentProject.id},
       maxHeight: '665px',
       width: '700px',
     });
@@ -125,8 +142,8 @@ export class NeuroTaggerComponent implements OnInit, OnDestroy {
     this.neuroTaggerService.deleteNeuroTagger(this.currentProject.id, neurotagger.id).subscribe(() => {
       this.logService.snackBarMessage(`NeuroTagger ${neurotagger.id}: ${neurotagger.description} deleted`, 2000);
       this.tableData.data.splice(index, 1);
-      this.tableData.data = [...this.tableData.data]
-    })
+      this.tableData.data = [...this.tableData.data];
+    });
   }
 
   ngOnDestroy() {
@@ -134,7 +151,7 @@ export class NeuroTaggerComponent implements OnInit, OnDestroy {
     this.destroyed$.complete();
   }
 
-  
+
 
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
@@ -154,8 +171,8 @@ export class NeuroTaggerComponent implements OnInit, OnDestroy {
   onDelteAllSelected() {
     if (this.selectedRows.selected.length > 0) {
       // Delete selected taggers
-      const ids_to_delete = this.selectedRows.selected.map((tagger: NeuroTagger) => { return tagger.id });
-      const body = {"ids": ids_to_delete}
+      const idsToDelete = this.selectedRows.selected.map((tagger: NeuroTagger) => tagger.id);
+      const body = {ids: idsToDelete};
       // Refresh taggers
       this.neuroTaggerService.bulkDeleteNeuroTaggers(this.currentProject.id, body).subscribe(() => {
         this.logService.snackBarMessage(`${this.selectedRows.selected.length} NeuroTaggers deleted`, 2000);
@@ -165,19 +182,19 @@ export class NeuroTaggerComponent implements OnInit, OnDestroy {
   }
 
   removeSelectedRows() {
-    this.selectedRows.selected.forEach((selected_tagger: NeuroTagger) => {
-       const index: number = this.tableData.data.findIndex(tagger => tagger.id === selected_tagger.id);
-        this.tableData.data.splice(index, 1);
-        this.tableData.data = [...this.tableData.data];
+    this.selectedRows.selected.forEach((selectedTagger: NeuroTagger) => {
+       const index: number = this.tableData.data.findIndex(tagger => tagger.id === selectedTagger.id);
+       this.tableData.data.splice(index, 1);
+       this.tableData.data = [...this.tableData.data];
      });
-     this.selectedRows.clear();
+    this.selectedRows.clear();
   }
 
   openGenericDialog(data: string) {
     const dialogRef = this.dialog.open(GenericDialogComponent, {
-      data: {data:  data},
+      data: {data},
       maxHeight: '665px',
       width: '700px',
-    });    
+    });
   }
 }

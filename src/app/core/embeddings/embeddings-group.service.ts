@@ -17,12 +17,12 @@ export class EmbeddingsGroupService {
               private logService: LogService) {
   }
 
-  getEmbeddingGroups(projectId: number): Observable<EmbeddingCluster[] | HttpErrorResponse> {
-    return this.http.get<EmbeddingCluster[]>(
+  getEmbeddingGroups(projectId: number): Observable<{count: number, results: EmbeddingCluster[]} | HttpErrorResponse> {
+    return this.http.get<{count: number, results: EmbeddingCluster[]}>(
       this.apiUrl + '/projects/' + projectId + '/embedding_clusters/',
     ).pipe(
       tap(e => this.logService.logStatus(e, 'getEmbeddingGroups')),
-      catchError(this.logService.handleError<EmbeddingCluster[]>('getEmbeddingGroups')));
+      catchError(this.logService.handleError<{count: number, results: EmbeddingCluster[]}>('getEmbeddingGroups')));
   }
 
   createEmbeddingGroup(body: {}, projectId: number): Observable<EmbeddingCluster | HttpErrorResponse> {

@@ -18,12 +18,11 @@ export class EmbeddingsService {
               private logService: LogService) {
   }
 
-  getEmbeddings(projectId): Observable<Embedding[] | HttpErrorResponse> {
-    return this.http.get<Embedding[]>(
-      this.apiUrl + '/projects/' + projectId + '/embeddings/',
-    ).pipe(
+  getEmbeddings(projectId: number, params = ''): Observable<{count: number, results: Embedding[]} | HttpErrorResponse> {
+    return this.http.get<{count: number, results: Embedding[]}>(
+      `${this.apiUrl}/projects/${projectId}/embeddings/?${params}`).pipe(
       tap(e => this.logService.logStatus(e, 'getEmbeddings')),
-      catchError(this.logService.handleError<Embedding[]>('getEmbeddings')));
+      catchError(this.logService.handleError<{count: number, results: Embedding[]}>('getEmbeddings')));
   }
 
   createEmbedding(body, projectId): Observable<Embedding | HttpErrorResponse> {
@@ -36,7 +35,7 @@ export class EmbeddingsService {
 
   predict(body, projectId, embeddingId): Observable<EmbeddingPrediction[] | HttpErrorResponse> {
     return this.http.post<EmbeddingPrediction[]>(
-      this.apiUrl + '/projects/' + projectId + '/embeddings/' + embeddingId + '/predict/', body
+      this.apiUrl + '/projects/' + projectId + '/embeddings/' + embeddingId + '/predict_similar/', body
     ).pipe(
       tap(e => this.logService.logStatus(e, 'predict')),
       catchError(this.logService.handleError<EmbeddingPrediction[]>('predict')));

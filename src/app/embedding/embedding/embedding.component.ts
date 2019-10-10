@@ -1,11 +1,11 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild, AfterViewInit} from '@angular/core';
 import {EmbeddingsService} from '../../core/embeddings/embeddings.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Embedding} from '../../shared/types/tasks/Embedding';
 import {ProjectStore} from '../../core/projects/project.store';
 import {Project} from '../../shared/types/Project';
-import {switchMap} from 'rxjs/operators';
-import {of, Subscription, timer} from 'rxjs';
+import {switchMap, takeUntil, startWith} from 'rxjs/operators';
+import {Subscription, timer, Subject} from 'rxjs';
 import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import {CreateEmbeddingDialogComponent} from './create-embedding-dialog/create-embedding-dialog.component';
 import {LogService} from '../../core/util/log.service';
@@ -25,20 +25,18 @@ import { QueryDialogComponent } from 'src/app/shared/components/dialogs/query-di
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ])]
 })
-export class EmbeddingComponent implements OnInit, OnDestroy {
-
-  private projectSubscription: Subscription;
-  private dialogAfterClosedSubscription: Subscription;
-  private updateEmbeddingsSubscription: Subscription;
+export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: Embedding | null;
   public tableData: MatTableDataSource<Embedding> = new MatTableDataSource();
   public displayedColumns = ['select', 'description', 'fields_parsed', 'time_started', 'time_completed', 'Task', 'Modify'];
   selectedRows = new SelectionModel<Embedding>(true, []);
   public isLoadingResults = true;
 
+  destroyed$: Subject<boolean> = new Subject<boolean>();
   @ViewChild(MatSort, {static: true}) sort: MatSort;
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   currentProject: Project;
+  resultsLength: number;
 
   constructor(private projectStore: ProjectStore,
               private embeddingsService: EmbeddingsService,
@@ -50,28 +48,16 @@ export class EmbeddingComponent implements OnInit, OnDestroy {
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
 
-    this.projectSubscription = this.projectStore.getCurrentProject().pipe(switchMap((currentProject: Project) => {
-      if (currentProject) {
-        this.currentProject = currentProject;
-        return this.embeddingsService.getEmbeddings(currentProject.id);
-      } else {
-        return of(null);
-      }
-    })).subscribe((resp: Embedding[] | HttpErrorResponse) => {
-      if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.tableData.data = resp;
-        this.isLoadingResults = false;
-      } else if (resp instanceof HttpErrorResponse) {
-        this.logService.snackBarError(resp, 5000);
-        this.isLoadingResults = false;
-      }
-    });
     // check for updates after 30s every 30s
-    this.updateEmbeddingsSubscription = timer(30000, 30000).pipe(switchMap(_ => this.embeddingsService.getEmbeddings(this.currentProject.id)))
-    .subscribe((resp: Embedding[] | HttpErrorResponse) => {
+    timer(30000, 30000).pipe(takeUntil(this.destroyed$),
+      switchMap(_ => this.embeddingsService.getEmbeddings(
+        this.currentProject.id,
+        `page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`
+        )))
+    .subscribe((resp: {count: number, results: Embedding[]} | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        if (resp.length > 0) {
-          resp.map(embedding => {
+        if (resp.results.length > 0) {
+          resp.results.map(embedding => {
             const indx = this.tableData.data.findIndex(x => x.id === embedding.id);
             this.tableData.data[indx].task = embedding.task;
           });
@@ -79,6 +65,35 @@ export class EmbeddingComponent implements OnInit, OnDestroy {
       }
     });
 
+  }
+
+  ngAfterViewInit() {
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(
+      (resp: HttpErrorResponse | Project) => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.currentProject = resp;
+        this.setUpPaginator();
+      } else if (resp instanceof HttpErrorResponse) {
+        this.logService.snackBarError(resp, 5000);
+        this.isLoadingResults = false;
+      }
+    });
+  }
+
+  setUpPaginator() {
+    this.paginator.page.pipe(startWith({}), switchMap(() => {
+      this.isLoadingResults = true;
+      return this.embeddingsService.getEmbeddings(
+        this.currentProject.id,
+        // Add 1 to to index because Material paginator starts from 0 and DRF paginator from 1
+        `page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`
+        );
+    })).subscribe((data: {count: number, results: Embedding[]}) => {
+      // Flip flag to show that loading has finished.
+      this.isLoadingResults = false;
+      this.resultsLength = data.count;
+      this.tableData.data = data.results;
+    });
   }
 
   phrase(embedding: Embedding) {
@@ -91,15 +106,8 @@ export class EmbeddingComponent implements OnInit, OnDestroy {
 
 
   ngOnDestroy() {
-    if (this.projectSubscription) {
-      this.projectSubscription.unsubscribe();
-    }
-    if (this.dialogAfterClosedSubscription) {
-      this.dialogAfterClosedSubscription.unsubscribe();
-    }
-    if (this.updateEmbeddingsSubscription) {
-      this.updateEmbeddingsSubscription.unsubscribe();
-    }
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
   }
 
   openCreateDialog() {
@@ -107,7 +115,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy {
       height: '490px',
       width: '700px',
     });
-    this.dialogAfterClosedSubscription = dialogRef.afterClosed().subscribe((resp: Embedding | HttpErrorResponse) => {
+    dialogRef.afterClosed().subscribe((resp: Embedding | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.tableData.data = [...this.tableData.data, resp];
       } else if (resp instanceof HttpErrorResponse) {
@@ -116,7 +124,6 @@ export class EmbeddingComponent implements OnInit, OnDestroy {
     });
   }
 
-   
 
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
@@ -136,8 +143,8 @@ export class EmbeddingComponent implements OnInit, OnDestroy {
   onDelteAllSelected() {
     if (this.selectedRows.selected.length > 0) {
       // Delete selected taggers
-      const ids_to_delete = this.selectedRows.selected.map((tagger: Embedding) => { return tagger.id });
-      const body = {"ids": ids_to_delete}
+      const idsToDelete = this.selectedRows.selected.map((tagger: Embedding) => tagger.id);
+      const body = {ids: idsToDelete};
       // Refresh taggers
       this.embeddingsService.bulkDeleteEmbeddings(this.currentProject.id, body).subscribe(() => {
         this.logService.snackBarMessage(`${this.selectedRows.selected.length} Embeddings deleted`, 2000);
@@ -147,18 +154,18 @@ export class EmbeddingComponent implements OnInit, OnDestroy {
   }
 
   removeSelectedRows() {
-    this.selectedRows.selected.forEach((selected_tagger: Embedding) => {
-       const index: number = this.tableData.data.findIndex(tagger => tagger.id === selected_tagger.id);
-        this.tableData.data.splice(index, 1);
-        this.tableData.data = [...this.tableData.data];
+    this.selectedRows.selected.forEach((selectedTagger: Embedding) => {
+       const index: number = this.tableData.data.findIndex(tagger => tagger.id === selectedTagger.id);
+       this.tableData.data.splice(index, 1);
+       this.tableData.data = [...this.tableData.data];
      });
-     this.selectedRows.clear();
+    this.selectedRows.clear();
   }
 
 
   openQueryDialog(query: string) {
     const dialogRef = this.dialog.open(QueryDialogComponent, {
-      data: { query: query },
+      data: { query },
       maxHeight: '665px',
       width: '700px',
     });

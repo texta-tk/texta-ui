@@ -17,12 +17,12 @@ export class LexiconService {
               private logService: LogService) {
   }
 
-  getLexicons(projectId: number): Observable<Lexicon[] | HttpErrorResponse> {
-    return this.http.get<Lexicon[]>(
-      this.apiUrl + '/projects/' + projectId + '/lexicons/',
+  getLexicons(projectId: number, params = ''): Observable<{count: number, results: Lexicon[]} | HttpErrorResponse> {
+    return this.http.get<{count: number, results: Lexicon[]}>(
+      `${this.apiUrl}/projects/${projectId}/lexicons/?${params}`,
     ).pipe(
       tap(e => this.logService.logStatus(e, 'getLexicons')),
-      catchError(this.logService.handleError<Lexicon[]>('getLexicons')));
+      catchError(this.logService.handleError<{count: number, results: Lexicon[]}>('getLexicons')));
   }
 
 

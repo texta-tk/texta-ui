@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
-import {LocalStorageService} from '../util/local-storage.service';
 import {LogService} from '../util/log.service';
 import {Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
@@ -13,14 +12,12 @@ import {Project, ProjectFact, ProjectField} from '../../shared/types/Project';
 export class ProjectService {
   apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient, private localStorageService: LocalStorageService,
+  constructor(private http: HttpClient,
               private logService: LogService) {
   }
 
   getProjects(): Observable<Project[] | HttpErrorResponse> {
-    return this.http.get<Project[]>(
-      this.apiUrl + '/projects/',
-    ).pipe(
+    return this.http.get<Project[]>(`${this.apiUrl}/projects/`).pipe(
       tap(e => this.logService.logStatus(e, 'getProjects')),
       catchError(this.logService.handleError<Project[]>('getProjects')));
   }

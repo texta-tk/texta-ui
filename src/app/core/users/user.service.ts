@@ -64,9 +64,7 @@ export class UserService {
   }
 
   getAllUsers(): Observable<UserProfile[]> {
-    return this.http.get<UserProfile[]>(
-      this.apiUrl + '/users/',
-    ).pipe(
+    return this.http.get<UserProfile[]>(this.apiUrl + '/users/').pipe(
       tap(e => this.logService.logStatus(e, 'userProfile')),
       catchError(this.logService.handleError<UserProfile[]>('getUserProfile')));
   }

@@ -34,9 +34,9 @@ export class TaggerGroupComponent implements OnInit, OnDestroy {
       } else {
         return of(null);
       }
-    })).subscribe((resp: TaggerGroup[] | HttpErrorResponse) => {
+    })).subscribe((resp: {count: number, results: TaggerGroup[]} | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.tableData = resp;
+        this.tableData = resp.results;
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
         // todo
