@@ -1,15 +1,11 @@
 <mat-toolbar color="primary">
   <mat-toolbar-row>
-    <a routerLinkActive="is-active" [routerLink]="['searcher']">Searcher</a>
-    <a routerLinkActive="is-active" [routerLink]="['projects']">Projects</a>
-    <a routerLinkActive="is-active" [routerLink]="['']" [routerLinkActiveOptions]="{exact:true}">Landing</a>
-<!--    <a routerLinkActive="is-active" [routerLink]="['embeddings']">Embeddings</a>
-    <a routerLinkActive="is-active" [routerLink]="['taggers']">Taggers</a>-->
-    <a routerLinkActive="is-active" [routerLink]="['users']">Users</a>
-<!--    <a routerLinkActive="is-active" [routerLink]="['embedding-group']">Embedding Group</a>
-    <a routerLinkActive="is-active" [routerLink]="['tagger-group']">Tagger Group</a>-->
-    <a routerLinkActive="is-active" [routerLink]="['lexicon-miner']">Lexicon Miner</a>
-    <a class="pointer" [matMenuTriggerFor]="models">Language stuff<mat-icon>arrow_drop_down</mat-icon></a>
+    <a routerLinkActive="is-active" [routerLink]="['searcher']"><button mat-button class="nav-button">SEARCHER</button></a>
+    <a routerLinkActive="is-active" [routerLink]="['projects']"><button mat-button class="nav-button">PROJECTS</button></a>
+    <a routerLinkActive="is-active" [routerLink]="['']" [routerLinkActiveOptions]="{exact:true}"><button mat-button class="nav-button">LANDING</button></a>
+    <a routerLinkActive="is-active" [routerLink]="['users']"><button mat-button class="nav-button">USERS</button></a>
+    <a routerLinkActive="is-active" [routerLink]="['lexicon-miner']"><button mat-button class="nav-button">LEXICON MINER</button></a>
+    <a class="pointer" [matMenuTriggerFor]="models"><button mat-button class="nav-button">TASKS<mat-icon>arrow_drop_down</mat-icon></button></a>
 
     <mat-menu #models="matMenu">
       <button mat-menu-item>Get Facts</button>
@@ -25,8 +21,8 @@
     </mat-menu>
 
     <div class="flex-item-right login" *ngIf="!user">
-      <button mat-raised-button (click)="registerDialog()">Register</button>
-      <button mat-raised-button (click)="loginDialog()">Login</button>
+      <button mat-stroked-button class="nav-button" (click)="registerDialog()">REGISTER</button>
+      <button mat-stroked-button class="nav-button" (click)="loginDialog()">LOG IN</button>
     </div>
 
 
@@ -40,8 +36,7 @@
       </mat-form-field>
 
       <div class="flex-row logout">
-        <button mat-flat-button [matMenuTriggerFor]="menu"><span>{{user.username}}
-        </span>
+        <button mat-button [matMenuTriggerFor]="menu"><span>{{user.username}}<mat-icon>arrow_drop_down</mat-icon></span>
         </button>
         <mat-menu #menu="matMenu">
           <button mat-menu-item routerLinkActive="is-active"

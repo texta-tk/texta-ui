@@ -1,11 +1,16 @@
 @import "../../variables/variables";
 mat-toolbar {
   height: $navbar-height;
+  min-height: $navbar-height;
+
   mat-toolbar-row {
     height: 100%;
     a {
-      padding: 5px;
       color: white;
+    }
+    
+    .nav-button {
+      font-weight: lighter !important;
     }
 
     mat-menu {
