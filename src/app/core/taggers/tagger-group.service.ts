@@ -16,9 +16,9 @@ export class TaggerGroupService {
   constructor(private http: HttpClient, private localStorageService: LocalStorageService,
               private logService: LogService) {
   }
-  getTaggerGroups(projectId: number): Observable<{count: number, results: TaggerGroup[]} | HttpErrorResponse> {
+  getTaggerGroups(projectId: number,  params = ''): Observable<{count: number, results: TaggerGroup[]} | HttpErrorResponse> {
     return this.http.get<{count: number, results: TaggerGroup[]}>(
-      this.apiUrl + '/projects/' + projectId + '/tagger_groups/',
+      `${this.apiUrl}/projects/${projectId}/tagger_groups/?${params}`,
     ).pipe(
       tap(e => this.logService.logStatus(e, 'getTaggerGroups')),
       catchError(this.logService.handleError<{count: number, results: TaggerGroup[]}>('getTaggerGroups')));
