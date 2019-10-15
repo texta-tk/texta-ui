@@ -157,3 +157,12 @@ pre {
   text-align: left;
   padding: 8px;
 }
+
+.table-paginator-row {
+  position: absolute;
+  margin: 6px 4px 0 4px;
+  font-size: 12px;
+  button {
+    font-size: 12px;
+  }
+}

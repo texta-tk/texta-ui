@@ -11,6 +11,7 @@ import {FormControl} from '@angular/forms';
 import {ProjectStore} from '../core/projects/project.store';
 import {of} from 'rxjs';
 import {RegistrationDialogComponent} from '../shared/components/dialogs/registration/registration-dialog.component';
+import { LogService } from '../core/util/log.service';
 
 @Component({
   selector: 'app-navbar',
@@ -26,8 +27,8 @@ export class NavbarComponent implements OnInit {
               private userStore: UserStore,
               private userService: UserService,
               private localStorageService: LocalStorageService,
-              private projectService: ProjectService,
-              private projectStore: ProjectStore) {
+              private projectStore: ProjectStore,
+              private logService: LogService) {
 
   }
 
@@ -76,12 +77,15 @@ export class NavbarComponent implements OnInit {
 
   logout() {
     this.userService.logout().subscribe(
-      next => console.log(next),
-      error => console.log(error),
       () => {
+        console.log(' IN LOGOUT NEXT');
         this.localStorageService.deleteUser();
         this.userStore.setCurrentUser(null);
-        location.reload();
+        // location.reload();
+      },
+      error => {
+        console.log(error, ' IN LOGOUT ERRORRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR');
+        this.logService.snackBarError(error, 5000);
       });
   }
 }

@@ -11,6 +11,7 @@ export class LocalStorageService {
   }
 
   public getUser(): UserAuth {
+    console.log(JSON.parse(localStorage.getItem('user')), 'hhhhhhhhhhhhhhhhhh');
     return JSON.parse(localStorage.getItem('user'));
   }
 

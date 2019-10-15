@@ -1,6 +1,8 @@
+@import "../../../variables/variables";
+
 .table-container {
-  max-height: calc(100vh - 72px - 56px);
-  min-height: calc(100vh - 72px - 56px);;
+  max-height: calc(100vh - #{$navbar-height} - 56px);
+  min-height: calc(100vh - #{$navbar-height} - 56px);
   overflow: auto;
 }
 
@@ -8,6 +10,7 @@
   position: absolute;
   margin: 6px 4px 0 4px;
   font-size: 12px;
+  max-height: 56px;
   button {
     font-size: 12px;
   }
