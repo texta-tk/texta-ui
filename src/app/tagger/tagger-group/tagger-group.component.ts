@@ -10,11 +10,20 @@ import {TaggerGroup} from '../../shared/types/tasks/Tagger';
 import {CreateTaggerGroupDialogComponent} from './create-tagger-group-dialog/create-tagger-group-dialog.component';
 import {TaggerGroupService} from '../../core/taggers/tagger-group.service';
 import { SelectionModel } from '@angular/cdk/collections';
+import { trigger, state, style, transition, animate } from '@angular/animations';
+import { ModelsListDialogComponent } from './models-list-dialog/models-list-dialog.component';
+import { TaggerGroupTagTextDialogComponent } from './tagger-group-tag-text-dialog/tagger-group-tag-text-dialog.component';
 
 @Component({
   selector: 'app-tagger-group',
   templateUrl: './tagger-group.component.html',
-  styleUrls: ['./tagger-group.component.scss']
+  styleUrls: ['./tagger-group.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+  ])]
 })
 export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
   private projectSubscription: Subscription;
@@ -93,6 +102,35 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       }
+    });
+  }
+
+  openModelsListDialog(taggerGroup: TaggerGroup) {
+    const dialogRef = this.dialog.open(ModelsListDialogComponent, {
+      data: {taggerGroupId: taggerGroup.id, currentProjectId: this.currentProject.id },
+      height: '835px',
+      width: '850px',
+      panelClass: 'custom-no-padding-dialog'
+    });
+  }
+
+  onModelsRetrain(taggerGroup: TaggerGroup) {
+    this.taggerGroupService.modelsRetrain(taggerGroup.id, this.currentProject.id).subscribe(
+      (resp: {'success': 'retraining tasks created'} | HttpErrorResponse) => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.logService.snackBarMessage('Started retraining loggers', 3000);
+      } else if (resp instanceof HttpErrorResponse) {
+        this.logService.snackBarError(resp, 5000);
+      }
+    }
+    );
+  }
+
+  tagTextDialog(tagger: TaggerGroup) {
+    const dialogRef = this.dialog.open(TaggerGroupTagTextDialogComponent, {
+      data: {taggerId: tagger.id, currentProjectId: this.currentProject.id },
+      maxHeight: '665px',
+      width: '700px',
     });
   }
 }

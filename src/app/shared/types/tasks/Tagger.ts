@@ -35,3 +35,12 @@ export class TaggerGroup {
   location = null;
   task: TaskStatus;
 }
+
+
+// For endpoints such as 'projects/{projectId}/tagger_groups/{taggerGroupId}/models_list/'
+export class LightTagger {
+    tag = '';
+    url = '';
+    status: TaskStatus;
+    id: number;
+}

@@ -14,6 +14,7 @@ export class GenericTableComponent implements OnInit {
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
+  @Input() pageSizeOptions: number[] = [15, 50, 100];
   @Input() set dataSource(data: any[]) {
     if (data.length >= 0) {
       this.displayedColumns = this.makeColumns(data);

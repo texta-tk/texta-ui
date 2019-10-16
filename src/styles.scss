@@ -166,3 +166,8 @@ pre {
     font-size: 12px;
   }
 }
+
+// panelClass for mat dialog to remove padding
+.custom-no-padding-dialog .mat-dialog-container {
+  padding: 0 !important;
+}
