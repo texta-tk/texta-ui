@@ -1,23 +1,20 @@
-import { AppPage } from './app.po';
-import { browser, logging } from 'protractor';
+import {AppPage} from './app.po';
+import {browser} from 'protractor';
+import {protractor} from 'protractor/built/ptor';
 
 describe('workspace-project App', () => {
   let page: AppPage;
-
+  const EC = protractor.ExpectedConditions;
   beforeEach(() => {
     page = new AppPage();
   });
 
-  it('should display welcome message', () => {
+  it('should be able to log in', () => {
     page.navigateTo();
-    expect(page.getTitleText()).toEqual('Welcome to TEXTA!');
-  });
 
-  afterEach(async () => {
-    // Assert that there are no errors emitted from the browser
-    const logs = await browser.manage().logs().get(logging.Type.BROWSER);
-    expect(logs).not.toContain(jasmine.objectContaining({
-      level: logging.Level.SEVERE,
-    } as logging.Entry));
+    const logoutButton = page.getLogoutButton();
+    const logoutClickable = EC.elementToBeClickable(logoutButton);
+    browser.wait(logoutClickable);
+    expect(logoutButton).toBeTruthy('Log in button should not be visible, we logged in');
   });
 });

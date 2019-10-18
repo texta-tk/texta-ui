@@ -78,13 +78,11 @@ export class NavbarComponent implements OnInit {
   logout() {
     this.userService.logout().subscribe(
       () => {
-        console.log(' IN LOGOUT NEXT');
         this.localStorageService.deleteUser();
         this.userStore.setCurrentUser(null);
-        // location.reload();
+        location.reload();
       },
       error => {
-        console.log(error, ' IN LOGOUT ERRORRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR');
         this.logService.snackBarError(error, 5000);
       });
   }
