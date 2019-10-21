@@ -5,9 +5,8 @@ Test:
     paths:
       - node_modules
   before_script:
-  - npm install -g @angular/cli
+  - npm install @angular/cli
   - npm install
-  - ng build
   stage: test
   tags:
   - ci-test
