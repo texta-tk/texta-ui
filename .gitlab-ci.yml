@@ -4,19 +4,17 @@ image: node:latest
 #  - name: docker.texta.ee/texta/texta-rest:latest
 #    alias: texta-rest
 
-#variables:
-#  TEXTA_ES_URL: http://172.17.0.1:9200
-
 Test:
   before_script:
   - npm install -g @angular/cli
-  - npm install chromium
+  - npm i -D puppeteer
   - npm install
   - ng build
   stage: test
   tags:
   - ci-test
   variables:
+    CHROME_BIN: 
     apiUrl: http://texta-rest:8000
   script:
   - ng test
