@@ -5,6 +5,8 @@ image: node:latest
 #    alias: texta-rest
 
 Test:
+  before_script:
+  - npm install -g @angular/cli@7.3.8
   stage: test
   tags:
   - ci-test
