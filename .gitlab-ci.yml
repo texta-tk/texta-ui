@@ -1,15 +1,14 @@
-image: node:latest
+image: circleci/node:10-browsers
 
 Test:
   before_script:
   - npm install -g @angular/cli
-  - npm i -D puppeteer
   - npm install
   - ng build
   stage: test
   tags:
   - ci-test
   script:
-  - ng test
+  - npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
   except:
   - tags
