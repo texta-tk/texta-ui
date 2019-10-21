@@ -1,0 +1,16 @@
+image: node:latest
+
+#services:
+#  - name: docker.texta.ee/texta/texta-rest:latest
+#    alias: texta-rest
+
+Test:
+  stage: test
+  tags:
+  - ci-test
+  variables:
+    TEXTA_ES_URL: http://172.17.0.1:9200
+  script:
+  - ng test
+  except:
+  - tags
