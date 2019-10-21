@@ -24,11 +24,15 @@ exports.config = {
       project: require('path').join(__dirname, './tsconfig.e2e.json')
     });
     jasmine.getEnv().addReporter(new SpecReporter({spec: {displayStacktrace: true}}));
+    let globals = require('protractor');
     await browser.driver.get('http://localhost:4200/'); // todo, default? env file!
     const login = await browser.driver.findElement(by.id('loginButton'));
     login.click();
-    await browser.driver.findElement(by.css('input[formcontrolname=usernameFormControl')).sendKeys('test'); // todo
-    await browser.driver.findElement(by.css('input[formcontrolname=passwordFormControl')).sendKeys('test');
+    await browser.driver.findElement(by.css('input[formcontrolname=usernameFormControl')).sendKeys('admin'); // todo
+    await browser.driver.findElement(by.css('input[formcontrolname=passwordFormControl')).sendKeys('1234');
     await browser.driver.findElement(by.tagName('form')).submit();
+    var until = globals.ExpectedConditions;
+    const logoutButton = browser.driver.findElement(by.className('logout'));
+    await browser.driver.wait(until.presenceOf(logoutButton), 5000, 'timed out');
   }
 };
