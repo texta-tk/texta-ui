@@ -17,15 +17,12 @@ export interface TextaFact {
   styleUrls: ['./highlight.component.sass']
 })
 export class HighlightComponent implements OnInit {
-
+  static colors: Map<string, string> = new Map<string, string>();
   highlightArray: HighlightObject[] = [];
+  _searchTerm: string;
 
-  // make this into an input variable, dont need it right now tho
-  // json at root level is: [text, texta_facts], text is the defaultentrypoint
-  // doc_path text.[columnName]
   @Input() currentColumn: string;
 
-  _searchTerm: string;
   get searchTerm(): string {
     return this._searchTerm;
   }
@@ -36,7 +33,7 @@ export class HighlightComponent implements OnInit {
 
   @Input() set JsonResponse(data: any) { // todo data
     let textaFieldFacts = this.getFactsByField(data, this.currentColumn);
-    textaFieldFacts = this.removeDuplicates(textaFieldFacts, 'spans')
+    textaFieldFacts = this.removeDuplicates(textaFieldFacts, 'spans');
     const highlightTerms = [
       ...this.makeSearcherHighlightFacts(data[this.currentColumn], this.searchTerm, this.currentColumn),
       ...textaFieldFacts];
@@ -85,14 +82,13 @@ export class HighlightComponent implements OnInit {
 
   generateColorsForFacts(facts: TextaFact[]): Map<string, string> {
     const colorPallette = this.generateRandomColors(facts.length);
-    const colors: Map<string, string> = new Map<string, string>();
     facts.forEach(fact => {
-      if (!colors.has(fact.fact) && colorPallette) {
-        colors.set(fact.fact, colorPallette[0]);
+      if (!HighlightComponent.colors.has(fact.fact) && colorPallette) {
+        HighlightComponent.colors.set(fact.fact, colorPallette[0]);
         colorPallette.shift();
       }
     });
-    return colors;
+    return HighlightComponent.colors;
   }
 
   private makeHighLights(originalText: string, facts: TextaFact[], factColors: Map<string, string>): HighlightObject[] {
@@ -279,6 +275,7 @@ export class HighlightComponent implements OnInit {
 
     return loopIndex;
   }
+
   // searcher prio
   private startOfFact(nestedFacts: TextaFact[], loopIndex: number, previousFact: TextaFact): TextaFact {
     const facts: TextaFact[] = nestedFacts.filter(e => (e.spans[0] === loopIndex));

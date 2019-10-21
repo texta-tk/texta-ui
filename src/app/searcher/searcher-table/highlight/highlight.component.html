@@ -1,8 +1,11 @@
 <div>
   <ng-container *ngFor="let highlight of this.highlightArray">
-    <ng-template [ngIf]="highlight.highlighted">
+    <ng-template [ngIf]="highlight.highlighted && !highlight.fact.searcherHighlight">
       <span matTooltip="{{highlight.fact.fact}}: {{highlight.fact.str_val}}" style="cursor: pointer;"
         [ngStyle]="{'backgroundColor': highlight.color}">{{highlight.text}}</span>
+    </ng-template>
+    <ng-template [ngIf]="highlight.highlighted && highlight.fact.searcherHighlight">
+      <span style="cursor: pointer;" [ngStyle]="{'backgroundColor': highlight.color}">{{highlight.text}}</span>
     </ng-template>
     <ng-template [ngIf]="highlight.nested">
       <ng-container [ngTemplateOutlet]="factTemplate" [ngTemplateOutletContext]={highlight:highlight.nested}>

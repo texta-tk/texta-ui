@@ -62,7 +62,6 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
         }
         if (!(resp.fields instanceof HttpErrorResponse)) {
           this.projectFields = resp.fields;
-          this.makeFactFields(this.projectFields);
           this.projectFieldsFiltered = this.projectFields;
         }
       }
@@ -106,10 +105,6 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
       filteredIndex.fields = filteredFields;
       this.projectFieldsFiltered.push(filteredIndex);
     }
-  }
-
-  makeFactFields(projectFields: ProjectField[]) {
-    //need backend
   }
 
   buildSavedSearch(savedSearch: any) { // todo type
@@ -156,7 +151,6 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
 
   searchOnChange(event) {
     // dont want left focus events
-    console.log(event);
     if (event === this.elasticQuery && this.searcherOptions.includes('live_search')) {
       this.getSearch();
     }
