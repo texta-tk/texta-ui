@@ -9,7 +9,7 @@ variables:
 
 Test:
   before_script:
-  - npm install
+  - npm install -g @angular/cli
   - ng build
   stage: test
   tags:
