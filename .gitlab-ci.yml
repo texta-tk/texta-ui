@@ -4,9 +4,12 @@ services:
   - name: docker.texta.ee/texta/texta-rest:latest
     alias: texta-rest
 
+variables:
+  TEXTA_ES_URL: http://172.17.0.1:9200
+
 Test:
   before_script:
-  - npm install -g @angular/cli@7.3.8
+  - npm install
   - ng build
   stage: test
   tags:
