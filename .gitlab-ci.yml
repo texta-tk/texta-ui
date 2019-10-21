@@ -10,7 +10,7 @@ image: node:latest
 Test:
   before_script:
   - npm install -g @angular/cli
-  - ls -al
+  - npm install
   - ng build
   stage: test
   tags:
