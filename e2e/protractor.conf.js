@@ -47,7 +47,10 @@ exports.config = {
         './src/**/*.e2e-spec.ts'
     ],
     capabilities: {
-        'browserName': 'chrome'
+        browserName: 'chrome',
+        chromeOptions: {
+            args: ['--headless', '--no-sandbox']
+        }
     },
     directConnect: true,
     baseUrl: 'http://localhost:4200/',
@@ -74,10 +77,10 @@ exports.config = {
                 case 2:
                     login = _a.sent();
                     login.click();
-                    return [4 /*yield*/, protractor_1.browser.driver.findElement(protractor_1.by.css('input[formcontrolname=usernameFormControl')).sendKeys('admin')];
+                    return [4 /*yield*/, protractor_1.browser.driver.findElement(protractor_1.by.css('input[formcontrolname=usernameFormControl')).sendKeys('test')];
                 case 3:
                     _a.sent(); // todo
-                    return [4 /*yield*/, protractor_1.browser.driver.findElement(protractor_1.by.css('input[formcontrolname=passwordFormControl')).sendKeys('1234')];
+                    return [4 /*yield*/, protractor_1.browser.driver.findElement(protractor_1.by.css('input[formcontrolname=passwordFormControl')).sendKeys('test')];
                 case 4:
                     _a.sent();
                     return [4 /*yield*/, protractor_1.browser.driver.findElement(protractor_1.by.tagName('form')).submit()];
@@ -85,7 +88,7 @@ exports.config = {
                     _a.sent();
                     until = ptor_1.protractor.ExpectedConditions;
                     logoutButton = protractor_1.element(protractor_1.by.className('logout'));
-                    return [4 /*yield*/, protractor_1.browser.driver.wait(until.presenceOf(logoutButton), 5000, 'timed out')];
+                    return [4 /*yield*/, protractor_1.browser.driver.wait(until.presenceOf(logoutButton), 5000, 'wait for logout div to be present timed out')];
                 case 6:
                     _a.sent();
                     return [2 /*return*/];
