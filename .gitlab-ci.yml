@@ -1,0 +1,14 @@
+image: circleci/node:10-browsers
+
+Test:
+  cache:
+    paths:
+      - node_modules
+  before_script:
+  - npm install @angular/cli
+  - npm install
+  stage: test
+  tags:
+  - ci-test
+  script:
+  - npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
