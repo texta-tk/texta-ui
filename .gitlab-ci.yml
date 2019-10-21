@@ -10,6 +10,7 @@ image: node:latest
 Test:
   before_script:
   - npm install -g @angular/cli
+  - npm install chromium
   - npm install
   - ng build
   stage: test
