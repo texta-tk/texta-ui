@@ -1,17 +1,18 @@
 image: node:latest
 
-#services:
-#  - name: docker.texta.ee/texta/texta-rest:latest
-#    alias: texta-rest
+services:
+  - name: docker.texta.ee/texta/texta-rest:latest
+    alias: texta-rest
 
 Test:
   before_script:
   - npm install -g @angular/cli@7.3.8
+  - ng build
   stage: test
   tags:
   - ci-test
   variables:
-    TEXTA_ES_URL: http://172.17.0.1:9200
+    apiUrl: http://texta-rest:8000
   script:
   - ng test
   except:
