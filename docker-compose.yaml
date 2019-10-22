@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+
+  toolkit-rest:
+    container_name: toolkit-rest
+    image: docker.texta.ee/texta/texta-rest:latest
+    ports:
+      - 8000:8000
+    env_file:
+      - ./docker/env
+    volumes:
+      - ./data-volumes/toolkit-data:/var/texta-rest/data
+
+  toolkit-front:
+    container_name: toolkit-front
+    image: docker.texta.ee/texta/texta-rest-front:latest
+    ports:
+      - 80:80
+    env_file:
+      - ./docker/env
+    depends_on:
+      - toolkit-rest
