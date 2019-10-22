@@ -1,0 +1,37 @@
+<mat-form-field class="max-width m-bot-10" appearance="outline" floatLabel="always">
+    <mat-label>Tag document</mat-label>
+    <input matInput placeholder="Tag doc" #textInput>
+    <mat-hint>Document in JSON format.</mat-hint>
+</mat-form-field>
+<mat-form-field class="max-width m-bot-10" appearance="outline" floatLabel="always">
+    <mat-label>Number of similar documents</mat-label>
+    <input matInput placeholder="Number of Similar docs" #nSimilarDocsInput [(ngModel)]="nSimilarDocs">
+    <mat-hint>Number of documents used in unsupervised prefiltering</mat-hint>
+</mat-form-field>
+  <mat-checkbox [(ngModel)]="lemmatize" class="margin-right">Lemmatize</mat-checkbox>
+  <mat-checkbox [(ngModel)]="ner">Use NER</mat-checkbox>
+  <div class="m-top-10">
+      <div *ngFor="let result of results" class="m-top-10">
+          <span class="mat-body-strong">Tagger id:</span> {{result.tagger_id}}
+          <br>
+          <span class="mat-body-strong">Result: </span>{{result.tag}}
+          <br>
+          <span class="mat-body-strong">Probability:</span> {{result.probability}}
+          <br>
+          <br>
+    </div>
+    <div *ngIf="errors">
+        <mat-error> {{errors}} </mat-error>
+    </div>
+    <span class="mat-hint" *ngIf="loading"> <i>Loading</i></span>
+    <div *ngIf="!loading && !errors && results.length < 1">
+        <span class="mat-hint"> <i>No results</i></span>
+    </div>
+  </div>
+  <div class="flex-col">
+    <div class="flex-row">
+      <div class="flex-item-right">
+        <button type="submit" mat-button (click)="onSubmit(textInput.value)">Post</button>
+      </div>
+    </div>
+  </div>

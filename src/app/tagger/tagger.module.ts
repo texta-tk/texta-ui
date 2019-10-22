@@ -11,6 +11,8 @@ import {TaggerGroupComponent} from './tagger-group/tagger-group.component';
 import { TagRandomDocDialogComponent } from './tagger/tag-random-doc-dialog/tag-random-doc-dialog.component';
 import { ModelsListDialogComponent } from './tagger-group/models-list-dialog/models-list-dialog.component';
 import { TaggerGroupTagTextDialogComponent } from './tagger-group/tagger-group-tag-text-dialog/tagger-group-tag-text-dialog.component';
+import { TaggerGroupTagDocDialogComponent } from './tagger-group/tagger-group-tag-doc-dialog/tagger-group-tag-doc-dialog.component';
+import { TaggerGroupTagRandomDocDialogComponent } from './tagger-group/tagger-group-tag-random-doc-dialog/tagger-group-tag-random-doc-dialog.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +26,8 @@ import { TaggerGroupTagTextDialogComponent } from './tagger-group/tagger-group-t
     TagRandomDocDialogComponent,
     ModelsListDialogComponent,
     TaggerGroupTagTextDialogComponent,
+    TaggerGroupTagDocDialogComponent,
+    TaggerGroupTagRandomDocDialogComponent,
   ],
   imports: [
     SharedModule,
@@ -38,6 +42,8 @@ import { TaggerGroupTagTextDialogComponent } from './tagger-group/tagger-group-t
     CreateTaggerGroupDialogComponent,
     ModelsListDialogComponent,
     TaggerGroupTagTextDialogComponent,
+    TaggerGroupTagDocDialogComponent,
+    TagRandomDocDialogComponent,
   ]
 })
 export class TaggerModule {

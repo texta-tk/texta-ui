@@ -1,8 +1,6 @@
-import {Component, Input, Inject} from '@angular/core';
-import {LogService} from '../../../core/util/log.service';
+import {Component, Inject} from '@angular/core';
 import {TaggerService} from '../../../core/taggers/tagger.service';
 import {MAT_DIALOG_DATA} from '@angular/material';
-import {take} from 'rxjs/operators';
 
 @Component({
   selector: 'app-tag-text-dialog',

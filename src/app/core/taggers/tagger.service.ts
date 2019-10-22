@@ -66,6 +66,7 @@ export class TaggerService {
       tap(e => this.logService.logStatus(e, 'tagRandomDocument')),
       catchError(this.logService.handleError('tagRandomDocument')));
   }
+
   tagDocument(body: {}, projectId: number, taggerId): Observable<unknown | HttpErrorResponse> {
     return this.http.post<unknown>(
       this.apiUrl + '/projects/' + projectId + '/taggers/' + taggerId + '/tag_doc/',
@@ -98,7 +99,7 @@ export class TaggerService {
   }
 
   bulkDeleteTaggers(projectId: number, body) {
-    return this.http.post<{"num_deleted": number, "deleted_types": {string: number}[] }>
+    return this.http.post<{'num_deleted': number, 'deleted_types': {string: number}[] }>
     (`${this.apiUrl}/projects/${projectId}/taggers/bulk_delete/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'bulkDeleteTaggers')),
       catchError(this.logService.handleError<unknown>('bulkDeleteTaggers')));

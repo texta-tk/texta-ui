@@ -12,13 +12,14 @@ import {LogService} from '../util/log.service';
 })
 export class TaggerGroupService {
   apiUrl = environment.apiUrl;
+  apiEndpoint = 'tagger_groups';
 
   constructor(private http: HttpClient, private localStorageService: LocalStorageService,
               private logService: LogService) {
   }
   getTaggerGroups(projectId: number,  params = ''): Observable<{count: number, results: TaggerGroup[]} | HttpErrorResponse> {
     return this.http.get<{count: number, results: TaggerGroup[]}>(
-      `${this.apiUrl}/projects/${projectId}/tagger_groups/?${params}`,
+      `${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/?${params}`,
     ).pipe(
       tap(e => this.logService.logStatus(e, 'getTaggerGroups')),
       catchError(this.logService.handleError<{count: number, results: TaggerGroup[]}>('getTaggerGroups')));
@@ -27,7 +28,7 @@ export class TaggerGroupService {
   // todo
   createTaggerGroup(body: {}, projectId: number): Observable<TaggerGroup | HttpErrorResponse> {
     return this.http.post<TaggerGroup>(
-      this.apiUrl + '/projects/' + projectId + '/tagger_groups/',
+      `${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/`,
       body
     ).pipe(
       tap(e => this.logService.logStatus(e, 'makeTagger')),
@@ -36,7 +37,7 @@ export class TaggerGroupService {
 
   modelsRetrain(taggerGroupId: number, projectId: number) {
     return this.http.post<{'success': 'retraining tasks created'}>(
-      `${this.apiUrl}/projects/${projectId}/tagger_groups/${taggerGroupId}/models_retrain/`, {}
+      `${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/${taggerGroupId}/models_retrain/`, {}
     ).pipe(
       tap(e => this.logService.logStatus(e, 'modelsRetrain')),
       catchError(this.logService.handleError<HttpErrorResponse>('modelsRetrain')));
@@ -44,7 +45,7 @@ export class TaggerGroupService {
 
   getModelsList(taggerGroupId: number, projectId: number) {
     return this.http.get<LightTagger[]>(
-      `${this.apiUrl}/projects/${projectId}/tagger_groups/${taggerGroupId}/models_list/`
+      `${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/${taggerGroupId}/models_list/`
     ).pipe(
       tap(e => this.logService.logStatus(e, 'getModelsList')),
       catchError(this.logService.handleError<HttpErrorResponse>('getModelsList')));
@@ -53,10 +54,34 @@ export class TaggerGroupService {
   tagText(body: {}, projectId: number, taggerId):
    Observable<{ probability: number, tag: string, tagger_id: number }[] | HttpErrorResponse> {
     return this.http.post<{ probability: number, tag: string, tagger_id: number }[]>(
-      `${this.apiUrl}/projects/${projectId}/tagger_groups/${taggerId}/tag_text/`,
+      `${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/${taggerId}/tag_text/`,
       body
     ).pipe(
       tap(e => this.logService.logStatus(e, 'tagText')),
       catchError(this.logService.handleError<{ probability: number, tag: string, tagger_id: number }[]>('tagText')));
+  }
+
+  tagDoc(body: {}, projectId: number, taggerId):
+   Observable<{ probability: number, tag: string, tagger_id: number }[] | HttpErrorResponse> {
+    return this.http.post<{ probability: number, tag: string, tagger_id: number }[]>(
+      `${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/${taggerId}/tag_doc/`,
+      body
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'tagDoc')),
+      catchError(this.logService.handleError<{ probability: number, tag: string, tagger_id: number }[]>('tagDoc')));
+  }
+
+  tagRandomDocument(projectId: number, taggerId: number): Observable<unknown | HttpErrorResponse> {
+    return this.http.get(`${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/${taggerId}/tag_random_doc/`
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'tagRandomDocument')),
+      catchError(this.logService.handleError('tagRandomDocument')));
+  }
+
+  bulkDeleteTaggerGroups(projectId: number, body: { ids: any[]; }) {
+    return this.http.post<{'num_deleted': number, 'deleted_types': {string: number}[] }>
+    (`${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/bulk_delete/`, body).pipe(
+      tap(e => this.logService.logStatus(e, 'bulkDeleteTaggerGroups')),
+      catchError(this.logService.handleError<unknown>('bulkDeleteTaggerGroups')));
   }
 }

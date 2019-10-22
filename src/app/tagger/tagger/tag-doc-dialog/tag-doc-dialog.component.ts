@@ -1,9 +1,6 @@
 import {Component, OnInit, Inject} from '@angular/core';
-import {LogService} from '../../../core/util/log.service';
-import {ProjectStore} from '../../../core/projects/project.store';
 import {TaggerService} from '../../../core/taggers/tagger.service';
-import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
-import {take} from 'rxjs/operators';
+import {MAT_DIALOG_DATA} from '@angular/material';
 import {Tagger} from 'src/app/shared/types/tasks/Tagger';
 
 @Component({
@@ -13,7 +10,7 @@ import {Tagger} from 'src/app/shared/types/tasks/Tagger';
 })
 export class TagDocDialogComponent implements OnInit {
   lemmatize: boolean;
-  defaultDoc;
+  defaultDoc: string;
   result: { result: boolean, probability: number };
 
   constructor(private taggerService: TaggerService,

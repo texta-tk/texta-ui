@@ -13,6 +13,8 @@ import {SelectionModel} from '@angular/cdk/collections';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {ModelsListDialogComponent} from './models-list-dialog/models-list-dialog.component';
 import {TaggerGroupTagTextDialogComponent} from './tagger-group-tag-text-dialog/tagger-group-tag-text-dialog.component';
+import { TaggerGroupTagDocDialogComponent } from './tagger-group-tag-doc-dialog/tagger-group-tag-doc-dialog.component';
+import { TagRandomDocDialogComponent } from '../tagger/tag-random-doc-dialog/tag-random-doc-dialog.component';
 
 @Component({
   selector: 'app-tagger-group',
@@ -32,7 +34,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: TaggerGroup | null;
   public tableData: MatTableDataSource<TaggerGroup> = new MatTableDataSource();
   selectedRows = new SelectionModel<TaggerGroup>(true, []);
-  public displayedColumns = ['id', 'description', 'fact_name', 'minimum_sample_size', 'Modify'];
+  public displayedColumns = ['select', 'id', 'description', 'fact_name', 'minimum_sample_size', 'Modify'];
   public isLoadingResults = true;
 
   @ViewChild(MatSort, {static: true}) sort: MatSort;
@@ -91,9 +93,6 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  onDeleteAllSelected() {
-    // todo
-  }
 
   openCreateDialog() {
     const dialogRef = this.dialog.open(CreateTaggerGroupDialogComponent, {
@@ -137,4 +136,59 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
       width: '700px',
     });
   }
+
+  tagDocDialog(tagger: TaggerGroup) {
+    const dialogRef = this.dialog.open(TaggerGroupTagDocDialogComponent, {
+      data: {taggerId: tagger.id, currentProjectId: this.currentProject.id},
+      maxHeight: '665px',
+      width: '700px',
+    });
+  }
+
+  tagRandomDocDialog(tagger: TaggerGroup) {
+    const dialogRef = this.dialog.open(TagRandomDocDialogComponent, {
+      data: {tagger, currentProjectId: this.currentProject.id },
+      maxHeight: '665px',
+      maxWidth: '1200px',
+    });
+  }
+
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selectedRows.selected.length;
+    const numRows = this.tableData.data.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterToggle() {
+    this.isAllSelected() ?
+        this.selectedRows.clear() :
+        this.tableData.data.forEach(row => this.selectedRows.select(row));
+  }
+
+
+  onDeleteAllSelected() {
+    if (this.selectedRows.selected.length > 0) {
+      // Delete selected taggers
+      const idsToDelede = this.selectedRows.selected.map((tagger: TaggerGroup) => tagger.id);
+      const body = { ids: idsToDelede };
+      // Refresh taggers
+      this.taggerGroupService.bulkDeleteTaggerGroups(this.currentProject.id, body).subscribe(() => {
+        this.logService.snackBarMessage(`${this.selectedRows.selected.length} Taggers deleted`, 2000);
+        this.removeSelectedRows();
+      });
+    }
+  }
+
+  removeSelectedRows() {
+    this.selectedRows.selected.forEach((selectedTagger: TaggerGroup) => {
+       const index: number = this.tableData.data.findIndex(tagger => tagger.id === selectedTagger.id);
+       this.tableData.data.splice(index, 1);
+       this.tableData.data = [...this.tableData.data];
+     });
+    this.selectedRows.clear();
+  }
+
 }
