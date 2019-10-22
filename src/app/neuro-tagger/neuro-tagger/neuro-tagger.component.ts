@@ -168,7 +168,7 @@ export class NeuroTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
 
-  onDelteAllSelected() {
+  onDeleteAllSelected() {
     if (this.selectedRows.selected.length > 0) {
       // Delete selected taggers
       const idsToDelete = this.selectedRows.selected.map((tagger: NeuroTagger) => tagger.id);
