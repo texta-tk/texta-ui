@@ -12,3 +12,16 @@ Test:
   - ci-test
   script:
   - npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
+  except:
+  - tags
+
+Build:
+  stage: build
+  tags:
+  - docker
+  script:
+  - docker login -u $CI_DEPLOY_USER -p $CI_DEPLOY_PASSWORD docker.texta.ee
+  - python ./docker/build_and_push.py
+  - docker system prune --volumes -f
+  only:
+  - tags
