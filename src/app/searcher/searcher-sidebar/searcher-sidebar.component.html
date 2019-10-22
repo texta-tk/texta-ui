@@ -1,7 +1,7 @@
 <mat-accordion [multi]="true"> <!--[displayMode]="flat"-->
   <mat-expansion-panel
     [expanded]="buildSearchExpanded" #buildSearchPanel>
-    <mat-expansion-panel-header (click)="expandBuildSearchPanel($event)">
+    <mat-expansion-panel-header (click)="expandBuildSearchPanel()">
       <mat-panel-title>
         <span>Current Search</span>
       </mat-panel-title>
@@ -32,7 +32,7 @@
     </mat-tab-group>
   </mat-expansion-panel>
   <mat-expansion-panel [expanded]="savedSearchesExpanded" #savedSearchesPanel>
-    <mat-expansion-panel-header (click)="expandSavedSearchesPanel($event)">
+    <mat-expansion-panel-header (click)="expandSavedSearchesPanel()">
       <mat-panel-title>
         <span> Saved Searches </span>
       </mat-panel-title>

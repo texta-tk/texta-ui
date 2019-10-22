@@ -5,10 +5,10 @@ import {ProjectService} from '../../core/projects/project.service';
 import {ProjectStore} from '../../core/projects/project.store';
 import {NeuroTaggerService} from '../../core/neuro-tagger/neuro-tagger.service';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {mergeMap, take} from "rxjs/operators";
-import {forkJoin, of} from "rxjs";
-import {ProjectFact, ProjectField} from "../../shared/types/Project";
-import {HttpErrorResponse} from "@angular/common/http";
+import {mergeMap, take} from 'rxjs/operators';
+import {forkJoin, of} from 'rxjs';
+import {ProjectFact, ProjectField} from '../../shared/types/Project';
+import {HttpErrorResponse} from '@angular/common/http';
 import { NeuroTagger } from 'src/app/shared/types/tasks/NeuroTagger';
 
 interface NeuroTaggerOptions {
