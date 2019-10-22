@@ -17,3 +17,10 @@ COPY docker/nginx.conf /etc/nginx/conf.d/
 RUN rm -rf /usr/share/nginx/html/*
 # copy dist files
 COPY --from=build /build/dist/TEXTA /usr/share/nginx/html
+
+# copy entrypoint
+COPY ./docker/entrypoint.sh /
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+# start nginx
+CMD ["nginx", "-g", "daemon off;"]

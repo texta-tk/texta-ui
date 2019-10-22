@@ -1,4 +1,4 @@
 export const environment = {
-  apiUrl: 'http://toolkit-rest',
+  apiUrl: 'REST_API_URL_REPLACE',
   production: true
 };
