@@ -168,6 +168,14 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
         this.tableData.data.forEach(row => this.selectedRows.select(row));
   }
 
+  onDelete(tagger: TaggerGroup, index: number) {
+    this.taggerGroupService.deleteTaggerGroup(this.currentProject.id, tagger.id).subscribe(() => {
+      this.logService.snackBarMessage(`Tagger Group ${tagger.id}: ${tagger.description} deleted`, 2000);
+      this.tableData.data.splice(index, 1);
+      this.tableData.data = [...this.tableData.data];
+    });
+  }
+
 
   onDeleteAllSelected() {
     if (this.selectedRows.selected.length > 0) {
