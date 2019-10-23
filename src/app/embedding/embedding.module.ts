@@ -6,6 +6,7 @@ import {EmbeddingRoutingModule} from './embedding-routing.module';
 import {EmbeddingGroupComponent} from './embedding-group/embedding-group.component';
 import {CreateEmbeddingGroupDialogComponent} from './embedding-group/create-embedding-group-dialog/create-embedding-group-dialog.component';
 import { PhraseDialogComponent } from './phrase-dialog/phrase-dialog.component';
+import { BrowseClustersDialogComponent } from './embedding-group/browse-clusters-dialog/browse-clusters-dialog.component';
 
 
 @NgModule({
@@ -16,6 +17,7 @@ import { PhraseDialogComponent } from './phrase-dialog/phrase-dialog.component';
     EmbeddingGroupComponent,
     CreateEmbeddingGroupDialogComponent,
     PhraseDialogComponent,
+    BrowseClustersDialogComponent,
   ],
   imports: [
     SharedModule,
@@ -26,6 +28,7 @@ import { PhraseDialogComponent } from './phrase-dialog/phrase-dialog.component';
     PhraseDialogComponent,
 
     CreateEmbeddingGroupDialogComponent,
+    BrowseClustersDialogComponent,
   ],
 })
 export class EmbeddingModule {
