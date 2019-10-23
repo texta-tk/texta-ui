@@ -33,11 +33,6 @@
       <app-fact-constraints [factConstraint]="constraint" [elasticSearchQuery]="elasticQuery"
                             [projectFacts]="projectFacts" (change)="searchOnChange($event)"></app-fact-constraints>
     </div>
-    <div class="content" *ngIf="isFactTextConstraint(constraint)">
-      <app-fact-text-constraints [factTextConstraint]="constraint"
-                                 [elasticSearchQuery]="elasticQuery"
-                                 [projectFacts]="projectFacts"></app-fact-text-constraints>
-    </div>
   </div>
   <div fxLayout="column" class="bg-grey search-options">
     <h4 class="flex-item-center">Search options</h4>

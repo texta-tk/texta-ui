@@ -51,11 +51,11 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     });
   }
 
-  // temp functions for testing todo
-  makeColumns<T>(data: T[]): string[] {
+  // temp functions for testing todo, right now its only looking at first element for columns
+  makeColumns(data: { highlight: any, doc: any }[]): string[] {
     const columns: string[] = [];
     if (data.length > 0) {
-      for (const key of Object.keys(data[0])) {
+      for (const key of Object.keys(data[0].doc)) {
         columns.push(key);
       }
     }

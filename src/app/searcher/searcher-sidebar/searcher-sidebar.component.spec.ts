@@ -10,7 +10,6 @@ import {SavedSearchesComponent} from './saved-searches/saved-searches.component'
 import {TextConstraintsComponent} from './build-search/text-constraints/text-constraints.component';
 import {DateConstraintsComponent} from './build-search/date-constraints/date-constraints.component';
 import {FactConstraintsComponent} from './build-search/fact-constraints/fact-constraints.component';
-import {FactTextConstraintsComponent} from './build-search/fact-text-constraints/fact-text-constraints.component';
 import {Search} from '../../shared/types/Search';
 import {BehaviorSubject} from 'rxjs';
 import {SearchService} from '../services/search.service';
@@ -26,7 +25,7 @@ describe('SearcherSidebarComponent', () => {
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule,
       ],
       declarations: [SearcherSidebarComponent, BuildSearchComponent, SavedSearchesComponent, TextConstraintsComponent,
-        DateConstraintsComponent, FactConstraintsComponent, FactTextConstraintsComponent]
+        DateConstraintsComponent, FactConstraintsComponent, ]
     }).overrideComponent(BuildSearchComponent, {
       set: {
         providers: [

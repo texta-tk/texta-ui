@@ -10,7 +10,6 @@ import {
   DateConstraint,
   ElasticsearchQuery,
   FactConstraint,
-  FactTextConstraint,
   TextConstraint
 } from './Constraints';
 import {HttpErrorResponse} from '@angular/common/http';
@@ -131,9 +130,6 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     return constraintType instanceof DateConstraint;
   }
 
-  isFactTextConstraint(constraintType: Constraint) {
-    return constraintType instanceof FactTextConstraint;
-  }
 
   ngOnDestroy() {
     this.destroy$.next(true);
@@ -142,7 +138,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
 
   getSearch() {// implement previous query cancellation todo
     this.searcherService.search({query: this.elasticQuery.elasticsearchQuery}, this.currentProject.id).subscribe(
-      (result: any[] | HttpErrorResponse) => {
+      (result: { highlight: any, doc: any }[] | HttpErrorResponse) => {
         if (result && !(result instanceof HttpErrorResponse)) {
           this.searchService.nextSearch(new Search(result, false, false));
         }

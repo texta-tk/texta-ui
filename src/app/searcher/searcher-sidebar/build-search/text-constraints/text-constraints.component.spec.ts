@@ -5,6 +5,7 @@ import {SharedModule} from '../../../../shared/shared.module';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {ElasticsearchQuery, TextConstraint} from '../Constraints';
 
 describe('TextConstraintsComponent', () => {
   let component: TextConstraintsComponent;
@@ -23,6 +24,8 @@ describe('TextConstraintsComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(TextConstraintsComponent);
     component = fixture.componentInstance;
+    component.elasticSearchQuery = new ElasticsearchQuery();
+    component.textConstraint = new TextConstraint([{path: 'test', type: 'text'}]);
     fixture.detectChanges();
   });
 
