@@ -11,7 +11,7 @@ import {EmbeddingsGroupService} from '../../core/embeddings/embeddings-group.ser
 import {EmbeddingCluster} from '../../shared/types/tasks/Embedding';
 import { SelectionModel } from '@angular/cdk/collections';
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { BrowseClustersDialogComponent } from './browse-clusters-dialog/browse-clusters-dialog.component';
+// import { BrowseClustersDialogComponent } from './browse-clusters-dialog/browse-clusters-dialog.component';
 
 @Component({
   selector: 'app-embedding-group',
@@ -107,11 +107,11 @@ export class EmbeddingGroupComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   onBrowseClusters(cluster: EmbeddingCluster) {
-    const dialogRef = this.dialog.open(BrowseClustersDialogComponent, {
-      data: {clusterId: cluster.id, currentProjectId: this.currentProject.id},
-      height: '860px',
-      width: '700px',
-    });
+    // const dialogRef = this.dialog.open(BrowseClustersDialogComponent, {
+    //   data: {clusterId: cluster.id, currentProjectId: this.currentProject.id},
+    //   height: '860px',
+    //   width: '700px',
+    // });
   }
 
 
