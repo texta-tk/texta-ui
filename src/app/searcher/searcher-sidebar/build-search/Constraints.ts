@@ -48,13 +48,6 @@ export class FactConstraint extends Constraint {
   }
 }
 
-export class FactTextConstraint extends Constraint {
-
-  constructor(fields: Field[]) {
-    super(fields);
-  }
-}
-
 export class ElasticsearchQuery {
   query: {
     bool: {

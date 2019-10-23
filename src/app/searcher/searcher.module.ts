@@ -4,7 +4,6 @@ import {SearcherRoutingModule} from './searcher-routing.module';
 import {TextConstraintsComponent} from './searcher-sidebar/build-search/text-constraints/text-constraints.component';
 import {DateConstraintsComponent} from './searcher-sidebar/build-search/date-constraints/date-constraints.component';
 import {FactConstraintsComponent} from './searcher-sidebar/build-search/fact-constraints/fact-constraints.component';
-import {FactTextConstraintsComponent} from './searcher-sidebar/build-search/fact-text-constraints/fact-text-constraints.component';
 import {SearcherComponent} from './searcher.component';
 import {SearcherSidebarComponent} from './searcher-sidebar/searcher-sidebar.component';
 import {SearcherTableComponent} from './searcher-table/searcher-table.component';
@@ -22,7 +21,6 @@ import {HighlightComponent} from './searcher-table/highlight/highlight.component
     TextConstraintsComponent,
     DateConstraintsComponent,
     FactConstraintsComponent,
-    FactTextConstraintsComponent,
     SavedSearchesComponent,
     SaveSearchDialogComponent,
     HighlightComponent

@@ -28,7 +28,9 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
   factNameOperatorFormControl: FormControl = new FormControl();
   factNameFormControl: FormControl = new FormControl();
   destroyed$: Subject<boolean> = new Subject<boolean>();
-  constraintQuery;
+  constraintQuery = {
+    bool: {}
+  };
 
   constructor() {
     FactConstraintsComponent.componentCount += 1;
@@ -53,9 +55,6 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
         }
       };
       const formQueries = [];
-      this.constraintQuery = {
-        bool: {}
-      };
       this.constraintQuery.bool = {[this.factNameOperatorFormControl.value]: formQueries};
       this.elasticSearchQuery.query.bool.must.push(this.constraintQuery);
       this.factNameOperatorFormControl.valueChanges.pipe(

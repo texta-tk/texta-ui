@@ -8,7 +8,6 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {TextConstraintsComponent} from './text-constraints/text-constraints.component';
 import {DateConstraintsComponent} from './date-constraints/date-constraints.component';
 import {FactConstraintsComponent} from './fact-constraints/fact-constraints.component';
-import {FactTextConstraintsComponent} from './fact-text-constraints/fact-text-constraints.component';
 import {SearcherService} from '../../../core/searcher/searcher.service';
 import {Search} from '../../../shared/types/Search';
 import {BehaviorSubject} from 'rxjs';
@@ -26,7 +25,7 @@ describe('BuildSearchComponent', () => {
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule
       ],
       declarations: [BuildSearchComponent, TextConstraintsComponent,
-        DateConstraintsComponent, FactConstraintsComponent, FactTextConstraintsComponent]
+        DateConstraintsComponent, FactConstraintsComponent, ]
     }).overrideComponent(BuildSearchComponent, {
       set: {
         providers: [
