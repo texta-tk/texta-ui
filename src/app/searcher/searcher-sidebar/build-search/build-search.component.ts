@@ -5,13 +5,7 @@ import {forkJoin, of, Subject} from 'rxjs';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {ProjectService} from '../../../core/projects/project.service';
 import {ProjectStore} from '../../../core/projects/project.store';
-import {
-  Constraint,
-  DateConstraint,
-  ElasticsearchQuery,
-  FactConstraint,
-  TextConstraint
-} from './Constraints';
+import {Constraint, DateConstraint, ElasticsearchQuery, FactConstraint, TextConstraint} from './Constraints';
 import {HttpErrorResponse} from '@angular/common/http';
 import {SearcherService} from '../../../core/searcher/searcher.service';
 import {MatSelectChange} from '@angular/material';
@@ -78,12 +72,11 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
       } else {
         this.constraintList.push(new FactConstraint(formFields));
       }
-      this.checkMinimumMatch();
+      this.updateFieldsToHighlight(this.constraintList);
+      this.checkMinimumMatch(); // query minimum_should_match
       // reset field selection
       this.fieldsFormControl.reset();
-      this.projectFieldsFiltered = this.projectFields; // remove field filter
-
-      console.log(this.constraintList);
+      this.projectFieldsFiltered = this.projectFields; // remove field filter by type
     }
   }
 
@@ -157,11 +150,25 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
   }
 
   checkMinimumMatch() {
-    // need this for fact search to work standalone
-    if (this.constraintList.some(x => (x instanceof TextConstraint))) {
-      this.elasticQuery.query.bool.minimum_should_match = 1; // nested query is seperate search so need this at 0
-    } else {
-      this.elasticQuery.query.bool.minimum_should_match = 0; // back to normal
+    // need this for fact query to work standalone
+    let shouldMatch = 0;
+    for (let i = 0; i < this.constraintList.length; i++) {
+      if (!(this.constraintList[i] instanceof FactConstraint)) {
+        shouldMatch += 1;
+      }
+    }
+    this.elasticQuery.query.bool.minimum_should_match = shouldMatch;
+  }
+
+  updateFieldsToHighlight(constraints: Constraint[]) {
+    this.elasticQuery.highlight.fields = {};
+    const fieldsToHighlight = [];
+    for (const constraint of constraints) {
+      const fields = constraint.fields.map((x: Field) => x.path);
+      fieldsToHighlight.push(...fields);
+    }
+    for (const field of fieldsToHighlight) {
+      this.elasticQuery.highlight.fields[field] = {};
     }
   }
 

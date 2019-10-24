@@ -9,7 +9,7 @@
         <td mat-cell *matCellDef="let row" class="table-row">
           <span *ngIf="checkIfObject(row.doc[column])"><pre>{{row.doc[column] | json}}</pre></span>
           <span *ngIf="!checkIfObject(row.doc[column])"><app-highlight [JsonResponse]="row.doc" [currentColumn]="column"
-                                                                   [searchTerm]="searchTerm"></app-highlight></span>
+                                                                   [searcherHighlight]="row.highlight"></app-highlight></span>
         </td>
       </ng-container>
 
@@ -30,9 +30,6 @@
           {{column}}
         </mat-option>
       </mat-select>
-    </mat-form-field>
-    <mat-form-field class="margin-right">
-      <input matInput [(ngModel)]="searchTerm">
     </mat-form-field>
     <button mat-stroked-button (click)="drawerToggle.emit(true)">Toggle drawer</button>
   </div>

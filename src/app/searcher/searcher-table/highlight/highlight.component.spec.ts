@@ -3,6 +3,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {HighlightComponent} from './highlight.component';
 import {SharedModule} from '../../../shared/shared.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {ElasticsearchQuery} from '../../searcher-sidebar/build-search/Constraints';
 
 describe('HighlightComponent', () => {
   let component: HighlightComponent;
@@ -36,7 +37,7 @@ describe('HighlightComponent', () => {
       ]
     };
     component.currentColumn = 'text';
-    component.searchTerm = 'tere';
+    component.searcherHighlight = {};
     component.JsonResponse = jsonData;
     console.log(component.highlightArray);
     let johnHighlight;
@@ -67,7 +68,7 @@ describe('HighlightComponent', () => {
       ]
     };
     component.currentColumn = 'text';
-    component.searchTerm = 'tere';
+    component.searcherHighlight = {};
     component.JsonResponse = jsonData;
     console.log(component.highlightArray);
     const highlightedText = [];
@@ -123,7 +124,7 @@ describe('HighlightComponent', () => {
     });
     it('should highlight nested facts correctly', () => {
       component.currentColumn = 'text';
-      component.searchTerm = 'tere';
+      component.searcherHighlight = {};
       component.JsonResponse = jsonData;
       console.log(component.highlightArray);
       const highlightedText: string[] = [];
@@ -149,7 +150,10 @@ describe('HighlightComponent', () => {
     it('should highlight searcher terms in the middle of nested facts correctly', () => {
 
       component.currentColumn = 'text';
-      component.searchTerm = 'a';
+      component.searcherHighlight = {
+        text:
+          [`these ${ElasticsearchQuery.PRE_TAG}a${ElasticsearchQuery.POST_TAG}re some words: OÜ H${ElasticsearchQuery.PRE_TAG}a${ElasticsearchQuery.POST_TAG}ns${ElasticsearchQuery.PRE_TAG}a${ElasticsearchQuery.POST_TAG} Medic${ElasticsearchQuery.PRE_TAG}a${ElasticsearchQuery.POST_TAG}list, Eesti Energi${ElasticsearchQuery.PRE_TAG}a${ElasticsearchQuery.POST_TAG} Joon${ElasticsearchQuery.PRE_TAG}a${ElasticsearchQuery.POST_TAG}s xxxxxx`]
+      };
       component.JsonResponse = jsonData;
       console.log(component.highlightArray);
       const highlightedText: string[] = [];
@@ -166,7 +170,10 @@ describe('HighlightComponent', () => {
 
     it('should highlight searcher terms at the start of nested facts correctly', () => {
       component.currentColumn = 'text';
-      component.searchTerm = 'OÜ';
+      component.searcherHighlight = {
+        text:
+          [`these are some words: ${ElasticsearchQuery.PRE_TAG}OÜ${ElasticsearchQuery.POST_TAG} Hansa Medicalist, Eesti Energia Joonas xxxxxx`]
+      };
       component.JsonResponse = jsonData;
       console.log(component.highlightArray);
       const highlightedText: string[] = [];
@@ -182,7 +189,11 @@ describe('HighlightComponent', () => {
     });
     it('should highlight searcher terms cutting into the start of a nested fact', () => {
       component.currentColumn = 'text';
-      component.searchTerm = 'ome words: OÜ H';
+      component.searcherHighlight = {
+        text:
+          [`these are s${ElasticsearchQuery.PRE_TAG}ome words: OÜ H${ElasticsearchQuery.POST_TAG}ansa Medicalist, Eesti Energia Joonas xxxxxx`]
+      };
+      // 'ome words: OÜ H';
       component.JsonResponse = jsonData;
       console.log(component.highlightArray);
       const highlightedText: string[] = [];
@@ -197,7 +208,11 @@ describe('HighlightComponent', () => {
     });
     it('should highlight searcher terms overlapping the whole nestedfact', () => {
       component.currentColumn = 'text';
-      component.searchTerm = 'these are some words: OÜ Hansa Medicalist, Ees';
+      component.searcherHighlight = {
+        text:
+          [`${ElasticsearchQuery.PRE_TAG}these are some words: OÜ Hansa Medicalist, Ees${ElasticsearchQuery.POST_TAG}ti Energia Joonas xxxxxx`]
+      };
+
       component.JsonResponse = jsonData;
       console.log(component.highlightArray);
       const highlightedText: string[] = [];
@@ -213,7 +228,10 @@ describe('HighlightComponent', () => {
 
     it('should highlight searcher terms with starting point and end point exactly the same as a nestedfacts child', () => {
       component.currentColumn = 'text';
-      component.searchTerm = 'OÜ Hansa';
+      component.searcherHighlight = {
+        text:
+          [`these are some words: ${ElasticsearchQuery.PRE_TAG}OÜ Hansa${ElasticsearchQuery.POST_TAG} Medicalist, Eesti Energia Joonas xxxxxx`]
+      };
       component.JsonResponse = jsonData;
       console.log(component.highlightArray);
       const highlightedText: string[] = [];
@@ -229,7 +247,10 @@ describe('HighlightComponent', () => {
     });
     it('should highlight searcher terms ending at the exact position of the last fact of a nestedfact', () => {
       component.currentColumn = 'text';
-      component.searchTerm = 'Energia Joonas';
+      component.searcherHighlight = {
+        text:
+          [`these are some words: OÜ Hansa Medicalist, Eesti ${ElasticsearchQuery.PRE_TAG}Energia Joonas${ElasticsearchQuery.POST_TAG} xxxxxx`]
+      };
       component.JsonResponse = jsonData;
       console.log(component.highlightArray);
       const highlightedText: string[] = [];
@@ -245,7 +266,10 @@ describe('HighlightComponent', () => {
     });
     it('should highlight searcher term at the exact position of a nestedfact', () => {
       component.currentColumn = 'text';
-      component.searchTerm = 'OÜ Hansa Medicalist';
+      component.searcherHighlight = {
+        text:
+          [`these are some words: ${ElasticsearchQuery.PRE_TAG}OÜ Hansa Medicalist${ElasticsearchQuery.POST_TAG}, Eesti Energia Joonas xxxxxx`]
+      };
       component.JsonResponse = jsonData;
       console.log(component.highlightArray);
       const highlightedText: string[] = [];
@@ -261,7 +285,10 @@ describe('HighlightComponent', () => {
     });
     it('should highlight searcher term cutting out of the nesterdfacts ending', () => {
       component.currentColumn = 'text';
-      component.searchTerm = 'as xxx';
+      component.searcherHighlight = {
+        text:
+          [`these are some words: OÜ Hansa Medicalist, Eesti Energia Joon${ElasticsearchQuery.PRE_TAG}as xxx${ElasticsearchQuery.POST_TAG}xxx`]
+      };
       component.JsonResponse = jsonData;
       console.log(component.highlightArray);
       const highlightedText: string[] = [];
@@ -277,7 +304,10 @@ describe('HighlightComponent', () => {
     });
     it('should highlight searcher term ranging from the middle of 1 nestedfact to the middle of another one', () => {
       component.currentColumn = 'text';
-      component.searchTerm = 'edicalist, Eesti Ener';
+      component.searcherHighlight = {
+        text:
+          [`these are some words: OÜ Hansa M${ElasticsearchQuery.PRE_TAG}edicalist, Eesti Ener${ElasticsearchQuery.POST_TAG}gia Joonas xxxxxx`]
+      };
       component.JsonResponse = jsonData;
       console.log(component.highlightArray);
       const highlightedText: string[] = [];

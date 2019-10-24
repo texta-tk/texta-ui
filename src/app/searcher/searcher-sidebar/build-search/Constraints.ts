@@ -49,6 +49,8 @@ export class FactConstraint extends Constraint {
 }
 
 export class ElasticsearchQuery {
+  static PRE_TAG = '<TEXTA_SEARCHER_HIGHLIGHT_START_TAG>';
+  static POST_TAG = '<TEXTA_SEARCHER_HIGHLIGHT_END_TAG>';
   query: {
     bool: {
       must: any[],
@@ -59,12 +61,17 @@ export class ElasticsearchQuery {
       boost: 1.0
     }
   };
-  // todo highlight query here?
-  highlight = {
-    fields: {
-      kysimus_ja_vastus: {pre_tags: ['<em>'], post_tags: ['</em>']},
-    }
+
+  highlight: {
+    order?: string,
+    number_of_fragments?: number,
+    fragment_size?: number,
+    pre_tags?: any[],
+    post_tags?: any[],
+    type?: string,
+    fields: {}
   };
+
   elasticsearchQuery;
 
   constructor() {
@@ -77,6 +84,12 @@ export class ElasticsearchQuery {
         minimum_should_match: 0,
         boost: 1.0
       }
+    };
+    this.highlight = {
+      pre_tags: [ElasticsearchQuery.PRE_TAG],
+      post_tags: [ElasticsearchQuery.POST_TAG],
+      number_of_fragments: 0,
+      fields: {}
     };
     this.elasticsearchQuery = {
       query: this.query,

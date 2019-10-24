@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-
+import {ElasticsearchQuery} from '../../searcher-sidebar/build-search/Constraints';
 
 export interface TextaFact {
   doc_path: string;
@@ -19,50 +19,65 @@ export interface TextaFact {
 export class HighlightComponent implements OnInit {
   static colors: Map<string, string> = new Map<string, string>();
   highlightArray: HighlightObject[] = [];
-  _searchTerm: string;
+
 
   @Input() currentColumn: string;
+  _searcherHighlight: any;
 
-  get searchTerm(): string {
-    return this._searchTerm;
+  get searcherHighlight(): any {
+    return this._searcherHighlight;
   }
 
-  @Input() set searchTerm(value: string) {
-    this._searchTerm = value;
+  @Input() set searcherHighlight(value: any) {
+    this._searcherHighlight = value;
   }
 
   @Input() set JsonResponse(data: any) { // todo data
     let textaFieldFacts = this.getFactsByField(data, this.currentColumn);
     textaFieldFacts = this.removeDuplicates(textaFieldFacts, 'spans');
     const highlightTerms = [
-      ...this.makeSearcherHighlightFacts(data[this.currentColumn], this.searchTerm, this.currentColumn),
+      ...this.makeSearcherHighlightFacts(this.searcherHighlight, this.currentColumn),
       ...textaFieldFacts];
     const colors = this.generateColorsForFacts(highlightTerms);
     this.highlightArray = this.makeHighLights(data[this.currentColumn], highlightTerms, colors);
   }
 
-  // todo temp, searcher highlight
-  makeSearcherHighlightFacts(columnData: any, searchTerm: string, column: string) { // todo this whole function is TEMP
-    const searcherHighLights: TextaFact[] = [];
-    let start = 0;
-    if (searchTerm && columnData) {
-      while (start < columnData.length) {
-        const termStart = columnData.toLowerCase().indexOf(searchTerm.toLowerCase(), start);
-        if (termStart === -1) {
-          break;
+  makeSearcherHighlightFacts(searcherHighlight: any, currentColumn: string) {
+    const highlightArray: TextaFact[] = [];
+    for (const column in searcherHighlight) {
+      if (column === currentColumn) {
+        if (searcherHighlight[column].length === 1) {
+          const columnText: string = searcherHighlight[column][0];
+          const splitStartTag: string[] = columnText.split(ElasticsearchQuery.PRE_TAG);
+          const splitEndTag: string[] = [];
+          let previousIndex = 0;
+          for (const row of splitStartTag) {
+            const endTagIndex = row.indexOf(ElasticsearchQuery.POST_TAG);
+            if (endTagIndex > 0) {
+              const f: TextaFact = {} as TextaFact;
+              f.doc_path = column;
+              f.fact = '';
+              f.searcherHighlight = true;
+              f.spans = `[[${previousIndex}, ${previousIndex + endTagIndex}]]`;
+              f.str_val = 'searcher highlight';
+              highlightArray.push(f);
+              const rowClean = row.replace(ElasticsearchQuery.POST_TAG, '');
+              previousIndex = previousIndex + rowClean.length;
+            } else {
+              previousIndex = previousIndex + row.length;
+            }
+            const splitRow: string[] = row.split(ElasticsearchQuery.POST_TAG);
+            if (splitRow) {
+              splitEndTag.push(...splitRow);
+            }
+          }
+          // console.log(columnText);
+        } else {
+          console.error('highlight number of fragments has to be 0');
         }
-        const termEnd = termStart + searchTerm.length;
-        start = termEnd;
-        const f: TextaFact = {} as TextaFact;
-        f.doc_path = column;
-        f.fact = '';
-        f.searcherHighlight = true;
-        f.spans = `[[${termStart}, ${termEnd}]]`;
-        f.str_val = 'searcher highlight';
-        searcherHighLights.push(f);
       }
     }
-    return searcherHighLights;
+    return highlightArray;
   }
 
   constructor() {
