@@ -153,7 +153,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     // need this for fact query to work standalone
     let shouldMatch = 0;
     for (let i = 0; i < this.constraintList.length; i++) {
-      if (!(this.constraintList[i] instanceof FactConstraint)) {
+      if (!(this.constraintList[i] instanceof FactConstraint) && !(this.constraintList[i] instanceof DateConstraint)) {
         shouldMatch += 1;
       }
     }
