@@ -11,7 +11,7 @@ const routes: Routes = [
     component: TaggerComponent
   },
   {
-    path: 'tagger-group',
+    path: 'tagger-groups',
     canActivate: [AuthGuard],
     component: TaggerGroupComponent,
   },

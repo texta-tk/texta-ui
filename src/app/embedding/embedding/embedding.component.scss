@@ -42,3 +42,10 @@ tr.element-row:not(.expanded-row):active {
   display: flex;
   flex-direction: column;
 }
+.mat-column-Modify {
+  width: 60px;
+  text-align: center;
+}
+.mat-column-Task {
+  max-width: 160px;
+}

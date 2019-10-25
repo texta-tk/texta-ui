@@ -1,12 +1,15 @@
+<div>
   <div mat-dialog-content>
-
-    <div *ngIf="result" class="m-top-10"><span class="mat-body-strong">Result: </span>
+    <div class="m-top-10"><span class="mat-body-strong">Result: </span>
       <div class="code-wrapper">
         <code>
-          <pre>
+          <pre *ngIf="result">
                     {{result.document | json}}
                 </pre>
         </code>
+      </div>
+      <div class="loading-div">
+      <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
       </div>
     </div>
   </div>
@@ -16,5 +19,8 @@
       <br>
       <span class="mat-body-strong">Probability:</span> {{result.prediction.probability}}
     </div>
-    <button fxFlex="150px" mat-flat-button color="primary" (click)="onSubmit()">New random doc</button>
+    <button fxFlex="150px" mat-flat-button color="primary" (click)="onSubmit()" [disabled]="isLoading">New random doc
+    </button>
   </div>
+</div>
+

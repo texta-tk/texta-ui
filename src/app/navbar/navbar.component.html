@@ -1,11 +1,10 @@
 <mat-toolbar color="primary">
   <mat-toolbar-row>
     <a routerLinkActive="is-active" [routerLink]="['']" [routerLinkActiveOptions]="{exact:true}"><button mat-button class="nav-button"><mat-icon class="margin-right">home</mat-icon>LANDING</button></a>
-    <a routerLinkActive="is-active" [routerLink]="['searcher']"><button mat-button class="nav-button"><mat-icon class="margin-right">search</mat-icon>SEARCHER</button></a>
+    <a routerLinkActive="is-active" [routerLink]="['searcher']"><button mat-button class="nav-button"><mat-icon class="margin-right">search</mat-icon>SEARCH</button></a>
     <a routerLinkActive="is-active" [routerLink]="['projects']"><button mat-button class="nav-button"><mat-icon class="margin-right">assignment</mat-icon>PROJECTS</button></a>
-    <a routerLinkActive="is-active" [routerLink]="['users']"><button mat-button class="nav-button"><mat-icon class="margin-right">people</mat-icon>USERS</button></a>
     <a routerLinkActive="is-active" [routerLink]="['lexicon-miner']"><button mat-button class="nav-button"><mat-icon class="margin-right">library_books</mat-icon>LEXICONS</button></a>
-    <a class="pointer" [matMenuTriggerFor]="models"><button mat-button class="nav-button"><mat-icon class="margin-right">done_all</mat-icon>TASKS<mat-icon>arrow_drop_down</mat-icon></button></a>
+    <a class="pointer" [matMenuTriggerFor]="models"><button mat-button class="nav-button"><mat-icon class="margin-right">done_all</mat-icon>MODELS<mat-icon>arrow_drop_down</mat-icon></button></a>
 
     <mat-menu #models="matMenu">
       <button mat-menu-item>Get Facts</button>
@@ -13,11 +12,11 @@
     </mat-menu>
 
     <mat-menu #models="matMenu">
-      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['embedding-group']">Embedding Cluster</a>
-      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['tagger-group']">Tagger Group</a>
+      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['embedding-groups']">Embedding Clusters</a>
+      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['tagger-groups']">Tagger Groups</a>
       <a mat-menu-item routerLinkActive="is-active" [routerLink]="['embeddings']">Embeddings</a>
       <a mat-menu-item routerLinkActive="is-active" [routerLink]="['taggers']">Taggers</a>
-      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['neurotagger']">NeuroTagger</a>
+      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['neurotaggers']">NeuroTaggers</a>
     </mat-menu>
 
     <div class="flex-item-right login" *ngIf="!user">

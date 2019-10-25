@@ -10,7 +10,6 @@ import {HttpAuthInterceptor} from './core/auth/http-auth.interceptor';
 import {NavbarComponent} from './navbar/navbar.component';
 import {UserSettingsComponent} from './user-settings/user-settings.component';
 import {HomeComponent} from './home/home.component';
-import {UsersComponent} from './users/users.component';
 import {LexiconMinerComponent} from './lexicon-miner/lexicon-miner.component';
 import {TaggerModule} from './tagger/tagger.module';
 import {EmbeddingModule} from './embedding/embedding.module';
@@ -27,7 +26,6 @@ import {MAT_HAMMER_OPTIONS} from '@angular/material';
     NavbarComponent,
     UserSettingsComponent,
     HomeComponent,
-    UsersComponent,
     LexiconMinerComponent,
     LexiconBuilderComponent,
   ],

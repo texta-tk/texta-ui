@@ -1,0 +1,20 @@
+
+.wrapper {
+  height: 100%;
+}
+
+table {
+  width: 100%;
+
+}
+
+.table-container {
+  position: relative;
+  max-height: 100%;
+  min-height: calc(100% - #{58px});
+  overflow: auto;
+}
+
+.mat-cell {
+  word-break: break-word;
+}

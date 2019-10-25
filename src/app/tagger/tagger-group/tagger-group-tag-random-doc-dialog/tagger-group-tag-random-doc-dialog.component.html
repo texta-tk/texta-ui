@@ -1,23 +1,26 @@
-<div mat-dialog-content>
-  <div *ngIf="result" class="m-top-10">
-    <span class="mat-body-strong">Result: </span>
-    <div class="code-wrapper">
-      <code>
-        <pre>
-            {{ result.document | json }}
-        </pre>
-      </code>
+<div>
+  <div mat-dialog-content>
+    <div class="m-top-10"><span class="mat-body-strong">Result: </span>
+      <div class="code-wrapper">
+        <code>
+          <pre *ngIf="result">
+                    {{result.document | json}}
+                </pre>
+        </code>
+      </div>
+      <div class="loading-div">
+        <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+      </div>
     </div>
   </div>
-</div>
-<div mat-dialog-actions fxLayout="row" fxLayoutAlign="space-between center">
-  <div *ngIf="result" fxFlex>
-    <span class="mat-body-strong">Result: </span> {{ result.prediction.result }}
-    <br />
-    <span class="mat-body-strong">Probability:</span>
-    {{ result.prediction.probability }}
+  <div mat-dialog-actions fxLayout="row" fxLayoutAlign="space-between center">
+    <div *ngIf="result" fxFlex>
+      <span class="mat-body-strong">Result: </span> {{result.prediction.result}}
+      <br>
+      <span class="mat-body-strong">Probability:</span> {{result.prediction.probability}}
+    </div>
+    <button fxFlex="150px" mat-flat-button color="primary" (click)="onSubmit()" [disabled]="isLoading">New random doc
+    </button>
   </div>
-  <button fxFlex="150px" mat-flat-button color="primary" (click)="onSubmit()">
-    New random doc
-  </button>
 </div>
+

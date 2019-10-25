@@ -34,17 +34,14 @@
                             [projectFacts]="projectFacts" (change)="searchOnChange($event)"></app-fact-constraints>
     </div>
   </div>
-  <div fxLayout="column" class="bg-grey search-options">
+<!--  <div fxLayout="column" class="bg-grey search-options">
     <h4 class="flex-item-center">Search options</h4>
     <mat-selection-list dense [(ngModel)]="searcherOptions">
       <mat-list-option value="short_version">Show short version:</mat-list-option>
       <mat-list-option selected="true" value="live_search">Search as you type:</mat-list-option>
     </mat-selection-list>
-  </div>
+  </div>-->
   <div class="max-width">
     <button class="max-width" mat-stroked-button (click)="getSearch()">Search</button>
   </div>
 </div>
-
-
-<pre>{{elasticQuery.elasticsearchQuery | json}}</pre>

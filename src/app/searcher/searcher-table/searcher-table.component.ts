@@ -29,6 +29,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     this.searchService.getSearch().pipe(takeUntil(this.destroy$)).subscribe((resp: Search) => {
       if (resp) {
         this.displayedColumns = this.makeColumns(resp.searchContent);
+        this.displayedColumns.sort((a, b) => 0 - (a < b ? 1 : -1));
         console.log(`columns: ${this.displayedColumns.length}`);
         // first search || no search results
         if (this.columnsToDisplay.length === 0 || this.displayedColumns.length === 0) {
@@ -77,9 +78,11 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
           this.columnsToDisplay.splice(index, 1);
         }
       }
-      if (this.columnsToDisplay.length === 0) {
-        this.columnsToDisplay = this.displayedColumns.slice();
-        this.columnFormControl.setValue(this.columnsToDisplay);
+      if (this.columnsToDisplay.length <= 1) {
+        if (this.columnsToDisplay[0] === 'texta_facts' || this.columnsToDisplay.length === 0) {
+          this.columnsToDisplay = this.displayedColumns.slice();
+          this.columnFormControl.setValue(this.columnsToDisplay);
+        }
       }
     }
   }

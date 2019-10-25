@@ -10,6 +10,7 @@ import { MAT_DIALOG_DATA } from '@angular/material';
 })
 export class TaggerGroupTagRandomDocDialogComponent implements OnInit {
   result: { document: any, result: {result: boolean, probability: number} };
+  isLoading = false;
 
   constructor(private taggerGroupService: TaggerGroupService,
               @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, tagger: TaggerGroup; }) {
@@ -20,9 +21,11 @@ export class TaggerGroupTagRandomDocDialogComponent implements OnInit {
   }
 
   onSubmit() {
+    this.isLoading = true;
     this.taggerGroupService.tagRandomDocument(this.data.currentProjectId, this.data.tagger.id)
     .subscribe((result: any) => {
       this.result = result;
+      this.isLoading = false;
     });
   }
 }

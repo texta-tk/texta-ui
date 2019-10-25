@@ -11,7 +11,7 @@ const routes: Routes = [
     component: EmbeddingComponent,
   },
   {
-    path: 'embedding-group',
+    path: 'embedding-groups',
     canActivate: [AuthGuard],
     component: EmbeddingGroupComponent,
   },
