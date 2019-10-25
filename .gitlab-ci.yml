@@ -1,5 +1,9 @@
 image: circleci/node:10-browsers
 
+stages:
+  - test
+  - build
+
 Test:
   cache:
     paths:
