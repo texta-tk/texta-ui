@@ -12,8 +12,8 @@ Test:
   - ci-test
   script:
   - npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
-  except:
-  - tags
+#  except:
+#  - tags
 
 Build:
   stage: build
@@ -24,4 +24,4 @@ Build:
   - python ./docker/build_and_push.py
   - docker system prune --volumes -f
   only:
-  - tags
+  - master
