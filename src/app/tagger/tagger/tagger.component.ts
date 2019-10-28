@@ -16,6 +16,7 @@ import {TagDocDialogComponent} from './tag-doc-dialog/tag-doc-dialog.component';
 import { TagRandomDocDialogComponent } from './tag-random-doc-dialog/tag-random-doc-dialog.component';
 import { SelectionModel } from '@angular/cdk/collections';
 import { QueryDialogComponent } from 'src/app/shared/components/dialogs/query-dialog/query-dialog.component';
+import { ConfirmDialogComponent } from 'src/app/shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-tagger',
@@ -178,10 +179,18 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onDelete(tagger: Tagger, index: number) {
-    this.taggerService.deleteTagger(this.currentProject.id, tagger.id).subscribe(() => {
-      this.logService.snackBarMessage(`Tagger ${tagger.id}: ${tagger.description} deleted`, 2000);
-      this.tableData.data.splice(index, 1);
-      this.tableData.data = [...this.tableData.data];
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: { confirmText: 'Delete', mainText: 'Are you sure you want to delete this Tagger?' }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result) {
+        this.taggerService.deleteTagger(this.currentProject.id, tagger.id).subscribe(() => {
+          this.logService.snackBarMessage(`Tagger ${tagger.id}: ${tagger.description} deleted`, 2000);
+          this.tableData.data.splice(index, 1);
+          this.tableData.data = [...this.tableData.data];
+        });
+      }
     });
   }
 
@@ -204,13 +213,21 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onDeleteAllSelected() {
     if (this.selectedRows.selected.length > 0) {
-      // Delete selected taggers
-      const idsToDelede = this.selectedRows.selected.map((tagger: Tagger) => tagger.id);
-      const body = { ids: idsToDelede };
-      // Refresh taggers
-      this.taggerService.bulkDeleteTaggers(this.currentProject.id, body).subscribe(() => {
-        this.logService.snackBarMessage(`${this.selectedRows.selected.length} Taggers deleted`, 2000);
-        this.removeSelectedRows();
+      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+        data: { confirmText: 'Delete',  mainText: `Are you sure you want to delete ${this.selectedRows.selected.length} Taggers?` }
+      });
+  
+      dialogRef.afterClosed().subscribe(result => {
+        if(result) {
+          // Delete selected taggers
+          const idsToDelede = this.selectedRows.selected.map((tagger: Tagger) => tagger.id);
+          const body = { ids: idsToDelede };
+          // Refresh taggers
+          this.taggerService.bulkDeleteTaggers(this.currentProject.id, body).subscribe(() => {
+            this.logService.snackBarMessage(`${this.selectedRows.selected.length} Taggers deleted`, 2000);
+            this.removeSelectedRows();
+          });
+        }
       });
     }
   }

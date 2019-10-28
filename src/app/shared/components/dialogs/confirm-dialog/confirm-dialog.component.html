@@ -8,10 +8,8 @@
         <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">{{cancelText}}</button>
       </div>
       <div class="flex-item-right">
-        <button type="submit" mat-button (click)="closeDialogConfirm()">{{confirmText}}</button>
+        <button type="submit" mat-raised-button (click)="closeDialogConfirm()" [color]="confirmBtnColor">{{confirmText}}</button>
       </div>
     </div>
   </div>
 </div>
-
-
