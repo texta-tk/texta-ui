@@ -106,9 +106,9 @@ export class EmbeddingGroupComponent implements OnInit, OnDestroy, AfterViewInit
     });
   }
 
-  onBrowseClusters(cluster: EmbeddingCluster) {
+  onBrowseClusters(embeddingClusterId: EmbeddingCluster) {
     const dialogRef = this.dialog.open(BrowseClustersDialogComponent, {
-      data: {clusterId: cluster.id, currentProjectId: this.currentProject.id},
+      data: {embeddingClusterId: embeddingClusterId.id, currentProjectId: this.currentProject.id},
       height: '860px',
       width: '700px',
     });

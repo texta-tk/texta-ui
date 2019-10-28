@@ -1,34 +1,48 @@
-<!-- <mat-form-field class="max-width">
-    <input matInput placeholder="Number of clusters" [(ngModel)]="numClusters" #numClusters>
-</mat-form-field>
-<mat-form-field class="max-width">
-    <input matInput placeholder="Max examples per cluster" [(ngModel)]="maxClusterExamples" #maxClusterExamples>
-</mat-form-field> -->
-<mat-select required>
-        <mat-option [value]="'ascending'">
-          Ascending
-        </mat-option>
-        <mat-option [value]="'decending'">
-          Decending
+<form [formGroup]="browseClustersForm" *ngIf="browseClustersForm" (ngSubmit)="onSubmit()">
+
+  <div fxLayout="row wrap" fxLayoutGap="10px">
+
+    <mat-form-field fxFlex appearance="outline" floatLabel="always">
+      <mat-label>Number of clusters</mat-label>
+
+      <input matInput placeholder="Number of clusters" formControlName="number_of_clusters" #numClusters>
+    </mat-form-field>
+    <mat-form-field fxFlex appearance="outline" floatLabel="always">
+      <mat-label>Max examples per cluster </mat-label>
+
+      <input matInput placeholder="Max examples per cluster" formControlName="max_examples_per_cluster"
+        #maxClusterExamples>
+    </mat-form-field>
+    <mat-form-field appearance="outline" floatLabel="always">
+      <mat-label>Cluster Order </mat-label>
+      <mat-select formControlName="cluster_order" fxFlex>
+        <mat-option *ngFor="let choice of options?.actions.POST.cluster_order.choices" [value]="choice.value">
+          {{choice.display_name | titlecase }}
         </mat-option>
       </mat-select>
-<div mat-dialog-content>
-
-        <div *ngIf="result" class="m-top-10"><span class="mat-body-strong">Result: </span>
-          <div class="code-wrapper">
-            <code>
-              <pre>
-                        {{result.document | json}}
-                    </pre>
-            </code>
-          </div>
+    </mat-form-field>
+  </div>
+  <div class="flex-col">
+      <div class="flex-row">
+        <div class="flex-item-right">
+          <button type="submit" mat-raised-button color="primary" (click)="onSubmit()">Post</button>
         </div>
       </div>
-
-      <div class="flex-col">
-        <div class="flex-row">
-          <div class="flex-item-right">
-            <button type="submit" mat-button (click)="onSubmit(textInput.value)">Post</button>
-          </div>
+    </div>
+  <div mat-dialog-content>
+    <div *ngIf="result" class="m-top-10"><span class="mat-body-strong">Result: </span>
+      <div class="debossed-wrapper result-wrapper">
+        <div *ngFor="let item of result" class="mat-body">
+            <b>Items:</b>
+            <br>
+            <span *ngFor="let sub of item.items">&emsp; - {{sub}}</span> <br>
+            <b>size:</b> {{item.size}} <br>
+            <b>etalon:</b> {{item.etalon}} <br>
+            <br>
+            <hr>
+            <br>
         </div>
-</div>
+      </div>
+    </div>
+  </div>
+</form>
