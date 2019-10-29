@@ -2,8 +2,12 @@ import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core'
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatTableDataSource} from '@angular/material';
 import {SearcherService} from '../../../core/searcher/searcher.service';
-import {takeUntil} from 'rxjs/operators';
-import {Subject} from 'rxjs';
+import {switchMap, takeUntil} from 'rxjs/operators';
+import {of, Subject} from 'rxjs';
+import {ProjectStore} from '../../../core/projects/project.store';
+import {Project} from '../../../shared/types/Project';
+import {SavedSearch} from '../../../shared/types/SavedSearch';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-saved-searches',
@@ -15,19 +19,26 @@ export class SavedSearchesComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ['select', 'name', 'url'];
   selection = new SelectionModel<any>(true, []);
 
-  dataSource: MatTableDataSource<any>;
+  dataSource: MatTableDataSource<SavedSearch>;
   destroyed$: Subject<boolean> = new Subject<boolean>();
 
-  constructor(private searcherService: SearcherService) {
+  constructor(private searcherService: SearcherService, private projectStore: ProjectStore) {
   }
 
   ngOnInit() {
-    this.searcherService.getSavedSearches().pipe(takeUntil(this.destroyed$)).subscribe(searches => {
-      if (searches) {
-        console.log(searches);
-        this.dataSource = new MatTableDataSource<any>(searches);
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), switchMap((currentProject: Project) => {
+      if (currentProject) {
+        return this.searcherService.getSavedSearches(currentProject.id);
+      } else {
+        return of(null);
+      }
+    })).subscribe((response: SavedSearch[] | HttpErrorResponse) => {
+      if (response && !(response instanceof HttpErrorResponse)) {
+        console.log(response);
+        this.dataSource = new MatTableDataSource(response);
       }
     });
+
   }
 
   displaySavedSearch(element) {

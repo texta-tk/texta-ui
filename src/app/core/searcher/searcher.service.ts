@@ -3,46 +3,50 @@ import {HttpClient} from '@angular/common/http';
 import {LogService} from '../util/log.service';
 import {environment} from '../../../environments/environment';
 import {LocalStorageService} from '../util/local-storage.service';
-import {Constraint, ElasticsearchQuery, FactConstraint, TextConstraint} from '../../searcher/searcher-sidebar/build-search/Constraints';
-import {Field} from '../../shared/types/Project';
+import {
+  Constraint,
+  DateConstraint,
+  ElasticsearchQuery,
+  FactConstraint,
+  FactTextConstraint,
+  TextConstraint
+} from '../../searcher/searcher-sidebar/build-search/Constraints';
 import {catchError, tap} from 'rxjs/operators';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {Observable} from 'rxjs';
+import {SavedSearch} from '../../shared/types/SavedSearch';
 
 @Injectable({
   providedIn: 'root'
 })
+
+// { id: number, constraints: Constraint[], elasticQuery?: ElasticsearchQuery, description: string }[]
 export class SearcherService {
   apiUrl = environment.apiUrl;
-  _searches: { id: number, constraints: Constraint[], elasticQuery?: ElasticsearchQuery, description: string }[] = [];
-  searches$: BehaviorSubject<{
-    id: number,
-    constraints: Constraint[],
-    elasticQuery?: ElasticsearchQuery,
-    description: string
-  }[]> = new BehaviorSubject(null);
 
   constructor(private http: HttpClient, private localStorageService: LocalStorageService,
               private logService: LogService) {
-    this._searches.push({
-      id: 0,
-      constraints: [new FactConstraint([{path: 'texta_facts', type: 'fact'} as Field], 'must', ['ORG', 'LOC', 'PER']),
-        new TextConstraint([{
-          path: 'kysimus_ja_vastus_mlp.text',
-          type: 'text'
-        }], 'phrase_prefix', 'Pöördusin murega perearsti juurde', 'must', '0')],
-      description: 'kliinik dataset hardcoded'
-    });
-    this.searches$.next(this._searches);
+
   }
 
-  getSavedSearchById(id: number, projectId: number) {
-    if (this._searches.length >= id) {
-      return this._searches[id];
-    }
+
+  getSavedSearches(projectId: number): Observable<SavedSearch[]> {
+    return this.http.get<SavedSearch[]>(`${this.apiUrl}/projects/${projectId}/searches/`).pipe(
+      tap(e => this.logService.logStatus(e, 'getSavedSearches')),
+      catchError(this.logService.handleError<SavedSearch[]>('getSavedSearches')));
   }
 
-  getSavedSearches(): Observable<{ constraints: Constraint[], elasticQuery?: ElasticsearchQuery, description: string }[]> {
-    return this.searches$.asObservable();
+  saveSearch(projectId: number, authorId: number, constraintList: Constraint[], elasticQuery: ElasticsearchQuery, desc: string) {
+    const body = {
+      author: authorId,
+      query_constraints: this.convertConstraintListToJson(constraintList),
+      description: desc,
+      project: projectId,
+      query: elasticQuery
+    };
+
+    return this.http.post(`${this.apiUrl}/projects/${projectId}/searches/`, body).pipe(
+      tap(e => this.logService.logStatus(e, 'saveSearch')),
+      catchError(this.logService.handleError<unknown>('saveSearch')));
   }
 
   search(body, projectId: number) {
@@ -51,8 +55,39 @@ export class SearcherService {
       catchError(this.logService.handleError<unknown>('search')));
   }
 
-  saveSearch(constraintList: Constraint[], query: ElasticsearchQuery, desc: string) {
-    this._searches.push({id: this._searches.length, constraints: constraintList, elasticQuery: query, description: desc});
-    this.searches$.next(this._searches);
+  private convertConstraintListToJson(constraintList: Constraint[]): any[] {
+    const outPutJson = [];
+    for (const constraint of constraintList) {
+      if (constraint instanceof TextConstraint) {
+        outPutJson.push({
+          fields: constraint.fields,
+          match: constraint.matchFormControl.value,
+          slop: constraint.slopFormControl.value,
+          operator: constraint.operatorFormControl.value
+        });
+      }
+      if (constraint instanceof DateConstraint) {
+        outPutJson.push({
+          fields: constraint.fields,
+          dateFrom: constraint.dateFromFormControl.value,
+          dateTo: constraint.dateToFormControl.value
+        });
+      }
+      if (constraint instanceof FactConstraint) {
+        outPutJson.push({
+          fields: constraint.fields,
+          factName: constraint.factNameFormControl.value,
+          factNameOperator: constraint.factNameOperatorFormControl,
+        });
+      }
+      if (constraint instanceof FactTextConstraint) {
+        outPutJson.push({
+          fields: constraint.fields
+        });
+      }
+    }
+    return outPutJson;
+
   }
+
 }

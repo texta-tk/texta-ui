@@ -17,7 +17,6 @@ export class UserStore {
   constructor(private userService: UserService, private localStorageService: LocalStorageService) {
     this.userAuthObservable.subscribe((user: UserProfile | HttpErrorResponse) => {
       if (user && !(user instanceof HttpErrorResponse)) {
-        console.log(user, 'user');
         this.setCurrentUser(user);
       } else if (user instanceof HttpErrorResponse) {
         this.localStorageService.deleteUser();

@@ -11,6 +11,8 @@ import {SearcherService} from '../../../core/searcher/searcher.service';
 import {MatSelectChange} from '@angular/material';
 import {Search} from '../../../shared/types/Search';
 import {SearchService} from '../../services/search.service';
+import {UserStore} from '../../../core/users/user.store';
+import {UserProfile} from '../../../shared/types/UserProfile';
 
 @Component({
   selector: 'app-build-search',
@@ -29,10 +31,12 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
   // building the whole search query onto this
   elasticQuery: ElasticsearchQuery = new ElasticsearchQuery();
   searcherOptions: string[] = ['live_search'];
+  currentUser: UserProfile;
 
   constructor(private projectService: ProjectService,
               private projectStore: ProjectStore,
               private searcherService: SearcherService,
+              private userStore: UserStore,
               private searchService: SearchService) {
   }
 
@@ -59,6 +63,11 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
         }
       }
     });
+    this.userStore.getCurrentUser().pipe(takeUntil(this.destroy$)).subscribe(user => {
+      if (user) {
+        this.currentUser = user;
+      }
+    });
   }
 
   public onOpenedChange(opened) {
@@ -81,7 +90,6 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
   }
 
   onSelectionChange(event: MatSelectChange) {
-    console.log(event.value);
     if (event.value.length > 0 && event.value[0].type) {
       this.filterFieldsByConstraintType(event.value[0].type);
     } else {
@@ -146,7 +154,13 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
   }
 
   saveSearch(description: string) {
-    this.searcherService.saveSearch([...this.constraintList], this.elasticQuery, description);
+    if (this.currentUser) {
+      this.searcherService.saveSearch(this.currentProject.id, this.currentUser.pk, [...this.constraintList], this.elasticQuery, description).subscribe(resp => {
+        if (resp) {
+          console.log(resp);
+        }
+      });
+    }
   }
 
   checkMinimumMatch() {

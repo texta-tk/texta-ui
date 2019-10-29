@@ -3,7 +3,7 @@ export class UserProfile {
   email = '';
   firstName = '';
   lastName = '';
-  id: number;
+  pk: number;
   username = '';
   // only sometimes?? nullable
   active_project?: '';

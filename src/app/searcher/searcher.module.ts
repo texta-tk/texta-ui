@@ -11,6 +11,7 @@ import {BuildSearchComponent} from './searcher-sidebar/build-search/build-search
 import {SavedSearchesComponent} from './searcher-sidebar/saved-searches/saved-searches.component';
 import {SaveSearchDialogComponent} from './searcher-sidebar/dialogs/save-search-dialog/save-search-dialog.component';
 import {HighlightComponent} from './searcher-table/highlight/highlight.component';
+import {FactTextConstraintsComponent} from './searcher-sidebar/build-search/fact-text-constraints/fact-text-constraints.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import {HighlightComponent} from './searcher-table/highlight/highlight.component
     TextConstraintsComponent,
     DateConstraintsComponent,
     FactConstraintsComponent,
+    FactTextConstraintsComponent,
     SavedSearchesComponent,
     SaveSearchDialogComponent,
     HighlightComponent

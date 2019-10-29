@@ -1,12 +1,13 @@
 import {Field} from '../../../shared/types/Project';
 import {FormControl} from '@angular/forms';
 
-export class Constraint {
+export class Constraint  {
   fields: Field[];
 
   constructor(fields: Field[]) {
     this.fields = fields;
   }
+
 }
 
 
@@ -38,6 +39,17 @@ export class DateConstraint extends Constraint {
 }
 
 export class FactConstraint extends Constraint {
+  factNameOperatorFormControl = new FormControl();
+  factNameFormControl = new FormControl();
+
+  constructor(fields: Field[], factNameOperator?, factName?) {
+    super(fields);
+    this.factNameOperatorFormControl.setValue(factNameOperator ? factNameOperator : 'must');
+    this.factNameFormControl.setValue(factName ? factName : '');
+  }
+}
+
+export class FactTextConstraint extends Constraint {
   factNameOperatorFormControl = new FormControl();
   factNameFormControl = new FormControl();
 
