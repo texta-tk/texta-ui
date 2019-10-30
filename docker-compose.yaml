@@ -7,5 +7,5 @@ services:
     image: docker.texta.ee/texta/texta-rest-front:latest
     ports:
       - 4200:80
-    depends_on:
-      - toolkit-rest
+    env_file:
+      - ./docker/env
