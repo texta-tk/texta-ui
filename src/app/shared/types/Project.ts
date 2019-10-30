@@ -11,6 +11,15 @@ export class Project {
     taggers: number[];
   };
 }
+
+export interface ProjectResourceCounts {
+  num_taggers: number;
+  num_tagger_groups: number;
+  num_neurotaggers: number;
+  num_embeddings: number;
+  num_embedding_clusters: number;
+}
+
 export interface ProjectFact {
   name: string;
   values: string[];

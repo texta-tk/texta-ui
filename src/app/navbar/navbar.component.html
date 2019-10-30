@@ -12,11 +12,11 @@
     </mat-menu>
 
     <mat-menu #models="matMenu">
-      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['embedding-groups']">Embedding Clusters</a>
-      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['tagger-groups']">Tagger Groups</a>
-      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['embeddings']">Embeddings</a>
-      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['taggers']">Taggers</a>
-      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['neurotaggers']">NeuroTaggers</a>
+      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['embedding-groups']">Embedding Clusters ({{projectResourceCounts?.num_embedding_clusters}})</a>
+      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['tagger-groups']">Tagger Groups ({{projectResourceCounts?.num_tagger_groups}})</a>
+      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['embeddings']">Embeddings ({{projectResourceCounts?.num_embeddings}})</a>
+      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['taggers']">Taggers ({{projectResourceCounts?.num_taggers}})</a>
+      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['neurotaggers']">NeuroTaggers ({{projectResourceCounts?.num_neurotaggers}})</a>
     </mat-menu>
 
     <div class="flex-item-right login" *ngIf="!user">

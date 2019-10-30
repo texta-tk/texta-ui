@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, OnDestroy} from '@angular/core';
 import {MatDialog} from '@angular/material';
 import {UserStore} from '../core/users/user.store';
 import {LoginDialogComponent} from '../shared/components/dialogs/login/login-dialog.component';
@@ -6,10 +6,10 @@ import {UserProfile} from '../shared/types/UserProfile';
 import {UserService} from '../core/users/user.service';
 import {LocalStorageService} from '../core/util/local-storage.service';
 import {ProjectService} from '../core/projects/project.service';
-import {Project} from '../shared/types/Project';
+import {Project, ProjectResourceCounts} from '../shared/types/Project';
 import {FormControl} from '@angular/forms';
 import {ProjectStore} from '../core/projects/project.store';
-import {of} from 'rxjs';
+import {of, Subscription} from 'rxjs';
 import {RegistrationDialogComponent} from '../shared/components/dialogs/registration/registration-dialog.component';
 import { LogService } from '../core/util/log.service';
 
@@ -18,21 +18,35 @@ import { LogService } from '../core/util/log.service';
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, OnDestroy {
   user: UserProfile;
   projects: Project[];
   projectControl = new FormControl();
+
+  currentProjSub: Subscription;
+  currentProject: Project;
+  projectResourceCounts: ProjectResourceCounts;
 
   constructor(public dialog: MatDialog,
               private userStore: UserStore,
               private userService: UserService,
               private localStorageService: LocalStorageService,
               private projectStore: ProjectStore,
-              private logService: LogService) {
+              private logService: LogService,
+              private projectService: ProjectService) {
 
   }
 
   ngOnInit() {
+    this.projectStore.getCurrentProject().subscribe((proj: Project) => {
+      if (proj) {
+        this.currentProject = proj;
+        this.projectService.getResourceCounts(proj.id).subscribe((resp: ProjectResourceCounts) => {
+          this.projectResourceCounts = resp;
+        });
+      }
+    });
+
     this.userStore.getCurrentUser().subscribe(resp => {
       if (resp) {
         this.user = resp;
@@ -85,5 +99,9 @@ export class NavbarComponent implements OnInit {
       error => {
         this.logService.snackBarError(error, 5000);
       });
+  }
+
+  ngOnDestroy() {
+    this.currentProjSub.unsubscribe();
   }
 }
