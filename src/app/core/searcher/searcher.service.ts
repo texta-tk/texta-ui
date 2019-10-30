@@ -35,12 +35,10 @@ export class SearcherService {
       catchError(this.logService.handleError<SavedSearch[]>('getSavedSearches')));
   }
 
-  saveSearch(projectId: number, authorId: number, constraintList: Constraint[], elasticQuery: ElasticsearchQuery, desc: string) {
+  saveSearch(projectId: number, constraintList: Constraint[], elasticQuery: ElasticsearchQuery, desc: string) {
     const body = {
-      author: authorId,
       query_constraints: this.convertConstraintListToJson(constraintList),
       description: desc,
-      project: projectId,
       query: elasticQuery
     };
 

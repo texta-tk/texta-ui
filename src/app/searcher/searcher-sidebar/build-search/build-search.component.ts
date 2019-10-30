@@ -155,7 +155,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
 
   saveSearch(description: string) {
     if (this.currentUser) {
-      this.searcherService.saveSearch(this.currentProject.id, this.currentUser.pk, [...this.constraintList], this.elasticQuery, description).subscribe(resp => {
+      this.searcherService.saveSearch(this.currentProject.id, [...this.constraintList], this.elasticQuery, description).subscribe(resp => {
         if (resp) {
           console.log(resp);
         }
