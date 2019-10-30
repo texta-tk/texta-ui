@@ -38,19 +38,22 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.projectStore.getCurrentProject().subscribe((proj: Project) => {
-      if (proj) {
-        this.currentProject = proj;
-        this.projectService.getResourceCounts(proj.id).subscribe((resp: ProjectResourceCounts) => {
-          this.projectResourceCounts = resp;
-        });
-      }
-    });
-
     this.userStore.getCurrentUser().subscribe(resp => {
       if (resp) {
         this.user = resp;
+
+        this.projectStore.getCurrentProject().subscribe((proj: Project) => {
+          if (proj) {
+            this.currentProject = proj;
+            this.projectService.getResourceCounts(proj.id).subscribe((resp: ProjectResourceCounts) => {
+              this.projectResourceCounts = resp;
+            });
+          } else {
+            this.projectResourceCounts = null;
+          }
+        });
       }
+      this.projectResourceCounts = null;
       return of(null);
     });
     this.projectStore.getProjects().subscribe(projects => {

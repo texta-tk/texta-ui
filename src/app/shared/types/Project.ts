@@ -36,9 +36,15 @@ export class ProjectField {
 
   static isProjectFields(object): object is ProjectField | ProjectField[] {
     if (Array.isArray(object) && object.length > 0) {
-      return ((object[0] as ProjectField).index !== undefined && (object[0] as ProjectField).fields !== undefined);
+      return (
+        (object[0] as ProjectField).index !== undefined &&
+        (object[0] as ProjectField).fields !== undefined
+      );
     } else {
-      return (object as ProjectField).index !== undefined && (object as ProjectField).fields !== undefined;
+      return (
+        (object as ProjectField).index !== undefined &&
+        (object as ProjectField).fields !== undefined
+      );
     }
   }
 
@@ -46,10 +52,12 @@ export class ProjectField {
     const filteredField: ProjectField[] = [];
     for (const index of fields) {
       index.fields = index.fields.filter(element => {
-        return element.type !== 'fact' &&
+        return (
+          element.type !== 'fact' &&
           element.path !== '_texta_id' &&
           element.type !== 'float' &&
-          element.type !== 'boolean';
+          element.type !== 'boolean'
+        );
       });
       if (index.fields.length > 0) {
         filteredField.push(index);
@@ -57,4 +65,36 @@ export class ProjectField {
     }
     return filteredField;
   }
+}
+
+// for the project/{id}/heath endpoint
+export interface Health {
+  elastic: {
+    url: string;
+    alive: boolean;
+    status: {
+      name: string;
+      cluster_name: string;
+      cluster_uuid: string;
+      version: {
+        number: string;
+        build_flavor: string;
+        build_type: string;
+        build_hash: string;
+        build_date: string;
+        build_snapshot: boolean;
+        lucene_version: string;
+        minimum_wire_compatibility_version: string;
+        minimum_index_compatibility_version: string;
+      };
+      tagline: string;
+    };
+  };
+  mlp: {url: string, alive: boolean};
+  version: string;
+  disk: {free: number, total: number, used: number, unit: string};
+  memory: {free: number, total: number, used: number, unit: string};
+  cpu: {percent: number};
+  model_cache: {embedding: number; embedding_cluster: number; phraser: number; tagger: number; };
+  gpu: {count: number; devices: string[]};
 }

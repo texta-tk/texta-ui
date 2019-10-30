@@ -4,7 +4,7 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../util/log.service';
 import {Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
-import {Project, ProjectFact, ProjectField, ProjectResourceCounts} from '../../shared/types/Project';
+import {Project, ProjectFact, ProjectField, ProjectResourceCounts, Health} from '../../shared/types/Project';
 
 @Injectable({
   providedIn: 'root'
@@ -77,5 +77,11 @@ export class ProjectService {
     return this.http.get<ProjectResourceCounts>(`${this.apiUrl}/projects/${projId}/get_resource_counts/`).pipe(
       tap(e => this.logService.logStatus(e, 'get Project Resource Counts')),
       catchError(this.logService.handleError<ProjectResourceCounts>('getResourceCounts')));
+  }
+
+  getHealth(): Observable<Health | HttpErrorResponse> {
+    return this.http.get<Health>(`${this.apiUrl}/projects/health/`).pipe(
+      tap(e => this.logService.logStatus(e, 'get Health')),
+      catchError(this.logService.handleError<Health>('getHealth')));
   }
 }
