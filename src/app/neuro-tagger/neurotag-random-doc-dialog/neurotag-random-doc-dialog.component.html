@@ -10,7 +10,7 @@
     </div>
   </div>
   <div  class="m-top-10"><span class="mat-body-strong">Predictions: </span>
-    <div class="result-wrapper" *ngIf="result">
+    <div class="debossed-wrapper result-wrapper" *ngIf="result">
         <div *ngFor="let tag of result.prediction.tags">
             <span class="mat-body-strong">Result: </span> {{tag.tag}}
             <span class="mat-body-strong">Probability:</span> {{tag.probability}}

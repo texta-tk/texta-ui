@@ -1,20 +1,21 @@
-import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {startWith, switchMap} from 'rxjs/operators';
-import {LogService} from '../../core/util/log.service';
-import {HttpErrorResponse} from '@angular/common/http';
-import {Project} from '../../shared/types/Project';
-import {Subscription} from 'rxjs';
-import {ProjectStore} from '../../core/projects/project.store';
-import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
-import {TaggerGroup} from '../../shared/types/tasks/Tagger';
-import {CreateTaggerGroupDialogComponent} from './create-tagger-group-dialog/create-tagger-group-dialog.component';
-import {TaggerGroupService} from '../../core/taggers/tagger-group.service';
-import {SelectionModel} from '@angular/cdk/collections';
-import {animate, state, style, transition, trigger} from '@angular/animations';
-import {ModelsListDialogComponent} from './models-list-dialog/models-list-dialog.component';
-import {TaggerGroupTagTextDialogComponent} from './tagger-group-tag-text-dialog/tagger-group-tag-text-dialog.component';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { startWith, switchMap } from 'rxjs/operators';
+import { LogService } from '../../core/util/log.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Project } from '../../shared/types/Project';
+import { Subscription } from 'rxjs';
+import { ProjectStore } from '../../core/projects/project.store';
+import { MatDialog, MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
+import { TaggerGroup } from '../../shared/types/tasks/Tagger';
+import { CreateTaggerGroupDialogComponent } from './create-tagger-group-dialog/create-tagger-group-dialog.component';
+import { TaggerGroupService } from '../../core/taggers/tagger-group.service';
+import { SelectionModel } from '@angular/cdk/collections';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { ModelsListDialogComponent } from './models-list-dialog/models-list-dialog.component';
+import { TaggerGroupTagTextDialogComponent } from './tagger-group-tag-text-dialog/tagger-group-tag-text-dialog.component';
 import { TaggerGroupTagDocDialogComponent } from './tagger-group-tag-doc-dialog/tagger-group-tag-doc-dialog.component';
 import { TagRandomDocDialogComponent } from '../tagger/tag-random-doc-dialog/tag-random-doc-dialog.component';
+import { ConfirmDialogComponent } from 'src/app/shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-tagger-group',
@@ -22,8 +23,8 @@ import { TagRandomDocDialogComponent } from '../tagger/tag-random-doc-dialog/tag
   styleUrls: ['./tagger-group.component.scss'],
   animations: [
     trigger('detailExpand', [
-      state('collapsed', style({height: '0px', minHeight: '0'})),
-      state('expanded', style({height: '*'})),
+      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ])]
 })
@@ -37,17 +38,17 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
   public displayedColumns = ['select', 'id', 'description', 'fact_name', 'minimum_sample_size', 'Modify'];
   public isLoadingResults = true;
 
-  @ViewChild(MatSort, {static: true}) sort: MatSort;
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
   currentProject: Project;
   resultsLength: number;
 
 
   constructor(public dialog: MatDialog,
-              private projectStore: ProjectStore,
-              private taggerGroupService: TaggerGroupService,
-              private logService: LogService) {
+    private projectStore: ProjectStore,
+    private taggerGroupService: TaggerGroupService,
+    private logService: LogService) {
   }
 
   ngOnInit() {
@@ -110,7 +111,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
 
   openModelsListDialog(taggerGroup: TaggerGroup) {
     const dialogRef = this.dialog.open(ModelsListDialogComponent, {
-      data: {taggerGroupId: taggerGroup.id, currentProjectId: this.currentProject.id},
+      data: { taggerGroupId: taggerGroup.id, currentProjectId: this.currentProject.id },
       height: '835px',
       width: '850px',
       panelClass: 'custom-no-padding-dialog'
@@ -131,7 +132,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
 
   tagTextDialog(tagger: TaggerGroup) {
     const dialogRef = this.dialog.open(TaggerGroupTagTextDialogComponent, {
-      data: {taggerId: tagger.id, currentProjectId: this.currentProject.id},
+      data: { taggerId: tagger.id, currentProjectId: this.currentProject.id },
       maxHeight: '665px',
       width: '700px',
     });
@@ -139,7 +140,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
 
   tagDocDialog(tagger: TaggerGroup) {
     const dialogRef = this.dialog.open(TaggerGroupTagDocDialogComponent, {
-      data: {taggerId: tagger.id, currentProjectId: this.currentProject.id},
+      data: { taggerId: tagger.id, currentProjectId: this.currentProject.id },
       maxHeight: '665px',
       width: '700px',
     });
@@ -147,7 +148,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
 
   tagRandomDocDialog(tagger: TaggerGroup) {
     const dialogRef = this.dialog.open(TagRandomDocDialogComponent, {
-      data: {tagger, currentProjectId: this.currentProject.id },
+      data: { tagger, currentProjectId: this.currentProject.id },
       minHeight: '300px',
       maxHeight: '665px',
       width: '1200px',
@@ -165,38 +166,54 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
     this.isAllSelected() ?
-        this.selectedRows.clear() :
-        this.tableData.data.forEach(row => this.selectedRows.select(row));
+      this.selectedRows.clear() :
+      this.tableData.data.forEach(row => this.selectedRows.select(row));
   }
 
   onDelete(tagger: TaggerGroup, index: number) {
-    this.taggerGroupService.deleteTaggerGroup(this.currentProject.id, tagger.id).subscribe(() => {
-      this.logService.snackBarMessage(`Tagger Group ${tagger.id}: ${tagger.description} deleted`, 2000);
-      this.tableData.data.splice(index, 1);
-      this.tableData.data = [...this.tableData.data];
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: { confirmText: 'Delete', mainText: 'Are you sure you want to delete this Tagger Group?' }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.taggerGroupService.deleteTaggerGroup(this.currentProject.id, tagger.id).subscribe(() => {
+          this.logService.snackBarMessage(`Tagger Group ${tagger.id}: ${tagger.description} deleted`, 2000);
+          this.tableData.data.splice(index, 1);
+          this.tableData.data = [...this.tableData.data];
+        });
+      }
     });
   }
 
 
   onDeleteAllSelected() {
     if (this.selectedRows.selected.length > 0) {
-      // Delete selected taggers
-      const idsToDelede = this.selectedRows.selected.map((tagger: TaggerGroup) => tagger.id);
-      const body = { ids: idsToDelede };
-      // Refresh taggers
-      this.taggerGroupService.bulkDeleteTaggerGroups(this.currentProject.id, body).subscribe(() => {
-        this.logService.snackBarMessage(`${this.selectedRows.selected.length} Taggers deleted`, 2000);
-        this.removeSelectedRows();
+      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+        data: { confirmText: 'Delete', mainText: `Are you sure you want to delete ${this.selectedRows.selected.length} Tagger Groups?` }
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          // Delete selected taggers
+          const idsToDelede = this.selectedRows.selected.map((tagger: TaggerGroup) => tagger.id);
+          const body = { ids: idsToDelede };
+          // Refresh taggers
+          this.taggerGroupService.bulkDeleteTaggerGroups(this.currentProject.id, body).subscribe(() => {
+            this.logService.snackBarMessage(`${this.selectedRows.selected.length} Taggers deleted`, 2000);
+            this.removeSelectedRows();
+          });
+        }
       });
     }
   }
 
   removeSelectedRows() {
     this.selectedRows.selected.forEach((selectedTagger: TaggerGroup) => {
-       const index: number = this.tableData.data.findIndex(tagger => tagger.id === selectedTagger.id);
-       this.tableData.data.splice(index, 1);
-       this.tableData.data = [...this.tableData.data];
-     });
+      const index: number = this.tableData.data.findIndex(tagger => tagger.id === selectedTagger.id);
+      this.tableData.data.splice(index, 1);
+      this.tableData.data = [...this.tableData.data];
+    });
     this.selectedRows.clear();
   }
 

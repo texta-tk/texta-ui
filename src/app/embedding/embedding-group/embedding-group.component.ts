@@ -1,17 +1,18 @@
-import {Component, OnDestroy, OnInit, ViewChild, AfterViewInit} from '@angular/core';
-import {LogService} from '../../core/util/log.service';
-import {MatDialog, MatTableDataSource, MatSort, MatPaginator} from '@angular/material';
-import {ProjectStore} from '../../core/projects/project.store';
-import {HttpErrorResponse} from '@angular/common/http';
-import {startWith, switchMap} from 'rxjs/operators';
-import {Project} from '../../shared/types/Project';
-import {Subscription} from 'rxjs';
-import {CreateEmbeddingGroupDialogComponent} from './create-embedding-group-dialog/create-embedding-group-dialog.component';
-import {EmbeddingsGroupService} from '../../core/embeddings/embeddings-group.service';
-import {EmbeddingCluster} from '../../shared/types/tasks/Embedding';
+import { Component, OnDestroy, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { LogService } from '../../core/util/log.service';
+import { MatDialog, MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
+import { ProjectStore } from '../../core/projects/project.store';
+import { HttpErrorResponse } from '@angular/common/http';
+import { startWith, switchMap } from 'rxjs/operators';
+import { Project } from '../../shared/types/Project';
+import { Subscription } from 'rxjs';
+import { CreateEmbeddingGroupDialogComponent } from './create-embedding-group-dialog/create-embedding-group-dialog.component';
+import { EmbeddingsGroupService } from '../../core/embeddings/embeddings-group.service';
+import { EmbeddingCluster } from '../../shared/types/tasks/Embedding';
 import { SelectionModel } from '@angular/cdk/collections';
 import { trigger, state, style, transition, animate } from '@angular/animations';
-// import { BrowseClustersDialogComponent } from './browse-clusters-dialog/browse-clusters-dialog.component';
+import { BrowseClustersDialogComponent } from './browse-clusters-dialog/browse-clusters-dialog.component';
+import { ConfirmDialogComponent } from 'src/app/shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-embedding-group',
@@ -19,10 +20,10 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
   styleUrls: ['./embedding-group.component.scss'],
   animations: [
     trigger('detailExpand', [
-      state('collapsed', style({height: '0px', minHeight: '0'})),
-      state('expanded', style({height: '*'})),
+      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-  ])]
+    ])]
 })
 export class EmbeddingGroupComponent implements OnInit, OnDestroy, AfterViewInit {
   private projectSubscription: Subscription;
@@ -32,20 +33,20 @@ export class EmbeddingGroupComponent implements OnInit, OnDestroy, AfterViewInit
   public tableData: MatTableDataSource<EmbeddingCluster> = new MatTableDataSource();
   selectedRows = new SelectionModel<EmbeddingCluster>(true, []);
   public displayedColumns = ['select', 'id', 'description', 'embedding', 'vocab_size', 'num_clusters',
-  'time_started', 'time_completed', 'Task', 'Modify'];
+    'time_started', 'time_completed', 'Task', 'Modify'];
   public isLoadingResults = true;
 
-  @ViewChild(MatSort, {static: true}) sort: MatSort;
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
   currentProject: Project;
   resultsLength: number;
 
 
   constructor(public dialog: MatDialog,
-              private projectStore: ProjectStore,
-              private embeddingClusterService: EmbeddingsGroupService,
-              private logService: LogService) {
+    private projectStore: ProjectStore,
+    private embeddingClusterService: EmbeddingsGroupService,
+    private logService: LogService) {
   }
 
   ngOnInit() {
@@ -106,12 +107,12 @@ export class EmbeddingGroupComponent implements OnInit, OnDestroy, AfterViewInit
     });
   }
 
-  onBrowseClusters(cluster: EmbeddingCluster) {
-    // const dialogRef = this.dialog.open(BrowseClustersDialogComponent, {
-    //   data: {clusterId: cluster.id, currentProjectId: this.currentProject.id},
-    //   height: '860px',
-    //   width: '700px',
-    // });
+  onBrowseClusters(embeddingClusterId: EmbeddingCluster) {
+    const dialogRef = this.dialog.open(BrowseClustersDialogComponent, {
+      data: { embeddingClusterId: embeddingClusterId.id, currentProjectId: this.currentProject.id },
+      height: '860px',
+      width: '700px',
+    });
   }
 
 
@@ -125,37 +126,53 @@ export class EmbeddingGroupComponent implements OnInit, OnDestroy, AfterViewInit
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
     this.isAllSelected() ?
-        this.selectedRows.clear() :
-        this.tableData.data.forEach(row => this.selectedRows.select(row));
+      this.selectedRows.clear() :
+      this.tableData.data.forEach(row => this.selectedRows.select(row));
   }
 
   onDelete(embCluster: EmbeddingCluster, index: number) {
-    this.embeddingClusterService.deleteEmbeddingCluster(this.currentProject.id, embCluster.id).subscribe(() => {
-      this.logService.snackBarMessage(`Embedding Cluster ${embCluster.id}: ${embCluster.description} deleted`, 2000);
-      this.tableData.data.splice(index, 1);
-      this.tableData.data = [...this.tableData.data];
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: { confirmText: 'Delete', mainText: `Are you sure you want to delete this Embedding Cluster?` }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.embeddingClusterService.deleteEmbeddingCluster(this.currentProject.id, embCluster.id).subscribe(() => {
+          this.logService.snackBarMessage(`Embedding Cluster ${embCluster.id}: ${embCluster.description} deleted`, 2000);
+          this.tableData.data.splice(index, 1);
+          this.tableData.data = [...this.tableData.data];
+        });
+      }
     });
   }
 
   onDeleteAllSelected() {
     if (this.selectedRows.selected.length > 0) {
-      // Delete selected embeddings
-      const idsToDelede = this.selectedRows.selected.map((embedding: EmbeddingCluster) => embedding.id);
-      const body = { ids: idsToDelede };
-      // Refresh embeddings
-      this.embeddingClusterService.bulkDeleteEmbeddingClusters(this.currentProject.id, body).subscribe(() => {
-        this.logService.snackBarMessage(`${this.selectedRows.selected.length} embeddings deleted`, 2000);
-        this.removeSelectedRows();
+      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+        data: { confirmText: 'Delete', mainText: `Are you sure you want to delete ${this.selectedRows.selected.length} Embedding Clusters?` }
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          // Delete selected embeddings
+          const idsToDelede = this.selectedRows.selected.map((embedding: EmbeddingCluster) => embedding.id);
+          const body = { ids: idsToDelede };
+          // Refresh embeddings
+          this.embeddingClusterService.bulkDeleteEmbeddingClusters(this.currentProject.id, body).subscribe(() => {
+            this.logService.snackBarMessage(`${this.selectedRows.selected.length} Embedding Clusters deleted`, 2000);
+            this.removeSelectedRows();
+          });
+        }
       });
     }
   }
 
   removeSelectedRows() {
     this.selectedRows.selected.forEach((selected: EmbeddingCluster) => {
-       const index: number = this.tableData.data.findIndex(embedding => embedding.id === selected.id);
-       this.tableData.data.splice(index, 1);
-       this.tableData.data = [...this.tableData.data];
-     });
+      const index: number = this.tableData.data.findIndex(embedding => embedding.id === selected.id);
+      this.tableData.data.splice(index, 1);
+      this.tableData.data = [...this.tableData.data];
+    });
     this.selectedRows.clear();
   }
 }

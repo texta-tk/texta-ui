@@ -41,9 +41,21 @@ export class EmbeddingsGroupService {
       catchError(this.logService.handleError<unknown>('bulkDeleteEmbeddingClusters')));
   }
 
-  deleteEmbeddingCluster(projectId: number, embeddingId: number): Observable<unknown | HttpErrorResponse> {
-    return this.http.delete(`${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/${embeddingId}`).pipe(
+  deleteEmbeddingCluster(projectId: number, clusterId: number): Observable<unknown | HttpErrorResponse> {
+    return this.http.delete(`${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/${clusterId}`).pipe(
       tap(e => this.logService.logStatus(e, 'deleteEmbeddingCluster')),
       catchError(this.logService.handleError<unknown>('deleteEmbeddingCluster')));
+  }
+
+  getBrowseClustersOptions(projectId: number, clusterId: number) {
+    return this.http.options(`${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/${clusterId}/browse_clusters/`).pipe(
+      tap(e => this.logService.logStatus(e, 'getBrowseClustersOptions')),
+      catchError(this.logService.handleError<unknown>('getBrowseClustersOptions')));
+  }
+
+  browseClusters(projectId: number, clusterId: number, payload) {
+    return this.http.post(`${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/${clusterId}/browse_clusters/`, payload).pipe(
+      tap(e => this.logService.logStatus(e, 'browseClusters')),
+      catchError(this.logService.handleError<unknown>('browseClusters')));
   }
 }

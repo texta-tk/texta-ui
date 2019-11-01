@@ -9,27 +9,28 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 export class ConfirmDialogComponent implements OnInit {
   confirmText = 'Continue';
   cancelText = 'Cancel';
-  mainText = 'Are you sure?';
-  title = 'Unsaved Progress';
+  mainText = 'Unsaved progress';
+  title = 'Are you sure?';
+  confirmBtnColor = 'warn';
 
   constructor(
     public dialogRef: MatDialogRef<ConfirmDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { confirmText: string, cancelText: string, mainText: string, title: string }) {
-    this.confirmText = data.confirmText;
-    this.cancelText = data.cancelText;
-    this.mainText = data.mainText;
-    this.title = data.title;
-
+    @Inject(MAT_DIALOG_DATA) public data: { confirmText: string, cancelText: string, mainText: string, title: string, confirmBtnColor: 'warn' | 'accent' | 'primary' | '' }) {
+      this.confirmText = data.confirmText ? data.confirmText : this.confirmText;
+      this.cancelText = data.cancelText ? data.cancelText : this.cancelText;
+      this.mainText = data.mainText ? data.mainText : this.mainText;
+      this.title = data.title ? data.title : this.title;
+      this.confirmBtnColor = data.confirmBtnColor ? data.confirmBtnColor : this.confirmBtnColor;
   }
 
   ngOnInit() {
   }
 
   closeDialog() {
-    this.dialogRef.close({action: false});
+    this.dialogRef.close(false);
   }
 
   closeDialogConfirm() {
-    this.dialogRef.close({action: true});
+    this.dialogRef.close(true);
   }
 }
