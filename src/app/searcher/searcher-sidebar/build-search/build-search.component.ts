@@ -78,7 +78,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.searchQueryQueue$.pipe(debounceTime(500), takeUntil(this.destroy$), switchMap(x => {
+    this.searchQueryQueue$.pipe(debounceTime(400), takeUntil(this.destroy$), switchMap(x => {
       return this.searcherService.search({query: this.elasticQuery}, this.currentProject.id);
     })).subscribe(
       (result: { highlight: any, doc: any }[] | HttpErrorResponse) => {

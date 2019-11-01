@@ -13,7 +13,7 @@ import {ProjectStore} from '../../core/projects/project.store';
   styleUrls: ['./searcher-table.component.scss'],
 })
 export class SearcherTableComponent implements OnInit, OnDestroy {
-  public tableData: MatTableDataSource<any>;
+  public tableData: MatTableDataSource<any> = new MatTableDataSource();
   public displayedColumns: string[];
   public columnsToDisplay: string[] = [];
   public columnFormControl = new FormControl([]);
@@ -26,18 +26,18 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-
+    this.tableData.sort = this.sort;
+    this.tableData.paginator = this.paginator;
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$)).subscribe(proj => {
       this.displayedColumns = [];
       this.columnsToDisplay = [];
-      this.tableData = new MatTableDataSource<any>([]);
+      this.tableData.data = [];
     });
 
     this.searchService.getSearch().pipe(takeUntil(this.destroy$)).subscribe((resp: Search) => {
       if (resp) {
         this.displayedColumns = this.makeColumns(resp.searchContent);
         this.displayedColumns.sort((a, b) => 0 - (a < b ? 1 : -1));
-        console.log(`columns: ${this.displayedColumns.length}`);
         // first search || no search results
         if (this.columnsToDisplay.length === 0 || this.displayedColumns.length === 0) {
           this.columnsToDisplay = this.displayedColumns.slice();
@@ -46,9 +46,8 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
           // sometimes response adds columns based on user input, so need to updated columns selection
           this.validateColumnSelect();
         }
-        this.tableData = new MatTableDataSource<any>(resp.searchContent);
-        this.tableData.sort = this.sort;
-        this.tableData.paginator = this.paginator;
+        this.tableData.data = resp.searchContent;
+
       }
     });
 
