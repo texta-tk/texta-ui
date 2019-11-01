@@ -16,6 +16,9 @@ import {CreateProjectDialogComponent} from './create-project-dialog/create-proje
     SharedModule,
     ProjectRoutingModule,
   ],
+  exports: [
+    ProjectComponent,
+  ],
   entryComponents: [
     CreateProjectDialogComponent,
     EditProjectDialogComponent,

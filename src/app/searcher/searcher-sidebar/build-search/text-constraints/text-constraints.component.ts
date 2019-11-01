@@ -102,7 +102,7 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
     }
   }
 
-  private buildRegexQuery(formQueries, formValue, fields) {
+  buildRegexQuery(formQueries, formValue, fields) {
 // gonna rebuild formqueries so delete previous
     formQueries.splice(0, formQueries.length);
     const textareaValues = this.stringToArray(formValue, '\n');
@@ -129,7 +129,7 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
   }
 
   // every newline in textarea is a new multi_match clause
-  private buildTextareaMultiMatchQuery(formQueries, formValue, multiMatchBlueprint) {
+  buildTextareaMultiMatchQuery(formQueries, formValue, multiMatchBlueprint) {
     // gonna rebuild formqueries so delete previous
     formQueries.splice(0, formQueries.length);
     const textareaValues = this.stringToArray(formValue, '\n');

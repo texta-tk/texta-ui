@@ -1,1 +1,27 @@
-<pre>landing page no login required</pre>
+<div *ngIf="!user">
+    not logged in
+</div>
+<div fxLayout="row" *ngIf="user">
+  <div fxFlex="50%">
+    <app-project></app-project>
+  </div>
+  <div fxFlex="50%">
+    <h1 class="mat-h1">HEALTH</h1>
+    <div *ngIf="health">
+        <table class="simple-table">
+            
+            <div> <span> VERSION:</span> {{health.version}} </div>
+            <div> <span> ElasticSearch:</span> {{health.elastic.alive}} </div>
+            <div> <span> MLP:</span> {{health.mlp.alive}} </div>
+            <div> <span> FREE DISK SPACE:</span> {{health.disk.free| number}} {{health.disk.unit}} </div>
+            <div> <span> MEMORY:</span> {{health.memory.free | number}} {{health.memory.unit}} </div>
+            <div> <span> CPU USAGE:</span> {{health.cpu.percent }} % </div>
+            <div> <span> CACHED MODELS:</span> {{health.model_cache.embedding_cluster + health.model_cache.embedding + health.model_cache.phraser + health.model_cache.tagger}}  </div>
+            <div> <span> NUMBER OF GPUs:</span> {{health.gpu.count}} </div>
+        </table>
+    </div>
+    <div *ngIf="unreachable">
+        <h2 class="mat-h2">SERVER UNREACHABLE</h2>
+    </div>
+  </div>
+</div>

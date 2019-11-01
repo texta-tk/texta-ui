@@ -12,7 +12,7 @@ RUN ng build --prod
 # start clean image
 FROM nginx:latest
 # copy nginx config
-COPY docker/nginx.conf /etc/nginx/conf.d/
+COPY docker/nginx.conf /etc/nginx/nginx.conf
 # remove default nginx website
 RUN rm -rf /usr/share/nginx/html/*
 # copy dist files
