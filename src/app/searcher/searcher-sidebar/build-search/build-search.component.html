@@ -42,7 +42,7 @@
     </mat-selection-list>
   </div>-->
   <div class="max-width">
-    <button class="max-width" mat-stroked-button (click)="getSearch()">Search</button>
+    <button class="max-width" mat-stroked-button (click)="searchQueryQueue$.next()">Search</button>
   </div>
 </div>
 <pre>{{elasticQuery.query | json}}</pre>

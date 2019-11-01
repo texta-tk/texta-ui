@@ -1,11 +1,18 @@
 import {Component, EventEmitter, OnDestroy, OnInit, Output,} from '@angular/core';
 import {Field, Project, ProjectFact, ProjectField} from '../../../shared/types/Project';
 import {FormControl} from '@angular/forms';
-import {forkJoin, of, Subject} from 'rxjs';
-import {switchMap, takeUntil} from 'rxjs/operators';
+import {BehaviorSubject, forkJoin, merge, of, Subject} from 'rxjs';
+import {debounceTime, switchMap, takeUntil, throttle, throttleTime} from 'rxjs/operators';
 import {ProjectService} from '../../../core/projects/project.service';
 import {ProjectStore} from '../../../core/projects/project.store';
-import {Constraint, DateConstraint, ElasticsearchQuery, FactConstraint, TextConstraint} from './Constraints';
+import {
+  Constraint,
+  DateConstraint,
+  ElasticsearchQuery,
+  FactConstraint,
+  FactTextConstraint,
+  TextConstraint
+} from './Constraints';
 import {HttpErrorResponse} from '@angular/common/http';
 import {SearcherService} from '../../../core/searcher/searcher.service';
 import {MatSelectChange} from '@angular/material';
@@ -13,6 +20,7 @@ import {Search} from '../../../shared/types/Search';
 import {SearchService} from '../../services/search.service';
 import {UserStore} from '../../../core/users/user.store';
 import {UserProfile} from '../../../shared/types/UserProfile';
+import {SavedSearch} from '../../../shared/types/SavedSearch';
 
 @Component({
   selector: 'app-build-search',
@@ -28,9 +36,10 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
   constraintList: (Constraint)[] = [];
   projectFacts: ProjectFact[] = [];
   destroy$: Subject<boolean> = new Subject();
+  searchQueryQueue$ = new Subject<void>();
   // building the whole search query onto this
   elasticQuery: ElasticsearchQuery = new ElasticsearchQuery();
-  searcherOptions: string[] = ['live_search'];
+  searcherOptions: Array<'live_search'> = ['live_search'];
   currentUser: UserProfile;
 
   constructor(private projectService: ProjectService,
@@ -43,6 +52,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$), switchMap((currentProject: Project) => {
       if (currentProject) {
+        this.constraintList = [];
         this.currentProject = currentProject;
         return forkJoin({
           facts: this.projectService.getProjectFacts(this.currentProject.id),
@@ -52,7 +62,6 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
       return of(null);
     })).subscribe((resp: { facts: ProjectFact[] | HttpErrorResponse, fields: ProjectField[] | HttpErrorResponse }) => {
       if (resp) {
-        this.constraintList = [];
         this.elasticQuery = new ElasticsearchQuery();
         if (!(resp.facts instanceof HttpErrorResponse)) {
           this.projectFacts = resp.facts;
@@ -68,6 +77,15 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
         this.currentUser = user;
       }
     });
+
+    this.searchQueryQueue$.pipe(debounceTime(500), takeUntil(this.destroy$), switchMap(x => {
+      return this.searcherService.search({query: this.elasticQuery}, this.currentProject.id);
+    })).subscribe(
+      (result: { highlight: any, doc: any }[] | HttpErrorResponse) => {
+        if (result && !(result instanceof HttpErrorResponse)) {
+          this.searchService.nextSearch(new Search(result, false));
+        }
+      });
   }
 
   public onOpenedChange(opened) {
@@ -107,10 +125,29 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     }
   }
 
-  buildSavedSearch(savedSearch: any) { // todo type
+  buildSavedSearch(savedSearch: SavedSearch) { // todo type
     this.constraintList.splice(0, this.constraintList.length);
-    // console.log(this.searcherService.getSavedSearchById(id, id));
-    this.constraintList = [...savedSearch.constraints];
+    const savedConstraints: any[] = JSON.parse(savedSearch.query_constraints as string);
+    console.log(savedConstraints);
+    // when we are building the query dont want to emit searches
+    this.searcherOptions = [];
+    for (const constraint of savedConstraints) {
+      const formFields = constraint.fields;
+      if (formFields.length >= 1) {
+        if (formFields[0].type === 'text') {
+          this.constraintList.push(new TextConstraint(formFields, constraint.match, constraint.text, constraint.operator, constraint.slop));
+        } else if (formFields[0].type === 'date') {
+          this.constraintList.push(new DateConstraint(formFields, constraint.dateFrom, constraint.dateTo));
+        } else {
+          this.constraintList.push(new FactConstraint(formFields, constraint.factNameOperator, constraint.factName));
+        }
+      }
+    }
+    this.updateFieldsToHighlight(this.constraintList);
+    // we can turn on live search again, after building query
+    this.searcherOptions.push('live_search');
+    // constraints built, lets search
+    this.searchQueryQueue$.next();
     this.checkMinimumMatch();
   }
 
@@ -137,19 +174,10 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  getSearch() {// implement previous query cancellation todo
-    this.searcherService.search({query: this.elasticQuery.elasticsearchQuery}, this.currentProject.id).subscribe(
-      (result: { highlight: any, doc: any }[] | HttpErrorResponse) => {
-        if (result && !(result instanceof HttpErrorResponse)) {
-          this.searchService.nextSearch(new Search(result, false, false));
-        }
-      });
-  }
-
   searchOnChange(event) {
     // dont want left focus events
     if (event === this.elasticQuery && this.searcherOptions.includes('live_search')) {
-      this.getSearch();
+      this.searchQueryQueue$.next();
     }
   }
 

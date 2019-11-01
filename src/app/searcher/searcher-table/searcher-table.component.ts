@@ -5,6 +5,7 @@ import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import {FormControl} from '@angular/forms';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
+import {ProjectStore} from '../../core/projects/project.store';
 
 @Component({
   selector: 'app-searcher-table',
@@ -21,10 +22,16 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject();
   @Output() drawerToggle = new EventEmitter<boolean>();
 
-  constructor(private searchService: SearchService) {
+  constructor(private searchService: SearchService, private projectStore: ProjectStore) {
   }
 
   ngOnInit() {
+
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$)).subscribe(proj => {
+      this.displayedColumns = [];
+      this.columnsToDisplay = [];
+      this.tableData = new MatTableDataSource<any>([]);
+    });
 
     this.searchService.getSearch().pipe(takeUntil(this.destroy$)).subscribe((resp: Search) => {
       if (resp) {
@@ -42,7 +49,6 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
         this.tableData = new MatTableDataSource<any>(resp.searchContent);
         this.tableData.sort = this.sort;
         this.tableData.paginator = this.paginator;
-
       }
     });
 

@@ -60,8 +60,7 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
       this.textAreaFormControl.valueChanges.pipe(
         takeUntil(this.destroyed$),
         startWith(this.textAreaFormControl.value as object),
-        distinctUntilChanged(),
-        debounceTime(200)).subscribe(value => {
+        distinctUntilChanged()).subscribe(value => {
         if (this.matchFormControl.value === 'regexp') {
           this.buildRegexQuery(formQueries, value, this._textConstraint.fields.map(x => x.path));
         } else {
@@ -162,6 +161,7 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
     if (index > -1) {
       this.elasticSearchQuery.query.bool.should.splice(index, 1);
     }
+    this.change.emit(this.elasticSearchQuery);
     this.destroyed$.next(true);
     this.destroyed$.complete();
   }

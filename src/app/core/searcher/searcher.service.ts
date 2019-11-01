@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../util/log.service';
 import {environment} from '../../../environments/environment';
 import {LocalStorageService} from '../util/local-storage.service';
@@ -29,7 +29,7 @@ export class SearcherService {
   }
 
 
-  getSavedSearches(projectId: number): Observable<SavedSearch[]> {
+  getSavedSearches(projectId: number): Observable<SavedSearch[] | HttpErrorResponse> {
     return this.http.get<SavedSearch[]>(`${this.apiUrl}/projects/${projectId}/searches/`).pipe(
       tap(e => this.logService.logStatus(e, 'getSavedSearches')),
       catchError(this.logService.handleError<SavedSearch[]>('getSavedSearches')));
@@ -37,7 +37,7 @@ export class SearcherService {
 
   saveSearch(projectId: number, constraintList: Constraint[], elasticQuery: ElasticsearchQuery, desc: string) {
     const body = {
-      query_constraints: this.convertConstraintListToJson(constraintList),
+      query_constraints: JSON.stringify(this.convertConstraintListToJson(constraintList)),
       description: desc,
       query: elasticQuery
     };
@@ -61,6 +61,7 @@ export class SearcherService {
           fields: constraint.fields,
           match: constraint.matchFormControl.value,
           slop: constraint.slopFormControl.value,
+          text: constraint.textAreaFormControl.value,
           operator: constraint.operatorFormControl.value
         });
       }
@@ -75,7 +76,7 @@ export class SearcherService {
         outPutJson.push({
           fields: constraint.fields,
           factName: constraint.factNameFormControl.value,
-          factNameOperator: constraint.factNameOperatorFormControl,
+          factNameOperator: constraint.factNameOperatorFormControl.value,
         });
       }
       if (constraint instanceof FactTextConstraint) {

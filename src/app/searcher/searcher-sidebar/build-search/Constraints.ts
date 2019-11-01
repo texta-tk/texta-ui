@@ -84,8 +84,6 @@ export class ElasticsearchQuery {
     fields: {}
   };
 
-  elasticsearchQuery;
-
   constructor() {
     this.query = {
       bool: {
@@ -102,10 +100,6 @@ export class ElasticsearchQuery {
       post_tags: [ElasticsearchQuery.POST_TAG],
       number_of_fragments: 0,
       fields: {}
-    };
-    this.elasticsearchQuery = {
-      query: this.query,
-      highlight: this.highlight
     };
   }
 }

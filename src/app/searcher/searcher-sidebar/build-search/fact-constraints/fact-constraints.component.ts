@@ -68,8 +68,6 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
         takeUntil(this.destroyed$)).subscribe((facts: string[]) => {
         if (facts) {
           formQueries.splice(0, formQueries.length);
-
-          console.log(formQueries);
           // filter out empty values
           const newlineString = facts.filter(x => x !== '');
           if (newlineString.length > 0) {
@@ -81,6 +79,7 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
               formQueries.push(newFormQuery);
             }
           }
+          console.log(formQueries);
           this.change.emit(this.elasticSearchQuery);
         }
       });
@@ -94,6 +93,7 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
     if (index > -1) {
       this.elasticSearchQuery.query.bool.must.splice(index, 1);
     }
+    this.change.emit(this.elasticSearchQuery);
     this.destroyed$.next(true);
     this.destroyed$.complete();
   }
