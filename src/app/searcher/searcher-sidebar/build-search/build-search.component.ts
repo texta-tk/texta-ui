@@ -10,7 +10,6 @@ import {
   DateConstraint,
   ElasticsearchQuery,
   FactConstraint,
-  FactTextConstraint,
   TextConstraint
 } from './Constraints';
 import {HttpErrorResponse} from '@angular/common/http';

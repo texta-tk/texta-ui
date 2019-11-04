@@ -1,7 +1,8 @@
 import {Field} from '../../../shared/types/Project';
 import {FormControl} from '@angular/forms';
+import {Observable} from "rxjs";
 
-export class Constraint  {
+export class Constraint {
   fields: Field[];
 
   constructor(fields: Field[]) {
@@ -41,23 +42,28 @@ export class DateConstraint extends Constraint {
 export class FactConstraint extends Constraint {
   factNameOperatorFormControl = new FormControl();
   factNameFormControl = new FormControl();
+  factTextOperatorFormControl = new FormControl();
+  inputGroupArray: FactTextInputGroup[] = [];
 
-  constructor(fields: Field[], factNameOperator?, factName?) {
+  constructor(fields: Field[], factNameOperator?, factName?, factTextOperator?) {
     super(fields);
+    this.factTextOperatorFormControl.setValue(factTextOperator ? factTextOperator : 'must');
     this.factNameOperatorFormControl.setValue(factNameOperator ? factNameOperator : 'must');
     this.factNameFormControl.setValue(factName ? factName : '');
   }
 }
 
-export class FactTextConstraint extends Constraint {
-  factNameOperatorFormControl = new FormControl();
-  factNameFormControl = new FormControl();
+export class FactTextInputGroup {
+  factTextOperatorFormControl = new FormControl();
+  factTextFactNameFormControl = new FormControl();
+  factTextInputFormControl = new FormControl();
+  filteredOptions: string[] = [];
+  formQuery: any;
 
-  constructor(fields: Field[], factNameOperator?, factName?) {
-    super(fields);
-    this.factNameOperatorFormControl.setValue(factNameOperator ? factNameOperator : 'must');
-    this.factNameFormControl.setValue(factName ? factName : '');
+  constructor() {
+    this.factTextOperatorFormControl.setValue('must');
   }
+
 }
 
 export class ElasticsearchQuery {

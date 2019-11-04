@@ -1,5 +1,5 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {ElasticsearchQuery, FactTextConstraint} from '../Constraints';
+import {ElasticsearchQuery} from '../Constraints';
 import {FormControl} from '@angular/forms';
 import {ProjectFact} from '../../../../shared/types/Project';
 import {Subject} from 'rxjs';
@@ -22,7 +22,6 @@ export class FactTextInputGroup {
 })
 
 export class FactTextConstraintsComponent implements OnInit, OnDestroy {
-  @Input() factTextConstraint: FactTextConstraint;
   @Input() elasticSearchQuery: ElasticsearchQuery;
   @Input() projectFacts: ProjectFact[] = [];
   inputGroupArray: FactTextInputGroup[] = [];

@@ -56,6 +56,19 @@ export class ProjectService {
       catchError(this.logService.handleError<ProjectField[]>('getProjectFields')));
   }
 
+  projectFactValueAutoComplete(id: number, factName: string, limit: number, startsWith: string): Observable<string[] | HttpErrorResponse> {
+    const body = {
+      limit: limit,
+      startswith: startsWith,
+      fact_name: factName
+    };
+    return this.http.post<string[]>(
+      this.apiUrl + '/projects/' + id + '/autocomplete_fact_values/', body
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'projectFactValueAutoComplete')),
+      catchError(this.logService.handleError<string[]>('projectFactValueAutoComplete')));
+  }
+
   getProjectFacts(id: number): Observable<ProjectFact[] | HttpErrorResponse> {
     return this.http.get<ProjectFact[]>(
       this.apiUrl + '/projects/' + id + '/get_facts/',

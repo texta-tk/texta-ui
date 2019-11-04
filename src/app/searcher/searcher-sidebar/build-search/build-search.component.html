@@ -31,7 +31,7 @@
     </div>
     <div class="content" *ngIf="isFactNameConstraint(constraint)">
       <app-fact-constraints [factConstraint]="constraint" [elasticSearchQuery]="elasticQuery"
-                            [projectFacts]="projectFacts" (change)="searchOnChange($event)"></app-fact-constraints>
+                            [projectFacts]="projectFacts" [currentProject]="currentProject" (change)="searchOnChange($event)"></app-fact-constraints>
     </div>
   </div>
 <!--  <div fxLayout="column" class="bg-grey search-options">

@@ -8,7 +8,6 @@ import {
   DateConstraint,
   ElasticsearchQuery,
   FactConstraint,
-  FactTextConstraint,
   TextConstraint
 } from '../../searcher/searcher-sidebar/build-search/Constraints';
 import {catchError, tap} from 'rxjs/operators';
@@ -77,11 +76,6 @@ export class SearcherService {
           fields: constraint.fields,
           factName: constraint.factNameFormControl.value,
           factNameOperator: constraint.factNameOperatorFormControl.value,
-        });
-      }
-      if (constraint instanceof FactTextConstraint) {
-        outPutJson.push({
-          fields: constraint.fields
         });
       }
     }
