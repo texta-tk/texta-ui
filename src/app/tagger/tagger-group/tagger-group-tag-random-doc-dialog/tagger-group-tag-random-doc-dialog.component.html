@@ -1,11 +1,11 @@
 <div>
   <div mat-dialog-content>
-    <div class="m-top-10"><span class="mat-body-strong">Result: </span>
+    <div class="m-top-10"><span class="mat-body-strong">Result document: </span>
       <div class="code-wrapper">
         <code>
           <pre *ngIf="result">
-                    {{result.document | json}}
-                </pre>
+            {{result.document | json}}
+          </pre>
         </code>
       </div>
       <div class="loading-div">
@@ -13,14 +13,19 @@
       </div>
     </div>
   </div>
-  <div mat-dialog-actions fxLayout="row" fxLayoutAlign="space-between center">
-    <div *ngIf="result" fxFlex>
-      <span class="mat-body-strong">Result: </span> {{result.prediction.result}}
+  <button mat-flat-button color="primary" (click)="onSubmit()" [disabled]="isLoading">New random doc
+  </button>
+  <div class="m-top-10 code-wrapper">
+    <div *ngFor="let tag of result.tags">
+      <span class="mat-body-strong">Tag: </span> {{tag.tag}}
       <br>
-      <span class="mat-body-strong">Probability:</span> {{result.prediction.probability}}
+      <span class="mat-body-strong">Probability:</span> {{tag.probability}}
+      <br>
+      <span class="mat-body-strong">Tagger id:</span> {{tag.tagger_id}}
+      <br>
+      <span class="mat-body-strong" *ngIf="tag.ner_match">Ner match:</span> {{tag.ner_match}}
+      <br>
+      <br>
     </div>
-    <button fxFlex="150px" mat-flat-button color="primary" (click)="onSubmit()" [disabled]="isLoading">New random doc
-    </button>
   </div>
 </div>
-
