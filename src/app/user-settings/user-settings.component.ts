@@ -30,7 +30,6 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
       Validators.required, Validators.email
     ]),
   });
-  healthStatus: any;
 
   passwordResetForm = new FormGroup({
     passwordForm: new FormGroup({
@@ -76,13 +75,6 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
       if (resp) {
         this.user = resp;
       }
-    });
-    this.http.get<any>(
-      this.apiUrl + '/health/',
-    ).pipe(
-      tap(e => this.logService.logStatus(e, 'getHealth')),
-      catchError(this.logService.handleError<any>('getHealth'))).subscribe(resp => {
-      this.healthStatus = resp;
     });
   }
 

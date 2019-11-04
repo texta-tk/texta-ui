@@ -1,8 +1,5 @@
 <div class="flex-row wrapper">
   <div>
-    <pre>{{healthStatus | json}}</pre>
-  </div>
-  <div>
     <form class="flex-col" [formGroup]="forgotPasswordForm" (ngSubmit)="onForgotPasswordFormSubmit(forgotPasswordForm.value)">
       <mat-form-field>
         <input matInput type="text" placeholder="Enter your email" formControlName="emailFormControl">
