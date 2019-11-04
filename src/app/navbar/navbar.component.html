@@ -12,7 +12,8 @@
     </mat-menu>
 
     <mat-menu #models="matMenu">
-      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['embedding-groups']">Embedding Clusters <span *ngIf="projectResourceCounts">({{projectResourceCounts?.num_embedding_clusters}})</span></a>
+      <!-- Embedding Clusters disabled until more functionality for them is added -->
+      <!-- <a mat-menu-item routerLinkActive="is-active" [routerLink]="['embedding-groups']">Embedding Clusters <span *ngIf="projectResourceCounts">({{projectResourceCounts?.num_embedding_clusters}})</span></a> -->
       <a mat-menu-item routerLinkActive="is-active" [routerLink]="['tagger-groups']">Tagger Groups <span *ngIf="projectResourceCounts">({{projectResourceCounts?.num_tagger_groups}})</span></a>
       <a mat-menu-item routerLinkActive="is-active" [routerLink]="['embeddings']">Embeddings <span *ngIf="projectResourceCounts">({{projectResourceCounts?.num_embeddings}})</span></a>
       <a mat-menu-item routerLinkActive="is-active" [routerLink]="['taggers']">Taggers <span *ngIf="projectResourceCounts">({{projectResourceCounts?.num_taggers}})</span></a>
