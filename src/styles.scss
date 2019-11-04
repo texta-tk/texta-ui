@@ -115,9 +115,22 @@ pre {
   margin-bottom: 10px;
 }
 
+.accent-text {
+  color: $accent;
+}
+
+.primary-text {
+  color: $primary;
+}
+
+.warn-text {
+  color: $warn;
+}
+
 .action-text {
   color: $primary;
 }
+
 
 .action-text:hover {
   text-decoration: underline;
@@ -183,4 +196,17 @@ pre {
   border: 1px solid #cdcdcd;
   box-shadow: inset 0px 0px 4px 0px #d0d0d0;
   padding: 15px 5px;
+}
+
+
+.center-text {
+  text-align: center;
+}
+
+.center-margin {
+  margin: 0 auto;
+}
+
+.block {
+  display: block;
 }

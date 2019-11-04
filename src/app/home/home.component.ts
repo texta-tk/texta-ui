@@ -39,4 +39,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.userSub.unsubscribe();
   }
+
+  round(value: number) {
+    return Math.round(value);
+  }
 }

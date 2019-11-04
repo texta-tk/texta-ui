@@ -5,23 +5,76 @@
   <div fxFlex="50%">
     <app-project></app-project>
   </div>
-  <div fxFlex="50%">
-    <h1 class="mat-h1">HEALTH</h1>
+  <div fxFlex="50%" class="health-wrapper">
     <div *ngIf="health">
-        <table class="simple-table">
-            
-            <div> <span> VERSION:</span> {{health.version}} </div>
-            <div> <span> ElasticSearch:</span> {{health.elastic.alive}} </div>
-            <div> <span> MLP:</span> {{health.mlp.alive}} </div>
-            <div> <span> FREE DISK SPACE:</span> {{health.disk.free| number}} {{health.disk.unit}} </div>
-            <div> <span> MEMORY:</span> {{health.memory.free | number}} {{health.memory.unit}} </div>
-            <div> <span> CPU USAGE:</span> {{health.cpu.percent }} % </div>
-            <div> <span> CACHED MODELS:</span> {{health.model_cache.embedding_cluster + health.model_cache.embedding + health.model_cache.phraser + health.model_cache.tagger}}  </div>
-            <div> <span> NUMBER OF GPUs:</span> {{health.gpu.count}} </div>
-        </table>
-    </div>
-    <div *ngIf="unreachable">
-        <h2 class="mat-h2">SERVER UNREACHABLE</h2>
+        <mat-card fxLayout="row wrap" fxLayoutGap="5px" class="service-status-card center-margin">
+          <mat-chip-list class="center-margin">
+            <mat-chip selected [color]="health.elastic.alive ? 'primary' : 'accent'"> ElasticSearch {{health.elastic.alive ? 'ONLINE' : 'OFFLINE'}}  </mat-chip>
+            <mat-chip selected [color]="health.mlp.alive ? 'primary' : 'accent'"> MLP {{health.mlp.alive ? 'ONLINE' : 'OFFLINE'}}  </mat-chip>
+            <mat-chip selected color="primary"> API VERSION {{health.version}}  </mat-chip>
+          </mat-chip-list>
+        </mat-card>
+
+        <mat-card fxLayout="row wrap" fxLayoutGap="5px" class="usage-card center-margin m-top-10">
+          <div fxFlex="calc(33% - 5px)">
+            <h4 class="mat-h4 center-text"> DISK SPACE </h4>
+            <mat-progress-spinner
+              [color]="((health.disk.free / health.disk.total) * 100) < 90 ? 'primary' : 'warn'"
+              [mode]="'determinate'"
+              [value]="(health.disk.free / health.disk.total) * 100"
+              class="center-margin"
+              >
+            </mat-progress-spinner>
+            <div style="position:relative; top: -60px;">
+                <span class="block center-text">{{(round((health.disk.free / health.disk.total) * 100)) }}% </span>
+            </div>
+            <span class="mat-hint mat-small center-text block"> {{health.disk.free | number}} /  {{health.disk.total| number}} {{health.disk.unit}} </span>
+          </div>
+
+          <div fxFlex="calc(33% - 5px)">
+            <h4 class="mat-h4 center-text"> MEMORY </h4>
+            <mat-progress-spinner
+              [color]="((health.memory.free / health.memory.total) * 100) < 90 ? 'primary' : 'warn'"
+              [mode]="'determinate'"
+              [value]="(health.memory.free / health.memory.total) * 100"
+              class="center-margin"
+              >
+            </mat-progress-spinner>
+            <div style="position:relative; top: -60px;">
+                <span class="block center-text">{{(round((health.memory.free / health.memory.total) * 100)) }}% </span>
+            </div>
+            <span class="mat-hint mat-small center-text block"> {{health.memory.free | number}} /  {{health.memory.total| number}} {{health.memory.unit}} </span>
+          </div>
+
+          <div fxFlex="calc(33% - 5px)">
+            <h4 class="mat-h4 center-text"> CPU USAGE </h4>
+            <mat-progress-spinner
+              [color]="health.cpu.percent < 90 ? 'primary' : 'warn'"
+              [mode]="'determinate'"
+              [value]="health.cpu.percent"
+              class="center-margin"
+              >
+            </mat-progress-spinner>
+            <div style="position:relative; top: -60px">
+                <span class="block center-text">{{health.cpu.percent}}%</span>
+            </div>
+            <span class="mat-hint mat-small center-text block">{{health.memory.free | number}} /  {{health.memory.total| number}} {{health.memory.unit}}</span>
+          </div>
+        </mat-card>
+
+        
+        <mat-card fxLayout="row wrap" fxLayoutGap="5px" class="counts-card center-margin">
+          <div fxFlex>
+            <span class="count-text center-text block primary-text">  {{health.model_cache.embedding_cluster + health.model_cache.embedding + health.model_cache.phraser + health.model_cache.tagger}} </span>
+            <span class="mat-hint center-text block">Cached Models</span>
+          </div>
+
+          <div fxFlex>
+            <span class="count-text center-text block" [ngClass]="health.gpu.count > 0 ? 'primary-text' : 'accent-text'">  {{health.gpu.count}} </span>
+            <span class="mat-hint center-text block">GPUs</span>
+          </div>
+
+        </mat-card>
     </div>
   </div>
 </div>
