@@ -16,7 +16,7 @@
   <button mat-flat-button color="primary" (click)="onSubmit()" [disabled]="isLoading">New random doc
   </button>
   <div class="m-top-10 code-wrapper">
-    <div *ngFor="let tag of result.tags">
+    <div *ngFor="let tag of result?.tags">
       <span class="mat-body-strong">Tag: </span> {{tag.tag}}
       <br>
       <span class="mat-body-strong">Probability:</span> {{tag.probability}}
