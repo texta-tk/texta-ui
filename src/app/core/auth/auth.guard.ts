@@ -44,9 +44,9 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
               this.dialog.open(LoginDialogComponent, {
                 height: '295px',
                 width: '400px',
-                data: {returnUrl: state.url}
+                data: {returnUrl: state.url },
+                disableClose: true,
               });
-              this.router.navigate(['']);
               return false;
             }
           }

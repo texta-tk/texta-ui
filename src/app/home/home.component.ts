@@ -24,22 +24,15 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.userSub = this.userStore.getCurrentUser().subscribe((user: UserProfile) => {
-      if (user) {
-        this.user = user;
-        this.projectService.getHealth().subscribe((resp: Health | HttpErrorResponse) => {
-          if (resp && !(resp instanceof HttpErrorResponse)) {
-            this.health = resp;
-            this.unreachable = false;
-          } else {
-            this.unreachable = true;
-          }
-        });
-      } else {
-        this.dialog.open(LoginDialogComponent, {
-          height: '270px',
-          width: '400px',
-        });
-      }
+      this.user = user;
+      this.projectService.getHealth().subscribe((resp: Health | HttpErrorResponse) => {
+        if (resp && !(resp instanceof HttpErrorResponse)) {
+          this.health = resp;
+          this.unreachable = false;
+        } else {
+          this.unreachable = true;
+        }
+      });
     });
   }
 
