@@ -17,6 +17,7 @@ import {MatListOption} from '@angular/material';
   styleUrls: ['./lexicon-builder.component.scss']
 })
 export class LexiconBuilderComponent implements OnInit, OnDestroy {
+  outputSize = 20;
   _lexicon: Lexicon;
   positives: string;
   predictions: EmbeddingPrediction[] = [];
@@ -77,7 +78,8 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
       if (currentProject) {
         return this.embeddingService.predict({
           positives: this.newLineStringToList(this.positives),
-          negatives: this.negatives.map(y => y.phrase)
+          negatives: this.negatives.map(y => y.phrase),
+          output_size: this.outputSize,
         }, currentProject.id, this.selectedEmbedding.id);
       }
     })).subscribe((resp: EmbeddingPrediction[] | HttpErrorResponse) => {

@@ -16,6 +16,7 @@
 
   }
   .predictions {
+    overflow: auto;
     margin-left: 20px;
     height: 605px;
     max-height: 605px;
@@ -51,10 +52,6 @@
       }
     }
   }
-}
-
-.predictions-wrapper {
-  overflow: auto;
 }
 
 .prediction {
