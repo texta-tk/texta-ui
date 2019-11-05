@@ -72,11 +72,24 @@ export class SearcherService {
         });
       }
       if (constraint instanceof FactConstraint) {
+        const inputGroupArrayJson = [];
+        console.log(constraint);
+        for (const inputGroup of constraint.inputGroupArray) {
+          inputGroupArrayJson.push({
+            factTextOperator: inputGroup.factTextOperatorFormControl.value,
+            factTextName: inputGroup.factTextFactNameFormControl.value,
+            factTextInput: inputGroup.factTextInputFormControl.value
+          });
+        }
+
         outPutJson.push({
           fields: constraint.fields,
           factName: constraint.factNameFormControl.value,
           factNameOperator: constraint.factNameOperatorFormControl.value,
-        });
+          factTextOperator: constraint.factTextOperatorFormControl.value,
+          inputGroup: inputGroupArrayJson
+        })
+        ;
       }
     }
     return outPutJson;

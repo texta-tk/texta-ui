@@ -9,7 +9,7 @@ import {
   Constraint,
   DateConstraint,
   ElasticsearchQuery,
-  FactConstraint,
+  FactConstraint, FactTextInputGroup,
   TextConstraint
 } from './Constraints';
 import {HttpErrorResponse} from '@angular/common/http';
@@ -127,7 +127,6 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
   buildSavedSearch(savedSearch: SavedSearch) { // todo type
     this.constraintList.splice(0, this.constraintList.length);
     const savedConstraints: any[] = JSON.parse(savedSearch.query_constraints as string);
-    console.log(savedConstraints);
     // when we are building the query dont want to emit searches
     this.searcherOptions = [];
     for (const constraint of savedConstraints) {
@@ -138,7 +137,15 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
         } else if (formFields[0].type === 'date') {
           this.constraintList.push(new DateConstraint(formFields, constraint.dateFrom, constraint.dateTo));
         } else {
-          this.constraintList.push(new FactConstraint(formFields, constraint.factNameOperator, constraint.factName));
+          const inputGroupArray: FactTextInputGroup[] = [];
+          if (constraint.hasOwnProperty('inputGroup')) {
+            for (const factTextGroup of constraint.inputGroup) {
+              inputGroupArray.push(
+                new FactTextInputGroup(factTextGroup.factTextOperator, factTextGroup.factTextName, factTextGroup.factTextInput));
+            }
+          }
+          this.constraintList.push(
+            new FactConstraint(formFields, constraint.factNameOperator, constraint.factName, constraint.factTextOperator, inputGroupArray));
         }
       }
     }

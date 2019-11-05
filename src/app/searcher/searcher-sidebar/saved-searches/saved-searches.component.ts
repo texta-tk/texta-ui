@@ -34,7 +34,6 @@ export class SavedSearchesComponent implements OnInit, OnDestroy {
       }
     })).subscribe((response: SavedSearch[] | HttpErrorResponse) => {
       if (response && !(response instanceof HttpErrorResponse)) {
-        console.log(response);
         this.dataSource = new MatTableDataSource(response);
       }
     });

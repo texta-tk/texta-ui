@@ -28,12 +28,12 @@
       </mat-select>
     </mat-form-field>
     <div fxFlex fxLayoutAlign="end">
-      <button mat-icon-button aria-label="Add" class="addFact mat-icon-button" (click)="addInputGroup()">
+      <button mat-icon-button aria-label="Add" class="addFact mat-icon-button" (click)="createGroupListeners()">
         <mat-icon>add</mat-icon>
       </button>
     </div>
   </div>
-  <div fxLayout="row" *ngFor="let inputGroup of inputGroupArray; let i=index;">
+  <div fxLayout="row" *ngFor="let inputGroup of _factConstraint.inputGroupArray; let i=index;">
     <mat-form-field fxFlex="36">
       <mat-label>Fact name</mat-label>
       <mat-select [formControl]="inputGroup.factTextFactNameFormControl">
@@ -49,14 +49,14 @@
         <mat-option value="must_not">not</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field fxFlex="36" >
+    <mat-form-field fxFlex="36">
       <input type="text" placeholder="Value"
              aria-label="Number"
              matInput
              [formControl]="inputGroup.factTextInputFormControl"
              [matAutocomplete]="auto">
-      <mat-autocomplete #auto="matAutocomplete" panelWidth="auto">
-        <mat-option *ngFor="let option of inputGroup.filteredOptions" [value]="option">
+      <mat-autocomplete #auto="matAutocomplete" panelWidth="auto" (optionSelected)="factValueSelected($event, inputGroup)">
+        <mat-option *ngFor="let option of inputGroup.filteredOptions" [value]="option" [disabled]="inputGroup.isLoadingOptions">
           {{option}}
         </mat-option>
       </mat-autocomplete>

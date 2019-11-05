@@ -1,11 +1,12 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {ElasticsearchQuery, FactConstraint, FactTextInputGroup} from '../Constraints';
 import {FormControl} from '@angular/forms';
-import {debounceTime, distinctUntilChanged, startWith, switchMap, takeUntil} from 'rxjs/operators';
+import {debounceTime, pairwise, startWith, switchMap, takeUntil} from 'rxjs/operators';
 import {Project, ProjectFact} from '../../../../shared/types/Project';
 import {of, Subject} from 'rxjs';
 import {ProjectService} from '../../../../core/projects/project.service';
 import {HttpErrorResponse} from '@angular/common/http';
+import {MatAutocompleteSelectedEvent} from '@angular/material';
 
 
 @Component({
@@ -23,7 +24,13 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
       this.factNameOperatorFormControl = this._factConstraint.factNameOperatorFormControl;
       this.factNameFormControl = this._factConstraint.factNameFormControl;
       this.factTextOperatorFormControl = this._factConstraint.factTextOperatorFormControl;
-      this.inputGroupArray = this._factConstraint.inputGroupArray;
+      if (this._factConstraint.inputGroupArray.length === 0) {
+        this.createGroupListeners();
+      } else {
+        for (const inputGroup of this._factConstraint.inputGroupArray) { // saved search, already has array
+          this.createGroupListeners(inputGroup);
+        }
+      }
     }
   }
 
@@ -31,12 +38,10 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
   @Input() projectFacts: ProjectFact[] = [];
   @Input() currentProject: Project;
   @Output() change = new EventEmitter<ElasticsearchQuery>(); // search as you type, emit changes
-  factNameOperatorFormControl: FormControl = new FormControl();
-  factNameFormControl: FormControl = new FormControl();
   destroyed$: Subject<boolean> = new Subject<boolean>();
-  constraintQueries = [];
+  factNameOperatorFormControl = new FormControl();
+  factNameFormControl = new FormControl();
   factTextOperatorFormControl = new FormControl();
-  inputGroupArray = [];
   inputGroupQueryArray = [];
   formQueryBluePrint = {
     nested: {
@@ -52,90 +57,103 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
       }
     }
   };
+  factNameQuery = {
+    bool: {}
+  };
+  inputGroupQuery = {
+    bool: {}
+  };
 
   constructor(private projectService: ProjectService) {
-
-    this.factTextOperatorFormControl.setValue('must');
     FactConstraintsComponent.componentCount += 1;
   }
 
+  // attach valuechanges listeners to formcontrols, and populate with savedsearch data if there is any
+  public createGroupListeners(inputGroup?: FactTextInputGroup) {
+    if (!inputGroup) {
+      inputGroup = new FactTextInputGroup();
+      this._factConstraint.inputGroupArray.push(inputGroup);
+      // cant select when factname is null
+      inputGroup.factTextInputFormControl.disable();
+    } else { // set default values selected already when we have inputgroup
+      this.factValueSelected(inputGroup.factTextInputFormControl.value, inputGroup);
+    }
 
-  public addInputGroup() {
-    const inputGroup = new FactTextInputGroup();
-    this.inputGroupArray.push(inputGroup);
-    const newFormQuery = JSON.parse(JSON.stringify(this.formQueryBluePrint));
-    const groupQuery = {
-      bool: {}
-    };
-    groupQuery.bool = {[this.factTextOperatorFormControl.value]: newFormQuery};
-    this.inputGroupQueryArray.push(groupQuery);
-    inputGroup.formQuery = groupQuery;
-    //this.constraintQueries.push(constraintQuery);
-    inputGroup.factTextInputFormControl.disable();
-    inputGroup.factTextOperatorFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(val => {
-      console.log(val);
-      groupQuery.bool = {[val]: newFormQuery};
+    inputGroup.query.bool = {[this.factTextOperatorFormControl.value]: inputGroup.formQuery};
+    this.inputGroupQueryArray.push(inputGroup.query);
+    inputGroup.factTextOperatorFormControl.valueChanges.pipe(
+      takeUntil(this.destroyed$),
+      startWith(inputGroup.factTextOperatorFormControl.value as string)).subscribe(val => {
+      if (val) {
+        inputGroup.query.bool = {[val]: inputGroup.formQuery};
+      }
     });
-    inputGroup.factTextFactNameFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(val => {
-      console.log(val);
-      if (inputGroup.factTextFactNameFormControl.value) {
+    inputGroup.factTextFactNameFormControl.valueChanges.pipe(
+      takeUntil(this.destroyed$),
+      startWith(inputGroup.factTextFactNameFormControl.value as string),
+      pairwise()).subscribe(([prev, next]: [string, string]) => {
+      if (next) {
         inputGroup.factTextInputFormControl.enable();
-      } else {
-        inputGroup.factTextInputFormControl.disable();
+        // set inital value to autocomplete after selecting a new fact name
+        if (next !== prev) {
+          inputGroup.factTextInputFormControl.setValue('');
+        }
       }
     });
     inputGroup.factTextInputFormControl.valueChanges.pipe(
       takeUntil(this.destroyed$),
       debounceTime(100),
       switchMap(value => {
-        if (value && this.currentProject) {
+        if ((value || value === '' && inputGroup.factTextFactNameFormControl.value) && this.currentProject) {
+          inputGroup.filteredOptions = ['Loading...'];
+          inputGroup.isLoadingOptions = true;
           return this.projectService.projectFactValueAutoComplete(this.currentProject.id,
             inputGroup.factTextFactNameFormControl.value, 10, value);
         }
         return of(null);
       })).subscribe((val: string[] | HttpErrorResponse) => {
-      console.log(val);
       if (val && !(val instanceof HttpErrorResponse)) {
-        const factValue = inputGroup.factTextInputFormControl.value;
+        inputGroup.isLoadingOptions = false;
         inputGroup.filteredOptions = val;
-        if (factValue.length > 0) {
-          // json for deep copy
-
-          newFormQuery.nested.inner_hits.name = `${FactConstraintsComponent.componentCount}_${this.inputGroupArray.length}_${factValue}`;
-          newFormQuery.nested.query.bool.must = [
-            {match: {'texta_facts.fact': inputGroup.factTextFactNameFormControl.value}},
-            {match: {'texta_facts.str_val': factValue}}];
-
-        }
+        // if it returned something then it means its a valid value
       }
     });
   }
 
+  factValueSelected(val: MatAutocompleteSelectedEvent | string, inputGroup) {
+    const factValue = (val instanceof MatAutocompleteSelectedEvent) ? val.option.value : val;
+    if (factValue.length > 0) {
+      inputGroup.formQuery.nested.inner_hits.name = `${FactConstraintsComponent.componentCount}_${this._factConstraint.inputGroupArray.length}_${factValue}`;
+      inputGroup.formQuery.nested.query.bool.must = [
+        {match: {'texta_facts.fact': inputGroup.factTextFactNameFormControl.value}},
+        {match: {'texta_facts.str_val': factValue}}];
+
+      this.change.emit(this.elasticSearchQuery);
+    }
+  }
+
   public deleteInputGroup(inputGroup: FactTextInputGroup) {
-    const queryIndex = this.inputGroupQueryArray.indexOf(inputGroup.formQuery, 0);
+    const queryIndex = this.inputGroupQueryArray.indexOf(inputGroup.query, 0);
     if (queryIndex > -1) {
       this.inputGroupQueryArray.splice(queryIndex, 1);
     }
-    const index = this.inputGroupArray.indexOf(inputGroup, 0);
+    const index = this._factConstraint.inputGroupArray.indexOf(inputGroup, 0);
     if (index > -1) {
-      this.inputGroupArray.splice(index, 1);
+      this._factConstraint.inputGroupArray.splice(index, 1);
     }
+    this.change.emit(this.elasticSearchQuery);
   }
 
 
   ngOnInit() {
     if (this._factConstraint) {
-      const constraintQuery = {
-        bool: {}
-      };
       const formQueries = [];
-      constraintQuery.bool = {[this.factNameOperatorFormControl.value]: formQueries};
-      //this.constraintQueries.push(constraintQuery);
-      this.elasticSearchQuery.query.bool.must.push(constraintQuery);
+      this.factNameQuery.bool = {[this.factNameOperatorFormControl.value]: formQueries};
+      this.elasticSearchQuery.query.bool.must.push(this.factNameQuery);
       this.factNameOperatorFormControl.valueChanges.pipe(
         startWith(this.factNameOperatorFormControl.value as object),
         takeUntil(this.destroyed$)).subscribe((value: string) => {
-        constraintQuery.bool = {[value]: formQueries};
+        this.factNameQuery.bool = {[value]: formQueries};
         this.change.emit(this.elasticSearchQuery);
       });
       this.factNameFormControl.valueChanges.pipe(
@@ -154,33 +172,34 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
               formQueries.push(newFormQuery);
             }
           }
-          console.log(formQueries);
           this.change.emit(this.elasticSearchQuery);
         }
       });
-      const inputGroupQuery = {bool: {[this.factTextOperatorFormControl.value]: this.inputGroupQueryArray}};
-      this.elasticSearchQuery.query.bool.must.push(inputGroupQuery);
+      this.inputGroupQuery.bool = {[this.factTextOperatorFormControl.value]: this.inputGroupQueryArray};
+      this.elasticSearchQuery.query.bool.must.push(this.inputGroupQuery);
       this.factTextOperatorFormControl.valueChanges.pipe(
         startWith(this.factTextOperatorFormControl.value as object),
         takeUntil(this.destroyed$)).subscribe((value: string) => {
-        console.log(value);
-        inputGroupQuery.bool = {[value]: this.inputGroupQueryArray};
-        // this.constraintQuery.bool = {[value]: formQueries};
-        // this.change.emit(this.elasticSearchQuery);
+        this.inputGroupQuery.bool = {[value]: this.inputGroupQueryArray};
+        this.change.emit(this.elasticSearchQuery);
       });
 
-
-      this.addInputGroup();
     }
 
   }
 
   ngOnDestroy() {
     console.log('destroy fact-constraint');
-    /* const index = this.elasticSearchQuery.query.bool.must.indexOf(constraintQueries, 0);
-     if (index > -1) {
-       this.elasticSearchQuery.query.bool.must.splice(index, 1);
-     }*/
+    const index = this.elasticSearchQuery.query.bool.must.indexOf(this.factNameQuery, 0);
+    if (index > -1) {
+      this.elasticSearchQuery.query.bool.must.splice(index, 1);
+    }
+
+    const inputQueryIndex = this.elasticSearchQuery.query.bool.must.indexOf(this.inputGroupQuery, 0);
+    if (inputQueryIndex > -1) {
+      this.elasticSearchQuery.query.bool.must.splice(inputQueryIndex, 1);
+    }
+
     this.change.emit(this.elasticSearchQuery);
     this.destroyed$.next(true);
     this.destroyed$.complete();

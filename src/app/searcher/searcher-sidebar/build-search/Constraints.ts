@@ -45,11 +45,12 @@ export class FactConstraint extends Constraint {
   factTextOperatorFormControl = new FormControl();
   inputGroupArray: FactTextInputGroup[] = [];
 
-  constructor(fields: Field[], factNameOperator?, factName?, factTextOperator?) {
+  constructor(fields: Field[], factNameOperator?, factName?, factTextOperator?, inputGroupArray?: FactTextInputGroup[]) {
     super(fields);
     this.factTextOperatorFormControl.setValue(factTextOperator ? factTextOperator : 'must');
     this.factNameOperatorFormControl.setValue(factNameOperator ? factNameOperator : 'must');
     this.factNameFormControl.setValue(factName ? factName : '');
+    this.inputGroupArray = inputGroupArray ? inputGroupArray : [];
   }
 }
 
@@ -58,10 +59,29 @@ export class FactTextInputGroup {
   factTextFactNameFormControl = new FormControl();
   factTextInputFormControl = new FormControl();
   filteredOptions: string[] = [];
-  formQuery: any;
+  isLoadingOptions = false;
+  query = {
+    bool: {}
+  };
+  formQuery = {
+    nested: {
+      query: {
+        bool: {
+          must: []
+        }
+      },
+      path: 'texta_facts', // constant
+      inner_hits: {
+        size: 100,
+        name: '??' // todo, redundant property?
+      }
+    }
+  };
 
-  constructor() {
-    this.factTextOperatorFormControl.setValue('must');
+  constructor(factTextOperator?, factTextFactName?, factTextInput?) {
+    this.factTextOperatorFormControl.setValue(factTextOperator ? factTextOperator : 'must');
+    this.factTextFactNameFormControl.setValue(factTextFactName ? factTextFactName : '');
+    this.factTextInputFormControl.setValue(factTextInput ? factTextInput : '');
   }
 
 }
