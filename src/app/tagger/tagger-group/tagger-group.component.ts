@@ -14,8 +14,8 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { ModelsListDialogComponent } from './models-list-dialog/models-list-dialog.component';
 import { TaggerGroupTagTextDialogComponent } from './tagger-group-tag-text-dialog/tagger-group-tag-text-dialog.component';
 import { TaggerGroupTagDocDialogComponent } from './tagger-group-tag-doc-dialog/tagger-group-tag-doc-dialog.component';
-import { TagRandomDocDialogComponent } from '../tagger/tag-random-doc-dialog/tag-random-doc-dialog.component';
 import { ConfirmDialogComponent } from 'src/app/shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import { TaggerGroupTagRandomDocDialogComponent } from './tagger-group-tag-random-doc-dialog/tagger-group-tag-random-doc-dialog.component';
 
 @Component({
   selector: 'app-tagger-group',
@@ -147,10 +147,10 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   tagRandomDocDialog(tagger: TaggerGroup) {
-    const dialogRef = this.dialog.open(TagRandomDocDialogComponent, {
+    const dialogRef = this.dialog.open(TaggerGroupTagRandomDocDialogComponent, {
       data: { tagger, currentProjectId: this.currentProject.id },
       minHeight: '300px',
-      maxHeight: '665px',
+      maxHeight: '710x',
       width: '1200px',
     });
   }

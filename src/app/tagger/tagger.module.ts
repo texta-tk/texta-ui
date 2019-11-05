@@ -43,7 +43,7 @@ import { TaggerGroupTagRandomDocDialogComponent } from './tagger-group/tagger-gr
     ModelsListDialogComponent,
     TaggerGroupTagTextDialogComponent,
     TaggerGroupTagDocDialogComponent,
-    TagRandomDocDialogComponent,
+    TaggerGroupTagRandomDocDialogComponent,
   ]
 })
 export class TaggerModule {

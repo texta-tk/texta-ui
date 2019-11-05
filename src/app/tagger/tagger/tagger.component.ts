@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit, ViewChild, AfterViewInit} from '@angular/core';
-import {of, Subscription, timer} from 'rxjs';
+import {Subscription, timer} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import {LogService} from '../../core/util/log.service';
@@ -13,10 +13,10 @@ import {Project} from '../../shared/types/Project';
 import {EditStopwordsDialogComponent} from './edit-stopwords-dialog/edit-stopwords-dialog.component';
 import {TagTextDialogComponent} from './tag-text-dialog/tag-text-dialog.component';
 import {TagDocDialogComponent} from './tag-doc-dialog/tag-doc-dialog.component';
-import { TagRandomDocDialogComponent } from './tag-random-doc-dialog/tag-random-doc-dialog.component';
-import { SelectionModel } from '@angular/cdk/collections';
-import { QueryDialogComponent } from 'src/app/shared/components/dialogs/query-dialog/query-dialog.component';
-import { ConfirmDialogComponent } from 'src/app/shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {TagRandomDocDialogComponent} from './tag-random-doc-dialog/tag-random-doc-dialog.component';
+import {SelectionModel} from '@angular/cdk/collections';
+import {QueryDialogComponent} from 'src/app/shared/components/dialogs/query-dialog/query-dialog.component';
+import {ConfirmDialogComponent} from 'src/app/shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-tagger',
@@ -59,7 +59,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
 
-    // check for updates after 30s every 30s
+    // Check for updates after 30s every 30s
     this.updateTaggersSubscription = timer(30000, 30000).pipe(switchMap(_ =>
         this.taggerService.getTaggers(this.currentProject.id,
         `page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`)))

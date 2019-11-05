@@ -5,6 +5,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { UserStore } from '../core/users/user.store';
 import { UserProfile } from '../shared/types/UserProfile';
 import { Subscription } from 'rxjs';
+import { MatDialog } from '@angular/material';
+import { LoginDialogComponent } from '../shared/components/dialogs/login/login-dialog.component';
 
 @Component({
   selector: 'app-home',
@@ -17,26 +19,28 @@ export class HomeComponent implements OnInit, OnDestroy {
   userSub: Subscription;
   user: UserProfile;
 
-  constructor(private projectService: ProjectService, private userStore: UserStore) {
+  constructor(private projectService: ProjectService, private userStore: UserStore, private dialog: MatDialog) {
   }
 
   ngOnInit() {
-    this.userSub = this.userStore.getCurrentUser().subscribe((user: UserProfile | HttpErrorResponse) => {
-      if (user && !(user instanceof HttpErrorResponse)) {
-        this.user = user;
-        this.projectService.getHealth().subscribe((resp: Health | HttpErrorResponse) => {
-          if (resp && !(resp instanceof HttpErrorResponse)) {
-            this.health = resp;
-            this.unreachable = false;
-          } else {
-            this.unreachable = true;
-          }
-        });
-      }
+    this.userSub = this.userStore.getCurrentUser().subscribe((user: UserProfile) => {
+      this.user = user;
+      this.projectService.getHealth().subscribe((resp: Health | HttpErrorResponse) => {
+        if (resp && !(resp instanceof HttpErrorResponse)) {
+          this.health = resp;
+          this.unreachable = false;
+        } else {
+          this.unreachable = true;
+        }
+      });
     });
   }
 
   ngOnDestroy(): void {
     this.userSub.unsubscribe();
+  }
+
+  round(value: number) {
+    return Math.round(value);
   }
 }
