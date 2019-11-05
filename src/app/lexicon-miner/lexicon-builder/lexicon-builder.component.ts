@@ -72,10 +72,7 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
     this.destroy$.unsubscribe();
   }
 
-  getNewSuggestions(value: MatListOption[]) {
-
-    this.updateLexicon(value);
-
+  getNewSuggestions() {
     this.projectStore.getCurrentProject().pipe(take(1), switchMap((currentProject: Project) => {
       if (currentProject) {
         return this.embeddingService.predict({
@@ -117,15 +114,12 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
     });
   }
 
-  updateLexicon(value: MatListOption[]) {
-    console.log(value);
-    value.map((item: MatListOption) => {
-      // remove selected item from predictions list
-      this.predictions = this.predictions.filter((x: any) => {
-        return x.phrase !== item.value.phrase;
-      });
-      return this.positives += this.positives.endsWith('\n') ? item.value.phrase + '\n' : '\n' + item.value.phrase;
+  updateLexicon(value: {phrase: string, score: number, model: string}) {
+    // remove selected item from predictions list
+    this.predictions = this.predictions.filter((x: any) => {
+      return x.phrase !== value.phrase;
     });
+    this.positives += this.positives.endsWith('\n') ? value.phrase + '\n' : '\n' + value.phrase;
     // predictions filtered out to only contain negatives
     this.negatives = [...this.negatives, ...this.predictions];
     // update lexicon object so when changing lexicons it saves state

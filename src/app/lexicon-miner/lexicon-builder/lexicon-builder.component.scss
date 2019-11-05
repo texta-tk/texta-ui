@@ -52,3 +52,16 @@
     }
   }
 }
+
+.predictions-wrapper {
+  overflow: auto;
+}
+
+.prediction {
+  width: 100%;
+  padding: 16px 16px;
+}
+
+.prediction:hover {
+  background-color: #f0f0f0;
+}

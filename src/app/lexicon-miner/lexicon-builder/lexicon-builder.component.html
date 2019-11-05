@@ -26,8 +26,9 @@
       </div>
 
       <div fxLayout="row" fxLayoutGap="5px">
-        <button mat-stroked-button color="accent" fxFlex *ngIf="selectedEmbedding"
-                (click)="getNewSuggestions(predictedWords.selectedOptions.selected)">
+        <button mat-stroked-button color="accent" fxFlex [disabled]="!selectedEmbedding"
+        matTooltip="Select an embedding and get new word suggestions"
+                (click)="getNewSuggestions()">
           New Suggestions
         </button>
         <button mat-stroked-button color="primary" (click)="saveLexicon()" fxFlex>Save</button>
@@ -37,17 +38,16 @@
 
   <div class="predictions mat-elevation-z2">
     <h3>Suggestions
-
-
-      <button mat-button color="primary"
-              (click)="updateLexicon(predictedWords.selectedOptions.selected)"
-              *ngIf="predictedWords.selectedOptions.selected.length > 0">Add selected
-      </button>
     </h3>
-    <mat-selection-list #predictedWords>
+    <div class="predictions-wrapper">
+      <div *ngFor="let prediction of predictions" class="prediction pointer" (click)="updateLexicon(prediction)">
+        <span>{{prediction.phrase}}</span>
+      </div>
+    </div>
+    <!-- <mat-selection-list #predictedWords>
       <mat-list-option *ngFor="let prediction of predictions" [value]="prediction">
         {{prediction.phrase}}
       </mat-list-option>
-    </mat-selection-list>
+    </mat-selection-list> -->
   </div>
 </div>
