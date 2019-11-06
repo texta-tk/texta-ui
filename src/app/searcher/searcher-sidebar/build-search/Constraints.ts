@@ -1,6 +1,5 @@
 import {Field} from '../../../shared/types/Project';
 import {FormControl} from '@angular/forms';
-import {Observable} from "rxjs";
 
 export class Constraint {
   fields: Field[];
@@ -96,7 +95,6 @@ export class ElasticsearchQuery {
       must_not: any[],
       should: any[],
       minimum_should_match: number,
-      boost: 1.0
     }
   };
 
@@ -110,6 +108,9 @@ export class ElasticsearchQuery {
     fields: {}
   };
 
+  size = 10;
+  from = 0;
+
   constructor() {
     this.query = {
       bool: {
@@ -118,7 +119,6 @@ export class ElasticsearchQuery {
         must_not: [],
         should: [],
         minimum_should_match: 0,
-        boost: 1.0
       }
     };
     this.highlight = {

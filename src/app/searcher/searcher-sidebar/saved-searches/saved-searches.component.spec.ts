@@ -5,6 +5,9 @@ import {SharedModule} from '../../../shared/shared.module';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {SearchService} from '../../services/search.service';
+import {BuildSearchComponent} from '../build-search/build-search.component';
+import {SearchServiceSpy} from '../../services/search.service.spec';
 
 describe('SavedSearchesComponent', () => {
   let component: SavedSearchesComponent;
@@ -16,6 +19,12 @@ describe('SavedSearchesComponent', () => {
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule
       ],
       declarations: [SavedSearchesComponent]
+    }).overrideComponent(SavedSearchesComponent, {
+      set: {
+        providers: [
+          {provide: SearchService, useClass: SearchServiceSpy}
+        ]
+      }
     })
       .compileComponents();
   }));

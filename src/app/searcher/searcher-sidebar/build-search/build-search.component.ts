@@ -1,17 +1,11 @@
 import {Component, EventEmitter, OnDestroy, OnInit, Output,} from '@angular/core';
 import {Field, Project, ProjectFact, ProjectField} from '../../../shared/types/Project';
 import {FormControl} from '@angular/forms';
-import {BehaviorSubject, forkJoin, merge, of, Subject} from 'rxjs';
-import {debounceTime, switchMap, takeUntil, throttle, throttleTime} from 'rxjs/operators';
+import {forkJoin, of, Subject} from 'rxjs';
+import {debounceTime, switchMap, takeUntil} from 'rxjs/operators';
 import {ProjectService} from '../../../core/projects/project.service';
 import {ProjectStore} from '../../../core/projects/project.store';
-import {
-  Constraint,
-  DateConstraint,
-  ElasticsearchQuery,
-  FactConstraint, FactTextInputGroup,
-  TextConstraint
-} from './Constraints';
+import {Constraint, DateConstraint, ElasticsearchQuery, FactConstraint, FactTextInputGroup, TextConstraint} from './Constraints';
 import {HttpErrorResponse} from '@angular/common/http';
 import {SearcherService} from '../../../core/searcher/searcher.service';
 import {MatSelectChange} from '@angular/material';
@@ -35,7 +29,6 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
   constraintList: (Constraint)[] = [];
   projectFacts: ProjectFact[] = [];
   destroy$: Subject<boolean> = new Subject();
-  searchQueryQueue$ = new Subject<void>();
   // building the whole search query onto this
   elasticQuery: ElasticsearchQuery = new ElasticsearchQuery();
   searcherOptions: Array<'live_search'> = ['live_search'];
@@ -45,7 +38,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
               private projectStore: ProjectStore,
               private searcherService: SearcherService,
               private userStore: UserStore,
-              private searchService: SearchService) {
+              public searchService: SearchService) {
   }
 
   ngOnInit() {
@@ -62,6 +55,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     })).subscribe((resp: { facts: ProjectFact[] | HttpErrorResponse, fields: ProjectField[] | HttpErrorResponse }) => {
       if (resp) {
         this.elasticQuery = new ElasticsearchQuery();
+        this.searchService.nextElasticQuery(this.elasticQuery);
         if (!(resp.facts instanceof HttpErrorResponse)) {
           this.projectFacts = resp.facts;
         }
@@ -77,10 +71,12 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.searchQueryQueue$.pipe(debounceTime(400), takeUntil(this.destroy$), switchMap(x => {
+    this.searchService.getSearchQueue().pipe(debounceTime(400), takeUntil(this.destroy$), switchMap(x => {
+      this.searchService.setIsLoading(true);
       return this.searcherService.search({query: this.elasticQuery}, this.currentProject.id);
     })).subscribe(
-      (result: { highlight: any, doc: any }[] | HttpErrorResponse) => {
+      (result: { count: number, results: { highlight: any, doc: any }[] } | HttpErrorResponse) => {
+        this.searchService.setIsLoading(false);
         if (result && !(result instanceof HttpErrorResponse)) {
           this.searchService.nextSearch(new Search(result, false));
         }
@@ -153,7 +149,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     // we can turn on live search again, after building query
     this.searcherOptions.push('live_search');
     // constraints built, lets search
-    this.searchQueryQueue$.next();
+    this.searchService.queryNextSearch();
     this.checkMinimumMatch();
   }
 
@@ -183,7 +179,9 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
   searchOnChange(event) {
     // dont want left focus events
     if (event === this.elasticQuery && this.searcherOptions.includes('live_search')) {
-      this.searchQueryQueue$.next();
+      // reset page when we change query
+      this.elasticQuery.from = 0;
+      this.searchService.queryNextSearch();
     }
   }
 
@@ -191,7 +189,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     if (this.currentUser) {
       this.searcherService.saveSearch(this.currentProject.id, [...this.constraintList], this.elasticQuery, description).subscribe(resp => {
         if (resp) {
-          console.log(resp);
+          this.searchService.nextSavedSearchUpdate();
         }
       });
     }

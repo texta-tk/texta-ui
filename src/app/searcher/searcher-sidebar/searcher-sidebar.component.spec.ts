@@ -26,7 +26,7 @@ describe('SearcherSidebarComponent', () => {
       ],
       declarations: [SearcherSidebarComponent, BuildSearchComponent, SavedSearchesComponent, TextConstraintsComponent,
         DateConstraintsComponent, FactConstraintsComponent, ]
-    }).overrideComponent(BuildSearchComponent, {
+    }).overrideComponent(SearcherSidebarComponent, {
       set: {
         providers: [
           {provide: SearchService, useClass: SearchServiceSpy}

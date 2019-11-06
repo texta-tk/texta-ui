@@ -4,6 +4,13 @@ import {BuildSearchComponent} from './build-search/build-search.component';
 import {takeUntil} from 'rxjs/operators';
 import {SaveSearchDialogComponent} from './dialogs/save-search-dialog/save-search-dialog.component';
 import {MatDialog} from '@angular/material';
+import {SavedSearchesComponent} from './saved-searches/saved-searches.component';
+import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {Embedding} from '../../shared/types/tasks/Embedding';
+import {SearcherService} from '../../core/searcher/searcher.service';
+import {Project} from '../../shared/types/Project';
+import {ProjectStore} from '../../core/projects/project.store';
+import {LogService} from '../../core/util/log.service';
 
 @Component({
   selector: 'app-searcher-sidebar',
@@ -14,16 +21,26 @@ export class SearcherSidebarComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject();
   @ViewChild(BuildSearchComponent, {static: false})
   private buildSearchComponent: BuildSearchComponent;
+  @ViewChild(SavedSearchesComponent, {static: false})
+  private savedSearchesComponent: SavedSearchesComponent;
   @ViewChild('buildSearchPanel', {static: false}) buildSearchPanel: any;
   @ViewChild('savedSearchesPanel', {static: false}) savedSearchesPanel: any;
   buildSearchExpanded = true;
   savedSearchesExpanded = true;
+  currentProject: Project;
 
-  constructor(public dialog: MatDialog) {
+  constructor(public dialog: MatDialog,
+              private searcherService: SearcherService,
+              private projectStore: ProjectStore,
+              private logService: LogService) {
   }
 
   ngOnInit() {
-
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$)).subscribe(proj => {
+      if (proj) {
+        this.currentProject = proj;
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -49,6 +66,29 @@ export class SearcherSidebarComponent implements OnInit, OnDestroy {
         console.log(this.buildSearchComponent.saveSearch(resp));
       }
     });
+  }
+
+  onDeleteAllSelected() {
+
+    const selectedRows = this.savedSearchesComponent.selection;
+    if (selectedRows.selected.length > 0) {
+      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+        data: {confirmText: 'Delete', mainText: `Are you sure you want to delete ${selectedRows.selected.length} Searches?`}
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          // Delete selected taggers
+          const idsToDelete = selectedRows.selected.map((tagger: Embedding) => tagger.id);
+          const body = {ids: idsToDelete};
+          // Refresh taggers
+          this.searcherService.bulkDeleteSavedSearches(this.currentProject.id, body).subscribe(() => {
+            this.logService.snackBarMessage(`${selectedRows.selected.length} Searches deleted`, 2000);
+            this.savedSearchesComponent.removeSelectedRows();
+          });
+        }
+      });
+    }
   }
 
   notifyBuildSearch(savedSearch: any) { // todo object

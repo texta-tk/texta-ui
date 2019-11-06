@@ -1,4 +1,4 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material';
 import {UserStore} from '../core/users/user.store';
 import {LoginDialogComponent} from '../shared/components/dialogs/login/login-dialog.component';
@@ -9,9 +9,11 @@ import {ProjectService} from '../core/projects/project.service';
 import {Project, ProjectResourceCounts} from '../shared/types/Project';
 import {FormControl} from '@angular/forms';
 import {ProjectStore} from '../core/projects/project.store';
-import {of, Subscription} from 'rxjs';
+import {of, Subject} from 'rxjs';
 import {RegistrationDialogComponent} from '../shared/components/dialogs/registration/registration-dialog.component';
-import { LogService } from '../core/util/log.service';
+import {LogService} from '../core/util/log.service';
+import {switchMap, takeUntil} from 'rxjs/operators';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-navbar',
@@ -22,10 +24,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
   user: UserProfile;
   projects: Project[];
   projectControl = new FormControl();
-
-  currentProjSub: Subscription;
   currentProject: Project;
   projectResourceCounts: ProjectResourceCounts;
+  destroyed$: Subject<boolean> = new Subject<boolean>();
 
   constructor(public dialog: MatDialog,
               private userStore: UserStore,
@@ -38,25 +39,27 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.userStore.getCurrentUser().subscribe(resp => {
+    this.userStore.getCurrentUser().pipe(takeUntil(this.destroyed$)).subscribe(resp => {
       if (resp) {
         this.user = resp;
-
-        this.projectStore.getCurrentProject().subscribe((proj: Project) => {
-          if (proj) {
-            this.currentProject = proj;
-            this.projectService.getResourceCounts(proj.id).subscribe((resp: ProjectResourceCounts) => {
-              this.projectResourceCounts = resp;
-            });
-          } else {
-            this.projectResourceCounts = null;
-          }
-        });
+      } else {
+        this.projectResourceCounts = null;
       }
-      this.projectResourceCounts = null;
-      return of(null);
     });
-    this.projectStore.getProjects().subscribe(projects => {
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), switchMap(proj => {
+      if (proj) {
+        return this.projectService.getResourceCounts(proj.id);
+      }
+      return of(null);
+    })).subscribe((response: ProjectResourceCounts | HttpErrorResponse) => {
+      if (response && !(response instanceof HttpErrorResponse)) {
+        this.projectResourceCounts = response;
+      } else {
+        this.projectResourceCounts = null;
+      }
+    });
+
+    this.projectStore.getProjects().pipe(takeUntil(this.destroyed$)).subscribe(projects => {
       if (projects) {
         this.projects = projects;
         // dont select first when already have something selected
@@ -71,6 +74,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
         }
       }
     });
+
   }
 
   public selectProject(selectedOption: Project) {
@@ -104,7 +108,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
       });
   }
 
+
   ngOnDestroy() {
-    this.currentProjSub.unsubscribe();
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
   }
 }

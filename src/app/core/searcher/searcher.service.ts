@@ -52,6 +52,13 @@ export class SearcherService {
       catchError(this.logService.handleError<unknown>('search')));
   }
 
+  bulkDeleteSavedSearches(projectId: number, body) {
+    return this.http.post<{'num_deleted': number, 'deleted_types': {string: number}[] }>
+    (`${this.apiUrl}/projects/${projectId}/searches/bulk_delete/`, body).pipe(
+      tap(e => this.logService.logStatus(e, 'bulkDeleteSavedSearches')),
+      catchError(this.logService.handleError<unknown>('bulkDeleteSavedSearches')));
+  }
+
   private convertConstraintListToJson(constraintList: Constraint[]): any[] {
     const outPutJson = [];
     for (const constraint of constraintList) {

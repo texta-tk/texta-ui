@@ -6,6 +6,8 @@ import {FormControl} from '@angular/forms';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {ProjectStore} from '../../core/projects/project.store';
+import {ElasticsearchQuery} from '../searcher-sidebar/build-search/Constraints';
+import {PageEvent} from '@angular/material/typings/paginator';
 
 @Component({
   selector: 'app-searcher-table',
@@ -21,13 +23,14 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   destroy$: Subject<boolean> = new Subject();
   @Output() drawerToggle = new EventEmitter<boolean>();
+  public resultsLength: number;
+  private currentElasticQuery: ElasticsearchQuery;
+  isLoadingResults = false;
 
-  constructor(private searchService: SearchService, private projectStore: ProjectStore) {
+  constructor(public searchService: SearchService, private projectStore: ProjectStore) {
   }
 
   ngOnInit() {
-    this.tableData.sort = this.sort;
-    this.tableData.paginator = this.paginator;
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$)).subscribe(proj => {
       this.displayedColumns = [];
       this.columnsToDisplay = [];
@@ -36,7 +39,8 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
 
     this.searchService.getSearch().pipe(takeUntil(this.destroy$)).subscribe((resp: Search) => {
       if (resp) {
-        this.displayedColumns = this.makeColumns(resp.searchContent);
+        this.resultsLength = resp.searchContent.count >= 10000 ? 10000 : resp.searchContent.count;
+        this.displayedColumns = this.makeColumns(resp.searchContent.results);
         this.displayedColumns.sort((a, b) => 0 - (a < b ? 1 : -1));
         // first search || no search results
         if (this.columnsToDisplay.length === 0 || this.displayedColumns.length === 0) {
@@ -46,14 +50,27 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
           // sometimes response adds columns based on user input, so need to updated columns selection
           this.validateColumnSelect();
         }
-        this.tableData.data = resp.searchContent;
-
+        this.tableData.data = resp.searchContent.results;
+        if (this.currentElasticQuery) {
+          console.log(this.currentElasticQuery.from);
+          this.paginator.pageIndex = this.currentElasticQuery.from / this.currentElasticQuery.size;
+        }
       }
     });
 
-    this.columnFormControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(value => {
-      this.columnsToDisplay = value;
+    this.searchService.getElasticQuery().pipe(takeUntil(this.destroy$)).subscribe(resp => {
+      if (resp) {
+        this.currentElasticQuery = resp;
+      }
     });
+  }
+
+  pageChange(event: PageEvent) {
+    if (this.currentElasticQuery) {
+      this.currentElasticQuery.size = event.pageSize;
+      this.currentElasticQuery.from = event.pageIndex * event.pageSize;
+      this.searchService.queryNextSearch();
+    }
   }
 
   // temp functions for testing todo, right now its only looking at first element for columns
@@ -89,6 +106,13 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
           this.columnFormControl.setValue(this.columnsToDisplay);
         }
       }
+    }
+  }
+
+  public onOpenedChange(opened) {
+    // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
+    if (!opened && (this.columnFormControl.value)) {
+      this.columnsToDisplay = this.columnFormControl.value;
     }
   }
 

@@ -1,4 +1,8 @@
-<div class="wrapper" *ngIf="displayedColumns">
+<div class="wrapper" [hidden]="displayedColumns.length === 0">
+  <div class="loading-shade"
+       *ngIf="searchService.getIsLoading()">
+    <mat-spinner *ngIf="searchService.getIsLoading()"></mat-spinner>
+  </div>
 
   <div class="table-container">
 
@@ -7,9 +11,11 @@
       <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>{{column}}</th>
         <td mat-cell *matCellDef="let row" class="table-row">
-          <span *ngIf="checkIfObject(row.doc[column])"><pre>{{row.doc[column] | json}}</pre></span>
-          <span *ngIf="!checkIfObject(row.doc[column])"><app-highlight [JsonResponse]="row.doc" [currentColumn]="column"
-                                                                   [searcherHighlight]="row.highlight"></app-highlight></span>
+          <pre *ngIf="checkIfObject(row.doc[column])">{{row.doc[column] | json}}</pre>
+          <app-highlight *ngIf="!checkIfObject(row.doc[column])" [JsonResponse]="row.doc" [currentColumn]="column"
+                         [searcherHighlight]="row.highlight">
+
+          </app-highlight>
         </td>
       </ng-container>
 
@@ -24,7 +30,7 @@
   <div class="table-paginator-row">
     <mat-form-field class="margin-right">
       <mat-label>Toggle Columns</mat-label>
-      <mat-select [formControl]="columnFormControl" multiple>
+      <mat-select [formControl]="columnFormControl" multiple (openedChange)="onOpenedChange($event)">
         <app-mat-option-select-all></app-mat-option-select-all>
         <mat-option *ngFor="let column of displayedColumns" [value]="column">
           {{column}}
@@ -33,7 +39,8 @@
     </mat-form-field>
     <button mat-stroked-button (click)="drawerToggle.emit(true)">Toggle drawer</button>
   </div>
-  <mat-paginator [pageSizeOptions]="[15, 50, 100]" showFirstLastButtons>
+  <mat-paginator (page)="pageChange($event)" [pageSizeOptions]="[10, 20, 50]" [length]="resultsLength"
+                 showFirstLastButtons>
 
   </mat-paginator>
 

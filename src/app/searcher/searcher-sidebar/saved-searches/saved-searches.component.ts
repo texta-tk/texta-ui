@@ -8,6 +8,7 @@ import {ProjectStore} from '../../../core/projects/project.store';
 import {Project} from '../../../shared/types/Project';
 import {SavedSearch} from '../../../shared/types/SavedSearch';
 import {HttpErrorResponse} from '@angular/common/http';
+import {SearchService} from '../../services/search.service';
 
 @Component({
   selector: 'app-saved-searches',
@@ -18,16 +19,17 @@ export class SavedSearchesComponent implements OnInit, OnDestroy {
   @Output() savedSearchClick = new EventEmitter<number>(); // search object future todo
   displayedColumns: string[] = ['select', 'name', 'url'];
   selection = new SelectionModel<any>(true, []);
-
   dataSource: MatTableDataSource<SavedSearch>;
   destroyed$: Subject<boolean> = new Subject<boolean>();
+  currentProject: Project;
 
-  constructor(private searcherService: SearcherService, private projectStore: ProjectStore) {
+  constructor(private searcherService: SearcherService, private projectStore: ProjectStore, private searchService: SearchService) {
   }
 
   ngOnInit() {
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), switchMap((currentProject: Project) => {
       if (currentProject) {
+        this.currentProject = currentProject;
         return this.searcherService.getSavedSearches(currentProject.id);
       } else {
         return of(null);
@@ -38,6 +40,16 @@ export class SavedSearchesComponent implements OnInit, OnDestroy {
       }
     });
 
+    this.searchService.getSavedSearchUpdate().pipe(takeUntil(this.destroyed$), switchMap(val => {
+      if (this.currentProject.id && val) {
+        return this.searcherService.getSavedSearches(this.currentProject.id);
+      }
+      return of(null);
+    })).subscribe((response: SavedSearch[] | HttpErrorResponse) => {
+      if (response && !(response instanceof HttpErrorResponse)) {
+        this.dataSource = new MatTableDataSource(response);
+      }
+    });
   }
 
   displaySavedSearch(element) {
@@ -64,4 +76,12 @@ export class SavedSearchesComponent implements OnInit, OnDestroy {
       this.dataSource.data.forEach(row => this.selection.select(row));
   }
 
+  removeSelectedRows() {
+    this.selection.selected.forEach((selectedSearch: SavedSearch) => {
+      const index: number = this.dataSource.data.findIndex((search: SavedSearch) => search.id === selectedSearch.id);
+      this.dataSource.data.splice(index, 1);
+      this.dataSource.data = [...this.dataSource.data];
+    });
+    this.selection.clear();
+  }
 }

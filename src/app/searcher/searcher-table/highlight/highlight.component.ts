@@ -121,9 +121,15 @@ export class HighlightComponent implements OnInit {
     const highlightArray: HighlightObject[] = [];
     const overLappingFacts = this.detectOverlappingFacts(facts);
     let factText = '';
-
+    let lowestSpanNumber = facts[0].spans[0];
     for (let i = 0; i <= originalText.length; i++) {
-      const fact = this.indexInStartOfFactSpan(i, facts); // sort order only
+      let fact = null;
+      // performance update, dont loop over every fact on each character, get next span position instead when needed
+      if (i === lowestSpanNumber || i > lowestSpanNumber) {
+        fact = this.getFactByStartSpan(i, facts);
+        lowestSpanNumber = this.getFactWithStartSpanHigherThan(i, facts);
+      }
+
       if (fact && fact.spans[0] !== fact.spans[1]) {
         if (this.isOverLappingFact(overLappingFacts, fact)) {
           // push old non fact text into array
@@ -377,13 +383,22 @@ export class HighlightComponent implements OnInit {
     return nestedArray;
   }
 
-  private indexInStartOfFactSpan(loopIndex: number, facts: TextaFact[]): TextaFact {
+  private getFactByStartSpan(loopIndex: number, facts: TextaFact[]): TextaFact {
     for (const fact of facts) {
-      if ((<number[]>fact.spans)[0] === loopIndex) {
+      if ((fact.spans as number[])[0] === loopIndex) {
         return fact;
       }
     }
     return undefined;
+  }
+
+  private getFactWithStartSpanHigherThan(position: number, facts: TextaFact[]): number {
+    for (const fact of facts) {
+      if ((fact.spans as number[])[0] > position) {
+        return fact.spans[0] as number;
+      }
+    }
+    return 0;
   }
 
   private sortByStartLowestSpan(a, b) {
@@ -394,13 +409,6 @@ export class HighlightComponent implements OnInit {
     }
   }
 
-  private sortByStart(a, b) {
-    if (a.spans[0] === b.spans[0]) {
-      return 0;
-    } else {
-      return (a.spans[0] < b.spans[0]) ? -1 : 1;
-    }
-  }
 
   generateRandomColors(number) {
     const output: string[] = [];

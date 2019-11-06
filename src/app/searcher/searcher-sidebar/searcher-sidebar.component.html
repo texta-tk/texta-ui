@@ -14,30 +14,38 @@
     </mat-expansion-panel-header>
 
     <app-build-search></app-build-search>
- <!--   <mat-tab-group mat-stretch-tabs dynamicHeight>
-      <mat-tab>
-        <ng-template class="test" mat-tab-label>
-          Build
-          Search
-        </ng-template>
-        <div>
-          <app-build-search></app-build-search>
-        </div>
-      </mat-tab>
-      <mat-tab>
-        <ng-template class="test" mat-tab-label>
-          Cluster
-          Search
-        </ng-template>
-        Content 1
-      </mat-tab>
-    </mat-tab-group>-->
+    <!--   <mat-tab-group mat-stretch-tabs dynamicHeight>
+         <mat-tab>
+           <ng-template class="test" mat-tab-label>
+             Build
+             Search
+           </ng-template>
+           <div>
+             <app-build-search></app-build-search>
+           </div>
+         </mat-tab>
+         <mat-tab>
+           <ng-template class="test" mat-tab-label>
+             Cluster
+             Search
+           </ng-template>
+           Content 1
+         </mat-tab>
+       </mat-tab-group>-->
   </mat-expansion-panel>
   <mat-expansion-panel [expanded]="savedSearchesExpanded" #savedSearchesPanel>
     <mat-expansion-panel-header (click)="expandSavedSearchesPanel()">
       <mat-panel-title>
         <span> Saved Searches </span>
       </mat-panel-title>
+      <mat-panel-description fxLayoutAlign="end start">
+        <button mat-icon-button class="flex-item-right panel-button" aria-label="delete search"
+
+                (click)="onDeleteAllSelected();$event.preventDefault();$event.stopPropagation()"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-panel-description>
     </mat-expansion-panel-header>
     <div>
       <app-saved-searches (savedSearchClick)="notifyBuildSearch($event)"></app-saved-searches>
