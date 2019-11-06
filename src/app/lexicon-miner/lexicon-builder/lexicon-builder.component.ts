@@ -9,7 +9,8 @@ import {EmbeddingsService} from '../../core/embeddings/embeddings.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Embedding, EmbeddingPrediction} from '../../shared/types/tasks/Embedding';
 import {LogService} from '../../core/util/log.service';
-import {MatListOption} from '@angular/material';
+import { LocalStorageService } from 'src/app/core/util/local-storage.service';
+import { NgForOf } from '@angular/common';
 
 @Component({
   selector: 'app-lexicon-builder',
@@ -46,7 +47,8 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
   constructor(private logService: LogService,
               private lexiconService: LexiconService,
               private embeddingService: EmbeddingsService,
-              private projectStore: ProjectStore) {
+              private projectStore: ProjectStore,
+              private localStorageService: LocalStorageService) {
   }
 
   ngOnInit() {
@@ -63,9 +65,24 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
           this.embeddings = resp.results.filter((embedding: Embedding) => {
             return embedding.task.status === 'completed';
           });
+          
+          this.getSavedDefaultEmbedding();
         }
       }
     });
+  }
+  getSavedDefaultEmbedding() {
+    const defaultEmbeddingId = this.localStorageService.getLexiconMinerEmbeddingId();
+    if (defaultEmbeddingId) {
+      this.embeddings.forEach((embedding: Embedding) => {
+        if (defaultEmbeddingId && defaultEmbeddingId === embedding.id) {
+          this.selectedEmbedding = embedding;
+        }
+      });
+    }
+    if (!defaultEmbeddingId || !this.selectedEmbedding) {
+      this.localStorageService.deleteLexiconMinerEmbeddingId()
+    }
   }
 
   ngOnDestroy() {
@@ -144,5 +161,9 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
     const stringList = stringWithNewLines.split('\n');
     // filter out empty values
     return stringList.filter(x => x !== '');
+  }
+
+  saveEmbeddingChoice(embedding: Embedding) {
+    this.localStorageService.setLexiconMinerEmbeddingId(embedding.id);
   }
 }

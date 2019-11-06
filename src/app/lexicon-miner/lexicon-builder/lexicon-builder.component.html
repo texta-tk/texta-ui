@@ -6,7 +6,7 @@
         <div class="flex-row embedding-row">
           <mat-form-field>
             <mat-label>Select Embedding</mat-label>
-            <mat-select [(value)]="selectedEmbedding">
+            <mat-select [(value)]="selectedEmbedding" (selectionChange)="saveEmbeddingChoice($event.value)">
               <mat-option *ngFor="let embedding of embeddings" [value]="embedding">
                 {{embedding.description}}
               </mat-option>
