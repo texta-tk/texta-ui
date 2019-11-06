@@ -90,4 +90,10 @@ export class ProjectService {
       tap(e => this.logService.logStatus(e, 'get Indices')),
       catchError(this.logService.handleError<string[]>('getIndices')));
   }
+
+  deleteProject(id: number) {
+    return this.http.delete<unknown>(`${this.apiUrl}/projects/${id}`).pipe(
+      tap(e => this.logService.logStatus(e, 'delete Project')),
+      catchError(this.logService.handleError<string[]>('deleteProject')));
+  }
 }
