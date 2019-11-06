@@ -10,6 +10,8 @@ import {EditProjectDialogComponent} from './edit-project-dialog/edit-project-dia
 import {UserProfile} from '../shared/types/UserProfile';
 import {mergeMap, toArray} from 'rxjs/operators';
 import {UserService} from '../core/users/user.service';
+import { ConfirmDialogComponent } from '../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import { ProjectService } from '../core/projects/project.service';
 
 @Component({
   selector: 'app-project',
@@ -34,7 +36,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
     private projectStore: ProjectStore,
     private userService: UserService,
     public dialog: MatDialog,
-    public logService: LogService) {
+    public logService: LogService,
+    private projectService: ProjectService) {
   }
 
   ngOnInit() {
@@ -87,4 +90,24 @@ export class ProjectComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  onDelete(project: Project, index: number) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: { confirmText: 'Delete', mainText: 'Are you sure you want to delete this Project?' }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.projectService.deleteProject(project.id).subscribe((resp: any | HttpErrorResponse) => {
+          if (resp && resp.status === 403) {
+            this.logService.snackBarMessage(resp.error.detail, 4000);
+          } else if (!(resp instanceof HttpErrorResponse)) {
+            this.logService.snackBarMessage(`Project ${project.id}: ${project.title} deleted`, 3000);
+            console.log(index);
+            this.tableData.data.splice(index, 1);
+            this.tableData.data = [...this.tableData.data];
+          }});
+        }
+      });
+    }
 }

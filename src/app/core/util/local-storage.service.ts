@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {UserAuth} from '../../shared/types/UserAuth';
 import {Project} from '../../shared/types/Project';
+import { Embedding } from 'src/app/shared/types/tasks/Embedding';
 
 @Injectable({
   providedIn: 'root'
@@ -28,5 +29,17 @@ export class LocalStorageService {
 
   public setCurrentlySelectedProject(value: Project) {
     localStorage.setItem('selectedProject', JSON.stringify(value));
+  }
+
+  public setLexiconMinerEmbeddingId(embeddingId: number) {
+    localStorage.setItem('lexiconMinerEmbedding', JSON.stringify(embeddingId));
+  }
+
+  public getLexiconMinerEmbeddingId() {
+    return JSON.parse(localStorage.getItem('lexiconMinerEmbedding'))
+  }
+
+  public deleteLexiconMinerEmbeddingId() {
+    localStorage.removeItem('lexiconMinerEmbedding');
   }
 }

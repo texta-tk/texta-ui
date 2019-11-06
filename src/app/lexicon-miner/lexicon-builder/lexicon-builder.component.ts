@@ -9,7 +9,8 @@ import {EmbeddingsService} from '../../core/embeddings/embeddings.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Embedding, EmbeddingPrediction} from '../../shared/types/tasks/Embedding';
 import {LogService} from '../../core/util/log.service';
-import {MatListOption} from '@angular/material';
+import { LocalStorageService } from 'src/app/core/util/local-storage.service';
+import { NgForOf } from '@angular/common';
 
 @Component({
   selector: 'app-lexicon-builder',
@@ -17,6 +18,7 @@ import {MatListOption} from '@angular/material';
   styleUrls: ['./lexicon-builder.component.scss']
 })
 export class LexiconBuilderComponent implements OnInit, OnDestroy {
+  outputSize = 20;
   _lexicon: Lexicon;
   positives: string;
   predictions: EmbeddingPrediction[] = [];
@@ -45,7 +47,8 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
   constructor(private logService: LogService,
               private lexiconService: LexiconService,
               private embeddingService: EmbeddingsService,
-              private projectStore: ProjectStore) {
+              private projectStore: ProjectStore,
+              private localStorageService: LocalStorageService) {
   }
 
   ngOnInit() {
@@ -62,9 +65,24 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
           this.embeddings = resp.results.filter((embedding: Embedding) => {
             return embedding.task.status === 'completed';
           });
+          
+          this.getSavedDefaultEmbedding();
         }
       }
     });
+  }
+  getSavedDefaultEmbedding() {
+    const defaultEmbeddingId = this.localStorageService.getLexiconMinerEmbeddingId();
+    if (defaultEmbeddingId) {
+      this.embeddings.forEach((embedding: Embedding) => {
+        if (defaultEmbeddingId && defaultEmbeddingId === embedding.id) {
+          this.selectedEmbedding = embedding;
+        }
+      });
+    }
+    if (!defaultEmbeddingId || !this.selectedEmbedding) {
+      this.localStorageService.deleteLexiconMinerEmbeddingId()
+    }
   }
 
   ngOnDestroy() {
@@ -72,15 +90,13 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
     this.destroy$.unsubscribe();
   }
 
-  getNewSuggestions(value: MatListOption[]) {
-
-    this.updateLexicon(value);
-
+  getNewSuggestions() {
     this.projectStore.getCurrentProject().pipe(take(1), switchMap((currentProject: Project) => {
       if (currentProject) {
         return this.embeddingService.predict({
           positives: this.newLineStringToList(this.positives),
-          negatives: this.negatives.map(y => y.phrase)
+          negatives: this.negatives.map(y => y.phrase),
+          output_size: this.outputSize,
         }, currentProject.id, this.selectedEmbedding.id);
       }
     })).subscribe((resp: EmbeddingPrediction[] | HttpErrorResponse) => {
@@ -117,15 +133,12 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
     });
   }
 
-  updateLexicon(value: MatListOption[]) {
-    console.log(value);
-    value.map((item: MatListOption) => {
-      // remove selected item from predictions list
-      this.predictions = this.predictions.filter((x: any) => {
-        return x.phrase !== item.value.phrase;
-      });
-      return this.positives += this.positives.endsWith('\n') ? item.value.phrase + '\n' : '\n' + item.value.phrase;
+  updateLexicon(value: {phrase: string, score: number, model: string}) {
+    // remove selected item from predictions list
+    this.predictions = this.predictions.filter((x: any) => {
+      return x.phrase !== value.phrase;
     });
+    this.positives += this.positives.endsWith('\n') ? value.phrase + '\n' : '\n' + value.phrase;
     // predictions filtered out to only contain negatives
     this.negatives = [...this.negatives, ...this.predictions];
     // update lexicon object so when changing lexicons it saves state
@@ -148,5 +161,9 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
     const stringList = stringWithNewLines.split('\n');
     // filter out empty values
     return stringList.filter(x => x !== '');
+  }
+
+  saveEmbeddingChoice(embedding: Embedding) {
+    this.localStorageService.setLexiconMinerEmbeddingId(embedding.id);
   }
 }

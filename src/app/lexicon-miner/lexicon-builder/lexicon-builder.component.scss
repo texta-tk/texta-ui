@@ -16,6 +16,7 @@
 
   }
   .predictions {
+    overflow: auto;
     margin-left: 20px;
     height: 605px;
     max-height: 605px;
@@ -51,4 +52,13 @@
       }
     }
   }
+}
+
+.prediction {
+  width: 100%;
+  padding: 16px 16px;
+}
+
+.prediction:hover {
+  background-color: #f0f0f0;
 }

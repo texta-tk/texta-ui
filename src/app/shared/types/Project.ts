@@ -97,4 +97,5 @@ export interface Health {
   cpu: {percent: number};
   model_cache: {embedding: number; embedding_cluster: number; phraser: number; tagger: number; };
   gpu: {count: number; devices: string[]};
+  active_tasks: number
 }
