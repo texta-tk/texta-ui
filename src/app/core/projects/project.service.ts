@@ -80,8 +80,14 @@ export class ProjectService {
   }
 
   getHealth(): Observable<Health | HttpErrorResponse> {
-    return this.http.get<Health>(`${this.apiUrl}/projects/health/`).pipe(
+    return this.http.get<Health>(`${this.apiUrl}/health/`).pipe(
       tap(e => this.logService.logStatus(e, 'get Health')),
       catchError(this.logService.handleError<Health>('getHealth')));
+  }
+
+  getIndices(): Observable<string[] | HttpErrorResponse> {
+    return this.http.get<string[]>(`${this.apiUrl}/get_indices/`).pipe(
+      tap(e => this.logService.logStatus(e, 'get Indices')),
+      catchError(this.logService.handleError<string[]>('getIndices')));
   }
 }

@@ -24,8 +24,8 @@
     <mat-form-field>
       <mat-label>Select Indices</mat-label>
       <mat-select formControlName="indicesFormControl" multiple required>
-        <mat-option *ngFor="let item of indices" [value]="item.value">
-          {{item.display_name}}
+        <mat-option *ngFor="let item of indices" [value]="item">
+          {{item}}
         </mat-option>
       </mat-select>
       <mat-error *ngIf="projectForm.get('indicesFormControl').hasError('required')">
@@ -48,4 +48,3 @@
 
   </form>
 </div>
-

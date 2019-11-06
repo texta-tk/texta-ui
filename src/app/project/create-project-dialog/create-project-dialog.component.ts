@@ -7,6 +7,7 @@ import {UserService} from '../../core/users/user.service';
 import {UserProfile} from '../../shared/types/UserProfile';
 import {Project} from '../../shared/types/Project';
 import {HttpErrorResponse} from '@angular/common/http';
+import { LogService } from 'src/app/core/util/log.service';
 
 @Component({
   selector: 'app-create-embedding-dialog',
@@ -29,15 +30,20 @@ export class CreateProjectDialogComponent implements OnInit {
 
   constructor(private dialogRef: MatDialogRef<CreateProjectDialogComponent>,
               private projectService: ProjectService,
-              private userService: UserService) {
+              private userService: UserService,
+              private logService: LogService) {
   }
 
   ngOnInit() {
     this.userService.getAllUsers().subscribe(resp => {
       this.users = resp;
     });
-    this.projectService.getProjectOptions().subscribe((resp: any) => {
-      this.indices = resp.actions.POST.indices.choices;
+    this.projectService.getIndices().subscribe((resp: string[] | HttpErrorResponse) => {
+      if (resp instanceof HttpErrorResponse) {
+        this.logService.snackBarError(resp, 5000);
+      } else {
+        this.indices = resp;
+      } 
     });
 
   }
