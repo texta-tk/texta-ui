@@ -52,6 +52,10 @@ export class SavedSearchesComponent implements OnInit, OnDestroy {
     });
   }
 
+  copy(url) {
+    navigator.clipboard.writeText(url);
+  }
+
   displaySavedSearch(element) {
     this.savedSearchClick.emit(element);
   }
