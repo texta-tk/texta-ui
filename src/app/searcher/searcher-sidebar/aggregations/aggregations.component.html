@@ -1,0 +1,20 @@
+<div class="wrapper">
+  <mat-form-field appearance="outline" class="max-width">
+    <mat-label>Select Fields</mat-label>
+    <mat-select [formControl]="fieldsFormControl" (openedChange)="fieldsSelectOpened($event)"
+                (selectionChange)="fieldSelected($event)">
+      <mat-optgroup *ngFor="let group of projectFields" [label]="group.index">
+        <mat-option *ngFor="let fields of group.fields" [value]="fields">
+          {{fields.path}}
+        </mat-option>
+      </mat-optgroup>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="max-width">
+    <mat-label>Aggregation</mat-label>
+    <mat-select [formControl]="fieldsFormControl" (openedChange)="aggregationsSelectOpened($event)"
+                (selectionChange)="aggregationSelected($event)">
+      <mat-option>test</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>

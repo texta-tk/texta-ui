@@ -51,5 +51,17 @@
       <app-saved-searches (savedSearchClick)="notifyBuildSearch($event)"></app-saved-searches>
     </div>
   </mat-expansion-panel>
+  <mat-expansion-panel [expanded]="aggregationsExpanded" #aggregationsPanel>
+    <mat-expansion-panel-header (click)="expandAggregationspanel()">
+      <mat-panel-title>
+        <span> Aggregations </span>
+      </mat-panel-title>
+      <mat-panel-description fxLayoutAlign="end start">
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <div>
+      <app-aggregations></app-aggregations>
+    </div>
+  </mat-expansion-panel>
   <div></div>
 </mat-accordion>

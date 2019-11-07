@@ -5,7 +5,14 @@ import {forkJoin, of, Subject} from 'rxjs';
 import {debounceTime, switchMap, takeUntil} from 'rxjs/operators';
 import {ProjectService} from '../../../core/projects/project.service';
 import {ProjectStore} from '../../../core/projects/project.store';
-import {Constraint, DateConstraint, ElasticsearchQuery, FactConstraint, FactTextInputGroup, TextConstraint} from './Constraints';
+import {
+  Constraint,
+  DateConstraint,
+  ElasticsearchQuery,
+  FactConstraint,
+  FactTextInputGroup,
+  TextConstraint
+} from './Constraints';
 import {HttpErrorResponse} from '@angular/common/http';
 import {SearcherService} from '../../../core/searcher/searcher.service';
 import {MatSelectChange} from '@angular/material';
@@ -42,29 +49,26 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$), switchMap((currentProject: Project) => {
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$)).subscribe((currentProject: Project) => {
       if (currentProject) {
         this.constraintList = [];
         this.currentProject = currentProject;
-        return forkJoin({
-          facts: this.projectService.getProjectFacts(this.currentProject.id),
-          fields: this.projectService.getProjectFields(this.currentProject.id)
-        });
-      }
-      return of(null);
-    })).subscribe((resp: { facts: ProjectFact[] | HttpErrorResponse, fields: ProjectField[] | HttpErrorResponse }) => {
-      if (resp) {
         this.elasticQuery = new ElasticsearchQuery();
         this.searchService.nextElasticQuery(this.elasticQuery);
-        if (!(resp.facts instanceof HttpErrorResponse)) {
-          this.projectFacts = resp.facts;
-        }
-        if (!(resp.fields instanceof HttpErrorResponse)) {
-          this.projectFields = resp.fields;
-          this.projectFieldsFiltered = this.projectFields;
-        }
       }
     });
+    this.projectStore.getProjectFacts().pipe(takeUntil(this.destroy$)).subscribe((projectFacts: ProjectFact[]) => {
+      if (projectFacts) {
+        this.projectFacts = projectFacts;
+      }
+    });
+    this.projectStore.getProjectFields().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectField[]) => {
+      if (projectFields) {
+        this.projectFields = projectFields;
+        this.projectFieldsFiltered = projectFields;
+      }
+    });
+
     this.userStore.getCurrentUser().pipe(takeUntil(this.destroy$)).subscribe(user => {
       if (user) {
         this.currentUser = user;
