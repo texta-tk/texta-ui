@@ -27,6 +27,7 @@ import {MatExpansionModule} from '@angular/material/expansion';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatNativeDateModule, MatTooltipModule} from '@angular/material';
+import {MatSliderModule} from '@angular/material/slider';
 import {FlexLayoutModule} from '@angular/flex-layout';
 
 import {LoginDialogComponent} from './components/dialogs/login/login-dialog.component';
@@ -43,9 +44,9 @@ import {CirclesComponent} from './components/svg/chart/circles/circles.component
 import {LineComponent} from './components/svg/chart/line/line.component';
 import {ConfirmDialogComponent} from './components/dialogs/confirm-dialog/confirm-dialog.component';
 import {MatOptionSelectAllComponent} from './components/mat-option-select-all.component';
-import { QueryDialogComponent } from './components/dialogs/query-dialog/query-dialog.component';
-import { GenericDialogComponent } from './components/dialogs/generic-dialog/generic-dialog.component';
-import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import {QueryDialogComponent} from './components/dialogs/query-dialog/query-dialog.component';
+import {GenericDialogComponent} from './components/dialogs/generic-dialog/generic-dialog.component';
+import {InfiniteScrollModule} from 'ngx-infinite-scroll';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
@@ -95,6 +96,7 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
     MatDatepickerModule,
     MatNativeDateModule,
     MatTooltipModule,
+    MatSliderModule,
 
     InfiniteScrollModule,
   ],
@@ -129,6 +131,7 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
     MatDatepickerModule,
     MatNativeDateModule,
     MatTooltipModule,
+    MatSliderModule,
 
     GenericTableComponent,
 

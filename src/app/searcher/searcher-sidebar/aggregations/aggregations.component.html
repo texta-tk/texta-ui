@@ -1,8 +1,7 @@
 <div class="wrapper">
   <mat-form-field appearance="outline" class="max-width">
     <mat-label>Select Fields</mat-label>
-    <mat-select [formControl]="fieldsFormControl" (openedChange)="fieldsSelectOpened($event)"
-                (selectionChange)="fieldSelected($event)">
+    <mat-select [formControl]="fieldsFormControl">
       <mat-optgroup *ngFor="let group of projectFields" [label]="group.index">
         <mat-option *ngFor="let fields of group.fields" [value]="fields">
           {{fields.path}}
@@ -10,11 +9,31 @@
       </mat-optgroup>
     </mat-select>
   </mat-form-field>
-  <mat-form-field appearance="outline" class="max-width">
-    <mat-label>Aggregation</mat-label>
-    <mat-select [formControl]="fieldsFormControl" (openedChange)="aggregationsSelectOpened($event)"
-                (selectionChange)="aggregationSelected($event)">
-      <mat-option>test</mat-option>
-    </mat-select>
-  </mat-form-field>
+
+  <div class="field-type-wrapper" *ngIf="fieldTypeTextOrFact(fieldsFormControl.value)">
+    <mat-form-field appearance="outline" class="max-width">
+      <mat-label>Aggregation</mat-label>
+      <mat-select [(ngModel)]="aggregationType" name="aggregationTextType">
+        <mat-option value="terms">frequent items</mat-option>
+        <mat-option value="significant_terms">significant items</mat-option>
+        <mat-option value="significant_text">significant words</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-label>Aggregation size</mat-label>
+    <mat-slider class="max-width" min="10" max="300" step="10" [(ngModel)]="aggregationSize" thumbLabel="true"></mat-slider>
+  </div>
+
+  <div class="field-type-wrapper" *ngIf="fieldTypeDate(fieldsFormControl.value)">
+    <!--not text or fact, means it has to be date or number-->
+    <mat-form-field appearance="outline" class="max-width" *ngIf="!fieldTypeTextOrFact(fieldsFormControl.value)">
+      <mat-label>Frequency</mat-label>
+      <mat-select [(ngModel)]="aggregationType" name="aggregationDateType">
+        <mat-option value="raw_frequency">raw frequency</mat-option>
+        <mat-option value="relative_frequency">relative frequency</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div class="max-width">
+    <button class="max-width" mat-stroked-button (click)="aggregate()">Aggregate</button>
+  </div>
 </div>
