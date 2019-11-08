@@ -5,6 +5,9 @@ import {ProjectStore} from '../../../core/projects/project.store';
 import {Subject} from 'rxjs';
 import {FormControl} from '@angular/forms';
 import {SearcherService} from '../../../core/searcher/searcher.service';
+import {SearchService} from "../../services/search.service";
+import {ElasticsearchQuery} from "../build-search/Constraints";
+import {HttpErrorResponse} from "@angular/common/http";
 
 @Component({
   selector: 'app-aggregations',
@@ -18,9 +21,13 @@ export class AggregationsComponent implements OnInit, OnDestroy {
   fieldsFormControl = new FormControl();
   aggregationType;
   aggregationSize = 30;
+  dateInterval;
   destroy$: Subject<boolean> = new Subject();
+  searcherElasticSearchQuery: ElasticsearchQuery;
 
-  constructor(private projectStore: ProjectStore, private searcherService: SearcherService) {
+  constructor(private projectStore: ProjectStore,
+              private searcherService: SearcherService,
+              private searchService: SearchService) {
   }
 
   ngOnInit() {
@@ -39,26 +46,54 @@ export class AggregationsComponent implements OnInit, OnDestroy {
         this.projectFields = projectFields;
       }
     });
+    this.searchService.getElasticQuery().pipe(takeUntil(this.destroy$)).subscribe((query: ElasticsearchQuery) => {
+      this.searcherElasticSearchQuery = query;
+    });
   }
 
   aggregate() {
-    const aggregationQuery = {
-      size: 0,
-      aggs: {
-        sales_over_time: {
-          auto_date_histogram: {
-            field: this.fieldsFormControl.value.path,
-            buckets: 10,
-            format: 'yyyy-MM-dd'
-          }
-        }
-      }
-    };
-    this.searcherService.search(aggregationQuery, this.currentProject.id).subscribe(resp => {
+    let aggregationQuery;
+    if (this.fieldTypeTextOrFact(this.fieldsFormControl.value)) {
+      aggregationQuery = this.makeTextAggregation();
+    } else if (this.fieldTypeDate(this.fieldsFormControl.value)) {
+      aggregationQuery = this.makeDateAggregation();
+
+    }
+
+    this.searcherElasticSearchQuery.aggs = aggregationQuery;
+    this.searcherService.search({query: this.searcherElasticSearchQuery}, this.currentProject.id).subscribe(resp => {
       console.log(resp);
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.searchService.nextAggregation(resp);
+      }
     });
     console.log(this.aggregationType);
     console.log(this.fieldsFormControl.value);
+  }
+
+  makeDateAggregation() {
+    this.searcherElasticSearchQuery.size = 0;
+    return {
+      agg_histo: {
+        date_histogram: {
+          field: this.fieldsFormControl.value.path,
+          interval: this.dateInterval
+        }
+      }
+    };
+  }
+
+  makeTextAggregation() {
+    this.searcherElasticSearchQuery.size = this.aggregationSize;
+    return {
+      agg_term: {
+        [this.aggregationType]: {
+          field:
+            `${this.fieldsFormControl.value.path}${
+              this.aggregationType === 'significant_terms' || this.aggregationType === 'terms' ? '.keyword' : ''}`
+        }
+      }
+    };
   }
 
   fieldTypeTextOrFact(val: Field) {

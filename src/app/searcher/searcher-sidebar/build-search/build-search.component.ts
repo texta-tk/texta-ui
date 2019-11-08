@@ -77,6 +77,9 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
 
     this.searchService.getSearchQueue().pipe(debounceTime(400), takeUntil(this.destroy$), switchMap(x => {
       this.searchService.setIsLoading(true);
+      if (this.elasticQuery.size === 0) {
+        this.elasticQuery.size = 10;
+      }
       return this.searcherService.search({query: this.elasticQuery}, this.currentProject.id);
     })).subscribe(
       (result: { count: number, results: { highlight: any, doc: any }[] } | HttpErrorResponse) => {

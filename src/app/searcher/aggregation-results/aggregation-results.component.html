@@ -1,0 +1,9 @@
+<div class="container">
+  <div *ngIf="aggregation && aggregation.aggregations['agg_terms']">
+    <pre>{{aggregation.aggregations | json}}</pre>
+  </div>
+  <div *ngIf="aggregation && aggregation.aggregations['agg_histo']">
+    <app-timeline [xAccessor]="xAccessor" [yAccessor]="yAccessor"
+                  [data]="aggregation.aggregations.agg_histo.buckets"></app-timeline>
+  </div>
+</div>

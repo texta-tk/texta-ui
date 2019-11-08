@@ -1,0 +1,7 @@
+@import "../../../variables/variables";
+
+.container {
+  max-height: calc(100vh - #{$navbar-height} - 56px);
+  min-height: calc(100vh - #{$navbar-height} - 56px);
+  overflow: auto;
+}

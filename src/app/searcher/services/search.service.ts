@@ -4,6 +4,7 @@ import {ElasticsearchQuery} from '../searcher-sidebar/build-search/Constraints';
 
 export class SearchService {
   private searchSubject = new BehaviorSubject<Search>(null);
+  private aggregationSubject = new BehaviorSubject<any>(null);
   private savedSearchUpdate = new Subject<boolean>();
   private elasticQuerySubject = new Subject<ElasticsearchQuery>();
   private searchQueryQueue$ = new Subject<void>();
@@ -26,6 +27,14 @@ export class SearchService {
 
   public getSearch(): Observable<Search> {
     return this.searchSubject.asObservable();
+  }
+
+  public nextAggregation(aggregation: any) {
+    this.aggregationSubject.next(aggregation);
+  }
+
+  public getAggregation(): Observable<any> {
+    return this.aggregationSubject.asObservable();
   }
 
   public nextSavedSearchUpdate() {

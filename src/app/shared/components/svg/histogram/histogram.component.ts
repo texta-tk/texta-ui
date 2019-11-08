@@ -1,7 +1,18 @@
-import {AfterContentInit, Component, ElementRef, HostListener, Input, OnChanges, SimpleChanges, ViewChild} from '@angular/core';
+import {
+  AfterContentInit,
+  Component,
+  ElementRef,
+  HostListener,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core';
 import * as d3 from 'd3';
 import {DimensionsType, getUniqueId} from '../chart/utils';
 import {AccessorType, ScaleType} from '../../../types/svg/types';
+import {ScaleLinear} from "d3";
 
 @Component({
   selector: 'app-histogram',
@@ -9,18 +20,18 @@ import {AccessorType, ScaleType} from '../../../types/svg/types';
   styleUrls: ['./histogram.component.css'],
 })
 export class HistogramComponent implements AfterContentInit, OnChanges {
-  @Input() data: Array<object>;
+  @Input() data: Array<any>;
   @Input() label: string;
   @Input() xAccessor: AccessorType;
   public dimensions: DimensionsType;
   public xAccessorScaled: AccessorType;
   public yAccessorScaled: AccessorType;
-  public xScale: ScaleType;
-  public yScale: ScaleType;
+  public xScale: ScaleLinear<number, number>;
+  public yScale: ScaleLinear<number, number>;
   public widthAccessorScaled: AccessorType;
   public heightAccessorScaled: AccessorType;
   public keyAccessor: AccessorType;
-  public bins: object[];
+  public bins: any[];
   public gradientId: string = getUniqueId('Histogram-gradient');
   public gradientColors: string[] = ['#9980FA', 'rgb(226, 222, 243)'];
   @ViewChild('container', {static: true}) container: ElementRef;
@@ -67,22 +78,22 @@ export class HistogramComponent implements AfterContentInit, OnChanges {
 
     const numberOfThresholds = 9;
 
-    this.xScale = d3.scaleLinear()
+    this.xScale = d3.scaleLinear<number, number>()
       .domain(d3.extent(this.data, this.xAccessor))
       .range([0, this.dimensions.boundedWidth])
       .nice(numberOfThresholds);
 
     const binsGenerator = d3.histogram()
-      .domain(this.xScale.domain())
+      .domain(this.xScale.domain() as any)
       .value(this.xAccessor)
       .thresholds(this.xScale.ticks(numberOfThresholds));
 
     this.bins = binsGenerator(this.data);
 
     const yAccessor = d => d.length;
-    this.yScale = d3.scaleLinear()
-      .domain([0, d3.max(this.bins, yAccessor)])
-      .range([this.dimensions.boundedHeight, 0])
+    this.yScale = d3.scaleLinear<number, number>()
+      .domain([0, d3.max(this.bins, yAccessor)] as any)
+      .range([this.dimensions.boundedHeight, 0] as any)
       .nice();
 
     const barPadding = 2;

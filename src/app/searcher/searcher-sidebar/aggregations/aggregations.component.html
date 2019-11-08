@@ -20,16 +20,38 @@
       </mat-select>
     </mat-form-field>
     <mat-label>Aggregation size</mat-label>
-    <mat-slider class="max-width" min="10" max="300" step="10" [(ngModel)]="aggregationSize" thumbLabel="true"></mat-slider>
+    <mat-slider class="max-width" min="10" max="300" step="10" [(ngModel)]="aggregationSize"
+                thumbLabel="true"></mat-slider>
   </div>
 
-  <div class="field-type-wrapper" *ngIf="fieldTypeDate(fieldsFormControl.value)">
+  <div class="field-type-wrapper" *ngIf="fieldTypeDate(fieldsFormControl.value)" fxLayout="column">
     <!--not text or fact, means it has to be date or number-->
-    <mat-form-field appearance="outline" class="max-width" *ngIf="!fieldTypeTextOrFact(fieldsFormControl.value)">
+    <div fxLayout="row" class="datepicker-row">
+      <mat-form-field appearance="outline">
+        <input matInput [matDatepicker]="picker" placeholder="Daterange from">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <input matInput [matDatepicker]="picker2" placeholder="Daterange to">
+        <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+        <mat-datepicker #picker2></mat-datepicker>
+      </mat-form-field>
+    </div>
+    <mat-form-field appearance="outline" class="max-width">
       <mat-label>Frequency</mat-label>
       <mat-select [(ngModel)]="aggregationType" name="aggregationDateType">
         <mat-option value="raw_frequency">raw frequency</mat-option>
         <mat-option value="relative_frequency">relative frequency</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="max-width">
+      <mat-label>Interval</mat-label>
+      <mat-select [(ngModel)]="dateInterval" name="aggregationDateInterval">
+        <mat-option value="day">day</mat-option>
+        <mat-option value="week">week</mat-option>
+        <mat-option value="month">month</mat-option>
+        <mat-option value="year">year</mat-option>
       </mat-select>
     </mat-form-field>
   </div>

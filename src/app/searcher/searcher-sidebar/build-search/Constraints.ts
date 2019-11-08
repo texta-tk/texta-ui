@@ -108,6 +108,8 @@ export class ElasticsearchQuery {
     fields: {}
   };
 
+  aggs: {};
+
   size = 10;
   from = 0;
 

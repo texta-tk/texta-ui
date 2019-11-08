@@ -1,6 +1,7 @@
 import {AfterContentInit, Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild} from '@angular/core';
 import * as d3 from 'd3';
 import {AccessorType, DimensionsType, ScaleType} from '../../../types/svg/types';
+import {ScaleLinear} from "d3";
 
 @Component({
   selector: 'app-scatter',
@@ -31,8 +32,8 @@ export class ScatterComponent implements AfterContentInit, OnChanges {
   @Input() xAccessor: AccessorType;
   @Input() yAccessor: AccessorType;
   public dimensions: DimensionsType;
-  public xScale: ScaleType;
-  public yScale: ScaleType;
+  public xScale: ScaleLinear<number, number>;
+  public yScale: ScaleLinear<number, number>;
   public xAccessorScaled: AccessorType;
   public yAccessorScaled: AccessorType;
   @ViewChild('container', {static: true}) container: ElementRef;

@@ -1,6 +1,7 @@
 import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import * as d3 from 'd3';
 import {AccessorType} from '../../../../types/svg/types';
+import {Area, CurveFactory, Line} from "d3";
 
 @Component({
   selector: '[appLine]',
@@ -15,22 +16,21 @@ import {AccessorType} from '../../../../types/svg/types';
 })
 export class LineComponent implements OnChanges {
   @Input() type: 'area' | 'line' = 'line';
-  @Input() data: object[];
+  @Input() data: any[];
   @Input() xAccessor: AccessorType;
   @Input() yAccessor: AccessorType;
   @Input() y0Accessor?: AccessorType;
-  @Input() interpolation?: Function = d3.curveMonotoneX;
+  @Input() interpolation?: CurveFactory = d3.curveMonotoneX;
   @Input() fill?: string;
-  lineString: '';
+  lineString: string;
 
   updateLineString(): void {
     const lineGenerator = d3[this.type]()
       .x(this.xAccessor)
       .y(this.yAccessor)
       .curve(this.interpolation);
-
-    if (this.type == 'area') {
-      lineGenerator
+    if (this.type === 'area') {
+      (lineGenerator as Area<[number, number]>)
         .y0(this.y0Accessor)
         .y1(this.yAccessor);
     }
