@@ -22,13 +22,13 @@ export class CreateEmbeddingDialogComponent implements OnInit {
     descriptionFormControl: new FormControl('', [
       Validators.required,
     ]),
-    queryFormControl: new FormControl('', []),
     fieldsFormControl: new FormControl([], [Validators.required]),
     dimensionsFormControl: new FormControl(100, [Validators.required]),
     frequencyFormControl: new FormControl(5, [Validators.required])
 
   });
   defaultQuery = '{"query": {"match_all": {}}}';
+  query = this.defaultQuery;
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   projectFields: ProjectField[];
 
@@ -55,13 +55,16 @@ export class CreateEmbeddingDialogComponent implements OnInit {
     });
   }
 
+  onQueryChanged(query: string) {
+    this.query = query ? query : this.defaultQuery;
+  }
+
   onSubmit(formData) {
-    const queryToSend = formData.queryFormControl === '' ? this.defaultQuery : formData.queryFormControl;
     // temp
     const fieldsToSend = this.generateFieldsFormat(formData.fieldsFormControl);
     const body = {
       description: formData.descriptionFormControl,
-      query: queryToSend,
+      query: this.query,
       fields: fieldsToSend,
       num_dimensions: formData.dimensionsFormControl,
       min_freq: formData.frequencyFormControl

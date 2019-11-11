@@ -9,10 +9,7 @@
         Description is <strong>required</strong>
       </mat-error>
     </mat-form-field>
-    <mat-form-field>
-      <textarea matInput placeholder="Query" formControlName="queryFormControl"></textarea>
-      <mat-hint>Default: {{defaultQuery}}</mat-hint>
-    </mat-form-field>
+    <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"></app-saved-search-autocomplete>
     <mat-form-field>
       <mat-label>Select Fields</mat-label>
       <mat-select formControlName="fieldsFormControl" multiple required>
@@ -47,4 +44,3 @@
 
   </form>
 </div>
-

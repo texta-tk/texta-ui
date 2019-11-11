@@ -46,6 +46,7 @@ import {MatOptionSelectAllComponent} from './components/mat-option-select-all.co
 import { QueryDialogComponent } from './components/dialogs/query-dialog/query-dialog.component';
 import { GenericDialogComponent } from './components/dialogs/generic-dialog/generic-dialog.component';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { SavedSearchAutocompleteComponent } from './components/saved-search-autocomplete/saved-search-autocomplete.component';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
@@ -63,7 +64,8 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
     ConfirmDialogComponent,
     MatOptionSelectAllComponent,
     QueryDialogComponent,
-    GenericDialogComponent
+    GenericDialogComponent,
+    SavedSearchAutocompleteComponent
   ],
   imports: [
     CommonModule,
@@ -131,6 +133,7 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
     MatTooltipModule,
 
     GenericTableComponent,
+    SavedSearchAutocompleteComponent,
 
     TimelineComponent,
     ScatterComponent,
