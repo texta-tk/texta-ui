@@ -56,6 +56,6 @@
     </mat-form-field>
   </div>
   <div class="max-width">
-    <button class="max-width" mat-stroked-button (click)="aggregate()">Aggregate</button>
+    <button class="max-width" mat-stroked-button (click)="aggregate()" [disabled]="!searcherElasticSearchQuery">Aggregate</button>
   </div>
 </div>

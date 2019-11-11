@@ -1,5 +1,5 @@
 <div class="container">
-  <div *ngIf="aggregation && aggregation.aggregations['agg_terms']">
+  <div *ngIf="aggregation && aggregation.aggregations['agg_term']">
     <pre>{{aggregation.aggregations | json}}</pre>
   </div>
   <div *ngIf="aggregation && aggregation.aggregations['agg_histo']">

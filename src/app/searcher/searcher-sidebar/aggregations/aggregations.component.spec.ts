@@ -1,6 +1,13 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AggregationsComponent } from './aggregations.component';
+import {SharedModule} from '../../../shared/shared.module';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {RouterTestingModule} from '@angular/router/testing';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {AggregationResultsComponent} from '../../aggregation-results/aggregation-results.component';
+import {SearchService} from '../../services/search.service';
+import {SearchServiceSpy} from '../../services/search.service.spec';
 
 describe('AggregationsComponent', () => {
   let component: AggregationsComponent;
@@ -8,7 +15,16 @@ describe('AggregationsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AggregationsComponent ]
+      declarations: [ AggregationsComponent ],
+      imports: [
+        SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule,
+      ],
+    }).overrideComponent(AggregationsComponent, {
+      set: {
+        providers: [
+          {provide: SearchService, useClass: SearchServiceSpy}
+        ]
+      }
     })
     .compileComponents();
   }));

@@ -47,7 +47,9 @@ export class AggregationsComponent implements OnInit, OnDestroy {
       }
     });
     this.searchService.getElasticQuery().pipe(takeUntil(this.destroy$)).subscribe((query: ElasticsearchQuery) => {
-      this.searcherElasticSearchQuery = query;
+      if (query) {
+        this.searcherElasticSearchQuery = query;
+      }
     });
   }
 

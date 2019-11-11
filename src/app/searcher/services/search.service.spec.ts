@@ -8,10 +8,19 @@ import {ElasticsearchQuery} from '../searcher-sidebar/build-search/Constraints';
 export class SearchServiceSpy {
   private searchSubject = new BehaviorSubject<Search>(null);
   private searchQueryQueue$ = new Subject<void>();
-  private elasticQuerySubject = new Subject<ElasticsearchQuery>()
+  private elasticQuerySubject = new Subject<ElasticsearchQuery>();
   private savedSearchUpdate = new Subject<boolean>();
+  private aggregationSubject = new BehaviorSubject<any>(null);
   private isLoading = false;
 
+  /* emit clone of test hero, with changes merged in */
+  nextAggregation = jasmine.createSpy('nextAggregation').and.callFake(
+    (search: Search) => this.aggregationSubject.next(search));
+
+  /* emit cloned test hero */
+  getAggregation = jasmine.createSpy('getAggregation').and.callFake(
+    () => this.aggregationSubject.asObservable()
+  );
 
   /* emit cloned test hero */
   getSearch = jasmine.createSpy('getSearch').and.callFake(
