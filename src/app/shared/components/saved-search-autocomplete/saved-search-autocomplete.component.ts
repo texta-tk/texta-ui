@@ -35,14 +35,12 @@ export class SavedSearchAutocompleteComponent implements OnInit, OnDestroy {
     })).subscribe((response: SavedSearch[] | HttpErrorResponse) => {
       if (response && !(response instanceof HttpErrorResponse)) {
         this.savedSearches = response;
-        console.log('saved searches here!!', response)
       }
     });
   }
 
   onQueryChanged(query: string) {
     this.queryChanged.emit(query);
-    console.log('QUERY !:', query);
   }
 
   ngOnDestroy(): void {
