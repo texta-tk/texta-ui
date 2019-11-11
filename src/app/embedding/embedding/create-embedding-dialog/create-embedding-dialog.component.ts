@@ -64,11 +64,15 @@ export class CreateEmbeddingDialogComponent implements OnInit {
     const fieldsToSend = this.generateFieldsFormat(formData.fieldsFormControl);
     const body = {
       description: formData.descriptionFormControl,
-      query: this.query,
       fields: fieldsToSend,
       num_dimensions: formData.dimensionsFormControl,
       min_freq: formData.frequencyFormControl
     };
+    
+    if (this.query) {
+      body['query'] = this.query;
+    }
+
     this.projectStore.getCurrentProject().pipe(take(1), mergeMap((project: Project) => {
       if (project) {
         return this.embeddingService.createEmbedding(body, project.id);
