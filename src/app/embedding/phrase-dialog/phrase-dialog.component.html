@@ -7,7 +7,7 @@
 <div class="flex-col">
   <div class="flex-row">
     <div class="flex-item-right">
-      <button type="submit" mat-button (click)="onSubmit(textInput.value)">Post</button>
+      <button color="primary" type="submit" mat-raised-button (click)="onSubmit(textInput.value)" [disabled]="!textInput.value">Post</button>
     </div>
   </div>
 </div>

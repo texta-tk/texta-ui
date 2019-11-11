@@ -41,10 +41,10 @@ export class EmbeddingsService {
       catchError(this.logService.handleError<EmbeddingPrediction[]>('predict')));
   }
 
-  phrase(body: {text: string}, currentProjectId: number, embeddingId: number) {
-    return this.http.post<Embedding>(`${this.apiUrl}/projects/${currentProjectId}/embeddings/${embeddingId}/phrase/`, body).pipe(
+  phrase(body: {text: string}, currentProjectId: number, embeddingId: number): Observable<string | HttpErrorResponse> {
+    return this.http.post<string>(`${this.apiUrl}/projects/${currentProjectId}/embeddings/${embeddingId}/phrase_text/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'phrase')),
-      catchError(this.logService.handleError('phrase')));
+      catchError(this.logService.handleError<string>('phrase')));
   }
 
   bulkDeleteEmbeddings(projectId: number, body) {
