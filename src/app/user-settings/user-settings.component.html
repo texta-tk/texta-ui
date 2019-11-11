@@ -1,5 +1,5 @@
 <div class="flex-row wrapper">
-  <div>
+  <!-- <div>
     <form class="flex-col" [formGroup]="forgotPasswordForm" (ngSubmit)="onForgotPasswordFormSubmit(forgotPasswordForm.value)">
       <mat-form-field>
         <input matInput type="text" placeholder="Enter your email" formControlName="emailFormControl">
@@ -7,7 +7,9 @@
       <button mat-stroked-button type="submit" [disabled]="!forgotPasswordForm.valid">Submit</button>
     </form>
     <span *ngIf="detail">{{detail}}</span>
-  </div>
+  </div> -->
+  <mat-card class="pw-form-wrapper">
+        <h2 class="mat-h2">Change Password</h2>
   <form class="flex-col" [formGroup]="passwordResetForm"
         (ngSubmit)="onPasswordResetFormSubmit(passwordResetForm.value)">
     <input type="text" autocomplete="username" hidden="true">
@@ -48,4 +50,5 @@
     </mat-form-field>
     <button mat-stroked-button type="submit" [disabled]="!passwordResetForm.valid">Submit</button>
   </form>
+</mat-card>
 </div>

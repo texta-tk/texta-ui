@@ -1,6 +1,12 @@
 .wrapper{
+  margin-top: 10px;
   justify-content: space-evenly;
   .flex-col{
-    width: 300px;
+    width: 100%;
+  }
+  
+  .pw-form-wrapper {
+    width: 100%;
+    max-width: 300px;
   }
 }
