@@ -38,8 +38,8 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: Tagger | null;
   public tableData: MatTableDataSource<Tagger> = new MatTableDataSource();
   selectedRows = new SelectionModel<Tagger>(true, []);
-  public displayedColumns = ['select', 'description', 'fields_parsed', 'time_started',
-    'time_completed', 'f1_score', 'precision', 'recall', 'Task', 'Modify'];
+  public displayedColumns = ['select', 'id', 'author', 'description', 'fields_parsed', 'time_started',
+  'time_completed', 'f1_score', 'precision', 'recall', 'Task', 'Modify'];
   public isLoadingResults = true;
 
   @ViewChild(MatSort, {static: true}) sort: MatSort;

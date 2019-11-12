@@ -29,7 +29,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/components/dialogs/confir
 export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: Embedding | null;
   public tableData: MatTableDataSource<Embedding> = new MatTableDataSource();
-  public displayedColumns = ['select', 'description', 'fields_parsed', 'time_started', 'time_completed', 'Task', 'Modify'];
+  public displayedColumns = ['select', 'id', 'author', 'description', 'fields_parsed', 'time_started', 'time_completed', 'Task', 'Modify'];
   selectedRows = new SelectionModel<Embedding>(true, []);
   public isLoadingResults = true;
 
