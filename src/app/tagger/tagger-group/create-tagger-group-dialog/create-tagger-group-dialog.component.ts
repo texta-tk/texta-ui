@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ProjectField} from '../../../shared/types/Project';
+import {ProjectField, ProjectFact} from '../../../shared/types/Project';
 import {mergeMap, take} from 'rxjs/operators';
 import {LogService} from '../../../core/util/log.service';
 import {TaggerOptions} from '../../../shared/types/tasks/TaggerOptions';
@@ -12,7 +12,7 @@ import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers'
 import {EmbeddingsService} from '../../../core/embeddings/embeddings.service';
 import {Embedding} from '../../../shared/types/tasks/Embedding';
 import {TaggerService} from '../../../core/taggers/tagger.service';
-import {merge, of} from 'rxjs';
+import {merge, of, forkJoin} from 'rxjs';
 import {TaggerGroupService} from '../../../core/taggers/tagger-group.service';
 import {TaggerGroup} from '../../../shared/types/tasks/Tagger';
 
@@ -27,7 +27,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
     descriptionFormControl: new FormControl('', [
       Validators.required,
     ]),
-    factNameFormControl: new FormControl('', Validators.required),
+    factNameFormControl: new FormControl(Validators.required),
     taggerGroupSampleSizeFormControl: new FormControl(50, [Validators.required]),
     taggerForm: new FormGroup({
       fieldsFormControl: new FormControl([], [Validators.required]),
@@ -44,6 +44,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
   taggerOptions: TaggerOptions = TaggerOptions.createEmpty();
   embeddings: Embedding[];
   projectFields: ProjectField[];
+  projectFacts: ProjectFact[];
 
   constructor(private dialogRef: MatDialogRef<CreateTaggerGroupDialogComponent>,
               private taggerService: TaggerService,
@@ -57,24 +58,35 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
   ngOnInit() {
     this.projectStore.getCurrentProject().pipe(take(1), mergeMap(currentProject => {
       if (currentProject) {
-        return merge(
-          this.taggerService.getTaggerOptions(currentProject.id),
-          this.projectService.getProjectFields(currentProject.id),
-          this.embeddingService.getEmbeddings(currentProject.id));
+        return forkJoin(
+          {
+            taggerOptions: this.taggerService.getTaggerOptions(currentProject.id),
+            projectFields: this.projectService.getProjectFields(currentProject.id),
+            embeddings: this.embeddingService.getEmbeddings(currentProject.id),
+            projectFacts: this.projectService.getProjectFacts(currentProject.id)
+          }); 
       } else {
         return of(null);
       }
-    })).subscribe((resp: TaggerOptions | ProjectField[] | Embedding[] | HttpErrorResponse) => {
+    })).subscribe((resp: {
+      taggerOptions: TaggerOptions | HttpErrorResponse,
+      projectFields: ProjectField[] | HttpErrorResponse,
+      embeddings: Embedding[] |  HttpErrorResponse,
+      projectFacts: ProjectFact[] | HttpErrorResponse,
+    }) => {
       if (resp) {
-        if ((resp as TaggerOptions).actions !== undefined) {
-          this.taggerOptions = resp as TaggerOptions;
+        if (!(resp.taggerOptions instanceof HttpErrorResponse)) {
+          this.taggerOptions = resp.taggerOptions;
           this.setDefaultFormValues(this.taggerOptions);
-        } else if (resp instanceof HttpErrorResponse) {
-          this.logService.snackBarError(resp, 5000);
-        } else if (Embedding.isEmbedding(resp)) {
-          this.embeddings = resp;
-        } else if (ProjectField.isProjectFields(resp)) {
-          this.projectFields = ProjectField.cleanProjectFields(resp);
+        }
+        if (!(resp.projectFacts instanceof HttpErrorResponse)) {
+          this.projectFacts = resp.projectFacts;
+        }
+        if (!(resp.embeddings instanceof HttpErrorResponse)) {
+          this.embeddings = resp.embeddings;
+        }
+        if (!(resp.projectFields instanceof HttpErrorResponse)) {
+          this.projectFields = ProjectField.cleanProjectFields(resp.projectFields);
         }
       }
     });
@@ -83,7 +95,6 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
 
 
   onSubmit() {
-    console.log(this.taggerGroupForm.value);
     const formData = this.taggerGroupForm.value;
     const tagger_body = {
       fields: formData.taggerForm.fieldsFormControl,

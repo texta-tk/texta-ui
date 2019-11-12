@@ -10,8 +10,12 @@
       </mat-error>
     </mat-form-field>
     <mat-form-field>
-      <input matInput placeholder="Fact name" autocomplete="off" formControlName="factNameFormControl"
-             [errorStateMatcher]="matcher" required>
+      <mat-label>Fact name</mat-label>
+      <mat-select formControlName="factNameFormControl">
+        <mat-option *ngFor="let fact of projectFacts" [value]="fact.name">
+          {{fact.name}}
+        </mat-option>
+      </mat-select>
     </mat-form-field>
     <mat-form-field>
       <input matInput type="number" placeholder="Minimum sample size"
