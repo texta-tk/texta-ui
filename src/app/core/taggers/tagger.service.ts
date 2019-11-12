@@ -44,11 +44,10 @@ export class TaggerService {
   }
 
   retrainTagger(projectId: number, taggerId: number) {
-    return this.http.get<Tagger>(
-      this.apiUrl + '/projects/' + projectId + '/taggers/' + taggerId + '/retrain_tagger/',
+    return this.http.post<unknown>(`${this.apiUrl}/projects/${projectId}/taggers/${taggerId}/retrain_tagger/`, {}
     ).pipe(
       tap(e => this.logService.logStatus(e, 'retrainTagger')),
-      catchError(this.logService.handleError<Tagger>('retrainTagger')));
+      catchError(this.logService.handleError<unknown>('retrainTagger')));
   }
 
   // todo backend seperate endpoint

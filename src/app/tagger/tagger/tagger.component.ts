@@ -113,7 +113,14 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   retrainTagger(value) {
       if (this.currentProject) {
-        return this.taggerService.retrainTagger(this.currentProject.id, value.id);
+        return this.taggerService.retrainTagger(this.currentProject.id, value.id)
+        .subscribe((resp: any | HttpErrorResponse) => {
+          if (resp && !(resp instanceof HttpErrorResponse)) {
+            this.logService.snackBarMessage('Successfully started re-training tagger', 4000);
+          } else if (resp instanceof HttpErrorResponse) {
+            this.logService.snackBarError(resp, 5000);
+          }
+        });
       } else {
         return null;
       }
