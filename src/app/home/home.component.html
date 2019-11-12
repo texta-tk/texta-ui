@@ -9,11 +9,12 @@
             <mat-chip selected [color]="health.elastic.alive ? 'primary' : 'accent'"> ElasticSearch {{health.elastic.alive ? 'ONLINE' : 'OFFLINE'}}  </mat-chip>
             <mat-chip selected [color]="health.mlp.alive ? 'primary' : 'accent'"> MLP {{health.mlp.alive ? 'ONLINE' : 'OFFLINE'}}  </mat-chip>
             <mat-chip selected color="primary"> API VERSION {{health.version}}  </mat-chip>
+            <mat-chip selected color="primary"> VERSION {{frontVersion}}  </mat-chip>
           </mat-chip-list>
         </mat-card>
 
         <mat-card fxLayout="row wrap" fxLayoutGap="5px" class="usage-card center-margin m-top-10">
-          <div fxFlex="calc(33% - 5px)">
+          <div fxFlex="1 0 125px">
             <h4 class="mat-h4 center-text"> DISK SPACE </h4>
             <mat-progress-spinner
               [color]="((health.disk.free / health.disk.total) * 100) < 90 ? 'primary' : 'warn'"
@@ -28,7 +29,7 @@
             <span class="mat-hint mat-small center-text block"> {{health.disk.free | number}} /  {{health.disk.total| number}} {{health.disk.unit}} </span>
           </div>
 
-          <div fxFlex="calc(33% - 5px)">
+          <div fxFlex="1 0 125px">
             <h4 class="mat-h4 center-text"> MEMORY </h4>
             <mat-progress-spinner
               [color]="((health.memory.free / health.memory.total) * 100) < 90 ? 'primary' : 'warn'"
@@ -43,7 +44,7 @@
             <span class="mat-hint mat-small center-text block"> {{health.memory.free | number}} /  {{health.memory.total| number}} {{health.memory.unit}} </span>
           </div>
 
-          <div fxFlex="calc(33% - 5px)">
+          <div fxFlex="1 0 125px">
             <h4 class="mat-h4 center-text"> CPU USAGE </h4>
             <mat-progress-spinner
               [color]="health.cpu.percent < 90 ? 'primary' : 'warn'"
