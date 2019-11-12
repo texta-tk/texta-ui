@@ -33,34 +33,16 @@ import {FlexLayoutModule} from '@angular/flex-layout';
 import {LoginDialogComponent} from './components/dialogs/login/login-dialog.component';
 import {GenericTableComponent} from './components/generic-table/generic-table.component';
 import {RegistrationDialogComponent} from './components/dialogs/registration/registration-dialog.component';
-import {TimelineComponent} from './components/svg/timeline/timeline.component';
-import {ScatterComponent} from './components/svg/scatter/scatter.component';
-import {HistogramComponent} from './components/svg/histogram/histogram.component';
-import {ChartComponent} from './components/svg/chart/chart.component';
-import {AxisComponent} from './components/svg/chart/axis/axis.component';
-import {GradientComponent} from './components/svg/chart/gradient/gradient.component';
-import {BarsComponent} from './components/svg/chart/bars/bars.component';
-import {CirclesComponent} from './components/svg/chart/circles/circles.component';
-import {LineComponent} from './components/svg/chart/line/line.component';
 import {ConfirmDialogComponent} from './components/dialogs/confirm-dialog/confirm-dialog.component';
 import {MatOptionSelectAllComponent} from './components/mat-option-select-all.component';
 import {QueryDialogComponent} from './components/dialogs/query-dialog/query-dialog.component';
 import {GenericDialogComponent} from './components/dialogs/generic-dialog/generic-dialog.component';
 import {InfiniteScrollModule} from 'ngx-infinite-scroll';
+import {LineChartModule} from '@swimlane/ngx-charts';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
     RegistrationDialogComponent,
-
-    TimelineComponent,
-    ScatterComponent,
-    HistogramComponent,
-    ChartComponent,
-    AxisComponent,
-    LineComponent,
-    CirclesComponent,
-    BarsComponent,
-    GradientComponent,
     ConfirmDialogComponent,
     MatOptionSelectAllComponent,
     QueryDialogComponent,
@@ -98,6 +80,7 @@ import {InfiniteScrollModule} from 'ngx-infinite-scroll';
     MatTooltipModule,
     MatSliderModule,
 
+    LineChartModule,
     InfiniteScrollModule,
   ],
   exports: [
@@ -135,17 +118,9 @@ import {InfiniteScrollModule} from 'ngx-infinite-scroll';
 
     GenericTableComponent,
 
-    TimelineComponent,
-    ScatterComponent,
-    HistogramComponent,
-    ChartComponent,
-    AxisComponent,
-    LineComponent,
-    CirclesComponent,
-    BarsComponent,
-    GradientComponent,
     MatOptionSelectAllComponent,
 
+    LineChartModule,
     InfiniteScrollModule,
   ],
   entryComponents: [
