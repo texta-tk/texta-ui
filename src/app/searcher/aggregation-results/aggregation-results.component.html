@@ -3,7 +3,11 @@
     <pre>{{aggregation.aggregations | json}}</pre>
   </div>
   <div *ngIf="aggregation && aggregation.aggregations['agg_histo']">
-    <app-timeline [xAccessor]="xAccessor" [yAccessor]="yAccessor"
+    <app-timeline [xAccessor]="xAccessor" [yAccessor]="yAccessor" (hoveredOverData)="displayHoveredData($event)"
                   [data]="aggregation.aggregations.agg_histo.buckets"></app-timeline>
+    <div *ngIf="timeLineHoveredOverData">
+      Date: <strong>{{xAccessor(timeLineHoveredOverData) | date: 'fullDate'}}</strong><br>
+      Doc count: <strong>{{yAccessor(timeLineHoveredOverData)}}</strong>
+    </div>
   </div>
 </div>

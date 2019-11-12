@@ -34,7 +34,8 @@
     <svg:g appLine
       [data]="data"
       [xAccessor]="xAccessorScaled"
-      [yAccessor]="yAccessorScaled">
+      [yAccessor]="yAccessorScaled"
+      (hoveredOverData)="hoveredOverData.emit($event)">
     </svg:g>
   </app-chart>
 </div>

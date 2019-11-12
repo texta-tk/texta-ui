@@ -3,6 +3,7 @@ import {SearchService} from '../services/search.service';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import * as d3 from 'd3';
+
 @Component({
   selector: 'app-aggregation-results',
   templateUrl: './aggregation-results.component.html',
@@ -12,9 +13,15 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
 
   destroy$: Subject<boolean> = new Subject();
   aggregation: any;
+  timeLineHoveredOverData: any = undefined;
   xAccessor = x => new Date(x.key_as_string);
   yAccessor = y => y.doc_count;
+
   constructor(private searchService: SearchService) {
+  }
+
+  displayHoveredData(val) {
+    this.timeLineHoveredOverData = val;
   }
 
   ngOnInit() {

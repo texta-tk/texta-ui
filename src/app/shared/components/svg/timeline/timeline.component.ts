@@ -1,10 +1,10 @@
 import {
   AfterContentInit,
   Component,
-  ElementRef,
+  ElementRef, EventEmitter,
   HostListener,
   Input,
-  OnChanges,
+  OnChanges, Output,
   SimpleChanges,
   ViewChild
 } from '@angular/core';
@@ -29,18 +29,18 @@ export class TimelineComponent implements AfterContentInit, OnChanges {
   public xAccessorScaled: AccessorType;
   public yAccessorScaled: AccessorType;
   public y0AccessorScaled: number;
-  public formatDate: (date: object) => string = d3.timeFormat('%c');
+  public formatDate: (date: object) => string = d3.timeFormat('%B %d, %Y');
   public gradientId: string = getUniqueId('Timeline-gradient');
   public gradientColors: string[] = ['rgb(226, 222, 243)', '#f8f9fa'];
   @ViewChild('container', {static: true}) container: ElementRef;
-
+  @Output() hoveredOverData = new EventEmitter<any>();
   constructor() {
     this.dimensions = {
       marginTop: 40,
       marginRight: 30,
       marginBottom: 75,
       marginLeft: 75,
-      height: 300,
+      height: 400,
       width: 600,
     };
     this.dimensions = {
