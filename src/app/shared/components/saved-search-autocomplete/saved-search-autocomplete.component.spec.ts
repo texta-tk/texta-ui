@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SavedSearchAutocompleteComponent } from './saved-search-autocomplete.component';
+import { SharedModule } from '../../shared.module';
 
 describe('SavedSearchAutocompleteComponent', () => {
   let component: SavedSearchAutocompleteComponent;
@@ -8,6 +9,7 @@ describe('SavedSearchAutocompleteComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports: [SharedModule],
       declarations: [ SavedSearchAutocompleteComponent ]
     })
     .compileComponents();
