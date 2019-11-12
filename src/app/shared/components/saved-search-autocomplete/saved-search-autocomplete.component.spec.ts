@@ -2,6 +2,9 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SavedSearchAutocompleteComponent } from './saved-search-autocomplete.component';
 import { SharedModule } from '../../shared.module';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('SavedSearchAutocompleteComponent', () => {
   let component: SavedSearchAutocompleteComponent;
@@ -9,8 +12,7 @@ describe('SavedSearchAutocompleteComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [SharedModule],
-      declarations: [ SavedSearchAutocompleteComponent ]
+      imports: [SharedModule, HttpClientTestingModule, BrowserAnimationsModule],
     })
     .compileComponents();
   }));
