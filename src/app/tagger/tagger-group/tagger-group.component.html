@@ -39,6 +39,19 @@
                       <td mat-cell *matCellDef="let element"> {{element.tagger_status.total}}</td>
                     </ng-container>
 
+                    <ng-container matColumnDef="f1_score">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Avg. f1_score</th>
+                      <td mat-cell *matCellDef="let element"> {{element.tagger_statistics?.avg_f1_score | number:'0.2-2'}}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="precision">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Avg. precision</th>
+                      <td mat-cell *matCellDef="let element"> {{element.tagger_statistics?.avg_precision | number:'0.2-2'}}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="recall">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Avg. recall</th>
+                      <td mat-cell *matCellDef="let element"> {{element.tagger_statistics?.avg_recall | number:'0.2-2' }}</td>
+                    </ng-container>
+
                     <ng-container matColumnDef="progress">
                       <th mat-header-cell *matHeaderCellDef mat-sort-header> Progress</th>
                       <td mat-cell *matCellDef="let element">

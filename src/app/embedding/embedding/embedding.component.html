@@ -28,23 +28,35 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Description</th>
         <td mat-cell *matCellDef="let element"> {{element.description}}</td>
       </ng-container>
+      <ng-container matColumnDef="min_freq">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Min Frequency </th>
+        <td mat-cell *matCellDef="let element"> {{element.min_freq}}</td>
+      </ng-container>
+      <ng-container matColumnDef="num_dims">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Dimensions </th>
+        <td mat-cell *matCellDef="let element"> {{element.num_dimensions}}</td>
+      </ng-container>
+      <ng-container matColumnDef="vocab_size">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Vocab Size </th>
+        <td mat-cell *matCellDef="let element"> {{element.vocab_size}}</td>
+      </ng-container>
       <ng-container matColumnDef="time_started">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> time_started</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Time started</th>
         <td mat-cell *matCellDef="let element"> {{element.task.time_started | date:['MMM d, h:mm:ss a']}}</td>
       </ng-container>
       <ng-container matColumnDef="time_completed">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> time_completed</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Time completed</th>
         <td mat-cell *matCellDef="let element">
           <span *ngIf="element.task.time_completed">{{element.task.time_completed | date:['MMM d, h:mm:ss a']}}</span>
           <span *ngIf="!element.task.time_completed">Null</span>
         </td>
       </ng-container>
       <ng-container matColumnDef="fields_parsed">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> fields_parsed</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Fields parsed</th>
         <td mat-cell *matCellDef="let element"> {{element.fields_parsed}}</td>
       </ng-container>
       <ng-container matColumnDef="Task">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> task</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Task</th>
         <td mat-cell *matCellDef="let element">
           <mat-progress-bar
             mode="determinate"

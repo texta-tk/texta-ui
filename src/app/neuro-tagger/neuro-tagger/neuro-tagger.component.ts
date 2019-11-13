@@ -31,7 +31,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/components/dialogs/confir
 export class NeuroTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: NeuroTagger | null;
   public tableData: MatTableDataSource<NeuroTagger> = new MatTableDataSource();
-  public displayedColumns = ['select', 'id', 'author', 'description', 'fields_parsed', 'time_started', 'time_completed', 'Task', 'Modify'];
+  public displayedColumns = ['select', 'id', 'author', 'description', 'fields_parsed', 'time_started', 'time_completed', 'train_acc', 'train_loss', 'val_acc', 'val_loss', 'Task', 'Modify'];
   selectedRows = new SelectionModel<NeuroTagger>(true, []);
   public isLoadingResults = true;
 
