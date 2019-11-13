@@ -1,6 +1,8 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { NeuroTaggerService } from 'src/app/core/neuro-tagger/neuro-tagger.service';
 import { MAT_DIALOG_DATA } from '@angular/material';
+import { HttpErrorResponse } from '@angular/common/http';
+import { LogService } from 'src/app/core/util/log.service';
 
 @Component({
   selector: 'app-neurotag-text-dialog',
@@ -12,15 +14,19 @@ export class NeurotagTextDialogComponent {
   result: { tags: { tag: string, probability: number }[]};
   options: any;
 
-  constructor(private neuroTaggerService: NeuroTaggerService,
+  constructor(private neuroTaggerService: NeuroTaggerService, private logService: LogService,
               @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, taggerId: number; }) {
   }
 
   onSubmit(value: string, threshold: number) {
     
     this.neuroTaggerService.tagText({text: value, threshold: threshold}, this.data.currentProjectId, this.data.taggerId)
-      .subscribe((resp: { tags: { tag: string, probability: number }[]}) => {
-      this.result = resp;
+      .subscribe((resp: { tags: { tag: string, probability: number }[]} | HttpErrorResponse) => {
+        if (resp && !(resp instanceof HttpErrorResponse)) {
+          this.result = resp;
+        } else if (resp instanceof HttpErrorResponse){
+          this.logService.snackBarError(resp, 4000);
+        }
     });
   }
 }

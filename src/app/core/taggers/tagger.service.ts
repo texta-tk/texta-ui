@@ -50,6 +50,18 @@ export class TaggerService {
       catchError(this.logService.handleError<unknown>('retrainTagger')));
   }
 
+  getStopWords(projectId: number, taggerId: number): Observable<{'stop_words': string} | HttpErrorResponse> {
+    return this.http.get<{'stop_words': string}>(`${this.apiUrl}/projects/${projectId}/taggers/${taggerId}/stop_words/`).pipe(
+      tap(e => this.logService.logStatus(e, 'getStopWords')),
+      catchError(this.logService.handleError<{'stop_words': string}>('getStopWords')));
+  }
+
+  postStopWords(projectId: number, taggerId: number, payload): Observable<{'stop_words': string} | HttpErrorResponse> {
+    return this.http.post<{'stop_words': string}>(`${this.apiUrl}/projects/${projectId}/taggers/${taggerId}/stop_words/`, payload).pipe(
+      tap(e => this.logService.logStatus(e, 'postStopWords')),
+      catchError(this.logService.handleError<{'stop_words': string}>('postStopWords')));
+  }
+
   // todo backend seperate endpoint
   getTaggerOptions(projectId: number): Observable<TaggerOptions | HttpErrorResponse> {
     return this.http.options<TaggerOptions>(

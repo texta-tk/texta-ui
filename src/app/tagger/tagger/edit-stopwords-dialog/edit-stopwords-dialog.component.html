@@ -1,5 +1,6 @@
 <mat-form-field class="max-width">
-  <textarea matInput
+  <textarea [(ngModel)]="stopwords"
+  matInput
             cdkTextareaAutosize
             cdkAutosizeMinRows="1"
             cdkAutosizeMaxRows="10" placeholder="Stopwords"></textarea>

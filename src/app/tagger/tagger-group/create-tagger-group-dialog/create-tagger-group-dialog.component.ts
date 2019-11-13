@@ -115,7 +115,6 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
       tagger: tagger_body
     };
 
-    console.log(body);
     this.projectStore.getCurrentProject().pipe(take(1), mergeMap(currentProject => {
       if (currentProject) {
         return this.taggerGroupService.createTaggerGroup(body, currentProject.id);
@@ -127,6 +126,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
         this.dialogRef.close(resp);
       } else if (resp instanceof HttpErrorResponse) {
         this.dialogRef.close(resp);
+        this.logService.snackBarError(resp, 4000);
       }
     });
   }

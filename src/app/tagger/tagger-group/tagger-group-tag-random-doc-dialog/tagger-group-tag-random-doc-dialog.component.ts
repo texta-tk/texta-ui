@@ -2,6 +2,8 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { TaggerGroupService } from 'src/app/core/taggers/tagger-group.service';
 import { TaggerGroup } from 'src/app/shared/types/tasks/Tagger';
 import { MAT_DIALOG_DATA } from '@angular/material';
+import { LogService } from 'src/app/core/util/log.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 interface TaggerGroupRandomDocTag {
   ner_match: boolean;
@@ -27,7 +29,7 @@ export class TaggerGroupTagRandomDocDialogComponent implements OnInit {
 
   isLoading = false;
 
-  constructor(private taggerGroupService: TaggerGroupService,
+  constructor(private taggerGroupService: TaggerGroupService, private logService: LogService,
               @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, tagger: TaggerGroup; }) {
   }
 
@@ -38,8 +40,12 @@ export class TaggerGroupTagRandomDocDialogComponent implements OnInit {
   onSubmit() {
     this.isLoading = true;
     this.taggerGroupService.tagRandomDocument(this.data.currentProjectId, this.data.tagger.id)
-    .subscribe((result: TaggerGroupRandomDocResult) => {
-      this.result = result;
+    .subscribe((resp: TaggerGroupRandomDocResult | HttpErrorResponse) => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.result = resp;
+      } else if (resp instanceof HttpErrorResponse){
+        this.logService.snackBarError(resp, 4000);
+      }
       this.isLoading = false;
     });
   }

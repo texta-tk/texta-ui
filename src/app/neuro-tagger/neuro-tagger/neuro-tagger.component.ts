@@ -90,11 +90,15 @@ export class NeuroTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
         // Add 1 to to index because Material paginator starts from 0 and DRF paginator from 1
         `page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`
       );
-    })).subscribe((data: { count: number, results: NeuroTagger[] }) => {
-      // Flip flag to show that loading has finished.
-      this.isLoadingResults = false;
-      this.resultsLength = data.count;
-      this.tableData.data = data.results;
+    })).subscribe((data: { count: number, results: NeuroTagger[] } | HttpErrorResponse) => {
+      if (data && !(data instanceof HttpErrorResponse)) {
+        // Flip flag to show that loading has finished.
+        this.isLoadingResults = false;
+        this.resultsLength = data.count;
+        this.tableData.data = data.results;
+      } else if (data instanceof HttpErrorResponse){
+        this.logService.snackBarError(data, 4000);
+      }
     });
   }
 
@@ -146,10 +150,14 @@ export class NeuroTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.neuroTaggerService.deleteNeuroTagger(this.currentProject.id, neurotagger.id).subscribe(() => {
-          this.logService.snackBarMessage(`NeuroTagger ${neurotagger.id}: ${neurotagger.description} deleted`, 2000);
-          this.tableData.data.splice(index, 1);
-          this.tableData.data = [...this.tableData.data];
+        this.neuroTaggerService.deleteNeuroTagger(this.currentProject.id, neurotagger.id).subscribe((resp: any | HttpErrorResponse) => {
+          if (resp && !(resp instanceof HttpErrorResponse)) {
+            this.logService.snackBarMessage(`NeuroTagger ${neurotagger.id}: ${neurotagger.description} deleted`, 2000);
+            this.tableData.data.splice(index, 1);
+            this.tableData.data = [...this.tableData.data];
+          } else if (resp instanceof HttpErrorResponse){
+            this.logService.snackBarError(resp, 4000);
+          }
         });
       }
     });

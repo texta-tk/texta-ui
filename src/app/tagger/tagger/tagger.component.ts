@@ -152,8 +152,9 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  editStopwordsDialog(element) {
+  editStopwordsDialog(tagger: Tagger) {
     const dialogRef = this.dialog.open(EditStopwordsDialogComponent, {
+      data: {taggerId: tagger.id, currentProjectId: this.currentProject.id },
       maxHeight: '665px',
       width: '700px',
     });

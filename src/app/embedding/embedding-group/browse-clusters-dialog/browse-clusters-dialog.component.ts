@@ -2,6 +2,8 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { EmbeddingsGroupService } from 'src/app/core/embeddings/embeddings-group.service';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { LogService } from 'src/app/core/util/log.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 
 interface BrowseClustersResponse {
@@ -23,7 +25,7 @@ export class BrowseClustersDialogComponent implements OnInit {
   browseClustersForm: FormGroup;
 
 
-  constructor(private embGroupService: EmbeddingsGroupService,
+  constructor(private embGroupService: EmbeddingsGroupService, private logService: LogService,
     @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, embeddingClusterId: number; }) {
   }
 
@@ -31,7 +33,6 @@ export class BrowseClustersDialogComponent implements OnInit {
     this.embGroupService.getBrowseClustersOptions(this.data.currentProjectId, this.data.embeddingClusterId)
       .subscribe(options => {
         this.options = options;
-        console.log(this.options);
 
         this.browseClustersForm = new FormGroup({
           cluster_order: new FormControl(this.options.actions.POST.cluster_order.choices[0].value, Validators.required),
@@ -45,8 +46,12 @@ export class BrowseClustersDialogComponent implements OnInit {
   onSubmit() {
     if (this.browseClustersForm.valid) {
       this.embGroupService.browseClusters(this.data.currentProjectId, this.data.embeddingClusterId, this.browseClustersForm.getRawValue())
-        .subscribe((response: BrowseClustersResponse[]) => {
-          this.result = response;
+        .subscribe((resp: BrowseClustersResponse[] | HttpErrorResponse) => {
+          if (resp && !(resp instanceof HttpErrorResponse)) {
+            this.result = resp;
+          } else if (resp instanceof HttpErrorResponse){
+            this.logService.snackBarError(resp, 4000);
+          }
         });
     }
   }

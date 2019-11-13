@@ -6,7 +6,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {UserService} from '../core/users/user.service';
 import {CrossFieldErrorMatcher, LiveErrorStateMatcher} from '../shared/CustomerErrorStateMatchers';
 import {catchError, tap} from 'rxjs/operators';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../core/util/log.service';
 import {environment} from '../../environments/environment';
 
@@ -51,22 +51,22 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
   }
 
   public onPasswordResetFormSubmit(formData: any) {
-    console.log(formData);
     const body = {
       new_password1: formData.passwordForm.passwordFormControl,
       new_password2: formData.passwordForm.passwordConfirmFormControl
     };
     this.userService.changePassword(body).subscribe((resp: any) => {
-      console.log(resp);
       this.detail = resp.detail;
     });
   }
 
   public onForgotPasswordFormSubmit(formData: any) {
-    console.log(formData);
-    this.userService.resetPassword(formData.emailFormControl).subscribe((resp: any) => {
-      console.log(resp);
-      this.detail = resp.detail;
+    this.userService.resetPassword(formData.emailFormControl).subscribe((resp: any | HttpErrorResponse) => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.detail = resp.detail;
+      } else if (resp instanceof HttpErrorResponse){
+        this.logService.snackBarError(resp, 4000);
+      }
     });
   }
 

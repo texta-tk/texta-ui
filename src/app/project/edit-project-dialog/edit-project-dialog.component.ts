@@ -51,11 +51,13 @@ export class EditProjectDialogComponent implements OnInit {
         this.indices = resp;
       } 
     });
-    this.userService.getAllUsers().subscribe(resp => {
-      this.users = resp;
+    this.userService.getAllUsers().subscribe((resp: UserProfile[] | HttpErrorResponse) => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.users = resp;
+      } else if (resp instanceof HttpErrorResponse){
+        this.logService.snackBarError(resp, 4000);
+      }
     });
-
-
   }
 
   onSubmit(formData) {
