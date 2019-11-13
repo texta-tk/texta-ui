@@ -55,7 +55,7 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
         }
       };
 
-      this.elasticSearchQuery.query.bool.should.push(this.constraintQuery);
+      this.elasticSearchQuery.elasticSearchQuery.query.bool.should.push(this.constraintQuery);
 
       this.textAreaFormControl.valueChanges.pipe(
         takeUntil(this.destroyed$),
@@ -157,9 +157,9 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     console.log('destroy text-constraint');
-    const index = this.elasticSearchQuery.query.bool.should.indexOf(this.constraintQuery, 0);
+    const index = this.elasticSearchQuery.elasticSearchQuery.query.bool.should.indexOf(this.constraintQuery, 0);
     if (index > -1) {
-      this.elasticSearchQuery.query.bool.should.splice(index, 1);
+      this.elasticSearchQuery.elasticSearchQuery.query.bool.should.splice(index, 1);
     }
     this.change.emit(this.elasticSearchQuery);
     this.destroyed$.next(true);

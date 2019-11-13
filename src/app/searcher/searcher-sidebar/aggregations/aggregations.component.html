@@ -1,7 +1,7 @@
 <div class="wrapper">
   <mat-form-field appearance="outline" class="max-width">
     <mat-label>Select Fields</mat-label>
-    <mat-select [formControl]="fieldsFormControl">
+    <mat-select [formControl]="fieldsFormControl" (valueChange)="fieldSelected($event)">
       <mat-optgroup *ngFor="let group of projectFields" [label]="group.index">
         <mat-option *ngFor="let fields of group.fields" [value]="fields">
           {{fields.path}}
@@ -9,53 +9,17 @@
       </mat-optgroup>
     </mat-select>
   </mat-form-field>
-
-  <div class="field-type-wrapper" *ngIf="fieldTypeTextOrFact(fieldsFormControl.value)">
-    <mat-form-field appearance="outline" class="max-width">
-      <mat-label>Aggregation</mat-label>
-      <mat-select [(ngModel)]="aggregationType" name="aggregationTextType">
-        <mat-option value="terms">frequent items</mat-option>
-        <mat-option value="significant_terms">significant items</mat-option>
-        <mat-option value="significant_text">significant words</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-label>Aggregation size</mat-label>
-    <mat-slider class="max-width" min="10" max="300" step="10" [(ngModel)]="aggregationSize"
-                thumbLabel="true"></mat-slider>
-  </div>
-
-  <div class="field-type-wrapper" *ngIf="fieldTypeDate(fieldsFormControl.value)" fxLayout="column">
-    <!--not text or fact, means it has to be date or number-->
-    <div fxLayout="row" class="datepicker-row">
-      <mat-form-field appearance="outline">
-        <input matInput [matDatepicker]="picker" placeholder="Daterange from">
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <input matInput [matDatepicker]="picker2" placeholder="Daterange to">
-        <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
-        <mat-datepicker #picker2></mat-datepicker>
-      </mat-form-field>
-    </div>
-    <mat-form-field appearance="outline" class="max-width">
-      <mat-label>Frequency</mat-label>
-      <mat-select [(ngModel)]="aggregationType" name="aggregationDateType">
-        <mat-option value="raw_frequency">raw frequency</mat-option>
-        <mat-option value="relative_frequency">relative frequency</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field appearance="outline" class="max-width">
-      <mat-label>Interval</mat-label>
-      <mat-select [(ngModel)]="dateInterval" name="aggregationDateInterval">
-        <mat-option value="day">day</mat-option>
-        <mat-option value="week">week</mat-option>
-        <mat-option value="month">month</mat-option>
-        <mat-option value="year">year</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
+  <ng-container *ngFor="let aggregation of aggregationList; let i = index;">
+    <ng-container *ngIf="fieldTypeTextOrFact(aggregation.type)">
+      <app-text-aggregation [fieldsFormControl]="fieldsFormControl" [aggregationObj]="aggregation"></app-text-aggregation>
+    </ng-container>
+    <ng-container *ngIf="fieldTypeDate(aggregation.type)">
+      <app-date-aggregation [fieldsFormControl]="fieldsFormControl" [aggregationObj]="aggregation"></app-date-aggregation>
+    </ng-container>
+  </ng-container>
   <div class="max-width">
-    <button class="max-width" mat-stroked-button (click)="aggregate()" [disabled]="!searcherElasticSearchQuery">Aggregate</button>
+    <button class="max-width" mat-stroked-button (click)="aggregate()" [disabled]="!searcherElasticSearchQuery">
+      Aggregate
+    </button>
   </div>
 </div>

@@ -1,19 +1,9 @@
 <div class="container">
-  <div *ngIf="aggregation && aggregation.aggregations['agg_term']">
-    <pre>{{aggregation.aggregations | json}}</pre>
+  <div *ngIf="aggregation && aggregation.aggs['agg_term']">
+    <pre>{{aggregation.aggs | json}}</pre>
   </div>
 
-  <ngx-charts-line-chart *ngIf="aggregation && aggregation.aggregations['agg_histo']" [results]="dataToDisplay"
+  <ngx-charts-line-chart *ngIf="aggregation && aggregation.aggs['agg_histo']" [results]="dataToDisplay"
                          [yAxis]="true"
-                         [xAxis]="true" [xAxisTickFormatting]="dateFormatBindingFn"></ngx-charts-line-chart>
-  <!--  <div>
-
-      <
-      <app-timeline [xAccessor]="xAccessor" [yAccessor]="yAccessor" (hoveredOverData)="displayHoveredData($event)"
-                    [data]="aggregation.aggregations.agg_histo.buckets"></app-timeline>
-      <div *ngIf="timeLineHoveredOverData">
-        Date: <strong>{{xAccessor(timeLineHoveredOverData) | date: 'fullDate'}}</strong><br>
-        Doc count: <strong>{{yAccessor(timeLineHoveredOverData)}}</strong>
-      </div>
-    </div>-->
+                         [xAxis]="true"></ngx-charts-line-chart>
 </div>

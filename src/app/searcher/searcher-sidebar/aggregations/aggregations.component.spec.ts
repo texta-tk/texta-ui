@@ -8,6 +8,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {AggregationResultsComponent} from '../../aggregation-results/aggregation-results.component';
 import {SearchService} from '../../services/search.service';
 import {SearchServiceSpy} from '../../services/search.service.spec';
+import {TextAggregationComponent} from './text-aggregation/text-aggregation.component';
+import {DateAggregationComponent} from './date-aggregation/date-aggregation.component';
 
 describe('AggregationsComponent', () => {
   let component: AggregationsComponent;
@@ -15,7 +17,7 @@ describe('AggregationsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AggregationsComponent ],
+      declarations: [ AggregationsComponent, TextAggregationComponent, DateAggregationComponent ],
       imports: [
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule,
       ],

@@ -15,6 +15,8 @@ import {BehaviorSubject} from 'rxjs';
 import {SearchService} from '../services/search.service';
 import {SearchServiceSpy} from '../services/search.service.spec';
 import {AggregationsComponent} from './aggregations/aggregations.component';
+import {DateAggregationComponent} from './aggregations/date-aggregation/date-aggregation.component';
+import {TextAggregationComponent} from './aggregations/text-aggregation/text-aggregation.component';
 
 describe('SearcherSidebarComponent', () => {
   let component: SearcherSidebarComponent;
@@ -26,7 +28,7 @@ describe('SearcherSidebarComponent', () => {
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule,
       ],
       declarations: [SearcherSidebarComponent, BuildSearchComponent, SavedSearchesComponent, TextConstraintsComponent,
-        DateConstraintsComponent, FactConstraintsComponent, AggregationsComponent ]
+        DateConstraintsComponent, FactConstraintsComponent, AggregationsComponent, DateAggregationComponent, TextAggregationComponent ]
     }).overrideComponent(SearcherSidebarComponent, {
       set: {
         providers: [

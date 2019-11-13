@@ -80,7 +80,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
       if (this.elasticQuery.size === 0) {
         this.elasticQuery.size = 10;
       }
-      return this.searcherService.search({query: this.elasticQuery}, this.currentProject.id);
+      return this.searcherService.search({query: this.elasticQuery.elasticSearchQuery}, this.currentProject.id);
     })).subscribe(
       (result: { count: number, results: { highlight: any, doc: any }[] } | HttpErrorResponse) => {
         this.searchService.setIsLoading(false);
@@ -194,7 +194,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
 
   saveSearch(description: string) {
     if (this.currentUser) {
-      this.searcherService.saveSearch(this.currentProject.id, [...this.constraintList], this.elasticQuery, description).subscribe(resp => {
+      this.searcherService.saveSearch(this.currentProject.id, [...this.constraintList], this.elasticQuery.elasticSearchQuery, description).subscribe(resp => {
         if (resp) {
           this.searchService.nextSavedSearchUpdate();
         }
@@ -210,18 +210,18 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
         shouldMatch += 1;
       }
     }
-    this.elasticQuery.query.bool.minimum_should_match = shouldMatch;
+    this.elasticQuery.elasticSearchQuery.query.bool.minimum_should_match = shouldMatch;
   }
 
   updateFieldsToHighlight(constraints: Constraint[]) {
-    this.elasticQuery.highlight.fields = {};
+    this.elasticQuery.elasticSearchQuery.highlight.fields = {};
     const fieldsToHighlight = [];
     for (const constraint of constraints) {
       const fields = constraint.fields.map((x: Field) => x.path);
       fieldsToHighlight.push(...fields);
     }
     for (const field of fieldsToHighlight) {
-      this.elasticQuery.highlight.fields[field] = {};
+      this.elasticQuery.elasticSearchQuery.highlight.fields[field] = {};
     }
   }
 

@@ -14,6 +14,8 @@ import {HighlightComponent} from './searcher-table/highlight/highlight.component
 import {FactTextConstraintsComponent} from './searcher-sidebar/build-search/fact-text-constraints/fact-text-constraints.component';
 import { AggregationsComponent } from './searcher-sidebar/aggregations/aggregations.component';
 import { AggregationResultsComponent } from './aggregation-results/aggregation-results.component';
+import { DateAggregationComponent } from './searcher-sidebar/aggregations/date-aggregation/date-aggregation.component';
+import { TextAggregationComponent } from './searcher-sidebar/aggregations/text-aggregation/text-aggregation.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +31,9 @@ import { AggregationResultsComponent } from './aggregation-results/aggregation-r
     SaveSearchDialogComponent,
     HighlightComponent,
     AggregationsComponent,
-    AggregationResultsComponent
+    AggregationResultsComponent,
+    DateAggregationComponent,
+    TextAggregationComponent
   ],
   imports: [
     SharedModule,

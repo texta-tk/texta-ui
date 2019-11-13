@@ -88,33 +88,11 @@ export class FactTextInputGroup {
 export class ElasticsearchQuery {
   static PRE_TAG = '<TEXTA_SEARCHER_HIGHLIGHT_START_TAG>';
   static POST_TAG = '<TEXTA_SEARCHER_HIGHLIGHT_END_TAG>';
-  query: {
-    bool: {
-      must: any[],
-      filter: any[],
-      must_not: any[],
-      should: any[],
-      minimum_should_match: number,
-    }
-  };
 
-  highlight: {
-    order?: string,
-    number_of_fragments?: number,
-    fragment_size?: number,
-    pre_tags?: any[],
-    post_tags?: any[],
-    type?: string,
-    fields: {}
-  };
-
-  aggs: {};
-
-  size = 10;
-  from = 0;
+  private _elasticSearchQuery: ElasticsearchQueryStructure = {};
 
   constructor() {
-    this.query = {
+    this._elasticSearchQuery.query = {
       bool: {
         must: [],
         filter: [],
@@ -123,11 +101,72 @@ export class ElasticsearchQuery {
         minimum_should_match: 0,
       }
     };
-    this.highlight = {
+    this._elasticSearchQuery.highlight = {
       pre_tags: [ElasticsearchQuery.PRE_TAG],
       post_tags: [ElasticsearchQuery.POST_TAG],
       number_of_fragments: 0,
       fields: {}
     };
+    this._elasticSearchQuery.from = 0;
+    this._elasticSearchQuery.size = 10;
   }
+
+  get size(): number {
+    return this._elasticSearchQuery.size;
+  }
+
+  set size(val: number) {
+    this._elasticSearchQuery.size = val;
+  }
+
+  get from(): number {
+    return this._elasticSearchQuery.from;
+  }
+
+  set from(val: number) {
+    this._elasticSearchQuery.from = val;
+  }
+
+  get elasticSearchQuery(): ElasticsearchQueryStructure {
+    return this._elasticSearchQuery;
+  }
+
+  set elasticSearchQuery(elasticQuery: ElasticsearchQueryStructure) {
+    this._elasticSearchQuery = elasticQuery;
+  }
+}
+
+export interface ElasticsearchQueryStructure {
+  highlight?: HighlightStructure;
+  query?: QueryStructure;
+  aggs?: AggregationStructure;
+  size?: number;
+  from?: number;
+}
+
+interface HighlightStructure {
+  order?: string;
+  number_of_fragments?: number;
+  fragment_size?: number;
+  pre_tags?: any[];
+  post_tags?: any[];
+  type?: string;
+  fields: {};
+}
+
+interface QueryStructure {
+  bool: {
+    must: any[],
+    filter: any[],
+    must_not: any[],
+    should: any[],
+    minimum_should_match: number,
+  };
+}
+
+interface AggregationStructure {
+  number_of_fragments: number;
+  fields: {};
+  pre_tags: string;
+  post_tags: string;
 }

@@ -6,7 +6,7 @@ import {LocalStorageService} from '../util/local-storage.service';
 import {
   Constraint,
   DateConstraint,
-  ElasticsearchQuery,
+  ElasticsearchQuery, ElasticsearchQueryStructure,
   FactConstraint,
   TextConstraint
 } from '../../searcher/searcher-sidebar/build-search/Constraints';
@@ -34,7 +34,7 @@ export class SearcherService {
       catchError(this.logService.handleError<SavedSearch[]>('getSavedSearches')));
   }
 
-  saveSearch(projectId: number, constraintList: Constraint[], elasticQuery: ElasticsearchQuery, desc: string) {
+  saveSearch(projectId: number, constraintList: Constraint[], elasticQuery: ElasticsearchQueryStructure, desc: string) {
     const body = {
       query_constraints: JSON.stringify(this.convertConstraintListToJson(constraintList)),
       description: desc,
