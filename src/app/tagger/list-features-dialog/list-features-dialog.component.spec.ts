@@ -2,6 +2,10 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ListFeaturesDialogComponent } from './list-features-dialog.component';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('ListFeaturesDialogComponent', () => {
   let component: ListFeaturesDialogComponent;
@@ -15,6 +19,9 @@ describe('ListFeaturesDialogComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ ListFeaturesDialogComponent ],
+      imports: [
+        SharedModule, HttpClientTestingModule, BrowserAnimationsModule
+      ],
       providers: [
         {
           provide: MatDialogRef,
