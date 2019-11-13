@@ -5,7 +5,7 @@ import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/mat
 import {LogService} from '../../core/util/log.service';
 import {TaggerService} from '../../core/taggers/tagger.service';
 import {ProjectStore} from '../../core/projects/project.store';
-import {Tagger} from '../../shared/types/tasks/Tagger';
+import {Tagger, TaggerVectorizerChoices} from '../../shared/types/tasks/Tagger';
 import {switchMap, startWith } from 'rxjs/operators';
 import {CreateTaggerDialogComponent} from './create-tagger-dialog/create-tagger-dialog.component';
 import {animate, state, style, transition, trigger} from '@angular/animations';
@@ -17,6 +17,7 @@ import {TagRandomDocDialogComponent} from './tag-random-doc-dialog/tag-random-do
 import {SelectionModel} from '@angular/cdk/collections';
 import {QueryDialogComponent} from 'src/app/shared/components/dialogs/query-dialog/query-dialog.component';
 import {ConfirmDialogComponent} from 'src/app/shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import { ListFeaturesDialogComponent } from '../list-features-dialog/list-features-dialog.component';
 
 @Component({
   selector: 'app-tagger',
@@ -256,5 +257,17 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
       maxHeight: '665px',
       width: '700px',
     });
+  }
+
+  listFeatures(tagger: Tagger) {
+    if (tagger.vectorizer === TaggerVectorizerChoices.HASHING) {
+      this.logService.snackBarMessage('Hashing Vectorizer is not supported for listing features', 4500);
+    } else {
+      const dialogRef = this.dialog.open(ListFeaturesDialogComponent, {
+        data: {taggerId: tagger.id, currentProjectId: this.currentProject.id },
+        maxHeight: '665px',
+        width: '700px',
+      });
+    }
   }
 }

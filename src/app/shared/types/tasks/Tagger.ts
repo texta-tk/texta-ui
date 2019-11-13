@@ -9,7 +9,7 @@ export class Tagger {
   query: string;
   fields: string[];
   embedding: null;
-  vectorizer: string;
+  vectorizer: TaggerVectorizerChoices;
   feature_selector: string;
   stop_words: string;
   maximum_sample_size: number;
@@ -22,6 +22,12 @@ export class Tagger {
   plot: unknown;
   task: TaskStatus;
   fields_parsed: string[];
+}
+
+export enum TaggerVectorizerChoices {
+  HASHING = 'Hashing Vectorizer',
+  COUNT = 'Count Vectorizer',
+  TFIDF = 'Tfidf Vectorizer',
 }
 
 export class TaggerGroup {
@@ -43,4 +49,11 @@ export class LightTagger {
     url = '';
     status: TaskStatus;
     id: number;
+}
+
+
+export class ListFeaturesResponse {
+  features: { feature: string, coefficient: number }[];
+  total_features: number;
+  showing_features: number;
 }

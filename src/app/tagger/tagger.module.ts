@@ -13,6 +13,7 @@ import { ModelsListDialogComponent } from './tagger-group/models-list-dialog/mod
 import { TaggerGroupTagTextDialogComponent } from './tagger-group/tagger-group-tag-text-dialog/tagger-group-tag-text-dialog.component';
 import { TaggerGroupTagDocDialogComponent } from './tagger-group/tagger-group-tag-doc-dialog/tagger-group-tag-doc-dialog.component';
 import { TaggerGroupTagRandomDocDialogComponent } from './tagger-group/tagger-group-tag-random-doc-dialog/tagger-group-tag-random-doc-dialog.component';
+import { ListFeaturesDialogComponent } from './list-features-dialog/list-features-dialog.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { TaggerGroupTagRandomDocDialogComponent } from './tagger-group/tagger-gr
     TaggerGroupTagTextDialogComponent,
     TaggerGroupTagDocDialogComponent,
     TaggerGroupTagRandomDocDialogComponent,
+    ListFeaturesDialogComponent,
   ],
   imports: [
     SharedModule,
@@ -44,6 +46,7 @@ import { TaggerGroupTagRandomDocDialogComponent } from './tagger-group/tagger-gr
     TaggerGroupTagTextDialogComponent,
     TaggerGroupTagDocDialogComponent,
     TaggerGroupTagRandomDocDialogComponent,
+    ListFeaturesDialogComponent,
   ]
 })
 export class TaggerModule {

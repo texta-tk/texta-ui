@@ -1,0 +1,14 @@
+<ng-container *ngIf="result">
+    <h1 mat-dialog-title>Showing {{result.showing_features}} features out of {{result.total_features}}</h1>
+    <mat-divider></mat-divider>
+    <mat-dialog-content class="results-wrapper">
+        <div *ngFor="let feature of result.features" class="m-top-10">
+            <span class="mat-body-strong">Feature:</span> {{feature.feature}}
+            <br>
+            <span class="mat-body-strong">Coefficient: </span>{{feature.coefficient}}
+            <br>
+            <br>
+            <mat-divider></mat-divider>
+        </div>
+    </mat-dialog-content>
+</ng-container>

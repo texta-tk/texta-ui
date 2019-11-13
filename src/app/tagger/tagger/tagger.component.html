@@ -178,6 +178,9 @@
           </button>
           <mat-menu #editMenu="matMenu">
             <div *ngIf="element.task.status === 'completed'">
+              <button mat-menu-item (click)="listFeatures(element)">
+                List features
+              </button>
               <button mat-menu-item (click)="retrainTagger(element)">
                 Retrain tagger
               </button>
