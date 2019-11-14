@@ -1,0 +1,76 @@
+<h1 mat-dialog-title>New Reindexer</h1>
+<div mat-dialog-content>
+  <form class="flex-col" [formGroup]="reindexerForm" (ngSubmit)="onSubmit(reindexerForm?.value)">
+    <mat-form-field>
+      <input matInput placeholder="Description" autocomplete="off" formControlName="descriptionFormControl"
+             [errorStateMatcher]="matcher" required>
+
+      <mat-error *ngIf="reindexerForm?.get('descriptionFormControl').hasError('required')">
+        Description is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput placeholder="New index name" autocomplete="off" formControlName="newNameFormControl"
+             [errorStateMatcher]="matcher" required>
+
+      <mat-error *ngIf="reindexerForm?.get('newNameFormControl').hasError('required')">
+        New index name is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+    
+    <mat-form-field>
+      <mat-label>Indices</mat-label>
+      <mat-select formControlName="indicesFormControl" multiple required>
+        <mat-option *ngFor="let index of indices" [value]="index">
+          {{index}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+
+    <mat-form-field>
+      <mat-label>Select Fields</mat-label>
+      <mat-select formControlName="fieldsFormControl" multiple>
+        <mat-optgroup *ngFor="let group of projectFields" [label]="group.index">
+          <mat-option *ngFor="let fields of group.fields" [value]="fields">
+            {{fields.path}}
+          </mat-option>
+        </mat-optgroup>
+      </mat-select>
+      <mat-error *ngIf="reindexerForm?.get('fieldsFormControl').hasError('required')">
+        Field is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput placeholder="Field types" autocomplete="off" formControlName="fieldTypesFormControl"
+             [errorStateMatcher]="matcher">
+             <mat-hint>For example: [{{'{'}}'"path": "comment_text", "field_type": "long", "new_path_name": "CHANGED_NAME"{{'}'}}]</mat-hint>
+    </mat-form-field>
+
+    <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"></app-saved-search-autocomplete>
+
+
+    <mat-form-field>
+      <input matInput placeholder="Random subset size" autocomplete="off" formControlName="randomSizeFormControl"
+             [errorStateMatcher]="matcher">
+             <mat-hint>If added, selects a random subset from all samples</mat-hint>
+    </mat-form-field>
+
+
+    <div class="flex-col">
+      <div class="flex-row">
+        <div class="flex-item-left">
+          <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Close</button>
+        </div>
+        <div class="flex-item-right">
+          <button type="submit" [disabled]="!reindexerForm?.valid" mat-button>Create</button>
+        </div>
+      </div>
+
+    </div>
+
+
+  </form>
+</div>

@@ -4,11 +4,12 @@
     <a routerLinkActive="is-active" [routerLink]="['searcher']"><button mat-button class="nav-button"><mat-icon class="margin-right">search</mat-icon>Search</button></a>
     <a routerLinkActive="is-active" [routerLink]="['lexicon-miner']"><button mat-button class="nav-button"><mat-icon class="margin-right">library_books</mat-icon>Lexicons  <ng-container *ngIf="projectResourceCounts">({{projectResourceCounts?.num_lexicons}})</ng-container></button></a>
     <a class="pointer" [matMenuTriggerFor]="models"><button mat-button class="nav-button"><mat-icon class="margin-right">done_all</mat-icon>Models<mat-icon>arrow_drop_down</mat-icon></button></a>
+    <a class="pointer" [matMenuTriggerFor]="tools"><button mat-button class="nav-button"><mat-icon class="margin-right">build</mat-icon>Tools<mat-icon>arrow_drop_down</mat-icon></button></a>
 
-    <mat-menu #models="matMenu">
+    <!-- <mat-menu #models="matMenu">
       <button mat-menu-item>Get Facts</button>
       <button mat-menu-item>Get Fields</button>
-    </mat-menu>
+    </mat-menu> -->
 
     <mat-menu #models="matMenu">
       <!-- Embedding Clusters disabled until more functionality for them is added -->
@@ -17,6 +18,10 @@
       <a mat-menu-item routerLinkActive="is-active" [routerLink]="['embeddings']">Embeddings <span *ngIf="projectResourceCounts">({{projectResourceCounts?.num_embeddings}})</span></a>
       <a mat-menu-item routerLinkActive="is-active" [routerLink]="['taggers']">Taggers <span *ngIf="projectResourceCounts">({{projectResourceCounts?.num_taggers}})</span></a>
       <a mat-menu-item routerLinkActive="is-active" [routerLink]="['neurotaggers']">NeuroTaggers <span *ngIf="projectResourceCounts">({{projectResourceCounts?.num_neurotaggers}})</span></a>
+    </mat-menu>
+
+    <mat-menu #tools="matMenu">
+      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['reindexer']">Reindexer</a>
     </mat-menu>
 
     <div class="flex-item-right login" *ngIf="!user">
@@ -39,10 +44,8 @@
         <button mat-button [matMenuTriggerFor]="menu"><span>{{user.username}}<mat-icon>arrow_drop_down</mat-icon></span>
         </button>
         <mat-menu #menu="matMenu">
-          <button mat-menu-item routerLinkActive="is-active"
-                  [routerLink]="['settings']">Settings
-          </button>
-          <button mat-menu-item (click)="logout()">Logout</button>
+          <a mat-menu-item [routerLink]="['settings']"><mat-icon inline="true">settings</mat-icon> <span>Settings </span> </a>
+          <a mat-menu-item (click)="logout()"><mat-icon inline="true">power_settings_new </mat-icon> <span>Log out</span> </a>
         </mat-menu>
       </div>
 
