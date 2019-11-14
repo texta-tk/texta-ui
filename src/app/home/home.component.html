@@ -71,7 +71,7 @@
             <span class="mat-hint center-text block">GPUs</span>
           </div>
 
-          <div fxFlex>
+          <div fxFlex matTooltip="Tasks updated in the last hour">
             <span class="count-text center-text block" [ngClass]="health.active_tasks > 0 ? 'accent-text' : 'primary-text'">  {{health.active_tasks}} </span>
             <span class="mat-hint center-text block">Active Tasks</span>
           </div>

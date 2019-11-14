@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { LocalStorageService } from 'src/app/core/util/local-storage.service';
 import { LogService } from 'src/app/core/util/log.service';
 import { Observable } from 'rxjs';
 import { HttpErrorResponse, HttpClient } from '@angular/common/http';
