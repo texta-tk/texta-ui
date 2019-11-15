@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit, ViewChild, AfterViewInit} from '@angular/core';
-import {Subscription, timer} from 'rxjs';
+import {Subscription, timer, merge, Subject} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import {LogService} from '../../core/util/log.service';
@@ -39,15 +39,18 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: Tagger | null;
   public tableData: MatTableDataSource<Tagger> = new MatTableDataSource();
   selectedRows = new SelectionModel<Tagger>(true, []);
-  public displayedColumns = ['select', 'id', 'author', 'description', 'fields_parsed', 'time_started',
-  'time_completed', 'f1_score', 'precision', 'recall', 'Task', 'Modify'];
+  public displayedColumns = ['select', 'id', 'author__username', 'description', 'fields', 'task__time_started',
+  'task__time_completed', 'f1_score', 'precision', 'recall', 'task__status', 'Modify'];
   public isLoadingResults = true;
 
-  @ViewChild(MatSort, {static: true}) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
 
   currentProject: Project;
   resultsLength: number;
+  filteredSubject = new Subject();
+  // For custom filtering, such as text search in description
+  inputFilterQuery = '';
 
 
   constructor(private projectStore: ProjectStore,
@@ -72,6 +75,9 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    // If the user changes the sort order, reset back to the first page.
+    this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
+
     this.currentProjectSubscription = this.projectStore.getCurrentProject().subscribe(
       (resp: HttpErrorResponse | Project) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
@@ -85,12 +91,15 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   setUpPaginator() {
-    this.paginator.page.pipe(startWith({}), switchMap(() => {
+    merge(this.sort.sortChange, this.paginator.page, this.filteredSubject).pipe(startWith({}), switchMap(() => {
       this.isLoadingResults = true;
+      // DRF backend asks for '-' or '' to declare ordering direction
+
+      const sortDirection = this.sort.direction === 'desc' ? '-' : ''
       return this.taggerService.getTaggers(
         this.currentProject.id,
         // Add 1 to to index because Material paginator starts from 0 and DRF paginator from 1
-        `page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`
+        `${this.inputFilterQuery}&ordering=${sortDirection}${this.sort.active}&page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`
         );
     })).subscribe((data: {count: number, results: Tagger[]}) => {
       // Flip flag to show that loading has finished.
@@ -98,6 +107,10 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
       this.resultsLength = data.count;
       this.tableData.data = data.results;
     });
+  }
+
+  getTaggers() {
+
   }
 
 
@@ -269,5 +282,11 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
         width: '700px',
       });
     }
+  }
+
+  applyFilter(filterValue: string, field: string) {
+    // TODO need debounce, and some better way of multi-field filtering
+    this.inputFilterQuery = `&${field}=${filterValue}`;
+    this.filteredSubject.next();
   }
 }
