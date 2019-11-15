@@ -1,9 +1,19 @@
 <div class="container">
   <div *ngIf="aggregation && aggregation.aggs['agg_term']">
-    <pre>{{aggregation.aggs | json}}</pre>
+    <mat-accordion [multi]="true"> <!--[displayMode]="flat"-->
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <span>Current Search</span>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <app-generic-table [dataSource]="aggregation.aggs.agg_term.buckets"></app-generic-table>
+
+      </mat-expansion-panel>
+    </mat-accordion>
   </div>
 
-  <ngx-charts-line-chart *ngIf="aggregation && aggregation.aggs['agg_histo']" [results]="dataToDisplay"
+  <ngx-charts-line-chart *ngIf="dateAggregationData.length > 0" [results]="dateAggregationData"
                          [yAxis]="true"
                          [xAxis]="true"></ngx-charts-line-chart>
 </div>

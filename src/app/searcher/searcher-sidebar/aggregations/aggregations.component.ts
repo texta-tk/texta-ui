@@ -57,64 +57,16 @@ export class AggregationsComponent implements OnInit, OnDestroy {
   }
 
   aggregate() {
-    let body = {};
+    let body;
+    for (const aggregation of this.aggregationList) {
+      console.log(aggregation);
+    }
 
-    console.log(this.aggregationList);
-    this.searcherElasticSearchQuery.elasticSearchQuery.aggs = this.aggregationList[0].aggregation;
+    if (this.aggregationList.length > 0) {
+      this.searcherElasticSearchQuery.elasticSearchQuery.aggs = this.aggregationList[0].aggregation;
+    }
     body = {query: this.searcherElasticSearchQuery.elasticSearchQuery};
-    /*let aggregationQuery;
-    let body = {}
-    debugger
-    if (this.fieldTypeTextOrFact(this.fieldsFormControl.value)) {
-      aggregationQuery = this.makeTextAggregation();
-      if (this.searchQueryExcluded) {
-        body = {query: {aggs: aggregationQuery}};
-      } else {
-        this.searcherElasticSearchQuery.aggs = aggregationQuery;
-        body = {query: this.searcherElasticSearchQuery};
-      }
-    } else if (this.fieldTypeDate(this.fieldsFormControl.value)) {
-      aggregationQuery = this.makeDateAggregation();
-      if (this.searchQueryExcluded) {
-        body = {
-          query: {
-            query: {
-              bool: {
-                must: [
-                  {range: {[this.fieldsFormControl.value.path]: {gte: this.startDate}}},
-                  {range: {[this.fieldsFormControl.value.path]: {lte: this.toDate}}}
-                ]
-              }
-            },
-            aggs: aggregationQuery,
-          }
-        };
-      } else {
-        let changed = false;
-        this.searcherElasticSearchQuery.query.bool.must.map(x => {
-          const f = x.range;
-          if (f) {
-            if (f[this.fieldsFormControl.value.path]) {
-              if (f[this.fieldsFormControl.value.path.gte]) {
-                changed = true;
-                f[this.fieldsFormControl.value.path.gte] = this.startDate;
-              } else if (f[this.fieldsFormControl.value.path.lte]) {
-                changed = true;
-                f[this.fieldsFormControl.value.path.lte] = this.toDate;
-              }
-            }
-          }
-        });
-        if (!changed) {
-          this.searcherElasticSearchQuery.query.bool.must.push(...[
-            {range: {[this.fieldsFormControl.value.path]: {gte: this.startDate}}},
-            {range: {[this.fieldsFormControl.value.path]: {lte: this.toDate}}}
-          ]);
-        }
-        this.searcherElasticSearchQuery.aggs = aggregationQuery;
-        body = {query: this.searcherElasticSearchQuery};
-      }
-    }*/
+
     this.searcherService.search(body, this.currentProject.id).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.searchService.nextAggregation(resp);

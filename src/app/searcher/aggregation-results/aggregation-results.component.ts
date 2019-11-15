@@ -13,7 +13,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
 
   destroy$: Subject<boolean> = new Subject();
   aggregation: any;
-  dataToDisplay = [];
+  dateAggregationData = [];
 
   constructor(private searchService: SearchService, @Inject(LOCALE_ID) private locale: string) {
   }
@@ -29,11 +29,12 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.searchService.getAggregation().pipe(takeUntil(this.destroy$)).subscribe(aggregation => {
       if (aggregation && aggregation.aggs) {
+        this.dateAggregationData = [];
         console.log(aggregation);
         this.aggregation = aggregation;
         if (this.aggregation.aggs.agg_histo) {
           const buckets: { key_as_string: string, key: number, doc_count: number }[] = this.aggregation.aggs.agg_histo.buckets;
-          this.dataToDisplay = [{name: 'document count', series: this.formatDateData(buckets)}];
+          this.dateAggregationData = [{name: 'document count', series: this.formatDateData(buckets)}];
         }
       }
     });

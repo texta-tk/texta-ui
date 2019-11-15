@@ -20,8 +20,8 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
   startDate = new Date('1999-02-03');
   toDate = new Date('2019-02-03');
   searchQueryExcluded = false;
-  dateRangeFrom: {range?: any} = {};
-  dateRangeTo: {range?: any} = {};
+  dateRangeFrom: { range?: any } = {};
+  dateRangeTo: { range?: any } = {};
   destroy$: Subject<boolean> = new Subject();
 
   constructor(
@@ -35,6 +35,7 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
 
         this.dateRangeFrom = {range: {[this.fieldsFormControl.value.path]: {gte: this.startDate}}};
         this.dateRangeTo = {range: {[this.fieldsFormControl.value.path]: {lte: this.toDate}}};
+        // object indentifier binding
         this.searcherElasticSearchQuery.elasticSearchQuery.query.bool.must.push(this.dateRangeFrom);
         this.searcherElasticSearchQuery.elasticSearchQuery.query.bool.must.push(this.dateRangeTo);
         this.makeDateAggregation();
@@ -43,7 +44,6 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
   }
 
   makeDateAggregation() {
-    this.searcherElasticSearchQuery.size = 0;
     this.dateRangeFrom.range = {[this.fieldsFormControl.value.path]: {gte: this.startDate}};
     this.dateRangeTo.range = {[this.fieldsFormControl.value.path]: {lte: this.toDate}};
     let returnquery: { [key: string]: any };
@@ -79,6 +79,16 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    const indexFrom = this.searcherElasticSearchQuery.elasticSearchQuery.query.bool.must.indexOf(this.dateRangeFrom);
+    if (indexFrom > -1) {
+      this.searcherElasticSearchQuery.elasticSearchQuery.query.bool.must.splice(indexFrom, 1);
+    }
+    const indexTo = this.searcherElasticSearchQuery.elasticSearchQuery.query.bool.must.indexOf(this.dateRangeTo);
+    if (indexTo > -1) {
+      this.searcherElasticSearchQuery.elasticSearchQuery.query.bool.must.splice(indexTo, 1);
+    }
+    console.log(this.searcherElasticSearchQuery);
+
     this.destroy$.next(true);
     this.destroy$.complete();
   }

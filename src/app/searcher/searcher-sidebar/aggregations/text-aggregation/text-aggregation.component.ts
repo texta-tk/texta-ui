@@ -34,7 +34,6 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
   }
 
   makeTextAggregation() {
-    this.searcherElasticSearchQuery.size = this.aggregationSize;
     let returnquery: { [key: string]: any };
     if (this.searchQueryExcluded) {
       returnquery = {
