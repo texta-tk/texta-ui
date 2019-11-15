@@ -21,8 +21,8 @@ export class NeurotagDocDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.data.tagger.fields_parsed && this.data.tagger.fields_parsed.length > 0) {
-      this.defaultDoc = `{ "${this.data.tagger.fields_parsed[0]}": " " }`;
+    if (this.data.tagger.fields && this.data.tagger.fields.length > 0) {
+      this.defaultDoc = `{ "${this.data.tagger.fields[0]}": " " }`;
     }
   }
 

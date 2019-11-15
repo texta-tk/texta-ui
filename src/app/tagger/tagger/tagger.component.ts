@@ -70,6 +70,9 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     .subscribe((resp: {count: number, results: Tagger[]} | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.refreshTaggers(resp.results);
+      } else if (resp instanceof HttpErrorResponse) {
+        this.logService.snackBarError(resp, 5000);
+        this.isLoadingResults = false;
       }
     });
   }

@@ -6,7 +6,7 @@ export class Embedding {
   id: number;
   description = '';
   query = '';
-  fields_parsed: string[];
+  fields: string[];
   num_dimensions = 0;
   min_freq = 0;
   vocab_size = 0;
