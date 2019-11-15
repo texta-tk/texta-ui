@@ -98,13 +98,6 @@ class StopWords {
   label: string;
 }
 
-class FieldsParsed {
-  type: string;
-  required: boolean;
-  read_only: boolean;
-  label: string;
-}
-
 class MaximumSampleSize {
   type: string;
   required: boolean;
@@ -249,7 +242,6 @@ class POST {
   classifier: Classifier;
   feature_selector: FeatureSelector;
   stop_words: StopWords;
-  fields: FieldsParsed;
   maximum_sample_size: MaximumSampleSize;
   negative_multiplier: NegativeMultiplier;
   location: Location;
@@ -283,7 +275,6 @@ export class TaggerOptions {
     out.actions.POST.embedding = new EmbeddingTaggerOptions();
     out.actions.POST.f1_score = new F1Score();
     out.actions.POST.fields = new Fields();
-    out.actions.POST.fields = new FieldsParsed();
     out.actions.POST.id = new Id();
     out.actions.POST.location = new Location();
     out.actions.POST.maximum_sample_size = new MaximumSampleSize();

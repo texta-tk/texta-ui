@@ -21,7 +21,6 @@ export class Tagger {
   num_features: number;
   plot: unknown;
   task: TaskStatus;
-  fields: string[];
 }
 
 export enum TaggerVectorizerChoices {
