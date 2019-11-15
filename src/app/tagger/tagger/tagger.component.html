@@ -221,7 +221,7 @@
   <div class="table-paginator-row">
     <button class="new-resource-btn" mat-button color="primary" (click)="openCreateDialog()"><mat-icon>add</mat-icon> CREATE </button>
     <button class="new-resource-btn" mat-icon-button color="warn" (click)="onDeleteAllSelected()" matTooltip="Delete selected" [disabled]="selectedRows.selected.length < 1"><mat-icon>delete</mat-icon></button>
-    <mat-form-field class="filter-field">
+    <mat-form-field class="m-l-15">
         <mat-icon matSuffix>search</mat-icon>
         <input matInput (keyup)="applyFilter($event.target.value, 'description')" placeholder="Filter description">
     </mat-form-field>

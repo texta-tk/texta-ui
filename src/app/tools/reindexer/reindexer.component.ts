@@ -2,11 +2,11 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Reindexer } from 'src/app/shared/types/tools/Elastic';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Subject, timer } from 'rxjs';
+import { Subject, timer, merge } from 'rxjs';
 import { Project } from 'src/app/shared/types/Project';
 import { ProjectStore } from 'src/app/core/projects/project.store';
 import { LogService } from 'src/app/core/util/log.service';
-import { takeUntil, switchMap, startWith } from 'rxjs/operators';
+import { takeUntil, switchMap, startWith, debounceTime } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ConfirmDialogComponent } from 'src/app/shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import { QueryDialogComponent } from 'src/app/shared/components/dialogs/query-dialog/query-dialog.component';
@@ -28,13 +28,19 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 export class ReindexerComponent implements OnInit {
   expandedElement: Reindexer | null;
   public tableData: MatTableDataSource<Reindexer> = new MatTableDataSource();
-  public displayedColumns = ['select', 'id', 'author', 'description', 'new_index', 'fields', 'random_size', 'show_query', 'time_started', 'time_completed',  'Task', 'Modify'];
+  public displayedColumns = ['select', 'id', 'author__username', 'description', 'new_index', 'fields', 'random_size',
+   'show_query', 'task__time_started', 'task__time_completed',  'task__status', 'Modify'];
   selectedRows = new SelectionModel<Reindexer>(true, []);
   public isLoadingResults = true;
 
   destroyed$: Subject<boolean> = new Subject<boolean>();
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+
+    @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  filteredSubject = new Subject();
+  // For custom filtering, such as text search in description
+  inputFilterQuery = '';
+
   currentProject: Project;
   resultsLength: number;
 
@@ -81,12 +87,18 @@ export class ReindexerComponent implements OnInit {
   }
 
   setUpPaginator() {
-    this.paginator.page.pipe(startWith({}), switchMap(() => {
+    // If the user changes the sort order, reset back to the first page.
+    this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
+
+    merge(this.sort.sortChange, this.paginator.page, this.filteredSubject)
+    .pipe(debounceTime(250), startWith({}), switchMap(() => {
       this.isLoadingResults = true;
+      const sortDirection = this.sort.direction === 'desc' ? '-' : ''
+
       return this.reindexerService.getReindexers(
         this.currentProject.id,
         // Add 1 to to index because Material paginator starts from 0 and DRF paginator from 1
-        `page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`
+        `${this.inputFilterQuery}&ordering=${sortDirection}${this.sort.active}&page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`
       );
     })).subscribe((data: { count: number, results: Reindexer[] }) => {
       // Flip flag to show that loading has finished.
@@ -186,4 +198,9 @@ export class ReindexerComponent implements OnInit {
     });
   }
 
+
+  applyFilter(filterValue: string, field: string) {
+    this.inputFilterQuery = `&${field}=${filterValue}`;
+    this.filteredSubject.next();
+  }
 }

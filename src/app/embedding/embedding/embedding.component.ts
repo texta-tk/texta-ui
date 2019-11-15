@@ -4,8 +4,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Embedding } from '../../shared/types/tasks/Embedding';
 import { ProjectStore } from '../../core/projects/project.store';
 import { Project } from '../../shared/types/Project';
-import { switchMap, takeUntil, startWith } from 'rxjs/operators';
-import { Subscription, timer, Subject } from 'rxjs';
+import { switchMap, takeUntil, startWith, debounceTime } from 'rxjs/operators';
+import { Subscription, timer, Subject, merge } from 'rxjs';
 import { MatDialog, MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
 import { CreateEmbeddingDialogComponent } from './create-embedding-dialog/create-embedding-dialog.component';
 import { LogService } from '../../core/util/log.service';
@@ -29,13 +29,20 @@ import { ConfirmDialogComponent } from 'src/app/shared/components/dialogs/confir
 export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: Embedding | null;
   public tableData: MatTableDataSource<Embedding> = new MatTableDataSource();
-  public displayedColumns = ['select', 'id', 'author', 'description', 'fields_parsed', 'time_started', 'time_completed', 'num_dims', 'min_freq', 'vocab_size',  'Task', 'Modify'];
+  public displayedColumns = ['select', 'id', 'author__username', 'description',
+   'fields', 'task__time_started', 'task__time_completed', 'num_dims', 'min_freq', 'vocab_size',  'task__status', 'Modify'];
   selectedRows = new SelectionModel<Embedding>(true, []);
   public isLoadingResults = true;
 
   destroyed$: Subject<boolean> = new Subject<boolean>();
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  filteredSubject = new Subject();
+  // For custom filtering, such as text search in description
+  inputFilterQuery = '';
+
+
   currentProject: Project;
   resultsLength: number;
 
@@ -82,12 +89,18 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   setUpPaginator() {
-    this.paginator.page.pipe(startWith({}), switchMap(() => {
+    // If the user changes the sort order, reset back to the first page.
+    this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
+
+    merge(this.sort.sortChange, this.paginator.page, this.filteredSubject)
+    .pipe(debounceTime(250), startWith({}), switchMap(() => {
       this.isLoadingResults = true;
+
+      const sortDirection = this.sort.direction === 'desc' ? '-' : ''
       return this.embeddingsService.getEmbeddings(
         this.currentProject.id,
         // Add 1 to to index because Material paginator starts from 0 and DRF paginator from 1
-        `page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`
+        `${this.inputFilterQuery}&ordering=${sortDirection}${this.sort.active}&page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`
       );
     })).subscribe((data: { count: number, results: Embedding[] }) => {
       // Flip flag to show that loading has finished.
@@ -194,5 +207,10 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
       maxHeight: '665px',
       width: '700px',
     });
+  }
+
+  applyFilter(filterValue: string, field: string) {
+    this.inputFilterQuery = `&${field}=${filterValue}`;
+    this.filteredSubject.next();
   }
 }

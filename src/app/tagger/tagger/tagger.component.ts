@@ -6,7 +6,7 @@ import {LogService} from '../../core/util/log.service';
 import {TaggerService} from '../../core/taggers/tagger.service';
 import {ProjectStore} from '../../core/projects/project.store';
 import {Tagger, TaggerVectorizerChoices} from '../../shared/types/tasks/Tagger';
-import {switchMap, startWith } from 'rxjs/operators';
+import {switchMap, startWith, debounceTime } from 'rxjs/operators';
 import {CreateTaggerDialogComponent} from './create-tagger-dialog/create-tagger-dialog.component';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {Project} from '../../shared/types/Project';
@@ -45,12 +45,12 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChild(MatSort, {static: false}) sort: MatSort;
   @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
-
-  currentProject: Project;
-  resultsLength: number;
   filteredSubject = new Subject();
   // For custom filtering, such as text search in description
   inputFilterQuery = '';
+
+  currentProject: Project;
+  resultsLength: number;
 
 
   constructor(private projectStore: ProjectStore,
@@ -75,9 +75,6 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // If the user changes the sort order, reset back to the first page.
-    this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
-
     this.currentProjectSubscription = this.projectStore.getCurrentProject().subscribe(
       (resp: HttpErrorResponse | Project) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
@@ -91,7 +88,11 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   setUpPaginator() {
-    merge(this.sort.sortChange, this.paginator.page, this.filteredSubject).pipe(startWith({}), switchMap(() => {
+    // If the user changes the sort order, reset back to the first page.
+    this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
+
+    merge(this.sort.sortChange, this.paginator.page, this.filteredSubject)
+    .pipe(debounceTime(250), startWith({}), switchMap(() => {
       this.isLoadingResults = true;
       // DRF backend asks for '-' or '' to declare ordering direction
 
@@ -107,10 +108,6 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
       this.resultsLength = data.count;
       this.tableData.data = data.results;
     });
-  }
-
-  getTaggers() {
-
   }
 
 
@@ -285,7 +282,6 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   applyFilter(filterValue: string, field: string) {
-    // TODO need debounce, and some better way of multi-field filtering
     this.inputFilterQuery = `&${field}=${filterValue}`;
     this.filteredSubject.next();
   }
