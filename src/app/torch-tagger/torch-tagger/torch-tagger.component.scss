@@ -1,0 +1,58 @@
+@import "../../../variables/variables";
+
+table {
+  width: 100%;
+}
+
+.table-container {
+  position: relative;
+  max-height: calc(100vh - #{$navbar-height} - 56px);
+  min-height: calc(100vh - #{$navbar-height} - 56px);
+  overflow: auto;
+}
+
+.mat-cell {
+  word-break: break-word;
+}
+
+tr.detail-row {
+  height: 0;
+}
+
+tr.element-row:not(.expanded-row):hover {
+  background: #eeeeee;
+}
+
+tr.element-row:not(.expanded-row):active {
+  background: #efefef;
+}
+
+.element-row td {
+  border-bottom-width: 0;
+}
+
+.element-detail {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+}
+
+.element-plot {
+  object-fit: cover;
+  border: 2px solid black;
+  padding: 8px;
+  margin: 8px 0;
+  max-width: 750px;
+}
+
+.element-detail-plot-fields {
+  flex-wrap: wrap;
+}
+.mat-column-Modify {
+  width: 60px;
+  text-align: center;
+}
+.mat-column-Task {
+  max-width: 160px;
+}

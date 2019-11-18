@@ -15,9 +15,7 @@ import {TaggerOptions} from '../../shared/types/tasks/TaggerOptions';
 export class TaggerService {
   apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient, private localStorageService: LocalStorageService,
-              private logService: LogService) {
-  }
+  constructor(private http: HttpClient, private logService: LogService) {}
 
   getTaggers(projectId: number, params = ''): Observable<{count: number, results: Tagger[]} | HttpErrorResponse> {
     return this.http.get<{count: number, results: Tagger[]}>(`${this.apiUrl}/projects/${projectId}/taggers/?${params}`,
