@@ -1,14 +1,14 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {SearchService} from './services/search.service';
-import {Search} from "../shared/types/Search";
-import {takeUntil} from "rxjs/operators";
-import {Subject} from "rxjs";
+import {SearcherComponentService} from './services/searcher-component.service';
+import {Search} from '../shared/types/Search';
+import {takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'app-searcher',
   templateUrl: './searcher.component.html',
   styleUrls: ['./searcher.component.scss'],
-  providers: [SearchService]
+  providers: [SearcherComponentService]
 })
 export class SearcherComponent implements OnInit, OnDestroy {
 
@@ -16,7 +16,7 @@ export class SearcherComponent implements OnInit, OnDestroy {
   isSearch = true;
   isAggregation = false;
 
-  constructor(private searchService: SearchService) {
+  constructor(private searchService: SearcherComponentService) {
   }
 
   ngOnInit() {

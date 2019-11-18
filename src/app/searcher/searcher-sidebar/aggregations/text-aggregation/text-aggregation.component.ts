@@ -2,7 +2,7 @@ import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {ElasticsearchQuery} from '../../build-search/Constraints';
 import {FormControl} from '@angular/forms';
 import {Subject} from 'rxjs';
-import {SearchService} from '../../../services/search.service';
+import {SearcherComponentService} from '../../../services/searcher-component.service';
 import {takeUntil} from 'rxjs/operators';
 import {Field} from '../../../../shared/types/Project';
 
@@ -21,7 +21,7 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject();
 
   constructor(
-    private searchService: SearchService) {
+    private searchService: SearcherComponentService) {
   }
 
   ngOnInit() {
@@ -43,7 +43,8 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
               [this.aggregationType]: {
                 field:
                   `${this.fieldsFormControl.value.path}${
-                    this.aggregationType === 'significant_terms' || this.aggregationType === 'terms' ? '.keyword' : ''}`
+                    this.aggregationType === 'significant_terms' || this.aggregationType === 'terms' ? '.keyword' : ''}`,
+                size: this.aggregationSize,
               }
             },
           }
@@ -56,7 +57,8 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
           [this.aggregationType]: {
             field:
               `${this.fieldsFormControl.value.path}${
-                this.aggregationType === 'significant_terms' || this.aggregationType === 'terms' ? '.keyword' : ''}`
+                this.aggregationType === 'significant_terms' || this.aggregationType === 'terms' ? '.keyword' : ''}`,
+            size: this.aggregationSize,
           }
         }
       };

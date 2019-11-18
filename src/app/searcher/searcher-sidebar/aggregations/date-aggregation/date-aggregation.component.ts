@@ -2,7 +2,7 @@ import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {ElasticsearchQuery} from '../../build-search/Constraints';
 import {FormControl} from '@angular/forms';
 import {takeUntil} from 'rxjs/operators';
-import {SearchService} from '../../../services/search.service';
+import {SearcherComponentService} from '../../../services/searcher-component.service';
 import {Subject} from 'rxjs';
 import {Field} from '../../../../shared/types/Project';
 
@@ -17,15 +17,15 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
   searcherElasticSearchQuery: ElasticsearchQuery;
   dateInterval = 'year';
   aggregationType;
-  startDate = new Date('1999-02-03');
-  toDate = new Date('2019-02-03');
+  startDate = new Date('1999-01-01');
+  toDate = new Date();
   searchQueryExcluded = false;
   dateRangeFrom: { range?: any } = {};
   dateRangeTo: { range?: any } = {};
   destroy$: Subject<boolean> = new Subject();
 
   constructor(
-    private searchService: SearchService) {
+    private searchService: SearcherComponentService) {
   }
 
   ngOnInit() {

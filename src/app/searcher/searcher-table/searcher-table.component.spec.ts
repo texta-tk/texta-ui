@@ -6,8 +6,8 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {HighlightComponent} from './highlight/highlight.component';
-import {SearchServiceSpy} from '../services/search.service.spec';
-import {SearchService} from '../services/search.service';
+import {SearchServiceSpy} from '../services/searcher-component.service.spec';
+import {SearcherComponentService} from '../services/searcher-component.service';
 import {BuildSearchComponent} from '../searcher-sidebar/build-search/build-search.component';
 
 describe('SearcherTableComponent', () => {
@@ -23,7 +23,7 @@ describe('SearcherTableComponent', () => {
     }).overrideComponent(SearcherTableComponent, {
       set: {
         providers: [
-          {provide: SearchService, useClass: SearchServiceSpy}
+          {provide: SearcherComponentService, useClass: SearchServiceSpy}
         ]
       }
     })

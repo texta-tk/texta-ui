@@ -18,7 +18,7 @@
     </ng-container>
   </ng-container>
   <div class="max-width">
-    <button class="max-width" mat-stroked-button (click)="aggregate()" [disabled]="!searcherElasticSearchQuery">
+    <button class="max-width" mat-stroked-button (click)="aggregate()" [disabled]="aggregationList.length < 1">
       Aggregate
     </button>
   </div>

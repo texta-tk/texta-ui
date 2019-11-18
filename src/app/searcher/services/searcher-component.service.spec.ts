@@ -1,6 +1,6 @@
 import {TestBed} from '@angular/core/testing';
 
-import {SearchService} from './search.service';
+import {SearcherComponentService} from './searcher-component.service';
 import {Search} from '../../shared/types/Search';
 import {BehaviorSubject, Subject} from 'rxjs';
 import {ElasticsearchQuery} from '../searcher-sidebar/build-search/Constraints';
@@ -62,13 +62,13 @@ export class SearchServiceSpy {
   }
 }
 
-describe('SearchService', () => {
+describe('SearcherComponentService', () => {
   beforeEach(() => TestBed.configureTestingModule({
-    providers: [SearchService]
+    providers: [SearcherComponentService]
   }));
 
   it('should be created', () => {
-    const service: SearchService = TestBed.get(SearchService);
+    const service: SearcherComponentService = TestBed.get(SearcherComponentService);
     expect(service).toBeTruthy();
   });
 });

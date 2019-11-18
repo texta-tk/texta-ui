@@ -6,8 +6,8 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {AggregationResultsComponent} from '../../aggregation-results/aggregation-results.component';
-import {SearchService} from '../../services/search.service';
-import {SearchServiceSpy} from '../../services/search.service.spec';
+import {SearcherComponentService} from '../../services/searcher-component.service';
+import {SearchServiceSpy} from '../../services/searcher-component.service.spec';
 import {TextAggregationComponent} from './text-aggregation/text-aggregation.component';
 import {DateAggregationComponent} from './date-aggregation/date-aggregation.component';
 
@@ -24,7 +24,7 @@ describe('AggregationsComponent', () => {
     }).overrideComponent(AggregationsComponent, {
       set: {
         providers: [
-          {provide: SearchService, useClass: SearchServiceSpy}
+          {provide: SearcherComponentService, useClass: SearchServiceSpy}
         ]
       }
     })

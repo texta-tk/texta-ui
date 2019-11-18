@@ -6,8 +6,8 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {SearcherTableComponent} from '../searcher-table/searcher-table.component';
-import {SearchService} from '../services/search.service';
-import {SearchServiceSpy} from '../services/search.service.spec';
+import {SearcherComponentService} from '../services/searcher-component.service';
+import {SearchServiceSpy} from '../services/searcher-component.service.spec';
 
 describe('AggregationResultsComponent', () => {
   let component: AggregationResultsComponent;
@@ -22,7 +22,7 @@ describe('AggregationResultsComponent', () => {
     }).overrideComponent(AggregationResultsComponent, {
       set: {
         providers: [
-          {provide: SearchService, useClass: SearchServiceSpy}
+          {provide: SearcherComponentService, useClass: SearchServiceSpy}
         ]
       }
     })

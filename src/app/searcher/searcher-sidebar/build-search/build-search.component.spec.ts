@@ -11,8 +11,8 @@ import {FactConstraintsComponent} from './fact-constraints/fact-constraints.comp
 import {SearcherService} from '../../../core/searcher/searcher.service';
 import {Search} from '../../../shared/types/Search';
 import {BehaviorSubject} from 'rxjs';
-import {SearchService} from '../../services/search.service';
-import {SearchServiceSpy} from '../../services/search.service.spec';
+import {SearcherComponentService} from '../../services/searcher-component.service';
+import {SearchServiceSpy} from '../../services/searcher-component.service.spec';
 
 
 describe('BuildSearchComponent', () => {
@@ -29,7 +29,7 @@ describe('BuildSearchComponent', () => {
     }).overrideComponent(BuildSearchComponent, {
       set: {
         providers: [
-          {provide: SearchService, useClass: SearchServiceSpy}
+          {provide: SearcherComponentService, useClass: SearchServiceSpy}
         ]
       }
     })

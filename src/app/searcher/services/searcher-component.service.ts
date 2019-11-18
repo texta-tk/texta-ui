@@ -2,7 +2,7 @@ import {Search} from '../../shared/types/Search';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {ElasticsearchQuery} from '../searcher-sidebar/build-search/Constraints';
 
-export class SearchService {
+export class SearcherComponentService {
   private searchSubject = new BehaviorSubject<Search>(null);
   private aggregationSubject = new BehaviorSubject<any>(null);
   private savedSearchUpdate = new Subject<boolean>();

@@ -17,7 +17,7 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {SearcherService} from '../../../core/searcher/searcher.service';
 import {MatSelectChange} from '@angular/material';
 import {Search} from '../../../shared/types/Search';
-import {SearchService} from '../../services/search.service';
+import {SearcherComponentService} from '../../services/searcher-component.service';
 import {UserStore} from '../../../core/users/user.store';
 import {UserProfile} from '../../../shared/types/UserProfile';
 import {SavedSearch} from '../../../shared/types/SavedSearch';
@@ -45,7 +45,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
               private projectStore: ProjectStore,
               private searcherService: SearcherService,
               private userStore: UserStore,
-              public searchService: SearchService) {
+              public searchService: SearcherComponentService) {
   }
 
   ngOnInit() {

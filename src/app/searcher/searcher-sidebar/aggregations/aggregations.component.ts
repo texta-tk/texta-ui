@@ -5,7 +5,7 @@ import {ProjectStore} from '../../../core/projects/project.store';
 import {Subject} from 'rxjs';
 import {FormControl} from '@angular/forms';
 import {SearcherService} from '../../../core/searcher/searcher.service';
-import {SearchService} from '../../services/search.service';
+import {SearcherComponentService} from '../../services/searcher-component.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ElasticsearchQuery} from '../build-search/Constraints';
 
@@ -25,7 +25,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
 
   constructor(private projectStore: ProjectStore,
               private searcherService: SearcherService,
-              private searchService: SearchService) {
+              private searchService: SearcherComponentService) {
   }
 
   fieldSelected(val) {
@@ -58,19 +58,23 @@ export class AggregationsComponent implements OnInit, OnDestroy {
 
   aggregate() {
     let body;
-    for (const aggregation of this.aggregationList) {
-      console.log(aggregation);
-    }
+    /*    for (const aggregation of this.aggregationList) {
+          console.log(aggregation);
+        }*/
 
     if (this.aggregationList.length > 0) {
       this.searcherElasticSearchQuery.elasticSearchQuery.aggs = this.aggregationList[0].aggregation;
     }
     body = {query: this.searcherElasticSearchQuery.elasticSearchQuery};
-
+    body.query.size = 0; // ignore results, performance improvement
+    this.searchService.setIsLoading(true);
     this.searcherService.search(body, this.currentProject.id).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.searchService.nextAggregation(resp);
+      } else {
+        this.searchService.nextAggregation([]);
       }
+      this.searchService.setIsLoading(false);
     });
   }
 
