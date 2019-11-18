@@ -1,6 +1,11 @@
 <div class="wrapper mat-elevation-z8">
     <div class="table-container">
-            <table mat-table [dataSource]="tableData" matSort multiTemplateDataRows>
+        <div class="loading-shade" *ngIf="isLoadingResults ">
+            <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+          </div>
+            <table mat-table [dataSource]="tableData" matSort multiTemplateDataRows
+      matSort matSortActive="id" matSortDisableClear matSortDirection="asc"
+      >
                     <ng-container matColumnDef="select">
                       <th mat-header-cell *matHeaderCellDef>
                         <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selectedRows.hasValue() && isAllSelected()"
@@ -18,6 +23,10 @@
                       <th mat-header-cell *matHeaderCellDef mat-sort-header> Id</th>
                       <td mat-cell *matCellDef="let element"> {{element.id}}</td>
                     </ng-container>
+                    <ng-container matColumnDef="author__username">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Author</th>
+                      <td mat-cell *matCellDef="let element"> {{element.author_username}}</td>
+                    </ng-container>
                     <ng-container matColumnDef="description">
                       <th mat-header-cell *matHeaderCellDef mat-sort-header> Description</th>
                       <td mat-cell *matCellDef="let element"> {{element.description}}</td>
@@ -30,13 +39,39 @@
                       <th mat-header-cell *matHeaderCellDef mat-sort-header> Min Sample Size</th>
                       <td mat-cell *matCellDef="let element"> {{element.minimum_sample_size}}</td>
                     </ng-container>
+                    <ng-container matColumnDef="num_tags">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Total Tags </th>
+                      <td mat-cell *matCellDef="let element"> {{element.num_tags}}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="f1_score">
+                      <th mat-header-cell *matHeaderCellDef> Avg. f1_score</th>
+                      <td mat-cell *matCellDef="let element"> {{element.tagger_statistics?.avg_f1_score | number:'0.2-2'}}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="precision">
+                      <th mat-header-cell *matHeaderCellDef> Avg. precision</th>
+                      <td mat-cell *matCellDef="let element"> {{element.tagger_statistics?.avg_precision | number:'0.2-2'}}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="recall">
+                      <th mat-header-cell *matHeaderCellDef> Avg. recall</th>
+                      <td mat-cell *matCellDef="let element"> {{element.tagger_statistics?.avg_recall | number:'0.2-2' }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="progress">
+                      <th mat-header-cell *matHeaderCellDef> Progress</th>
+                      <td mat-cell *matCellDef="let element">
+
+                        <mat-progress-bar *ngIf="element.tagger_status" mode="determinate" [value]="(element.tagger_status.completed /element.tagger_status.total) * 100">
+                        </mat-progress-bar>
+                        <mat-hint *ngIf="element.tagger_status">{{element.tagger_status.completed}} / {{element.tagger_status.total}}</mat-hint>
+                      </td>
+                    </ng-container>
 
                     <ng-container matColumnDef="expandedDetail">
                       <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
                         <div class="element-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-                          <div class="flex-row element-detail-plot-fields">
-                            <div *ngIf="element.plot"><img class="element-plot" [src]="element.plot"></div>
-                              <div class="flex-col m-l-r-5">
+                              <div class="m-l-r-5" fxLayout="row wrap" fxLayoutGap="10px">
+                                <div fxFlex="0 0 300px">
                                 <table class="simple-table">
                                   <th colspan="2" class="mat-body-strong">Taggers</th>
                                       <tr>
@@ -60,8 +95,42 @@
                                         <td>{{element.tagger_status.failed}}</td>
                                       </tr>
                                   </table>
+                                </div>
+                                <div fxFlex="0 0 300px">
+                                <table class="simple-table" *ngIf="element.tagger_statistics">
+                                  <th colspan="2" class="mat-body-strong">Statistics</th>
+                                      <tr>
+                                      <th class="mat-body-strong">Average precision</th>
+                                        <td>{{element.tagger_statistics.avg_precision}}</td>
+                                      </tr>
+                                      <tr>
+                                      <th class="mat-body-strong">Average recall</th>
+                                        <td>{{element.tagger_statistics.avg_recall}}</td>
+                                      </tr>
+                                      <tr>
+                                      <th class="mat-body-strong">Average F1 Score</th>
+                                        <td>{{element.tagger_statistics.avg_f1_score}}</td>
+                                      </tr>
+                                  </table>
+                                </div>
+                                <div fxFlex="0 0 300px">
+                                <table class="simple-table" *ngIf="element.tagger_params">
+                                  <th colspan="2" class="mat-body-strong">Tagger parameters</th>
+                                      <tr>
+                                      <th class="mat-body-strong">Fields</th>
+                                        <td>{{element.tagger_params.fields}}</td>
+                                      </tr>
+                                      <tr>
+                                      <th class="mat-body-strong">Vectorizer</th>
+                                        <td>{{element.tagger_params.vectorizer}}</td>
+                                      </tr>
+                                      <tr>
+                                      <th class="mat-body-strong">Classifier</th>
+                                        <td>{{element.tagger_params.classifier}}</td>
+                                      </tr>
+                                  </table>
+                                </div>
                               </div>
-                          </div>
 
 
                         </div>
@@ -111,6 +180,10 @@
     <div class="table-paginator-row">
         <button class="new-resource-btn" mat-button color="primary" (click)="openCreateDialog()"><mat-icon>add</mat-icon> CREATE </button>
         <button class="new-resource-btn" mat-icon-button color="warn" (click)="onDeleteAllSelected()" matTooltip="Delete selected" [disabled]="selectedRows.selected.length < 1"><mat-icon>delete</mat-icon></button>
+        <mat-form-field class="m-l-15">
+            <mat-icon matSuffix>search</mat-icon>
+            <input matInput (keyup)="applyFilter($event.target.value, 'description')" placeholder="Filter description">
+        </mat-form-field>
       </div>
 
       <mat-paginator [pageSizeOptions]="[15, 50, 100]" showFirstLastButtons [length]="resultsLength">

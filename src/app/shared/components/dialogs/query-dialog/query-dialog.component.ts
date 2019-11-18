@@ -6,14 +6,7 @@ import {MAT_DIALOG_DATA} from '@angular/material';
   templateUrl: './query-dialog.component.html',
   styleUrls: ['./query-dialog.component.scss']
 })
-export class QueryDialogComponent implements OnInit {
-  query: {} = {};
-
-  constructor(@Inject(MAT_DIALOG_DATA) public data: { query: string; }) {
-  }
-
-  ngOnInit() {
-    this.query = JSON.parse(this.data.query);
-  }
+export class QueryDialogComponent {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: { query: string; }) {}
 
 }

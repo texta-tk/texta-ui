@@ -35,9 +35,10 @@ import {GenericTableComponent} from './components/generic-table/generic-table.co
 import {RegistrationDialogComponent} from './components/dialogs/registration/registration-dialog.component';
 import {ConfirmDialogComponent} from './components/dialogs/confirm-dialog/confirm-dialog.component';
 import {MatOptionSelectAllComponent} from './components/mat-option-select-all.component';
-import {QueryDialogComponent} from './components/dialogs/query-dialog/query-dialog.component';
-import {GenericDialogComponent} from './components/dialogs/generic-dialog/generic-dialog.component';
-import {InfiniteScrollModule} from 'ngx-infinite-scroll';
+import { QueryDialogComponent } from './components/dialogs/query-dialog/query-dialog.component';
+import { GenericDialogComponent } from './components/dialogs/generic-dialog/generic-dialog.component';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { SavedSearchAutocompleteComponent } from './components/saved-search-autocomplete/saved-search-autocomplete.component';
 import {LineChartModule} from '@swimlane/ngx-charts';
 
 @NgModule({
@@ -46,7 +47,8 @@ import {LineChartModule} from '@swimlane/ngx-charts';
     ConfirmDialogComponent,
     MatOptionSelectAllComponent,
     QueryDialogComponent,
-    GenericDialogComponent
+    GenericDialogComponent,
+    SavedSearchAutocompleteComponent
   ],
   imports: [
     CommonModule,
@@ -117,6 +119,7 @@ import {LineChartModule} from '@swimlane/ngx-charts';
     MatSliderModule,
 
     GenericTableComponent,
+    SavedSearchAutocompleteComponent,
 
     MatOptionSelectAllComponent,
 

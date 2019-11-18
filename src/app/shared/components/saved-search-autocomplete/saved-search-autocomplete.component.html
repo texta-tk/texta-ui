@@ -1,0 +1,12 @@
+<mat-form-field [appearance]="appearance" class="form-field">
+  <textarea matInput placeholder="Query" [matAutocomplete]="auto" 
+  #queryInput
+  (input)="onQueryChanged(queryInput.value)"></textarea>
+  <mat-autocomplete #auto="matAutocomplete"
+  (optionSelected)="onQueryChanged(queryInput.value)">
+    <mat-option *ngFor="let search of savedSearches" [value]="search.query">
+      {{search.description}}
+    </mat-option>
+  </mat-autocomplete>
+  <mat-hint>Default: {{defaultQuery}}</mat-hint>
+</mat-form-field>

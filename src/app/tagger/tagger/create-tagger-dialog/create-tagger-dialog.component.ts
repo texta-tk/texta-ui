@@ -22,12 +22,12 @@ import {Tagger} from '../../../shared/types/tasks/Tagger';
 })
 export class CreateTaggerDialogComponent implements OnInit {
   defaultQuery = '{"query": {"match_all": {}}}';
+  query = this.defaultQuery;
 
   taggerForm = new FormGroup({
     descriptionFormControl: new FormControl('', [
       Validators.required,
     ]),
-    queryFormControl: new FormControl('', []),
     fieldsFormControl: new FormControl([], [Validators.required]),
     embeddingFormControl: new FormControl(),
     vectorizerFormControl: new FormControl([Validators.required]),
@@ -76,6 +76,9 @@ export class CreateTaggerDialogComponent implements OnInit {
 
   }
 
+  onQueryChanged(query: string) {
+    this.query = query ? query : this.defaultQuery;
+  }
 
   onSubmit(formData) {
     const body = {
@@ -85,11 +88,11 @@ export class CreateTaggerDialogComponent implements OnInit {
       vectorizer: formData.vectorizerFormControl.value,
       classifier: formData.classifierFormControl.value,
       maximum_sample_size: formData.sampleSizeFormControl,
-      negative_multiplier: formData.negativeMultiplierFormControl
+      negative_multiplier: formData.negativeMultiplierFormControl,
     };
 
-    if (formData.queryFormControl) {
-      body['query'] = formData.queryFormControl;
+    if (this.query) {
+      body['query'] = this.query;
     }
 
     this.projectStore.getCurrentProject().pipe(take(1), mergeMap(currentProject => {

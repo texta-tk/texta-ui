@@ -2,7 +2,11 @@
 
 
   <div class="table-container">
-    <table mat-table [dataSource]="tableData" matSort multiTemplateDataRows>
+      <div class="loading-shade" *ngIf="isLoadingResults ">
+          <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+        </div>
+    <table mat-table [dataSource]="tableData" matSort multiTemplateDataRows
+    matSort matSortActive="id" matSortDisableClear matSortDirection="asc">
       <ng-container matColumnDef="select">
         <th mat-header-cell *matHeaderCellDef>
           <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selectedRows.hasValue() && isAllSelected()"
@@ -16,42 +20,56 @@
         </td>
       </ng-container>
 
+      <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Id</th>
+          <td mat-cell *matCellDef="let element"> {{element.id}}</td>
+        </ng-container>
+
+      <ng-container matColumnDef="author__username">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Author</th>
+        <td mat-cell *matCellDef="let element"> {{element.author_username}}</td>
+      </ng-container>
+
       <ng-container matColumnDef="description">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Description</th>
         <td mat-cell *matCellDef="let element"> {{element.description}}</td>
       </ng-container>
-      <ng-container matColumnDef="time_started">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> time_started</th>
+      <ng-container matColumnDef="task__time_started">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Time started</th>
         <td mat-cell *matCellDef="let element"><span
             *ngIf="element.task">{{element.task.time_started | date:['MMM d, h:mm:ss a']}}</span>
         </td>
       </ng-container>
-      <ng-container matColumnDef="time_completed">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> time_completed</th>
+      <ng-container matColumnDef="task__time_completed">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Time completed</th>
         <td mat-cell *matCellDef="let element">
           <span
             *ngIf="element.task && element.task.time_completed">{{element.task.time_completed | date:['MMM d, h:mm:ss a']}}</span>
           <span *ngIf="element.task && !element.task.time_completed">Null</span>
         </td>
       </ng-container>
-      <ng-container matColumnDef="fields_parsed">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> fields_parsed</th>
-        <td mat-cell *matCellDef="let element"> {{element.fields_parsed}}</td>
+      <ng-container matColumnDef="fields">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Fields</th>
+        <td mat-cell *matCellDef="let element"> {{element.fields}}</td>
       </ng-container>
-      <ng-container matColumnDef="f1_score">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> f1_score</th>
-        <td mat-cell *matCellDef="let element"> {{element.f1_score | number:'0.2-2'}}</td>
+      <ng-container matColumnDef="training_accuracy">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Training accuracy</th>
+        <td mat-cell *matCellDef="let element"> {{element.training_accuracy | number:'0.2-2'}}</td>
       </ng-container>
-      <ng-container matColumnDef="precision">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> precision</th>
-        <td mat-cell *matCellDef="let element"> {{element.precision | number:'0.2-2'}}</td>
+      <ng-container matColumnDef="training_loss">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Training loss</th>
+        <td mat-cell *matCellDef="let element"> {{element.training_loss | number:'0.2-2'}}</td>
       </ng-container>
-      <ng-container matColumnDef="recall">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> recall</th>
-        <td mat-cell *matCellDef="let element"> {{element.recall | number:'0.2-2' }}</td>
+      <ng-container matColumnDef="validation_accuracy">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Validation accuracy</th>
+        <td mat-cell *matCellDef="let element"> {{element.validation_accuracy | number:'0.2-2' }}</td>
       </ng-container>
-      <ng-container matColumnDef="Task">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> task</th>
+      <ng-container matColumnDef="validation_loss">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Validation loss</th>
+        <td mat-cell *matCellDef="let element"> {{element.validation_loss | number:'0.2-2' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="task__status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Task</th>
         <td mat-cell *matCellDef="let element">
           <mat-progress-bar *ngIf="element.task && element.task.step !== 'training'" mode="determinate"
             [value]="element.task.progress">
@@ -217,7 +235,7 @@
                   <tr>
                     <th class="mat-body-strong">Fields</th>
                   </tr>
-                  <tr *ngFor="let field of element.fields_parsed">
+                  <tr *ngFor="let field of element.fields">
                     <td>{{field}}</td>
                   </tr>
                 </table>
@@ -241,6 +259,10 @@
   <div class="table-paginator-row">
     <button class="new-resource-btn" mat-button color="primary" (click)="openCreateDialog()"><mat-icon>add</mat-icon> CREATE </button>
     <button class="new-resource-btn" mat-icon-button color="warn" (click)="onDeleteAllSelected()" matTooltip="Delete selected" [disabled]="selectedRows.selected.length < 1"><mat-icon>delete</mat-icon></button>
+    <mat-form-field class="m-l-15">
+        <mat-icon matSuffix>search</mat-icon>
+        <input matInput (keyup)="applyFilter($event.target.value, 'description')" placeholder="Filter description">
+    </mat-form-field>
   </div>
 
   <mat-paginator [pageSizeOptions]="[15, 50, 100]" showFirstLastButtons [length]="resultsLength">

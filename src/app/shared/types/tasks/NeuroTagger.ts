@@ -9,7 +9,7 @@ export class NeuroTagger {
   queries: string;
   validation_split: number;
   score_threshold: number;
-  fields_parsed: string[];
+  fields: string[];
   model_architecture: string;
   seq_len: number;
   maximum_sample_size: number;

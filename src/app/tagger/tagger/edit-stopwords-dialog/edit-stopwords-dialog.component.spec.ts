@@ -5,7 +5,7 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {SharedModule} from '../../../shared/shared.module';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {MatDialogRef} from '@angular/material';
+import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 
 describe('EditStopwordsDialogComponent', () => {
   let component: EditStopwordsDialogComponent;
@@ -13,6 +13,8 @@ describe('EditStopwordsDialogComponent', () => {
   const mockDialogRef = {
     close: jasmine.createSpy('close')
   };
+  const data = {currentProjectId: 1, taggerId: 2};
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ EditStopwordsDialogComponent ],
@@ -22,6 +24,10 @@ describe('EditStopwordsDialogComponent', () => {
         {
           provide: MatDialogRef,
           useValue: mockDialogRef
+        },
+        {
+          provide: MAT_DIALOG_DATA,
+          useValue: data
         }]
     })
     .compileComponents();

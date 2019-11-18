@@ -5,7 +5,7 @@ import {LocalStorageService} from '../util/local-storage.service';
 import {LogService} from '../util/log.service';
 import {Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
-import {Tagger} from '../../shared/types/tasks/Tagger';
+import {Tagger, ListFeaturesResponse} from '../../shared/types/tasks/Tagger';
 import {TaggerOptions} from '../../shared/types/tasks/TaggerOptions';
 
 
@@ -44,11 +44,28 @@ export class TaggerService {
   }
 
   retrainTagger(projectId: number, taggerId: number) {
-    return this.http.get<Tagger>(
-      this.apiUrl + '/projects/' + projectId + '/taggers/' + taggerId + '/retrain_tagger/',
+    return this.http.post<unknown>(`${this.apiUrl}/projects/${projectId}/taggers/${taggerId}/retrain_tagger/`, {}
     ).pipe(
       tap(e => this.logService.logStatus(e, 'retrainTagger')),
-      catchError(this.logService.handleError<Tagger>('retrainTagger')));
+      catchError(this.logService.handleError<unknown>('retrainTagger')));
+  }
+
+  getStopWords(projectId: number, taggerId: number): Observable<{'stop_words': string} | HttpErrorResponse> {
+    return this.http.get<{'stop_words': string}>(`${this.apiUrl}/projects/${projectId}/taggers/${taggerId}/stop_words/`).pipe(
+      tap(e => this.logService.logStatus(e, 'getStopWords')),
+      catchError(this.logService.handleError<{'stop_words': string}>('getStopWords')));
+  }
+
+  listFeatures(projectId: number, taggerId: number): Observable<ListFeaturesResponse | HttpErrorResponse> {
+    return this.http.get<ListFeaturesResponse>(`${this.apiUrl}/projects/${projectId}/taggers/${taggerId}/list_features/`).pipe(
+      tap(e => this.logService.logStatus(e, 'listFeatures')),
+      catchError(this.logService.handleError<ListFeaturesResponse>('listFeatures')));
+  }
+
+  postStopWords(projectId: number, taggerId: number, payload): Observable<{'stop_words': string} | HttpErrorResponse> {
+    return this.http.post<{'stop_words': string}>(`${this.apiUrl}/projects/${projectId}/taggers/${taggerId}/stop_words/`, payload).pipe(
+      tap(e => this.logService.logStatus(e, 'postStopWords')),
+      catchError(this.logService.handleError<{'stop_words': string}>('postStopWords')));
   }
 
   // todo backend seperate endpoint

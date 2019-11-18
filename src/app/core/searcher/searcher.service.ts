@@ -38,7 +38,7 @@ export class SearcherService {
     const body = {
       query_constraints: JSON.stringify(this.convertConstraintListToJson(constraintList)),
       description: desc,
-      query: elasticQuery
+      query: JSON.stringify(elasticQuery)
     };
 
     return this.http.post(`${this.apiUrl}/projects/${projectId}/searches/`, body).pipe(
