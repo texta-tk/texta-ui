@@ -5,12 +5,19 @@ import {forkJoin, of, Subject} from 'rxjs';
 import {debounceTime, switchMap, takeUntil} from 'rxjs/operators';
 import {ProjectService} from '../../../core/projects/project.service';
 import {ProjectStore} from '../../../core/projects/project.store';
-import {Constraint, DateConstraint, ElasticsearchQuery, FactConstraint, FactTextInputGroup, TextConstraint} from './Constraints';
+import {
+  Constraint,
+  DateConstraint,
+  ElasticsearchQuery,
+  FactConstraint,
+  FactTextInputGroup,
+  TextConstraint
+} from './Constraints';
 import {HttpErrorResponse} from '@angular/common/http';
 import {SearcherService} from '../../../core/searcher/searcher.service';
 import {MatSelectChange} from '@angular/material';
 import {Search} from '../../../shared/types/Search';
-import {SearchService} from '../../services/search.service';
+import {SearcherComponentService} from '../../services/searcher-component.service';
 import {UserStore} from '../../../core/users/user.store';
 import {UserProfile} from '../../../shared/types/UserProfile';
 import {SavedSearch} from '../../../shared/types/SavedSearch';
@@ -38,33 +45,30 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
               private projectStore: ProjectStore,
               private searcherService: SearcherService,
               private userStore: UserStore,
-              public searchService: SearchService) {
+              public searchService: SearcherComponentService) {
   }
 
   ngOnInit() {
-    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$), switchMap((currentProject: Project) => {
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$)).subscribe((currentProject: Project) => {
       if (currentProject) {
         this.constraintList = [];
         this.currentProject = currentProject;
-        return forkJoin({
-          facts: this.projectService.getProjectFacts(this.currentProject.id),
-          fields: this.projectService.getProjectFields(this.currentProject.id)
-        });
-      }
-      return of(null);
-    })).subscribe((resp: { facts: ProjectFact[] | HttpErrorResponse, fields: ProjectField[] | HttpErrorResponse }) => {
-      if (resp) {
         this.elasticQuery = new ElasticsearchQuery();
         this.searchService.nextElasticQuery(this.elasticQuery);
-        if (!(resp.facts instanceof HttpErrorResponse)) {
-          this.projectFacts = resp.facts;
-        }
-        if (!(resp.fields instanceof HttpErrorResponse)) {
-          this.projectFields = resp.fields;
-          this.projectFieldsFiltered = this.projectFields;
-        }
       }
     });
+    this.projectStore.getProjectFacts().pipe(takeUntil(this.destroy$)).subscribe((projectFacts: ProjectFact[]) => {
+      if (projectFacts) {
+        this.projectFacts = projectFacts;
+      }
+    });
+    this.projectStore.getProjectFields().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectField[]) => {
+      if (projectFields) {
+        this.projectFields = projectFields;
+        this.projectFieldsFiltered = projectFields;
+      }
+    });
+
     this.userStore.getCurrentUser().pipe(takeUntil(this.destroy$)).subscribe(user => {
       if (user) {
         this.currentUser = user;
@@ -73,7 +77,10 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
 
     this.searchService.getSearchQueue().pipe(debounceTime(400), takeUntil(this.destroy$), switchMap(x => {
       this.searchService.setIsLoading(true);
-      return this.searcherService.search({query: this.elasticQuery}, this.currentProject.id);
+      if (this.elasticQuery.size === 0) {
+        this.elasticQuery.size = 10;
+      }
+      return this.searcherService.search({query: this.elasticQuery.elasticSearchQuery}, this.currentProject.id);
     })).subscribe(
       (result: { count: number, results: { highlight: any, doc: any }[] } | HttpErrorResponse) => {
         this.searchService.setIsLoading(false);
@@ -187,7 +194,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
 
   saveSearch(description: string) {
     if (this.currentUser) {
-      this.searcherService.saveSearch(this.currentProject.id, [...this.constraintList], this.elasticQuery, description).subscribe(resp => {
+      this.searcherService.saveSearch(this.currentProject.id, [...this.constraintList], this.elasticQuery.elasticSearchQuery, description).subscribe(resp => {
         if (resp) {
           this.searchService.nextSavedSearchUpdate();
         }
@@ -203,18 +210,18 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
         shouldMatch += 1;
       }
     }
-    this.elasticQuery.query.bool.minimum_should_match = shouldMatch;
+    this.elasticQuery.elasticSearchQuery.query.bool.minimum_should_match = shouldMatch;
   }
 
   updateFieldsToHighlight(constraints: Constraint[]) {
-    this.elasticQuery.highlight.fields = {};
+    this.elasticQuery.elasticSearchQuery.highlight.fields = {};
     const fieldsToHighlight = [];
     for (const constraint of constraints) {
       const fields = constraint.fields.map((x: Field) => x.path);
       fieldsToHighlight.push(...fields);
     }
     for (const field of fieldsToHighlight) {
-      this.elasticQuery.highlight.fields[field] = {};
+      this.elasticQuery.elasticSearchQuery.highlight.fields[field] = {};
     }
   }
 

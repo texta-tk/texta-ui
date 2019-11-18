@@ -12,8 +12,11 @@ import {DateConstraintsComponent} from './build-search/date-constraints/date-con
 import {FactConstraintsComponent} from './build-search/fact-constraints/fact-constraints.component';
 import {Search} from '../../shared/types/Search';
 import {BehaviorSubject} from 'rxjs';
-import {SearchService} from '../services/search.service';
-import {SearchServiceSpy} from '../services/search.service.spec';
+import {SearcherComponentService} from '../services/searcher-component.service';
+import {SearchServiceSpy} from '../services/searcher-component.service.spec';
+import {AggregationsComponent} from './aggregations/aggregations.component';
+import {DateAggregationComponent} from './aggregations/date-aggregation/date-aggregation.component';
+import {TextAggregationComponent} from './aggregations/text-aggregation/text-aggregation.component';
 
 describe('SearcherSidebarComponent', () => {
   let component: SearcherSidebarComponent;
@@ -25,11 +28,11 @@ describe('SearcherSidebarComponent', () => {
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule,
       ],
       declarations: [SearcherSidebarComponent, BuildSearchComponent, SavedSearchesComponent, TextConstraintsComponent,
-        DateConstraintsComponent, FactConstraintsComponent, ]
+        DateConstraintsComponent, FactConstraintsComponent, AggregationsComponent, DateAggregationComponent, TextAggregationComponent ]
     }).overrideComponent(SearcherSidebarComponent, {
       set: {
         providers: [
-          {provide: SearchService, useClass: SearchServiceSpy}
+          {provide: SearcherComponentService, useClass: SearchServiceSpy}
         ]
       }
     })

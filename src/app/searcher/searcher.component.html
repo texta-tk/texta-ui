@@ -3,7 +3,8 @@
     <app-searcher-sidebar></app-searcher-sidebar>
   </mat-drawer>
   <mat-drawer-content>
-    <app-searcher-table (drawerToggle)="drawer.toggle()"></app-searcher-table>
+    <app-searcher-table (drawerToggle)="drawer.toggle()" [hidden]="isAggregation"></app-searcher-table>
+    <app-aggregation-results [hidden]="isSearch"></app-aggregation-results>
   </mat-drawer-content>
 </mat-drawer-container>
 

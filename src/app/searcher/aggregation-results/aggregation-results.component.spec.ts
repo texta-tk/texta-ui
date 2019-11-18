@@ -1,26 +1,25 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SearcherTableComponent } from './searcher-table.component';
+import { AggregationResultsComponent } from './aggregation-results.component';
 import {SharedModule} from '../../shared/shared.module';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {HighlightComponent} from './highlight/highlight.component';
-import {SearchServiceSpy} from '../services/searcher-component.service.spec';
+import {SearcherTableComponent} from '../searcher-table/searcher-table.component';
 import {SearcherComponentService} from '../services/searcher-component.service';
-import {BuildSearchComponent} from '../searcher-sidebar/build-search/build-search.component';
+import {SearchServiceSpy} from '../services/searcher-component.service.spec';
 
-describe('SearcherTableComponent', () => {
-  let component: SearcherTableComponent;
-  let fixture: ComponentFixture<SearcherTableComponent>;
+describe('AggregationResultsComponent', () => {
+  let component: AggregationResultsComponent;
+  let fixture: ComponentFixture<AggregationResultsComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      declarations: [ AggregationResultsComponent ],
       imports: [
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule,
       ],
-      declarations: [ SearcherTableComponent, HighlightComponent ]
-    }).overrideComponent(SearcherTableComponent, {
+    }).overrideComponent(AggregationResultsComponent, {
       set: {
         providers: [
           {provide: SearcherComponentService, useClass: SearchServiceSpy}
@@ -31,7 +30,7 @@ describe('SearcherTableComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SearcherTableComponent);
+    fixture = TestBed.createComponent(AggregationResultsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -33,7 +33,7 @@ export class DateConstraintsComponent implements OnInit, OnDestroy {
 
     if (this._dateConstraint) {
       const fieldPaths = this._dateConstraint.fields.map(x => x.path);
-      this.elasticSearchQuery.query.bool.must.push(this.constraintQuery);
+      this.elasticSearchQuery.elasticSearchQuery.query.bool.must.push(this.constraintQuery);
       this.dateFromFormControl.valueChanges.pipe(
         takeUntil(this.destroyed$),
         startWith(this.dateFromFormControl.value as object),
@@ -67,9 +67,9 @@ export class DateConstraintsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     console.log('destroy date-constraint');
-    const index = this.elasticSearchQuery.query.bool.must.indexOf(this.constraintQuery, 0);
+    const index = this.elasticSearchQuery.elasticSearchQuery.query.bool.must.indexOf(this.constraintQuery, 0);
     if (index > -1) {
-      this.elasticSearchQuery.query.bool.must.splice(index, 1);
+      this.elasticSearchQuery.elasticSearchQuery.query.bool.must.splice(index, 1);
     }
     this.change.emit(this.elasticSearchQuery);
     this.destroyed$.next(true);

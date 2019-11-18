@@ -1,5 +1,5 @@
 import {Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
-import {SearchService} from '../services/search.service';
+import {SearcherComponentService} from '../services/searcher-component.service';
 import {Search} from '../../shared/types/Search';
 import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import {FormControl} from '@angular/forms';
@@ -27,7 +27,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
   private currentElasticQuery: ElasticsearchQuery;
   isLoadingResults = false;
 
-  constructor(public searchService: SearchService, private projectStore: ProjectStore) {
+  constructor(public searchService: SearcherComponentService, private projectStore: ProjectStore) {
   }
 
   ngOnInit() {

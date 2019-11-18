@@ -8,7 +8,7 @@ import {ProjectStore} from '../../../core/projects/project.store';
 import {Project} from '../../../shared/types/Project';
 import {SavedSearch} from '../../../shared/types/SavedSearch';
 import {HttpErrorResponse} from '@angular/common/http';
-import {SearchService} from '../../services/search.service';
+import {SearcherComponentService} from '../../services/searcher-component.service';
 
 @Component({
   selector: 'app-saved-searches',
@@ -23,7 +23,7 @@ export class SavedSearchesComponent implements OnInit, OnDestroy {
   destroyed$: Subject<boolean> = new Subject<boolean>();
   currentProject: Project;
 
-  constructor(private searcherService: SearcherService, private projectStore: ProjectStore, private searchService: SearchService) {
+  constructor(private searcherService: SearcherService, private projectStore: ProjectStore, private searchService: SearcherComponentService) {
   }
 
   ngOnInit() {

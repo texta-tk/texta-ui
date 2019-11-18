@@ -149,7 +149,7 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
     if (this._factConstraint) {
       const formQueries = [];
       this.factNameQuery.bool = {[this.factNameOperatorFormControl.value]: formQueries};
-      this.elasticSearchQuery.query.bool.must.push(this.factNameQuery);
+      this.elasticSearchQuery.elasticSearchQuery.query.bool.must.push(this.factNameQuery);
       this.factNameOperatorFormControl.valueChanges.pipe(
         startWith(this.factNameOperatorFormControl.value as object),
         takeUntil(this.destroyed$)).subscribe((value: string) => {
@@ -176,7 +176,7 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
         }
       });
       this.inputGroupQuery.bool = {[this.factTextOperatorFormControl.value]: this.inputGroupQueryArray};
-      this.elasticSearchQuery.query.bool.must.push(this.inputGroupQuery);
+      this.elasticSearchQuery.elasticSearchQuery.query.bool.must.push(this.inputGroupQuery);
       this.factTextOperatorFormControl.valueChanges.pipe(
         startWith(this.factTextOperatorFormControl.value as object),
         takeUntil(this.destroyed$)).subscribe((value: string) => {
@@ -190,14 +190,14 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     console.log('destroy fact-constraint');
-    const index = this.elasticSearchQuery.query.bool.must.indexOf(this.factNameQuery, 0);
+    const index = this.elasticSearchQuery.elasticSearchQuery.query.bool.must.indexOf(this.factNameQuery, 0);
     if (index > -1) {
-      this.elasticSearchQuery.query.bool.must.splice(index, 1);
+      this.elasticSearchQuery.elasticSearchQuery.query.bool.must.splice(index, 1);
     }
 
-    const inputQueryIndex = this.elasticSearchQuery.query.bool.must.indexOf(this.inputGroupQuery, 0);
+    const inputQueryIndex = this.elasticSearchQuery.elasticSearchQuery.query.bool.must.indexOf(this.inputGroupQuery, 0);
     if (inputQueryIndex > -1) {
-      this.elasticSearchQuery.query.bool.must.splice(inputQueryIndex, 1);
+      this.elasticSearchQuery.elasticSearchQuery.query.bool.must.splice(inputQueryIndex, 1);
     }
 
     this.change.emit(this.elasticSearchQuery);

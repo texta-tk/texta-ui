@@ -42,7 +42,7 @@ describe('DateConstraintsComponent', () => {
     fixture.detectChanges();
     tick(300); // debouncetime 200 valuechanges
     expect(spy).toHaveBeenCalledTimes(2);
-    expect(component.elasticSearchQuery.query.bool.must[0].bool.must[0].range.test.gte).toBeDefined('Should create date query from');
-    expect(component.elasticSearchQuery.query.bool.must[0].bool.must[1].range.test.lte).toBeDefined('Should create date query to');
+    expect(component.elasticSearchQuery.elasticSearchQuery.query.bool.must[0].bool.must[0].range.test.gte).toBeDefined('Should create date query from');
+    expect(component.elasticSearchQuery.elasticSearchQuery.query.bool.must[0].bool.must[1].range.test.lte).toBeDefined('Should create date query to');
   }));
 });

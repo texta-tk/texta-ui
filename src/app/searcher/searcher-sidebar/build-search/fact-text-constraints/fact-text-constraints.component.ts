@@ -50,9 +50,9 @@ export class FactTextConstraintsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     console.log('destroy fact-text-constraint');
-    const index = this.elasticSearchQuery.query.bool.should.indexOf(this.constraintQuery, 0);
+    const index = this.elasticSearchQuery.elasticSearchQuery.query.bool.should.indexOf(this.constraintQuery, 0);
     if (index > -1) {
-      this.elasticSearchQuery.query.bool.should.splice(index, 1);
+      this.elasticSearchQuery.elasticSearchQuery.query.bool.should.splice(index, 1);
     }
     this.destroyed$.next(true);
     this.destroyed$.complete();

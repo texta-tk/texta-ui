@@ -1,0 +1,17 @@
+
+.exclude-search-checkbox {
+  ::ng-deep .mat-checkbox-layout {
+    margin-bottom: 1em;
+    width: 100%;
+    .mat-checkbox-inner-container{
+      margin-right: 0;
+      margin-left: auto;
+    }
+  }
+}
+.datepicker-row {
+  justify-content: space-between;
+  mat-form-field {
+    max-width: 155px;
+  }
+}

@@ -8,9 +8,9 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {MatDialogRef} from '@angular/material';
 import {Search} from '../../../../shared/types/Search';
 import {BehaviorSubject} from 'rxjs';
-import {SearchService} from '../../../services/search.service';
+import {SearcherComponentService} from '../../../services/searcher-component.service';
 import {BuildSearchComponent} from '../../build-search/build-search.component';
-import {SearchServiceSpy} from '../../../services/search.service.spec';
+import {SearchServiceSpy} from '../../../services/searcher-component.service.spec';
 
 describe('SaveSearchDialogComponent', () => {
   let component: SaveSearchDialogComponent;
@@ -32,7 +32,7 @@ describe('SaveSearchDialogComponent', () => {
     }).overrideComponent(BuildSearchComponent, {
       set: {
         providers: [
-          {provide: SearchService, useClass: SearchServiceSpy}
+          {provide: SearcherComponentService, useClass: SearchServiceSpy}
         ]
       }
     })

@@ -13,6 +13,10 @@ import {TextConstraintsComponent} from './searcher-sidebar/build-search/text-con
 import {DateConstraintsComponent} from './searcher-sidebar/build-search/date-constraints/date-constraints.component';
 import {FactConstraintsComponent} from './searcher-sidebar/build-search/fact-constraints/fact-constraints.component';
 import {HighlightComponent} from './searcher-table/highlight/highlight.component';
+import {AggregationResultsComponent} from './aggregation-results/aggregation-results.component';
+import {AggregationsComponent} from './searcher-sidebar/aggregations/aggregations.component';
+import {TextAggregationComponent} from './searcher-sidebar/aggregations/text-aggregation/text-aggregation.component';
+import {DateAggregationComponent} from './searcher-sidebar/aggregations/date-aggregation/date-aggregation.component';
 
 describe('SearcherComponent', () => {
   let component: SearcherComponent;
@@ -25,7 +29,8 @@ describe('SearcherComponent', () => {
       ],
       declarations: [SearcherComponent, SearcherTableComponent, SearcherSidebarComponent,
         BuildSearchComponent, SavedSearchesComponent, TextConstraintsComponent,
-        DateConstraintsComponent, FactConstraintsComponent, HighlightComponent]
+        DateConstraintsComponent, FactConstraintsComponent, HighlightComponent, AggregationResultsComponent, AggregationsComponent,
+        DateAggregationComponent, TextAggregationComponent]
     })
       .compileComponents();
   }));

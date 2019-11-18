@@ -25,8 +25,11 @@ export class SearcherSidebarComponent implements OnInit, OnDestroy {
   private savedSearchesComponent: SavedSearchesComponent;
   @ViewChild('buildSearchPanel', {static: false}) buildSearchPanel: any;
   @ViewChild('savedSearchesPanel', {static: false}) savedSearchesPanel: any;
+  @ViewChild('aggregationsPanel', {static: false}) aggregationsPanel: any;
+
   buildSearchExpanded = true;
   savedSearchesExpanded = true;
+  aggregationsExpanded = true;
   currentProject: Project;
 
   constructor(public dialog: MatDialog,
@@ -56,6 +59,9 @@ export class SearcherSidebarComponent implements OnInit, OnDestroy {
     this.savedSearchesExpanded = !this.savedSearchesExpanded;
   }
 
+  expandAggregationspanel() {
+    this.aggregationsExpanded = !this.aggregationsExpanded;
+  }
   openSaveSearchDialog() {
     const dialogRef = this.dialog.open(SaveSearchDialogComponent, {
       maxHeight: '300px',
