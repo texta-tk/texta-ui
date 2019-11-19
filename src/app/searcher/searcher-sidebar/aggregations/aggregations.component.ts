@@ -20,7 +20,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
   projectFacts: ProjectFact[] = [];
   fieldsFormControl = new FormControl();
   destroy$: Subject<boolean> = new Subject();
-  aggregationList: { type: Field, aggregation: any }[] = [];
+  aggregationList: { savedSearchesAggregatons: any[], aggregation: any }[] = [];
   searcherElasticSearchQuery: ElasticsearchQuery;
 
   constructor(private projectStore: ProjectStore,
@@ -30,13 +30,15 @@ export class AggregationsComponent implements OnInit, OnDestroy {
 
   fieldSelected(val) {
     this.aggregationList = [];
-    this.aggregationList.push({type: val, aggregation: {}});
+    this.aggregationList.push({savedSearchesAggregatons: [], aggregation: {}});
   }
 
   ngOnInit() {
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$)).subscribe((currentProject: Project) => {
       if (currentProject) {
         this.currentProject = currentProject;
+        this.aggregationList = [];
+        this.fieldsFormControl.reset();
       }
     });
     this.projectStore.getProjectFacts().pipe(takeUntil(this.destroy$)).subscribe((projectFacts: ProjectFact[]) => {
@@ -62,10 +64,20 @@ export class AggregationsComponent implements OnInit, OnDestroy {
           console.log(aggregation);
         }*/
 
-    if (this.aggregationList.length > 0) {
-      this.searcherElasticSearchQuery.elasticSearchQuery.aggs = this.aggregationList[0].aggregation;
+    /*    if (this.aggregationList.length > 0) {
+          this.searcherElasticSearchQuery.elasticSearchQuery.aggs =
+        }*/
+    console.log(this.aggregationList);
+    // todo, when i change query idk when to update rn.
+    body = {
+      query: {
+        aggs: {...this.aggregationList[0].aggregation}
+      }
+    };
+    for (const aggregation of this.aggregationList[0].savedSearchesAggregatons) {
+      const aggregationName = Object.keys(aggregation)[0];
+      body.query.aggs[aggregationName] = aggregation[aggregationName];
     }
-    body = {query: this.searcherElasticSearchQuery.elasticSearchQuery};
     body.query.size = 0; // ignore results, performance improvement
     this.searchService.setIsLoading(true);
     this.searcherService.search(body, this.currentProject.id).subscribe(resp => {

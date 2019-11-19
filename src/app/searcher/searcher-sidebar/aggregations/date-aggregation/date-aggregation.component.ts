@@ -1,10 +1,11 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {ElasticsearchQuery} from '../../build-search/Constraints';
 import {FormControl} from '@angular/forms';
-import {takeUntil} from 'rxjs/operators';
+import {debounceTime, startWith, takeUntil} from 'rxjs/operators';
 import {SearcherComponentService} from '../../../services/searcher-component.service';
 import {Subject} from 'rxjs';
-import {Field} from '../../../../shared/types/Project';
+import {SavedSearch} from '../../../../shared/types/SavedSearch';
+import {SelectionChange, SelectionModel} from '@angular/cdk/collections';
 
 @Component({
   selector: 'app-date-aggregation',
@@ -12,7 +13,7 @@ import {Field} from '../../../../shared/types/Project';
   styleUrls: ['./date-aggregation.component.scss']
 })
 export class DateAggregationComponent implements OnInit, OnDestroy {
-  @Input() aggregationObj: { type: Field, aggregation: any };
+  @Input() aggregationObj: { savedSearchesAggregatons: any[], aggregation: any };
   @Input() fieldsFormControl: FormControl;
   searcherElasticSearchQuery: ElasticsearchQuery;
   dateInterval = 'year';
@@ -32,15 +33,48 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
     this.searchService.getElasticQuery().pipe(takeUntil(this.destroy$)).subscribe((query: ElasticsearchQuery) => {
       if (query) {
         this.searcherElasticSearchQuery = query;
-
         this.dateRangeFrom = {range: {[this.fieldsFormControl.value.path]: {gte: this.startDate}}};
         this.dateRangeTo = {range: {[this.fieldsFormControl.value.path]: {lte: this.toDate}}};
-        // object indentifier binding
-        this.searcherElasticSearchQuery.elasticSearchQuery.query.bool.must.push(this.dateRangeFrom);
-        this.searcherElasticSearchQuery.elasticSearchQuery.query.bool.must.push(this.dateRangeTo);
         this.makeDateAggregation();
       }
     });
+    // when selecting all it emits each item once, debounce to ignore
+    this.searchService.savedSearchSelection.changed.pipe(
+      takeUntil(this.destroy$),
+      startWith(this.searchService.savedSearchSelection),
+      debounceTime(50)
+    ).subscribe((selection: SelectionChange<SavedSearch> | SelectionModel<SavedSearch>) => {
+      console.log(selection);
+      if (selection instanceof SelectionModel) {
+        this.makeAggregationsWithSavedSearches(selection.selected);
+      } else {
+        this.makeAggregationsWithSavedSearches(selection.source.selected);
+      }
+      console.log(this.aggregationObj.savedSearchesAggregatons);
+    });
+  }
+
+  makeAggregationsWithSavedSearches(selected: SavedSearch[]) {
+    console.log(selected);
+    this.aggregationObj.savedSearchesAggregatons = [];
+    for (const savedSearch of selected) {
+      const savedSearchQuery = JSON.parse(savedSearch.query);
+      const savedSearchAggregation = {
+        [savedSearch.description]: {
+          filter: {bool: {...savedSearchQuery.query.bool}},
+          aggs: {
+            [savedSearch.description]: {
+              date_histogram: {
+                format: 'MMM d, y',
+                field: this.fieldsFormControl.value.path,
+                interval: this.dateInterval
+              }
+            }
+          }
+        }
+      };
+      this.aggregationObj.savedSearchesAggregatons.push(savedSearchAggregation);
+    }
   }
 
   makeDateAggregation() {
@@ -50,8 +84,9 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
     if (this.searchQueryExcluded) {
       returnquery = {
         agg_histo: {
+          filter: {bool: {must: [{bool: {must: [this.dateRangeFrom, this.dateRangeTo]}}]}},
           aggs: {
-            agg_histo_global: {
+            agg_histo: {
               date_histogram: {
                 format: 'MMM d, y',
                 field: this.fieldsFormControl.value.path,
@@ -63,32 +98,29 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
       };
       returnquery.agg_histo.global = {};
     } else {
+      // todo what if dates overlap?
+      const currentSearchQuery = {...this.searcherElasticSearchQuery.elasticSearchQuery.query.bool};
+      currentSearchQuery.must.push({bool: {must: [this.dateRangeFrom, this.dateRangeTo]}});
       returnquery = {
         agg_histo: {
-          date_histogram: {
-            format: 'MMM d, y',
-            field: this.fieldsFormControl.value.path,
-            interval: this.dateInterval
+          filter: {bool: currentSearchQuery},
+          aggs: {
+            agg_histo: {
+              date_histogram: {
+                format: 'MMM d, y',
+                field: this.fieldsFormControl.value.path,
+                interval: this.dateInterval
+              }
+            }
           }
         }
       };
     }
-    console.log(this.searcherElasticSearchQuery);
 
     this.aggregationObj.aggregation = returnquery;
   }
 
   ngOnDestroy() {
-    const indexFrom = this.searcherElasticSearchQuery.elasticSearchQuery.query.bool.must.indexOf(this.dateRangeFrom);
-    if (indexFrom > -1) {
-      this.searcherElasticSearchQuery.elasticSearchQuery.query.bool.must.splice(indexFrom, 1);
-    }
-    const indexTo = this.searcherElasticSearchQuery.elasticSearchQuery.query.bool.must.indexOf(this.dateRangeTo);
-    if (indexTo > -1) {
-      this.searcherElasticSearchQuery.elasticSearchQuery.query.bool.must.splice(indexTo, 1);
-    }
-    console.log(this.searcherElasticSearchQuery);
-
     this.destroy$.next(true);
     this.destroy$.complete();
   }

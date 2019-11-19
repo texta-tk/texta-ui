@@ -11,6 +11,8 @@ import {SearcherService} from '../../core/searcher/searcher.service';
 import {Project} from '../../shared/types/Project';
 import {ProjectStore} from '../../core/projects/project.store';
 import {LogService} from '../../core/util/log.service';
+import {SearcherComponentService} from "../services/searcher-component.service";
+import {SavedSearch} from "../../shared/types/SavedSearch";
 
 @Component({
   selector: 'app-searcher-sidebar',
@@ -34,6 +36,7 @@ export class SearcherSidebarComponent implements OnInit, OnDestroy {
 
   constructor(public dialog: MatDialog,
               private searcherService: SearcherService,
+              private searchService: SearcherComponentService,
               private projectStore: ProjectStore,
               private logService: LogService) {
   }
@@ -76,7 +79,7 @@ export class SearcherSidebarComponent implements OnInit, OnDestroy {
 
   onDeleteAllSelected() {
 
-    const selectedRows = this.savedSearchesComponent.selection;
+    const selectedRows = this.searchService.savedSearchSelection;
     if (selectedRows.selected.length > 0) {
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         data: {confirmText: 'Delete', mainText: `Are you sure you want to delete ${selectedRows.selected.length} Searches?`}
@@ -84,10 +87,8 @@ export class SearcherSidebarComponent implements OnInit, OnDestroy {
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          // Delete selected taggers
-          const idsToDelete = selectedRows.selected.map((tagger: Embedding) => tagger.id);
+          const idsToDelete = selectedRows.selected.map((savedSearch: SavedSearch) => savedSearch.id);
           const body = {ids: idsToDelete};
-          // Refresh taggers
           this.searcherService.bulkDeleteSavedSearches(this.currentProject.id, body).subscribe(() => {
             this.logService.snackBarMessage(`${selectedRows.selected.length} Searches deleted`, 2000);
             this.savedSearchesComponent.removeSelectedRows();

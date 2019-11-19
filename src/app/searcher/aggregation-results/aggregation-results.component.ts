@@ -19,6 +19,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   displayedColumns = ['key', 'doc_count'];
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  tableAggregationData: { tableData?: MatTableDataSource<any>, name?: string }[] = [];
   public tableData: MatTableDataSource<any> = new MatTableDataSource();
 
   constructor(public searchService: SearcherComponentService, @Inject(LOCALE_ID) private locale: string) {
@@ -38,35 +39,29 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
         this.dateAggregationData = [];
         this.tableData.data = [];
         this.displayedColumns = ['key', 'doc_count'];
-        this.displayAggregationData(aggregation);
+        this.parseAggregationResults(aggregation);
       }
     });
   }
 
-  displayAggregationData(aggregation: any) {
+  parseAggregationResults(aggregation: any) {
     if (aggregation && aggregation.aggs) {
-      const aggs = aggregation.aggs;
-      if (aggs.agg_histo) {
-        let buckets: { key_as_string: string, key: number, doc_count: number }[] = [];
-        if (aggs.agg_histo.agg_histo_global) {
-          buckets = aggs.agg_histo.agg_histo_global.buckets;
+      const termsAgg = Object.keys(aggregation.aggs).includes('agg_term');
+      this.tableAggregationData = [];
+      this.dateAggregationData = [];
+      for (const aggregationKey of Object.keys(aggregation.aggs)) {
+        if (termsAgg) {
+          // sort, pagination for each table todo
+          this.tableAggregationData.push({
+            tableData: new MatTableDataSource(aggregation.aggs[aggregationKey][aggregationKey].buckets),
+            name: aggregationKey
+          });
         } else {
-          buckets = aggs.agg_histo.buckets;
+          this.dateAggregationData.push({
+            name: aggregationKey,
+            series: this.formatDateData(aggregation.aggs[aggregationKey][aggregationKey].buckets)
+          });
         }
-        this.dateAggregationData = [{name: 'document count', series: this.formatDateData(buckets)}];
-      } else if (aggs.agg_term) {
-        let buckets: { key: string, doc_count: number, score: number }[] = [];
-        if (aggs.agg_term.agg_term_global) {
-          buckets = aggs.agg_term.agg_term_global.buckets;
-        } else {
-          buckets = aggs.agg_term.buckets;
-        }
-        if (buckets[0] && buckets[0].score) {
-          this.displayedColumns.push('score');
-        }
-        this.tableData = new MatTableDataSource(buckets);
-        this.tableData.sort = this.sort;
-        this.tableData.paginator = this.paginator;
       }
     }
   }

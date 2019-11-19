@@ -18,12 +18,11 @@ import {SearcherComponentService} from '../../services/searcher-component.servic
 export class SavedSearchesComponent implements OnInit, OnDestroy {
   @Output() savedSearchClick = new EventEmitter<number>(); // search object future todo
   displayedColumns: string[] = ['select', 'name', 'url'];
-  selection = new SelectionModel<any>(true, []);
   dataSource: MatTableDataSource<SavedSearch>;
   destroyed$: Subject<boolean> = new Subject<boolean>();
   currentProject: Project;
 
-  constructor(private searcherService: SearcherService, private projectStore: ProjectStore, private searchService: SearcherComponentService) {
+  constructor(private searcherService: SearcherService, private projectStore: ProjectStore, public searchService: SearcherComponentService) {
   }
 
   ngOnInit() {
@@ -37,6 +36,7 @@ export class SavedSearchesComponent implements OnInit, OnDestroy {
     })).subscribe((response: SavedSearch[] | HttpErrorResponse) => {
       if (response && !(response instanceof HttpErrorResponse)) {
         this.dataSource = new MatTableDataSource(response);
+        this.searchService.savedSearchSelection = new SelectionModel<SavedSearch>(true, []);
       }
     });
 
@@ -68,7 +68,7 @@ export class SavedSearchesComponent implements OnInit, OnDestroy {
 
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
-    const numSelected = this.selection.selected.length;
+    const numSelected = this.searchService.savedSearchSelection.selected.length;
     const numRows = this.dataSource.data.length;
     return numSelected === numRows;
   }
@@ -76,16 +76,16 @@ export class SavedSearchesComponent implements OnInit, OnDestroy {
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
     this.isAllSelected() ?
-      this.selection.clear() :
-      this.dataSource.data.forEach(row => this.selection.select(row));
+      this.searchService.savedSearchSelection.clear() :
+      this.dataSource.data.forEach(row => this.searchService.savedSearchSelection.select(row));
   }
 
   removeSelectedRows() {
-    this.selection.selected.forEach((selectedSearch: SavedSearch) => {
+    this.searchService.savedSearchSelection.selected.forEach((selectedSearch: SavedSearch) => {
       const index: number = this.dataSource.data.findIndex((search: SavedSearch) => search.id === selectedSearch.id);
       this.dataSource.data.splice(index, 1);
       this.dataSource.data = [...this.dataSource.data];
     });
-    this.selection.clear();
+    this.searchService.savedSearchSelection.clear();
   }
 }
