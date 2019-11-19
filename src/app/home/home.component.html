@@ -30,7 +30,7 @@
           </div>
 
           <div fxFlex="1 0 125px">
-            <h4 class="mat-h4 center-text"> MEMORY </h4>
+            <h4 class="mat-h4 center-text">MEMORY</h4>
             <mat-progress-spinner
               [color]="((health.memory.used / health.memory.total) * 100) < 90 ? 'primary' : 'warn'"
               [mode]="'determinate'"
@@ -41,7 +41,7 @@
             <div style="position:relative; top: -60px;">
                 <span class="block center-text">{{(round((health.memory.used / health.memory.total) * 100)) }}% </span>
             </div>
-            <span class="mat-hint mat-small center-text block"> <mat-icon inline="true">memory</mat-icon>  {{health.memory.used | number}} /  {{health.memory.total| number}} {{health.memory.unit}} </span>
+            <span class="mat-hint mat-small center-text block">  {{health.memory.used | number}} /  {{health.memory.total| number}} {{health.memory.unit}} </span>
           </div>
 
           <div fxFlex="1 0 125px">
@@ -71,7 +71,7 @@
             <span class="mat-hint center-text block">GPUs</span>
           </div>
 
-          <div fxFlex matTooltip="Tasks updated in the last hour">
+          <div fxFlex>
             <span class="count-text center-text block" [ngClass]="health.active_tasks > 0 ? 'accent-text' : 'primary-text'">  {{health.active_tasks}} </span>
             <span class="mat-hint center-text block">Active Tasks</span>
           </div>

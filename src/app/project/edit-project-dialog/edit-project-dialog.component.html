@@ -3,7 +3,7 @@
   <div class="dialog-content-wrapper" mat-dialog-content>
     <mat-form-field class="max-width">
       <mat-label>Select Indices</mat-label>
-      <mat-select formControlName="indicesFormControl" required multiple>
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="indicesFormControl" required multiple>
         <mat-option *ngFor="let item of indices" [value]="item">
           {{item}}
         </mat-option>
@@ -14,7 +14,7 @@
     </mat-form-field>
     <mat-form-field class="max-width">
       <mat-label>Select Users</mat-label>
-      <mat-select formControlName="usersFormControl" required multiple>
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="usersFormControl" required multiple>
         <mat-option *ngFor="let item of users" [value]="item.url">
           {{item.username}}
         </mat-option>

@@ -30,7 +30,7 @@
   <div class="table-paginator-row">
     <mat-form-field class="margin-right">
       <mat-label>Toggle Columns</mat-label>
-      <mat-select [formControl]="columnFormControl" multiple (openedChange)="onOpenedChange($event)">
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" [formControl]="columnFormControl" multiple (openedChange)="onOpenedChange($event)">
         <app-mat-option-select-all></app-mat-option-select-all>
         <mat-option *ngFor="let column of displayedColumns" [value]="column">
           {{column}}

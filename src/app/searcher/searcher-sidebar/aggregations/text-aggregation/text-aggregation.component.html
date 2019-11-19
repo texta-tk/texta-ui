@@ -1,7 +1,7 @@
 <div class="field-type-wrapper">
   <mat-form-field appearance="outline" class="max-width">
     <mat-label>Aggregation</mat-label>
-    <mat-select [(ngModel)]="aggregationType" name="aggregationTextType" (selectionChange)="makeTextAggregation()">
+    <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" [(ngModel)]="aggregationType" name="aggregationTextType" (selectionChange)="makeTextAggregation()">
       <mat-option value="terms">frequent items</mat-option>
       <mat-option value="significant_terms">significant items</mat-option>
       <mat-option value="significant_text" >significant words</mat-option>

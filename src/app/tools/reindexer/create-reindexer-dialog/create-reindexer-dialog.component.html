@@ -21,7 +21,7 @@
     
     <mat-form-field>
       <mat-label>Indices</mat-label>
-      <mat-select formControlName="indicesFormControl" multiple required>
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="indicesFormControl" multiple required>
         <mat-option *ngFor="let index of indices" [value]="index">
           {{index}}
         </mat-option>
@@ -31,7 +31,7 @@
 
     <mat-form-field>
       <mat-label>Select Fields</mat-label>
-      <mat-select formControlName="fieldsFormControl" multiple>
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="fieldsFormControl" multiple>
         <mat-optgroup *ngFor="let group of projectFields" [label]="group.index">
           <mat-option *ngFor="let fields of group.fields" [value]="fields">
             {{fields.path}}

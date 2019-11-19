@@ -11,7 +11,7 @@
     </mat-form-field>
     <mat-form-field>
       <mat-label>Select Fields</mat-label>
-      <mat-select formControlName="fieldsFormControl" multiple required>
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="fieldsFormControl" multiple required>
         <mat-optgroup *ngFor="let group of projectFields" [label]="group.index">
           <mat-option *ngFor="let fields of group.fields" [value]="fields.path">
             {{fields.path}}
@@ -28,7 +28,7 @@
 
     <mat-form-field>
       <mat-label>Select Embedding</mat-label>
-      <mat-select formControlName="embeddingFormControl">        <mat-option *ngFor="let item of embeddings" [value]="item">
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="embeddingFormControl">        <mat-option *ngFor="let item of embeddings" [value]="item">
           {{item.description}}
         </mat-option>
       </mat-select>
@@ -38,7 +38,7 @@
     </mat-form-field>
     <mat-form-field>
       <mat-label>Vectorizer</mat-label>
-      <mat-select formControlName="vectorizerFormControl" required>
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="vectorizerFormControl" required>
         <mat-option *ngFor="let item of taggerOptions.actions.POST.vectorizer.choices" [value]="item">
           {{item.display_name}}
         </mat-option>
@@ -49,7 +49,7 @@
     </mat-form-field>
     <mat-form-field>
       <mat-label>Classifier</mat-label>
-      <mat-select formControlName="classifierFormControl" required>
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="classifierFormControl" required>
         <mat-option *ngFor="let item of taggerOptions.actions.POST.classifier.choices" [value]="item">
           {{item.display_name}}
         </mat-option>

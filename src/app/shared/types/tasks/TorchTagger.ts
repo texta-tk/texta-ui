@@ -14,6 +14,7 @@ export class TorchTagger {
   accuracy: number;
   model_architecture: string;
   maximum_sample_size: number;
+  minimum_sample_size: number;
   num_epochs: number;
   location: string;
   plot: string;

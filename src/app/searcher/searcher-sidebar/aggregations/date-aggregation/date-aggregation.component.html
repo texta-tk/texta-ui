@@ -16,14 +16,14 @@
   </div>
 <!--  <mat-form-field appearance="outline" class="max-width">
     <mat-label>Frequency</mat-label>
-    <mat-select [(ngModel)]="aggregationType" name="aggregationDateType" (selectionChange)="makeDateAggregation()">
+    <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" [(ngModel)]="aggregationType" name="aggregationDateType" (selectionChange)="makeDateAggregation()">
       <mat-option value="raw_frequency">raw frequency</mat-option>
       <mat-option value="relative_frequency">relative frequency</mat-option>
     </mat-select>
   </mat-form-field>-->
   <mat-form-field appearance="outline" class="max-width">
     <mat-label>Interval</mat-label>
-    <mat-select [(ngModel)]="dateInterval" name="aggregationDateInterval" (selectionChange)="makeDateAggregation()">
+    <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" [(ngModel)]="dateInterval" name="aggregationDateInterval" (selectionChange)="makeDateAggregation()">
       <mat-option value="day">day</mat-option>
       <mat-option value="week">week</mat-option>
       <mat-option value="month">month</mat-option>

@@ -46,4 +46,10 @@ export class TorchTaggerService {
       tap(e => this.logService.logStatus(e, 'makeTagger')),
       catchError(this.logService.handleError<TorchTagger>('makeTagger')));
   }
+
+  tagText(body: {}, projectId: number, taggerId): Observable<unknown | HttpErrorResponse> {
+    return this.http.post<unknown>(`${this.apiUrl}/projects/${projectId}/torchtaggers/${taggerId}/tag_text/`, body).pipe(
+      tap(e => this.logService.logStatus(e, 'tagText')),
+      catchError(this.logService.handleError<unknown>('tagText')));
+  }
 }

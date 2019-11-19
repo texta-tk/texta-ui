@@ -25,10 +25,11 @@ export class CreateTorchTaggerDialogComponent implements OnInit {
   torchTaggerForm = new FormGroup({
     descriptionFormControl: new FormControl('', [Validators.required]),
     fieldsFormControl: new FormControl([], [Validators.required]),
-    embeddingFormControl: new FormControl([Validators.required]),
+    embeddingFormControl: new FormControl('', [Validators.required]),
     sampleSizeFormControl: new FormControl(10000, [Validators.required]),
+    minSampleSizeFormControl: new FormControl(50, [Validators.required]),
     factNameFormControl: new FormControl(),
-    modelArchitectureFormControl: new FormControl([Validators.required]),
+    modelArchitectureFormControl: new FormControl('', [Validators.required]),
     numEpochsFormControl: new FormControl(5, [Validators.required]),
   });
 
@@ -92,13 +93,17 @@ export class CreateTorchTaggerDialogComponent implements OnInit {
       fields: formData.fieldsFormControl,
       embedding: formData.embeddingFormControl,
       maximum_sample_size: formData.sampleSizeFormControl,
+      minimum_sample_size: formData.minSampleSizeFormControl,
       num_epochs: formData.numEpochsFormControl,
       model_architecture: formData.modelArchitectureFormControl,
-      fact_name: formData.factNameFormControl,
     };
     
     if (this.query) {
       body['query'] = this.query;
+    }
+
+    if (formData.factNameFormControl) {
+      body['fact_name'] = formData.factNameFormControl;
     }
 
 

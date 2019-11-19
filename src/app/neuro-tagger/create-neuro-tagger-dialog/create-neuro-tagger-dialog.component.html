@@ -16,7 +16,7 @@
     </mat-form-field>
     <mat-form-field>
       <mat-label>Select Fields</mat-label>
-      <mat-select formControlName="fieldsFormControl" multiple required>
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="fieldsFormControl" multiple required>
         <mat-optgroup *ngFor="let group of projectFields" [label]="group.index">
           <mat-option *ngFor="let fields of group.fields" [value]="fields.path">
             {{fields.path}}
@@ -30,7 +30,7 @@
 
     <mat-form-field>
       <mat-label>Model architecture</mat-label>
-      <mat-select formControlName="modelArchitectureFormControl" required>
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="modelArchitectureFormControl" required>
         <mat-option *ngFor="let item of neuroTaggerOptions.actions.POST.model_architecture.choices" [value]="item.value">
           {{item.display_name}}
         </mat-option>
@@ -57,7 +57,7 @@
     </mat-form-field>
     <mat-form-field>
       <mat-label>Fact name</mat-label>
-      <mat-select formControlName="factNameFormControl">
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="factNameFormControl">
         <mat-option *ngFor="let fact of projectFacts" [value]="fact.name">
           {{fact.name}}
         </mat-option>

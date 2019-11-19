@@ -33,7 +33,7 @@
 
     <div class="flex-item-right flex-row user-name" *ngIf="user">
       <mat-form-field class="project-select">
-        <mat-select [formControl]="projectControl" (selectionChange)="selectProject($event.value)"
+        <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" [formControl]="projectControl" (selectionChange)="selectProject($event.value)"
         [placeholder]="projects?.length < 1 ? 'No projects' : ''">
           <mat-option *ngFor="let item of projects" [value]="item">
             {{item.id}}: {{item.title}}

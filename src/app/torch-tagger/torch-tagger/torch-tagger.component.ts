@@ -7,13 +7,13 @@ import { ProjectStore } from 'src/app/core/projects/project.store';
 import { LogService } from 'src/app/core/util/log.service';
 import { switchMap, debounceTime, startWith } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
-import { TagTextDialogComponent } from 'src/app/tagger/tagger/tag-text-dialog/tag-text-dialog.component';
 import { ConfirmDialogComponent } from 'src/app/shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import { QueryDialogComponent } from 'src/app/shared/components/dialogs/query-dialog/query-dialog.component';
 import { TorchTagger } from 'src/app/shared/types/tasks/TorchTagger';
 import { CreateTorchTaggerDialogComponent } from '../create-torch-tagger-dialog/create-torch-tagger-dialog.component';
 import { TorchTaggerService } from '../torch-tagger.service';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+import { TorchTagTextDialogComponent } from '../torch-tag-text-dialog/torch-tag-text-dialog.component';
 
 @Component({
   selector: 'app-torch-tagger',
@@ -149,14 +149,6 @@ export class TorchTaggerComponent implements OnInit {
     });
   }
 
-  tagTextDialog(torchtagger: TorchTagger) {
-    const dialogRef = this.dialog.open(TagTextDialogComponent, {
-      data: {torchtaggerId: torchtagger.id, currentProjectId: this.currentProject.id },
-      maxHeight: '665px',
-      width: '700px',
-    });
-  }
-
 
   onDelete(torchtagger: TorchTagger, index: number) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
@@ -236,4 +228,11 @@ export class TorchTaggerComponent implements OnInit {
   }
 
 
+  tagTextDialog(tagger: TorchTagger) {
+    const dialogRef = this.dialog.open(TorchTagTextDialogComponent, {
+      data: {torchTorchTaggerId: tagger.id, currentProjectId: this.currentProject.id },
+      maxHeight: '665px',
+      width: '700px',
+    });
+  }
 }

@@ -2,7 +2,7 @@
   <div fxLayout="row">
     <mat-form-field fxFlex="25">
       <mat-label>Operator</mat-label>
-      <mat-select [formControl]="factTextTypeOperatorFormControl">
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" [formControl]="factTextTypeOperatorFormControl">
         <mat-option value="must">and</mat-option>
         <mat-option value="should">or</mat-option>
         <mat-option value="must_not">not</mat-option>
@@ -17,7 +17,7 @@
   <div fxLayout="row" *ngFor="let inputGroup of inputGroupArray; let i=index;">
     <mat-form-field fxFlex="36">
       <mat-label>Fact name</mat-label>
-      <mat-select [formControl]="inputGroup.factTextFactNameFormControl">
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" [formControl]="inputGroup.factTextFactNameFormControl">
         <mat-option *ngFor="let fact of projectFacts" [value]="fact.name">
           {{fact.name}}
         </mat-option>
@@ -25,7 +25,7 @@
     </mat-form-field>
 
     <mat-form-field fxFlex="15" class="m-l-r-5">
-      <mat-select [formControl]="inputGroup.factTextOperatorFormControl">
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" [formControl]="inputGroup.factTextOperatorFormControl">
         <mat-option value="must">is</mat-option>
         <mat-option value="must_not">not</mat-option>
       </mat-select>
