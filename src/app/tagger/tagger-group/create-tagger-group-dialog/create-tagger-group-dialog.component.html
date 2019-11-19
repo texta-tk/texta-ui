@@ -18,7 +18,7 @@
       </mat-select>
     </mat-form-field>
     <mat-form-field>
-      <input matInput type="number" placeholder="Minimum sample size"
+      <input matInput type="number" step="50" placeholder="Minimum sample size"
              formControlName="taggerGroupSampleSizeFormControl">
     </mat-form-field>
     <div class="flex-col" formGroupName="taggerForm">
@@ -72,10 +72,10 @@
       </mat-form-field>
 
       <mat-form-field>
-        <input matInput type="number" placeholder="Maximum sample size" formControlName="sampleSizeFormControl">
+        <input matInput type="number" step="1000" placeholder="Maximum sample size" formControlName="sampleSizeFormControl">
       </mat-form-field>
       <mat-form-field>
-        <input matInput type="number" placeholder="Negative multiplier" formControlName="negativeMultiplierFormControl">
+        <input matInput type="number" step="0.1" placeholder="Negative multiplier" formControlName="negativeMultiplierFormControl">
       </mat-form-field>
 
 
