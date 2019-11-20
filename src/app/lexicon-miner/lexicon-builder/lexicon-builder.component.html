@@ -6,7 +6,7 @@
         <div class="flex-row embedding-row">
           <mat-form-field>
             <mat-label>Select Embedding</mat-label>
-            <mat-select [(value)]="selectedEmbedding" (selectionChange)="saveEmbeddingChoice($event.value)">
+            <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" [(value)]="selectedEmbedding" (selectionChange)="saveEmbeddingChoice($event.value)">
               <mat-option *ngFor="let embedding of embeddings" [value]="embedding">
                 {{embedding.description}}
               </mat-option>
@@ -44,7 +44,7 @@
         <span>{{prediction.phrase}}</span>
       </div>
     </div>
-    <!-- <mat-selection-list #predictedWords>
+    <!-- <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"ion-list #predictedWords>
       <mat-list-option *ngFor="let prediction of predictions" [value]="prediction">
         {{prediction.phrase}}
       </mat-list-option>

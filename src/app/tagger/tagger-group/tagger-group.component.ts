@@ -44,6 +44,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
   filteredSubject = new Subject();
   // For custom filtering, such as text search in description
   inputFilterQuery = '';
+filteringValues = {}
 
   currentProject: Project;
   resultsLength: number;
@@ -228,7 +229,15 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   applyFilter(filterValue: string, field: string) {
-    this.inputFilterQuery = `&${field}=${filterValue}`;
+    this.filteringValues[field] = filterValue;
+    this.filterQueriesToString();
     this.filteredSubject.next();
+  }
+
+  filterQueriesToString() {
+    this.inputFilterQuery = '';
+    for (const field in this.filteringValues) {
+      this.inputFilterQuery += `&${field}=${this.filteringValues[field]}`
+    }
   }
 }

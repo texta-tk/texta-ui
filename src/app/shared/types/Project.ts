@@ -18,6 +18,7 @@ export interface ProjectResourceCounts {
   num_neurotaggers: number;
   num_embeddings: number;
   num_embedding_clusters: number;
+  num_torchtaggers?: number;
 }
 
 export interface ProjectFact {

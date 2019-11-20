@@ -1,7 +1,8 @@
 <div class="wrapper">
   <mat-form-field appearance="outline" class="max-width">
     <mat-label>Select Fields</mat-label>
-    <mat-select [formControl]="fieldsFormControl" multiple (openedChange)="onOpenedChange($event)"
+    <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" [formControl]="fieldsFormControl" multiple (openedChange)="onOpenedChange($event)" 
+    
                 (selectionChange)="onSelectionChange($event)">
       <mat-optgroup *ngFor="let group of projectFieldsFiltered" [label]="group.index">
         <mat-option *ngFor="let fields of group.fields" [value]="fields">
@@ -36,7 +37,7 @@
   </div>
 <!--  <div fxLayout="column" class="bg-grey search-options">
     <h4 class="flex-item-center">Search options</h4>
-    <mat-selection-list dense [(ngModel)]="searcherOptions">
+    <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"ion-list dense [(ngModel)]="searcherOptions">
       <mat-list-option value="short_version">Show short version:</mat-list-option>
       <mat-list-option selected="true" value="live_search">Search as you type:</mat-list-option>
     </mat-selection-list>

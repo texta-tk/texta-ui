@@ -15,7 +15,7 @@
     </mat-form-field>
     <mat-form-field appearance="outline" floatLabel="always">
       <mat-label>Cluster Order </mat-label>
-      <mat-select formControlName="cluster_order" fxFlex>
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="cluster_order" fxFlex>
         <mat-option *ngFor="let choice of options?.actions.POST.cluster_order.choices" [value]="choice.value">
           {{choice.display_name | titlecase }}
         </mat-option>

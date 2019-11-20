@@ -19,6 +19,7 @@ import {SearcherModule} from './searcher/searcher.module';
 import {NeuroTaggerModule} from './neuro-tagger/neuro-tagger.module';
 import {MAT_HAMMER_OPTIONS} from '@angular/material';
 import { ToolsModule } from './tools/tools/tools.module';
+import { TorchTaggerModule } from './torch-tagger/torch-tagger/torch-tagger.module';
 
 
 @NgModule({
@@ -41,6 +42,7 @@ import { ToolsModule } from './tools/tools/tools.module';
     ProjectModule,
     SearcherModule,
     NeuroTaggerModule,
+    TorchTaggerModule,
     ToolsModule
   ],
   providers: [

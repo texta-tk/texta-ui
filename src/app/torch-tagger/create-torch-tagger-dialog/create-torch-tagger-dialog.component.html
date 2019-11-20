@@ -1,0 +1,78 @@
+<h1 mat-dialog-title>New TorchTagger</h1>
+<div mat-dialog-content>
+  <form id="torchTaggerForm" fxLayout="column" [formGroup]="torchTaggerForm" (ngSubmit)="onSubmit(torchTaggerForm.value)">
+    <mat-form-field>
+      <input matInput placeholder="Description" autocomplete="off" formControlName="descriptionFormControl" required>
+
+      <mat-error *ngIf="torchTaggerForm.get('descriptionFormControl').hasError('required')">
+        Description is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Select Fields</mat-label>
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="fieldsFormControl" multiple required>
+        <mat-optgroup *ngFor="let group of projectFields" [label]="group.index">
+          <mat-option *ngFor="let fields of group.fields" [value]="fields.path">
+            {{fields.path}}
+          </mat-option>
+        </mat-optgroup>
+      </mat-select>
+      <mat-error *ngIf="torchTaggerForm.get('fieldsFormControl').hasError('required')">
+        Field is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Model architecture</mat-label>
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="modelArchitectureFormControl" required>
+        <mat-option *ngFor="let item of torchTaggerOptions?.actions.POST.model_architecture.choices" [value]="item.value">
+          {{item.display_name}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="torchTaggerForm.get('modelArchitectureFormControl').hasError('required')">
+        Model architecture is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field >
+        <mat-label>Select Embedding</mat-label>
+        <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="embeddingFormControl" required>
+            <ng-container *ngFor="let item of embeddings">
+            <mat-option  *ngIf="item.task.status === 'completed'" [value]="item.id">
+            {{item.description}}
+            </mat-option>
+          </ng-container>
+        </mat-select>
+        <mat-error *ngIf="torchTaggerForm.get('embeddingFormControl').hasError('required')">
+            Embedding is <strong>required</strong>
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Fact name</mat-label>
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="factNameFormControl">
+        <mat-option *ngFor="let fact of projectFacts" [value]="fact.name">
+          {{fact.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    
+
+
+    <mat-form-field>
+      <input matInput type="number" step="50" placeholder="Minimum sample size" formControlName="minSampleSizeFormControl">
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput type="number" step="1000" placeholder="Maximum sample size" formControlName="sampleSizeFormControl">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="number" placeholder="Number of epochs" formControlName="numEpochsFormControl">
+    </mat-form-field>
+
+  </form>
+</div>
+<div mat-dialog-actions fxLayout="row">
+  <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Close</button>
+  <button form="torchTaggerForm" type="submit" class="flex-item-right"  [disabled]="!torchTaggerForm.valid" mat-button>Create</button>
+</div>

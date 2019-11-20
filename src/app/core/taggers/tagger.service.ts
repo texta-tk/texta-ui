@@ -15,9 +15,7 @@ import {TaggerOptions} from '../../shared/types/tasks/TaggerOptions';
 export class TaggerService {
   apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient, private localStorageService: LocalStorageService,
-              private logService: LogService) {
-  }
+  constructor(private http: HttpClient, private logService: LogService) {}
 
   getTaggers(projectId: number, params = ''): Observable<{count: number, results: Tagger[]} | HttpErrorResponse> {
     return this.http.get<{count: number, results: Tagger[]}>(`${this.apiUrl}/projects/${projectId}/taggers/?${params}`,
@@ -92,6 +90,7 @@ export class TaggerService {
       tap(e => this.logService.logStatus(e, 'tagDocument')),
       catchError(this.logService.handleError<unknown>('tagDocument')));
   }
+
   tagText(body: {}, projectId: number, taggerId): Observable<unknown | HttpErrorResponse> {
     return this.http.post<unknown>(
       this.apiUrl + '/projects/' + projectId + '/taggers/' + taggerId + '/tag_text/',
@@ -100,6 +99,7 @@ export class TaggerService {
       tap(e => this.logService.logStatus(e, 'tagText')),
       catchError(this.logService.handleError<unknown>('tagText')));
   }
+
   taggerListFeatures(body: {}, projectId: number, taggerId: number): Observable<unknown | HttpErrorResponse> {
     return this.http.post<unknown>(
       this.apiUrl + '/projects/' + projectId + '/taggers/' + taggerId + '/list_features/',

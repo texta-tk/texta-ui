@@ -12,7 +12,7 @@
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"></app-saved-search-autocomplete>
     <mat-form-field>
       <mat-label>Select Fields</mat-label>
-      <mat-select formControlName="fieldsFormControl" multiple required>
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="fieldsFormControl" multiple required>
         <mat-optgroup *ngFor="let group of projectFields" [label]="group.index">
           <mat-option *ngFor="let fields of group.fields" [value]="fields">
             {{fields.path}}

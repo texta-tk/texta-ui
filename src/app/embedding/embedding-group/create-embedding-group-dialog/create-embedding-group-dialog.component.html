@@ -12,7 +12,7 @@
     </mat-form-field>
     <mat-form-field>
       <mat-label>Select Embedding</mat-label>
-      <mat-select formControlName="embeddingFormControl" required>
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="embeddingFormControl" required>
         <mat-option *ngFor="let item of embeddings" [value]="item">
           {{item.description}}
         </mat-option>
@@ -23,7 +23,7 @@
     </mat-form-field>
 
     <mat-form-field>
-      <input matInput type="number" placeholder="Number of clusters" formControlName="clustersFormControl">
+      <input matInput type="number" step="10" placeholder="Number of clusters" formControlName="clustersFormControl">
     </mat-form-field>
     <div class="flex-col">
       <div class="flex-row">
@@ -37,4 +37,3 @@
     </div>
   </form>
 </div>
-
