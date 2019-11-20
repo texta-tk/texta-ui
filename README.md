@@ -26,10 +26,10 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
 
-# Tutorial on creating a new Models component
+# Tutorial on creating a new Model app
 
-In this example, functionality for `TorchTagger` is used created.
-## In order to create a new component, you first need need to create a Module.
+In this example, functionality for TorchTagger is created.
+## In order to start the new app, you first need need to create a Module.
 
 - Run `ng g m torch-tagger/torch-tagger --routing=true` to create torch-tagger.module.ts and torch-tagger-routing.module.ts
 - Within torch-tagger.module.ts, in the array of `imports`, import `SharedModule`, and remove the default `CommonModule` import.
@@ -42,11 +42,11 @@ In this example, functionality for `TorchTagger` is used created.
 In order for us to navigate to that component, we need to set up routing for it.
 
 ## Set up the Routing module
-- In torch-tagger-routing.module.ts routes array, add a new object:
--- `{ path: 'torchtaggers', canActivate: [AuthGuard], component: TorchTaggerComponent }`
---- `path` is the url segment you will route to.
---- `canActivate` is for the Route Guard, to prevent users navigating on the given route in certain conditions. Here, the `AuthGuard` Route Guard is added, to make the route only accessible to logged in users.
---- `component` is the component that gets activated when the user is on that route.
+- In torch-tagger-routing.module.ts routes array, add a new object: `{ path: 'torchtaggers', canActivate: [AuthGuard], component: TorchTaggerComponent }`
+
+* `path` is the url segment you will route to.
+* `canActivate` is for the Route Guard, to prevent users navigating on the given route in certain conditions. Here, the `AuthGuard` Route Guard is added, to make the route only accessible to logged in users.
+* `component` is the component that gets activated when the user is on that route.
 
 ## Add a way to navigate to the component 
 - In `navbar.component.html` find the mat-menu with the `#models` template reference variable and add a new element, with `[routerLink]="['torchtaggers']"`
