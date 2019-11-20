@@ -26,10 +26,10 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
 
-# Tutorial on creating a new Models component
+# Tutorial on creating a new Model app
 
 In this example, functionality for TorchTagger is created.
-## In order to create a new component, you first need need to create a Module.
+## In order to start the new app, you first need need to create a Module.
 
 - Run `ng g m torch-tagger/torch-tagger --routing=true` to create torch-tagger.module.ts and torch-tagger-routing.module.ts
 - Within torch-tagger.module.ts, in the array of `imports`, import `SharedModule`, and remove the default `CommonModule` import.
