@@ -105,7 +105,6 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
           }
         }
       };
-      returnquery.agg_histo.global = {};
     } else {
       // todo what if dates overlap?
       const currentSearchQuery = this.searcherElasticSearchQuery.query.bool;
