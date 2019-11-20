@@ -1,9 +1,9 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {ElasticsearchQuery} from '../../build-search/Constraints';
+import {ElasticsearchQuery, ElasticsearchQueryStructure} from '../../build-search/Constraints';
 import {FormControl} from '@angular/forms';
-import {debounceTime, startWith, takeUntil} from 'rxjs/operators';
+import {debounceTime, startWith, switchMap, takeUntil} from 'rxjs/operators';
 import {SearcherComponentService} from '../../../services/searcher-component.service';
-import {Subject} from 'rxjs';
+import {of, Subject} from 'rxjs';
 import {SavedSearch} from '../../../../shared/types/SavedSearch';
 import {SelectionChange, SelectionModel} from '@angular/cdk/collections';
 
@@ -15,7 +15,7 @@ import {SelectionChange, SelectionModel} from '@angular/cdk/collections';
 export class DateAggregationComponent implements OnInit, OnDestroy {
   @Input() aggregationObj: { savedSearchesAggregatons: any[], aggregation: any };
   @Input() fieldsFormControl: FormControl;
-  searcherElasticSearchQuery: ElasticsearchQuery;
+  searcherElasticSearchQuery: ElasticsearchQueryStructure;
   dateInterval = 'year';
   aggregationType;
   startDate = new Date('1999-01-01');
@@ -30,32 +30,41 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.searchService.getElasticQuery().pipe(takeUntil(this.destroy$)).subscribe((query: ElasticsearchQuery) => {
+    // every time we get new search result refresh the query
+    this.searchService.getSearch().pipe(takeUntil(this.destroy$), startWith({}), switchMap(search => {
+      if (search) {
+        return this.searchService.getElasticQuery();
+      }
+      return of(null);
+    })).subscribe((query: ElasticsearchQuery | null) => {
       if (query) {
-        this.searcherElasticSearchQuery = query;
+        this.searcherElasticSearchQuery = JSON.parse(JSON.stringify(query.elasticSearchQuery));
         this.dateRangeFrom = {range: {[this.fieldsFormControl.value.path]: {gte: this.startDate}}};
         this.dateRangeTo = {range: {[this.fieldsFormControl.value.path]: {lte: this.toDate}}};
         this.makeDateAggregation();
       }
     });
+
     // when selecting all it emits each item once, debounce to ignore
     this.searchService.savedSearchSelection.changed.pipe(
       takeUntil(this.destroy$),
       startWith(this.searchService.savedSearchSelection),
       debounceTime(50)
     ).subscribe((selection: SelectionChange<SavedSearch> | SelectionModel<SavedSearch>) => {
-      console.log(selection);
       if (selection instanceof SelectionModel) {
         this.makeAggregationsWithSavedSearches(selection.selected);
       } else {
         this.makeAggregationsWithSavedSearches(selection.source.selected);
       }
-      console.log(this.aggregationObj.savedSearchesAggregatons);
     });
   }
 
+  updateAggregations() {
+    this.makeDateAggregation();
+    this.makeAggregationsWithSavedSearches(this.searchService.savedSearchSelection.selected);
+  }
+
   makeAggregationsWithSavedSearches(selected: SavedSearch[]) {
-    console.log(selected);
     this.aggregationObj.savedSearchesAggregatons = [];
     for (const savedSearch of selected) {
       const savedSearchQuery = JSON.parse(savedSearch.query);
@@ -99,7 +108,7 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
       returnquery.agg_histo.global = {};
     } else {
       // todo what if dates overlap?
-      const currentSearchQuery = {...this.searcherElasticSearchQuery.elasticSearchQuery.query.bool};
+      const currentSearchQuery = this.searcherElasticSearchQuery.query.bool;
       currentSearchQuery.must.push({bool: {must: [this.dateRangeFrom, this.dateRangeTo]}});
       returnquery = {
         agg_histo: {
@@ -118,6 +127,12 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
     }
 
     this.aggregationObj.aggregation = returnquery;
+  }
+
+  dateRangeDaysSmallerThan(goal: number) {
+    const differenceTime = this.toDate.getTime() - this.startDate.getTime();
+    const differenceInDays = differenceTime / (1000 * 3600 * 24);
+    return differenceInDays < goal;
   }
 
   ngOnDestroy() {

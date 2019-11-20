@@ -1,10 +1,8 @@
-import {Component, Inject, LOCALE_ID, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, Inject, LOCALE_ID, OnDestroy, OnInit} from '@angular/core';
 import {SearcherComponentService} from '../services/searcher-component.service';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
-import {formatDate} from '@angular/common';
-import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
-import {Project} from '../../shared/types/Project';
+import {MatTableDataSource} from '@angular/material';
 
 @Component({
   selector: 'app-aggregation-results',
@@ -16,11 +14,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject();
   aggregation: any;
   dateAggregationData = [];
-  displayedColumns = ['key', 'doc_count'];
-  @ViewChild(MatSort, {static: true}) sort: MatSort;
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   tableAggregationData: { tableData?: MatTableDataSource<any>, name?: string }[] = [];
-  public tableData: MatTableDataSource<any> = new MatTableDataSource();
 
   constructor(public searchService: SearcherComponentService, @Inject(LOCALE_ID) private locale: string) {
   }
@@ -37,8 +31,6 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     this.searchService.getAggregation().pipe(takeUntil(this.destroy$)).subscribe(aggregation => {
       if (aggregation && aggregation.aggs) {
         this.dateAggregationData = [];
-        this.tableData.data = [];
-        this.displayedColumns = ['key', 'doc_count'];
         this.parseAggregationResults(aggregation);
       }
     });
@@ -51,16 +43,18 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
       this.dateAggregationData = [];
       for (const aggregationKey of Object.keys(aggregation.aggs)) {
         if (termsAgg) {
-          // sort, pagination for each table todo
+          const dataSource = new MatTableDataSource(aggregation.aggs[aggregationKey][aggregationKey].buckets);
           this.tableAggregationData.push({
-            tableData: new MatTableDataSource(aggregation.aggs[aggregationKey][aggregationKey].buckets),
-            name: aggregationKey
+            tableData: dataSource,
+            name: aggregationKey === 'agg_term' ? 'aggregation_results' : aggregationKey
           });
         } else {
-          this.dateAggregationData.push({
-            name: aggregationKey,
-            series: this.formatDateData(aggregation.aggs[aggregationKey][aggregationKey].buckets)
-          });
+          if (aggregation.aggs[aggregationKey][aggregationKey].buckets.length > 0) {
+            this.dateAggregationData.push({
+              name: aggregationKey === 'agg_histo' ? 'aggregation_results' : aggregationKey,
+              series: this.formatDateData(aggregation.aggs[aggregationKey][aggregationKey].buckets)
+            });
+          }
         }
       }
     }

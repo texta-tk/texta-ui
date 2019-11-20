@@ -8,6 +8,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {SearcherTableComponent} from '../searcher-table/searcher-table.component';
 import {SearcherComponentService} from '../services/searcher-component.service';
 import {SearchServiceSpy} from '../services/searcher-component.service.spec';
+import {AggregationResultTableComponent} from './aggregation-result-table/aggregation-result-table.component';
 
 describe('AggregationResultsComponent', () => {
   let component: AggregationResultsComponent;
@@ -15,7 +16,7 @@ describe('AggregationResultsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AggregationResultsComponent ],
+      declarations: [ AggregationResultsComponent, AggregationResultTableComponent ],
       imports: [
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule,
       ],

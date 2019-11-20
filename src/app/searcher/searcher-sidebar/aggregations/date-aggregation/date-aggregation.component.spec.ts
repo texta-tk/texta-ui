@@ -32,6 +32,7 @@ describe('DateAggregationComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DateAggregationComponent);
     component = fixture.componentInstance;
+    component.aggregationObj = {savedSearchesAggregatons: [], aggregation: {}};
     fixture.detectChanges();
   });
 

@@ -60,15 +60,6 @@ export class AggregationsComponent implements OnInit, OnDestroy {
 
   aggregate() {
     let body;
-    /*    for (const aggregation of this.aggregationList) {
-          console.log(aggregation);
-        }*/
-
-    /*    if (this.aggregationList.length > 0) {
-          this.searcherElasticSearchQuery.elasticSearchQuery.aggs =
-        }*/
-    console.log(this.aggregationList);
-    // todo, when i change query idk when to update rn.
     body = {
       query: {
         aggs: {...this.aggregationList[0].aggregation}

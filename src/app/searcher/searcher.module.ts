@@ -16,6 +16,7 @@ import { AggregationsComponent } from './searcher-sidebar/aggregations/aggregati
 import { AggregationResultsComponent } from './aggregation-results/aggregation-results.component';
 import { DateAggregationComponent } from './searcher-sidebar/aggregations/date-aggregation/date-aggregation.component';
 import { TextAggregationComponent } from './searcher-sidebar/aggregations/text-aggregation/text-aggregation.component';
+import { AggregationResultTableComponent } from './aggregation-results/aggregation-result-table/aggregation-result-table.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { TextAggregationComponent } from './searcher-sidebar/aggregations/text-a
     AggregationsComponent,
     AggregationResultsComponent,
     DateAggregationComponent,
-    TextAggregationComponent
+    TextAggregationComponent,
+    AggregationResultTableComponent
   ],
   imports: [
     SharedModule,

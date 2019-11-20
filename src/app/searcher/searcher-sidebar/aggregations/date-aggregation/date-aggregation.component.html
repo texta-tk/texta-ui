@@ -7,7 +7,7 @@
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
     <mat-form-field appearance="outline">
-      <input matInput [matDatepicker]="picker2" placeholder="Daterange to" [(ngModel)]="toDate"
+      <input matInput [min]="startDate" [matDatepicker]="picker2" placeholder="Daterange to" [(ngModel)]="toDate"
              (dateChange)="makeDateAggregation()">
       <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
       <mat-datepicker #picker2></mat-datepicker>
@@ -22,9 +22,9 @@
   </mat-form-field>
   <mat-form-field appearance="outline" class="max-width">
     <mat-label>Interval</mat-label>
-    <mat-select [(ngModel)]="dateInterval" name="aggregationDateInterval" (selectionChange)="makeDateAggregation()">
-      <mat-option value="day">day</mat-option>
-      <mat-option value="week">week</mat-option>
+    <mat-select [(ngModel)]="dateInterval" name="aggregationDateInterval" (selectionChange)="updateAggregations()">
+      <mat-option value="day" [disabled]="!dateRangeDaysSmallerThan(365)">day</mat-option>
+      <mat-option value="week" [disabled]="!dateRangeDaysSmallerThan(1095)">week</mat-option>
       <mat-option value="month">month</mat-option>
       <mat-option value="year">year</mat-option>
     </mat-select>

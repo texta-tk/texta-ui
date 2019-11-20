@@ -1,47 +1,47 @@
-<div class="wrapper" [hidden]="displayedColumns.length === 0">
+<div class="wrapper">
   <div class="loading-shade"
        *ngIf="searchService.getIsLoading()">
     <mat-spinner *ngIf="searchService.getIsLoading()"></mat-spinner>
   </div>
+  <div [hidden]="displayedColumns.length === 0">
+    <div class="table-container">
 
-  <div class="table-container">
+      <table mat-table [dataSource]="tableData" class="generic-table" matSort>
 
-    <table mat-table [dataSource]="tableData" class="generic-table" matSort>
+        <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{column}}</th>
+          <td mat-cell *matCellDef="let row" class="table-row">
+            <pre *ngIf="checkIfObject(row.doc[column])">{{row.doc[column] | json}}</pre>
+            <app-highlight *ngIf="!checkIfObject(row.doc[column])" [JsonResponse]="row.doc" [currentColumn]="column"
+                           [searcherHighlight]="row.highlight">
 
-      <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{column}}</th>
-        <td mat-cell *matCellDef="let row" class="table-row">
-          <pre *ngIf="checkIfObject(row.doc[column])">{{row.doc[column] | json}}</pre>
-          <app-highlight *ngIf="!checkIfObject(row.doc[column])" [JsonResponse]="row.doc" [currentColumn]="column"
-                         [searcherHighlight]="row.highlight">
+            </app-highlight>
+          </td>
+        </ng-container>
 
-          </app-highlight>
-        </td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
+        <tr mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
 
 
-    </table>
+      </table>
 
+    </div>
+
+    <div class="table-paginator-row">
+      <mat-form-field class="margin-right">
+        <mat-label>Toggle Columns</mat-label>
+        <mat-select [formControl]="columnFormControl" multiple (openedChange)="onOpenedChange($event)">
+          <app-mat-option-select-all></app-mat-option-select-all>
+          <mat-option *ngFor="let column of displayedColumns" [value]="column">
+            {{column}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button mat-stroked-button (click)="drawerToggle.emit(true)">Toggle drawer</button>
+    </div>
+    <mat-paginator (page)="pageChange($event)" [pageSizeOptions]="[10, 20, 50]" [length]="resultsLength"
+                   showFirstLastButtons>
+
+    </mat-paginator>
   </div>
-
-  <div class="table-paginator-row">
-    <mat-form-field class="margin-right">
-      <mat-label>Toggle Columns</mat-label>
-      <mat-select [formControl]="columnFormControl" multiple (openedChange)="onOpenedChange($event)">
-        <app-mat-option-select-all></app-mat-option-select-all>
-        <mat-option *ngFor="let column of displayedColumns" [value]="column">
-          {{column}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <button mat-stroked-button (click)="drawerToggle.emit(true)">Toggle drawer</button>
-  </div>
-  <mat-paginator (page)="pageChange($event)" [pageSizeOptions]="[10, 20, 50]" [length]="resultsLength"
-                 showFirstLastButtons>
-
-  </mat-paginator>
-
 </div>

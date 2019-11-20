@@ -32,6 +32,7 @@ describe('TextAggregationComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(TextAggregationComponent);
     component = fixture.componentInstance;
+    component.aggregationObj = {savedSearchesAggregatons: [], aggregation: {}}
     fixture.detectChanges();
   });
 
