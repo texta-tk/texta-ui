@@ -28,7 +28,7 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 # Tutorial on creating a new Models component
 
-In this example, functionality for `TorchTagger` is used created.
+In this example, functionality for TorchTagger is created.
 ## In order to create a new component, you first need need to create a Module.
 
 - Run `ng g m torch-tagger/torch-tagger --routing=true` to create torch-tagger.module.ts and torch-tagger-routing.module.ts
