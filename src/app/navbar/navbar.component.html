@@ -2,7 +2,7 @@
   <mat-toolbar-row>
     <a routerLinkActive="is-active" [routerLink]="['']" [routerLinkActiveOptions]="{exact:true}"><button mat-button class="nav-button"><mat-icon class="margin-right">home</mat-icon>Projects</button></a>
     <a routerLinkActive="is-active" [routerLink]="['searcher']"><button mat-button class="nav-button"><mat-icon class="margin-right">search</mat-icon>Search</button></a>
-    <a routerLinkActive="is-active" [routerLink]="['lexicon-miner']"><button mat-button class="nav-button"><mat-icon class="margin-right">library_books</mat-icon>Lexicons  <ng-container *ngIf="projectResourceCounts">({{projectResourceCounts?.num_lexicons}})</ng-container></button></a>
+    <a routerLinkActive="is-active" [routerLink]="['lexicon-miner']"><button mat-button class="nav-button"><mat-icon class="margin-right">library_books</mat-icon>Lexicons  <ng-container *ngIf="projectResourceCounts?.num_lexicons">({{projectResourceCounts?.num_lexicons}})</ng-container></button></a>
     <a class="pointer" [matMenuTriggerFor]="models"><button mat-button class="nav-button"><mat-icon class="margin-right">done_all</mat-icon>Models<mat-icon>arrow_drop_down</mat-icon></button></a>
     <a class="pointer" [matMenuTriggerFor]="tools"><button mat-button class="nav-button"><mat-icon class="margin-right">build</mat-icon>Tools<mat-icon>arrow_drop_down</mat-icon></button></a>
 
