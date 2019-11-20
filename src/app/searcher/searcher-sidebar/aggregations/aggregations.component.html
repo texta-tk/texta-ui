@@ -10,10 +10,10 @@
     </mat-select>
   </mat-form-field>
   <ng-container *ngFor="let aggregation of aggregationList; let i = index;">
-    <ng-container *ngIf="fieldTypeTextOrFact(aggregation.type)">
+    <ng-container *ngIf="fieldTypeTextOrFact(fieldsFormControl.value)">
       <app-text-aggregation [fieldsFormControl]="fieldsFormControl" [aggregationObj]="aggregation"></app-text-aggregation>
     </ng-container>
-    <ng-container *ngIf="fieldTypeDate(aggregation.type)">
+    <ng-container *ngIf="fieldTypeDate(fieldsFormControl.value)">
       <app-date-aggregation [fieldsFormControl]="fieldsFormControl" [aggregationObj]="aggregation"></app-date-aggregation>
     </ng-container>
   </ng-container>

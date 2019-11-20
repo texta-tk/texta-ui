@@ -1,10 +1,11 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {ElasticsearchQuery} from '../../build-search/Constraints';
+import {ElasticsearchQuery, ElasticsearchQueryStructure} from '../../build-search/Constraints';
 import {FormControl} from '@angular/forms';
-import {Subject} from 'rxjs';
+import {of, Subject} from 'rxjs';
 import {SearcherComponentService} from '../../../services/searcher-component.service';
-import {takeUntil} from 'rxjs/operators';
-import {Field} from '../../../../shared/types/Project';
+import {debounceTime, startWith, switchMap, takeUntil} from 'rxjs/operators';
+import {SavedSearch} from '../../../../shared/types/SavedSearch';
+import {SelectionChange, SelectionModel} from '@angular/cdk/collections';
 
 @Component({
   selector: 'app-text-aggregation',
@@ -12,9 +13,9 @@ import {Field} from '../../../../shared/types/Project';
   styleUrls: ['./text-aggregation.component.scss']
 })
 export class TextAggregationComponent implements OnInit, OnDestroy {
-  @Input() aggregationObj: { type: Field, aggregation: any };
+  @Input() aggregationObj: { savedSearchesAggregatons: any[], aggregation: any };
   @Input() fieldsFormControl: FormControl;
-  searcherElasticSearchQuery: ElasticsearchQuery;
+  searcherElasticSearchQuery: ElasticsearchQueryStructure;
   aggregationType = 'significant_text';
   aggregationSize = 30;
   searchQueryExcluded = false;
@@ -25,12 +26,59 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.searchService.getElasticQuery().pipe(takeUntil(this.destroy$)).subscribe((query: ElasticsearchQuery) => {
+    // every time we get new search result refresh the query
+    this.searchService.getSearch().pipe(takeUntil(this.destroy$), startWith({}), switchMap(search => {
+      if (search) {
+        return this.searchService.getElasticQuery();
+      }
+      return of(null);
+    })).subscribe((query: ElasticsearchQuery | null) => {
       if (query) {
-        this.searcherElasticSearchQuery = query;
+        // deep clone
+        this.searcherElasticSearchQuery = JSON.parse(JSON.stringify(query.elasticSearchQuery));
         this.makeTextAggregation();
       }
     });
+    // when selecting all it emits each item once, debounce to ignore
+    this.searchService.savedSearchSelection.changed.pipe(
+      takeUntil(this.destroy$),
+      startWith(this.searchService.savedSearchSelection),
+      debounceTime(50)
+    ).subscribe((selection: SelectionChange<SavedSearch> | SelectionModel<SavedSearch>) => {
+      if (selection instanceof SelectionModel) {
+        this.makeAggregationsWithSavedSearches(selection.selected);
+      } else {
+        this.makeAggregationsWithSavedSearches(selection.source.selected);
+      }
+    });
+  }
+
+  updateAggregations() {
+    this.makeTextAggregation();
+    this.makeAggregationsWithSavedSearches(this.searchService.savedSearchSelection.selected);
+  }
+
+  makeAggregationsWithSavedSearches(selected: SavedSearch[]) {
+    this.aggregationObj.savedSearchesAggregatons = [];
+    for (const savedSearch of selected) {
+      const savedSearchQuery = JSON.parse(savedSearch.query);
+      const savedSearchAggregation = {
+        [savedSearch.description]: {
+          filter: {bool: {...savedSearchQuery.query.bool}},
+          aggs: {
+            [savedSearch.description]: {
+              [this.aggregationType]: {
+                field:
+                  `${this.fieldsFormControl.value.path}${
+                    this.aggregationType === 'significant_terms' || this.aggregationType === 'terms' ? '.keyword' : ''}`,
+                size: this.aggregationSize,
+              }
+            }
+          }
+        }
+      };
+      this.aggregationObj.savedSearchesAggregatons.push(savedSearchAggregation);
+    }
   }
 
   makeTextAggregation() {
@@ -39,7 +87,7 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
       returnquery = {
         agg_term: {
           aggs: {
-            agg_term_global: {
+            agg_term: {
               [this.aggregationType]: {
                 field:
                   `${this.fieldsFormControl.value.path}${
@@ -54,11 +102,16 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
     } else {
       returnquery = {
         agg_term: {
-          [this.aggregationType]: {
-            field:
-              `${this.fieldsFormControl.value.path}${
-                this.aggregationType === 'significant_terms' || this.aggregationType === 'terms' ? '.keyword' : ''}`,
-            size: this.aggregationSize,
+          filter: {bool: this.searcherElasticSearchQuery.query.bool},
+          aggs: {
+            agg_term: {
+              [this.aggregationType]: {
+                field:
+                  `${this.fieldsFormControl.value.path}${
+                    this.aggregationType === 'significant_terms' || this.aggregationType === 'terms' ? '.keyword' : ''}`,
+                size: this.aggregationSize,
+              }
+            }
           }
         }
       };

@@ -4,6 +4,8 @@ import {SearcherComponentService} from './searcher-component.service';
 import {Search} from '../../shared/types/Search';
 import {BehaviorSubject, Subject} from 'rxjs';
 import {ElasticsearchQuery} from '../searcher-sidebar/build-search/Constraints';
+import {SavedSearch} from '../../shared/types/SavedSearch';
+import {SelectionModel} from '@angular/cdk/collections';
 
 export class SearchServiceSpy {
   private searchSubject = new BehaviorSubject<Search>(null);
@@ -12,7 +14,7 @@ export class SearchServiceSpy {
   private savedSearchUpdate = new Subject<boolean>();
   private aggregationSubject = new BehaviorSubject<any>(null);
   private isLoading = false;
-
+  public savedSearchSelection = new SelectionModel<SavedSearch>(true, []);
   /* emit clone of test hero, with changes merged in */
   nextAggregation = jasmine.createSpy('nextAggregation').and.callFake(
     (search: Search) => this.aggregationSubject.next(search));

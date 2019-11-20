@@ -17,6 +17,7 @@ import {AggregationResultsComponent} from './aggregation-results/aggregation-res
 import {AggregationsComponent} from './searcher-sidebar/aggregations/aggregations.component';
 import {TextAggregationComponent} from './searcher-sidebar/aggregations/text-aggregation/text-aggregation.component';
 import {DateAggregationComponent} from './searcher-sidebar/aggregations/date-aggregation/date-aggregation.component';
+import {AggregationResultTableComponent} from './aggregation-results/aggregation-result-table/aggregation-result-table.component';
 
 describe('SearcherComponent', () => {
   let component: SearcherComponent;
@@ -30,7 +31,7 @@ describe('SearcherComponent', () => {
       declarations: [SearcherComponent, SearcherTableComponent, SearcherSidebarComponent,
         BuildSearchComponent, SavedSearchesComponent, TextConstraintsComponent,
         DateConstraintsComponent, FactConstraintsComponent, HighlightComponent, AggregationResultsComponent, AggregationsComponent,
-        DateAggregationComponent, TextAggregationComponent]
+        DateAggregationComponent, TextAggregationComponent, AggregationResultTableComponent]
     })
       .compileComponents();
   }));

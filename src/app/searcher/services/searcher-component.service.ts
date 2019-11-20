@@ -1,8 +1,11 @@
 import {Search} from '../../shared/types/Search';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {ElasticsearchQuery} from '../searcher-sidebar/build-search/Constraints';
+import {SelectionModel} from '@angular/cdk/collections';
+import {SavedSearch} from '../../shared/types/SavedSearch';
 
 export class SearcherComponentService {
+  public savedSearchSelection = new SelectionModel<SavedSearch>(true, []);
   private searchSubject = new BehaviorSubject<Search>(null);
   private aggregationSubject = new BehaviorSubject<any>(null);
   private savedSearchUpdate = new Subject<boolean>();
