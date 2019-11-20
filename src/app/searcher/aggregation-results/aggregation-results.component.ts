@@ -39,11 +39,18 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   parseAggregationResults(aggregation: any) {
     if (aggregation && aggregation.aggs) {
       const termsAgg = Object.keys(aggregation.aggs).includes('agg_term');
+      const factAgg = Object.keys(aggregation.aggs).includes('agg_fact');
       this.tableAggregationData = [];
       this.dateAggregationData = [];
       for (const aggregationKey of Object.keys(aggregation.aggs)) {
         if (termsAgg) {
           const dataSource = new MatTableDataSource(aggregation.aggs[aggregationKey][aggregationKey].buckets);
+          this.tableAggregationData.push({
+            tableData: dataSource,
+            name: aggregationKey === 'agg_term' ? 'aggregation_results' : aggregationKey
+          });
+        } else if (factAgg) {
+          const dataSource = new MatTableDataSource(aggregation.aggs[aggregationKey][aggregationKey][aggregationKey].buckets);
           this.tableAggregationData.push({
             tableData: dataSource,
             name: aggregationKey === 'agg_term' ? 'aggregation_results' : aggregationKey

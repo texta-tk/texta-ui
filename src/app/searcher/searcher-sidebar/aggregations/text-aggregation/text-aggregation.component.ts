@@ -16,7 +16,7 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
   @Input() aggregationObj: { savedSearchesAggregatons: any[], aggregation: any };
   @Input() fieldsFormControl: FormControl;
   searcherElasticSearchQuery: ElasticsearchQueryStructure;
-  aggregationType = 'significant_text';
+  aggregationType: 'terms' | 'significant_text' | 'significant_terms' = 'terms';
   aggregationSize = 30;
   searchQueryExcluded = false;
   destroy$: Subject<boolean> = new Subject();
@@ -36,7 +36,7 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
       if (query) {
         // deep clone
         this.searcherElasticSearchQuery = JSON.parse(JSON.stringify(query.elasticSearchQuery));
-        this.makeTextAggregation();
+        this.updateAggregations();
       }
     });
     // when selecting all it emits each item once, debounce to ignore
@@ -54,7 +54,11 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
   }
 
   updateAggregations() {
-    this.makeTextAggregation();
+    if (this.fieldsFormControl.value.type === 'fact') {
+      this.makeFactAggregation();
+    } else {
+      this.makeTextAggregation();
+    }
     this.makeAggregationsWithSavedSearches(this.searchService.savedSearchSelection.selected);
   }
 
@@ -79,6 +83,52 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
       };
       this.aggregationObj.savedSearchesAggregatons.push(savedSearchAggregation);
     }
+  }
+
+  makeFactAggregation() {
+    let returnquery: { [key: string]: any };
+    if (this.searchQueryExcluded) {
+      returnquery = {
+        agg_term: {
+          nested : {
+            path : this.fieldsFormControl.value.path
+          },
+          aggs: {
+            agg_term: {
+              [this.aggregationType]: {
+                field:
+                  `${this.fieldsFormControl.value.path}.fact`,
+                size: this.aggregationSize,
+              }
+            }
+          }
+        }
+      };
+    } else {
+      returnquery = {
+        agg_fact: {
+          filter: {bool: this.searcherElasticSearchQuery.query.bool},
+
+          aggs: {
+            agg_fact: {
+              nested: {
+                path: this.fieldsFormControl.value.path
+              },
+              aggs: {
+                agg_fact: {
+                  [this.aggregationType]: {
+                    field:
+                      `${this.fieldsFormControl.value.path}.fact`,
+                    size: this.aggregationSize,
+                  }
+                }
+              }
+            }
+          }
+        }
+      };
+    }
+    this.aggregationObj.aggregation = returnquery;
   }
 
   makeTextAggregation() {

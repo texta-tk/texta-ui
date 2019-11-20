@@ -3,8 +3,8 @@
     <mat-label>Aggregation</mat-label>
     <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" [(ngModel)]="aggregationType" name="aggregationTextType" (selectionChange)="updateAggregations()">
       <mat-option value="terms">frequent items</mat-option>
-      <mat-option value="significant_terms">significant items</mat-option>
-      <mat-option value="significant_text" >significant words</mat-option>
+      <mat-option value="significant_terms" *ngIf="fieldsFormControl.value.type !== 'fact'">significant items</mat-option>
+      <mat-option value="significant_text" *ngIf="fieldsFormControl.value.type !== 'fact'">significant words</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-label>Aggregation size</mat-label>
@@ -12,7 +12,7 @@
               (change)="updateAggregations()"
               thumbLabel="true"></mat-slider>
 </div>
-<mat-checkbox class="exclude-search-checkbox" [(ngModel)]="searchQueryExcluded" (change)="makeTextAggregation()"
+<mat-checkbox class="exclude-search-checkbox" [(ngModel)]="searchQueryExcluded" (change)="updateAggregations()"
               labelPosition="before">Exclude current
   search:
 </mat-checkbox>
