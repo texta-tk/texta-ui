@@ -13,6 +13,7 @@ export class Project {
 }
 
 export interface ProjectResourceCounts {
+  num_lexicons: number;
   num_taggers: number;
   num_tagger_groups: number;
   num_neurotaggers: number;
