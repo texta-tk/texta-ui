@@ -1,7 +1,7 @@
 <div class="wrapper mat-elevation-z8">
   <div class="table-container">
 
-    <table mat-table [dataSource]="tableDataSource" matSort>
+    <table mat-table [dataSource]="tableDataSource" matSort multiTemplateDataRows>
 
       <ng-container matColumnDef="key">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Key</th>
@@ -20,9 +20,34 @@
         <td mat-cell *matCellDef="let element"> {{element.score}}</td>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+      <ng-container matColumnDef="expandedDetail">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+          <div class="element-detail"
+               [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+            <div fxflexfill fxLayout="column wrap" fxLayoutGap="10px grid" style="height: 400px; max-height: 400px;">
+              <div fxLayout="row" class="fact-val-div" *ngFor="let bucket of element.agg_fact_val.buckets ">
+                <span [title]="bucket.key">{{bucket.key}}</span>
+                <span [title]="bucket.doc_count">{{bucket.doc_count}}</span>
+              </div>
+            </div>
+          </div>
+        </td>
+      </ng-container>
 
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <ng-container *ngIf="factAggregation">
+        <tr mat-row *matRowDef="let element; columns: displayedColumns;"
+            class="element-row"
+            [class.example-expanded-row]="expandedElement === element"
+            (click)="expandedElement = expandedElement === element ? null : element"></tr>
+      </ng-container>
+      <ng-container *ngIf="!factAggregation">
+        <tr mat-row *matRowDef="let element; columns: displayedColumns;"></tr>
+      </ng-container>
+      <ng-container *ngIf="factAggregation">
+        <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
+      </ng-container>
 
     </table>
 

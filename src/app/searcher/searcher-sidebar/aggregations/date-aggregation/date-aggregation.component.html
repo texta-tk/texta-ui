@@ -2,13 +2,13 @@
   <div fxLayout="row" class="datepicker-row">
     <mat-form-field appearance="outline">
       <input matInput [matDatepicker]="picker" placeholder="Daterange from" [(ngModel)]="startDate"
-             (dateChange)="makeDateAggregation()">
+             (dateChange)="updateAggregations()">
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
     <mat-form-field appearance="outline">
       <input matInput [min]="startDate" [matDatepicker]="picker2" placeholder="Daterange to" [(ngModel)]="toDate"
-             (dateChange)="makeDateAggregation()">
+             (dateChange)="updateAggregations()">
       <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
       <mat-datepicker #picker2></mat-datepicker>
     </mat-form-field>

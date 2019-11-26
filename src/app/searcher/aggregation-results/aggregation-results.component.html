@@ -5,7 +5,7 @@
   </div>
   <mat-tab-group mat-stretch-tabs>
     <mat-tab *ngFor="let tableAggregation of tableAggregationData" [label]="tableAggregation.name">
-      <app-aggregation-result-table [tableData]="tableAggregation.tableData"></app-aggregation-result-table>
+      <app-aggregation-result-table [tableData]="tableAggregation.tableData" [factAggregation]="tableAggregation.factAggregation"></app-aggregation-result-table>
     </mat-tab>
   </mat-tab-group>
 

@@ -45,10 +45,8 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
       startWith(this.searchService.savedSearchSelection),
       debounceTime(50)
     ).subscribe((selection: SelectionChange<SavedSearch> | SelectionModel<SavedSearch>) => {
-      if (selection instanceof SelectionModel) {
-        this.makeAggregationsWithSavedSearches(selection.selected);
-      } else {
-        this.makeAggregationsWithSavedSearches(selection.source.selected);
+      if (selection) {
+        this.updateAggregations();
       }
     });
   }
@@ -56,10 +54,49 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
   updateAggregations() {
     if (this.fieldsFormControl.value.type === 'fact') {
       this.makeFactAggregation();
+      this.makeFactTextAggregationsWithSavedSearches(this.searchService.savedSearchSelection.selected);
     } else {
       this.makeTextAggregation();
+      this.makeAggregationsWithSavedSearches(this.searchService.savedSearchSelection.selected);
     }
-    this.makeAggregationsWithSavedSearches(this.searchService.savedSearchSelection.selected);
+  }
+
+  makeFactTextAggregationsWithSavedSearches(selected: SavedSearch[]) {
+    this.aggregationObj.savedSearchesAggregatons = [];
+    for (const savedSearch of selected) {
+      const savedSearchQuery = JSON.parse(savedSearch.query);
+      const savedSearchAggregation = {
+        [savedSearch.description]: {
+          filter: {bool: {...savedSearchQuery.query.bool}},
+          aggs: {
+            [savedSearch.description]: {
+              nested: {
+                path: this.fieldsFormControl.value.path
+              },
+              aggs: {
+                [savedSearch.description]: {
+                  [this.aggregationType]: {
+                    field:
+                      `${this.fieldsFormControl.value.path}.fact`,
+                    size: this.aggregationSize,
+                  },
+                  aggs: {
+                    agg_fact_val: {
+                      [this.aggregationType]: {
+                        field:
+                          `${this.fieldsFormControl.value.path}.str_val`,
+                        size: this.aggregationSize,
+                      },
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      };
+      this.aggregationObj.savedSearchesAggregatons.push(savedSearchAggregation);
+    }
   }
 
   makeAggregationsWithSavedSearches(selected: SavedSearch[]) {
@@ -89,16 +126,25 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
     let returnquery: { [key: string]: any };
     if (this.searchQueryExcluded) {
       returnquery = {
-        agg_term: {
-          nested : {
-            path : this.fieldsFormControl.value.path
+        agg_fact: {
+          nested: {
+            path: this.fieldsFormControl.value.path
           },
           aggs: {
-            agg_term: {
+            agg_fact: {
               [this.aggregationType]: {
                 field:
                   `${this.fieldsFormControl.value.path}.fact`,
                 size: this.aggregationSize,
+              },
+              aggs: {
+                agg_fact_val: {
+                  [this.aggregationType]: {
+                    field:
+                      `${this.fieldsFormControl.value.path}.str_val`,
+                    size: this.aggregationSize,
+                  },
+                }
               }
             }
           }
@@ -120,6 +166,15 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
                     field:
                       `${this.fieldsFormControl.value.path}.fact`,
                     size: this.aggregationSize,
+                  },
+                  aggs: {
+                    agg_fact_val: {
+                      [this.aggregationType]: {
+                        field:
+                          `${this.fieldsFormControl.value.path}.str_val`,
+                        size: this.aggregationSize,
+                      },
+                    }
                   }
                 }
               }

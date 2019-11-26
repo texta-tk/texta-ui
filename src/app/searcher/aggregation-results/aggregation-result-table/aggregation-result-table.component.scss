@@ -15,3 +15,42 @@ table {
 .mat-column-key {
   max-width: 50%;
 }
+
+tr.detail-row {
+  height: 0;
+}
+
+tr.element-row:not(.example-expanded-row):hover {
+  background: #777;
+}
+
+tr.element-row:not(.example-expanded-row):active {
+  background: #efefef;
+}
+
+.element-row td {
+  border-bottom-width: 0;
+}
+
+.element-detail {
+  overflow: hidden;
+  overflow-x: auto;
+  display: flex;
+}
+
+.fact-val-div {
+  border-collapse: collapse;
+  min-width: 200px;
+  max-width: 200px;
+
+  span {
+    max-width: 100px;
+    width: 100px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 3px;
+  }
+}

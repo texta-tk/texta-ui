@@ -14,7 +14,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject();
   aggregation: any;
   dateAggregationData = [];
-  tableAggregationData: { tableData?: MatTableDataSource<any>, name?: string }[] = [];
+  tableAggregationData: { tableData?: MatTableDataSource<any>, name?: string, factAggregation?: boolean }[] = [];
 
   constructor(public searchService: SearcherComponentService, @Inject(LOCALE_ID) private locale: string) {
   }
@@ -50,10 +50,17 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
             name: aggregationKey === 'agg_term' ? 'aggregation_results' : aggregationKey
           });
         } else if (factAgg) {
-          const dataSource = new MatTableDataSource(aggregation.aggs[aggregationKey][aggregationKey][aggregationKey].buckets);
+          let dataSource;
+          // when filtering with search query result is nested 3 deep, when not filtering 2 deep
+          if (aggregation.aggs[aggregationKey][aggregationKey][aggregationKey]) {
+            dataSource = new MatTableDataSource(aggregation.aggs[aggregationKey][aggregationKey][aggregationKey].buckets);
+          } else {
+            dataSource = new MatTableDataSource(aggregation.aggs[aggregationKey][aggregationKey].buckets);
+          }
           this.tableAggregationData.push({
             tableData: dataSource,
-            name: aggregationKey === 'agg_term' ? 'aggregation_results' : aggregationKey
+            factAggregation: true,
+            name: aggregationKey === 'agg_fact' ? 'aggregation_results' : aggregationKey
           });
         } else {
           if (aggregation.aggs[aggregationKey][aggregationKey].buckets.length > 0) {

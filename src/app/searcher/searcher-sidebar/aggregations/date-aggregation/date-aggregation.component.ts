@@ -6,6 +6,7 @@ import {SearcherComponentService} from '../../../services/searcher-component.ser
 import {of, Subject} from 'rxjs';
 import {SavedSearch} from '../../../../shared/types/SavedSearch';
 import {SelectionChange, SelectionModel} from '@angular/cdk/collections';
+import {DatePipe} from "@angular/common";
 
 @Component({
   selector: 'app-date-aggregation',
@@ -24,6 +25,7 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
   dateRangeFrom: { range?: any } = {};
   dateRangeTo: { range?: any } = {};
   destroy$: Subject<boolean> = new Subject();
+  pipe = new DatePipe('en_US');
 
   constructor(
     private searchService: SearcherComponentService) {
@@ -68,6 +70,7 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
     this.aggregationObj.savedSearchesAggregatons = [];
     for (const savedSearch of selected) {
       const savedSearchQuery = JSON.parse(savedSearch.query);
+      savedSearchQuery.query.bool.must.push([{bool: {must: [this.dateRangeFrom, this.dateRangeTo]}}]);
       const savedSearchAggregation = {
         [savedSearch.description]: {
           filter: {bool: {...savedSearchQuery.query.bool}},
@@ -76,7 +79,12 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
               date_histogram: {
                 format: 'MMM d, y',
                 field: this.fieldsFormControl.value.path,
-                interval: this.dateInterval
+                interval: this.dateInterval,
+                min_doc_count: 0,
+                extended_bounds: {
+                  min: this.pipe.transform(this.startDate, 'MMM d, y'),
+                  max: this.pipe.transform(this.toDate, 'MMM d, y'),
+                }
               }
             }
           }
@@ -99,7 +107,8 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
               date_histogram: {
                 format: 'MMM d, y',
                 field: this.fieldsFormControl.value.path,
-                interval: this.dateInterval
+                interval: this.dateInterval,
+                min_doc_count: 0
               }
             }
           }
@@ -117,7 +126,8 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
               date_histogram: {
                 format: 'MMM d, y',
                 field: this.fieldsFormControl.value.path,
-                interval: this.dateInterval
+                interval: this.dateInterval,
+                min_doc_count: 0
               }
             }
           }

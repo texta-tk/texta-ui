@@ -59,12 +59,9 @@
           </div>
         </mat-card>
 
-        
+
         <mat-card fxLayout="row wrap" fxLayoutGap="5px" class="counts-card center-margin">
-          <div fxFlex>
-            <span class="count-text center-text block primary-text">  {{health.model_cache.embedding_cluster + health.model_cache.embedding + health.model_cache.phraser + health.model_cache.tagger}} </span>
-            <span class="mat-hint center-text block">Cached Models</span>
-          </div>
+
 
           <div fxFlex>
             <span class="count-text center-text block" [ngClass]="health.gpu.count > 0 ? 'primary-text' : 'accent-text'">  {{health.gpu.count}} </span>
