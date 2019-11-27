@@ -8,6 +8,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {SearcherComponentService} from '../../../services/searcher-component.service';
 import {AggregationsComponent} from '../aggregations.component';
 import {SearchServiceSpy} from '../../../services/searcher-component.service.spec';
+import {FormControl} from '@angular/forms';
 
 describe('TextAggregationComponent', () => {
   let component: TextAggregationComponent;
@@ -32,7 +33,7 @@ describe('TextAggregationComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(TextAggregationComponent);
     component = fixture.componentInstance;
-    component.aggregationObj = {savedSearchesAggregatons: [], aggregation: {}}
+    component.aggregationObj = {savedSearchesAggregatons: [], aggregation: {}};
     fixture.detectChanges();
   });
 

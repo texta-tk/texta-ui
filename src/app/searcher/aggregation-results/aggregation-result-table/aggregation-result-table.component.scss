@@ -38,11 +38,13 @@ tr.element-row:not(.example-expanded-row):active {
   display: flex;
 }
 
+.fact-val-wrapper {
+  max-height: 400px;
+}
 .fact-val-div {
   border-collapse: collapse;
   min-width: 200px;
   max-width: 200px;
-
   span {
     max-width: 100px;
     width: 100px;

@@ -52,12 +52,16 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
   }
 
   updateAggregations() {
-    if (this.fieldsFormControl.value.type === 'fact') {
-      this.makeFactAggregation();
-      this.makeFactTextAggregationsWithSavedSearches(this.searchService.savedSearchSelection.selected);
-    } else {
-      this.makeTextAggregation();
-      this.makeAggregationsWithSavedSearches(this.searchService.savedSearchSelection.selected);
+    if (this.searcherElasticSearchQuery && this.searcherElasticSearchQuery.query && this.searcherElasticSearchQuery.query.bool) {
+      if (this.isFormControlTypeOfFact()) {
+        console.log("ffff");
+        this.makeFactAggregation();
+        this.makeFactTextAggregationsWithSavedSearches(this.searchService.savedSearchSelection.selected);
+      } else {
+        console.log("gggg");
+        this.makeTextAggregation();
+        this.makeAggregationsWithSavedSearches(this.searchService.savedSearchSelection.selected);
+      }
     }
   }
 
@@ -222,6 +226,11 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
       };
     }
     this.aggregationObj.aggregation = returnquery;
+  }
+
+  isFormControlTypeOfFact() {
+    return this.fieldsFormControl &&
+      this.fieldsFormControl.value && this.fieldsFormControl.value.type && this.fieldsFormControl.value.type === 'fact';
   }
 
   ngOnDestroy() {
