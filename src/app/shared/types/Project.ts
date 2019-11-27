@@ -13,6 +13,7 @@ export class Project {
 }
 
 export interface ProjectResourceCounts {
+  num_lexicons: number;
   num_taggers: number;
   num_tagger_groups: number;
   num_neurotaggers: number;
@@ -97,5 +98,5 @@ export interface Health {
   memory: {free: number, total: number, used: number, unit: string};
   cpu: {percent: number};
   gpu: {count: number; devices: string[]};
-  active_tasks: number
+  active_tasks: number;
 }
