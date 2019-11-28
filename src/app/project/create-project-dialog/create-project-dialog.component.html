@@ -22,7 +22,7 @@
       </mat-error>
     </mat-form-field>
 
-    <mat-form-field *ngIf="currentUser.is_superuser">
+    <mat-form-field *ngIf="currentUser && currentUser.is_superuser">
       <mat-label>Select Owner</mat-label>
       <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
                   formControlName="ownerFormControl">
