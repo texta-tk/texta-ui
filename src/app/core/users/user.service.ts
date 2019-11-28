@@ -55,12 +55,13 @@ export class UserService {
       tap(e => this.logService.logStatus(e, 'userProfile')),
       catchError(this.logService.handleError<UserProfile>('getUserProfile')));
   }
+
   // todo
   logout(): Observable<unknown> {
     return this.http.post<unknown>(
       this.apiUrl + '/rest-auth/logout/', {}).pipe(
       tap(e => this.logService.logStatus(e, 'logout')));
-      // catchError(this.logService.handleError<unknown>('logout')));
+    // catchError(this.logService.handleError<unknown>('logout')));
   }
 
   getAllUsers(): Observable<UserProfile[]> {
@@ -69,9 +70,12 @@ export class UserService {
       catchError(this.logService.handleError<UserProfile[]>('getUserProfile')));
   }
 
-  getUserByUrl(url: string): Observable<UserProfile> {
+  getUserByUrl(url: string | number): Observable<UserProfile | HttpErrorResponse> {
+    if (Number(url)) {
+      url = this.apiUrl + '/users/' + url;
+    }
     return this.http.get<UserProfile>(
-      url,
+      url as string,
     ).pipe(
       tap(e => this.logService.logStatus(e, 'getbyurl')),
       catchError(this.logService.handleError<UserProfile>('getbyurl')));

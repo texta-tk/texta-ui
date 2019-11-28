@@ -24,7 +24,15 @@
       </mat-error>
     </mat-form-field>
   </div>
-
+<!--  <mat-form-field>
+    <mat-label>Select Owner</mat-label>
+    <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
+                formControlName="ownerFormControl">
+      <mat-option *ngFor="let item of users" [value]="item.id">
+        {{item.username}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>-->
 
   <div mat-dialog-actions class="flex-col submit-button-row">
     <div class="flex-row">

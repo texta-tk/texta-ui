@@ -1,6 +1,6 @@
 <div class="wrapper">
   <div class="table-container">
-    
+
         <div class="loading-shade" *ngIf="isLoadingResults ">
           <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
         </div>
@@ -87,11 +87,11 @@
             <mat-icon aria-label="Edit Project">edit</mat-icon> Edit
                 </button>
               </div>
-              <button mat-menu-item (click)="onDelete(element, i)">
+              <button mat-menu-item (click)="onDelete(element)">
                 <mat-icon>delete</mat-icon> Delete
               </button>
             </mat-menu>
-  
+
           </td>
         </ng-container>
 

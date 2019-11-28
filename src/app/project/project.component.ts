@@ -10,8 +10,8 @@ import {EditProjectDialogComponent} from './edit-project-dialog/edit-project-dia
 import {UserProfile} from '../shared/types/UserProfile';
 import {mergeMap, toArray} from 'rxjs/operators';
 import {UserService} from '../core/users/user.service';
-import { ConfirmDialogComponent } from '../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
-import { ProjectService } from '../core/projects/project.service';
+import {ConfirmDialogComponent} from '../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {ProjectService} from '../core/projects/project.service';
 
 @Component({
   selector: 'app-project',
@@ -24,7 +24,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
   projectSubscription: Subscription;
 
   private urlsToRequest: Subject<string[]> = new Subject();
-  public projectUsers$: Observable<UserProfile[]>;
+  public projectUsers$: Observable<(UserProfile | HttpErrorResponse)[]>;
   public tableData: MatTableDataSource<Project>;
   public displayedColumns = ['id', 'owner__username', 'title', 'indices_count', 'users_count', 'Modify'];
   public isLoadingResults = true;
@@ -79,7 +79,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
   openCreateDialog() {
     const dialogRef = this.dialog.open(CreateProjectDialogComponent, {
-      height: '340px',
+      maxHeight: '440px',
       width: '700px',
     });
     this.dialogAfterClosedSubscription = dialogRef.afterClosed().subscribe((resp: Project | HttpErrorResponse) => {
@@ -91,9 +91,9 @@ export class ProjectComponent implements OnInit, OnDestroy {
     });
   }
 
-  onDelete(project: Project, index: number) {
+  onDelete(project: Project) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: { confirmText: 'Delete', mainText: 'Are you sure you want to delete this Project?' }
+      data: {confirmText: 'Delete', mainText: 'Are you sure you want to delete this Project?'}
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -103,11 +103,14 @@ export class ProjectComponent implements OnInit, OnDestroy {
             this.logService.snackBarMessage(resp.error.detail, 4000);
           } else if (!(resp instanceof HttpErrorResponse)) {
             this.logService.snackBarMessage(`Project ${project.id}: ${project.title} deleted`, 3000);
-            console.log(index);
-            this.tableData.data.splice(index, 1);
-            this.tableData.data = [...this.tableData.data];
-          }});
-        }
-      });
-    }
+            const index = this.tableData.data.indexOf(project, 0);
+            if (index > -1) {
+              this.tableData.data.splice(index, 1);
+              this.tableData.data = [...this.tableData.data];
+            }
+          }
+        });
+      }
+    });
+  }
 }

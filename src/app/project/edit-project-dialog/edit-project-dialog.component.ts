@@ -8,8 +8,8 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../../core/util/log.service';
 import {UserService} from '../../core/users/user.service';
 import {UserProfile} from '../../shared/types/UserProfile';
-import {mergeMap} from 'rxjs/operators';
-import {from} from 'rxjs';
+import {mergeMap, switchMap, takeUntil} from 'rxjs/operators';
+import {from, of, Subject} from 'rxjs';
 
 @Component({
   selector: 'app-edit-project-dialog',
@@ -24,7 +24,11 @@ export class EditProjectDialogComponent implements OnInit {
   projectForm = new FormGroup({
     indicesFormControl: new FormControl([], Validators.required),
     usersFormControl: new FormControl(this.selectedUsers, Validators.required),
+/*    ownerFormControl: new FormControl(),*/
   });
+  destroyed$: Subject<boolean> = new Subject<boolean>();
+
+  currentUser = new UserProfile();
 
   constructor(public dialogRef: MatDialogRef<EditProjectDialogComponent>,
               private logService: LogService,
@@ -33,6 +37,7 @@ export class EditProjectDialogComponent implements OnInit {
               private projectStore: ProjectStore,
               private projectService: ProjectService) {
     this.projectForm.get('indicesFormControl').setValue(this.data.indices);
+/*    this.projectForm.get('ownerFormControl').setValue(this.data.owner);*/
     if (this.data.users) {
       from(this.data.users).pipe(mergeMap(url => {
         return this.userService.getUserByUrl(url);
@@ -49,12 +54,12 @@ export class EditProjectDialogComponent implements OnInit {
         this.logService.snackBarError(resp, 5000);
       } else {
         this.indices = resp;
-      } 
+      }
     });
     this.userService.getAllUsers().subscribe((resp: UserProfile[] | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.users = resp;
-      } else if (resp instanceof HttpErrorResponse){
+      } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 4000);
       }
     });
@@ -63,6 +68,7 @@ export class EditProjectDialogComponent implements OnInit {
   onSubmit(formData) {
     this.data.indices = formData.indicesFormControl;
     this.data.users = formData.usersFormControl;
+/*    this.data.owner = formData.ownerFormControl;*/
     this.projectService.editProject(this.data, this.data.id).subscribe((resp: Project | HttpErrorResponse) => {
       if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
