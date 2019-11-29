@@ -6,7 +6,7 @@ import {SearcherComponentService} from '../../../services/searcher-component.ser
 import {of, Subject} from 'rxjs';
 import {SavedSearch} from '../../../../shared/types/SavedSearch';
 import {SelectionChange, SelectionModel} from '@angular/cdk/collections';
-import {DatePipe} from "@angular/common";
+import {DatePipe} from '@angular/common';
 
 @Component({
   selector: 'app-date-aggregation',
@@ -14,7 +14,7 @@ import {DatePipe} from "@angular/common";
   styleUrls: ['./date-aggregation.component.scss']
 })
 export class DateAggregationComponent implements OnInit, OnDestroy {
-  @Input() aggregationObj: { savedSearchesAggregatons: any[], aggregation: any };
+  @Input() aggregationObj: { savedSearchesAggregations: any[], aggregation: any };
   @Input() fieldsFormControl: FormControl;
   searcherElasticSearchQuery: ElasticsearchQueryStructure;
   dateInterval = 'year';
@@ -46,7 +46,11 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
         this.makeDateAggregation();
       }
     });
-
+    this.fieldsFormControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(val => {
+      if (val) {
+        this.updateAggregations();
+      }
+    });
     // when selecting all it emits each item once, debounce to ignore
     this.searchService.savedSearchSelection.changed.pipe(
       takeUntil(this.destroy$),
@@ -67,7 +71,7 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
   }
 
   makeAggregationsWithSavedSearches(selected: SavedSearch[]) {
-    this.aggregationObj.savedSearchesAggregatons = [];
+    this.aggregationObj.savedSearchesAggregations = [];
     for (const savedSearch of selected) {
       const savedSearchQuery = JSON.parse(savedSearch.query);
       savedSearchQuery.query.bool.must.push([{bool: {must: [this.dateRangeFrom, this.dateRangeTo]}}]);
@@ -90,7 +94,7 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
           }
         }
       };
-      this.aggregationObj.savedSearchesAggregatons.push(savedSearchAggregation);
+      this.aggregationObj.savedSearchesAggregations.push(savedSearchAggregation);
     }
   }
 

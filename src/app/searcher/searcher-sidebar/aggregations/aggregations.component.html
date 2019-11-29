@@ -1,22 +1,31 @@
 <div class="wrapper">
-  <mat-form-field appearance="outline" class="max-width">
-    <mat-label>Select Fields</mat-label>
-    <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" [formControl]="fieldsFormControl" (valueChange)="fieldSelected($event)">
-      <mat-optgroup *ngFor="let group of projectFields" [label]="group.index">
-        <mat-option *ngFor="let fields of group.fields" [value]="fields">
-          {{fields.path}}
-        </mat-option>
-      </mat-optgroup>
-    </mat-select>
-  </mat-form-field>
+
   <ng-container *ngFor="let aggregation of aggregationList; let i = index;">
-    <ng-container *ngIf="fieldTypeTextOrFact(fieldsFormControl.value)">
-      <app-text-aggregation [fieldsFormControl]="fieldsFormControl" [aggregationObj]="aggregation"></app-text-aggregation>
+    <mat-form-field appearance="outline" class="max-width">
+      <mat-label>Select Fields</mat-label>
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
+                  [formControl]="aggregation.formControl">
+        <mat-optgroup *ngFor="let group of projectFields" [label]="group.index">
+          <mat-option *ngFor="let fields of group.fields" [value]="fields">
+            {{fields.path}}
+          </mat-option>
+        </mat-optgroup>
+      </mat-select>
+    </mat-form-field>
+    <ng-container *ngIf="fieldTypeTextOrFact(aggregation.formControl.value)">
+      <app-text-aggregation [fieldsFormControl]="aggregation.formControl"
+                            [aggregationObj]="aggregation"></app-text-aggregation>
     </ng-container>
-    <ng-container *ngIf="fieldTypeDate(fieldsFormControl.value)">
-      <app-date-aggregation [fieldsFormControl]="fieldsFormControl" [aggregationObj]="aggregation"></app-date-aggregation>
+    <ng-container *ngIf="fieldTypeDate(aggregation.formControl.value)">
+      <app-date-aggregation [fieldsFormControl]="aggregation.formControl"
+                            [aggregationObj]="aggregation"></app-date-aggregation>
     </ng-container>
   </ng-container>
+  <div class="max-width">
+    <button class="max-width" mat-stroked-button (click)="addNewAggregation()" [disabled]="aggregationList.length < 1">
+      New Field
+    </button>
+  </div>
   <div class="max-width">
     <button class="max-width" mat-stroked-button (click)="aggregate()" [disabled]="aggregationList.length < 1">
       Aggregate

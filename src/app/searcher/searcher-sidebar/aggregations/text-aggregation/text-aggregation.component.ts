@@ -13,7 +13,7 @@ import {SelectionChange, SelectionModel} from '@angular/cdk/collections';
   styleUrls: ['./text-aggregation.component.scss']
 })
 export class TextAggregationComponent implements OnInit, OnDestroy {
-  @Input() aggregationObj: { savedSearchesAggregatons: any[], aggregation: any };
+  @Input() aggregationObj: { savedSearchesAggregations: any[], aggregation: any };
   @Input() fieldsFormControl: FormControl;
   searcherElasticSearchQuery: ElasticsearchQueryStructure;
   aggregationType: 'terms' | 'significant_text' | 'significant_terms' = 'terms';
@@ -39,6 +39,11 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
         this.updateAggregations();
       }
     });
+    this.fieldsFormControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(val => {
+      if (val) {
+        this.updateAggregations();
+      }
+    });
     // when selecting all it emits each item once, debounce to ignore
     this.searchService.savedSearchSelection.changed.pipe(
       takeUntil(this.destroy$),
@@ -54,11 +59,9 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
   updateAggregations() {
     if (this.searcherElasticSearchQuery && this.searcherElasticSearchQuery.query && this.searcherElasticSearchQuery.query.bool) {
       if (this.isFormControlTypeOfFact()) {
-        console.log("ffff");
         this.makeFactAggregation();
         this.makeFactTextAggregationsWithSavedSearches(this.searchService.savedSearchSelection.selected);
       } else {
-        console.log("gggg");
         this.makeTextAggregation();
         this.makeAggregationsWithSavedSearches(this.searchService.savedSearchSelection.selected);
       }
@@ -66,7 +69,7 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
   }
 
   makeFactTextAggregationsWithSavedSearches(selected: SavedSearch[]) {
-    this.aggregationObj.savedSearchesAggregatons = [];
+    this.aggregationObj.savedSearchesAggregations = [];
     for (const savedSearch of selected) {
       const savedSearchQuery = JSON.parse(savedSearch.query);
       const savedSearchAggregation = {
@@ -99,12 +102,12 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
           }
         }
       };
-      this.aggregationObj.savedSearchesAggregatons.push(savedSearchAggregation);
+      this.aggregationObj.savedSearchesAggregations.push(savedSearchAggregation);
     }
   }
 
   makeAggregationsWithSavedSearches(selected: SavedSearch[]) {
-    this.aggregationObj.savedSearchesAggregatons = [];
+    this.aggregationObj.savedSearchesAggregations = [];
     for (const savedSearch of selected) {
       const savedSearchQuery = JSON.parse(savedSearch.query);
       const savedSearchAggregation = {
@@ -122,7 +125,7 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
           }
         }
       };
-      this.aggregationObj.savedSearchesAggregatons.push(savedSearchAggregation);
+      this.aggregationObj.savedSearchesAggregations.push(savedSearchAggregation);
     }
   }
 
@@ -195,19 +198,14 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
     if (this.searchQueryExcluded) {
       returnquery = {
         agg_term: {
-          aggs: {
-            agg_term: {
-              [this.aggregationType]: {
-                field:
-                  `${this.fieldsFormControl.value.path}${
-                    this.aggregationType === 'significant_terms' || this.aggregationType === 'terms' ? '.keyword' : ''}`,
-                size: this.aggregationSize,
-              }
-            },
+          [this.aggregationType]: {
+            field:
+              `${this.fieldsFormControl.value.path}${
+                this.aggregationType === 'significant_terms' || this.aggregationType === 'terms' ? '.keyword' : ''}`,
+            size: this.aggregationSize,
           }
-        }
+        },
       };
-      returnquery.agg_term.global = {};
     } else {
       returnquery = {
         agg_term: {
@@ -236,5 +234,6 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();
+    console.log('ｘＤ');
   }
 }
