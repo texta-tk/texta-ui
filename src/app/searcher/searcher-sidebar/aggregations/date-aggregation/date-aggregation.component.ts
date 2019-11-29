@@ -16,6 +16,7 @@ import {DatePipe} from '@angular/common';
 export class DateAggregationComponent implements OnInit, OnDestroy {
   @Input() aggregationObj: { savedSearchesAggregations: any[], aggregation: any };
   @Input() fieldsFormControl: FormControl;
+  @Input() id !: number;
   searcherElasticSearchQuery: ElasticsearchQueryStructure;
   dateInterval = 'year';
   aggregationType;
@@ -102,42 +103,23 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
     this.dateRangeFrom.range = {[this.fieldsFormControl.value.path]: {gte: this.startDate}};
     this.dateRangeTo.range = {[this.fieldsFormControl.value.path]: {lte: this.toDate}};
     let returnquery: { [key: string]: any };
-    if (this.searchQueryExcluded) {
-      returnquery = {
-        agg_histo: {
-          filter: {bool: {must: [{bool: {must: [this.dateRangeFrom, this.dateRangeTo]}}]}},
-          aggs: {
-            agg_histo: {
-              date_histogram: {
-                format: 'MMM d, y',
-                field: this.fieldsFormControl.value.path,
-                interval: this.dateInterval,
-                min_doc_count: 0
-              }
+
+    returnquery = {
+      agg_histo: {
+        filter: {bool: {must: [{bool: {must: [this.dateRangeFrom, this.dateRangeTo]}}]}},
+        aggs: {
+          agg_histo: {
+            date_histogram: {
+              format: 'MMM d, y',
+              field: this.fieldsFormControl.value.path,
+              interval: this.dateInterval,
+              min_doc_count: 0
             }
           }
         }
-      };
-    } else {
-      // todo what if dates overlap?
-      const currentSearchQuery = this.searcherElasticSearchQuery.query.bool;
-      currentSearchQuery.must.push({bool: {must: [this.dateRangeFrom, this.dateRangeTo]}});
-      returnquery = {
-        agg_histo: {
-          filter: {bool: currentSearchQuery},
-          aggs: {
-            agg_histo: {
-              date_histogram: {
-                format: 'MMM d, y',
-                field: this.fieldsFormControl.value.path,
-                interval: this.dateInterval,
-                min_doc_count: 0
-              }
-            }
-          }
-        }
-      };
-    }
+      }
+    };
+
 
     this.aggregationObj.aggregation = returnquery;
   }

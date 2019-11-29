@@ -15,10 +15,10 @@ import {SelectionChange, SelectionModel} from '@angular/cdk/collections';
 export class TextAggregationComponent implements OnInit, OnDestroy {
   @Input() aggregationObj: { savedSearchesAggregations: any[], aggregation: any };
   @Input() fieldsFormControl: FormControl;
+  @Input() id !: number;
   searcherElasticSearchQuery: ElasticsearchQueryStructure;
   aggregationType: 'terms' | 'significant_text' | 'significant_terms' = 'terms';
   aggregationSize = 30;
-  searchQueryExcluded = false;
   destroy$: Subject<boolean> = new Subject();
 
   constructor(
@@ -60,10 +60,8 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
     if (this.searcherElasticSearchQuery && this.searcherElasticSearchQuery.query && this.searcherElasticSearchQuery.query.bool) {
       if (this.isFormControlTypeOfFact()) {
         this.makeFactAggregation();
-        this.makeFactTextAggregationsWithSavedSearches(this.searchService.savedSearchSelection.selected);
       } else {
         this.makeTextAggregation();
-        this.makeAggregationsWithSavedSearches(this.searchService.savedSearchSelection.selected);
       }
     }
   }
@@ -106,7 +104,7 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
     }
   }
 
-  makeAggregationsWithSavedSearches(selected: SavedSearch[]) {
+  makeTextAggregationsWithSavedSearches(selected: SavedSearch[]) {
     this.aggregationObj.savedSearchesAggregations = [];
     for (const savedSearch of selected) {
       const savedSearchQuery = JSON.parse(savedSearch.query);
@@ -131,98 +129,58 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
 
   makeFactAggregation() {
     let returnquery: { [key: string]: any };
-    if (this.searchQueryExcluded) {
-      returnquery = {
-        agg_fact: {
-          nested: {
-            path: this.fieldsFormControl.value.path
-          },
-          aggs: {
-            agg_fact: {
-              [this.aggregationType]: {
-                field:
-                  `${this.fieldsFormControl.value.path}.fact`,
-                size: this.aggregationSize,
-              },
-              aggs: {
-                agg_fact_val: {
-                  [this.aggregationType]: {
-                    field:
-                      `${this.fieldsFormControl.value.path}.str_val`,
-                    size: this.aggregationSize,
-                  },
-                }
-              }
-            }
-          }
-        }
-      };
-    } else {
-      returnquery = {
-        agg_fact: {
-          filter: {bool: this.searcherElasticSearchQuery.query.bool},
 
-          aggs: {
-            agg_fact: {
-              nested: {
-                path: this.fieldsFormControl.value.path
-              },
-              aggs: {
-                agg_fact: {
-                  [this.aggregationType]: {
-                    field:
-                      `${this.fieldsFormControl.value.path}.fact`,
-                    size: this.aggregationSize,
-                  },
-                  aggs: {
-                    agg_fact_val: {
-                      [this.aggregationType]: {
-                        field:
-                          `${this.fieldsFormControl.value.path}.str_val`,
-                        size: this.aggregationSize,
-                      },
-                    }
+    returnquery = {
+      agg_fact: {
+        aggs: {
+          agg_fact: {
+            nested: {
+              path: this.fieldsFormControl.value.path
+            },
+            aggs: {
+              agg_fact: {
+                [this.aggregationType]: {
+                  field:
+                    `${this.fieldsFormControl.value.path}.fact`,
+                  size: this.aggregationSize,
+                },
+                aggs: {
+                  agg_fact_val: {
+                    [this.aggregationType]: {
+                      field:
+                        `${this.fieldsFormControl.value.path}.str_val`,
+                      size: this.aggregationSize,
+                    },
                   }
                 }
               }
             }
           }
         }
-      };
-    }
+      }
+    };
+
     this.aggregationObj.aggregation = returnquery;
   }
 
   makeTextAggregation() {
     let returnquery: { [key: string]: any };
-    if (this.searchQueryExcluded) {
-      returnquery = {
-        agg_term: {
-          [this.aggregationType]: {
-            field:
-              `${this.fieldsFormControl.value.path}${
-                this.aggregationType === 'significant_terms' || this.aggregationType === 'terms' ? '.keyword' : ''}`,
-            size: this.aggregationSize,
-          }
-        },
-      };
-    } else {
-      returnquery = {
-        agg_term: {
-          filter: {bool: this.searcherElasticSearchQuery.query.bool},
-          aggs: {
-            agg_term: {
-              [this.aggregationType]: {
-                field:
-                  `${this.fieldsFormControl.value.path}${
-                    this.aggregationType === 'significant_terms' || this.aggregationType === 'terms' ? '.keyword' : ''}`,
-                size: this.aggregationSize,
-              }
+
+    returnquery = {
+      agg_term: {
+        aggs: {
+          agg_term: {
+            [this.aggregationType]: {
+              field:
+                `${this.fieldsFormControl.value.path}${
+                  this.aggregationType === 'significant_terms' || this.aggregationType === 'terms' ? '.keyword' : ''}`,
+              size: this.aggregationSize,
             }
           }
         }
-      };
-    }
+      }
+    };
+
     this.aggregationObj.aggregation = returnquery;
   }
 
@@ -234,6 +192,5 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();
-    console.log('ｘＤ');
   }
 }

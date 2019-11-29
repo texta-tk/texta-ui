@@ -13,12 +13,16 @@
       </mat-select>
     </mat-form-field>
     <ng-container *ngIf="fieldTypeTextOrFact(aggregation.formControl.value)">
-      <app-text-aggregation [fieldsFormControl]="aggregation.formControl"
-                            [aggregationObj]="aggregation"></app-text-aggregation>
+      <app-text-aggregation [id]=i
+                            [fieldsFormControl]="aggregation.formControl"
+                            [aggregationObj]="aggregation">
+      </app-text-aggregation>
     </ng-container>
     <ng-container *ngIf="fieldTypeDate(aggregation.formControl.value)">
-      <app-date-aggregation [fieldsFormControl]="aggregation.formControl"
-                            [aggregationObj]="aggregation"></app-date-aggregation>
+      <app-date-aggregation [id]=i
+                            [fieldsFormControl]="aggregation.formControl"
+                            [aggregationObj]="aggregation">
+      </app-date-aggregation>
     </ng-container>
   </ng-container>
   <div class="max-width">
@@ -26,6 +30,12 @@
       New Field
     </button>
   </div>
+
+  <mat-checkbox class="exclude-search-checkbox" [(ngModel)]="searchQueryExcluded"
+                labelPosition="before">Exclude current
+    search:
+  </mat-checkbox>
+
   <div class="max-width">
     <button class="max-width" mat-stroked-button (click)="aggregate()" [disabled]="aggregationList.length < 1">
       Aggregate
