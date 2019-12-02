@@ -1,8 +1,8 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {debounceTime, startWith, takeUntil} from 'rxjs/operators';
+import {debounceTime, startWith, switchMap, takeUntil} from 'rxjs/operators';
 import {Field, Project, ProjectFact, ProjectField} from '../../../shared/types/Project';
 import {ProjectStore} from '../../../core/projects/project.store';
-import {Subject} from 'rxjs';
+import {of, Subject} from 'rxjs';
 import {FormControl} from '@angular/forms';
 import {SearcherService} from '../../../core/searcher/searcher.service';
 import {SearcherComponentService} from '../../services/searcher-component.service';
@@ -56,15 +56,15 @@ export class AggregationsComponent implements OnInit, OnDestroy {
   }
 
   addNewAggregation() {
-    this.aggregationList.push({savedSearchesAggregations: [], aggregation: {}, formControl: new FormControl()});
+    const frm = new FormControl();
+    frm.setValue(this.projectFields[0].fields[0]);
+    this.aggregationList.push({savedSearchesAggregations: [], aggregation: {}, formControl: frm});
   }
 
   ngOnInit() {
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$)).subscribe((currentProject: Project) => {
       if (currentProject) {
         this.currentProject = currentProject;
-        this.aggregationList = [];
-        this.aggregationList.push({savedSearchesAggregations: [], aggregation: {}, formControl: new FormControl()});
       }
     });
     this.projectStore.getProjectFacts().pipe(takeUntil(this.destroy$)).subscribe((projectFacts: ProjectFact[]) => {
@@ -75,10 +75,16 @@ export class AggregationsComponent implements OnInit, OnDestroy {
     this.projectStore.getProjectFields().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectField[]) => {
       if (projectFields) {
         this.projectFields = projectFields;
+        this.aggregationList = [];
+        this.aggregationList.push({savedSearchesAggregations: [], aggregation: {}, formControl: new FormControl()});
+        this.aggregationList[0].formControl.setValue(projectFields[0].fields[0]);
       }
     });
-    this.searchService.getElasticQuery().pipe(takeUntil(this.destroy$)).subscribe((query: ElasticsearchQuery) => {
+    this.searchService.getSearch().pipe(takeUntil(this.destroy$), startWith({}), switchMap(search => {
+      return this.searchService.getElasticQuery();
+    })).subscribe((query: ElasticsearchQuery | null) => {
       if (query) {
+        // deep clone
         this.searcherElasticSearchQuery = JSON.parse(JSON.stringify(query.elasticSearchQuery));
       }
     });
@@ -86,9 +92,6 @@ export class AggregationsComponent implements OnInit, OnDestroy {
 
   aggregate() {
     const agg = this.makeAggregations(this.aggregationList);
-    if (!this.searchQueryExcluded) {
-      agg.filter = {bool: this.searcherElasticSearchQuery.query.bool};
-    }
     const body = {
       query: {
         aggs: {...agg}
@@ -125,13 +128,20 @@ export class AggregationsComponent implements OnInit, OnDestroy {
       innermostAgg = this.getInnerMostAggs(finalAgg);
       innermostAgg.aggs = aggregationToAdd;
     }
+
+    if (!this.searchQueryExcluded) {
+      for (const aggType in finalAgg) {
+        if (finalAgg.hasOwnProperty(aggType)) {
+          finalAgg = {[aggType]: {aggs: finalAgg}};
+          finalAgg[aggType].filter = {bool: this.searcherElasticSearchQuery.query.bool};
+        }
+      }
+    }
     return finalAgg;
   }
 
   getInnerMostAggs(aggregation: any) {
     let aggInner;
-
-
     let inCaseNoAggsFound;
     for (const firstLevelAgg in aggregation) {
       if (aggregation.hasOwnProperty(firstLevelAgg)) {
@@ -172,6 +182,14 @@ export class AggregationsComponent implements OnInit, OnDestroy {
         this._textAggregationComponent.makeTextAggregationsWithSavedSearches(this.searchService.savedSearchSelection.selected);
       }
     }
+  }
+
+  checkIfMainAggregation(indx: number) {
+    return this.aggregationList.length === (indx + 1);
+  }
+
+  removeAggregation(index) {
+    this.aggregationList.splice(index, 1);
   }
 
   isFormControlTypeOfFact(formControl: FormControl) {

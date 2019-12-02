@@ -15,6 +15,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   aggregation: any;
   dateAggregationData = [];
   tableAggregationData: { tableData?: MatTableDataSource<any>, name?: string, factAggregation?: boolean }[] = [];
+  bucketAccessor = (x: any) => (x.buckets);
 
   constructor(public searchService: SearcherComponentService, @Inject(LOCALE_ID) private locale: string) {
   }
@@ -44,6 +45,8 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
       this.dateAggregationData = [];
       for (const aggregationKey of Object.keys(aggregation.aggs)) {
         if (termsAgg) {
+          console.log(this.formatAggregationDataStructure(aggregation.aggs, aggregationKey, ['agg_histo', 'agg_fact', 'agg_fact_val', 'agg_term']));
+
           const dataSource = new MatTableDataSource(aggregation.aggs[aggregationKey][aggregationKey].buckets);
           this.tableAggregationData.push({
             tableData: dataSource,
@@ -63,15 +66,42 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
             name: aggregationKey === 'agg_fact' ? 'aggregation_results' : aggregationKey
           });
         } else {
-          if (aggregation.aggs[aggregationKey][aggregationKey].buckets.length > 0) {
+          if (aggregation.aggs[aggregationKey][aggregationKey][aggregationKey].buckets.length > 0) {
             this.dateAggregationData.push({
               name: aggregationKey === 'agg_histo' ? 'aggregation_results' : aggregationKey,
-              series: this.formatDateData(aggregation.aggs[aggregationKey][aggregationKey].buckets)
+              series: this.formatDateData(aggregation.aggs[aggregationKey][aggregationKey][aggregationKey].buckets)
             });
           }
         }
       }
     }
+  }
+
+  formatAggregationDataStructure(aggregation, firstKey, aggregationKeys: string[]) {
+    const upperLevelBuckets = this.parseTextAgg(aggregation, firstKey);
+    for (const bucket of this.bucketAccessor(upperLevelBuckets)) {
+      for (const key of aggregationKeys) {
+        const innerBuckets = this.parseTextAgg(bucket, key);
+        if (this.bucketAccessor(innerBuckets)) {
+          bucket[key] = this.formatAggregationDataStructure(innerBuckets, firstKey, aggregationKeys).buckets;
+        }
+      }
+    }
+    return upperLevelBuckets;
+
+  }
+
+  parseTextAgg(aggregation, aggregationKey) {
+    let aggInner;
+    for (const firstLevelAgg in aggregation) {
+      if (aggregation.hasOwnProperty(firstLevelAgg)) {
+        if (firstLevelAgg === aggregationKey) {
+          aggInner = aggregation[aggregationKey];
+          return this.parseTextAgg(aggInner, aggregationKey);
+        }
+      }
+    }
+    return aggregation;
   }
 
   ngOnDestroy() {

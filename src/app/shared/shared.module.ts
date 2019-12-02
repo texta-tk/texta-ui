@@ -40,7 +40,7 @@ import { GenericDialogComponent } from './components/dialogs/generic-dialog/gene
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { SavedSearchAutocompleteComponent } from './components/saved-search-autocomplete/saved-search-autocomplete.component';
 import {LineChartModule} from '@swimlane/ngx-charts';
-
+import {MatTreeModule} from '@angular/material/tree';
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
     RegistrationDialogComponent,
@@ -81,7 +81,7 @@ import {LineChartModule} from '@swimlane/ngx-charts';
     MatNativeDateModule,
     MatTooltipModule,
     MatSliderModule,
-
+    MatTreeModule,
     LineChartModule,
     InfiniteScrollModule,
   ],
@@ -117,7 +117,7 @@ import {LineChartModule} from '@swimlane/ngx-charts';
     MatNativeDateModule,
     MatTooltipModule,
     MatSliderModule,
-
+    MatTreeModule,
     GenericTableComponent,
     SavedSearchAutocompleteComponent,
 

@@ -17,12 +17,12 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
   @Input() aggregationObj: { savedSearchesAggregations: any[], aggregation: any };
   @Input() fieldsFormControl: FormControl;
   @Input() id !: number;
+  @Input() notSubAgg: boolean;
   searcherElasticSearchQuery: ElasticsearchQueryStructure;
   dateInterval = 'year';
   aggregationType;
   startDate = new Date('1999-01-01');
   toDate = new Date();
-  searchQueryExcluded = false;
   dateRangeFrom: { range?: any } = {};
   dateRangeTo: { range?: any } = {};
   destroy$: Subject<boolean> = new Subject();

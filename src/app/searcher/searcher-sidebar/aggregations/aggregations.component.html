@@ -1,6 +1,12 @@
-<div class="wrapper">
+<div class="wrapper" fxFlex fxLayout="column">
 
-  <ng-container *ngFor="let aggregation of aggregationList; let i = index;">
+  <div class="aggregation-form" fxFlex fxLayout="column" *ngFor="let aggregation of aggregationList; let i = index;">
+
+    <div fxFlex fxLayoutAlign="end" *ngIf="!checkIfMainAggregation(i)">
+      <button mat-icon-button aria-label="Close" (click)="removeAggregation(i)" class="mat-icon-button">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
     <mat-form-field appearance="outline" class="max-width">
       <mat-label>Select Fields</mat-label>
       <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
@@ -12,24 +18,27 @@
         </mat-optgroup>
       </mat-select>
     </mat-form-field>
+
     <ng-container *ngIf="fieldTypeTextOrFact(aggregation.formControl.value)">
       <app-text-aggregation [id]=i
+                            [notSubAgg]="checkIfMainAggregation(i)"
                             [fieldsFormControl]="aggregation.formControl"
                             [aggregationObj]="aggregation">
       </app-text-aggregation>
     </ng-container>
     <ng-container *ngIf="fieldTypeDate(aggregation.formControl.value)">
       <app-date-aggregation [id]=i
+                            [notSubAgg]="checkIfMainAggregation(i)"
                             [fieldsFormControl]="aggregation.formControl"
                             [aggregationObj]="aggregation">
       </app-date-aggregation>
     </ng-container>
-  </ng-container>
-  <div class="max-width">
-    <button class="max-width" mat-stroked-button (click)="addNewAggregation()" [disabled]="aggregationList.length < 1">
-      New Field
-    </button>
+    <mat-divider></mat-divider>
   </div>
+  <button class="flex-item-center" mat-icon-button aria-label="add sub aggregation" (click)="addNewAggregation()"
+          [disabled]="!(aggregationList.length > 0 && aggregationList[0].formControl.value)">
+    <mat-icon>add</mat-icon>
+  </button>
 
   <mat-checkbox class="exclude-search-checkbox" [(ngModel)]="searchQueryExcluded"
                 labelPosition="before">Exclude current
@@ -37,7 +46,8 @@
   </mat-checkbox>
 
   <div class="max-width">
-    <button class="max-width" mat-stroked-button (click)="aggregate()" [disabled]="aggregationList.length < 1">
+    <button class="max-width" mat-stroked-button (click)="aggregate()"
+            [disabled]="!(aggregationList.length > 0 && aggregationList[0].formControl.value)">
       Aggregate
     </button>
   </div>

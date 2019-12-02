@@ -2,11 +2,19 @@
 
 .wrapper {
   font-size: 14px;
+  .aggregation-form{
+    margin-top: 5px;
+    margin-bottom: 5px;
+    mat-divider{
+      border-width: 2px;
+    }
+  }
 }
 
 .exclude-search-checkbox {
   ::ng-deep .mat-checkbox-layout {
     margin-bottom: 1em;
+    margin-top: 1em;
     width: 100%;
     .mat-checkbox-inner-container{
       margin-right: 0;

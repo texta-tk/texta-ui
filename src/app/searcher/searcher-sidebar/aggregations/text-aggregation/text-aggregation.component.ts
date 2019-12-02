@@ -16,6 +16,7 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
   @Input() aggregationObj: { savedSearchesAggregations: any[], aggregation: any };
   @Input() fieldsFormControl: FormControl;
   @Input() id !: number;
+  @Input() notSubAgg: boolean;
   searcherElasticSearchQuery: ElasticsearchQueryStructure;
   aggregationType: 'terms' | 'significant_text' | 'significant_terms' = 'terms';
   aggregationSize = 30;
@@ -132,27 +133,23 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
 
     returnquery = {
       agg_fact: {
+        nested: {
+          path: this.fieldsFormControl.value.path
+        },
         aggs: {
           agg_fact: {
-            nested: {
-              path: this.fieldsFormControl.value.path
+            [this.aggregationType]: {
+              field:
+                `${this.fieldsFormControl.value.path}.fact`,
+              size: this.aggregationSize,
             },
             aggs: {
-              agg_fact: {
+              agg_fact_val: {
                 [this.aggregationType]: {
                   field:
-                    `${this.fieldsFormControl.value.path}.fact`,
+                    `${this.fieldsFormControl.value.path}.str_val`,
                   size: this.aggregationSize,
                 },
-                aggs: {
-                  agg_fact_val: {
-                    [this.aggregationType]: {
-                      field:
-                        `${this.fieldsFormControl.value.path}.str_val`,
-                      size: this.aggregationSize,
-                    },
-                  }
-                }
               }
             }
           }
@@ -168,20 +165,25 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
 
     returnquery = {
       agg_term: {
-        aggs: {
-          agg_term: {
-            [this.aggregationType]: {
-              field:
-                `${this.fieldsFormControl.value.path}${
-                  this.aggregationType === 'significant_terms' || this.aggregationType === 'terms' ? '.keyword' : ''}`,
-              size: this.aggregationSize,
-            }
-          }
+        [this.aggregationType]: {
+          field:
+            `${this.fieldsFormControl.value.path}${
+              this.aggregationType === 'significant_terms' || this.aggregationType === 'terms' ? '.keyword' : ''}`,
+          size: this.aggregationSize,
         }
       }
     };
 
     this.aggregationObj.aggregation = returnquery;
+  }
+
+  isMainAgg() {
+    if (this.notSubAgg) {
+      return true;
+    } else {
+      this.aggregationType = 'terms';
+      return false;
+    }
   }
 
   isFormControlTypeOfFact() {

@@ -1,10 +1,13 @@
 <div class="field-type-wrapper">
   <mat-form-field appearance="outline" class="max-width">
     <mat-label>Aggregation</mat-label>
-    <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" [(ngModel)]="aggregationType" name="aggregationTextType" (selectionChange)="updateAggregations()">
+    <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" [(ngModel)]="aggregationType"
+                name="aggregationTextType" (selectionChange)="updateAggregations()">
       <mat-option value="terms">frequent items</mat-option>
-      <mat-option value="significant_terms" *ngIf="!isFormControlTypeOfFact()">significant items</mat-option>
-      <mat-option value="significant_text" *ngIf="!isFormControlTypeOfFact()">significant words</mat-option>
+      <mat-option value="significant_terms" *ngIf="!isFormControlTypeOfFact() && isMainAgg()">significant items
+      </mat-option>
+      <mat-option value="significant_text" *ngIf="!isFormControlTypeOfFact()  && isMainAgg()">significant words
+      </mat-option>
     </mat-select>
   </mat-form-field>
   <mat-label>Aggregation size</mat-label>
