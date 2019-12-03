@@ -12,11 +12,12 @@ import {SavedSearchesComponent} from './searcher-sidebar/saved-searches/saved-se
 import {SaveSearchDialogComponent} from './searcher-sidebar/dialogs/save-search-dialog/save-search-dialog.component';
 import {HighlightComponent} from './searcher-table/highlight/highlight.component';
 import {FactTextConstraintsComponent} from './searcher-sidebar/build-search/fact-text-constraints/fact-text-constraints.component';
-import { AggregationsComponent } from './searcher-sidebar/aggregations/aggregations.component';
-import { AggregationResultsComponent } from './aggregation-results/aggregation-results.component';
-import { DateAggregationComponent } from './searcher-sidebar/aggregations/date-aggregation/date-aggregation.component';
-import { TextAggregationComponent } from './searcher-sidebar/aggregations/text-aggregation/text-aggregation.component';
-import { AggregationResultTableComponent } from './aggregation-results/aggregation-result-table/aggregation-result-table.component';
+import {AggregationsComponent} from './searcher-sidebar/aggregations/aggregations.component';
+import {AggregationResultsComponent} from './aggregation-results/aggregation-results.component';
+import {DateAggregationComponent} from './searcher-sidebar/aggregations/date-aggregation/date-aggregation.component';
+import {TextAggregationComponent} from './searcher-sidebar/aggregations/text-aggregation/text-aggregation.component';
+import {AggregationResultTableComponent} from './aggregation-results/aggregation-result-table/aggregation-result-table.component';
+import {AggregationResultsDialogComponent} from './aggregation-results/aggregation-results-dialog/aggregation-results-dialog.component';
 
 @NgModule({
   declarations: [
@@ -35,13 +36,14 @@ import { AggregationResultTableComponent } from './aggregation-results/aggregati
     AggregationResultsComponent,
     DateAggregationComponent,
     TextAggregationComponent,
-    AggregationResultTableComponent
+    AggregationResultTableComponent,
+    AggregationResultsDialogComponent,
   ],
   imports: [
     SharedModule,
     SearcherRoutingModule
   ],
-  entryComponents: [SaveSearchDialogComponent]
+  entryComponents: [SaveSearchDialogComponent, AggregationResultsDialogComponent]
 })
 export class SearcherModule {
   constructor() {

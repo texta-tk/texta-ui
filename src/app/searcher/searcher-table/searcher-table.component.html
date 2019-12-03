@@ -1,7 +1,7 @@
 <div class="wrapper">
   <div class="loading-shade"
-       *ngIf="searchService.getIsLoading()">
-    <mat-spinner *ngIf="searchService.getIsLoading()"></mat-spinner>
+       *ngIf="searchService.getIsLoading() | async">
+    <mat-spinner></mat-spinner>
   </div>
   <div [hidden]="displayedColumns.length === 0">
     <div class="table-container">

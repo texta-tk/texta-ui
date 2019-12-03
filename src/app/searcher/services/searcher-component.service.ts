@@ -11,17 +11,17 @@ export class SearcherComponentService {
   private savedSearchUpdate = new Subject<boolean>();
   private elasticQuerySubject = new BehaviorSubject<ElasticsearchQuery>(null);
   private searchQueryQueue$ = new Subject<void>();
-  private isLoading = false;
+  private isLoading = new BehaviorSubject<boolean>(false);
 
   constructor() {
   }
 
-  public setIsLoading(val) {
-    this.isLoading = val;
+  public setIsLoading(val: boolean) {
+    this.isLoading.next(val);
   }
 
-  public getIsLoading() {
-    return this.isLoading;
+  public getIsLoading(): Observable<boolean> {
+    return this.isLoading.asObservable();
   }
 
   public nextSearch(search: Search) {

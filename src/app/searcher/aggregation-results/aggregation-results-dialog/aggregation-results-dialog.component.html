@@ -1,0 +1,8 @@
+<div class="table" *ngIf="type === 'table'">
+    <app-aggregation-result-table [tableData]="aggData"></app-aggregation-result-table>
+</div>
+<div class="histo" *ngIf="type === 'histo'">
+  <ngx-charts-line-chart [results]="aggData"
+                         [yAxis]="true" [yAxisLabel]="'document count'" showYAxisLabel="true"
+                         [xAxis]="true"></ngx-charts-line-chart>
+</div>

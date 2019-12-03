@@ -94,9 +94,10 @@ export class AggregationsComponent implements OnInit, OnDestroy {
     const agg = this.makeAggregations(this.aggregationList);
     const body = {
       query: {
-        aggs: {...agg}
+        aggs: {...agg},
+        size: 0 // ignore results, performance improvement
       },
-      size: 0 // ignore results, performance improvement
+
     };
     this.makeSavedSearchAggregations(this.aggregationList[0], this.searchService.savedSearchSelection.selected);
     for (const aggregation of this.aggregationList[0].savedSearchesAggregations) {
