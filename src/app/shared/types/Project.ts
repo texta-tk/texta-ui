@@ -50,10 +50,18 @@ export class ProjectField {
     }
   }
 
-  static cleanProjectFields(fields: ProjectField[]): ProjectField[] {
-    const filteredField: ProjectField[] = [];
+  static cleanProjectFields(fields: ProjectField[], whiteList?: string[], blackList?: string[]): ProjectField[] {
+    const filteredField: ProjectField[] = []
+    const whiteListTypes = whiteList && whiteList.length > 0 ? whiteList : null;
+    const blackListTypes = blackList && blackList.length > 0 ? blackList : null;
     for (const index of fields) {
       index.fields = index.fields.filter(element => {
+        if (whiteListTypes && whiteListTypes.includes(element.type)) {
+          return true;
+        }
+        if (blackListTypes && blackListTypes.includes(element.type)) {
+          return false;
+        }
         return (
           element.type !== 'fact' &&
           element.path !== '_texta_id' &&
@@ -92,11 +100,11 @@ export interface Health {
       tagline: string;
     };
   };
-  mlp: {url: string, alive: boolean};
+  mlp: { url: string, alive: boolean };
   version: string;
-  disk: {free: number, total: number, used: number, unit: string};
-  memory: {free: number, total: number, used: number, unit: string};
-  cpu: {percent: number};
-  gpu: {count: number; devices: string[]};
+  disk: { free: number, total: number, used: number, unit: string };
+  memory: { free: number, total: number, used: number, unit: string };
+  cpu: { percent: number };
+  gpu: { count: number; devices: string[] };
   active_tasks: number;
 }

@@ -3,9 +3,7 @@ import {ElasticsearchQuery, ElasticsearchQueryStructure} from '../../build-searc
 import {FormControl} from '@angular/forms';
 import {of, Subject} from 'rxjs';
 import {SearcherComponentService} from '../../../services/searcher-component.service';
-import {debounceTime, startWith, switchMap, takeUntil} from 'rxjs/operators';
-import {SavedSearch} from '../../../../shared/types/SavedSearch';
-import {SelectionChange, SelectionModel} from '@angular/cdk/collections';
+import {startWith, switchMap, takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-text-aggregation',
@@ -13,9 +11,8 @@ import {SelectionChange, SelectionModel} from '@angular/cdk/collections';
   styleUrls: ['./text-aggregation.component.scss']
 })
 export class TextAggregationComponent implements OnInit, OnDestroy {
-  @Input() aggregationObj: { savedSearchesAggregations: any[], aggregation: any };
+  @Input() aggregationObj: { aggregation: any };
   @Input() fieldsFormControl: FormControl;
-  @Input() id !: number;
   @Input() notSubAgg: boolean;
   searcherElasticSearchQuery: ElasticsearchQueryStructure;
   aggregationType: 'terms' | 'significant_text' | 'significant_terms' = 'terms';
@@ -45,16 +42,7 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
         this.updateAggregations();
       }
     });
-    // when selecting all it emits each item once, debounce to ignore
-    this.searchService.savedSearchSelection.changed.pipe(
-      takeUntil(this.destroy$),
-      startWith(this.searchService.savedSearchSelection),
-      debounceTime(50)
-    ).subscribe((selection: SelectionChange<SavedSearch> | SelectionModel<SavedSearch>) => {
-      if (selection) {
-        this.updateAggregations();
-      }
-    });
+
   }
 
   updateAggregations() {
@@ -67,66 +55,7 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
     }
   }
 
-  makeFactTextAggregationsWithSavedSearches(selected: SavedSearch[]) {
-    this.aggregationObj.savedSearchesAggregations = [];
-    for (const savedSearch of selected) {
-      const savedSearchQuery = JSON.parse(savedSearch.query);
-      const savedSearchAggregation = {
-        [savedSearch.description]: {
-          filter: {bool: {...savedSearchQuery.query.bool}},
-          aggs: {
-            [savedSearch.description]: {
-              nested: {
-                path: this.fieldsFormControl.value.path
-              },
-              aggs: {
-                [savedSearch.description]: {
-                  [this.aggregationType]: {
-                    field:
-                      `${this.fieldsFormControl.value.path}.fact`,
-                    size: this.aggregationSize,
-                  },
-                  aggs: {
-                    agg_fact_val: {
-                      [this.aggregationType]: {
-                        field:
-                          `${this.fieldsFormControl.value.path}.str_val`,
-                        size: this.aggregationSize,
-                      },
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      };
-      this.aggregationObj.savedSearchesAggregations.push(savedSearchAggregation);
-    }
-  }
 
-  makeTextAggregationsWithSavedSearches(selected: SavedSearch[]) {
-    this.aggregationObj.savedSearchesAggregations = [];
-    for (const savedSearch of selected) {
-      const savedSearchQuery = JSON.parse(savedSearch.query);
-      const savedSearchAggregation = {
-        [savedSearch.description]: {
-          filter: {bool: {...savedSearchQuery.query.bool}},
-          aggs: {
-            [savedSearch.description]: {
-              [this.aggregationType]: {
-                field:
-                  `${this.fieldsFormControl.value.path}${
-                    this.aggregationType === 'significant_terms' || this.aggregationType === 'terms' ? '.keyword' : ''}`,
-                size: this.aggregationSize,
-              }
-            }
-          }
-        }
-      };
-      this.aggregationObj.savedSearchesAggregations.push(savedSearchAggregation);
-    }
-  }
 
   makeFactAggregation() {
     let returnquery: { [key: string]: any };

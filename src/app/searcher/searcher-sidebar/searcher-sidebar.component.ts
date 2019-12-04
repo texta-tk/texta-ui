@@ -31,7 +31,7 @@ export class SearcherSidebarComponent implements OnInit, OnDestroy {
 
   buildSearchExpanded = true;
   savedSearchesExpanded = true;
-  aggregationsExpanded = true;
+  aggregationsExpanded = false;
   currentProject: Project;
 
   constructor(public dialog: MatDialog,

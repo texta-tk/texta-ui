@@ -18,6 +18,7 @@ import {DateAggregationComponent} from './searcher-sidebar/aggregations/date-agg
 import {TextAggregationComponent} from './searcher-sidebar/aggregations/text-aggregation/text-aggregation.component';
 import {AggregationResultTableComponent} from './aggregation-results/aggregation-result-table/aggregation-result-table.component';
 import {AggregationResultsDialogComponent} from './aggregation-results/aggregation-results-dialog/aggregation-results-dialog.component';
+import { AggregationResultsTreeComponent } from './aggregation-results/aggregation-results-tree/aggregation-results-tree.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import {AggregationResultsDialogComponent} from './aggregation-results/aggregati
     TextAggregationComponent,
     AggregationResultTableComponent,
     AggregationResultsDialogComponent,
+    AggregationResultsTreeComponent,
   ],
   imports: [
     SharedModule,

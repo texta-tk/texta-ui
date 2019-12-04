@@ -3,7 +3,7 @@
   <div class="aggregation-form" fxFlex fxLayout="column" *ngFor="let aggregation of aggregationList; let i = index;">
 
     <div fxFlex fxLayoutAlign="end" *ngIf="!checkIfMainAggregation(i)">
-      <button mat-icon-button aria-label="Close" (click)="removeAggregation(i)" class="mat-icon-button">
+      <button mat-icon-button aria-label="Close" (click)="removeAggregation(i)" class="mat-icon-button close-button">
         <mat-icon>close</mat-icon>
       </button>
     </div>
@@ -20,20 +20,19 @@
     </mat-form-field>
 
     <ng-container *ngIf="fieldTypeTextOrFact(aggregation.formControl.value)">
-      <app-text-aggregation [id]=i
-                            [notSubAgg]="checkIfMainAggregation(i)"
-                            [fieldsFormControl]="aggregation.formControl"
-                            [aggregationObj]="aggregation">
+      <app-text-aggregation
+        [notSubAgg]="checkIfMainAggregation(i)"
+        [fieldsFormControl]="aggregation.formControl"
+        [aggregationObj]="aggregation">
       </app-text-aggregation>
     </ng-container>
     <ng-container *ngIf="fieldTypeDate(aggregation.formControl.value)">
-      <app-date-aggregation [id]=i
-                            [notSubAgg]="checkIfMainAggregation(i)"
-                            [fieldsFormControl]="aggregation.formControl"
-                            [aggregationObj]="aggregation">
+      <app-date-aggregation
+        [notSubAgg]="checkIfMainAggregation(i)"
+        [fieldsFormControl]="aggregation.formControl"
+        [aggregationObj]="aggregation">
       </app-date-aggregation>
     </ng-container>
-    <mat-divider></mat-divider>
   </div>
   <button class="flex-item-center" mat-icon-button aria-label="add sub aggregation" (click)="addNewAggregation()"
           [disabled]="!(aggregationList.length > 0 && aggregationList[0].formControl.value)">
@@ -47,7 +46,7 @@
 
   <div class="max-width">
     <button class="max-width" mat-stroked-button (click)="aggregate()"
-            [disabled]="!(aggregationList.length > 0 && aggregationList[0].formControl.value)">
+            [disabled]="!(aggregationList.length > 0 && aggregationList[0].formControl.value) || (searchService.getIsLoading() | async)">
       Aggregate
     </button>
   </div>

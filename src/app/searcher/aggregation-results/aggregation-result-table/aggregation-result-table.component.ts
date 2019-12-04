@@ -30,9 +30,6 @@ export class AggregationResultTableComponent implements OnInit {
       }
     }
   }
-
-  @Input() factAggregation = false;
-
   displayedColumns = ['key', 'doc_count'];
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;

@@ -6,8 +6,8 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {SharedModule} from '../../../../shared/shared.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {SearcherComponentService} from '../../../services/searcher-component.service';
-import {AggregationsComponent} from '../aggregations.component';
 import {SearchServiceSpy} from '../../../services/searcher-component.service.spec';
+import {FormControl} from '@angular/forms';
 
 describe('DateAggregationComponent', () => {
   let component: DateAggregationComponent;
@@ -32,7 +32,8 @@ describe('DateAggregationComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DateAggregationComponent);
     component = fixture.componentInstance;
-    component.aggregationObj = {savedSearchesAggregations: [], aggregation: {}};
+    component.aggregationObj = {aggregation: {}};
+    component.fieldsFormControl = new FormControl();
     fixture.detectChanges();
   });
 

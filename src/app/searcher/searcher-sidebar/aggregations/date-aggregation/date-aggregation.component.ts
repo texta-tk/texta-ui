@@ -1,11 +1,9 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {ElasticsearchQuery, ElasticsearchQueryStructure} from '../../build-search/Constraints';
 import {FormControl} from '@angular/forms';
-import {debounceTime, startWith, switchMap, takeUntil} from 'rxjs/operators';
+import {startWith, switchMap, takeUntil} from 'rxjs/operators';
 import {SearcherComponentService} from '../../../services/searcher-component.service';
 import {of, Subject} from 'rxjs';
-import {SavedSearch} from '../../../../shared/types/SavedSearch';
-import {SelectionChange, SelectionModel} from '@angular/cdk/collections';
 import {DatePipe} from '@angular/common';
 
 @Component({
@@ -14,9 +12,8 @@ import {DatePipe} from '@angular/common';
   styleUrls: ['./date-aggregation.component.scss']
 })
 export class DateAggregationComponent implements OnInit, OnDestroy {
-  @Input() aggregationObj: { savedSearchesAggregations: any[], aggregation: any };
+  @Input() aggregationObj: { aggregation: any };
   @Input() fieldsFormControl: FormControl;
-  @Input() id !: number;
   @Input() notSubAgg: boolean;
   searcherElasticSearchQuery: ElasticsearchQueryStructure;
   dateInterval = 'year';
@@ -49,54 +46,9 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
     });
     this.fieldsFormControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(val => {
       if (val) {
-        this.updateAggregations();
+        this.makeDateAggregation();
       }
     });
-    // when selecting all it emits each item once, debounce to ignore
-    this.searchService.savedSearchSelection.changed.pipe(
-      takeUntil(this.destroy$),
-      startWith(this.searchService.savedSearchSelection),
-      debounceTime(50)
-    ).subscribe((selection: SelectionChange<SavedSearch> | SelectionModel<SavedSearch>) => {
-      if (selection instanceof SelectionModel) {
-        this.makeAggregationsWithSavedSearches(selection.selected);
-      } else {
-        this.makeAggregationsWithSavedSearches(selection.source.selected);
-      }
-    });
-  }
-
-  updateAggregations() {
-    this.makeDateAggregation();
-    this.makeAggregationsWithSavedSearches(this.searchService.savedSearchSelection.selected);
-  }
-
-  makeAggregationsWithSavedSearches(selected: SavedSearch[]) {
-    this.aggregationObj.savedSearchesAggregations = [];
-    for (const savedSearch of selected) {
-      const savedSearchQuery = JSON.parse(savedSearch.query);
-      savedSearchQuery.query.bool.must.push([{bool: {must: [this.dateRangeFrom, this.dateRangeTo]}}]);
-      const savedSearchAggregation = {
-        [savedSearch.description]: {
-          filter: {bool: {...savedSearchQuery.query.bool}},
-          aggs: {
-            [savedSearch.description]: {
-              date_histogram: {
-                format: 'MMM d, y',
-                field: this.fieldsFormControl.value.path,
-                interval: this.dateInterval,
-                min_doc_count: 0,
-                extended_bounds: {
-                  min: this.pipe.transform(this.startDate, 'MMM d, y'),
-                  max: this.pipe.transform(this.toDate, 'MMM d, y'),
-                }
-              }
-            }
-          }
-        }
-      };
-      this.aggregationObj.savedSearchesAggregations.push(savedSearchAggregation);
-    }
   }
 
   makeDateAggregation() {
@@ -113,7 +65,11 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
               format: 'MMM d, y',
               field: this.fieldsFormControl.value.path,
               interval: this.dateInterval,
-              min_doc_count: 0
+              min_doc_count: 0,
+              extended_bounds: {
+                min: this.pipe.transform(this.startDate, 'MMM d, y'),
+                max: this.pipe.transform(this.toDate, 'MMM d, y'),
+              }
             }
           }
         }

@@ -4,14 +4,3 @@
   max-height: calc(100vh - #{$navbar-height});
   min-height: calc(100vh - #{$navbar-height});
 }
-
-mat-tree-node {
-  padding-left: 40px;
-}
-
-.nested-agg-tree ul,
-.nested-agg-tree li {
-  margin-top: 0;
-  margin-bottom: 0;
-  list-style-type: none;
-}

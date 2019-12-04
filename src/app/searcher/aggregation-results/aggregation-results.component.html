@@ -3,74 +3,21 @@
   <div class="loading-shade" *ngIf="searchService.getIsLoading() | async">
     <mat-spinner></mat-spinner>
   </div>
-  <ng-container *ngIf="dataSource">
-    <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="nested-agg-tree">
-      <!-- This is the tree node template for leaf nodes -->
-      <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
-        <li class="mat-tree-node">
-          <ng-container *ngIf="node.key_as_string">
-            ({{node.doc_count}}) {{node.key_as_string}}
-          </ng-container>
-          <ng-container *ngIf="!node.key_as_string">
-            ({{node.doc_count}}) {{node.key}}
-          </ng-container>
-        </li>
-      </mat-tree-node>
-      <!-- This is the tree node template for expandable nodes -->
-      <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
-        <li>
-          <div class="mat-tree-node">
-            <button mat-icon-button matTreeNodeToggle
-                    [attr.aria-label]="'toggle ' + node.key">
-              <mat-icon class="mat-icon-rtl-mirror">
-                {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
-              </mat-icon>
-            </button>
-            <ng-container *ngIf="node.key_as_string">
-              ({{node.doc_count}}) {{node.key_as_string}}
-            </ng-container>
-            <ng-container *ngIf="!node.key_as_string">
-              ({{node.doc_count}}) {{node.key}}
-            </ng-container>
-            <button mat-icon-button (click)="openDialog(node)">
-              <mat-icon>fullscreen</mat-icon>
-            </button>
-          </div>
-          <ul *ngIf="treeControl.isExpanded(node)">
-            <ng-container matTreeNodeOutlet></ng-container>
-          </ul>
-        </li>
-      </mat-nested-tree-node>
-    </mat-tree>
-    <!--
-        <ng-template #dateKey let-node="node">
-          ({{node.doc_count}}) {{node.key_as_string}}
-        </ng-template>
-        <ng-template #normalKey let-node="node">
-          <span title="{{node.key}}">
-          ({{node.doc_count}}) {{node.key}}
-            </span>
-        </ng-template>-->
+  <ng-container *ngIf="aggregationData">
+    <mat-tab-group mat-stretch-tabs *ngIf="aggregationData.tableData.length > 0">
+      <mat-tab *ngFor="let tableAggregation of aggregationData.tableData" [label]="tableAggregation.name">
+        <app-aggregation-result-table [tableData]="tableAggregation.tableData"></app-aggregation-result-table>
+      </mat-tab>
+    </mat-tab-group>
+    <ngx-charts-line-chart *ngIf="aggregationData.dateData.length > 0" [results]="aggregationData.dateData"
+                           [yAxis]="true" [yAxisLabel]="'document count'" showYAxisLabel="true"
+                           [xAxis]="true"></ngx-charts-line-chart>
+
+    <mat-tab-group mat-stretch-tabs *ngIf="aggregationData.treeData.length > 0">
+      <mat-tab *ngFor="let nestedAggregation of aggregationData.treeData" [label]="nestedAggregation.name">
+        <app-aggregation-results-tree [dataSource]="nestedAggregation.treeData"></app-aggregation-results-tree>
+      </mat-tab>
+    </mat-tab-group>
   </ng-container>
-  <mat-tab-group mat-stretch-tabs *ngIf="tableAggregationData.length > 0">
-    <mat-tab *ngFor="let tableAggregation of tableAggregationData" [label]="tableAggregation.name">
-      <app-aggregation-result-table [tableData]="tableAggregation.tableData"
-                                    [factAggregation]="tableAggregation.factAggregation"></app-aggregation-result-table>
-    </mat-tab>
-  </mat-tab-group>
-
-  <ngx-charts-line-chart *ngIf="dateAggregationData.length > 0" [results]="dateAggregationData"
-                         [yAxis]="true" [yAxisLabel]="'document count'" showYAxisLabel="true"
-                         [xAxis]="true"></ngx-charts-line-chart>
-  <!--
-  <mat-tab-group mat-stretch-tabs>
-    <mat-tab *ngFor="let tableAggregation of tableAggregationData" [label]="tableAggregation.name">
-      <app-aggregation-result-table [tableData]="tableAggregation.tableData" [factAggregation]="tableAggregation.factAggregation"></app-aggregation-result-table>
-    </mat-tab>
-  </mat-tab-group>
-
-  <ngx-charts-line-chart *ngIf="dateAggregationData.length > 0" [results]="dateAggregationData"
-                         [yAxis]="true" [yAxisLabel]="'document count'" showYAxisLabel="true"
-                         [xAxis]="true"></ngx-charts-line-chart>-->
 
 </div>

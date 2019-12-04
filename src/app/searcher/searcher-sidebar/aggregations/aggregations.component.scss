@@ -4,12 +4,13 @@
   .aggregation-form{
     margin-top: 5px;
     margin-bottom: 5px;
-    mat-divider{
-      border-color: #3f51b5;
-    }
+    background-color: #EFEFEF;
+    padding: 5px;
   }
 }
-
+.close-button{
+  margin-right: -5px;
+}
 .exclude-search-checkbox {
   ::ng-deep .mat-checkbox-layout {
     margin-bottom: 1em;

@@ -1,20 +1,16 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {debounceTime, startWith, switchMap, takeUntil} from 'rxjs/operators';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {startWith, switchMap, takeUntil} from 'rxjs/operators';
 import {Field, Project, ProjectFact, ProjectField} from '../../../shared/types/Project';
 import {ProjectStore} from '../../../core/projects/project.store';
-import {of, Subject} from 'rxjs';
+import {Subject} from 'rxjs';
 import {FormControl} from '@angular/forms';
 import {SearcherService} from '../../../core/searcher/searcher.service';
 import {SearcherComponentService} from '../../services/searcher-component.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ElasticsearchQuery, ElasticsearchQueryStructure} from '../build-search/Constraints';
-import {SelectionChange, SelectionModel} from "@angular/cdk/collections";
-import {SavedSearch} from "../../../shared/types/SavedSearch";
-import {TextAggregationComponent} from "./text-aggregation/text-aggregation.component";
-import {DateAggregationComponent} from "./date-aggregation/date-aggregation.component";
+import {LogService} from '../../../core/util/log.service';
 
 export interface AggregationObject {
-  savedSearchesAggregations: any[];
   aggregation: any;
   formControl: FormControl;
 }
@@ -32,25 +28,13 @@ export class AggregationsComponent implements OnInit, OnDestroy {
   aggregationList: AggregationObject[] = [];
   searcherElasticSearchQuery: ElasticsearchQueryStructure;
   searchQueryExcluded = false;
-  _textAggregationComponent;
-  @ViewChild(TextAggregationComponent, {static: false}) set textAggregationComponent(x: TextAggregationComponent) {
-    if (x && x.id === 0) {
-      this._textAggregationComponent = x;
-    }
-  }
-
-  _dateAggregationComponent;
-  @ViewChild(DateAggregationComponent, {static: false}) set dateAggregationComponent(x: DateAggregationComponent) {
-    if (x && x.id === 0) {
-      this._dateAggregationComponent = x;
-    }
-  }
 
   aggregationAccessor = (x: any) => (x.aggs);
 
   constructor(private projectStore: ProjectStore,
               private searcherService: SearcherService,
-              private searchService: SearcherComponentService) {
+              private logService: LogService,
+              public searchService: SearcherComponentService) {
 
 
   }
@@ -58,7 +42,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
   addNewAggregation() {
     const frm = new FormControl();
     frm.setValue(this.projectFields[0].fields[0]);
-    this.aggregationList.push({savedSearchesAggregations: [], aggregation: {}, formControl: frm});
+    this.aggregationList.push({aggregation: {}, formControl: frm});
   }
 
   ngOnInit() {
@@ -74,10 +58,10 @@ export class AggregationsComponent implements OnInit, OnDestroy {
     });
     this.projectStore.getProjectFields().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectField[]) => {
       if (projectFields) {
-        this.projectFields = projectFields;
+        this.projectFields = ProjectField.cleanProjectFields(projectFields, ['fact'], ['keyword']);
         this.aggregationList = [];
-        this.aggregationList.push({savedSearchesAggregations: [], aggregation: {}, formControl: new FormControl()});
-        this.aggregationList[0].formControl.setValue(projectFields[0].fields[0]);
+        this.aggregationList.push({aggregation: {}, formControl: new FormControl()});
+        this.aggregationList[0].formControl.setValue(this.projectFields[0].fields[0]);
       }
     });
     this.searchService.getSearch().pipe(takeUntil(this.destroy$), startWith({}), switchMap(search => {
@@ -88,10 +72,11 @@ export class AggregationsComponent implements OnInit, OnDestroy {
         this.searcherElasticSearchQuery = JSON.parse(JSON.stringify(query.elasticSearchQuery));
       }
     });
+
   }
 
   aggregate() {
-    const agg = this.makeAggregations(this.aggregationList);
+    const agg = this.makeAggregations(this.aggregationList, this.searchQueryExcluded);
     const body = {
       query: {
         aggs: {...agg},
@@ -99,24 +84,31 @@ export class AggregationsComponent implements OnInit, OnDestroy {
       },
 
     };
-    this.makeSavedSearchAggregations(this.aggregationList[0], this.searchService.savedSearchSelection.selected);
-    for (const aggregation of this.aggregationList[0].savedSearchesAggregations) {
-      const aggregationName = Object.keys(aggregation)[0];
-      body.query.aggs[aggregationName] = aggregation[aggregationName];
+    const savedSearchTemplate = this.makeAggregations(this.aggregationList, true);
+    for (const savedSearch of this.searchService.savedSearchSelection.selected) {
+      const finalAgg = {...savedSearchTemplate};
+      for (const aggType in finalAgg) {
+        if (finalAgg.hasOwnProperty(aggType)) {
+          body.query.aggs[savedSearch.description] = {aggs: finalAgg};
+          const savedSearchQuery = JSON.parse(savedSearch.query);
+          body.query.aggs[savedSearch.description].filter = {bool: {...savedSearchQuery.query.bool}};
+        }
+      }
     }
 
     this.searchService.setIsLoading(true);
     this.searcherService.search(body, this.currentProject.id).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.searchService.nextAggregation(resp);
-      } else {
+      } else if (resp instanceof HttpErrorResponse) {
+        this.logService.snackBarError(resp, 2000);
         this.searchService.nextAggregation([]);
       }
       this.searchService.setIsLoading(false);
     });
   }
 
-  makeAggregations(aggregationList: { savedSearchesAggregations: any[], aggregation: any }[]) {
+  makeAggregations(aggregationList: { aggregation: any }[], searcherQueryExcluded: boolean) {
     let innermostAgg;
     let finalAgg: any;
     for (const aggregation of aggregationList) {
@@ -130,7 +122,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
       innermostAgg.aggs = aggregationToAdd;
     }
 
-    if (!this.searchQueryExcluded) {
+    if (!searcherQueryExcluded) {
       for (const aggType in finalAgg) {
         if (finalAgg.hasOwnProperty(aggType)) {
           finalAgg = {[aggType]: {aggs: finalAgg}};
@@ -172,30 +164,12 @@ export class AggregationsComponent implements OnInit, OnDestroy {
     return (val && (val.type === 'date'));
   }
 
-  makeSavedSearchAggregations(aggregationObj: AggregationObject, savedSearch: SavedSearch[]) {
-    if (this.fieldTypeDate(aggregationObj.formControl.value)) {
-      this._dateAggregationComponent.makeAggregationsWithSavedSearches(this.searchService.savedSearchSelection.selected);
-    }
-    if (this.fieldTypeTextOrFact(aggregationObj.formControl.value)) {
-      if (this.isFormControlTypeOfFact(aggregationObj.formControl)) {
-        this._textAggregationComponent.makeFactTextAggregationsWithSavedSearches(this.searchService.savedSearchSelection.selected);
-      } else {
-        this._textAggregationComponent.makeTextAggregationsWithSavedSearches(this.searchService.savedSearchSelection.selected);
-      }
-    }
-  }
-
   checkIfMainAggregation(indx: number) {
     return this.aggregationList.length === (indx + 1);
   }
 
   removeAggregation(index) {
     this.aggregationList.splice(index, 1);
-  }
-
-  isFormControlTypeOfFact(formControl: FormControl) {
-    return formControl &&
-      formControl.value && formControl.value.type && formControl.value.type === 'fact';
   }
 
   ngOnDestroy() {
