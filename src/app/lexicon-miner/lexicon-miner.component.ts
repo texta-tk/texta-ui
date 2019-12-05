@@ -1,14 +1,14 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { of, Subject } from 'rxjs';
-import { Lexicon } from '../shared/types/Lexicon';
-import { LogService } from '../core/util/log.service';
-import { LexiconService } from '../core/lexicon/lexicon.service';
-import { ProjectStore } from '../core/projects/project.store';
-import { switchMap, takeUntil } from 'rxjs/operators';
-import { Project } from '../shared/types/Project';
-import { HttpErrorResponse } from '@angular/common/http';
-import { MatDialog } from '@angular/material';
-import { ConfirmDialogComponent } from '../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {of, Subject} from 'rxjs';
+import {Lexicon} from '../shared/types/Lexicon';
+import {LogService} from '../core/util/log.service';
+import {LexiconService} from '../core/lexicon/lexicon.service';
+import {ProjectStore} from '../core/projects/project.store';
+import {switchMap, takeUntil} from 'rxjs/operators';
+import {Project} from '../shared/types/Project';
+import {HttpErrorResponse} from '@angular/common/http';
+import {MatDialog} from '@angular/material';
+import {ConfirmDialogComponent} from '../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 
 
 @Component({
@@ -26,7 +26,7 @@ export class LexiconMinerComponent implements OnInit, OnDestroy {
   totalLexicons: number;
 
   constructor(private logService: LogService, private dialog: MatDialog,
-    private lexiconService: LexiconService, private projectStore: ProjectStore) {
+              private lexiconService: LexiconService, private projectStore: ProjectStore) {
   }
 
   ngOnInit() {
@@ -41,16 +41,16 @@ export class LexiconMinerComponent implements OnInit, OnDestroy {
       }
       return of(null);
     })).subscribe((resp: { count: number, results: Lexicon[] } | HttpErrorResponse) => {
-      if (resp) {
-        if (resp instanceof HttpErrorResponse) {
-          this.logService.snackBarError(resp, 5000);
-        } else {
-          this.selectedLexicon = null;
-          this.totalLexicons = resp.count;
-          this.lexicons = resp.results;
+        if (resp) {
+          if (resp instanceof HttpErrorResponse) {
+            this.logService.snackBarError(resp, 5000);
+          } else {
+            this.selectedLexicon = null;
+            this.totalLexicons = resp.count;
+            this.lexicons = resp.results;
+          }
         }
       }
-    }
     );
   }
 
@@ -63,9 +63,9 @@ export class LexiconMinerComponent implements OnInit, OnDestroy {
   createNewLexicon() {
     if (this.currentProject) {
       this.lexiconService.createLexicon({
-        description: this.newLexiconDescription,
-        phrases: []
-      }, this.currentProject.id
+          description: this.newLexiconDescription,
+          phrases: []
+        }, this.currentProject.id
       ).subscribe((resp: Lexicon | HttpErrorResponse) => {
         if (resp) {
           if (resp instanceof HttpErrorResponse) {
@@ -81,7 +81,7 @@ export class LexiconMinerComponent implements OnInit, OnDestroy {
 
   deleteLexicon(lexicon: Lexicon) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: { confirmText: 'Delete', mainText: `Are you sure you want to delete this Lexion?` }
+      data: {confirmText: 'Delete', mainText: `Are you sure you want to delete this Lexion?`}
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -94,6 +94,8 @@ export class LexiconMinerComponent implements OnInit, OnDestroy {
               this.logService.snackBarMessage(`Lexicon ${lexicon.description} deleted.`, 3000);
               const position = this.lexicons.findIndex(x => x.id === lexicon.id);
               this.lexicons.splice(position, 1);
+              // update lexicon count in navbar by setting current project as next proj
+              this.projectStore.setCurrentProject(this.currentProject);
             }
           });
       }
