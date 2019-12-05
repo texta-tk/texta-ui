@@ -1,10 +1,42 @@
 <mat-toolbar color="primary">
   <mat-toolbar-row>
-    <a routerLinkActive="is-active" [routerLink]="['']" [routerLinkActiveOptions]="{exact:true}"><button mat-button class="nav-button"><mat-icon class="margin-right">home</mat-icon>Projects</button></a>
-    <a routerLinkActive="is-active" [routerLink]="['searcher']"><button mat-button class="nav-button"><mat-icon class="margin-right">search</mat-icon>Search</button></a>
-    <a routerLinkActive="is-active" [routerLink]="['lexicon-miner']"><button mat-button class="nav-button"><mat-icon class="margin-right">library_books</mat-icon>Lexicons  <ng-container *ngIf="projectResourceCounts?.num_lexicons">({{projectResourceCounts?.num_lexicons}})</ng-container></button></a>
-    <a class="pointer" [matMenuTriggerFor]="models"><button mat-button class="nav-button"><mat-icon class="margin-right">done_all</mat-icon>Models<mat-icon>arrow_drop_down</mat-icon></button></a>
-    <a class="pointer" [matMenuTriggerFor]="tools"><button mat-button class="nav-button"><mat-icon class="margin-right">build</mat-icon>Tools<mat-icon>arrow_drop_down</mat-icon></button></a>
+    <a routerLinkActive="is-active" [routerLink]="['']" [routerLinkActiveOptions]="{exact:true}">
+      <button mat-button class="nav-button">
+        <mat-icon class="margin-right">home</mat-icon>
+        Projects
+      </button>
+    </a>
+    <a routerLinkActive="is-active" [routerLink]="['searcher']">
+      <button mat-button class="nav-button">
+        <mat-icon class="margin-right">search</mat-icon>
+        Search
+      </button>
+    </a>
+    <a routerLinkActive="is-active" [routerLink]="['lexicon-miner']">
+      <button mat-button class="nav-button">
+        <mat-icon class="margin-right">library_books</mat-icon>
+        Lexicons
+        <ng-container *ngIf="projectResourceCounts?.num_lexicons">({{projectResourceCounts?.num_lexicons}})
+        </ng-container>
+      </button>
+    </a>
+    <a
+      [ngClass]="{'is-active': ['/tagger-groups', '/taggers', '/embeddings', '/neurotaggers', '/torchtaggers'].includes(router.url)}"
+      class="pointer" [matMenuTriggerFor]="models">
+      <button mat-button class="nav-button">
+        <mat-icon class="margin-right">done_all</mat-icon>
+        Models
+        <mat-icon>arrow_drop_down</mat-icon>
+      </button>
+    </a>
+    <a [ngClass]="{'is-active': ['/reindexer'].includes(router.url)}"
+      class="pointer" [matMenuTriggerFor]="tools">
+      <button mat-button class="nav-button">
+        <mat-icon class="margin-right">build</mat-icon>
+        Tools
+        <mat-icon>arrow_drop_down</mat-icon>
+      </button>
+    </a>
 
     <!-- <mat-menu #models="matMenu">
       <button mat-menu-item>Get Facts</button>
@@ -14,11 +46,16 @@
     <mat-menu #models="matMenu">
       <!-- Embedding Clusters disabled until more functionality for them is added -->
       <!-- <a mat-menu-item routerLinkActive="is-active" [routerLink]="['embedding-groups']">Embedding Clusters <span *ngIf="projectResourceCounts">({{projectResourceCounts?.num_embedding_clusters}})</span></a> -->
-      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['tagger-groups']">Tagger Groups <span *ngIf="projectResourceCounts?.num_tagger_groups">({{projectResourceCounts?.num_tagger_groups}})</span></a>
-      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['embeddings']">Embeddings <span *ngIf="projectResourceCounts?.num_embeddings">({{projectResourceCounts?.num_embeddings}})</span></a>
-      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['taggers']">Taggers <span *ngIf="projectResourceCounts?.num_taggers">({{projectResourceCounts?.num_taggers}})</span></a>
-      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['neurotaggers']">NeuroTaggers <span *ngIf="projectResourceCounts?.num_neurotaggers">({{projectResourceCounts?.num_neurotaggers}})</span></a>
-      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['torchtaggers']">TorchTaggers <span *ngIf="projectResourceCounts?.num_torchtaggers">({{projectResourceCounts.num_torchtaggers}})</span></a>
+      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['tagger-groups']">Tagger Groups <span
+        *ngIf="projectResourceCounts?.num_tagger_groups">({{projectResourceCounts?.num_tagger_groups}})</span></a>
+      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['embeddings']">Embeddings <span
+        *ngIf="projectResourceCounts?.num_embeddings">({{projectResourceCounts?.num_embeddings}})</span></a>
+      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['taggers']">Taggers <span
+        *ngIf="projectResourceCounts?.num_taggers">({{projectResourceCounts?.num_taggers}})</span></a>
+      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['neurotaggers']">NeuroTaggers <span
+        *ngIf="projectResourceCounts?.num_neurotaggers">({{projectResourceCounts?.num_neurotaggers}})</span></a>
+      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['torchtaggers']">TorchTaggers <span
+        *ngIf="projectResourceCounts?.num_torchtaggers">({{projectResourceCounts.num_torchtaggers}})</span></a>
     </mat-menu>
 
     <mat-menu #tools="matMenu">
@@ -33,8 +70,9 @@
 
     <div class="flex-item-right flex-row user-name" *ngIf="user">
       <mat-form-field class="project-select">
-        <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" [formControl]="projectControl" (selectionChange)="selectProject($event.value)"
-        [placeholder]="projects?.length < 1 ? 'No projects' : ''">
+        <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
+                    [formControl]="projectControl" (selectionChange)="selectProject($event.value)"
+                    [placeholder]="projects?.length < 1 ? 'No projects' : ''">
           <mat-option *ngFor="let item of projects" [value]="item">
             {{item.id}}: {{item.title}}
           </mat-option>
@@ -42,11 +80,16 @@
       </mat-form-field>
 
       <div class="flex-row logout">
-        <button mat-button [matMenuTriggerFor]="menu"><span>{{user.username}}<mat-icon>arrow_drop_down</mat-icon></span>
+        <button mat-button [matMenuTriggerFor]="menu"><span>{{user.username}}
+          <mat-icon>arrow_drop_down</mat-icon></span>
         </button>
         <mat-menu #menu="matMenu">
-          <a mat-menu-item [routerLink]="['settings']"><mat-icon inline="true">settings</mat-icon> <span>Settings </span> </a>
-          <a mat-menu-item (click)="logout()"><mat-icon inline="true">power_settings_new </mat-icon> <span>Log out</span> </a>
+          <a mat-menu-item [routerLink]="['settings']">
+            <mat-icon inline="true">settings</mat-icon>
+            <span>Settings </span> </a>
+          <a mat-menu-item (click)="logout()">
+            <mat-icon inline="true">power_settings_new</mat-icon>
+            <span>Log out</span> </a>
         </mat-menu>
       </div>
 

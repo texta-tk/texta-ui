@@ -1,12 +1,18 @@
 @import "../../variables/variables";
+
 mat-toolbar {
   height: $navbar-height;
   min-height: $navbar-height;
 
   mat-toolbar-row {
     height: 100%;
+
     a {
       color: white;
+    }
+
+    .is-active {
+      color: red;
     }
 
     .nav-button {
@@ -16,20 +22,24 @@ mat-toolbar {
     mat-menu {
       a {
         color: black;
-
       }
 
+
     }
+
     .login {
       button {
         margin-left: 5px;
       }
     }
+
     .user-name {
       line-height: 24px;
+
       .logout {
         align-self: center;
         height: 36px;
+
         button {
           margin-left: 5px;
         }

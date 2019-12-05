@@ -14,6 +14,7 @@ import {RegistrationDialogComponent} from '../shared/components/dialogs/registra
 import {LogService} from '../core/util/log.service';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-navbar',
@@ -34,6 +35,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
               private localStorageService: LocalStorageService,
               private projectStore: ProjectStore,
               private logService: LogService,
+              private router: Router,
               private projectService: ProjectService) {
 
   }
@@ -74,7 +76,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
         }
       }
     });
-
   }
 
   public selectProject(selectedOption: Project) {
