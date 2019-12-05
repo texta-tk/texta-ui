@@ -11,14 +11,16 @@ import {MatDialog} from '@angular/material/dialog';
 })
 export class AggregationResultsTreeComponent implements OnInit {
   @Input() dataSource;
-  treeControl = new NestedTreeControl<any>(node => node.buckets);
+  treeControl: NestedTreeControl<any> = new NestedTreeControl<any>(node => node.buckets);
   hasChild = (_: number, node: any) => !!node.buckets && node.buckets.length > 0;
   bucketAccessor = (x: any) => (x.buckets);
 
-  constructor(  public dialog: MatDialog) { }
+  constructor(public dialog: MatDialog) {
+  }
 
   ngOnInit() {
   }
+
   openDialog(val) {
     if (this.bucketAccessor(val)[0].key_as_string) {
       this.dialog.open(AggregationResultsDialogComponent, {
@@ -41,6 +43,7 @@ export class AggregationResultsTreeComponent implements OnInit {
       });
     }
   }
+
   formatDateData(buckets: { key_as_string: string, key: number, doc_count: number }[]) {
     const dateData = [];
     for (const element of buckets) {

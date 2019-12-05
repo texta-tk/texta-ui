@@ -23,7 +23,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   destroy$: Subject<boolean> = new Subject();
   @Output() drawerToggle = new EventEmitter<boolean>();
-  public resultsLength: number;
+  public totalCountLength;
   private currentElasticQuery: ElasticsearchQuery;
   isLoadingResults = false;
 
@@ -39,7 +39,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
 
     this.searchService.getSearch().pipe(takeUntil(this.destroy$)).subscribe((resp: Search) => {
       if (resp) {
-        this.resultsLength = resp.searchContent.count >= 10000 ? 10000 : resp.searchContent.count;
+        this.totalCountLength = resp.searchContent.count;
         this.displayedColumns = this.makeColumns(resp.searchContent.results);
         this.displayedColumns.sort((a, b) => 0 - (a < b ? 1 : -1));
         // first search || no search results
@@ -52,7 +52,6 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
         }
         this.tableData.data = resp.searchContent.results;
         if (this.currentElasticQuery) {
-          console.log(this.currentElasticQuery.from);
           this.paginator.pageIndex = this.currentElasticQuery.from / this.currentElasticQuery.size;
         }
       }

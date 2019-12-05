@@ -2,7 +2,7 @@
 
   <div class="aggregation-form" fxFlex fxLayout="column" *ngFor="let aggregation of aggregationList; let i = index;">
 
-    <div fxFlex fxLayoutAlign="end" *ngIf="!checkIfMainAggregation(i)">
+    <div fxFlex fxLayoutAlign="end" *ngIf="i !== 0">
       <button mat-icon-button aria-label="Close" (click)="removeAggregation(i)" class="mat-icon-button close-button">
         <mat-icon>close</mat-icon>
       </button>
@@ -12,7 +12,8 @@
       <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
                   [formControl]="aggregation.formControl">
         <mat-optgroup *ngFor="let group of projectFields" [label]="group.index">
-          <mat-option *ngFor="let fields of group.fields" [value]="fields">
+          <mat-option *ngFor="let fields of group.fields" [value]="fields"
+                      [disabled]="fields.type === 'date' && aggregation.formControl.value.type !== 'date' && dateAlreadySelected">
             {{fields.path}}
           </mat-option>
         </mat-optgroup>

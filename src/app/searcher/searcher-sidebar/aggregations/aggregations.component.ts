@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {startWith, switchMap, takeUntil} from 'rxjs/operators';
+import {pairwise, startWith, switchMap, takeUntil, takeWhile} from 'rxjs/operators';
 import {Field, Project, ProjectFact, ProjectField} from '../../../shared/types/Project';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {Subject} from 'rxjs';
@@ -13,6 +13,7 @@ import {LogService} from '../../../core/util/log.service';
 export interface AggregationObject {
   aggregation: any;
   formControl: FormControl;
+  formDestroy: Subject<boolean>;
 }
 
 @Component({
@@ -28,7 +29,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
   aggregationList: AggregationObject[] = [];
   searcherElasticSearchQuery: ElasticsearchQueryStructure;
   searchQueryExcluded = false;
-
+  dateAlreadySelected = false;
   aggregationAccessor = (x: any) => (x.aggs);
 
   constructor(private projectStore: ProjectStore,
@@ -40,9 +41,17 @@ export class AggregationsComponent implements OnInit, OnDestroy {
   }
 
   addNewAggregation() {
-    const frm = new FormControl();
-    frm.setValue(this.projectFields[0].fields[0]);
-    this.aggregationList.push({aggregation: {}, formControl: frm});
+    const form = new FormControl();
+    const formDestroy = new Subject<boolean>();
+    form.valueChanges.pipe(takeUntil(formDestroy), pairwise()).subscribe(([old, val]) => {
+      if (val && val.type === 'date') {
+        this.dateAlreadySelected = true;
+      } else if (old.type === 'date') {
+        this.dateAlreadySelected = false;
+      }
+    });
+    form.setValue(this.projectFields[0].fields[0]);
+    this.aggregationList.push({aggregation: {}, formControl: form, formDestroy});
   }
 
   ngOnInit() {
@@ -60,7 +69,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
       if (projectFields) {
         this.projectFields = ProjectField.cleanProjectFields(projectFields, ['fact'], ['keyword']);
         this.aggregationList = [];
-        this.aggregationList.push({aggregation: {}, formControl: new FormControl()});
+        this.addNewAggregation();
         this.aggregationList[0].formControl.setValue(this.projectFields[0].fields[0]);
       }
     });
@@ -159,7 +168,6 @@ export class AggregationsComponent implements OnInit, OnDestroy {
     return (val && (val.type === 'text' || val.type === 'fact'));
   }
 
-
   fieldTypeDate(val: Field) {
     return (val && (val.type === 'date'));
   }
@@ -169,11 +177,18 @@ export class AggregationsComponent implements OnInit, OnDestroy {
   }
 
   removeAggregation(index) {
+    this.aggregationList[index].formDestroy.next(true);
+    this.aggregationList[index].formDestroy.complete();
     this.aggregationList.splice(index, 1);
   }
 
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();
+    for (const aggregation of this.aggregationList) {
+      aggregation.formDestroy.next(true);
+      aggregation.formDestroy.complete();
+    }
+    this.aggregationList = [];
   }
 }

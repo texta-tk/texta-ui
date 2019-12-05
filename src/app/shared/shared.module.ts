@@ -16,7 +16,7 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatListModule} from '@angular/material/list';
 import {MatTableModule} from '@angular/material/table';
 import {MatMenuModule} from '@angular/material/menu';
-import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatPaginatorIntl, MatPaginatorModule} from '@angular/material/paginator';
 import {MatSortModule} from '@angular/material/sort';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatChipsModule} from '@angular/material/chips';
@@ -35,12 +35,14 @@ import {GenericTableComponent} from './components/generic-table/generic-table.co
 import {RegistrationDialogComponent} from './components/dialogs/registration/registration-dialog.component';
 import {ConfirmDialogComponent} from './components/dialogs/confirm-dialog/confirm-dialog.component';
 import {MatOptionSelectAllComponent} from './components/mat-option-select-all.component';
-import { QueryDialogComponent } from './components/dialogs/query-dialog/query-dialog.component';
-import { GenericDialogComponent } from './components/dialogs/generic-dialog/generic-dialog.component';
-import { InfiniteScrollModule } from 'ngx-infinite-scroll';
-import { SavedSearchAutocompleteComponent } from './components/saved-search-autocomplete/saved-search-autocomplete.component';
+import {QueryDialogComponent} from './components/dialogs/query-dialog/query-dialog.component';
+import {GenericDialogComponent} from './components/dialogs/generic-dialog/generic-dialog.component';
+import {InfiniteScrollModule} from 'ngx-infinite-scroll';
+import {SavedSearchAutocompleteComponent} from './components/saved-search-autocomplete/saved-search-autocomplete.component';
 import {LineChartModule} from '@swimlane/ngx-charts';
 import {MatTreeModule} from '@angular/material/tree';
+import {getRangePaginatorIntl} from './length-paginator-intl';
+
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
     RegistrationDialogComponent,
@@ -133,6 +135,9 @@ import {MatTreeModule} from '@angular/material/tree';
     QueryDialogComponent,
     GenericDialogComponent
   ],
+  providers: [
+    {provide: MatPaginatorIntl, useValue: getRangePaginatorIntl()}
+  ]
 })
 export class SharedModule {
 }
