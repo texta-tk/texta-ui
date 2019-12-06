@@ -14,7 +14,7 @@
                            [xAxis]="true"></ngx-charts-line-chart>
 
     <mat-tab-group mat-stretch-tabs *ngIf="aggregationData.treeData.length > 0">
-      <mat-tab *ngFor="let nestedAggregation of aggregationData.treeData" >
+      <mat-tab *ngFor="let nestedAggregation of aggregationData.treeData">
 
         <ng-template mat-tab-label>
           {{nestedAggregation.name}}
