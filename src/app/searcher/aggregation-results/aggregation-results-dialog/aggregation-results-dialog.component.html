@@ -5,7 +5,7 @@
   <ng-container *ngIf="aggData.length > 1">
 
     <ngx-charts-line-chart [results]="aggData"
-                           [yAxis]="true" [yAxisLabel]="'document count'" showYAxisLabel="true" [legend]="true"
+                           [yAxis]="true" [yAxisLabel]="'document count'" showYAxisLabel="true" [legend]="true" scheme="fire"
                            [xAxis]="true"></ngx-charts-line-chart>
   </ng-container>
   <ng-container *ngIf="aggData.length === 1">

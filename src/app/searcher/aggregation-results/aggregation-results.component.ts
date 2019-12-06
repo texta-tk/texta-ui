@@ -34,10 +34,10 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   constructor(public searchService: SearcherComponentService, @Inject(LOCALE_ID) private locale: string, public dialog: MatDialog) {
   }
 
-  formatDateData(buckets: { key_as_string: string, key: number, doc_count: number }[]) {
+  formatDateData(buckets: { key_as_string: string, key: number, doc_count: number }[]): { value: number, name: Date }[] {
     const dateData = [];
     for (const element of buckets) {
-      dateData.push({value: element.doc_count, name: element.key_as_string});
+      dateData.push({value: element.doc_count, name: new Date(element.key_as_string)});
     }
     return dateData;
   }
@@ -86,11 +86,11 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
             if (!rootAgg.histoBuckets) {
               rootAgg.histoBuckets = [];
             }
-            const seriesData = rootAgg.histoBuckets.find(series => series.name === bucket.key);
+            const seriesData = rootAgg.histoBuckets.find(series => series.name.toLowerCase().trim() === bucket.key.toLowerCase().trim());
             if (seriesData) {
               for (const element of this.bucketAccessor(innerBuckets)) {
-                seriesData.series.map(x => {
-                  if (x.name === element.key_as_string) {
+                seriesData.series.map(x => { // todo
+                  if (x.name.getTime() === new Date(element.key_as_string).getTime()) {
                     x.value += element.doc_count;
                   }
                 });

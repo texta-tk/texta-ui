@@ -47,7 +47,7 @@ export class AggregationResultsTreeComponent implements OnInit {
   formatDateData(buckets: { key_as_string: string, key: number, doc_count: number }[]) {
     const dateData = [];
     for (const element of buckets) {
-      dateData.push({value: element.doc_count, name: element.key_as_string});
+      dateData.push({value: element.doc_count, name: new Date(element.key_as_string)});
     }
     return dateData;
   }
