@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {pairwise, startWith, switchMap, takeUntil, takeWhile} from 'rxjs/operators';
+import {pairwise, startWith, switchMap, takeUntil} from 'rxjs/operators';
 import {Field, Project, ProjectFact, ProjectField} from '../../../shared/types/Project';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {Subject} from 'rxjs';
@@ -68,6 +68,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
     this.projectStore.getProjectFields().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectField[]) => {
       if (projectFields) {
         this.projectFields = ProjectField.cleanProjectFields(projectFields, ['fact'], ['keyword']);
+        this.dateAlreadySelected = false;
         this.aggregationList = [];
         this.addNewAggregation();
         this.aggregationList[0].formControl.setValue(this.projectFields[0].fields[0]);
@@ -177,6 +178,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
   }
 
   removeAggregation(index) {
+    this.dateAlreadySelected = this.aggregationList[index].formControl.value.type === 'date' ? false : this.dateAlreadySelected;
     this.aggregationList[index].formDestroy.next(true);
     this.aggregationList[index].formDestroy.complete();
     this.aggregationList.splice(index, 1);

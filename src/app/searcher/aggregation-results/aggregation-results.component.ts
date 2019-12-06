@@ -4,6 +4,8 @@ import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {MatTableDataSource} from '@angular/material';
 import {ArrayDataSource} from '@angular/cdk/collections';
+import {AggregationResultsDialogComponent} from './aggregation-results-dialog/aggregation-results-dialog.component';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-aggregation-results',
@@ -15,10 +17,10 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
 
   destroy$: Subject<boolean> = new Subject();
   aggregation: any;
-  aggregationData: { treeData?: { treeData?: ArrayDataSource<any>, name?: string }[], tableData?: { tableData?: MatTableDataSource<any>, name?: string }[], dateData?: any[] };
+  aggregationData: { treeData?: { treeData?: ArrayDataSource<any>, name?: string, histoBuckets?: any[] }[], tableData?: { tableData?: MatTableDataSource<any>, name?: string }[], dateData?: any[] };
   bucketAccessor = (x: any) => (x.buckets);
 
-  constructor(public searchService: SearcherComponentService, @Inject(LOCALE_ID) private locale: string) {
+  constructor(public searchService: SearcherComponentService, @Inject(LOCALE_ID) private locale: string, public dialog: MatDialog) {
   }
 
   formatDateData(buckets: { key_as_string: string, key: number, doc_count: number }[]) {
@@ -47,18 +49,20 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     if (aggregation && aggregation.aggs) {
       for (const aggregationKey of Object.keys(aggregation.aggs)) {
         // first object is aggregation name, get real agg type, todo refactor
-        const aggregationInner = aggregation.aggs[aggregationKey];
+        let aggregationInner = aggregation.aggs[aggregationKey];
         const termsAgg = Object.keys(aggregationInner).includes('agg_term');
         const factAgg = Object.keys(aggregationInner).includes('agg_fact');
         const histoAgg = Object.keys(aggregationInner).includes('agg_histo');
         if (termsAgg || aggregationKey === 'agg_term') { // agg term has no depth
-          const formattedData = this.formatAggregationDataStructure(
-            this.navigateNestedAggregationByKey(aggregationInner, 'agg_term'),
+
+          aggregationInner = this.navigateNestedAggregationByKey(aggregationInner, 'agg_term');
+          const formattedData = this.formatAggregationDataStructure(aggregationInner, aggregationInner,
             ['agg_histo', 'agg_fact', 'agg_fact_val', 'agg_term']);
           if (this.bucketAccessor(formattedData).length > 0) {
             if (formattedData.nested) {
               this.aggregationData.treeData.push({
                 name: aggregationKey === 'agg_term' ? 'aggregation_results' : aggregationKey,
+                histoBuckets: formattedData.histoBuckets ? formattedData.histoBuckets : [],
                 treeData: new ArrayDataSource(this.bucketAccessor(formattedData))
               });
             } else {
@@ -69,13 +73,14 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
             }
           }
         } else if (histoAgg) {
-          const formattedData = this.formatAggregationDataStructure(
-            this.navigateNestedAggregationByKey(aggregationInner, 'agg_histo'),
+          aggregationInner = this.navigateNestedAggregationByKey(aggregationInner, 'agg_histo');
+          const formattedData = this.formatAggregationDataStructure(aggregationInner, aggregationInner,
             ['agg_histo', 'agg_fact', 'agg_fact_val', 'agg_term']);
           if (this.bucketAccessor(formattedData).length > 0) {
             if (formattedData.nested) {
               this.aggregationData.treeData.push({
                 name: aggregationKey === 'agg_histo' ? 'aggregation_results' : aggregationKey,
+                histoBuckets: formattedData.histoBuckets ? formattedData.histoBuckets : [],
                 treeData: new ArrayDataSource(this.bucketAccessor(formattedData))
               });
             } else {
@@ -86,8 +91,8 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
             }
           }
         } else if (factAgg) {
-          const datas = this.formatAggregationDataStructure(
-            this.navigateNestedAggregationByKey(aggregationInner, 'agg_fact'),
+          aggregationInner = this.navigateNestedAggregationByKey(aggregationInner, 'agg_fact');
+          const datas = this.formatAggregationDataStructure(aggregationInner, aggregationInner,
             ['agg_histo', 'agg_fact', 'agg_fact_val', 'agg_term']);
           this.aggregationData.treeData.push({
             name: aggregationKey === 'agg_fact' ? 'aggregation_results' : aggregationKey,
@@ -98,25 +103,39 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     }
   }
 
-  formatAggregationDataStructure(aggregation, aggregationKeys: string[]) {
-    const upperLevelBuckets = aggregation;
-    upperLevelBuckets.nested = true;
-    let deepestLevel = true;
-    for (const bucket of this.bucketAccessor(upperLevelBuckets)) {
+  formatAggregationDataStructure(rootAggregation, aggregation, aggregationKeys: string[]) {
+    for (const bucket of this.bucketAccessor(aggregation)) {
       for (const key of aggregationKeys) {
         const innerBuckets = this.navigateNestedAggregationByKey(bucket, key);
         if (this.bucketAccessor(innerBuckets)) {
+          if (bucket.hasOwnProperty('agg_histo') && key === 'agg_histo') {
+            if (!rootAggregation.histoBuckets) {
+              rootAggregation.histoBuckets = [];
+            }
+            const seriesData = rootAggregation.histoBuckets.find(series => series.name === bucket.key);
+            if (seriesData) {
+              for (const element of this.bucketAccessor(innerBuckets)) {
+                seriesData.series.map(x => {
+                  if (x.name === element.key_as_string) {
+                    x.value += element.doc_count;
+                  }
+                });
+              }
+            } else {
+              rootAggregation.histoBuckets.push({name: bucket.key, series: this.formatDateData(this.bucketAccessor(innerBuckets))});
+            }
+          }
           // dont delete original data to avoid major GC
-          deepestLevel = false;
-          bucket.buckets = this.formatAggregationDataStructure(innerBuckets, aggregationKeys).buckets;
+          rootAggregation.nested = true;
+          bucket.buckets = this.formatAggregationDataStructure(rootAggregation, innerBuckets, aggregationKeys).buckets;
         }
       }
     }
-    if (deepestLevel) {
-      upperLevelBuckets.nested = false;
+    if (!rootAggregation.nested) {
+      rootAggregation.nested = false;
     }
 
-    return upperLevelBuckets;
+    return aggregation;
 
   }
 
@@ -128,6 +147,15 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     return aggregation;
   }
 
+  openUnifiedTimeline(buckets: any[]) {
+    this.dialog.open(AggregationResultsDialogComponent, {
+      data: {
+        aggData: buckets, type: 'histo'
+      },
+      height: '95%',
+      width: '90%',
+    });
+  }
 
   ngOnDestroy() {
     this.destroy$.next(true);

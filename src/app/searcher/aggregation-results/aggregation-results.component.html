@@ -14,7 +14,15 @@
                            [xAxis]="true"></ngx-charts-line-chart>
 
     <mat-tab-group mat-stretch-tabs *ngIf="aggregationData.treeData.length > 0">
-      <mat-tab *ngFor="let nestedAggregation of aggregationData.treeData" [label]="nestedAggregation.name">
+      <mat-tab *ngFor="let nestedAggregation of aggregationData.treeData" >
+
+        <ng-template mat-tab-label>
+          {{nestedAggregation.name}}
+          <button *ngIf="nestedAggregation.histoBuckets && nestedAggregation.histoBuckets.length > 0" mat-icon-button
+                  (click)="openUnifiedTimeline(nestedAggregation.histoBuckets)">
+            <mat-icon>assessment</mat-icon>
+          </button>
+        </ng-template>
         <app-aggregation-results-tree [dataSource]="nestedAggregation.treeData"></app-aggregation-results-tree>
       </mat-tab>
     </mat-tab-group>
