@@ -19,7 +19,7 @@ export class AggregationResultsDialogComponent implements OnInit {
   ngOnInit() {
     setTimeout(() => {
       this.type = this.data.type;
-      this.aggData = this.data.aggData;
+      this.aggData = this.data.aggData.slice(0, 150);
     }, 150);
   }
 
