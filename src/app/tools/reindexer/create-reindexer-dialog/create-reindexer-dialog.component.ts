@@ -1,15 +1,16 @@
-import { Component, OnInit } from '@angular/core';
-import { Reindexer } from 'src/app/shared/types/tools/Elastic';
-import { ReindexerService } from '../reindexer.service';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { ErrorStateMatcher, MatDialogRef } from '@angular/material';
-import { LiveErrorStateMatcher } from 'src/app/shared/CustomerErrorStateMatchers';
-import { ProjectField, Project, Field } from 'src/app/shared/types/Project';
-import { ProjectService } from 'src/app/core/projects/project.service';
-import { ProjectStore } from 'src/app/core/projects/project.store';
-import { take, mergeMap } from 'rxjs/operators';
-import { of, forkJoin } from 'rxjs';
-import { HttpErrorResponse } from '@angular/common/http';
+import {Component, OnInit} from '@angular/core';
+import {Reindexer} from 'src/app/shared/types/tools/Elastic';
+import {ReindexerService} from '../../../core/reindexer/reindexer.service';
+import {FormGroup, FormControl, Validators} from '@angular/forms';
+import {ErrorStateMatcher, MatDialogRef} from '@angular/material';
+import {LiveErrorStateMatcher} from 'src/app/shared/CustomerErrorStateMatchers';
+import {ProjectField, Project, Field} from 'src/app/shared/types/Project';
+import {ProjectService} from 'src/app/core/projects/project.service';
+import {ProjectStore} from 'src/app/core/projects/project.store';
+import {take, mergeMap} from 'rxjs/operators';
+import {of, forkJoin} from 'rxjs';
+import {HttpErrorResponse} from '@angular/common/http';
+import {LogService} from '../../../core/util/log.service';
 
 @Component({
   selector: 'app-create-reindexer-dialog',
@@ -36,24 +37,11 @@ export class CreateReindexerDialogComponent implements OnInit {
   constructor(private dialogRef: MatDialogRef<CreateReindexerDialogComponent>,
               private projectService: ProjectService,
               private reindexerService: ReindexerService,
+              private logService: LogService,
               private projectStore: ProjectStore) {
   }
 
   ngOnInit() {
-    this.projectStore.getCurrentProject().pipe(take(1), mergeMap(currentProject => {
-      if (currentProject) {
-        return this.projectService.getProjectFields(currentProject.id);
-      } else {
-        return of(null);
-      }
-    })).subscribe((resp: ProjectField[] | HttpErrorResponse) => {
-      if (resp && !(resp instanceof HttpErrorResponse)) {
-        console.log(resp);
-        this.projectFields = ProjectField.cleanProjectFields(resp);
-      } else if (resp instanceof HttpErrorResponse) {
-        this.dialogRef.close(resp);
-      }
-    });
 
     this.projectStore.getCurrentProject().pipe(take(1), mergeMap(currentProject => {
       if (currentProject) {
@@ -72,10 +60,14 @@ export class CreateReindexerDialogComponent implements OnInit {
     }) => {
       if (resp) {
         if (!(resp.projectFields instanceof HttpErrorResponse)) {
-          this.projectFields = resp.projectFields;
+          this.projectFields = ProjectField.cleanProjectFields(resp.projectFields);
+        } else {
+          this.logService.snackBarError(resp.projectFields, 2000);
         }
         if (!(resp.reindexerOptions instanceof HttpErrorResponse)) {
           this.reindexerOptions = resp.reindexerOptions;
+        } else {
+          this.logService.snackBarError(resp.reindexerOptions, 2000);
         }
       }
     });
