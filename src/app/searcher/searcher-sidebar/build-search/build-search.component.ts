@@ -65,6 +65,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     this.projectStore.getProjectFields().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectField[]) => {
       if (projectFields) {
         this.projectFields = projectFields;
+        ProjectField.sortTextaFactsAsFirstItem(this.projectFields);
         this.projectFieldsFiltered = projectFields;
       }
     });

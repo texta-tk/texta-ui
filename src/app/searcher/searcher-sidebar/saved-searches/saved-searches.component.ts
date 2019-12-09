@@ -17,7 +17,7 @@ import {SearcherComponentService} from '../../services/searcher-component.servic
 })
 export class SavedSearchesComponent implements OnInit, OnDestroy {
   @Output() savedSearchClick = new EventEmitter<number>(); // search object future todo
-  displayedColumns: string[] = ['select', 'name', 'url'];
+  displayedColumns: string[] = ['select', 'name'];
   dataSource: MatTableDataSource<SavedSearch>;
   destroyed$: Subject<boolean> = new Subject<boolean>();
   currentProject: Project;

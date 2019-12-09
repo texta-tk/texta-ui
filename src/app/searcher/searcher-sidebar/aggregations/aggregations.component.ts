@@ -68,6 +68,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
     this.projectStore.getProjectFields().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectField[]) => {
       if (projectFields) {
         this.projectFields = ProjectField.cleanProjectFields(projectFields, ['fact'], ['keyword']);
+        ProjectField.sortTextaFactsAsFirstItem(this.projectFields);
         this.dateAlreadySelected = false;
         this.aggregationList = [];
         this.addNewAggregation();

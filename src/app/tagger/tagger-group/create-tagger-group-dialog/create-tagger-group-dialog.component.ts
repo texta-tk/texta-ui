@@ -64,14 +64,14 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
             projectFields: this.projectService.getProjectFields(currentProject.id),
             embeddings: this.embeddingService.getEmbeddings(currentProject.id),
             projectFacts: this.projectService.getProjectFacts(currentProject.id)
-          }); 
+          });
       } else {
         return of(null);
       }
     })).subscribe((resp: {
       taggerOptions: TaggerOptions | HttpErrorResponse,
       projectFields: ProjectField[] | HttpErrorResponse,
-      embeddings: Embedding[] |  HttpErrorResponse,
+      embeddings: { count: number, results: Embedding[] } | HttpErrorResponse,
       projectFacts: ProjectFact[] | HttpErrorResponse,
     }) => {
       if (resp) {
@@ -83,7 +83,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
           this.projectFacts = resp.projectFacts;
         }
         if (!(resp.embeddings instanceof HttpErrorResponse)) {
-          this.embeddings = resp.embeddings;
+          this.embeddings = resp.embeddings.results;
         }
         if (!(resp.projectFields instanceof HttpErrorResponse)) {
           this.projectFields = ProjectField.cleanProjectFields(resp.projectFields);

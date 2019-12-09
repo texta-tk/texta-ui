@@ -36,6 +36,13 @@ export class ProjectField {
   index: string;
   fields: Field[];
 
+  static sortTextaFactsAsFirstItem(fields: ProjectField[]): ProjectField[] {
+    return fields.map((field: ProjectField) => {
+      field.fields.sort((x, y) => (x.type === 'fact' ? -1 : y.type === 'fact' ? 1 : 0));
+      return field;
+    });
+  }
+
   static isProjectFields(object): object is ProjectField | ProjectField[] {
     if (Array.isArray(object) && object.length > 0) {
       return (
@@ -51,7 +58,7 @@ export class ProjectField {
   }
 
   static cleanProjectFields(fields: ProjectField[], whiteList?: string[], blackList?: string[]): ProjectField[] {
-    const filteredField: ProjectField[] = []
+    const filteredField: ProjectField[] = [];
     const whiteListTypes = whiteList && whiteList.length > 0 ? whiteList : null;
     const blackListTypes = blackList && blackList.length > 0 ? blackList : null;
     for (const index of fields) {
