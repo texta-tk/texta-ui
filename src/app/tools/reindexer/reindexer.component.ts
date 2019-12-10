@@ -35,8 +35,8 @@ export class ReindexerComponent implements OnInit, OnDestroy {
 
   destroyed$: Subject<boolean> = new Subject<boolean>();
 
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatSort, {static: true}) sort: MatSort;
+  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   filteredSubject = new Subject();
   // For custom filtering, such as text search in description
   inputFilterQuery = '';
@@ -54,7 +54,6 @@ export class ReindexerComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
-
     // check for updates after 30s every 30s
     timer(30000, 30000).pipe(takeUntil(this.destroyed$),
       switchMap(_ => this.reindexerService.getReindexers(
@@ -113,7 +112,7 @@ export class ReindexerComponent implements OnInit, OnDestroy {
 
   openCreateDialog() {
     const dialogRef = this.dialog.open(CreateReindexerDialogComponent, {
-      maxHeight: '620px',
+      maxHeight: '650px',
       width: '700px',
     });
     dialogRef.afterClosed().subscribe((resp: Reindexer | HttpErrorResponse) => {

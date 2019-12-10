@@ -42,10 +42,22 @@ tr.element-row:not(.expanded-row):active {
   display: flex;
   flex-direction: column;
 }
+
 .mat-column-Modify {
   width: 60px;
   text-align: center;
 }
+
+.mat-column {
+  min-width: 80px;
+}
+.mat-column-fields{
+  max-width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .mat-column-Task {
   max-width: 160px;
 }

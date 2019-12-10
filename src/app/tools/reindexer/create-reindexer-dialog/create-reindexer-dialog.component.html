@@ -18,10 +18,11 @@
       </mat-error>
     </mat-form-field>
 
-    
+
     <mat-form-field>
       <mat-label>Indices</mat-label>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="indicesFormControl" multiple required>
+      <mat-select (selectionChange)="onIndexSelected($event)" panelClass="select-panel-reveal-input"
+                  [disableOptionCentering]="true" formControlName="indicesFormControl" multiple required>
         <mat-option *ngFor="let index of indices" [value]="index">
           {{index}}
         </mat-option>
@@ -31,8 +32,10 @@
 
     <mat-form-field>
       <mat-label>Select Fields</mat-label>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="fieldsFormControl" multiple>
-        <mat-optgroup *ngFor="let group of projectFields" [label]="group.index">
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
+                  formControlName="fieldsFormControl" multiple>
+        <app-mat-option-select-all></app-mat-option-select-all>
+        <mat-optgroup *ngFor="let group of filteredProjectFields" [label]="group.index">
           <mat-option *ngFor="let fields of group.fields" [value]="fields">
             {{fields.path}}
           </mat-option>
@@ -46,16 +49,18 @@
     <mat-form-field>
       <input matInput placeholder="Field types" autocomplete="off" formControlName="fieldTypesFormControl"
              [errorStateMatcher]="matcher">
-             <mat-hint>For example: [{{'{'}}'"path": "comment_text", "field_type": "long", "new_path_name": "CHANGED_NAME"{{'}'}}]</mat-hint>
+      <mat-hint>For example: [{{'{'}}'"path": "comment_text", "field_type": "long", "new_path_name":
+        "CHANGED_NAME"{{'}'}}]
+      </mat-hint>
     </mat-form-field>
 
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"></app-saved-search-autocomplete>
 
 
     <mat-form-field>
-      <input matInput placeholder="Random subset size" autocomplete="off" formControlName="randomSizeFormControl"
+      <input matInput type="text" pattern="[1-9]\d*" placeholder="Random subset size" autocomplete="off" formControlName="randomSizeFormControl"
              [errorStateMatcher]="matcher">
-             <mat-hint>If added, selects a random subset from all samples</mat-hint>
+      <mat-hint>If added, selects a random subset from all samples</mat-hint>
     </mat-form-field>
 
 

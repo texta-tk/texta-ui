@@ -11,6 +11,7 @@ import {take, mergeMap} from 'rxjs/operators';
 import {of, forkJoin} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../../../core/util/log.service';
+import {MatSelectChange} from '@angular/material/select';
 
 @Component({
   selector: 'app-create-reindexer-dialog',
@@ -23,7 +24,7 @@ export class CreateReindexerDialogComponent implements OnInit {
     descriptionFormControl: new FormControl('', [Validators.required]),
     newNameFormControl: new FormControl('', [Validators.required]),
     randomSizeFormControl: new FormControl(''),
-    fieldsFormControl: new FormControl([]),
+    fieldsFormControl: new FormControl({value: [], disabled: true}),
     fieldTypesFormControl: new FormControl(''),
     indicesFormControl: new FormControl([], [Validators.required]),
   });
@@ -31,6 +32,7 @@ export class CreateReindexerDialogComponent implements OnInit {
   query = this.defaultQuery;
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   projectFields: ProjectField[];
+  filteredProjectFields: ProjectField[] = [];
   indices: string[];
   reindexerOptions: any;
 
@@ -77,9 +79,21 @@ export class CreateReindexerDialogComponent implements OnInit {
     this.query = query ? query : this.defaultQuery;
   }
 
+  onIndexSelected(val: MatSelectChange) {
+    this.filteredProjectFields = this.projectFields.filter(x => val.value.includes(x.index));
+    if (this.filteredProjectFields.length > 0) {
+      this.reindexerForm.get('fieldsFormControl').reset({
+        value: [].concat.apply([], this.filteredProjectFields.map(x => x.fields)),
+        disabled: false
+      });
+    } else {
+      this.reindexerForm.get('fieldsFormControl').disable();
+    }
+  }
+
   onSubmit(formData) {
     // temp
-    const fieldsToSend = this.generateFieldsFormat(formData.fieldsFormControl);
+    const fieldsToSend = formData.fieldsFormControl.map(x => x.path);
     const body = {
       description: formData.descriptionFormControl,
       new_index: formData.newNameFormControl,
@@ -87,7 +101,7 @@ export class CreateReindexerDialogComponent implements OnInit {
       field_type: formData.fieldTypesFormControl ? JSON.parse(formData.fieldTypesFormControl) : [],
       indices: formData.indicesFormControl,
     };
-    if (formData.randomSizeFormControl.value) {
+    if (formData.randomSizeFormControl) {
       body['random_size'] = formData.randomSizeFormControl;
     }
 
@@ -109,15 +123,6 @@ export class CreateReindexerDialogComponent implements OnInit {
       }
     });
   }
-
-  generateFieldsFormat(fields: Field[]) {
-    const output = [];
-    for (const field of fields) {
-      output.push(field.path);
-    }
-    return output;
-  }
-
 
   closeDialog(): void {
     this.dialogRef.close();
