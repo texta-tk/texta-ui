@@ -12,7 +12,8 @@
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"></app-saved-search-autocomplete>
     <mat-form-field>
       <mat-label>Select Fields</mat-label>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="fieldsFormControl" multiple required>
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
+                  formControlName="fieldsFormControl" multiple required>
         <mat-optgroup *ngFor="let group of projectFields" [label]="group.index">
           <mat-option *ngFor="let fields of group.fields" [value]="fields">
             {{fields.path}}
@@ -24,10 +25,12 @@
       </mat-error>
     </mat-form-field>
     <mat-form-field>
-      <input matInput type="number"  step="50" placeholder="Number of Dimensions" formControlName="dimensionsFormControl">
+      <input matInput type="number" pattern="[1-9]\d*" step="50" placeholder="Number of Dimensions"
+             formControlName="dimensionsFormControl">
     </mat-form-field>
     <mat-form-field>
-      <input matInput type="number"  step="5" placeholder="Minimum frequency" formControlName="frequencyFormControl">
+      <input matInput type="number" pattern="[1-9]\d*" step="5" placeholder="Minimum frequency"
+             formControlName="frequencyFormControl">
     </mat-form-field>
     <div class="flex-col">
       <div class="flex-row">

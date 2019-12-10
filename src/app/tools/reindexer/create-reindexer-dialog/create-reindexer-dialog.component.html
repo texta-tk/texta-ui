@@ -58,7 +58,7 @@
 
 
     <mat-form-field>
-      <input matInput type="text" pattern="[1-9]\d*" placeholder="Random subset size" autocomplete="off" formControlName="randomSizeFormControl"
+      <input matInput type="number" pattern="[1-9]\d*" placeholder="Random subset size" autocomplete="off" formControlName="randomSizeFormControl"
              [errorStateMatcher]="matcher">
       <mat-hint>If added, selects a random subset from all samples</mat-hint>
     </mat-form-field>

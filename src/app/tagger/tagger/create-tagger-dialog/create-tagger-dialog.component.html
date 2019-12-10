@@ -60,10 +60,10 @@
     </mat-form-field>
 
     <mat-form-field>
-      <input matInput type="number" step="1000" placeholder="Maximum sample size" formControlName="sampleSizeFormControl">
+      <input matInput type="number" pattern="[1-9]\d*" step="1000" placeholder="Maximum sample size" formControlName="sampleSizeFormControl">
     </mat-form-field>
     <mat-form-field>
-      <input matInput type="number" step="0.1" placeholder="Negative Multiplier" formControlName="negativeMultiplierFormControl">
+      <input matInput type="number" pattern="([0-9]*|[0-9]*[.]?)\d*" step="0.1" placeholder="Negative Multiplier" formControlName="negativeMultiplierFormControl">
     </mat-form-field>
     <div class="flex-col">
       <div class="flex-row">
