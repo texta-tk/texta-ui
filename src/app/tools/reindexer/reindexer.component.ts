@@ -63,9 +63,9 @@ export class ReindexerComponent implements OnInit, OnDestroy {
       .subscribe((resp: { count: number, results: Reindexer[] } | HttpErrorResponse) => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
           if (resp.results.length > 0) {
-            resp.results.map(embedding => {
-              const indx = this.tableData.data.findIndex(x => x.id === embedding.id);
-              this.tableData.data[indx].task = embedding.task;
+            resp.results.map(reindexer => {
+              const indx = this.tableData.data.findIndex(x => x.id === reindexer.id);
+              this.tableData.data[indx].task = reindexer.task;
             });
           }
         }
@@ -140,15 +140,15 @@ export class ReindexerComponent implements OnInit, OnDestroy {
   }
 
 
-  onDelete(embedding: Reindexer, index: number) {
+  onDelete(reindexer: Reindexer, index: number) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {confirmText: 'Delete', mainText: 'Are you sure you want to delete this Reindexer?'}
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.reindexerService.deleteReindex(this.currentProject.id, embedding.id).subscribe(() => {
-          this.logService.snackBarMessage(`Reindexer ${embedding.id}: ${embedding.description} deleted`, 2000);
+        this.reindexerService.deleteReindex(reindexer.id, this.currentProject.id).subscribe(() => {
+          this.logService.snackBarMessage(`Reindexer ${reindexer.id}: ${reindexer.description} deleted`, 2000);
           this.tableData.data.splice(index, 1);
           this.tableData.data = [...this.tableData.data];
         });
@@ -168,7 +168,7 @@ export class ReindexerComponent implements OnInit, OnDestroy {
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
           // Delete selected elements
-          const idsToDelete = this.selectedRows.selected.map((tagger: Reindexer) => tagger.id);
+          const idsToDelete = this.selectedRows.selected.map((reindexer: Reindexer) => reindexer.id);
           const body = {ids: idsToDelete};
           // Refresh elements
           this.reindexerService.bulkDeleteReindexers(this.currentProject.id, body).subscribe(() => {
@@ -181,8 +181,8 @@ export class ReindexerComponent implements OnInit, OnDestroy {
   }
 
   removeSelectedRows() {
-    this.selectedRows.selected.forEach((selectedTagger: Reindexer) => {
-      const index: number = this.tableData.data.findIndex(tagger => tagger.id === selectedTagger.id);
+    this.selectedRows.selected.forEach((selectedReindexer: Reindexer) => {
+      const index: number = this.tableData.data.findIndex(reindexer => reindexer.id === selectedReindexer.id);
       this.tableData.data.splice(index, 1);
       this.tableData.data = [...this.tableData.data];
     });
@@ -208,7 +208,7 @@ export class ReindexerComponent implements OnInit, OnDestroy {
   filterQueriesToString() {
     this.inputFilterQuery = '';
     for (const field in this.filteringValues) {
-      this.inputFilterQuery += `&${field}=${this.filteringValues[field]}`
+      this.inputFilterQuery += `&${field}=${this.filteringValues[field]}`;
     }
   }
 }
