@@ -42,6 +42,7 @@ import {SavedSearchAutocompleteComponent} from './components/saved-search-autoco
 import {LineChartModule} from '@swimlane/ngx-charts';
 import {MatTreeModule} from '@angular/material/tree';
 import {getRangePaginatorIntl} from './length-paginator-intl';
+import {MaterialFileInputModule} from 'ngx-material-file-input';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
@@ -86,6 +87,7 @@ import {getRangePaginatorIntl} from './length-paginator-intl';
     MatTreeModule,
     LineChartModule,
     InfiniteScrollModule,
+    MaterialFileInputModule,
   ],
   exports: [
     CommonModule,
@@ -127,6 +129,7 @@ import {getRangePaginatorIntl} from './length-paginator-intl';
 
     LineChartModule,
     InfiniteScrollModule,
+    MaterialFileInputModule,
   ],
   entryComponents: [
     LoginDialogComponent,

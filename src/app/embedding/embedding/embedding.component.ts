@@ -1,19 +1,19 @@
-import { Component, OnDestroy, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { EmbeddingsService } from '../../core/embeddings/embeddings.service';
-import { HttpErrorResponse } from '@angular/common/http';
-import { Embedding } from '../../shared/types/tasks/Embedding';
-import { ProjectStore } from '../../core/projects/project.store';
-import { Project } from '../../shared/types/Project';
-import { switchMap, takeUntil, startWith, debounceTime } from 'rxjs/operators';
-import { Subscription, timer, Subject, merge } from 'rxjs';
-import { MatDialog, MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
-import { CreateEmbeddingDialogComponent } from './create-embedding-dialog/create-embedding-dialog.component';
-import { LogService } from '../../core/util/log.service';
-import { animate, state, style, transition, trigger } from '@angular/animations';
-import { PhraseDialogComponent } from '../phrase-dialog/phrase-dialog.component';
-import { SelectionModel } from '@angular/cdk/collections';
-import { QueryDialogComponent } from 'src/app/shared/components/dialogs/query-dialog/query-dialog.component';
-import { ConfirmDialogComponent } from 'src/app/shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {EmbeddingsService} from '../../core/embeddings/embeddings.service';
+import {HttpErrorResponse} from '@angular/common/http';
+import {Embedding} from '../../shared/types/tasks/Embedding';
+import {ProjectStore} from '../../core/projects/project.store';
+import {Project} from '../../shared/types/Project';
+import {debounceTime, startWith, switchMap, takeUntil} from 'rxjs/operators';
+import {merge, Subject, timer} from 'rxjs';
+import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
+import {CreateEmbeddingDialogComponent} from './create-embedding-dialog/create-embedding-dialog.component';
+import {LogService} from '../../core/util/log.service';
+import {animate, state, style, transition, trigger} from '@angular/animations';
+import {PhraseDialogComponent} from '../phrase-dialog/phrase-dialog.component';
+import {SelectionModel} from '@angular/cdk/collections';
+import {QueryDialogComponent} from 'src/app/shared/components/dialogs/query-dialog/query-dialog.component';
+import {ConfirmDialogComponent} from 'src/app/shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-embedding',
@@ -21,8 +21,8 @@ import { ConfirmDialogComponent } from 'src/app/shared/components/dialogs/confir
   styleUrls: ['./embedding.component.scss'],
   animations: [
     trigger('detailExpand', [
-      state('collapsed', style({ height: '0px', minHeight: '0' })),
-      state('expanded', style({ height: '*' })),
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ])]
 })
@@ -30,7 +30,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: Embedding | null;
   public tableData: MatTableDataSource<Embedding> = new MatTableDataSource();
   public displayedColumns = ['select', 'id', 'author__username', 'description',
-   'fields', 'task__time_started', 'task__time_completed', 'num_dims', 'min_freq', 'vocab_size',  'task__status', 'Modify'];
+    'fields', 'task__time_started', 'task__time_completed', 'num_dims', 'min_freq', 'vocab_size', 'task__status', 'Modify'];
   selectedRows = new SelectionModel<Embedding>(true, []);
   public isLoadingResults = true;
 
@@ -41,16 +41,16 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
   filteredSubject = new Subject();
   // For custom filtering, such as text search in description
   inputFilterQuery = '';
-filteringValues = {}
+  filteringValues = {}
 
 
   currentProject: Project;
   resultsLength: number;
 
   constructor(private projectStore: ProjectStore,
-    private embeddingsService: EmbeddingsService,
-    public dialog: MatDialog,
-    private logService: LogService) {
+              private embeddingsService: EmbeddingsService,
+              public dialog: MatDialog,
+              private logService: LogService) {
   }
 
   ngOnInit() {
@@ -94,16 +94,16 @@ filteringValues = {}
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
     merge(this.sort.sortChange, this.paginator.page, this.filteredSubject)
-    .pipe(debounceTime(250), startWith({}), switchMap(() => {
-      this.isLoadingResults = true;
+      .pipe(debounceTime(250), startWith({}), switchMap(() => {
+        this.isLoadingResults = true;
 
-      const sortDirection = this.sort.direction === 'desc' ? '-' : ''
-      return this.embeddingsService.getEmbeddings(
-        this.currentProject.id,
-        // Add 1 to to index because Material paginator starts from 0 and DRF paginator from 1
-        `${this.inputFilterQuery}&ordering=${sortDirection}${this.sort.active}&page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`
-      );
-    })).subscribe((data: { count: number, results: Embedding[] }) => {
+        const sortDirection = this.sort.direction === 'desc' ? '-' : ''
+        return this.embeddingsService.getEmbeddings(
+          this.currentProject.id,
+          // Add 1 to to index because Material paginator starts from 0 and DRF paginator from 1
+          `${this.inputFilterQuery}&ordering=${sortDirection}${this.sort.active}&page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`
+        );
+      })).subscribe((data: { count: number, results: Embedding[] }) => {
       // Flip flag to show that loading has finished.
       this.isLoadingResults = false;
       this.resultsLength = data.count;
@@ -113,7 +113,7 @@ filteringValues = {}
 
   phrase(embedding: Embedding) {
     const dialogRef = this.dialog.open(PhraseDialogComponent, {
-      data: { embeddingId: embedding.id, currentProjectId: this.currentProject.id },
+      data: {embeddingId: embedding.id, currentProjectId: this.currentProject.id},
       maxHeight: '665px',
       width: '700px',
     });
@@ -154,14 +154,14 @@ filteringValues = {}
       this.tableData.data.forEach(row => this.selectedRows.select(row));
   }
 
-  
+
   onDelete(embedding: Embedding, index: number) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: { confirmText: 'Delete', mainText: 'Are you sure you want to delete this Embedding?' }
+      data: {confirmText: 'Delete', mainText: 'Are you sure you want to delete this Embedding?'}
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if(result) {
+      if (result) {
         this.embeddingsService.deleteEmbedding(this.currentProject.id, embedding.id).subscribe(() => {
           this.logService.snackBarMessage(`Embedding ${embedding.id}: ${embedding.description} deleted`, 2000);
           this.tableData.data.splice(index, 1);
@@ -174,14 +174,14 @@ filteringValues = {}
   onDeleteAllSelected() {
     if (this.selectedRows.selected.length > 0) {
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-        data: { confirmText: 'Delete', mainText: `Are you sure you want to delete ${this.selectedRows.select.length} Embeddings?` }
+        data: {confirmText: 'Delete', mainText: `Are you sure you want to delete ${this.selectedRows.selected.length} Embeddings?`}
       });
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
           // Delete selected taggers
           const idsToDelete = this.selectedRows.selected.map((tagger: Embedding) => tagger.id);
-          const body = { ids: idsToDelete };
+          const body = {ids: idsToDelete};
           // Refresh taggers
           this.embeddingsService.bulkDeleteEmbeddings(this.currentProject.id, body).subscribe(() => {
             this.logService.snackBarMessage(`${this.selectedRows.selected.length} Embeddings deleted`, 2000);
@@ -204,7 +204,7 @@ filteringValues = {}
 
   openQueryDialog(query: string) {
     const dialogRef = this.dialog.open(QueryDialogComponent, {
-      data: { query },
+      data: {query},
       maxHeight: '665px',
       width: '700px',
     });

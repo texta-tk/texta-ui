@@ -6,24 +6,30 @@ import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/mat
 import {merge, Subject, timer} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../../core/util/log.service';
-import {Reindexer} from '../../shared/types/tools/Elastic';
-import {QueryDialogComponent} from '../../shared/components/dialogs/query-dialog/query-dialog.component';
-import {ReindexerService} from '../../core/tools/reindexer/reindexer.service';
+import {DatasetImporter} from '../../shared/types/tools/Elastic';
 import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {SelectionModel} from '@angular/cdk/collections';
 import {CreateDatasetDialogComponent} from './create-dataset-dialog/create-dataset-dialog.component';
+import {DatasetImporterService} from '../../core/tools/dataset-importer/dataset-importer.service';
+import {animate, state, style, transition, trigger} from '@angular/animations';
 
 @Component({
   selector: 'app-dataset-importer',
   templateUrl: './dataset-importer.component.html',
-  styleUrls: ['./dataset-importer.component.scss']
+  styleUrls: ['./dataset-importer.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ])]
 })
 export class DatasetImporterComponent implements OnInit, OnDestroy {
-  expandedElement: Reindexer | null;
-  public tableData: MatTableDataSource<Reindexer> = new MatTableDataSource();
-  public displayedColumns = ['select', 'id', 'author__username', 'description', 'new_index', 'fields', 'random_size',
-    'show_query', 'task__time_started', 'task__time_completed', 'task__status', 'Modify'];
-  selectedRows = new SelectionModel<Reindexer>(true, []);
+  expandedElement: DatasetImporter | null;
+  public tableData: MatTableDataSource<DatasetImporter> = new MatTableDataSource();
+  public displayedColumns = ['select', 'id', 'author__username', 'description', 'index',  'num_documents',
+    'num_documents_sucess', 'task__time_started', 'task__time_completed', 'task__status', 'Modify'];
+  selectedRows = new SelectionModel<DatasetImporter>(true, []);
   public isLoadingResults = true;
 
   destroyed$: Subject<boolean> = new Subject<boolean>();
@@ -39,7 +45,7 @@ export class DatasetImporterComponent implements OnInit, OnDestroy {
   resultsLength: number;
 
   constructor(private projectStore: ProjectStore,
-              private reindexerService: ReindexerService,
+              private importerService: DatasetImporterService,
               public dialog: MatDialog,
               private logService: LogService) {
   }
@@ -49,16 +55,16 @@ export class DatasetImporterComponent implements OnInit, OnDestroy {
     this.tableData.paginator = this.paginator;
     // check for updates after 30s every 30s
     timer(30000, 30000).pipe(takeUntil(this.destroyed$),
-      switchMap(_ => this.reindexerService.getReindexers(
+      switchMap(_ => this.importerService.getIndices(
         this.currentProject.id,
         `page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`
       )))
-      .subscribe((resp: { count: number, results: Reindexer[] } | HttpErrorResponse) => {
+      .subscribe((resp: { count: number, results: DatasetImporter[] } | HttpErrorResponse) => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
           if (resp.results.length > 0) {
-            resp.results.map(reindexer => {
-              const indx = this.tableData.data.findIndex(x => x.id === reindexer.id);
-              this.tableData.data[indx].task = reindexer.task;
+            resp.results.map(dataset => {
+              const indx = this.tableData.data.findIndex(x => x.id === dataset.id);
+              this.tableData.data[indx].task = dataset.task;
             });
           }
         }
@@ -85,12 +91,12 @@ export class DatasetImporterComponent implements OnInit, OnDestroy {
         this.isLoadingResults = true;
         const sortDirection = this.sort.direction === 'desc' ? '-' : '';
 
-        return this.reindexerService.getReindexers(
+        return this.importerService.getIndices(
           this.currentProject.id,
           // Add 1 to to index because Material paginator starts from 0 and DRF paginator from 1
           `${this.inputFilterQuery}&ordering=${sortDirection}${this.sort.active}&page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`
         );
-      })).subscribe((data: { count: number, results: Reindexer[] }) => {
+      })).subscribe((data: { count: number, results: DatasetImporter[] }) => {
       // Flip flag to show that loading has finished.
       this.isLoadingResults = false;
       this.resultsLength = data.count;
@@ -108,7 +114,7 @@ export class DatasetImporterComponent implements OnInit, OnDestroy {
       maxHeight: '650px',
       width: '700px',
     });
-    dialogRef.afterClosed().subscribe((resp: Reindexer | HttpErrorResponse) => {
+    dialogRef.afterClosed().subscribe((resp: DatasetImporter | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.tableData.data = [...this.tableData.data, resp];
       } else if (resp instanceof HttpErrorResponse) {
@@ -133,15 +139,15 @@ export class DatasetImporterComponent implements OnInit, OnDestroy {
   }
 
 
-  onDelete(reindexer: Reindexer, index: number) {
+  onDelete(dataset: DatasetImporter, index: number) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: {confirmText: 'Delete', mainText: 'Are you sure you want to delete this Reindexer?'}
+      data: {confirmText: 'Delete', mainText: 'Are you sure you want to delete this Dataset?'}
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.reindexerService.deleteReindex(reindexer.id, this.currentProject.id).subscribe(() => {
-          this.logService.snackBarMessage(`Reindexer ${reindexer.id}: ${reindexer.description} deleted`, 2000);
+        this.importerService.deleteIndex(dataset.id, this.currentProject.id).subscribe(() => {
+          this.logService.snackBarMessage(`Dataset ${dataset.id}: ${dataset.description} deleted`, 2000);
           this.tableData.data.splice(index, 1);
           this.tableData.data = [...this.tableData.data];
         });
@@ -154,18 +160,18 @@ export class DatasetImporterComponent implements OnInit, OnDestroy {
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         data: {
           confirmText: 'Delete',
-          mainText: `Are you sure you want to delete ${this.selectedRows.select.length} Reindexers?`
+          mainText: `Are you sure you want to delete ${this.selectedRows.selected.length} Datasets?`
         }
       });
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
           // Delete selected elements
-          const idsToDelete = this.selectedRows.selected.map((reindexer: Reindexer) => reindexer.id);
+          const idsToDelete = this.selectedRows.selected.map((dataset: DatasetImporter) => dataset.id);
           const body = {ids: idsToDelete};
           // Refresh elements
-          this.reindexerService.bulkDeleteReindexers(this.currentProject.id, body).subscribe(() => {
-            this.logService.snackBarMessage(`${this.selectedRows.selected.length} Reindexers deleted`, 2000);
+          this.importerService.bulkDeleteIndices(this.currentProject.id, body).subscribe(() => {
+            this.logService.snackBarMessage(`${this.selectedRows.selected.length} Datasets deleted`, 2000);
             this.removeSelectedRows();
           });
         }
@@ -174,21 +180,12 @@ export class DatasetImporterComponent implements OnInit, OnDestroy {
   }
 
   removeSelectedRows() {
-    this.selectedRows.selected.forEach((selectedReindexer: Reindexer) => {
-      const index: number = this.tableData.data.findIndex(reindexer => reindexer.id === selectedReindexer.id);
+    this.selectedRows.selected.forEach((selectedDataset: DatasetImporter) => {
+      const index: number = this.tableData.data.findIndex(x => x.id === selectedDataset.id);
       this.tableData.data.splice(index, 1);
       this.tableData.data = [...this.tableData.data];
     });
     this.selectedRows.clear();
-  }
-
-
-  openQueryDialog(query: string) {
-    const dialogRef = this.dialog.open(QueryDialogComponent, {
-      data: {query},
-      maxHeight: '665px',
-      width: '700px',
-    });
   }
 
 

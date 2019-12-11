@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>New Reindexer</h1>
+<h1 mat-dialog-title>New Dataset</h1>
 <div mat-dialog-content>
   <form class="flex-col" [formGroup]="importerForm" (ngSubmit)="onSubmit(importerForm?.value)">
     <mat-form-field>
@@ -10,37 +10,52 @@
       </mat-error>
     </mat-form-field>
     <mat-form-field>
-      <input matInput placeholder="New index name" autocomplete="off" formControlName="newNameFormControl"
+      <input matInput placeholder="Dataset name" autocomplete="off" formControlName="newNameFormControl"
              [errorStateMatcher]="matcher" required>
 
       <mat-error *ngIf="importerForm?.get('newNameFormControl').hasError('required')">
-        New index name is <strong>required</strong>
+        Dataset name is <strong>required</strong>
       </mat-error>
     </mat-form-field>
 
 
     <mat-form-field>
-      <input matInput placeholder="Separator" autocomplete="off" formControlName="separatorFormControl"
-             [errorStateMatcher]="matcher" required>
-
-      <mat-error *ngIf="importerForm?.get('separatorFormControl').hasError('required')">
-        New index name is <strong>required</strong>
-      </mat-error>
+      <input matInput placeholder="Separator" autocomplete="off" formControlName="separatorFormControl">
       <mat-hint>CSV only
       </mat-hint>
     </mat-form-field>
 
-
+    <mat-form-field>
+      <ngx-mat-file-input formControlName="fileFormControl" placeholder="File" valuePlaceholder="No file selected"
+                          [accept]="'.xls,.xlsx,.csv,.jl'"
+                          required></ngx-mat-file-input>
+      <mat-icon matSuffix>folder</mat-icon>
+      <mat-error *ngIf="importerForm.get('fileFormControl').hasError('required')">
+        Please select a file
+      </mat-error>
+      <mat-error *ngIf="importerForm.get('fileFormControl').hasError('maxContentSize')">
+        The total size must not exceed {{importerForm.get('fileFormControl')?.getError('maxContentSize').maxSize |
+        byteFormat}} ({{importerForm.get('fileFormControl')?.getError('maxContentSize').actualSize
+        | byteFormat}}).
+      </mat-error>
+      <mat-hint>
+        Supported file types: CSV, JSON-LINES, EXCEL
+      </mat-hint>
+    </mat-form-field>
     <div class="flex-col">
+      <div *ngIf="uploadProgress > 0" class="m-top-5">
+        <mat-progress-bar mode="determinate" [value]="uploadProgress"></mat-progress-bar>
+        <small>{{uploadedBytes | byteFormat}} of {{totalBytes | byteFormat}}</small>
+      </div>
       <div class="flex-row">
         <div class="flex-item-left">
-          <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Close</button>
+          <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Cancel</button>
         </div>
         <div class="flex-item-right">
-          <button type="submit" [disabled]="!importerForm?.valid" mat-button>Create</button>
+          <button type="submit" [disabled]="!importerForm?.valid || uploadedBytes !== totalBytes" mat-button>Create
+          </button>
         </div>
       </div>
-
     </div>
 
 

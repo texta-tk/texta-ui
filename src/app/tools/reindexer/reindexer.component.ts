@@ -1,18 +1,18 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Reindexer} from 'src/app/shared/types/tools/Elastic';
-import {MatTableDataSource, MatSort, MatPaginator, MatDialog} from '@angular/material';
+import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import {SelectionModel} from '@angular/cdk/collections';
-import {Subject, timer, merge} from 'rxjs';
+import {merge, Subject, timer} from 'rxjs';
 import {Project} from 'src/app/shared/types/Project';
 import {ProjectStore} from 'src/app/core/projects/project.store';
 import {LogService} from 'src/app/core/util/log.service';
-import {takeUntil, switchMap, startWith, debounceTime} from 'rxjs/operators';
+import {debounceTime, startWith, switchMap, takeUntil} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ConfirmDialogComponent} from 'src/app/shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {QueryDialogComponent} from 'src/app/shared/components/dialogs/query-dialog/query-dialog.component';
 import {ReindexerService} from '../../core/tools/reindexer/reindexer.service';
 import {CreateReindexerDialogComponent} from './create-reindexer-dialog/create-reindexer-dialog.component';
-import {trigger, state, style, transition, animate} from '@angular/animations';
+import {animate, state, style, transition, trigger} from '@angular/animations';
 
 @Component({
   selector: 'app-reindexer',
@@ -161,7 +161,7 @@ export class ReindexerComponent implements OnInit, OnDestroy {
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         data: {
           confirmText: 'Delete',
-          mainText: `Are you sure you want to delete ${this.selectedRows.select.length} Reindexers?`
+          mainText: `Are you sure you want to delete ${this.selectedRows.selected.length} Reindexers?`
         }
       });
 
@@ -210,5 +210,12 @@ export class ReindexerComponent implements OnInit, OnDestroy {
     for (const field in this.filteringValues) {
       this.inputFilterQuery += `&${field}=${this.filteringValues[field]}`;
     }
+  }
+
+  getFields(element) {
+    if (element) {
+      return element.fields.join('\n');
+    }
+    return '';
   }
 }

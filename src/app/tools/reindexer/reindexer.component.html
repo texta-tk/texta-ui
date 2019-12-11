@@ -47,7 +47,8 @@
       </ng-container>
       <ng-container matColumnDef="fields">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Fields</th>
-        <td mat-cell *matCellDef="let element" [title]="element.fields">{{element.fields}}</td>
+        <td mat-cell *matCellDef="let element"><span [title]="getFields(element)" (click)="$event.stopPropagation();">{{element.fields.join(', ')}}</span>
+        </td>
       </ng-container>
       <ng-container matColumnDef="random_size">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Random size</th>
@@ -56,7 +57,8 @@
       <ng-container matColumnDef="show_query">
         <th mat-header-cell *matHeaderCellDef> Query</th>
         <td mat-cell *matCellDef="let element">
-          <span class="action-text mat-body-strong pointer" (click)="openQueryDialog(element.query);$event.stopPropagation()">Show Query</span>
+          <span class="action-text mat-body-strong pointer"
+                (click)="openQueryDialog(element.query);$event.stopPropagation()">Show Query</span>
         </td>
       </ng-container>
       <ng-container matColumnDef="new_index">
@@ -70,7 +72,7 @@
             mode="determinate"
             [value]="element.task.progress">
           </mat-progress-bar>
-          <mat-hint>{{element.task.status}}  {{element.task.step}}</mat-hint>
+          <mat-hint>{{element.task.status}} {{element.task.step}}</mat-hint>
         </td>
       </ng-container>
 
