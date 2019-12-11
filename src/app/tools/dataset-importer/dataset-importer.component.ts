@@ -1,31 +1,24 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Reindexer} from 'src/app/shared/types/tools/Elastic';
-import {MatTableDataSource, MatSort, MatPaginator, MatDialog} from '@angular/material';
-import {SelectionModel} from '@angular/cdk/collections';
-import {Subject, timer, merge} from 'rxjs';
-import {Project} from 'src/app/shared/types/Project';
-import {ProjectStore} from 'src/app/core/projects/project.store';
-import {LogService} from 'src/app/core/util/log.service';
-import {takeUntil, switchMap, startWith, debounceTime} from 'rxjs/operators';
+import {debounceTime, startWith, switchMap, takeUntil} from 'rxjs/operators';
+import {ProjectStore} from '../../core/projects/project.store';
+import {Project} from '../../shared/types/Project';
+import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
+import {merge, Subject, timer} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
-import {ConfirmDialogComponent} from 'src/app/shared/components/dialogs/confirm-dialog/confirm-dialog.component';
-import {QueryDialogComponent} from 'src/app/shared/components/dialogs/query-dialog/query-dialog.component';
+import {LogService} from '../../core/util/log.service';
+import {Reindexer} from '../../shared/types/tools/Elastic';
+import {QueryDialogComponent} from '../../shared/components/dialogs/query-dialog/query-dialog.component';
 import {ReindexerService} from '../../core/tools/reindexer/reindexer.service';
-import {CreateReindexerDialogComponent} from './create-reindexer-dialog/create-reindexer-dialog.component';
-import {trigger, state, style, transition, animate} from '@angular/animations';
+import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {SelectionModel} from '@angular/cdk/collections';
+import {CreateDatasetDialogComponent} from './create-dataset-dialog/create-dataset-dialog.component';
 
 @Component({
-  selector: 'app-reindexer',
-  templateUrl: './reindexer.component.html',
-  styleUrls: ['./reindexer.component.scss'],
-  animations: [
-    trigger('detailExpand', [
-      state('collapsed', style({height: '0px', minHeight: '0'})),
-      state('expanded', style({height: '*'})),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ])]
+  selector: 'app-dataset-importer',
+  templateUrl: './dataset-importer.component.html',
+  styleUrls: ['./dataset-importer.component.scss']
 })
-export class ReindexerComponent implements OnInit, OnDestroy {
+export class DatasetImporterComponent implements OnInit, OnDestroy {
   expandedElement: Reindexer | null;
   public tableData: MatTableDataSource<Reindexer> = new MatTableDataSource();
   public displayedColumns = ['select', 'id', 'author__username', 'description', 'new_index', 'fields', 'random_size',
@@ -111,7 +104,7 @@ export class ReindexerComponent implements OnInit, OnDestroy {
   }
 
   openCreateDialog() {
-    const dialogRef = this.dialog.open(CreateReindexerDialogComponent, {
+    const dialogRef = this.dialog.open(CreateDatasetDialogComponent, {
       maxHeight: '650px',
       width: '700px',
     });

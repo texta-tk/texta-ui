@@ -1,0 +1,48 @@
+<h1 mat-dialog-title>New Reindexer</h1>
+<div mat-dialog-content>
+  <form class="flex-col" [formGroup]="importerForm" (ngSubmit)="onSubmit(importerForm?.value)">
+    <mat-form-field>
+      <input matInput placeholder="Description" autocomplete="off" formControlName="descriptionFormControl"
+             [errorStateMatcher]="matcher" required>
+
+      <mat-error *ngIf="importerForm?.get('descriptionFormControl').hasError('required')">
+        Description is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput placeholder="New index name" autocomplete="off" formControlName="newNameFormControl"
+             [errorStateMatcher]="matcher" required>
+
+      <mat-error *ngIf="importerForm?.get('newNameFormControl').hasError('required')">
+        New index name is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+
+    <mat-form-field>
+      <input matInput placeholder="Separator" autocomplete="off" formControlName="separatorFormControl"
+             [errorStateMatcher]="matcher" required>
+
+      <mat-error *ngIf="importerForm?.get('separatorFormControl').hasError('required')">
+        New index name is <strong>required</strong>
+      </mat-error>
+      <mat-hint>CSV only
+      </mat-hint>
+    </mat-form-field>
+
+
+    <div class="flex-col">
+      <div class="flex-row">
+        <div class="flex-item-left">
+          <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Close</button>
+        </div>
+        <div class="flex-item-right">
+          <button type="submit" [disabled]="!importerForm?.valid" mat-button>Create</button>
+        </div>
+      </div>
+
+    </div>
+
+
+  </form>
+</div>

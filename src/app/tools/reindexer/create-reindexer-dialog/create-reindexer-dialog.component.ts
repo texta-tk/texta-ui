@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Reindexer} from 'src/app/shared/types/tools/Elastic';
-import {ReindexerService} from '../../../core/reindexer/reindexer.service';
+import {ReindexerService} from '../../../core/tools/reindexer/reindexer.service';
 import {FormGroup, FormControl, Validators} from '@angular/forms';
 import {ErrorStateMatcher, MatDialogRef} from '@angular/material';
 import {LiveErrorStateMatcher} from 'src/app/shared/CustomerErrorStateMatchers';

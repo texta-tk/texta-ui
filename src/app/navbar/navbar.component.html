@@ -29,8 +29,8 @@
         <mat-icon>arrow_drop_down</mat-icon>
       </button>
     </a>
-    <a [ngClass]="{'is-active': ['/reindexer'].includes(router.url)}"
-      class="pointer" [matMenuTriggerFor]="tools">
+    <a [ngClass]="{'is-active': ['/reindexer', '/dataset-importer'].includes(router.url)}"
+       class="pointer" [matMenuTriggerFor]="tools">
       <button mat-button class="nav-button">
         <mat-icon class="margin-right">build</mat-icon>
         Tools
@@ -60,6 +60,7 @@
 
     <mat-menu #tools="matMenu">
       <a mat-menu-item routerLinkActive="is-active" [routerLink]="['reindexer']">Reindexer</a>
+      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['dataset-importer']">Dataset importer</a>
     </mat-menu>
 
     <div class="flex-item-right login" *ngIf="!user">
