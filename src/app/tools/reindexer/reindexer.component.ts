@@ -85,7 +85,7 @@ export class ReindexerComponent implements OnInit, OnDestroy {
 
   setUpPaginator() {
     // If the user changes the sort order, reset back to the first page.
-    this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
+    this.sort.sortChange.pipe(takeUntil(this.destroyed$)).subscribe(() => this.paginator.pageIndex = 0);
 
     merge(this.sort.sortChange, this.paginator.page, this.filteredSubject)
       .pipe(debounceTime(250), startWith({}), switchMap(() => {

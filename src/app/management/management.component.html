@@ -13,7 +13,8 @@
       <ng-container matColumnDef="is_superuser">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Superuser</th>
         <td mat-cell *matCellDef="let element">
-          <mat-checkbox (click)="togglePermissions(element)" [(ngModel)]="element.is_superuser"></mat-checkbox>
+          <mat-checkbox (click)="togglePermissions(element)" [(ngModel)]="element.is_superuser"
+                        [disabled]="element.id===1"></mat-checkbox> <!--todo -->
         </td>
       </ng-container>
       <ng-container matColumnDef="username">

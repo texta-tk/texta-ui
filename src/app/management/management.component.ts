@@ -38,6 +38,9 @@ export class ManagementComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.tableData.sort = this.sort;
+    this.tableData.paginator = this.paginator;
+    this.sort.sortChange.pipe(takeUntil(this.destroyed$)).subscribe(() => this.paginator.pageIndex = 0);
     this.userService.getAllUsers().pipe(takeUntil(this.destroyed$)).subscribe(resp => {
       if (resp) {
         this.tableData.data = resp;
@@ -46,22 +49,24 @@ export class ManagementComponent implements OnInit, OnDestroy {
     });
     this.userStore.getCurrentUser().pipe(takeUntil(this.destroyed$)).subscribe(user => {
       this.currentUser = user;
-    })
+    });
   }
 
   togglePermissions(row: UserProfile) {
-    this.userService.toggleSuperUser(row.id).subscribe((resp: UserProfile | HttpErrorResponse) => {
-      if (resp instanceof HttpErrorResponse) {
-        this.logService.snackBarError(resp, 2000);
-      } else {
-        if (row.id === this.currentUser.id) {
-          row.is_superuser = false; // can only access this view as superuser
-          this.userStore.setCurrentUser(row); // removed our own admin status
-          this.router.navigateByUrl('');
-          this.logService.snackBarMessage('No permissions for this resource', 2000);
+    if (row.id !== 1) { // admin always id 1???? todo
+      this.userService.toggleSuperUser(row.id).subscribe((resp: UserProfile | HttpErrorResponse) => {
+        if (resp instanceof HttpErrorResponse) {
+          this.logService.snackBarError(resp, 2000);
+        } else {
+          if (row.id === this.currentUser.id) {
+            row.is_superuser = false; // can only access this view as superuser
+            this.userStore.setCurrentUser(row); // removed our own admin status
+            this.router.navigateByUrl('');
+            this.logService.snackBarMessage('No permissions for this resource', 2000);
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   ngOnDestroy(): void {
