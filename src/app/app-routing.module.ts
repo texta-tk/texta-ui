@@ -4,6 +4,8 @@ import {UserSettingsComponent} from './user-settings/user-settings.component';
 import {AuthGuard} from './core/auth/auth.guard';
 import {HomeComponent} from './home/home.component';
 import {LexiconMinerComponent} from './lexicon-miner/lexicon-miner.component';
+import {ManagementComponent} from './management/management.component';
+import {USERROLES} from './shared/types/UserAuth';
 
 const routes: Routes = [
   {
@@ -21,6 +23,12 @@ const routes: Routes = [
     path: 'settings',
     canActivate: [AuthGuard],
     component: UserSettingsComponent,
+  },
+  {
+    path: 'management',
+    canActivate: [AuthGuard],
+    data: {role: USERROLES.SUPERUSER},
+    component: ManagementComponent,
   },
 ];
 

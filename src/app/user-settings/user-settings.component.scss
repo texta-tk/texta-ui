@@ -1,12 +1,22 @@
-.wrapper{
+.wrapper {
   margin-top: 10px;
   justify-content: space-evenly;
-  .flex-col{
+
+  .flex-col {
     width: 100%;
   }
-  
-  .pw-form-wrapper {
+
+  .form-wrapper {
     width: 100%;
     max-width: 300px;
+    display: flex;
+    flex-direction: column;
+
+    form {
+      flex: 1;
+      button {
+        margin-top: auto;
+      }
+    }
   }
 }

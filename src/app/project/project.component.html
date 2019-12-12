@@ -101,7 +101,7 @@
   </div>
 
   <div class="table-paginator-row">
-    <button
+    <button *ngIf="currentUser && currentUser.is_superuser"
       class="new-resource-btn"
       mat-button
       color="primary"
