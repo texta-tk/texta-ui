@@ -12,19 +12,11 @@ mat-toolbar {
     }
 
     .is-active {
-      color: red;
+      border-bottom: 2px solid invert(map-get($foreground, base));
     }
 
     .nav-button {
       font-weight: lighter;
-    }
-
-    mat-menu {
-      a {
-        color: black;
-      }
-
-
     }
 
     .login {
@@ -51,9 +43,8 @@ mat-toolbar {
     }
   }
 }
-
-.is-active {
-  color: red;
+.is-active-menu {
+  color: $primary;
 }
 .mat-icon {
   vertical-align: middle;

@@ -46,21 +46,21 @@
     <mat-menu #models="matMenu">
       <!-- Embedding Clusters disabled until more functionality for them is added -->
       <!-- <a mat-menu-item routerLinkActive="is-active" [routerLink]="['embedding-groups']">Embedding Clusters <span *ngIf="projectResourceCounts">({{projectResourceCounts?.num_embedding_clusters}})</span></a> -->
-      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['tagger-groups']">Tagger Groups <span
+      <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['tagger-groups']">Tagger Groups <span
         *ngIf="projectResourceCounts?.num_tagger_groups">({{projectResourceCounts?.num_tagger_groups}})</span></a>
-      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['embeddings']">Embeddings <span
+      <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['embeddings']">Embeddings <span
         *ngIf="projectResourceCounts?.num_embeddings">({{projectResourceCounts?.num_embeddings}})</span></a>
-      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['taggers']">Taggers <span
+      <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['taggers']">Taggers <span
         *ngIf="projectResourceCounts?.num_taggers">({{projectResourceCounts?.num_taggers}})</span></a>
-      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['neurotaggers']">NeuroTaggers <span
+      <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['neurotaggers']">NeuroTaggers <span
         *ngIf="projectResourceCounts?.num_neurotaggers">({{projectResourceCounts?.num_neurotaggers}})</span></a>
-      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['torchtaggers']">TorchTaggers <span
+      <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['torchtaggers']">TorchTaggers <span
         *ngIf="projectResourceCounts?.num_torchtaggers">({{projectResourceCounts.num_torchtaggers}})</span></a>
     </mat-menu>
 
     <mat-menu #tools="matMenu">
-      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['reindexer']">Reindexer</a>
-      <a mat-menu-item routerLinkActive="is-active" [routerLink]="['dataset-importer']">Dataset importer</a>
+      <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['reindexer']">Reindexer</a>
+      <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['dataset-importer']">Dataset importer</a>
     </mat-menu>
 
     <div class="flex-item-right login" *ngIf="!user">
