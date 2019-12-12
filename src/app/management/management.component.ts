@@ -3,13 +3,15 @@ import {from, of, Subject} from 'rxjs';
 import {UserService} from '../core/users/user.service';
 import {LogService} from '../core/util/log.service';
 import {ProjectStore} from '../core/projects/project.store';
-import {mergeMap, takeUntil} from 'rxjs/operators';
+import {mergeMap, take, takeUntil} from 'rxjs/operators';
 import {Project} from '../shared/types/Project';
 import {UserStore} from '../core/users/user.store';
 import {MatTableDataSource} from '@angular/material/table';
 import {UserProfile} from '../shared/types/UserProfile';
 import {MatSort} from '@angular/material/sort';
 import {MatPaginator} from '@angular/material/paginator';
+import {HttpErrorResponse} from '@angular/common/http';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-management',
@@ -26,11 +28,12 @@ export class ManagementComponent implements OnInit, OnDestroy {
 
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-
+  currentUser: UserProfile;
 
   constructor(private userService: UserService,
               private logService: LogService,
               private projectStore: ProjectStore,
+              private router: Router,
               private userStore: UserStore) {
   }
 
@@ -41,10 +44,24 @@ export class ManagementComponent implements OnInit, OnDestroy {
         this.isLoadingResults = false;
       }
     });
+    this.userStore.getCurrentUser().pipe(takeUntil(this.destroyed$)).subscribe(user => {
+      this.currentUser = user;
+    })
   }
 
-  togglePermissions(row) {
-    console.log(row);
+  togglePermissions(row: UserProfile) {
+    this.userService.toggleSuperUser(row.id).subscribe((resp: UserProfile | HttpErrorResponse) => {
+      if (resp instanceof HttpErrorResponse) {
+        this.logService.snackBarError(resp, 2000);
+      } else {
+        if (row.id === this.currentUser.id) {
+          row.is_superuser = false; // can only access this view as superuser
+          this.userStore.setCurrentUser(row); // removed our own admin status
+          this.router.navigateByUrl('');
+          this.logService.snackBarMessage('No permissions for this resource', 2000);
+        }
+      }
+    });
   }
 
   ngOnDestroy(): void {

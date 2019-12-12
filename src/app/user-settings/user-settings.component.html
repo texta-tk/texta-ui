@@ -1,54 +1,72 @@
 <div class="flex-row wrapper">
-  <!-- <div>
-    <form class="flex-col" [formGroup]="forgotPasswordForm" (ngSubmit)="onForgotPasswordFormSubmit(forgotPasswordForm.value)">
+  <!--   <div>
+      <form class="flex-col" [formGroup]="forgotPasswordForm" (ngSubmit)="onForgotPasswordFormSubmit(forgotPasswordForm.value)">
+        <mat-form-field>
+          <input matInput type="text" placeholder="Enter your email" formControlName="emailFormControl">
+        </mat-form-field>
+        <button mat-stroked-button type="submit" [disabled]="!forgotPasswordForm.valid">Submit</button>
+      </form>
+      <span *ngIf="detail">{{detail}}</span>
+    </div>-->
+  <mat-card class="form-wrapper">
+    <h2 class="mat-h2">Change Password</h2>
+    <form class="flex-col" [formGroup]="passwordResetForm"
+          (ngSubmit)="onPasswordResetFormSubmit(passwordResetForm.value)">
+      <input type="text" autocomplete="username" hidden="true">
+      <div class="flex-col" formGroupName="passwordForm">
+        <mat-form-field>
+          <input matInput placeholder="Enter new password" autocomplete="new-password"
+                 formControlName="passwordFormControl"
+                 type="password"
+                 [errorStateMatcher]="matcher" required>
+          <mat-error *ngIf="passwordResetForm.get('passwordForm').get('passwordFormControl').hasError('required')">
+            Password is <strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="passwordResetForm.get('passwordForm').get('passwordFormControl').hasError('minlength')">
+            Password must contain at least <strong>8</strong> characters.
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput placeholder="Confirm new password" autocomplete="new-password"
+                 formControlName="passwordConfirmFormControl"
+                 type="password"
+                 [errorStateMatcher]="crossFieldMatcher" required>
+          <mat-error
+            *ngIf="passwordResetForm.get('passwordForm').hasError('mismatch')">
+            Passwords don't <strong>match</strong>
+          </mat-error>
+        </mat-form-field>
+
+      </div>
       <mat-form-field>
-        <input matInput type="text" placeholder="Enter your email" formControlName="emailFormControl">
-      </mat-form-field>
-      <button mat-stroked-button type="submit" [disabled]="!forgotPasswordForm.valid">Submit</button>
-    </form>
-    <span *ngIf="detail">{{detail}}</span>
-  </div> -->
-  <mat-card class="pw-form-wrapper">
-        <h2 class="mat-h2">Change Password</h2>
-  <form class="flex-col" [formGroup]="passwordResetForm"
-        (ngSubmit)="onPasswordResetFormSubmit(passwordResetForm.value)">
-    <input type="text" autocomplete="username" hidden="true">
-    <div class="flex-col" formGroupName="passwordForm">
-      <mat-form-field>
-        <input matInput placeholder="Enter new password" autocomplete="new-password"
-               formControlName="passwordFormControl"
+        <input matInput placeholder="Enter current password" autocomplete="current-password"
                type="password"
-               [errorStateMatcher]="matcher" required>
-        <mat-error *ngIf="passwordResetForm.get('passwordForm').get('passwordFormControl').hasError('required')">
+               formControlName="oldPasswordFormControl"
+               [errorStateMatcher]="matcher">
+
+        <mat-error *ngIf="passwordResetForm.get('oldPasswordFormControl').hasError('required')">
           Password is <strong>required</strong>
         </mat-error>
-        <mat-error *ngIf="passwordResetForm.get('passwordForm').get('passwordFormControl').hasError('minlength')">
-          Password must contain at least <strong>8</strong> characters.
-        </mat-error>
       </mat-form-field>
+      <button mat-stroked-button type="submit" [disabled]="!passwordResetForm.valid">Submit</button>
+    </form>
+  </mat-card>
+<!--
+  <mat-card class="form-wrapper">
+    <h2 class="mat-h2">Change email</h2>
+    <form class="flex-col" [formGroup]="userProfileForm"
+          (ngSubmit)="changeUserProfile(userProfileForm.value)">
       <mat-form-field>
-        <input matInput placeholder="Confirm new password" autocomplete="new-password"
-               formControlName="passwordConfirmFormControl"
-               type="password"
-               [errorStateMatcher]="crossFieldMatcher" required>
-        <mat-error
-          *ngIf="passwordResetForm.get('passwordForm').hasError('mismatch')">
-          Passwords don't <strong>match</strong>
+        <input matInput placeholder="Email"
+               type="text"
+               formControlName="email"
+               [errorStateMatcher]="matcher">
+
+        <mat-error *ngIf="userProfileForm.get('email').hasError('required')">
+          Email is <strong>required</strong>
         </mat-error>
       </mat-form-field>
-
-    </div>
-    <mat-form-field>
-      <input matInput placeholder="Enter current password" autocomplete="current-password"
-             type="password"
-             formControlName="oldPasswordFormControl"
-             [errorStateMatcher]="matcher">
-
-      <mat-error *ngIf="passwordResetForm.get('oldPasswordFormControl').hasError('required')">
-        Password is <strong>required</strong>
-      </mat-error>
-    </mat-form-field>
-    <button mat-stroked-button type="submit" [disabled]="!passwordResetForm.valid">Submit</button>
-  </form>
-</mat-card>
+      <button mat-stroked-button type="submit" [disabled]="!userProfileForm.valid">Submit</button>
+    </form>
+  </mat-card>-->
 </div>

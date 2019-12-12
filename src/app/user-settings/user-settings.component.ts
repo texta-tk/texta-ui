@@ -1,11 +1,11 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {UserProfile} from '../shared/types/UserProfile';
 import {UserStore} from '../core/users/user.store';
-import {Subscription} from 'rxjs';
+import {Subject, Subscription} from 'rxjs';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {UserService} from '../core/users/user.service';
 import {CrossFieldErrorMatcher, LiveErrorStateMatcher} from '../shared/CustomerErrorStateMatchers';
-import {catchError, tap} from 'rxjs/operators';
+import {catchError, takeUntil, tap} from 'rxjs/operators';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../core/util/log.service';
 import {environment} from '../../environments/environment';
@@ -25,6 +25,7 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
   user: UserProfile;
   userSubscription: Subscription;
   detail: string;
+  destroy$: Subject<boolean> = new Subject<boolean>();
   forgotPasswordForm = new FormGroup({
     emailFormControl: new FormControl('', [
       Validators.required, Validators.email
@@ -40,6 +41,10 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
     }, passwordMatchValidator),
     oldPasswordFormControl: new FormControl('', Validators.required)
 
+  });
+
+  userProfileForm = new FormGroup({
+    email: new FormControl('', Validators.required),
   });
 
   matcher = new LiveErrorStateMatcher();
@@ -64,14 +69,18 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
     this.userService.resetPassword(formData.emailFormControl).subscribe((resp: any | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.detail = resp.detail;
-      } else if (resp instanceof HttpErrorResponse){
+      } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 4000);
       }
     });
   }
 
+  changeUserProfile(formData: any) {
+
+  }
+
   ngOnInit() {
-    this.userSubscription = this.userStore.getCurrentUser().subscribe(resp => {
+    this.userStore.getCurrentUser().pipe(takeUntil(this.destroy$)).subscribe(resp => {
       if (resp) {
         this.user = resp;
       }
@@ -79,9 +88,8 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.userSubscription) {
-      this.userSubscription.unsubscribe();
-    }
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 
 }
