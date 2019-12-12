@@ -20,6 +20,7 @@ import {NeuroTaggerModule} from './neuro-tagger/neuro-tagger.module';
 import {MAT_HAMMER_OPTIONS} from '@angular/material';
 import { ToolsModule } from './tools/tools.module';
 import { TorchTaggerModule } from './torch-tagger/torch-tagger/torch-tagger.module';
+import { ManagementComponent } from './management/management.component';
 
 
 @NgModule({
@@ -30,6 +31,7 @@ import { TorchTaggerModule } from './torch-tagger/torch-tagger/torch-tagger.modu
     HomeComponent,
     LexiconMinerComponent,
     LexiconBuilderComponent,
+    ManagementComponent,
   ],
   imports: [
     BrowserModule,
