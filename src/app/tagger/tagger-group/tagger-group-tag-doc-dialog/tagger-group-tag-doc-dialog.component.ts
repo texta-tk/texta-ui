@@ -12,7 +12,6 @@ export class TaggerGroupTagDocDialogComponent {
   lemmatize = false;
   ner = false;
   nSimilarDocs = 10;
-
   results: { probability: number; tag: string; tagger_id: number }[] = [];
   errors = '';
   submitted = false;

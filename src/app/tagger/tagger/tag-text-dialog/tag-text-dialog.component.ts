@@ -1,8 +1,8 @@
 import {Component, Inject} from '@angular/core';
 import {TaggerService} from '../../../core/taggers/tagger.service';
 import {MAT_DIALOG_DATA} from '@angular/material';
-import { HttpErrorResponse } from '@angular/common/http';
-import { LogService } from 'src/app/core/util/log.service';
+import {HttpErrorResponse} from '@angular/common/http';
+import {LogService} from 'src/app/core/util/log.service';
 
 @Component({
   selector: 'app-tag-text-dialog',
@@ -11,20 +11,24 @@ import { LogService } from 'src/app/core/util/log.service';
 })
 export class TagTextDialogComponent {
   lemmatize: boolean;
-  result: { result: boolean, probability: number };
+  result: { result: boolean, probability: number, feedback?: { id: string } };
+  feedback = false;
 
   constructor(private taggerService: TaggerService, private logService: LogService,
               @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, taggerId: number; }) {
   }
 
   onSubmit(value) {
-    this.taggerService.tagText({text: value, lemmatize: this.lemmatize}, this.data.currentProjectId, this.data.taggerId)
+    this.taggerService.tagText({
+      text: value, lemmatize: this.lemmatize,
+      feedback_enabled: this.feedback,
+    }, this.data.currentProjectId, this.data.taggerId)
       .subscribe((resp: { result: boolean, probability: number } | HttpErrorResponse) => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
           this.result = resp;
-        } else if (resp instanceof HttpErrorResponse){
+        } else if (resp instanceof HttpErrorResponse) {
           this.logService.snackBarError(resp, 4000);
         }
-    });
+      });
   }
 }

@@ -1,21 +1,26 @@
 <mat-form-field class="max-width">
-        <input matInput placeholder="Tag text" #textInput>
-      </mat-form-field>
-      <mat-checkbox [(ngModel)]="lemmatize" class="margin-right">Lemmatize</mat-checkbox>
-      <mat-checkbox [(ngModel)]="ner">Use NER</mat-checkbox>
-      <div class="m-top-10" *ngFor="let result of results">
-        <span class="mat-body-strong">Tagger id:</span> {{result.tagger_id}}
-        <br>
-        <span class="mat-body-strong">Result: </span>{{result.tag}}
-        <br>
-        <span class="mat-body-strong">Probability:</span> {{result.probability}}
-       <br>
-       <br>
-      </div>
-      <div class="flex-col">
-        <div class="flex-row">
-          <div class="flex-item-right">
-            <button type="submit" mat-button (click)="onSubmit(textInput.value)">Post</button>
-          </div>
-        </div>
-      </div>
+  <input matInput placeholder="Tag text" #textInput>
+</mat-form-field>
+<mat-form-field class="max-width m-bot-10" floatLabel="always">
+  <mat-label>Number of similar documents</mat-label>
+  <input matInput type="number" placeholder="Number of Similar docs" #nSimilarDocsInput [(ngModel)]="nSimilarDocs">
+  <mat-hint>Number of documents used in unsupervised prefiltering</mat-hint>
+</mat-form-field>
+<mat-checkbox [(ngModel)]="lemmatize" class="margin-right">Lemmatize</mat-checkbox>
+<mat-checkbox [(ngModel)]="ner">Use NER</mat-checkbox>
+<div class="m-top-10" *ngFor="let result of results">
+  <span class="mat-body-strong">Tagger id:</span> {{result.tagger_id}}
+  <br>
+  <span class="mat-body-strong">Result: </span>{{result.tag}}
+  <br>
+  <span class="mat-body-strong">Probability:</span> {{result.probability}}
+  <br>
+  <br>
+</div>
+<div class="flex-col">
+  <div class="flex-row">
+    <div class="flex-item-right">
+      <button type="submit" mat-button (click)="onSubmit(textInput.value)">Post</button>
+    </div>
+  </div>
+</div>

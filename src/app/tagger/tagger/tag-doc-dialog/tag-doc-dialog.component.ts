@@ -2,8 +2,8 @@ import {Component, OnInit, Inject} from '@angular/core';
 import {TaggerService} from '../../../core/taggers/tagger.service';
 import {MAT_DIALOG_DATA} from '@angular/material';
 import {Tagger} from 'src/app/shared/types/tasks/Tagger';
-import { HttpErrorResponse } from '@angular/common/http';
-import { LogService } from 'src/app/core/util/log.service';
+import {HttpErrorResponse} from '@angular/common/http';
+import {LogService} from 'src/app/core/util/log.service';
 
 @Component({
   selector: 'app-tag-doc-dialog',
@@ -13,7 +13,8 @@ import { LogService } from 'src/app/core/util/log.service';
 export class TagDocDialogComponent implements OnInit {
   lemmatize: boolean;
   defaultDoc: string;
-  result: { result: boolean, probability: number };
+  result: { result: boolean, probability: number, feedback?: { id: string } };
+  feedback = false;
 
   constructor(private taggerService: TaggerService, private logService: LogService,
               @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, tagger: Tagger; }) {
@@ -28,14 +29,15 @@ export class TagDocDialogComponent implements OnInit {
   onSubmit(doc) {
     this.taggerService.tagDocument({
       doc: JSON.parse(doc),
-      lemmatize: this.lemmatize
+      lemmatize: this.lemmatize,
+      feedback_enabled: this.feedback,
     }, this.data.currentProjectId, this.data.tagger.id)
-    .subscribe((resp: { result: boolean, probability: number } | HttpErrorResponse) => {
-      if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.result = resp;
-      } else if (resp instanceof HttpErrorResponse){
-        this.logService.snackBarError(resp, 4000);
-      }
-    });
+      .subscribe((resp: { result: boolean, probability: number } | HttpErrorResponse) => {
+        if (resp && !(resp instanceof HttpErrorResponse)) {
+          this.result = resp;
+        } else if (resp instanceof HttpErrorResponse) {
+          this.logService.snackBarError(resp, 4000);
+        }
+      });
   }
 }
