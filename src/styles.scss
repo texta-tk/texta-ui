@@ -26,10 +26,12 @@ pre {
 
 .flex {
   display: flex;
+
   &-col {
     @extend .flex;
     flex-direction: column;
   }
+
   &-row {
     @extend .flex;
     flex-direction: row;
@@ -40,9 +42,11 @@ pre {
   &-right {
     margin-left: auto;
   }
+
   &-left {
     margin-right: auto;
   }
+
   &-center {
     align-self: center;
   }
@@ -180,11 +184,31 @@ pre {
 }
 
 .table-paginator-row {
-  position: absolute;
-  margin: 6px 4px 0 4px;
-  font-size: 12px;
-  button {
-    font-size: 12px;
+  display: flex;
+  flex-direction: column;
+
+  height: $tasks-table-paginator-row;
+  .loading-bar {
+    height: 4px;
+    background-color: white;
+  }
+
+  .paginator-row {
+    background-color: white;
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    font-size: 14px;
+    max-height: 59px;
+    button {
+      mat-icon {
+        line-height: 20px;
+      }
+    }
+
+    mat-paginator {
+      margin-left: auto;
+    }
   }
 }
 

@@ -6,8 +6,8 @@ table {
 
 .table-container {
   position: relative;
-  max-height: calc(100vh - #{$navbar-height} - 56px);
-  min-height: calc(100vh - #{$navbar-height} - 56px);
+  max-height: calc(100vh - #{$navbar-height} - #{$tasks-table-paginator-row});
+  min-height: calc(100vh - #{$navbar-height} - #{$tasks-table-paginator-row});
   overflow: auto;
 }
 
@@ -51,7 +51,8 @@ tr.element-row:not(.expanded-row):active {
 .mat-column {
   min-width: 80px;
 }
-.mat-column-fields{
+
+.mat-column-fields {
   max-width: 250px;
   white-space: nowrap;
   overflow: hidden;

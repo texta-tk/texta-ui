@@ -1,48 +1,44 @@
 <div class="wrapper mat-elevation-z8">
   <div class="table-container">
-    <div class="loading-shade" *ngIf="isLoadingResults ">
-        <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
-      </div>
     <table mat-table [dataSource]="tableData" matSort multiTemplateDataRows
-    matSort matSortActive="id" matSortDisableClear matSortDirection="asc"
-    >
+           matSort matSortActive="id" matSortDisableClear matSortDirection="asc">
       <ng-container matColumnDef="select">
-          <th mat-header-cell *matHeaderCellDef>
-            <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selectedRows.hasValue() && isAllSelected()"
-              [indeterminate]="selectedRows.hasValue() && !isAllSelected()">
-            </mat-checkbox>
-          </th>
-          <td mat-cell *matCellDef="let row">
-            <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selectedRows.toggle(row) : null"
-              [checked]="selectedRows.isSelected(row)">
-            </mat-checkbox>
-          </td>
-        </ng-container>
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selectedRows.hasValue() && isAllSelected()"
+                        [indeterminate]="selectedRows.hasValue() && !isAllSelected()">
+          </mat-checkbox>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selectedRows.toggle(row) : null"
+                        [checked]="selectedRows.isSelected(row)">
+          </mat-checkbox>
+        </td>
+      </ng-container>
 
-        <ng-container matColumnDef="id">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Id</th>
-            <td mat-cell *matCellDef="let element"> {{element.id}}</td>
-          </ng-container>
-  
-        <ng-container matColumnDef="author__username">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Author</th>
-          <td mat-cell *matCellDef="let element"> {{element.author_username}}</td>
-        </ng-container>
-        
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Id</th>
+        <td mat-cell *matCellDef="let element"> {{element.id}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="author__username">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Author</th>
+        <td mat-cell *matCellDef="let element"> {{element.author_username}}</td>
+      </ng-container>
+
       <ng-container matColumnDef="description">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Description</th>
         <td mat-cell *matCellDef="let element"> {{element.description}}</td>
       </ng-container>
       <ng-container matColumnDef="min_freq">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Min Frequency </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Min Frequency</th>
         <td mat-cell *matCellDef="let element"> {{element.min_freq}}</td>
       </ng-container>
       <ng-container matColumnDef="num_dims">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Dimensions </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Dimensions</th>
         <td mat-cell *matCellDef="let element"> {{element.num_dimensions}}</td>
       </ng-container>
       <ng-container matColumnDef="vocab_size">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Vocab Size </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Vocab Size</th>
         <td mat-cell *matCellDef="let element"> {{element.vocab_size}}</td>
       </ng-container>
       <ng-container matColumnDef="task__time_started">
@@ -76,101 +72,102 @@
         <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
           <div class="element-detail"
                [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-               <div class="flex-row element-detail-plot-fields">
-                  <div *ngIf="element.plot"><img class="element-plot" [src]="element.plot"></div>
-                  <div class="flex-col m-l-r-5">
-                      <table class="simple-table">
-                            <tr>
-                            <th class="mat-body-strong">Vocab Size</th>
-                            <td>{{element.vocab_size}}</td>
-                            </tr>
-                            <tr>
-                            <th class="mat-body-strong">Min frequency</th>
-                            <td>{{element.min_freq}}</td>
-                            </tr>
-                            <tr>
-                            <th class="mat-body-strong">Number of Dimensions</th>
-                            <td>{{element.num_dimensions}}</td>
-                            </tr>
-                            <tr>
-                            <th class="mat-body-strong">Query</th>
-                            <td><span class="action-text mat-body-strong pointer" (click)="openQueryDialog(element.query)">Show Query</span></tr>
-                        </table>
-                    </div>
-    
-                    <div class="flex-col m-l-r-5">
-                      <table class="simple-table">
-                            <tr>
-                            <th class="mat-body-strong">Task id</th>
-                              <td>{{element.task.id}}</td>
-                            </tr>
-                            <tr>
-                            <th class="mat-body-strong">Status</th>
-                            <td>{{element.task.status}}</td>
-                            </tr>
-                            <tr>
-                            <th class="mat-body-strong">Progress</th>
-                            <td>{{element.task.progress}}</td>
-                            </tr>
-                            <tr>
-                            <th class="mat-body-strong">Step</th>
-                            <td>{{element.task.step}}</td>
-                            </tr>
-                            <tr>
-                            <th class="mat-body-strong">Errors</th>
-                            <td>{{element.task.errors}}</td>
-                            </tr>
-                            <tr>
-                            <th class="mat-body-strong">Time Started</th>
-                            <td>{{element.task.time_started}}</td>
-                            </tr>
-                            <tr>
-                            <th class="mat-body-strong">Last Update</th>
-                            <td>{{element.task.last_update}}</td>
-                            </tr>
-                            <tr>
-                            <th class="mat-body-strong">Time Completed</th>
-                            <td>{{element.task.time_completed}}</td>
-                            </tr>
-                        </table>
-                    </div>
-    
-                    <div class="flex-col m-l-r-5">
-                      <table class="simple-table">
-                        <tr>
-                          <th class="mat-body-strong">Fields</th>
-                        </tr>
-                        <tr *ngFor="let field of element.fields">
-                          <td>{{field}}</td>
-                        </tr>
-                      </table>
-                    </div>
-                </div>
+            <div class="flex-row element-detail-plot-fields">
+              <div *ngIf="element.plot"><img class="element-plot" [src]="element.plot"></div>
+              <div class="flex-col m-l-r-5">
+                <table class="simple-table">
+                  <tr>
+                    <th class="mat-body-strong">Vocab Size</th>
+                    <td>{{element.vocab_size}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Min frequency</th>
+                    <td>{{element.min_freq}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Number of Dimensions</th>
+                    <td>{{element.num_dimensions}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Query</th>
+                    <td><span class="action-text mat-body-strong pointer" (click)="openQueryDialog(element.query)">Show Query</span>
+                  </tr>
+                </table>
+              </div>
+
+              <div class="flex-col m-l-r-5">
+                <table class="simple-table">
+                  <tr>
+                    <th class="mat-body-strong">Task id</th>
+                    <td>{{element.task.id}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Status</th>
+                    <td>{{element.task.status}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Progress</th>
+                    <td>{{element.task.progress}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Step</th>
+                    <td>{{element.task.step}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Errors</th>
+                    <td>{{element.task.errors}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Time Started</th>
+                    <td>{{element.task.time_started}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Last Update</th>
+                    <td>{{element.task.last_update}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Time Completed</th>
+                    <td>{{element.task.time_completed}}</td>
+                  </tr>
+                </table>
+              </div>
+
+              <div class="flex-col m-l-r-5">
+                <table class="simple-table">
+                  <tr>
+                    <th class="mat-body-strong">Fields</th>
+                  </tr>
+                  <tr *ngFor="let field of element.fields">
+                    <td>{{field}}</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
           </div>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="Modify">
-          <th mat-header-cell class="center-header-cell" *matHeaderCellDef>Edit</th>
-          <td mat-cell *matCellDef="let element; let i = dataIndex" (click)="$event.stopPropagation();">
-  
-            <button mat-icon-button color="primary" [matMenuTriggerFor]="editMenu">
-              <mat-icon aria-label="Edit Options">more_vert</mat-icon>
-            </button>
-            <mat-menu #editMenu="matMenu">
-              <div *ngIf="element.task.status === 'completed'">
-                  <button mat-menu-item (click)="phrase(element)">
-                      Phrase
-                    </button>
-                <mat-divider></mat-divider>
-              </div>
-              <button mat-menu-item (click)="onDelete(element, i)">
-                  Delete
+        <th mat-header-cell class="center-header-cell" *matHeaderCellDef>Edit</th>
+        <td mat-cell *matCellDef="let element; let i = dataIndex" (click)="$event.stopPropagation();">
+
+          <button mat-icon-button color="primary" [matMenuTriggerFor]="editMenu">
+            <mat-icon aria-label="Edit Options">more_vert</mat-icon>
+          </button>
+          <mat-menu #editMenu="matMenu">
+            <div *ngIf="element.task.status === 'completed'">
+              <button mat-menu-item (click)="phrase(element)">
+                Phrase
               </button>
-            </mat-menu>
-  
-          </td>
-        </ng-container>
+              <mat-divider></mat-divider>
+            </div>
+            <button mat-menu-item (click)="onDelete(element, i)">
+              Delete
+            </button>
+          </mat-menu>
+
+        </td>
+      </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
       <tr mat-row *matRowDef="let element; columns: displayedColumns;"
@@ -183,20 +180,32 @@
 
   </div>
 
+
   <div class="table-paginator-row">
-    <button class="new-resource-btn" mat-button color="primary" (click)="openCreateDialog()"><mat-icon>add</mat-icon> CREATE </button>
-    <button class="new-resource-btn" mat-icon-button color="warn" (click)="onDeleteAllSelected()" matTooltip="Delete selected" [disabled]="selectedRows.selected.length < 1"><mat-icon>delete</mat-icon></button>
-    <mat-form-field class="m-l-15">
+    <div class="loading-bar">
+      <mat-progress-bar mode="indeterminate" *ngIf="isLoadingResults"></mat-progress-bar>
+    </div>
+    <div class="paginator-row">
+      <button class="new-resource-btn" mat-button color="primary" (click)="openCreateDialog()">
+        <mat-icon>add</mat-icon>
+        CREATE
+      </button>
+      <button class="new-resource-btn" mat-icon-button color="warn" (click)="onDeleteAllSelected()"
+              matTooltip="Delete selected" [disabled]="selectedRows.selected.length < 1">
+        <mat-icon>delete</mat-icon>
+      </button>
+      <mat-form-field class="m-l-15">
         <mat-icon matSuffix>search</mat-icon>
         <input matInput (keyup)="applyFilter($event.target.value, 'description')" placeholder="Filter description">
-    </mat-form-field>
-    <mat-form-field class="m-l-15">
+      </mat-form-field>
+      <mat-form-field class="m-l-15">
         <mat-icon matSuffix>search</mat-icon>
         <input matInput (keyup)="applyFilter($event.target.value, 'task_status')" placeholder="Filter task status">
-    </mat-form-field>
-  </div>
+      </mat-form-field>
 
-  <mat-paginator [pageSizeOptions]="[15, 50, 100]" showFirstLastButtons [length]="resultsLength">
-  </mat-paginator>
+      <mat-paginator [pageSizeOptions]="[15, 50, 100]" showFirstLastButtons [length]="resultsLength">
+      </mat-paginator>
+    </div>
+  </div>
 
 </div>
