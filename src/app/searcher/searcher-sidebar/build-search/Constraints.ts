@@ -127,6 +127,14 @@ export class ElasticsearchQuery {
     this._elasticSearchQuery.from = val;
   }
 
+  get sort() {
+    return this._elasticSearchQuery.sort;
+  }
+
+  set sort(val) {
+    this._elasticSearchQuery.sort = val;
+  }
+
   get elasticSearchQuery(): ElasticsearchQueryStructure {
     return this._elasticSearchQuery;
   }
@@ -142,6 +150,7 @@ export interface ElasticsearchQueryStructure {
   aggs?: AggregationStructure;
   size?: number;
   from?: number;
+  sort?: any;
 }
 
 interface HighlightStructure {

@@ -8,6 +8,8 @@ import {takeUntil} from 'rxjs/operators';
 import {ProjectStore} from '../../core/projects/project.store';
 import {ElasticsearchQuery} from '../searcher-sidebar/build-search/Constraints';
 import {PageEvent} from '@angular/material/typings/paginator';
+import {Field, ProjectField} from "../../shared/types/Project";
+import {Sort} from "@angular/material/sort";
 
 @Component({
   selector: 'app-searcher-table',
@@ -26,6 +28,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
   public totalCountLength;
   private currentElasticQuery: ElasticsearchQuery;
   isLoadingResults = false;
+  projectFields: ProjectField[];
 
   constructor(public searchService: SearcherComponentService, private projectStore: ProjectStore) {
   }
@@ -35,6 +38,11 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
       this.displayedColumns = [];
       this.columnsToDisplay = [];
       this.tableData.data = [];
+    });
+    this.projectStore.getProjectFields().pipe(takeUntil(this.destroy$)).subscribe(projField => {
+      if (projField) {
+        this.projectFields = projField;
+      }
     });
 
     this.searchService.getSearch().pipe(takeUntil(this.destroy$)).subscribe((resp: Search) => {
@@ -62,6 +70,30 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
         this.currentElasticQuery = resp;
       }
     });
+    this.sort.sortChange.pipe(takeUntil(this.destroy$)).subscribe(x => {
+      if (x && x.active && this.projectFields) {
+        this.currentElasticQuery.sort = this.buildSortQuery(x);
+        this.searchService.queryNextSearch();
+      }
+    });
+  }
+
+  buildSortQuery(sort: Sort): any {
+    if (sort.direction === '') {
+      return [];
+    }
+    const field: Field = this.projectFields.map(x => x.fields.find(y => y.path === sort.active))[0]; // not flattened
+    if (field) {
+      if (field.type === 'text') {
+        return [{[field.path + '.keyword']: sort.direction}];
+      } else if (field.type === 'fact') { // fact is nested type
+        // no sorting for facts right now
+        return [];
+      } else {
+        return [{[field.path]: sort.direction}];
+      }
+    }
+    return [];
   }
 
   pageChange(event: PageEvent) {
