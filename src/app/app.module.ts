@@ -11,15 +11,15 @@ import {NavbarComponent} from './navbar/navbar.component';
 import {UserSettingsComponent} from './user-settings/user-settings.component';
 import {HomeComponent} from './home/home.component';
 import {LexiconMinerComponent} from './lexicon-miner/lexicon-miner.component';
-import {TaggerModule} from './tagger/tagger.module';
-import {EmbeddingModule} from './embedding/embedding.module';
+import {TaggerModule} from './models/tagger/tagger.module';
+import {EmbeddingModule} from './models/embedding/embedding.module';
 import {ProjectModule} from './project/project.module';
 import {LexiconBuilderComponent} from './lexicon-miner/lexicon-builder/lexicon-builder.component';
 import {SearcherModule} from './searcher/searcher.module';
-import {NeuroTaggerModule} from './neuro-tagger/neuro-tagger.module';
+import {NeuroTaggerModule} from './models/neuro-tagger/neuro-tagger.module';
 import {MAT_HAMMER_OPTIONS} from '@angular/material';
 import { ToolsModule } from './tools/tools.module';
-import { TorchTaggerModule } from './torch-tagger/torch-tagger/torch-tagger.module';
+import { TorchTaggerModule } from './models/torch-tagger/torch-tagger/torch-tagger.module';
 import { ManagementComponent } from './management/management.component';
 
 
