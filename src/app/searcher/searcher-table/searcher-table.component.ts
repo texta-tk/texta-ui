@@ -8,8 +8,8 @@ import {takeUntil} from 'rxjs/operators';
 import {ProjectStore} from '../../core/projects/project.store';
 import {ElasticsearchQuery} from '../searcher-sidebar/build-search/Constraints';
 import {PageEvent} from '@angular/material/typings/paginator';
-import {Field, ProjectField} from "../../shared/types/Project";
-import {Sort} from "@angular/material/sort";
+import {Field, ProjectField} from '../../shared/types/Project';
+import {Sort} from '@angular/material/sort';
 
 @Component({
   selector: 'app-searcher-table',
