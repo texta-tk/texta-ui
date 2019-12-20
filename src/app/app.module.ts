@@ -5,7 +5,7 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {SharedModule} from './shared/shared.module';
-import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule, HttpClientXsrfModule} from '@angular/common/http';
 import {HttpAuthInterceptor} from './core/auth/http-auth.interceptor';
 import {NavbarComponent} from './navbar/navbar.component';
 import {UserSettingsComponent} from './user-settings/user-settings.component';
@@ -39,6 +39,10 @@ import { ManagementComponent } from './management/management.component';
     SharedModule,
     AppRoutingModule,
     HttpClientModule,
+    HttpClientXsrfModule.withOptions({
+      cookieName: 'XSRF-TOKEN',
+      headerName: 'X-XSRF-TOKEN',
+    }),
     TaggerModule,
     EmbeddingModule,
     ProjectModule,
