@@ -77,15 +77,6 @@ export class ProjectService {
       catchError(this.logService.handleError<ProjectFact[]>('getProjectFacts')));
   }
 
-  // todo backend seperate endpoint
-  getProjectOptions(): Observable<unknown> {
-    return this.http.options<unknown>(
-      this.apiUrl + '/projects/'
-    ).pipe(
-      tap(e => this.logService.logStatus(e, 'get Project Options')),
-      catchError(this.logService.handleError<unknown>('getProjectOptions')));
-  }
-
   getResourceCounts(projId: number): Observable<ProjectResourceCounts | HttpErrorResponse> {
     return this.http.get<ProjectResourceCounts>(`${this.apiUrl}/projects/${projId}/get_resource_counts/`).pipe(
       tap(e => this.logService.logStatus(e, 'get Project Resource Counts')),

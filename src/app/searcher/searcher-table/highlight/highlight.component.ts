@@ -22,6 +22,7 @@ export class HighlightComponent implements OnInit {
 
 
   @Input() currentColumn: string;
+  // tslint:disable-next-line:variable-name
   _searcherHighlight: any;
 
   get searcherHighlight(): any {
@@ -110,6 +111,9 @@ export class HighlightComponent implements OnInit {
     if (facts.length === 0) {
       return [{text: originalText, highlighted: false}];
     }
+    // elastic fields arent trimmed by default, so elasticsearch highlights are going to be misaligned because
+    // elasticsearch highlighter trims the field, MLP also trims the field
+    originalText = originalText.trim(); // todo, will MLP always trim fields? is this fine?
 
     // spans are strings, convert them to 2d array and flatten
     facts.forEach(fact => {
@@ -174,7 +178,7 @@ export class HighlightComponent implements OnInit {
         text: textToInsert,
         highlighted: true,
         fact: factToInsert,
-        color: color,
+        color,
         nested: undefined
       };
     } else {
@@ -337,7 +341,7 @@ export class HighlightComponent implements OnInit {
     for (let i = loopIndex; i <= originalText.length; i++) {
       // use closing span number, otherwise we would get no text, no nested facts
       if (fact.spans[1] === i) {
-        highlight.push({text: newText, highlighted: true, fact: fact, color: colors.get(fact.fact)});
+        highlight.push({text: newText, highlighted: true, fact, color: colors.get(fact.fact)});
         // - 1 because loop is escaped
         return i - 1;
       }
@@ -347,16 +351,14 @@ export class HighlightComponent implements OnInit {
 
   private removeDuplicates(myArr, prop) {
     return myArr.filter((obj, pos, arr) => {
-      return arr.map(mapObj => mapObj[prop]).indexOf(obj[prop]) === pos
-    })
+      return arr.map(mapObj => mapObj[prop]).indexOf(obj[prop]) === pos;
+    });
   }
 
   private detectOverlappingFacts(facts: TextaFact[]): Map<TextaFact, TextaFact[]> {
     let overLappingFacts: Map<TextaFact, TextaFact[]> = new Map<TextaFact, TextaFact[]>();
     if (facts.length > 0) {
       facts[0].id = 0;
-      let index = 1;
-
       overLappingFacts = this.detectOverLappingFactsDrill(facts[0], facts, facts[0].spans[1] as number, 1, overLappingFacts);
     }
 
@@ -410,10 +412,10 @@ export class HighlightComponent implements OnInit {
   }
 
 
-  generateRandomColors(number) {
+  generateRandomColors(numberOfRandomColors: number) {
     const output: string[] = [];
     const max = 0xfff;
-    for (let i = 0; i < number; i++) {
+    for (let i = 0; i < numberOfRandomColors; i++) {
       output.push('#' + (Math.round(Math.random() * (max - 0xf77)) + 0xf77).toString(16));
     }
     return output;

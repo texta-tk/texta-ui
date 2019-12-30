@@ -16,8 +16,8 @@ import {UserProfile} from '../../shared/types/UserProfile';
 import {HttpErrorResponse} from '@angular/common/http';
 import {MatDialog} from '@angular/material';
 import {LoginDialogComponent} from '../../shared/components/dialogs/login/login-dialog.component';
-import {USERROLES} from "../../shared/types/UserAuth";
-import {LogService} from "../util/log.service";
+import {USERROLES} from '../../shared/types/UserAuth';
+import {LogService} from '../util/log.service';
 
 
 @Injectable({
@@ -31,7 +31,6 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
 
   }
 
-  // temp todo
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
