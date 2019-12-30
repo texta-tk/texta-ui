@@ -36,7 +36,7 @@ export class ReindexerService {
   }
 
   deleteReindex(reindexerId: number, projectId: number) {
-    return this.http.delete(`${this.apiUrl}/projects/${projectId}/reindexer/${reindexerId}`).pipe(
+    return this.http.delete(`${this.apiUrl}/projects/${projectId}/reindexer/${reindexerId}/`).pipe(
       tap(e => this.logService.logStatus(e, 'deleteReindex')),
       catchError(this.logService.handleError<unknown>('deleteReindex')));
   }

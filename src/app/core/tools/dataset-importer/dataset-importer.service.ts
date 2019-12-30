@@ -35,7 +35,7 @@ export class DatasetImporterService {
   }
 
   deleteIndex(datasetId: number, projectId: number) {
-    return this.http.delete(`${this.apiUrl}/projects/${projectId}/dataset_imports/${datasetId}`).pipe(
+    return this.http.delete(`${this.apiUrl}/projects/${projectId}/dataset_imports/${datasetId}/`).pipe(
       tap(e => this.logService.logStatus(e, 'deleteIndex')),
       catchError(this.logService.handleError<unknown>('deleteIndex')));
   }

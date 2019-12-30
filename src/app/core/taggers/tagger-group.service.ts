@@ -85,7 +85,7 @@ export class TaggerGroupService {
   }
 
   deleteTaggerGroup(projectId: number, taggerId: number): Observable<unknown | HttpErrorResponse> {
-    return this.http.delete(`${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/${taggerId}`).pipe(
+    return this.http.delete(`${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/${taggerId}/`).pipe(
       tap(e => this.logService.logStatus(e, 'deleteTaggerGroup')),
       catchError(this.logService.handleError<unknown>('deleteTaggerGroup')));
   }

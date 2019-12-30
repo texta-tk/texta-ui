@@ -42,7 +42,7 @@ export class EmbeddingsGroupService {
   }
 
   deleteEmbeddingCluster(projectId: number, clusterId: number): Observable<unknown | HttpErrorResponse> {
-    return this.http.delete(`${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/${clusterId}`).pipe(
+    return this.http.delete(`${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/${clusterId}/`).pipe(
       tap(e => this.logService.logStatus(e, 'deleteEmbeddingCluster')),
       catchError(this.logService.handleError<unknown>('deleteEmbeddingCluster')));
   }

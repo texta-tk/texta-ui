@@ -105,7 +105,7 @@ export class ProjectService {
   }
 
   deleteProject(id: number) {
-    return this.http.delete<unknown>(`${this.apiUrl}/projects/${id}`).pipe(
+    return this.http.delete<unknown>(`${this.apiUrl}/projects/${id}/`).pipe(
       tap(e => this.logService.logStatus(e, 'delete Project')),
       catchError(this.logService.handleError<string[]>('deleteProject')));
   }

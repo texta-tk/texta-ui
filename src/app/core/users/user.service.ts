@@ -72,7 +72,7 @@ export class UserService {
 
   getUserByUrl(url: string | number): Observable<UserProfile | HttpErrorResponse> {
     if (Number(url)) {
-      url = this.apiUrl + '/users/' + url;
+      url = this.apiUrl + '/users/' + url + '/';
     }
     return this.http.get<UserProfile>(
       url as string,
@@ -83,7 +83,7 @@ export class UserService {
 
   toggleSuperUser(id: number): Observable<UserProfile | HttpErrorResponse> {
     return this.http.get<UserProfile>(
-      this.apiUrl + '/users/' + id + '/assign_superuser',
+      this.apiUrl + '/users/' + id + '/assign_superuser/',
     ).pipe(
       tap(e => this.logService.logStatus(e, 'toggleSuperUser')),
       catchError(this.logService.handleError<UserProfile>('toggleSuperUser')));
