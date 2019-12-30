@@ -55,7 +55,7 @@ export class CreateDatasetDialogComponent implements OnInit, OnDestroy {
     const postData = new FormData();
     postData.set('description', formData.descriptionFormControl);
     postData.set('index', formData.descriptionFormControl);
-    postData.set('separator', formData.descriptionFormControl);
+    postData.set('separator', formData.separatorFormControl);
     postData.set('file', formData.fileFormControl.files[0]);
 
     this.importerService.createIndex(postData, this.currentProject.id).pipe(
