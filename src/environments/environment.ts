@@ -4,7 +4,7 @@
 
 export const environment = {
   // apiUrl: '//dev.texta.ee:8000',
-  apiUrl: '//localhost:8000',
+  apiUrl: 'http://localhost:8000',
   production: false
 };
 

@@ -1,33 +1,30 @@
 import {Injectable} from '@angular/core';
-import {
-  HttpInterceptor,
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpErrorResponse
-} from '@angular/common/http';
+import {HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpXsrfTokenExtractor} from '@angular/common/http';
 
 import {Observable, throwError} from 'rxjs';
-import {map, catchError} from 'rxjs/operators';
+import {catchError, map} from 'rxjs/operators';
 import {LocalStorageService} from '../util/local-storage.service';
 import {LogService} from '../util/log.service';
 
 
 @Injectable()
 export class HttpAuthInterceptor implements HttpInterceptor {
-  constructor(private localStorageService: LocalStorageService, private logService: LogService) {
+  constructor(private localStorageService: LocalStorageService, private logService: LogService,
+              private tokenExtractor: HttpXsrfTokenExtractor) {
   }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const token = this.localStorageService.getUser();
+    const csrfToken = this.tokenExtractor.getToken() as string;
 
     if (token) {
       request = request.clone({
         headers: request.headers.set('Authorization', 'Token ' + token.key),
         withCredentials: true
       });
-    } else {
-      request = request.clone({withCredentials: true});
+    }
+    if (csrfToken) {
+      request = request.clone({setHeaders: {'X-XSRF-TOKEN': csrfToken}});
     }
 
     return next.handle(request).pipe(
