@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {SearcherComponentService} from '../services/searcher-component.service';
 import {Search} from '../../shared/types/Search';
 import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
@@ -15,6 +15,7 @@ import {Sort} from '@angular/material/sort';
   selector: 'app-searcher-table',
   templateUrl: './searcher-table.component.html',
   styleUrls: ['./searcher-table.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearcherTableComponent implements OnInit, OnDestroy {
   public tableData: MatTableDataSource<any> = new MatTableDataSource();
@@ -42,22 +43,16 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     this.projectStore.getProjectFields().pipe(takeUntil(this.destroy$)).subscribe(projField => {
       if (projField) {
         this.projectFields = projField;
+        // combine all fields of all projects into one unique array
+        this.displayedColumns = [...new Set([].concat.apply([], (projField.map(x => x.fields.map(y => y.path)))))] as string[];
+        this.columnsToDisplay = this.displayedColumns;
+        this.columnFormControl.setValue(this.columnsToDisplay);
       }
     });
 
     this.searchService.getSearch().pipe(takeUntil(this.destroy$)).subscribe((resp: Search) => {
       if (resp) {
         this.totalCountLength = resp.searchContent.count;
-        this.displayedColumns = this.makeColumns(resp.searchContent.results);
-        this.displayedColumns.sort((a, b) => 0 - (a < b ? 1 : -1));
-        // first search || no search results
-        if (this.columnsToDisplay.length === 0 || this.displayedColumns.length === 0) {
-          this.columnsToDisplay = this.displayedColumns.slice();
-          this.columnFormControl.setValue(this.columnsToDisplay);
-        } else {
-          // sometimes response adds columns based on user input, so need to updated columns selection
-          this.validateColumnSelect();
-        }
         this.tableData.data = resp.searchContent.results;
         if (this.currentElasticQuery) {
           this.paginator.pageIndex = this.currentElasticQuery.from / this.currentElasticQuery.size;
