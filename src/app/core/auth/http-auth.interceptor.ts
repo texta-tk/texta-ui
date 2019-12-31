@@ -24,7 +24,6 @@ export class HttpAuthInterceptor implements HttpInterceptor {
       });
     }
     if (csrfToken && (request.method !== 'GET' && request.method !== 'HEAD')) {
-      console.log(request.method);
       request = request.clone({setHeaders: {'X-XSRF-TOKEN': csrfToken}});
     }
 
