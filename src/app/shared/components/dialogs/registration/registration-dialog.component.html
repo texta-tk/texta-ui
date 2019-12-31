@@ -51,7 +51,7 @@
           <button type="submit" mat-button [disabled]="!profileForm.valid || makingRequest">Register</button>
         </div>
       </div>
-      <mat-error align="center" *ngIf="registrationError">
+      <mat-error class="center-text" *ngIf="registrationError">
         <small>{{registrationError}}</small>
       </mat-error>
     </div>

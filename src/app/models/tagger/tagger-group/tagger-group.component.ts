@@ -133,7 +133,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
     this.taggerGroupService.modelsRetrain(taggerGroup.id, this.currentProject.id).subscribe(
       (resp: { 'success': 'retraining tasks created' } | HttpErrorResponse) => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
-          this.logService.snackBarMessage('Started retraining loggers', 3000);
+          this.logService.snackBarMessage('Started retraining taggers', 3000);
         } else if (resp instanceof HttpErrorResponse) {
           this.logService.snackBarError(resp, 5000);
         }

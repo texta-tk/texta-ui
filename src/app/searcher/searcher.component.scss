@@ -3,16 +3,9 @@
 .mat-drawer-container {
   max-height: calc(100vh - #{$navbar-height});
   min-height: calc(100vh - #{$navbar-height});
+
   .mat-drawer {
-    max-width: 370px;
-    min-width: 370px;
-    ::ng-deep {
-      .mat-drawer-inner-container {
-        scrollbar-width: none; // Firefox
-      }
-      .mat-drawer-inner-container::-webkit-scrollbar {
-        display: none; // Safari and Chrome
-      }
-    }
+    max-width: 385px;
+    min-width: 385px;
   }
 }
