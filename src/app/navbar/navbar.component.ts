@@ -85,14 +85,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   registerDialog() {
     this.dialog.open(RegistrationDialogComponent, {
-      height: '400px',
+      maxHeight: '450px',
       width: '400px',
     });
   }
 
   loginDialog() {
     this.dialog.open(LoginDialogComponent, {
-      height: '270px',
+      maxHeight: '295px',
       width: '400px',
     });
   }

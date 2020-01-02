@@ -77,7 +77,9 @@ export class RegistrationDialogComponent implements OnInit, OnDestroy {
         this.makingRequest = false;
         if (response instanceof HttpErrorResponse) {
           // blink effect with timeout
-          setTimeout(() => this.registrationError = response.error.non_field_errors, 100);
+          setTimeout(() => {
+            this.registrationError = response.error.password1 ? response.error.password1[0] : null;
+          }, 100);
           return of(null);
         } else {
           // success, save token

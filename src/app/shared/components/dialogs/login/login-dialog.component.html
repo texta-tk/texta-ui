@@ -33,8 +33,7 @@
   </form>
 
 </div>
-<div mat-dialog-actions>
-  <mat-error align="center" *ngIf="loginError">
-    <small>{{loginError}}</small>
-  </mat-error>
-</div>
+
+<mat-error class="center-text" *ngIf="loginError">
+  <small>{{loginError}}</small>
+</mat-error>

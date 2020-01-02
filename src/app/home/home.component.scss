@@ -1,47 +1,51 @@
 .health-wrapper {
-    border-left: 1px solid #e0e0e0;
+  border-left: 1px solid #e0e0e0;
+
+  .mat-chip.mat-standard-chip.mat-chip-disabled {
+    opacity: 1;
+  }
 }
 
 
 .ok-text {
-    color: green;
+  color: green;
 }
 
 .danger-text {
-    color: red;
+  color: red;
 }
 
 
 .health-table {
-    max-width: 500px;
-    padding: 50px;
+  max-width: 500px;
+  padding: 50px;
 }
 
 .usage-card {
-    max-width: 600px;
-    margin-bottom: 10px;
+  max-width: 600px;
+  margin-bottom: 10px;
 }
 
 .service-status-card {
-    margin-top: 10px;
-    max-width: 600px;
-    margin-bottom: 10px;
+  margin-top: 10px;
+  max-width: 600px;
+  margin-bottom: 10px;
 }
 
 .counts-card {
-    max-width: 600px;
+  max-width: 600px;
 }
 
 .count-text {
-    font-size: 30px;
+  font-size: 30px;
 }
 
 
 .unreachable {
-    font-size: 30px;
+  font-size: 30px;
 }
 
 .unreachable-card {
-    max-width: 600px;
-    margin-top: 10px;    
+  max-width: 600px;
+  margin-top: 10px;
 }
