@@ -99,39 +99,11 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     }
   }
 
-  // temp functions for testing todo, right now its only looking at first element for columns
-  makeColumns(data: { highlight: any, doc: any }[]): string[] {
-    const columns: string[] = [];
-    if (data.length > 0) {
-      for (const key of Object.keys(data[0].doc)) {
-        columns.push(key);
-      }
-    }
-    return columns;
-  }
-
   checkIfObject(value) {
     if (value) {
       const stringValue = value.toString().split(',');
       // hacky way to check if object with properties
       return stringValue[0] === '[object Object]';
-    }
-  }
-
-  validateColumnSelect() {
-    for (const item of [...this.columnsToDisplay]) {
-      if (!(this.displayedColumns.includes(item))) {
-        const index = this.columnsToDisplay.indexOf(item);
-        if (index > -1) {
-          this.columnsToDisplay.splice(index, 1);
-        }
-      }
-      if (this.columnsToDisplay.length <= 1) {
-        if (this.columnsToDisplay[0] === 'texta_facts' || this.columnsToDisplay.length === 0) {
-          this.columnsToDisplay = this.displayedColumns.slice();
-          this.columnFormControl.setValue(this.columnsToDisplay);
-        }
-      }
     }
   }
 

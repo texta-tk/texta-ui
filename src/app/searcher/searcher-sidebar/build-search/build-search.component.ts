@@ -21,6 +21,7 @@ import {SearcherComponentService} from '../../services/searcher-component.servic
 import {UserStore} from '../../../core/users/user.store';
 import {UserProfile} from '../../../shared/types/UserProfile';
 import {SavedSearch} from '../../../shared/types/SavedSearch';
+import {SelectionModel} from "@angular/cdk/collections";
 
 @Component({
   selector: 'app-build-search',
@@ -40,6 +41,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
   elasticQuery: ElasticsearchQuery = new ElasticsearchQuery();
   searcherOptions: Array<'live_search'> = ['live_search'];
   currentUser: UserProfile;
+  indexSelection = new SelectionModel<string>(true, []);
 
   constructor(private projectService: ProjectService,
               private projectStore: ProjectStore,
@@ -67,6 +69,8 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
         this.projectFields = projectFields;
         ProjectField.sortTextaFactsAsFirstItem(this.projectFields);
         this.projectFieldsFiltered = projectFields;
+        this.indexSelection.clear();
+        this.projectFieldsFiltered.forEach(projectField => this.indexSelection.select(projectField.index));
       }
     });
 
@@ -81,7 +85,10 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
       if (this.elasticQuery.size === 0) {
         this.elasticQuery.size = 10;
       }
-      return this.searcherService.search({query: this.elasticQuery.elasticSearchQuery}, this.currentProject.id);
+      return this.searcherService.search({
+        query: this.elasticQuery.elasticSearchQuery,
+        indices: this.indexSelection.selected
+      }, this.currentProject.id);
     })).subscribe(
       (result: { count: number, results: { highlight: any, doc: any }[] } | HttpErrorResponse) => {
         this.searchService.setIsLoading(false);
