@@ -3,7 +3,8 @@
   <div class="dialog-content-wrapper" mat-dialog-content>
     <mat-form-field class="max-width">
       <mat-label>Select Indices</mat-label>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="indicesFormControl" required multiple>
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
+                  formControlName="indicesFormControl" required multiple>
         <mat-option *ngFor="let item of indices" [value]="item">
           {{item}}
         </mat-option>
@@ -14,7 +15,8 @@
     </mat-form-field>
     <mat-form-field class="max-width">
       <mat-label>Select Users</mat-label>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="usersFormControl" required multiple>
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
+                  formControlName="usersFormControl" required multiple>
         <mat-option *ngFor="let item of users" [value]="item.url">
           {{item.username}}
         </mat-option>
@@ -24,15 +26,6 @@
       </mat-error>
     </mat-form-field>
   </div>
-<!--  <mat-form-field>
-    <mat-label>Select Owner</mat-label>
-    <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
-                formControlName="ownerFormControl">
-      <mat-option *ngFor="let item of users" [value]="item.id">
-        {{item.username}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>-->
 
   <div mat-dialog-actions class="flex-col submit-button-row">
     <div class="flex-row">

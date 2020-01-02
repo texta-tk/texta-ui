@@ -41,7 +41,7 @@ export class NeuroTaggerService {
 
 
   deleteNeuroTagger(projectId: number, taggerId: number) {
-    return this.http.delete(`${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/${taggerId}`).pipe(
+    return this.http.delete(`${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/${taggerId}/`).pipe(
       tap(e => this.logService.logStatus(e, 'deleteNeuroTagger')),
       catchError(this.logService.handleError<unknown>('deleteNeuroTagger')));
   }

@@ -10,7 +10,6 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {LogService} from 'src/app/core/util/log.service';
 import {UserStore} from '../../core/users/user.store';
 import {of, Subject} from 'rxjs';
-import {switchMap, takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-create-embedding-dialog',
@@ -30,7 +29,6 @@ export class CreateProjectDialogComponent implements OnInit, OnDestroy {
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   users: UserProfile[];
   indices: unknown[] = [];
-  currentUser = new UserProfile();
 
   destroyed$: Subject<boolean> = new Subject<boolean>();
 
@@ -52,27 +50,12 @@ export class CreateProjectDialogComponent implements OnInit, OnDestroy {
         this.indices = resp;
       }
     });
-    this.userStore.getCurrentUser().pipe(takeUntil(this.destroyed$), switchMap(user => {
-      if (user) {
-        return this.userService.getUserByUrl(user.pk);
-      }
-      return of(null);
-    })).subscribe((resp: UserProfile | HttpErrorResponse) => {
-      if (!(resp instanceof HttpErrorResponse)) {
-        this.currentUser = resp;
-        if (!this.projectForm.contains('ownerFormControl')) {
-          this.projectForm.addControl('ownerFormControl', new FormControl());
-        }
-      }
-
-    });
   }
 
   onSubmit(formData) {
     const body = {
       indices: formData.indicesFormControl,
       users: formData.usersFormControl,
-      owner: formData.ownerFormControl ? formData.ownerFormControl : this.currentUser.id,
       title: formData.titleFormControl
     };
     this.projectService.createProject(body).subscribe((resp: Project | HttpErrorResponse) => {

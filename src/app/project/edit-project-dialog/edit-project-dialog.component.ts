@@ -24,11 +24,8 @@ export class EditProjectDialogComponent implements OnInit {
   projectForm = new FormGroup({
     indicesFormControl: new FormControl([], Validators.required),
     usersFormControl: new FormControl(this.selectedUsers, Validators.required),
-/*    ownerFormControl: new FormControl(),*/
   });
   destroyed$: Subject<boolean> = new Subject<boolean>();
-
-  currentUser = new UserProfile();
 
   constructor(public dialogRef: MatDialogRef<EditProjectDialogComponent>,
               private logService: LogService,
@@ -37,7 +34,6 @@ export class EditProjectDialogComponent implements OnInit {
               private projectStore: ProjectStore,
               private projectService: ProjectService) {
     this.projectForm.get('indicesFormControl').setValue(this.data.indices);
-/*    this.projectForm.get('ownerFormControl').setValue(this.data.owner);*/
     if (this.data.users) {
       from(this.data.users).pipe(mergeMap(url => {
         return this.userService.getUserByUrl(url);
@@ -68,7 +64,6 @@ export class EditProjectDialogComponent implements OnInit {
   onSubmit(formData) {
     this.data.indices = formData.indicesFormControl;
     this.data.users = formData.usersFormControl;
-/*    this.data.owner = formData.ownerFormControl;*/
     this.projectService.editProject(this.data, this.data.id).subscribe((resp: Project | HttpErrorResponse) => {
       if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);

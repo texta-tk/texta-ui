@@ -3,7 +3,6 @@ export class UserProfile {
   email = '';
   firstName = '';
   lastName = '';
-  pk: number;
   id: number;
   username = '';
   date_joined: string;

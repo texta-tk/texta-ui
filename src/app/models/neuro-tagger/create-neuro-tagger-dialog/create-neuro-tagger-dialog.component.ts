@@ -9,7 +9,7 @@ import {mergeMap, take} from 'rxjs/operators';
 import {forkJoin, of} from 'rxjs';
 import {ProjectFact, ProjectField} from '../../../shared/types/Project';
 import {HttpErrorResponse} from '@angular/common/http';
-import { NeuroTagger } from 'src/app/shared/types/tasks/NeuroTagger';
+import {NeuroTagger} from 'src/app/shared/types/tasks/NeuroTagger';
 
 interface NeuroTaggerOptions {
   actions: { POST: { model_architecture: { choices: [''] } } };
@@ -82,13 +82,10 @@ export class CreateNeuroTaggerDialogComponent implements OnInit {
   }
 
   setDefaultFormValues(options) {
-    console.log(options);
     this.taggerForm.get('modelArchitectureFormControl').setValue(options.actions.POST.model_architecture.choices[0].value);
   }
 
   onSubmit(formData) {
-    console.log(formData);
-    console.log(formData.modelArchitectureFormControl);
     const body = {
       description: formData.descriptionFormControl,
       fields: formData.fieldsFormControl,
@@ -101,7 +98,7 @@ export class CreateNeuroTaggerDialogComponent implements OnInit {
       num_epochs: formData.epochNumberFormControl,
       validation_split: formData.validationSplitFormControl,
       vocab_size: formData.vocabSizeFormControl,
-      fact_name: formData.factNameFormControl,
+      fact_name: formData.factNameFormControl ? formData.factNameFormControl : [],
       min_fact_doc_count: formData.minFactDocCountFormControl,
     };
 

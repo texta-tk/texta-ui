@@ -39,7 +39,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: Tagger | null;
   public tableData: MatTableDataSource<Tagger> = new MatTableDataSource();
   selectedRows = new SelectionModel<Tagger>(true, []);
-  public displayedColumns = ['select', 'id', 'author__username', 'description', 'fields', 'task__time_started',
+  public displayedColumns = ['select', 'author__username', 'description', 'fields', 'task__time_started',
     'task__time_completed', 'f1_score', 'precision', 'recall', 'task__status', 'Modify'];
   public isLoadingResults = true;
 
@@ -236,7 +236,10 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   onDeleteAllSelected() {
     if (this.selectedRows.selected.length > 0) {
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-        data: {confirmText: 'Delete', mainText: `Are you sure you want to delete ${this.selectedRows.selected.length} Taggers?`}
+        data: {
+          confirmText: 'Delete',
+          mainText: `Are you sure you want to delete ${this.selectedRows.selected.length} Taggers?`
+        }
       });
 
       dialogRef.afterClosed().subscribe(result => {
@@ -287,6 +290,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   applyFilter(filterValue: string, field: string) {
     this.filteringValues[field] = filterValue;
+    this.paginator.pageIndex = 0;
     this.filterQueriesToString();
     this.filteredSubject.next();
   }

@@ -29,7 +29,7 @@ import {ConfirmDialogComponent} from 'src/app/shared/components/dialogs/confirm-
 export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: Embedding | null;
   public tableData: MatTableDataSource<Embedding> = new MatTableDataSource();
-  public displayedColumns = ['select', 'id', 'author__username', 'description',
+  public displayedColumns = ['select', 'author__username', 'description',
     'fields', 'task__time_started', 'task__time_completed', 'num_dims', 'min_freq', 'vocab_size', 'task__status', 'Modify'];
   selectedRows = new SelectionModel<Embedding>(true, []);
   public isLoadingResults = true;
@@ -41,7 +41,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
   filteredSubject = new Subject();
   // For custom filtering, such as text search in description
   inputFilterQuery = '';
-  filteringValues = {}
+  filteringValues = {};
 
 
   currentProject: Project;
@@ -174,7 +174,10 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
   onDeleteAllSelected() {
     if (this.selectedRows.selected.length > 0) {
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-        data: {confirmText: 'Delete', mainText: `Are you sure you want to delete ${this.selectedRows.selected.length} Embeddings?`}
+        data: {
+          confirmText: 'Delete',
+          mainText: `Are you sure you want to delete ${this.selectedRows.selected.length} Embeddings?`
+        }
       });
 
       dialogRef.afterClosed().subscribe(result => {
@@ -212,6 +215,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
 
   applyFilter(filterValue: string, field: string) {
     this.filteringValues[field] = filterValue;
+    this.paginator.pageIndex = 0;
     this.filterQueriesToString();
     this.filteredSubject.next();
   }
@@ -219,7 +223,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
   filterQueriesToString() {
     this.inputFilterQuery = '';
     for (const field in this.filteringValues) {
-      this.inputFilterQuery += `&${field}=${this.filteringValues[field]}`
+      this.inputFilterQuery += `&${field}=${this.filteringValues[field]}`;
     }
   }
 }

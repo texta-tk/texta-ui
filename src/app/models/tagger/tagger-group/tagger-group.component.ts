@@ -35,7 +35,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: TaggerGroup | null;
   public tableData: MatTableDataSource<TaggerGroup> = new MatTableDataSource();
   selectedRows = new SelectionModel<TaggerGroup>(true, []);
-  public displayedColumns = ['select', 'id', 'author__username', 'description', 'fact_name', 'minimum_sample_size',
+  public displayedColumns = ['select', 'author__username', 'description', 'fact_name', 'minimum_sample_size',
     'num_tags', 'f1_score', 'precision', 'recall', 'progress', 'Modify'];
   public isLoadingResults = true;
 
@@ -233,6 +233,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
 
   applyFilter(filterValue: string, field: string) {
     this.filteringValues[field] = filterValue;
+    this.paginator.pageIndex = 0;
     this.filterQueriesToString();
     this.filteredSubject.next();
   }
