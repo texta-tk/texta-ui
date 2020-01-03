@@ -18,15 +18,16 @@ import {Sort} from '@angular/material/sort';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearcherTableComponent implements OnInit, OnDestroy {
+  static totalCountLength; // hack for paginator max length with label, no easy way to do this
   public tableData: MatTableDataSource<any> = new MatTableDataSource();
-  public displayedColumns: string[];
+  public displayedColumns: string[] = [];
   public columnsToDisplay: string[] = [];
   public columnFormControl = new FormControl([]);
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   destroy$: Subject<boolean> = new Subject();
   @Output() drawerToggle = new EventEmitter<boolean>();
-  public totalCountLength;
+  public paginatorLength;
   private currentElasticQuery: ElasticsearchQuery;
   isLoadingResults = false;
   projectFields: ProjectField[];
@@ -35,11 +36,9 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$)).subscribe(proj => {
-      this.displayedColumns = [];
-      this.columnsToDisplay = [];
-      this.tableData.data = [];
-    });
+    // paginator label hack
+    this.paginator._intl.getRangeLabel = this.countRangeLabel;
+
     this.projectStore.getProjectFields().pipe(takeUntil(this.destroy$)).subscribe(projField => {
       if (projField) {
         this.projectFields = projField;
@@ -47,12 +46,15 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
         this.displayedColumns = [...new Set([].concat.apply([], (projField.map(x => x.fields.map(y => y.path)))))] as string[];
         this.columnsToDisplay = this.displayedColumns;
         this.columnFormControl.setValue(this.columnsToDisplay);
+        // project changed reset table
+        this.tableData.data = [];
       }
     });
 
     this.searchService.getSearch().pipe(takeUntil(this.destroy$)).subscribe((resp: Search) => {
       if (resp) {
-        this.totalCountLength = resp.searchContent.count;
+        SearcherTableComponent.totalCountLength = resp.searchContent.count;
+        this.paginatorLength = SearcherTableComponent.totalCountLength > 10000 ? 10000 : SearcherTableComponent.totalCountLength;
         this.tableData.data = resp.searchContent.results;
         if (this.currentElasticQuery) {
           this.paginator.pageIndex = this.currentElasticQuery.from / this.currentElasticQuery.size;
@@ -119,5 +121,23 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  countRangeLabel(page: number, pageSize: number, length: number) {
+    if (length === 0 || pageSize === 0) {
+      return `0 of ${length}`;
+    }
+
+    length = Math.max(length, 0);
+    const startIndex = page * pageSize;
+
+    // If the start index exceeds the list length, do not try and fix the end index to the end.
+    const endIndex = startIndex < length ?
+      Math.min(startIndex + pageSize, length) :
+      startIndex + pageSize;
+    if (length >= 10000) {
+      return `${startIndex + 1} - ${endIndex} of 10000(${SearcherTableComponent.totalCountLength})`;
+    } else {
+      return `${startIndex + 1} - ${endIndex} of ${length}`;
+    }
+  }
 
 }

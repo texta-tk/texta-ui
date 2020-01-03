@@ -38,7 +38,7 @@
           </mat-select>
         </mat-form-field>
         <button mat-stroked-button (click)="drawerToggle.emit(true)">Toggle drawer</button>
-        <mat-paginator (page)="pageChange($event)" [pageSizeOptions]="[10, 20, 50]" [length]="totalCountLength"
+        <mat-paginator (page)="pageChange($event)" [pageSizeOptions]="[10, 20, 50]" [length]="paginatorLength"
                        showFirstLastButtons>
 
         </mat-paginator>

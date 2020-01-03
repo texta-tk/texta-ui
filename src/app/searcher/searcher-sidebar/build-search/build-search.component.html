@@ -10,7 +10,7 @@
         <mat-checkbox class="mat-option-pseudo-checkbox"
                       (change)="$event ? indexSelection.toggle(group.index) : null"
                       color="primary"
-                      [checked]="indexSelection.isSelected(group.index)" title="Only search selected indices">{{group.index}}</mat-checkbox>
+                      [checked]="indexSelection.isSelected(group.index)" matTooltip="Only search selected indices">{{group.index}}</mat-checkbox>
         <mat-option *ngFor="let fields of group.fields" [value]="fields">
           {{fields.path}}
         </mat-option>

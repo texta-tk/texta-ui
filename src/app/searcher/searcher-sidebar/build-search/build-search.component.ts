@@ -66,8 +66,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     });
     this.projectStore.getProjectFields().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectField[]) => {
       if (projectFields) {
-        this.projectFields = projectFields;
-        ProjectField.sortTextaFactsAsFirstItem(this.projectFields);
+        this.projectFields = ProjectField.sortTextaFactsAsFirstItem(projectFields);
         this.projectFieldsFiltered = projectFields;
         this.indexSelection.clear();
         this.projectFieldsFiltered.forEach(projectField => this.indexSelection.select(projectField.index));
@@ -80,9 +79,9 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.searchService.getSearchQueue().pipe(debounceTime(400), takeUntil(this.destroy$), switchMap(x => {
+    this.searchService.getSearchQueue().pipe(debounceTime(300), takeUntil(this.destroy$), switchMap(x => {
       this.searchService.setIsLoading(true);
-      if (this.elasticQuery.size === 0) {
+      if (this.elasticQuery.size === 0) { // aggregations use size 0
         this.elasticQuery.size = 10;
       }
       return this.searcherService.search({

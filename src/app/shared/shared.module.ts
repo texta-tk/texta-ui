@@ -41,7 +41,6 @@ import {InfiniteScrollModule} from 'ngx-infinite-scroll';
 import {SavedSearchAutocompleteComponent} from './components/saved-search-autocomplete/saved-search-autocomplete.component';
 import {LineChartModule} from '@swimlane/ngx-charts';
 import {MatTreeModule} from '@angular/material/tree';
-import {getRangePaginatorIntl} from './length-paginator-intl';
 import {MaterialFileInputModule} from 'ngx-material-file-input';
 
 @NgModule({
@@ -137,9 +136,6 @@ import {MaterialFileInputModule} from 'ngx-material-file-input';
     ConfirmDialogComponent,
     QueryDialogComponent,
     GenericDialogComponent
-  ],
-  providers: [
-    {provide: MatPaginatorIntl, useValue: getRangePaginatorIntl()}
   ]
 })
 export class SharedModule {
