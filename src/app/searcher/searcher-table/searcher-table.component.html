@@ -8,8 +8,12 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>{{column}}</th>
           <td mat-cell *matCellDef="let row" class="table-row">
             <pre *ngIf="checkIfObject(row.doc[column])">{{row.doc[column] | json}}</pre>
-            <app-highlight *ngIf="!checkIfObject(row.doc[column])" [JsonResponse]="row.doc" [currentColumn]="column"
-                           [searcherHighlight]="row.highlight">
+            <app-highlight *ngIf="!checkIfObject(row.doc[column])"
+                           [highlightConfig]="{
+                           currentColumn: column,
+                           searcherHighlight: row.highlight,
+                           highlightingStyle: searcherOptions.factHighlightStyle,
+                           data: row.doc}">
 
             </app-highlight>
           </td>

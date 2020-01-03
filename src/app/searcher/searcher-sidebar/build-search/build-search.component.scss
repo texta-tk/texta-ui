@@ -5,6 +5,7 @@
 .filters {
   padding: 5px;
   margin-bottom: 5px;
+
   .header {
     .field-titles {
       h4 {
@@ -20,6 +21,23 @@
   h4 {
     margin: 0.25em 0 0;
   }
+
+  mat-checkbox {
+    margin-left: 1em;
+    margin-right: 1em;
+  }
+
+  ::ng-deep .mat-checkbox-layout {
+    margin-bottom: 0.5em;
+    margin-top: 0.5em;
+    width: 100%;
+
+    .mat-checkbox-inner-container {
+      margin-right: 0;
+      margin-left: auto;
+    }
+  }
+
   margin-bottom: 5px;
 }
 

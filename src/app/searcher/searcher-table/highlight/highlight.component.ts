@@ -10,37 +10,37 @@ export interface TextaFact {
   searcherHighlight?: boolean;
 }
 
+export interface HighlightConfig {
+  currentColumn: string;
+  searcherHighlight: any;
+  onlyHighlightMatching: boolean;
+  data: any;
+}
+
 
 @Component({
   selector: 'app-highlight',
   templateUrl: './highlight.component.html',
   styleUrls: ['./highlight.component.sass']
 })
-export class HighlightComponent implements OnInit {
+export class HighlightComponent {
   static colors: Map<string, string> = new Map<string, string>();
   highlightArray: HighlightObject[] = [];
 
-
-  @Input() currentColumn: string;
-  // tslint:disable-next-line:variable-name
-  _searcherHighlight: any;
-
-  get searcherHighlight(): any {
-    return this._searcherHighlight;
-  }
-
-  @Input() set searcherHighlight(value: any) {
-    this._searcherHighlight = value;
-  }
-
-  @Input() set JsonResponse(data: any) { // todo data
-    let textaFieldFacts = this.getFactsByField(data, this.currentColumn);
-    textaFieldFacts = this.removeDuplicates(textaFieldFacts, 'spans');
+  @Input() set highlightConfig(highlightConfig: HighlightConfig) { // todo data
+    let fieldFacts = this.getFactsByField(highlightConfig.data, highlightConfig.currentColumn);
+    if (highlightConfig.onlyHighlightMatching) {
+      fieldFacts = this.getOnlyMatchingFacts(fieldFacts);
+    }
+    fieldFacts = this.removeDuplicates(fieldFacts, 'spans');
     const highlightTerms = [
-      ...this.makeSearcherHighlightFacts(this.searcherHighlight, this.currentColumn),
-      ...textaFieldFacts];
+      ...this.makeSearcherHighlightFacts(highlightConfig.searcherHighlight, highlightConfig.currentColumn),
+      ...fieldFacts];
     const colors = this.generateColorsForFacts(highlightTerms);
-    this.highlightArray = this.makeHighLights(data[this.currentColumn], highlightTerms, colors);
+    this.highlightArray = this.makeHighLights(highlightConfig.data[highlightConfig.currentColumn], highlightTerms, colors);
+  }
+
+  constructor() {
   }
 
   makeSearcherHighlightFacts(searcherHighlight: any, currentColumn: string) {
@@ -81,7 +81,8 @@ export class HighlightComponent implements OnInit {
     return highlightArray;
   }
 
-  constructor() {
+  getOnlyMatchingFacts(fieldFacts: TextaFact[]): TextaFact[] {
+    return [];
   }
 
   getFactsByField(factArray, columnName): TextaFact[] {
@@ -419,10 +420,6 @@ export class HighlightComponent implements OnInit {
       output.push('#' + (Math.round(Math.random() * (max - 0xf77)) + 0xf77).toString(16));
     }
     return output;
-  }
-
-  ngOnInit() {
-
   }
 }
 

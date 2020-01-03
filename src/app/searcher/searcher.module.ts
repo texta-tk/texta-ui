@@ -11,7 +11,6 @@ import {BuildSearchComponent} from './searcher-sidebar/build-search/build-search
 import {SavedSearchesComponent} from './searcher-sidebar/saved-searches/saved-searches.component';
 import {SaveSearchDialogComponent} from './searcher-sidebar/dialogs/save-search-dialog/save-search-dialog.component';
 import {HighlightComponent} from './searcher-table/highlight/highlight.component';
-import {FactTextConstraintsComponent} from './searcher-sidebar/build-search/fact-text-constraints/fact-text-constraints.component';
 import {AggregationsComponent} from './searcher-sidebar/aggregations/aggregations.component';
 import {AggregationResultsComponent} from './aggregation-results/aggregation-results.component';
 import {DateAggregationComponent} from './searcher-sidebar/aggregations/date-aggregation/date-aggregation.component';
@@ -29,7 +28,6 @@ import { AggregationResultsTreeComponent } from './aggregation-results/aggregati
     TextConstraintsComponent,
     DateConstraintsComponent,
     FactConstraintsComponent,
-    FactTextConstraintsComponent,
     SavedSearchesComponent,
     SaveSearchDialogComponent,
     HighlightComponent,

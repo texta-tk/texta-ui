@@ -31,6 +31,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
   private currentElasticQuery: ElasticsearchQuery;
   isLoadingResults = false;
   projectFields: ProjectField[];
+  searcherOptions: { liveSearch: boolean, onlyHighlightMatching: boolean  };
 
   constructor(public searchService: SearcherComponentService, private projectStore: ProjectStore) {
   }
@@ -53,6 +54,8 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
 
     this.searchService.getSearch().pipe(takeUntil(this.destroy$)).subscribe((resp: Search) => {
       if (resp) {
+        this.searcherOptions = resp.searcherOptions;
+        console.log(this.searcherOptions);
         SearcherTableComponent.totalCountLength = resp.searchContent.count;
         this.paginatorLength = SearcherTableComponent.totalCountLength > 10000 ? 10000 : SearcherTableComponent.totalCountLength;
         this.tableData.data = resp.searchContent.results;

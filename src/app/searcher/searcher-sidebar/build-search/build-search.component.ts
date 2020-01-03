@@ -21,7 +21,7 @@ import {SearcherComponentService} from '../../services/searcher-component.servic
 import {UserStore} from '../../../core/users/user.store';
 import {UserProfile} from '../../../shared/types/UserProfile';
 import {SavedSearch} from '../../../shared/types/SavedSearch';
-import {SelectionModel} from "@angular/cdk/collections";
+import {SelectionModel} from '@angular/cdk/collections';
 
 @Component({
   selector: 'app-build-search',
@@ -39,7 +39,10 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject();
   // building the whole search query onto this
   elasticQuery: ElasticsearchQuery = new ElasticsearchQuery();
-  searcherOptions: Array<'live_search'> = ['live_search'];
+  searcherOptions: { liveSearch: boolean, onlyHighlightMatching: boolean } = {
+    liveSearch: true,
+    onlyHighlightMatching: false
+  };
   currentUser: UserProfile;
   indexSelection = new SelectionModel<string>(true, []);
 
@@ -92,7 +95,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
       (result: { count: number, results: { highlight: any, doc: any }[] } | HttpErrorResponse) => {
         this.searchService.setIsLoading(false);
         if (result && !(result instanceof HttpErrorResponse)) {
-          this.searchService.nextSearch(new Search(result, false));
+          this.searchService.nextSearch(new Search(result, this.searcherOptions));
         }
       });
   }
@@ -138,7 +141,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     this.constraintList.splice(0, this.constraintList.length);
     const savedConstraints: any[] = JSON.parse(savedSearch.query_constraints as string);
     // when we are building the query dont want to emit searches
-    this.searcherOptions = [];
+    this.searcherOptions.liveSearch = false;
     for (const constraint of savedConstraints) {
       const formFields = constraint.fields;
       if (formFields.length >= 1) {
@@ -161,7 +164,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     }
     this.updateFieldsToHighlight(this.constraintList);
     // we can turn on live search again, after building query
-    this.searcherOptions.push('live_search');
+    this.searcherOptions.liveSearch = true;
     // constraints built, lets search
     this.searchService.queryNextSearch();
     this.checkMinimumMatch();
@@ -192,7 +195,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
 
   searchOnChange(event) {
     // dont want left focus events
-    if (event === this.elasticQuery && this.searcherOptions.includes('live_search')) {
+    if (event === this.elasticQuery && this.searcherOptions.liveSearch) {
       // reset page when we change query
       this.elasticQuery.from = 0;
       this.searchService.queryNextSearch();

@@ -10,7 +10,8 @@
         <mat-checkbox class="mat-option-pseudo-checkbox"
                       (change)="$event ? indexSelection.toggle(group.index) : null"
                       color="primary"
-                      [checked]="indexSelection.isSelected(group.index)" matTooltip="Only search selected indices">{{group.index}}</mat-checkbox>
+                      [checked]="indexSelection.isSelected(group.index)"
+                      matTooltip="Only search selected indices">{{group.index}}</mat-checkbox>
         <mat-option *ngFor="let fields of group.fields" [value]="fields">
           {{fields.path}}
         </mat-option>
@@ -42,13 +43,10 @@
                             (change)="searchOnChange($event)"></app-fact-constraints>
     </div>
   </div>
-  <!--  <div fxLayout="column" class="bg-grey search-options">
-      <h4 class="flex-item-center">Search options</h4>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"ion-list dense [(ngModel)]="searcherOptions">
-        <mat-list-option value="short_version">Show short version:</mat-list-option>
-        <mat-list-option selected="true" value="live_search">Search as you type:</mat-list-option>
-      </mat-selection-list>
-    </div>-->
+  <div fxLayout="column" class="bg-grey search-options">
+    <h4 class="flex-item-center">Search options</h4>
+      <mat-checkbox labelPosition="before" [(ngModel)]=searcherOptions.onlyHighlightMatching>Only highlight matching facts:</mat-checkbox>
+  </div>
   <div class="max-width">
     <button class="max-width" mat-stroked-button (click)="searchService.queryNextSearch()">Search</button>
   </div>
