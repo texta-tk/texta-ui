@@ -72,6 +72,7 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
   public createGroupListeners(inputGroup?: FactTextInputGroup) {
     if (!inputGroup) {
       inputGroup = new FactTextInputGroup();
+      inputGroup.formQuery.nested.inner_hits.name = `${FactConstraintsComponent.componentCount}_??`;
       this._factConstraint.inputGroupArray.push(inputGroup);
       // cant select when factname is null
       inputGroup.factTextInputFormControl.disable();

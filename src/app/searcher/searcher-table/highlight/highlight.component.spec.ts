@@ -3,7 +3,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {HighlightComponent} from './highlight.component';
 import {SharedModule} from '../../../shared/shared.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {ElasticsearchQuery} from '../../searcher-sidebar/build-search/Constraints';
+import {ElasticsearchQuery, FactConstraint, FactTextInputGroup} from '../../searcher-sidebar/build-search/Constraints';
 
 describe('HighlightComponent', () => {
   let component: HighlightComponent;
@@ -40,7 +40,6 @@ describe('HighlightComponent', () => {
       searcherHighlight: {},
       data: jsonData,
       currentColumn: 'text',
-      onlyHighlightMatching: false
     };
     console.log(component.highlightArray);
     let johnHighlight;
@@ -75,7 +74,6 @@ describe('HighlightComponent', () => {
       searcherHighlight: {},
       data: jsonData,
       currentColumn: 'text',
-      onlyHighlightMatching: false
     };
     console.log(component.highlightArray);
     const highlightedText = [];
@@ -135,7 +133,6 @@ describe('HighlightComponent', () => {
         searcherHighlight: {},
         data: jsonData,
         currentColumn: 'text',
-        onlyHighlightMatching: false
       };
       console.log(component.highlightArray);
       const highlightedText: string[] = [];
@@ -166,7 +163,6 @@ describe('HighlightComponent', () => {
         },
         data: jsonData,
         currentColumn: 'text',
-        onlyHighlightMatching: false
       };
       console.log(component.highlightArray);
       const highlightedText: string[] = [];
@@ -189,7 +185,6 @@ describe('HighlightComponent', () => {
         },
         data: jsonData,
         currentColumn: 'text',
-        onlyHighlightMatching: false
       };
       console.log(component.highlightArray);
       const highlightedText: string[] = [];
@@ -212,7 +207,6 @@ describe('HighlightComponent', () => {
         },
         data: jsonData,
         currentColumn: 'text',
-        onlyHighlightMatching: false
       };
       console.log(component.highlightArray);
       const highlightedText: string[] = [];
@@ -233,7 +227,6 @@ describe('HighlightComponent', () => {
         },
         data: jsonData,
         currentColumn: 'text',
-        onlyHighlightMatching: false
       };
       console.log(component.highlightArray);
       const highlightedText: string[] = [];
@@ -255,7 +248,6 @@ describe('HighlightComponent', () => {
         },
         data: jsonData,
         currentColumn: 'text',
-        onlyHighlightMatching: false
       };
       console.log(component.highlightArray);
       const highlightedText: string[] = [];
@@ -277,7 +269,6 @@ describe('HighlightComponent', () => {
         },
         data: jsonData,
         currentColumn: 'text',
-        onlyHighlightMatching: false
       };
       console.log(component.highlightArray);
       const highlightedText: string[] = [];
@@ -299,7 +290,6 @@ describe('HighlightComponent', () => {
         },
         data: jsonData,
         currentColumn: 'text',
-        onlyHighlightMatching: false
       };
       console.log(component.highlightArray);
       const highlightedText: string[] = [];
@@ -321,7 +311,6 @@ describe('HighlightComponent', () => {
         },
         data: jsonData,
         currentColumn: 'text',
-        onlyHighlightMatching: false
       };
       console.log(component.highlightArray);
       const highlightedText: string[] = [];
@@ -343,7 +332,6 @@ describe('HighlightComponent', () => {
         },
         data: jsonData,
         currentColumn: 'text',
-        onlyHighlightMatching: false
       };
       console.log(component.highlightArray);
       const highlightedText: string[] = [];
@@ -356,6 +344,59 @@ describe('HighlightComponent', () => {
       fixture.detectChanges(); // todo clean up empty highlight when search term overwrites fact highlight?
       // gia, joonas cause gia belongs to eesti energia so it also displays eesti energia fact not only energia joonas
       expect(highlightedText).toEqual(['OÜ Hansa', ' M', 'edicalist, Eesti Ener', 'gia', ' Joonas']);
+      // expect(component.highlightArray[1].nested.fact.searcherHighlight).toBe(true);
+    });
+    it('should only highlight matching facts with matching options config', () => {
+      component.highlightConfig = {
+        searcherHighlight: {
+          text:
+            [`these are some words: OÜ Hansa Medicalist, Eesti Energia Joonas xxxxxx`]
+        },
+        data: jsonData,
+        currentColumn: 'text',
+        onlyHighlightMatching: [new FactConstraint([{
+          path: 'texta_facts',
+          type: 'fact'
+        }], 'must', 'PER', 'must')]
+      };
+      console.log(component.highlightArray);
+      const highlightedText: string[] = [];
+      for (const element of component.highlightArray) {
+        if (element.highlighted) {
+          highlightedText.push(element.text);
+          loopThroughNestedHighlightObject(element, highlightedText);
+        }
+      }
+      fixture.detectChanges(); // todo clean up empty highlight when search term overwrites fact highlight?
+
+      expect(highlightedText).toEqual(['Energia Joonas']);
+      // expect(component.highlightArray[1].nested.fact.searcherHighlight).toBe(true);
+    });
+
+    it('should only highlight facts with matching fact value options config', () => {
+      component.highlightConfig = {
+        searcherHighlight: {
+          text:
+            [`these are some words: OÜ Hansa Medicalist, Eesti Energia Joonas xxxxxx`]
+        },
+        data: jsonData,
+        currentColumn: 'text',
+        onlyHighlightMatching: [new FactConstraint([{
+          path: 'texta_facts',
+          type: 'fact'
+        }], 'must', '', 'must', [new FactTextInputGroup('must', 'LOC', 'Eesti')])]
+      };
+      console.log(component.highlightArray);
+      const highlightedText: string[] = [];
+      for (const element of component.highlightArray) {
+        if (element.highlighted) {
+          highlightedText.push(element.text);
+          loopThroughNestedHighlightObject(element, highlightedText);
+        }
+      }
+      fixture.detectChanges(); // todo clean up empty highlight when search term overwrites fact highlight?
+
+      expect(highlightedText).toEqual(['Eesti']);
       // expect(component.highlightArray[1].nested.fact.searcherHighlight).toBe(true);
     });
   });

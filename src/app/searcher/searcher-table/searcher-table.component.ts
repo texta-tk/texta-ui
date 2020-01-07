@@ -6,7 +6,7 @@ import {FormControl} from '@angular/forms';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {ProjectStore} from '../../core/projects/project.store';
-import {ElasticsearchQuery} from '../searcher-sidebar/build-search/Constraints';
+import {ElasticsearchQuery, FactConstraint} from '../searcher-sidebar/build-search/Constraints';
 import {PageEvent} from '@angular/material/typings/paginator';
 import {Field, ProjectField} from '../../shared/types/Project';
 import {Sort} from '@angular/material/sort';
@@ -31,7 +31,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
   private currentElasticQuery: ElasticsearchQuery;
   isLoadingResults = false;
   projectFields: ProjectField[];
-  searcherOptions: { liveSearch: boolean, onlyHighlightMatching: boolean  };
+  searcherOptions: { liveSearch: boolean, onlyHighlightMatching?: FactConstraint[] };
 
   constructor(public searchService: SearcherComponentService, private projectStore: ProjectStore) {
   }
@@ -55,7 +55,6 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     this.searchService.getSearch().pipe(takeUntil(this.destroy$)).subscribe((resp: Search) => {
       if (resp) {
         this.searcherOptions = resp.searcherOptions;
-        console.log(this.searcherOptions);
         SearcherTableComponent.totalCountLength = resp.searchContent.count;
         this.paginatorLength = SearcherTableComponent.totalCountLength > 10000 ? 10000 : SearcherTableComponent.totalCountLength;
         this.tableData.data = resp.searchContent.results;

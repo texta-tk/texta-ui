@@ -39,10 +39,10 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject();
   // building the whole search query onto this
   elasticQuery: ElasticsearchQuery = new ElasticsearchQuery();
-  searcherOptions: { liveSearch: boolean, onlyHighlightMatching: boolean } = {
-    liveSearch: true,
-    onlyHighlightMatching: false
+  searcherOptions: { liveSearch: boolean, onlyHighlightMatching?: FactConstraint[] } = {
+    liveSearch: true
   };
+  onlyHighlightMatching = false;
   currentUser: UserProfile;
   indexSelection = new SelectionModel<string>(true, []);
 
@@ -70,9 +70,9 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     this.projectStore.getProjectFields().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectField[]) => {
       if (projectFields) {
         this.projectFields = ProjectField.sortTextaFactsAsFirstItem(projectFields);
-        this.projectFieldsFiltered = projectFields;
+        this.projectFieldsFiltered = this.projectFields;
         this.indexSelection.clear();
-        this.projectFieldsFiltered.forEach(projectField => this.indexSelection.select(projectField.index));
+        this.projectFieldsFiltered.forEach(x => this.indexSelection.select(x.index));
       }
     });
 
@@ -82,7 +82,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.searchService.getSearchQueue().pipe(debounceTime(300), takeUntil(this.destroy$), switchMap(x => {
+    this.searchService.getSearchQueue().pipe(debounceTime(350), takeUntil(this.destroy$), switchMap(x => {
       this.searchService.setIsLoading(true);
       if (this.elasticQuery.size === 0) { // aggregations use size 0
         this.elasticQuery.size = 10;
@@ -95,6 +95,11 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
       (result: { count: number, results: { highlight: any, doc: any }[] } | HttpErrorResponse) => {
         this.searchService.setIsLoading(false);
         if (result && !(result instanceof HttpErrorResponse)) {
+          if (this.onlyHighlightMatching) {
+            this.searcherOptions.onlyHighlightMatching = this.constraintList.filter(x => x instanceof FactConstraint) as FactConstraint[];
+          } else {
+            this.searcherOptions.onlyHighlightMatching = null;
+          }
           this.searchService.nextSearch(new Search(result, this.searcherOptions));
         }
       });

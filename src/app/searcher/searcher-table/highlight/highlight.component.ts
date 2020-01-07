@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ElasticsearchQuery} from '../../searcher-sidebar/build-search/Constraints';
+import {ElasticsearchQuery, FactConstraint} from '../../searcher-sidebar/build-search/Constraints';
 
 export interface TextaFact {
   doc_path: string;
@@ -13,7 +13,7 @@ export interface TextaFact {
 export interface HighlightConfig {
   currentColumn: string;
   searcherHighlight: any;
-  onlyHighlightMatching: boolean;
+  onlyHighlightMatching?: FactConstraint[];
   data: any;
 }
 
@@ -29,8 +29,8 @@ export class HighlightComponent {
 
   @Input() set highlightConfig(highlightConfig: HighlightConfig) { // todo data
     let fieldFacts = this.getFactsByField(highlightConfig.data, highlightConfig.currentColumn);
-    if (highlightConfig.onlyHighlightMatching) {
-      fieldFacts = this.getOnlyMatchingFacts(fieldFacts);
+    if (highlightConfig.onlyHighlightMatching && fieldFacts.length > 0) {
+      fieldFacts = this.getOnlyMatchingFacts(fieldFacts, highlightConfig);
     }
     fieldFacts = this.removeDuplicates(fieldFacts, 'spans');
     const highlightTerms = [
@@ -81,8 +81,25 @@ export class HighlightComponent {
     return highlightArray;
   }
 
-  getOnlyMatchingFacts(fieldFacts: TextaFact[]): TextaFact[] {
-    return [];
+  getOnlyMatchingFacts(fieldFacts: TextaFact[], highlightConfig: HighlightConfig): TextaFact[] {
+    if (fieldFacts) {
+      // if these exist match all facts of the type, PER, LOC, ORG etc. gets all unique global fact names
+      const globalFacts = [...new Set([].concat.apply([], highlightConfig.onlyHighlightMatching.map(x => x.factNameFormControl.value)))];
+      // get all unique fact names and their values as an object
+      const factValues = [...new Set([].concat.apply([], (highlightConfig.onlyHighlightMatching.map(x => x.inputGroupArray.map(y => {
+        return {value: y.factTextInputFormControl.value, name: y.factTextFactNameFormControl.value};
+      })))))] as { value: string, name: string }[];
+      return JSON.parse(JSON.stringify(fieldFacts.filter((fact: TextaFact) => {
+        if (globalFacts.includes(fact.fact)) {
+          return fact;
+        } else if (factValues.find(x => x.name === fact.fact)) {
+          if (factValues.find(x => x.value === fact.str_val)) {
+            return fact;
+          }
+        }
+      })));
+    }
+    return fieldFacts;
   }
 
   getFactsByField(factArray, columnName): TextaFact[] {
@@ -108,9 +125,30 @@ export class HighlightComponent {
     return HighlightComponent.colors;
   }
 
+  private chunkSubstr(str, size) {
+    const numChunks = Math.ceil(str.length / size);
+    const chunks = new Array(numChunks);
+
+    for (let i = 0, o = 0; i < numChunks; ++i, o += size) {
+      chunks[i] = str.substr(o, size);
+    }
+
+    return chunks;
+  }
+
   private makeHighLights(originalText: string, facts: TextaFact[], factColors: Map<string, string>): HighlightObject[] {
     if (facts.length === 0) {
-      return [{text: originalText, highlighted: false}];
+      if (!originalText) {
+        return [];
+      }
+      // weird behaviour on chrome, where if the string is really long (1000 or more characters), then it makes the
+      // rendering engine really slow, and causes 8 second layouts, so just split long strings into smaller ones todo  why?
+      const chunked = this.chunkSubstr(originalText, 400);
+      const returnArr = [];
+      for (const chunk of chunked) {
+        returnArr.push({text: chunk, highlighted: false});
+      }
+      return returnArr;
     }
     // elastic fields arent trimmed by default, so elasticsearch highlights are going to be misaligned because
     // elasticsearch highlighter trims the field, MLP also trims the field

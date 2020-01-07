@@ -9,11 +9,11 @@
           <td mat-cell *matCellDef="let row" class="table-row">
             <pre *ngIf="checkIfObject(row.doc[column])">{{row.doc[column] | json}}</pre>
             <app-highlight *ngIf="!checkIfObject(row.doc[column])"
-                           [highlightConfig]="{
-                           currentColumn: column,
-                           searcherHighlight: row.highlight,
-                           highlightingStyle: searcherOptions.factHighlightStyle,
-                           data: row.doc}">
+                          [highlightConfig]="{
+                          currentColumn: column,
+                          searcherHighlight: row.highlight,
+                          onlyHighlightMatching: this.searcherOptions.onlyHighlightMatching,
+                          data: row.doc}">
 
             </app-highlight>
           </td>

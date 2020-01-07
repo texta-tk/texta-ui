@@ -37,6 +37,7 @@ export class ProjectField {
   fields: Field[];
 
   static sortTextaFactsAsFirstItem(fields: ProjectField[]): ProjectField[] {
+    fields = JSON.parse(JSON.stringify(fields)); // deep clone, dont want to change original
     return fields.map((field: ProjectField) => {
       field.fields.sort((x, y) => (x.type === 'fact' ? -1 : y.type === 'fact' ? 1 : 0));
       return field;
@@ -58,6 +59,7 @@ export class ProjectField {
   }
 
   static cleanProjectFields(fields: ProjectField[], whiteList?: string[], blackList?: string[]): ProjectField[] {
+    fields = JSON.parse(JSON.stringify(fields)); // deep clone, dont want to change original
     const filteredField: ProjectField[] = [];
     const whiteListTypes = whiteList && whiteList.length > 0 ? whiteList : null;
     const blackListTypes = blackList && blackList.length > 0 ? blackList : null;
