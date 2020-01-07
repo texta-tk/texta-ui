@@ -42,6 +42,14 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     return dateData;
   }
 
+  formatDateDataExtraBucket(buckets: { key_as_string: string, key: number, doc_count: number, buckets: any }[]): { value: number, name: Date }[] {
+    const dateData = [];
+    for (const element of buckets) {
+      dateData.push({value: element.doc_count, name: new Date(element.key_as_string), extra: {buckets: element.buckets}});
+    }
+    return dateData;
+  }
+
   ngOnInit() {
     this.searchService.getAggregation().pipe(takeUntil(this.destroy$)).subscribe(aggregation => {
       if (aggregation && aggregation.aggs) {
@@ -96,7 +104,10 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
                 });
               }
             } else {
-              rootAgg.histoBuckets.push({name: bucket.key, series: this.formatDateData(this.bucketAccessor(innerBuckets))});
+              rootAgg.histoBuckets.push({
+                name: bucket.key,
+                series: this.formatDateData(this.bucketAccessor(innerBuckets))
+              });
             }
           }
           // dont delete original data to avoid major GC
@@ -126,11 +137,19 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
       ['agg_histo', 'agg_fact', 'agg_fact_val', 'agg_term']);
     if (this.bucketAccessor(formattedData).length > 0) {
       if (formattedData.nested) {
-        this.aggregationData.treeData.push({
-          name: aggName === aggregationType ? 'aggregation_results' : aggName,
-          histoBuckets: formattedData.histoBuckets ? formattedData.histoBuckets : [],
-          treeData: new ArrayDataSource(this.bucketAccessor(formattedData))
-        });
+        // depth of 3 means this structure: agg -> sub-agg
+        if (aggregationType === 'agg_histo' && this.determineDepthOfObject(formattedData, (x: any) => x.buckets) === 3) {
+          aggDataAccessor(this.aggregationData).push({
+            name: aggName === 'agg_histo' ? 'aggregation_results' : aggName,
+            series: this.formatDateDataExtraBucket(this.bucketAccessor(formattedData))
+          });
+        } else {
+          this.aggregationData.treeData.push({
+            name: aggName === aggregationType ? 'aggregation_results' : aggName,
+            histoBuckets: formattedData.histoBuckets ? formattedData.histoBuckets : [],
+            treeData: new ArrayDataSource(this.bucketAccessor(formattedData))
+          });
+        }
       } else if (aggregationType === 'agg_term') {
         aggDataAccessor(this.aggregationData).push({
           tableData: new MatTableDataSource(this.bucketAccessor(formattedData)),
@@ -153,6 +172,19 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
       height: '95%',
       width: '90%',
     });
+  }
+
+  determineDepthOfObject(object, accessor) {
+    let depth = 0;
+    if (accessor(object)) {
+      accessor(object).forEach(x => {
+        const temp = this.determineDepthOfObject(x, accessor);
+        if (temp > depth) {
+          depth = temp;
+        }
+      });
+    }
+    return depth + 1;
   }
 
   ngOnDestroy() {

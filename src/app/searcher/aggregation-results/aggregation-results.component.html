@@ -9,10 +9,24 @@
         <app-aggregation-result-table [tableData]="tableAggregation.tableData"></app-aggregation-result-table>
       </mat-tab>
     </mat-tab-group>
-    <ngx-charts-line-chart *ngIf="aggregationData.dateData.length > 0" [results]="aggregationData.dateData"
+    <ngx-charts-line-chart *ngIf="aggregationData.dateData.length > 0 && !aggregationData.dateData[0].series[0].extra"
+                           [results]="aggregationData.dateData"
                            [yAxis]="true" [yAxisLabel]="'document count'" showYAxisLabel="true"
-                           [xAxis]="true"></ngx-charts-line-chart>
-
+                           [xAxis]="true">
+    </ngx-charts-line-chart>
+    <ngx-charts-line-chart *ngIf="aggregationData.dateData.length > 0 && aggregationData.dateData[0].series[0].extra"
+                           [results]="aggregationData.dateData"
+                           [yAxis]="true" [yAxisLabel]="'document count'" showYAxisLabel="true"
+                           [xAxis]="true">
+      <ng-template #seriesTooltipTemplate let-model="model">
+        <div fxLayout="column" fxLayoutAlign="space-around start" class="timeline-tooltip">
+          <span *ngFor="let data of model[0].extra.buckets" class="m-bot-5" fxLayout="row">
+            <div class="timeline-tooltip-key">{{data.key}}</div>: <strong
+            class="timeline-tooltip-count">{{data.doc_count}}</strong>
+          </span>
+        </div>
+      </ng-template>
+    </ngx-charts-line-chart>
     <mat-tab-group mat-stretch-tabs *ngIf="aggregationData.treeData.length > 0">
       <mat-tab *ngFor="let nestedAggregation of aggregationData.treeData">
 

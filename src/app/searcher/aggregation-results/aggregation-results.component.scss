@@ -4,3 +4,19 @@
   max-height: calc(100vh - #{$navbar-height});
   min-height: calc(100vh - #{$navbar-height});
 }
+
+.timeline-tooltip {
+  max-height: 80vh;
+  max-width: 600px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  padding: 10px 5px 5px;
+
+  .timeline-tooltip-key {
+    max-width: 250px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+}
