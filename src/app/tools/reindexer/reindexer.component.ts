@@ -118,6 +118,7 @@ export class ReindexerComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((resp: Reindexer | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.tableData.data = [...this.tableData.data, resp];
+        this.logService.snackBarMessage(`Created re-indexer: ${resp.description}`, 2000);
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       }
@@ -148,7 +149,7 @@ export class ReindexerComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.reindexerService.deleteReindex(reindexer.id, this.currentProject.id).subscribe(() => {
-          this.logService.snackBarMessage(`Reindexer ${reindexer.id}: ${reindexer.description} deleted`, 2000);
+          this.logService.snackBarMessage(`Deleted re-indexer ${reindexer.description}`, 2000);
           this.tableData.data.splice(index, 1);
           this.tableData.data = [...this.tableData.data];
         });
@@ -161,7 +162,7 @@ export class ReindexerComponent implements OnInit, OnDestroy {
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         data: {
           confirmText: 'Delete',
-          mainText: `Are you sure you want to delete ${this.selectedRows.selected.length} Reindexers?`
+          mainText: `Are you sure you want to delete ${this.selectedRows.selected.length} re-indexers?`
         }
       });
 
@@ -172,7 +173,7 @@ export class ReindexerComponent implements OnInit, OnDestroy {
           const body = {ids: idsToDelete};
           // Refresh elements
           this.reindexerService.bulkDeleteReindexers(this.currentProject.id, body).subscribe(() => {
-            this.logService.snackBarMessage(`${this.selectedRows.selected.length} Reindexers deleted`, 2000);
+            this.logService.snackBarMessage(`${this.selectedRows.selected.length} re-indexers deleted`, 2000);
             this.removeSelectedRows();
           });
         }

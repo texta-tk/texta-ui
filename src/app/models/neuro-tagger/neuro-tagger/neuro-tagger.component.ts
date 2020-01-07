@@ -43,10 +43,9 @@ export class NeuroTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   filteredSubject = new Subject();
   // For custom filtering, such as text search in description
   inputFilterQuery = '';
-  filteringValues = {}
+  filteringValues = {};
 
   currentProject: Project;
-  updateTaggersSubscription: Subscription;
   resultsLength: number;
 
   constructor(private projectStore: ProjectStore,
@@ -123,6 +122,7 @@ export class NeuroTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     dialogRef.afterClosed().subscribe((resp: NeuroTagger | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.tableData.data = [...this.tableData.data, resp];
+        this.logService.snackBarMessage(`Created NeuroTagger ${resp.description}`, 2000);
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       }
@@ -167,7 +167,7 @@ export class NeuroTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
             this.logService.snackBarError(resp, 4000);
           }
         }, undefined, () => {
-          this.logService.snackBarMessage(`NeuroTagger ${neurotagger.id}: ${neurotagger.description} deleted`, 2000);
+          this.logService.snackBarMessage(`Deleted NeuroTagger ${neurotagger.description}`, 2000);
           this.tableData.data.splice(index, 1);
           this.tableData.data = [...this.tableData.data];
         });

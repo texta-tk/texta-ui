@@ -89,6 +89,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().pipe(takeUntil(this.destroyed$)).subscribe((resp: Project | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.projectStore.refreshProjects();
+        this.logService.snackBarMessage(`Created project ${resp.title}`, 2000);
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       }
@@ -106,7 +107,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
           if (resp && resp.status === 403) {
             this.logService.snackBarMessage(resp.error.detail, 4000);
           } else if (!(resp instanceof HttpErrorResponse)) {
-            this.logService.snackBarMessage(`Project ${project.id}: ${project.title} deleted`, 3000);
+            this.logService.snackBarMessage(`Deleted project ${project.title}`, 3000);
             const index = this.tableData.data.indexOf(project, 0);
             if (index > -1) {
               this.tableData.data.splice(index, 1);

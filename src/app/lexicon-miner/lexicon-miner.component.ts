@@ -72,6 +72,7 @@ export class LexiconMinerComponent implements OnInit, OnDestroy {
             this.logService.snackBarError(resp, 5000);
           } else {
             this.lexicons.push(resp);
+            this.logService.snackBarMessage(`Created lexicon ${resp.description}`, 2000);
           }
           this.newLexiconDescription = '';
         }
@@ -91,7 +92,7 @@ export class LexiconMinerComponent implements OnInit, OnDestroy {
             if (resp instanceof HttpErrorResponse) {
               this.logService.snackBarError(resp, 5000);
             } else {
-              this.logService.snackBarMessage(`Lexicon ${lexicon.description} deleted.`, 3000);
+              this.logService.snackBarMessage(`Deleted lexicon ${lexicon.description}`, 3000);
               const position = this.lexicons.findIndex(x => x.id === lexicon.id);
               this.lexicons.splice(position, 1);
               // update lexicon count in navbar by setting current project as next proj

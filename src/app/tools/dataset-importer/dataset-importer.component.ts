@@ -27,7 +27,7 @@ import {animate, state, style, transition, trigger} from '@angular/animations';
 export class DatasetImporterComponent implements OnInit, OnDestroy {
   expandedElement: DatasetImporter | null;
   public tableData: MatTableDataSource<DatasetImporter> = new MatTableDataSource();
-  public displayedColumns = ['select', 'id', 'author__username', 'description', 'index',  'num_documents',
+  public displayedColumns = ['select', 'id', 'author__username', 'description', 'index', 'num_documents',
     'num_documents_sucess', 'task__time_started', 'task__time_completed', 'task__status', 'Modify'];
   selectedRows = new SelectionModel<DatasetImporter>(true, []);
   public isLoadingResults = true;
@@ -117,6 +117,7 @@ export class DatasetImporterComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((resp: DatasetImporter | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.tableData.data = [...this.tableData.data, resp];
+        this.logService.snackBarMessage(`Created importer ${resp.description}`, 2000);
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       }
@@ -147,7 +148,7 @@ export class DatasetImporterComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.importerService.deleteIndex(dataset.id, this.currentProject.id).subscribe(() => {
-          this.logService.snackBarMessage(`Dataset ${dataset.id}: ${dataset.description} deleted`, 2000);
+          this.logService.snackBarMessage(`Deleted dataset ${dataset.description}`, 2000);
           this.tableData.data.splice(index, 1);
           this.tableData.data = [...this.tableData.data];
         });

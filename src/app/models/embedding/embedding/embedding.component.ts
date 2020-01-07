@@ -133,6 +133,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
     dialogRef.afterClosed().subscribe((resp: Embedding | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.tableData.data = [...this.tableData.data, resp];
+        this.logService.snackBarMessage(`Created embedding ${resp.description}`, 2000);
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       }
@@ -163,7 +164,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.embeddingsService.deleteEmbedding(this.currentProject.id, embedding.id).subscribe(() => {
-          this.logService.snackBarMessage(`Embedding ${embedding.id}: ${embedding.description} deleted`, 2000);
+          this.logService.snackBarMessage(`Deleted embedding ${embedding.description}`, 2000);
           this.tableData.data.splice(index, 1);
           this.tableData.data = [...this.tableData.data];
         });

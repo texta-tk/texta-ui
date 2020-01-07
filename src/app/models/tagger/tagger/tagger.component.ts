@@ -161,6 +161,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dialogAfterClosedSubscription = dialogRef.afterClosed().subscribe((resp: Tagger | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.tableData.data = [...this.tableData.data, resp];
+        this.logService.snackBarMessage(`Created tagger ${resp.description}`, 2000);
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       }
@@ -209,7 +210,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.taggerService.deleteTagger(this.currentProject.id, tagger.id).subscribe(() => {
-          this.logService.snackBarMessage(`Tagger ${tagger.id}: ${tagger.description} deleted`, 2000);
+          this.logService.snackBarMessage(`Deleted tagger ${tagger.description}`, 2000);
           this.tableData.data.splice(index, 1);
           this.tableData.data = [...this.tableData.data];
         });
