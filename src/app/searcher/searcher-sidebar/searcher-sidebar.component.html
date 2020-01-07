@@ -6,7 +6,11 @@
         <span>Current Search</span>
       </mat-panel-title>
       <mat-panel-description fxLayoutAlign="end start">
-        <button mat-icon-button class="flex-item-right panel-button" aria-label="save search"
+        <button mat-icon-button class="flex-item-right panel-button" aria-label="view query" matTooltip="view query"
+                (click)="openViewQueryDialog();$event.preventDefault();$event.stopPropagation()">
+          <mat-icon>visibility</mat-icon>
+        </button>
+        <button mat-icon-button class="flex-item-right panel-button" aria-label="save search" matTooltip="save search"
                 (click)="openSaveSearchDialog();$event.preventDefault();$event.stopPropagation()">
           <mat-icon>save</mat-icon>
         </button>

@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Subject} from 'rxjs';
 import {BuildSearchComponent} from './build-search/build-search.component';
-import {takeUntil} from 'rxjs/operators';
+import {take, takeUntil} from 'rxjs/operators';
 import {SaveSearchDialogComponent} from './dialogs/save-search-dialog/save-search-dialog.component';
 import {MatDialog} from '@angular/material';
 import {SavedSearchesComponent} from './saved-searches/saved-searches.component';
@@ -12,6 +12,7 @@ import {ProjectStore} from '../../core/projects/project.store';
 import {LogService} from '../../core/util/log.service';
 import {SearcherComponentService} from '../services/searcher-component.service';
 import {SavedSearch} from '../../shared/types/SavedSearch';
+import {GenericDialogComponent} from '../../shared/components/dialogs/generic-dialog/generic-dialog.component';
 
 @Component({
   selector: 'app-searcher-sidebar',
@@ -64,6 +65,19 @@ export class SearcherSidebarComponent implements OnInit, OnDestroy {
   expandAggregationspanel() {
     this.aggregationsExpanded = !this.aggregationsExpanded;
   }
+
+  openViewQueryDialog() {
+    this.searchService.getElasticQuery().pipe(take(1)).subscribe(x => {
+      this.dialog.open(GenericDialogComponent, {
+        data: {
+          data: {query: x.elasticSearchQuery.query}
+        },
+        maxHeight: '500px'
+      });
+    });
+
+  }
+
   openSaveSearchDialog() {
     const dialogRef = this.dialog.open(SaveSearchDialogComponent, {
       maxHeight: '300px',
@@ -71,7 +85,8 @@ export class SearcherSidebarComponent implements OnInit, OnDestroy {
     });
     dialogRef.afterClosed().pipe(takeUntil(this.destroy$)).subscribe((resp: string) => {
       if (resp) {
-        console.log(this.buildSearchComponent.saveSearch(resp));
+        this.buildSearchComponent.saveSearch(resp);
+        this.logService.snackBarMessage('Successfully saved search.', 2000);
       }
     });
   }
@@ -81,7 +96,10 @@ export class SearcherSidebarComponent implements OnInit, OnDestroy {
     const selectedRows = this.searchService.savedSearchSelection;
     if (selectedRows.selected.length > 0) {
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-        data: {confirmText: 'Delete', mainText: `Are you sure you want to delete ${selectedRows.selected.length} Searches?`}
+        data: {
+          confirmText: 'Delete',
+          mainText: `Are you sure you want to delete ${selectedRows.selected.length} Searches?`
+        }
       });
 
       dialogRef.afterClosed().subscribe(result => {

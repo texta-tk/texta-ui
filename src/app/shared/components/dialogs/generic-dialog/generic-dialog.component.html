@@ -1,3 +1,4 @@
-<pre>
-    {{data.data | json}}
-</pre>
+<div>
+  <pre *ngIf="!data.observableData">{{data.data | json}}</pre>
+  <pre *ngIf="data.observableData">{{data.observableData | async | json}}</pre>
+</div>
