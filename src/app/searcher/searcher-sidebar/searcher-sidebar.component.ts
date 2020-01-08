@@ -107,7 +107,8 @@ export class SearcherSidebarComponent implements OnInit, OnDestroy {
           const idsToDelete = selectedRows.selected.map((savedSearch: SavedSearch) => savedSearch.id);
           const body = {ids: idsToDelete};
           this.searcherService.bulkDeleteSavedSearches(this.currentProject.id, body).subscribe(() => {
-            this.logService.snackBarMessage(`${selectedRows.selected.length} Searches deleted`, 2000);
+            this.logService.snackBarMessage(
+              `Deleted ${selectedRows.selected.length > 1 ? selectedRows.selected.length : ''} search${selectedRows.selected.length > 1 ? 'es' : ''}`, 2000);
             this.savedSearchesComponent.removeSelectedRows();
           });
         }

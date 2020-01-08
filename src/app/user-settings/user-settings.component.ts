@@ -5,91 +5,94 @@ import {Subject, Subscription} from 'rxjs';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {UserService} from '../core/users/user.service';
 import {CrossFieldErrorMatcher, LiveErrorStateMatcher} from '../shared/CustomerErrorStateMatchers';
-import {catchError, takeUntil, tap} from 'rxjs/operators';
+import {takeUntil} from 'rxjs/operators';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../core/util/log.service';
 import {environment} from '../../environments/environment';
 
 function passwordMatchValidator(g: FormGroup) {
-  return g.get('passwordFormControl').value === g.get('passwordConfirmFormControl').value
-    ? null : {mismatch: true};
+    return g.get('passwordFormControl').value === g.get('passwordConfirmFormControl').value
+        ? null : {mismatch: true};
 }
 
 @Component({
-  selector: 'app-user-settings',
-  templateUrl: './user-settings.component.html',
-  styleUrls: ['./user-settings.component.scss']
+    selector: 'app-user-settings',
+    templateUrl: './user-settings.component.html',
+    styleUrls: ['./user-settings.component.scss']
 })
 export class UserSettingsComponent implements OnInit, OnDestroy {
-  apiUrl = environment.apiUrl;
-  user: UserProfile;
-  userSubscription: Subscription;
-  detail: string;
-  destroy$: Subject<boolean> = new Subject<boolean>();
-  forgotPasswordForm = new FormGroup({
-    emailFormControl: new FormControl('', [
-      Validators.required, Validators.email
-    ]),
-  });
-
-  passwordResetForm = new FormGroup({
-    passwordForm: new FormGroup({
-      passwordFormControl: new FormControl('', [
-        Validators.minLength(8), Validators.required
-      ]),
-      passwordConfirmFormControl: new FormControl('', [Validators.required])
-    }, passwordMatchValidator),
-    oldPasswordFormControl: new FormControl('', Validators.required)
-
-  });
-
-  userProfileForm = new FormGroup({
-    email: new FormControl('', Validators.required),
-  });
-
-  matcher = new LiveErrorStateMatcher();
-  crossFieldMatcher = new CrossFieldErrorMatcher();
-
-  constructor(private userStore: UserStore, private userService: UserService, private http: HttpClient,
-              private logService: LogService) {
-
-  }
-
-  public onPasswordResetFormSubmit(formData: any) {
-    const body = {
-      new_password1: formData.passwordForm.passwordFormControl,
-      new_password2: formData.passwordForm.passwordConfirmFormControl
-    };
-    this.userService.changePassword(body).subscribe((resp: any) => {
-      this.detail = resp.detail;
+    apiUrl = environment.apiUrl;
+    user: UserProfile;
+    userSubscription: Subscription;
+    detail: string;
+    destroy$: Subject<boolean> = new Subject<boolean>();
+    forgotPasswordForm = new FormGroup({
+        emailFormControl: new FormControl('', [
+            Validators.required, Validators.email
+        ]),
     });
-  }
 
-  public onForgotPasswordFormSubmit(formData: any) {
-    this.userService.resetPassword(formData.emailFormControl).subscribe((resp: any | HttpErrorResponse) => {
-      if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.detail = resp.detail;
-      } else if (resp instanceof HttpErrorResponse) {
-        this.logService.snackBarError(resp, 4000);
-      }
+    passwordResetForm = new FormGroup({
+        passwordForm: new FormGroup({
+            passwordFormControl: new FormControl('', [
+                Validators.minLength(8), Validators.required
+            ]),
+            passwordConfirmFormControl: new FormControl('',)
+        }, passwordMatchValidator),
+        /*  oldPasswordFormControl: new FormControl('', Validators.required)*/
+
     });
-  }
 
-  changeUserProfile(formData: any) {
-
-  }
-
-  ngOnInit() {
-    this.userStore.getCurrentUser().pipe(takeUntil(this.destroy$)).subscribe(resp => {
-      if (resp) {
-        this.user = resp;
-      }
+    userProfileForm = new FormGroup({
+        email: new FormControl('', Validators.required),
     });
-  }
 
-  ngOnDestroy() {
-    this.destroy$.next(true);
-    this.destroy$.complete();
-  }
+    matcher = new LiveErrorStateMatcher();
+    crossFieldMatcher = new CrossFieldErrorMatcher();
+
+    constructor(private userStore: UserStore, private userService: UserService, private http: HttpClient,
+                private logService: LogService) {
+
+    }
+
+    public onPasswordResetFormSubmit(formData: any) {
+        const body = {
+            new_password1: formData.passwordForm.passwordFormControl,
+            new_password2: formData.passwordForm.passwordConfirmFormControl
+        };
+        this.userService.changePassword(body).subscribe((resp: { detail: string } | HttpErrorResponse) => {
+            if (!(resp instanceof HttpErrorResponse)) {
+                this.detail = resp.detail;
+                this.logService.snackBarMessage('Password successfully changed', 2000);
+            }
+        });
+    }
+
+    public onForgotPasswordFormSubmit(formData: any) {
+        this.userService.resetPassword(formData.emailFormControl).subscribe((resp: any | HttpErrorResponse) => {
+            if (resp && !(resp instanceof HttpErrorResponse)) {
+                this.detail = resp.detail;
+            } else if (resp instanceof HttpErrorResponse) {
+                this.logService.snackBarError(resp, 4000);
+            }
+        });
+    }
+
+    changeUserProfile(formData: any) {
+
+    }
+
+    ngOnInit() {
+        this.userStore.getCurrentUser().pipe(takeUntil(this.destroy$)).subscribe(resp => {
+            if (resp) {
+                this.user = resp;
+            }
+        });
+    }
+
+    ngOnDestroy() {
+        this.destroy$.next(true);
+        this.destroy$.complete();
+    }
 
 }

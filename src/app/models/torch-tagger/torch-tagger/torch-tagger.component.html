@@ -18,7 +18,7 @@
             </mat-checkbox>
           </td>
         </ng-container>
-  
+
         <ng-container matColumnDef="description">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Description</th>
           <td mat-cell *matCellDef="let element"> {{element.description}}</td>
@@ -41,12 +41,12 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Fields</th>
           <td mat-cell *matCellDef="let element"> {{element.fields}}</td>
         </ng-container>
-        
+
         <ng-container matColumnDef="id">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Id</th>
             <td mat-cell *matCellDef="let element"> {{element.id}}</td>
           </ng-container>
-  
+
         <ng-container matColumnDef="author__username">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Author</th>
           <td mat-cell *matCellDef="let element"> {{element.author_username}}</td>
@@ -75,8 +75,8 @@
             <mat-hint *ngIf="element.task">{{element.task.status}} {{element.task.step}}</mat-hint>
           </td>
         </ng-container>
-  
-  
+
+
         <ng-container matColumnDef="expandedDetail">
           <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
             <div class="element-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
@@ -121,7 +121,7 @@
                           <td><span class="action-text mat-body-strong pointer" (click)="openQueryDialog(element.query)">Show Query</span></tr>
                       </table>
                   </div>
-  
+
                   <div class="flex-col m-l-r-5">
                     <table class="simple-table">
                           <tr>
@@ -158,7 +158,7 @@
                           </tr>
                       </table>
                   </div>
-  
+
                   <div class="flex-col m-l-r-5">
                     <table class="simple-table">
                       <tr>
@@ -170,15 +170,15 @@
                     </table>
                   </div>
               </div>
-  
-  
+
+
             </div>
           </td>
         </ng-container>
         <ng-container matColumnDef="Modify">
           <th mat-header-cell class="center-header-cell" *matHeaderCellDef>Edit</th>
           <td mat-cell *matCellDef="let element; let i = dataIndex" (click)="$event.stopPropagation();">
-  
+
             <button mat-icon-button color="primary" [matMenuTriggerFor]="editMenu">
               <mat-icon aria-label="Edit Options">more_vert</mat-icon>
             </button>
@@ -193,20 +193,20 @@
                 Delete
               </button>
             </mat-menu>
-  
+
           </td>
         </ng-container>
-  
+
         <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
         <tr mat-row *matRowDef="let element; columns: displayedColumns;" class="element-row"
           [class.expanded-row]="expandedElement === element"
           (click)="expandedElement = expandedElement === element ? null : element"></tr>
         <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
-  
+
       </table>
-  
+
     </div>
-  
+
     <div class="table-paginator-row">
       <button class="new-resource-btn" mat-button color="primary" (click)="openCreateDialog()"><mat-icon>add</mat-icon> CREATE </button>
       <button class="new-resource-btn" mat-icon-button color="warn" (click)="onDeleteAllSelected()" matTooltip="Delete selected" [disabled]="selectedRows.selected.length < 1"><mat-icon>delete</mat-icon></button>
@@ -219,9 +219,9 @@
           <input matInput (keyup)="applyFilter($event.target.value, 'task_status')" placeholder="Filter task status">
       </mat-form-field>
     </div>
-  
-  
-    <mat-paginator [pageSizeOptions]="[15, 50, 100]" showFirstLastButtons [length]="resultsLength">
+
+
+    <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons [length]="resultsLength">
     </mat-paginator>
-  
+
   </div>

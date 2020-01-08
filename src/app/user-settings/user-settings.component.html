@@ -38,35 +38,35 @@
         </mat-form-field>
 
       </div>
-      <mat-form-field>
-        <input matInput placeholder="Enter current password" autocomplete="current-password"
-               type="password"
-               formControlName="oldPasswordFormControl"
-               [errorStateMatcher]="matcher">
+      <!--      <mat-form-field>
+              <input matInput placeholder="Enter current password" autocomplete="current-password"
+                     type="password"
+                     formControlName="oldPasswordFormControl" required
+                     [errorStateMatcher]="matcher">
 
-        <mat-error *ngIf="passwordResetForm.get('oldPasswordFormControl').hasError('required')">
-          Password is <strong>required</strong>
-        </mat-error>
-      </mat-form-field>
+              <mat-error *ngIf="passwordResetForm.get('oldPasswordFormControl').hasError('required')">
+                Password is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>-->
       <button mat-stroked-button type="submit" [disabled]="!passwordResetForm.valid">Submit</button>
     </form>
   </mat-card>
-<!--
-  <mat-card class="form-wrapper">
-    <h2 class="mat-h2">Change email</h2>
-    <form class="flex-col" [formGroup]="userProfileForm"
-          (ngSubmit)="changeUserProfile(userProfileForm.value)">
-      <mat-form-field>
-        <input matInput placeholder="Email"
-               type="text"
-               formControlName="email"
-               [errorStateMatcher]="matcher">
+  <!--
+    <mat-card class="form-wrapper">
+      <h2 class="mat-h2">Change email</h2>
+      <form class="flex-col" [formGroup]="userProfileForm"
+            (ngSubmit)="changeUserProfile(userProfileForm.value)">
+        <mat-form-field>
+          <input matInput placeholder="Email"
+                 type="text"
+                 formControlName="email"
+                 [errorStateMatcher]="matcher">
 
-        <mat-error *ngIf="userProfileForm.get('email').hasError('required')">
-          Email is <strong>required</strong>
-        </mat-error>
-      </mat-form-field>
-      <button mat-stroked-button type="submit" [disabled]="!userProfileForm.valid">Submit</button>
-    </form>
-  </mat-card>-->
+          <mat-error *ngIf="userProfileForm.get('email').hasError('required')">
+            Email is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+        <button mat-stroked-button type="submit" [disabled]="!userProfileForm.valid">Submit</button>
+      </form>
+    </mat-card>-->
 </div>

@@ -41,7 +41,7 @@ export class UserService {
       catchError(this.logService.handleError<any>('reset password')));
   }
 
-  changePassword(body: {}): Observable<any> {
+  changePassword(body: {}): Observable<{ detail: string } | HttpErrorResponse> {
     return this.http.post<any>(
       this.apiUrl + '/rest-auth/password/change/',
       body).pipe(tap(e => this.logService.logStatus(e, 'change password')),
