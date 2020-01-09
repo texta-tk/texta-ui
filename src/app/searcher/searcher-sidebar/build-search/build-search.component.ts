@@ -22,6 +22,8 @@ import {UserStore} from '../../../core/users/user.store';
 import {UserProfile} from '../../../shared/types/UserProfile';
 import {SavedSearch} from '../../../shared/types/SavedSearch';
 import {SelectionModel} from '@angular/cdk/collections';
+import {Lexicon} from '../../../shared/types/Lexicon';
+import {LexiconService} from '../../../core/lexicon/lexicon.service';
 
 @Component({
   selector: 'app-build-search',
@@ -45,21 +47,29 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
   onlyHighlightMatching = false;
   currentUser: UserProfile;
   indexSelection = new SelectionModel<string>(true, []);
+  lexicons: Lexicon[] = [];
 
   constructor(private projectService: ProjectService,
               private projectStore: ProjectStore,
               private searcherService: SearcherService,
               private userStore: UserStore,
+              private lexiconService: LexiconService,
               public searchService: SearcherComponentService) {
   }
 
   ngOnInit() {
-    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$)).subscribe((currentProject: Project) => {
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$), switchMap((currentProject: Project) => {
       if (currentProject) {
         this.constraintList = [];
         this.currentProject = currentProject;
         this.elasticQuery = new ElasticsearchQuery();
         this.searchService.nextElasticQuery(this.elasticQuery);
+        return this.lexiconService.getLexicons(currentProject.id);
+      }
+      return of(null);
+    })).subscribe(resp => {
+      if (!(resp instanceof HttpErrorResponse) && resp) {
+        this.lexicons = resp.results;
       }
     });
     this.projectStore.getProjectFacts().pipe(takeUntil(this.destroy$)).subscribe((projectFacts: ProjectFact[]) => {
@@ -110,7 +120,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     if (!opened && (this.fieldsFormControl.value && this.fieldsFormControl.value.length > 0)) {
       const formFields: Field[] = this.fieldsFormControl.value;
       if (formFields[0].type === 'text') {
-        this.constraintList.push(new TextConstraint(formFields));
+        this.constraintList.push(new TextConstraint(formFields, this.lexicons));
       } else if (formFields[0].type === 'date') {
         this.constraintList.push(new DateConstraint(formFields));
       } else {
@@ -151,7 +161,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
       const formFields = constraint.fields;
       if (formFields.length >= 1) {
         if (formFields[0].type === 'text') {
-          this.constraintList.push(new TextConstraint(formFields, constraint.match, constraint.text, constraint.operator, constraint.slop));
+          this.constraintList.push(new TextConstraint(formFields, this.lexicons, constraint.match, constraint.text, constraint.operator, constraint.slop));
         } else if (formFields[0].type === 'date') {
           this.constraintList.push(new DateConstraint(formFields, constraint.dateFrom, constraint.dateTo));
         } else {

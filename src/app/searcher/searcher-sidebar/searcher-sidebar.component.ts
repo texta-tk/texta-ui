@@ -72,7 +72,8 @@ export class SearcherSidebarComponent implements OnInit, OnDestroy {
         data: {
           data: {query: x.elasticSearchQuery.query}
         },
-        maxHeight: '500px'
+        maxHeight: '500px',
+        maxWidth: '500px'
       });
     });
 

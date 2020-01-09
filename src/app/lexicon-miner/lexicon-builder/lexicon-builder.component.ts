@@ -126,6 +126,10 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
   }
 
   saveLexicon() {
+    // so i can save lexicon words without embedding
+    if (this.selectedEmbedding === null) {
+      this._lexicon.phrases = this.newLineStringToList(this.positives);
+    }
     const requestBody = {
       description: this._lexicon.description,
       phrases: this._lexicon.phrases,

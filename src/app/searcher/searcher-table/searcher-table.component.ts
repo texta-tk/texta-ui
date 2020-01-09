@@ -103,14 +103,6 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     }
   }
 
-  checkIfObject(value) {
-    if (value) {
-      const stringValue = value.toString().split(',');
-      // hacky way to check if object with properties
-      return stringValue[0] === '[object Object]';
-    }
-  }
-
   public onOpenedChange(opened) {
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && (this.columnFormControl.value)) {

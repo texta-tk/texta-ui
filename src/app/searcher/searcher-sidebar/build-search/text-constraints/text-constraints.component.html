@@ -2,7 +2,8 @@
   <div fxLayout="row" fxLayoutGap="5px">
     <mat-form-field fxFlex="20">
       <mat-label>Operator</mat-label>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" class="selectOperator" [formControl]="operatorFormControl">
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
+                  [formControl]="operatorFormControl">
         <mat-option value="must">and</mat-option>
         <mat-option value="should">or</mat-option>
         <mat-option value="must_not">not</mat-option>
@@ -10,7 +11,8 @@
     </mat-form-field>
     <mat-form-field fxFlex>
       <mat-label>Match</mat-label>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" class="selectMatch" [formControl]="matchFormControl">
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
+                  [formControl]="matchFormControl">
         <mat-option value="phrase_prefix">Phrase prefix</mat-option>
         <mat-option value="best_fields">word</mat-option>
         <mat-option value="phrase">phrase</mat-option>
@@ -19,7 +21,8 @@
     </mat-form-field>
     <mat-form-field fxFlex="20">
       <mat-label>Slop</mat-label>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" class="selectSlop" [formControl]="slopFormControl">
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
+                  [formControl]="slopFormControl">
         <mat-option value="0">0</mat-option>
         <mat-option value="1">1</mat-option>
         <mat-option value="2">2</mat-option>
@@ -29,11 +32,22 @@
       </mat-select>
     </mat-form-field>
   </div>
-  <div>
+  <div fxLayout="column">
     <mat-form-field floatLabel="never" class="max-width">
   <textarea matInput class="max-width"
             [formControl]="textAreaFormControl"
             placeholder="Type here"></textarea>
     </mat-form-field>
+    <button mat-button [matMenuTriggerFor]="menu" *ngIf="lexicons.length > 0">Add lexicon</button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item *ngFor="let lexicon of lexicons">
+        <button mat-menu-item [matMenuTriggerFor]="lexiconDetailed" (click)="addLexicon(lexicon)">
+          {{ lexicon.description }}
+        </button>
+        <mat-menu #lexiconDetailed="matMenu">
+          <button mat-menu-item *ngFor="let phrase of lexicon.phrases" (click)="addPhrase(phrase)">{{ phrase }}</button>
+        </mat-menu>
+      </button>
+    </mat-menu>
   </div>
 </div>

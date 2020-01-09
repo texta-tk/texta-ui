@@ -42,6 +42,7 @@ import {SavedSearchAutocompleteComponent} from './components/saved-search-autoco
 import {LineChartModule} from '@swimlane/ngx-charts';
 import {MatTreeModule} from '@angular/material/tree';
 import {MaterialFileInputModule} from 'ngx-material-file-input';
+import {FormatTextaFactsPipe} from './pipes/format-texta-facts.pipe';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
@@ -50,7 +51,8 @@ import {MaterialFileInputModule} from 'ngx-material-file-input';
     MatOptionSelectAllComponent,
     QueryDialogComponent,
     GenericDialogComponent,
-    SavedSearchAutocompleteComponent
+    SavedSearchAutocompleteComponent,
+    FormatTextaFactsPipe
   ],
   imports: [
     CommonModule,
@@ -125,7 +127,7 @@ import {MaterialFileInputModule} from 'ngx-material-file-input';
     SavedSearchAutocompleteComponent,
 
     MatOptionSelectAllComponent,
-
+    FormatTextaFactsPipe,
     LineChartModule,
     InfiniteScrollModule,
     MaterialFileInputModule,

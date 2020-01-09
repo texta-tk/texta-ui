@@ -1,8 +1,9 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {ElasticsearchQuery, TextConstraint} from '../Constraints';
 import {FormControl} from '@angular/forms';
-import {debounceTime, distinctUntilChanged, startWith, takeUntil} from 'rxjs/operators';
-import {Subject} from 'rxjs';
+import {debounceTime, distinctUntilChanged, startWith, switchMap, take, takeUntil} from 'rxjs/operators';
+import {Observable, Subject} from 'rxjs';
+import {Lexicon} from '../../../../shared/types/Lexicon';
 
 @Component({
   selector: 'app-text-constraints',
@@ -18,6 +19,9 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
       this.slopFormControl = this._textConstraint.slopFormControl;
       this.matchFormControl = this._textConstraint.matchFormControl;
       this.operatorFormControl = this._textConstraint.operatorFormControl;
+      if (this._textConstraint.lexicons) {
+        this.lexicons = this._textConstraint.lexicons;
+      }
     }
   }
 
@@ -31,6 +35,7 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
   slopFormControl: FormControl = new FormControl();
   matchFormControl: FormControl = new FormControl();
   operatorFormControl: FormControl = new FormControl();
+  lexicons: Lexicon[] = [];
 
   constructor() {
 
@@ -153,6 +158,30 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
     const stringList = stringToSplit.split(splitBy);
     // filter out empty values
     return stringList.filter(x => x !== '');
+  }
+
+  public addPhrase(val) {
+    const formControlValue = this.textAreaFormControl.value as string;
+    if (formControlValue.endsWith('\n') || formControlValue === '') {
+      this.textAreaFormControl.setValue(formControlValue + val);
+    } else {
+      this.textAreaFormControl.setValue(formControlValue + '\n' + val);
+    }
+  }
+
+  public addLexicon(val: Lexicon) {
+    const formControlValue = this.textAreaFormControl.value as string;
+    let phrases = '';
+    if (val.phrases) {
+      val.phrases.forEach(x => {
+        phrases += x + '\n';
+      });
+    }
+    if (formControlValue.endsWith('\n') || formControlValue === '') {
+      this.textAreaFormControl.setValue(formControlValue + phrases);
+    } else {
+      this.textAreaFormControl.setValue(formControlValue + '\n' + phrases);
+    }
   }
 
   ngOnDestroy() {

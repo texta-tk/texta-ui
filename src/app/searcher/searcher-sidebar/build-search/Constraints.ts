@@ -1,5 +1,6 @@
 import {Field} from '../../../shared/types/Project';
 import {FormControl} from '@angular/forms';
+import {Lexicon} from '../../../shared/types/Lexicon';
 
 export class Constraint {
   fields: Field[];
@@ -16,13 +17,15 @@ export class TextConstraint extends Constraint {
   slopFormControl = new FormControl();
   matchFormControl = new FormControl();
   operatorFormControl = new FormControl();
+  lexicons: Lexicon[];
 
-  constructor(fields: Field[], match?, text?, operator?, slop?) {
+  constructor(fields: Field[], lexicons?: Lexicon[], match?, text?, operator?, slop?) {
     super(fields);
     this.operatorFormControl.setValue(operator ? operator : 'must');
     this.matchFormControl.setValue(match ? match : 'phrase_prefix');
     this.slopFormControl.setValue(slop ? slop : '0');
     this.textAreaFormControl.setValue(text ? text : '');
+    this.lexicons = lexicons;
   }
 
 }

@@ -9,6 +9,10 @@
   max-height: calc(100vh - #{$navbar-height} - #{$tasks-table-paginator-row});
   min-height: calc(100vh - #{$navbar-height} - #{$tasks-table-paginator-row});
   overflow: auto;
+
+  table {
+    width: max-content;
+  }
 }
 
 .table-paginator-row {
@@ -28,6 +32,10 @@
 }
 
 .mat-cell {
-  max-width: 700px;
+  max-width: 500px;
   overflow-wrap: break-word;
+}
+
+.mat-cell-dense {
+  max-width: 150px;
 }
