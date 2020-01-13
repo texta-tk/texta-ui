@@ -81,9 +81,9 @@ export class UserService {
       catchError(this.logService.handleError<UserProfile>('getbyurl')));
   }
 
-  toggleSuperUser(id: number): Observable<UserProfile | HttpErrorResponse> {
-    return this.http.get<UserProfile>(
-      this.apiUrl + '/users/' + id + '/assign_superuser/',
+  toggleSuperUser(id: number, body): Observable<UserProfile | HttpErrorResponse> {
+    return this.http.put<UserProfile>(
+      this.apiUrl + '/users/' + id + '/', body
     ).pipe(
       tap(e => this.logService.logStatus(e, 'toggleSuperUser')),
       catchError(this.logService.handleError<UserProfile>('toggleSuperUser')));

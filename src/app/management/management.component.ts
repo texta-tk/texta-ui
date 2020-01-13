@@ -54,7 +54,7 @@ export class ManagementComponent implements OnInit, OnDestroy {
 
   togglePermissions(row: UserProfile) {
     if (row.id !== 1) { // admin always id 1???? todo
-      this.userService.toggleSuperUser(row.id).subscribe((resp: UserProfile | HttpErrorResponse) => {
+      this.userService.toggleSuperUser(row.id, {is_superuser: !row.is_superuser}).subscribe((resp: UserProfile | HttpErrorResponse) => {
         if (resp instanceof HttpErrorResponse) {
           this.logService.snackBarError(resp, 2000);
         } else {
