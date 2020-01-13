@@ -160,15 +160,6 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
     return stringList.filter(x => x !== '');
   }
 
-  public addPhrase(val) {
-    const formControlValue = this.textAreaFormControl.value as string;
-    if (formControlValue.endsWith('\n') || formControlValue === '') {
-      this.textAreaFormControl.setValue(formControlValue + val);
-    } else {
-      this.textAreaFormControl.setValue(formControlValue + '\n' + val);
-    }
-  }
-
   public addLexicon(val: Lexicon) {
     const formControlValue = this.textAreaFormControl.value as string;
     let phrases = '';

@@ -45,7 +45,7 @@
           {{ lexicon.description }}
         </button>
         <mat-menu #lexiconDetailed="matMenu">
-          <button mat-menu-item *ngFor="let phrase of lexicon.phrases" (click)="addPhrase(phrase)">{{ phrase }}</button>
+          <div mat-menu-item disabled *ngFor="let phrase of lexicon.phrases">{{ phrase }}</div>
         </mat-menu>
       </button>
     </mat-menu>

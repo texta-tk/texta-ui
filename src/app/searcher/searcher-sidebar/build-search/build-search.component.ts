@@ -92,7 +92,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.searchService.getSearchQueue().pipe(debounceTime(350), takeUntil(this.destroy$), switchMap(x => {
+    this.searchService.getSearchQueue().pipe(debounceTime(550), takeUntil(this.destroy$), switchMap(x => {
       this.searchService.setIsLoading(true);
       if (this.elasticQuery.size === 0) { // aggregations use size 0
         this.elasticQuery.size = 10;

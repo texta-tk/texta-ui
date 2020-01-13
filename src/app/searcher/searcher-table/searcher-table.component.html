@@ -8,7 +8,7 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>{{column}}</th>
           <td mat-cell *matCellDef="let row" class="table-row"
               [ngClass]="{'mat-cell-dense': row.doc[column]?.length < 345}">
-            <ng-container *ngIf="(row.doc[column] | keyvalue)?.length"> <!--check if object, dont want to call functions here use pure pipe-->
+            <ng-container *ngIf="(row.doc[column] | keyvalue)?.length"> <!--check if object, dont want to call functions here use pure pipe todo-->
               <ng-container *ngIf="column === 'texta_facts'">
                 <button mat-button [matMenuTriggerFor]="factMenu" [matMenuTriggerData]="{data: row.doc[column]}">
                   View facts
