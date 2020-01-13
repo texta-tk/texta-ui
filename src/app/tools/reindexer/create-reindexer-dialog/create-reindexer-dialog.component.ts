@@ -62,7 +62,7 @@ export class CreateReindexerDialogComponent implements OnInit {
     }) => {
       if (resp) {
         if (!(resp.projectFields instanceof HttpErrorResponse)) {
-          this.projectFields = ProjectField.cleanProjectFields(resp.projectFields);
+          this.projectFields = ProjectField.sortTextaFactsAsFirstItem(resp.projectFields);
         } else {
           this.logService.snackBarError(resp.projectFields, 2000);
         }
