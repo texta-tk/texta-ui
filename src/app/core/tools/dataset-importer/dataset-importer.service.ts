@@ -9,7 +9,7 @@ import {environment} from '../../../../environments/environment';
   providedIn: 'root'
 })
 export class DatasetImporterService {
-  apiUrl = environment.apiUrl;
+  apiUrl = environment.apiHost + environment.apiBasePath;
 
   constructor(private http: HttpClient,
               private logService: LogService) {

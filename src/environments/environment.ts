@@ -3,8 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  // apiUrl: 'https://rest-dev.texta.ee/api',
-  apiUrl: 'http://localhost:8000',
+  // apiUrl: 'https://rest-dev.texta.ee/api/v1',
+  apiHost: 'http://localhost:8000',
+  apiBasePath: '/api/v1',
   production: false
 };
 

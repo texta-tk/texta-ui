@@ -37,7 +37,6 @@ export class AggregationsComponent implements OnInit, OnDestroy {
               private logService: LogService,
               public searchService: SearcherComponentService) {
 
-
   }
 
   addNewAggregation() {

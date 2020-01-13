@@ -12,7 +12,7 @@ import {UserAuth} from '../../shared/types/UserAuth';
   providedIn: 'root'
 })
 export class UserService {
-  apiUrl = environment.apiUrl;
+  apiUrl = environment.apiHost + environment.apiBasePath;
 
   constructor(private http: HttpClient, private localStorageService: LocalStorageService,
               private logService: LogService) {

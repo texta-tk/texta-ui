@@ -13,7 +13,7 @@ import {TaggerOptions} from '../../shared/types/tasks/TaggerOptions';
   providedIn: 'root'
 })
 export class TaggerService {
-  apiUrl = environment.apiUrl;
+  apiUrl = environment.apiHost + environment.apiBasePath;
 
   constructor(private http: HttpClient, private logService: LogService) {}
 

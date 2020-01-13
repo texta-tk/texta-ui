@@ -20,7 +20,7 @@ import {SavedSearch} from '../../shared/types/SavedSearch';
 
 // { id: number, constraints: Constraint[], elasticQuery?: ElasticsearchQuery, description: string }[]
 export class SearcherService {
-  apiUrl = environment.apiUrl;
+  apiUrl = environment.apiHost + environment.apiBasePath;
 
   constructor(private http: HttpClient, private localStorageService: LocalStorageService,
               private logService: LogService) {

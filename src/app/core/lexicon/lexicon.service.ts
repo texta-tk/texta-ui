@@ -11,18 +11,18 @@ import {Lexicon} from '../../shared/types/Lexicon';
   providedIn: 'root'
 })
 export class LexiconService {
-  apiUrl = environment.apiUrl;
+  apiUrl = environment.apiHost + environment.apiBasePath;
 
   constructor(private http: HttpClient, private localStorageService: LocalStorageService,
               private logService: LogService) {
   }
 
-  getLexicons(projectId: number, params = ''): Observable<{count: number, results: Lexicon[]} | HttpErrorResponse> {
-    return this.http.get<{count: number, results: Lexicon[]}>(
+  getLexicons(projectId: number, params = ''): Observable<{ count: number, results: Lexicon[] } | HttpErrorResponse> {
+    return this.http.get<{ count: number, results: Lexicon[] }>(
       `${this.apiUrl}/projects/${projectId}/lexicons/?${params}`,
     ).pipe(
       tap(e => this.logService.logStatus(e, 'getLexicons')),
-      catchError(this.logService.handleError<{count: number, results: Lexicon[]}>('getLexicons')));
+      catchError(this.logService.handleError<{ count: number, results: Lexicon[] }>('getLexicons')));
   }
 
 

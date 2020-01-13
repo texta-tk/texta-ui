@@ -10,7 +10,7 @@ import { tap, catchError } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class TorchTaggerService {
-  apiUrl = environment.apiUrl;
+  apiUrl = environment.apiHost + environment.apiBasePath;
 
   constructor(private http: HttpClient, private logService: LogService) {}
 

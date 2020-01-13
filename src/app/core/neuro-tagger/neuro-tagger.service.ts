@@ -11,7 +11,7 @@ import {NeuroTagger} from '../../shared/types/tasks/NeuroTagger';
   providedIn: 'root'
 })
 export class NeuroTaggerService {
-  apiUrl = environment.apiUrl;
+  apiUrl = environment.apiHost + environment.apiBasePath;
   apiEndpoint = 'neurotaggers';
 
   constructor(private http: HttpClient, private localStorageService: LocalStorageService,

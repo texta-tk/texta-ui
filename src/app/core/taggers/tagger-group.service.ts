@@ -11,7 +11,7 @@ import {LogService} from '../util/log.service';
   providedIn: 'root'
 })
 export class TaggerGroupService {
-  apiUrl = environment.apiUrl;
+  apiUrl = environment.apiHost + environment.apiBasePath;
   apiEndpoint = 'tagger_groups';
 
   constructor(private http: HttpClient, private localStorageService: LocalStorageService,

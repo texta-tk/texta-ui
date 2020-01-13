@@ -12,7 +12,7 @@ import {Embedding, EmbeddingPrediction} from '../../shared/types/tasks/Embedding
   providedIn: 'root'
 })
 export class EmbeddingsService {
-  apiUrl = environment.apiUrl;
+  apiUrl = environment.apiHost + environment.apiBasePath;
 
   constructor(private http: HttpClient, private localStorageService: LocalStorageService,
               private logService: LogService) {

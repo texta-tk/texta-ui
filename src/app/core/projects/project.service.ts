@@ -10,7 +10,7 @@ import {Project, ProjectFact, ProjectField, ProjectResourceCounts, Health} from 
   providedIn: 'root'
 })
 export class ProjectService {
-  apiUrl = environment.apiUrl;
+  apiUrl = environment.apiHost + environment.apiBasePath;
 
   constructor(private http: HttpClient,
               private logService: LogService) {

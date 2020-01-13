@@ -10,7 +10,7 @@ import {EmbeddingCluster} from '../../shared/types/tasks/Embedding';
   providedIn: 'root'
 })
 export class EmbeddingsGroupService {
-  apiUrl = environment.apiUrl;
+  apiUrl = environment.apiHost + environment.apiBasePath;
   apiEndpoint = 'embedding_clusters';
 
   constructor(private http: HttpClient,
