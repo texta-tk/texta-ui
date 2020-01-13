@@ -63,6 +63,12 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
       if (!(resp instanceof HttpErrorResponse)) {
         this.detail = resp.detail;
         this.logService.snackBarMessage('Password successfully changed', 2000);
+      } else if (resp instanceof HttpErrorResponse) {
+        if (resp.error && resp.error.new_password2) {
+          this.logService.snackBarMessage('Failed to change password: ' + resp.error.new_password2[0], 5000);
+        } else {
+          this.logService.snackBarError(resp, 2000);
+        }
       }
     });
   }
