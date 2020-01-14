@@ -9,21 +9,48 @@
         <app-aggregation-result-table [tableData]="tableAggregation.tableData"></app-aggregation-result-table>
       </mat-tab>
     </mat-tab-group>
-    <ngx-charts-line-chart *ngIf="aggregationData.dateData.length > 0 && !aggregationData.dateData[0].series[0].extra"
-                           [results]="aggregationData.dateData"
-                           [yAxis]="true" [yAxisLabel]="'document count'" showYAxisLabel="true"
-                           [xAxis]="true">
-    </ngx-charts-line-chart>
-    <ngx-charts-line-chart *ngIf="aggregationData.dateData.length > 0 && aggregationData.dateData[0].series[0].extra"
-                           [results]="aggregationData.dateData"
-                           [yAxis]="true" [yAxisLabel]="'document count'" showYAxisLabel="true"
-                           [xAxis]="true">
+    <ngx-charts-line-chart
+      *ngIf="aggregationData.dateData.length > 0 && !aggregationData.dateData[0].series[0].extra"
+      [results]="aggregationData.dateData" [yAxis]="true" [yAxisLabel]="'document count'"
+      showYAxisLabel="true" [xAxis]="true">
       <ng-template #seriesTooltipTemplate let-model="model">
-        <div fxLayout="column" fxLayoutAlign="space-around start" class="timeline-tooltip">
-          <span *ngFor="let data of model[0].extra.buckets" class="m-bot-5" fxLayout="row">
-            <div class="timeline-tooltip-key">{{data.key}}</div>: <strong
-            class="timeline-tooltip-count">{{data.doc_count}}</strong>
-          </span>
+        <div fxLayout="column" fxLayoutAlign="center" class="timeline-tooltip">
+          <span *ngIf="model.length > 0" fxLayoutAlign="center">{{model[0].name}}</span>
+          <div fxLayout="column" fxLayoutAlign="space-around start">
+            <span *ngFor="let data of model" class="m-bot-5" fxLayout="row">
+              <span class="tooltip-color" [style.background-color]="data.color"></span>
+              <div class="timeline-tooltip-key">{{data.series}}:</div><strong
+                class="timeline-tooltip-count">&nbsp;{{data.value}}</strong>
+            </span>
+          </div>
+        </div>
+      </ng-template>
+    </ngx-charts-line-chart>
+    <ngx-charts-line-chart
+      *ngIf="aggregationData.dateData.length > 0 && aggregationData.dateData[0].series[0].extra"
+      [results]="aggregationData.dateData" [yAxis]="true" [yAxisLabel]="'document count'"
+      showYAxisLabel="true" [xAxis]="true">
+      <ng-template #seriesTooltipTemplate let-model="model">
+        <div fxLayout="column" fxLayoutAlign="center" class="timeline-tooltip">
+          <span fxLayoutAlign="center">{{model[0].name}}</span>
+
+          <ng-container *ngIf="model.length === 1">
+            <div fxLayout="column" fxLayoutAlign="space-around start">
+              <span *ngFor="let data of model[0].extra.buckets" class="m-bot-5" fxLayout="row">
+                <div class="timeline-tooltip-key">{{data.key}}</div>:<strong
+                  class="timeline-tooltip-count">&nbsp;{{data.doc_count}}</strong>
+              </span>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="model.length > 1">
+            <div fxLayout="column" fxLayoutAlign="space-around start">
+              <span *ngFor="let data of model" class="m-bot-5" fxLayout="row">
+                <span class="tooltip-color" [style.background-color]="data.color"></span>
+                <div class="timeline-tooltip-key">{{data.series}}:</div><strong
+                  class="timeline-tooltip-count">&nbsp;{{data.value}}</strong>
+              </span>
+            </div>
+          </ng-container>
         </div>
       </ng-template>
     </ngx-charts-line-chart>
@@ -32,12 +59,13 @@
 
         <ng-template mat-tab-label>
           {{nestedAggregation.name}}
-          <button *ngIf="nestedAggregation.histoBuckets && nestedAggregation.histoBuckets.length > 0" mat-icon-button
-                  (click)="openUnifiedTimeline(nestedAggregation.histoBuckets)">
+          <button *ngIf="nestedAggregation.histoBuckets && nestedAggregation.histoBuckets.length > 0"
+            mat-icon-button (click)="openUnifiedTimeline(nestedAggregation.histoBuckets)">
             <mat-icon>assessment</mat-icon>
           </button>
         </ng-template>
-        <app-aggregation-results-tree [dataSource]="nestedAggregation.treeData"></app-aggregation-results-tree>
+        <app-aggregation-results-tree [dataSource]="nestedAggregation.treeData">
+        </app-aggregation-results-tree>
       </mat-tab>
     </mat-tab-group>
   </ng-container>

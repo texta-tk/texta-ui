@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>Save search</h1>
 <div class="dialog-content-wrapper" mat-dialog-content>
-  <form id="saveSearch"  [formGroup]="saveSearchForm" (ngSubmit)="onSubmit(saveSearchForm.value)">
+  <form id="saveSearch" [formGroup]="saveSearchForm" (ngSubmit)="onSubmit(saveSearchForm.value)">
 
     <mat-form-field class="max-width">
       <input matInput placeholder="Description" formControlName="descriptionFormControl">
@@ -14,7 +14,7 @@
       <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Cancel</button>
     </div>
     <div class="flex-item-right">
-      <button type="submit" mat-button form="saveSearch"  [disabled]="!saveSearchForm.valid" >Submit</button>
+      <button type="submit" mat-button form="saveSearch" [disabled]="!saveSearchForm.valid">Save</button>
     </div>
   </div>
 </div>

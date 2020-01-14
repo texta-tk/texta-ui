@@ -1,5 +1,5 @@
 import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
+import {CommonModule, DatePipe} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 import {MatIconModule} from '@angular/material/icon';
@@ -138,7 +138,8 @@ import {FormatTextaFactsPipe} from './pipes/format-texta-facts.pipe';
     ConfirmDialogComponent,
     QueryDialogComponent,
     GenericDialogComponent
-  ]
+  ],
+  providers: [DatePipe] // todo when lazy loading change this
 })
 export class SharedModule {
 }

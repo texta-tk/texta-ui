@@ -3,11 +3,12 @@ import {NestedTreeControl} from '@angular/cdk/tree';
 import {MatTableDataSource} from '@angular/material';
 import {AggregationResultsDialogComponent} from '../aggregation-results-dialog/aggregation-results-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
+import {DatePipe} from '@angular/common';
 
 @Component({
   selector: 'app-aggregation-results-tree',
   templateUrl: './aggregation-results-tree.component.html',
-  styleUrls: ['./aggregation-results-tree.component.scss']
+  styleUrls: ['./aggregation-results-tree.component.scss'],
 })
 export class AggregationResultsTreeComponent implements OnInit {
   @Input() dataSource;
@@ -15,7 +16,7 @@ export class AggregationResultsTreeComponent implements OnInit {
   hasChild = (_: number, node: any) => !!node.buckets && node.buckets.length > 0;
   bucketAccessor = (x: any) => (x.buckets);
 
-  constructor(public dialog: MatDialog) {
+  constructor(public dialog: MatDialog, private datePipe: DatePipe) {
   }
 
   ngOnInit() {
@@ -47,7 +48,10 @@ export class AggregationResultsTreeComponent implements OnInit {
   formatDateData(buckets: { key_as_string: string, key: number, doc_count: number }[]) {
     const dateData = [];
     for (const element of buckets) {
-      dateData.push({value: element.doc_count, name: new Date(element.key_as_string)});
+      dateData.push({
+        value: element.doc_count,
+        name: this.datePipe.transform(new Date(element.key_as_string), 'dd.MM.yyyy')
+      });
     }
     return dateData;
   }

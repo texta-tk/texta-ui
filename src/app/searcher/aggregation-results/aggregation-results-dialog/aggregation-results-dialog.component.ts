@@ -5,7 +5,7 @@ import {MatTableDataSource} from '@angular/material/table';
 @Component({
   selector: 'app-aggregation-results-dialog',
   templateUrl: './aggregation-results-dialog.component.html',
-  styleUrls: ['./aggregation-results-dialog.component.scss']
+  styleUrls: ['./aggregation-results-dialog.component.scss', '../aggregation-results.component.scss']
 })
 export class AggregationResultsDialogComponent implements OnInit {
   type: 'table' | 'histo' | undefined = undefined;

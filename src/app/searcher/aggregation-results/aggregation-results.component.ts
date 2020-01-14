@@ -6,6 +6,7 @@ import {MatTableDataSource} from '@angular/material';
 import {ArrayDataSource} from '@angular/cdk/collections';
 import {AggregationResultsDialogComponent} from './aggregation-results-dialog/aggregation-results-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
+import {DatePipe} from "@angular/common";
 
 @Component({
   selector: 'app-aggregation-results',
@@ -31,13 +32,16 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   };
   bucketAccessor = (x: any) => (x.buckets);
 
-  constructor(public searchService: SearcherComponentService, @Inject(LOCALE_ID) private locale: string, public dialog: MatDialog) {
+  constructor(public searchService: SearcherComponentService, public dialog: MatDialog, private datePipe: DatePipe) {
   }
 
   formatDateData(buckets: { key_as_string: string, key: number, doc_count: number }[]): { value: number, name: Date }[] {
     const dateData = [];
     for (const element of buckets) {
-      dateData.push({value: element.doc_count, name: new Date(element.key_as_string)});
+      dateData.push({
+        value: element.doc_count,
+        name: this.datePipe.transform(new Date(element.key_as_string), 'dd.MM.yyyy')
+      });
     }
     return dateData;
   }
@@ -45,7 +49,11 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   formatDateDataExtraBucket(buckets: { key_as_string: string, key: number, doc_count: number, buckets: any }[]): { value: number, name: Date }[] {
     const dateData = [];
     for (const element of buckets) {
-      dateData.push({value: element.doc_count, name: new Date(element.key_as_string), extra: {buckets: element.buckets}});
+      dateData.push({
+        value: element.doc_count,
+        name: this.datePipe.transform(new Date(element.key_as_string), 'dd.MM.yyyy'),
+        extra: {buckets: element.buckets}
+      });
     }
     return dateData;
   }
@@ -94,6 +102,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
             if (!rootAgg.histoBuckets) {
               rootAgg.histoBuckets = [];
             }
+            // for the combined histo chart
             const seriesData = rootAgg.histoBuckets.find(series => series.name.toLowerCase().trim() === bucket.key.toLowerCase().trim());
             if (seriesData) {
               for (const element of this.bucketAccessor(innerBuckets)) {
@@ -110,7 +119,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
               });
             }
           }
-          // dont delete original data to avoid major GC
+          // dont delete original data to avoid major GC, (takes a while)
           rootAgg.nested = true;
           bucket.buckets = this.formatAggDataStructure(rootAgg, innerBuckets, aggKeys).buckets;
         }
