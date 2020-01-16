@@ -43,7 +43,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
     const form = new FormControl();
     const formDestroy = new Subject<boolean>();
     form.valueChanges.pipe(takeUntil(formDestroy), pairwise()).subscribe(([old, val]) => {
-      if (val && val.type === 'date') {
+      if (val && val.type === 'date') { // making a second date aggregation would add no value
         this.dateAlreadySelected = true;
       } else if (old.type === 'date') {
         this.dateAlreadySelected = false;

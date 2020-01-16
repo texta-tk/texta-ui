@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {ElasticsearchQuery, FactConstraint} from '../../searcher-sidebar/build-search/Constraints';
 
 export interface TextaFact {
@@ -26,18 +26,23 @@ export interface HighlightConfig {
 export class HighlightComponent {
   static colors: Map<string, string> = new Map<string, string>();
   highlightArray: HighlightObject[] = [];
+  id = 0; // for trackby template
 
   @Input() set highlightConfig(highlightConfig: HighlightConfig) { // todo data
-    let fieldFacts = this.getFactsByField(highlightConfig.data, highlightConfig.currentColumn);
-    if (highlightConfig.onlyHighlightMatching && fieldFacts.length > 0) {
-      fieldFacts = this.getOnlyMatchingFacts(fieldFacts, highlightConfig);
+    if (highlightConfig.data[highlightConfig.currentColumn]) {
+      let fieldFacts = this.getFactsByField(highlightConfig.data, highlightConfig.currentColumn);
+      if (highlightConfig.onlyHighlightMatching && fieldFacts.length > 0) {
+        fieldFacts = this.getOnlyMatchingFacts(fieldFacts, highlightConfig);
+      }
+      fieldFacts = this.removeDuplicates(fieldFacts, 'spans');
+      const highlightTerms = [
+        ...this.makeSearcherHighlightFacts(highlightConfig.searcherHighlight, highlightConfig.currentColumn),
+        ...fieldFacts];
+      const colors = this.generateColorsForFacts(highlightTerms);
+      this.highlightArray = this.makeHighLights(highlightConfig.data[highlightConfig.currentColumn], highlightTerms, colors);
+    } else {
+      this.highlightArray = [];
     }
-    fieldFacts = this.removeDuplicates(fieldFacts, 'spans');
-    const highlightTerms = [
-      ...this.makeSearcherHighlightFacts(highlightConfig.searcherHighlight, highlightConfig.currentColumn),
-      ...fieldFacts];
-    const colors = this.generateColorsForFacts(highlightTerms);
-    this.highlightArray = this.makeHighLights(highlightConfig.data[highlightConfig.currentColumn], highlightTerms, colors);
   }
 
   constructor() {
@@ -125,30 +130,14 @@ export class HighlightComponent {
     return HighlightComponent.colors;
   }
 
-  private chunkSubstr(str, size) {
-    const numChunks = Math.ceil(str.length / size);
-    const chunks = new Array(numChunks);
 
-    for (let i = 0, o = 0; i < numChunks; ++i, o += size) {
-      chunks[i] = str.substr(o, size);
-    }
-
-    return chunks;
-  }
-
-  private makeHighLights(originalText: string, facts: TextaFact[], factColors: Map<string, string>): HighlightObject[] {
+  private makeHighLights(originalText: string | number, facts: TextaFact[], factColors: Map<string, string>): HighlightObject[] {
+    originalText = originalText.toString();
     if (facts.length === 0) {
       if (!originalText) {
         return [];
       }
-      // weird behaviour on chrome, where if the string is really long (1000 or more characters), then it makes the
-      // rendering engine really slow, and causes 8 second layouts, so just split long strings into smaller ones todo  why?
-      const chunked = this.chunkSubstr(originalText, 400);
-      const returnArr = [];
-      for (const chunk of chunked) {
-        returnArr.push({text: chunk, highlighted: false});
-      }
-      return returnArr;
+      return [{text: originalText, highlighted: false, id: this.id++}];
     }
     // elastic fields arent trimmed by default, so elasticsearch highlights are going to be misaligned because
     // elasticsearch highlighter trims the field, MLP also trims the field
@@ -176,13 +165,13 @@ export class HighlightComponent {
       if (fact && fact.spans[0] !== fact.spans[1]) {
         if (this.isOverLappingFact(overLappingFacts, fact)) {
           // push old non fact text into array
-          highlightArray.push({text: factText, highlighted: false});
+          highlightArray.push({text: factText, highlighted: false, id: this.id++});
           factText = '';
           // highlightarray is updated inside this function, return new loop index (where to resume from)
           i = this.makeFactNested(highlightArray, fact, overLappingFacts, i, originalText, factColors);
         } else {
           // push old non fact text into array
-          highlightArray.push({text: factText, highlighted: false});
+          highlightArray.push({text: factText, highlighted: false, id: this.id++});
           factText = '';
           // make a regular fact, highlightarray updated inside function, return new loop index
           i = this.makeFact(highlightArray, fact, i, originalText, factColors);
@@ -196,7 +185,7 @@ export class HighlightComponent {
       // if the last substring in the whole string wasnt a fact
       // that means there was no way for it to be added into the highlightarray,
       // push non fact text into array
-      highlightArray.push({text: factText, highlighted: false});
+      highlightArray.push({text: factText, highlighted: false, id: this.id++});
     }
 
     return highlightArray;
@@ -218,7 +207,7 @@ export class HighlightComponent {
         highlighted: true,
         fact: factToInsert,
         color,
-        nested: undefined
+        nested: undefined, id: this.id++
       };
     } else {
       this.makeFactNestedHighlightRecursive(highlightObject.nested, factToInsert, color, textToInsert);
@@ -281,7 +270,7 @@ export class HighlightComponent {
             highlighted: true,
             fact: rootFact,
             color: colors.get(rootFact.fact),
-            nested: undefined
+            nested: undefined, id: this.id++
           };
           factText = '';
           previousFact = factCurrentIndex;
@@ -301,7 +290,7 @@ export class HighlightComponent {
               highlighted: true,
               fact: rootFact,
               color: colors.get(rootFact.fact),
-              nested: undefined
+              nested: undefined, id: this.id++
             };
             factText = '';
             previousFact = factCurrentIndex;
@@ -380,7 +369,7 @@ export class HighlightComponent {
     for (let i = loopIndex; i <= originalText.length; i++) {
       // use closing span number, otherwise we would get no text, no nested facts
       if (fact.spans[1] === i) {
-        highlight.push({text: newText, highlighted: true, fact, color: colors.get(fact.fact)});
+        highlight.push({text: newText, highlighted: true, fact, color: colors.get(fact.fact), id: this.id++});
         // - 1 because loop is escaped
         return i - 1;
       }
@@ -459,9 +448,14 @@ export class HighlightComponent {
     }
     return output;
   }
+
+  trackById(index, item) {
+    return item.id;
+  }
 }
 
 interface HighlightObject {
+  id: number; // for trackBy
   text: string;
   highlighted: boolean;
   fact?: TextaFact;

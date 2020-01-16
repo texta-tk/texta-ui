@@ -2,7 +2,7 @@
   <div [hidden]="displayedColumns.length === 0">
     <div class="table-container">
 
-      <table mat-table [dataSource]="tableData" class="generic-table" matSort>
+      <table mat-table [dataSource]="tableData" class="generic-table" matSort [trackBy]="trackByTableData">
 
         <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
           <th mat-header-cell *matHeaderCellDef mat-sort-header><span class="column-header-text"

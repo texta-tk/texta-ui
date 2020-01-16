@@ -1,4 +1,4 @@
-<ng-container *ngFor="let highlight of this.highlightArray">
+<ng-container *ngFor="let highlight of highlightArray; trackBy: trackById">
   <ng-template [ngIf]="highlight.highlighted && !highlight.fact.searcherHighlight">
       <span title="{{highlight.fact.fact}}: {{highlight.fact.str_val}}" style="cursor: pointer;"
             [style.background-color]="highlight.color">{{highlight.text}}</span>

@@ -24,6 +24,8 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
   dateRangeTo: { range?: any } = {};
   destroy$: Subject<boolean> = new Subject();
   pipe = new DatePipe('en_US');
+  dateRangeDays = false;
+  dateRangeWeek = false;
 
   constructor(
     private searchService: SearcherComponentService) {
@@ -52,6 +54,8 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
   }
 
   makeDateAggregation() {
+    this.checkDateInterval();
+
     this.dateRangeFrom.range = {[this.fieldsFormControl.value.path]: {gte: this.startDate}};
     this.dateRangeTo.range = {[this.fieldsFormControl.value.path]: {lte: this.toDate}};
     let returnquery: { [key: string]: any };
@@ -78,6 +82,18 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
 
 
     this.aggregationObj.aggregation = returnquery;
+  }
+
+  private checkDateInterval() {
+    // limit interval based on daterange
+    this.dateRangeDays = this.dateRangeDaysSmallerThan(365);
+    this.dateRangeWeek = this.dateRangeDaysSmallerThan(1095);
+    if (this.dateInterval === 'day' && !this.dateRangeDays) {
+      this.dateInterval = 'week';
+    }
+    if (this.dateInterval === 'week' && !this.dateRangeWeek) {
+      this.dateInterval = 'month';
+    }
   }
 
   dateRangeDaysSmallerThan(goal: number) {

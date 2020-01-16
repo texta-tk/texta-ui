@@ -13,7 +13,15 @@ import {startWith, switchMap, takeUntil} from 'rxjs/operators';
 export class TextAggregationComponent implements OnInit, OnDestroy {
   @Input() aggregationObj: { aggregation: any };
   @Input() fieldsFormControl: FormControl;
-  @Input() notSubAgg: boolean;
+  isMainAgg: boolean;
+
+  @Input() set notSubAgg(val: boolean) {
+    this.isMainAgg = val;
+    if (!this.isMainAgg) {
+      this.aggregationType = 'terms';
+    }
+  }
+
   searcherElasticSearchQuery: ElasticsearchQueryStructure;
   aggregationType: 'terms' | 'significant_text' | 'significant_terms' = 'terms';
   aggregationSize = 30;
@@ -54,7 +62,6 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
       }
     }
   }
-
 
 
   makeFactAggregation() {
@@ -106,14 +113,6 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
     this.aggregationObj.aggregation = returnquery;
   }
 
-  isMainAgg() {
-    if (this.notSubAgg) {
-      return true;
-    } else {
-      this.aggregationType = 'terms';
-      return false;
-    }
-  }
 
   isFormControlTypeOfFact() {
     return this.fieldsFormControl &&

@@ -1,4 +1,14 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component, DoCheck,
+  EventEmitter,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core';
 import {SearcherComponentService} from '../services/searcher-component.service';
 import {Search} from '../../shared/types/Search';
 import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
@@ -17,7 +27,7 @@ import {Sort} from '@angular/material/sort';
   styleUrls: ['./searcher-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SearcherTableComponent implements OnInit, OnDestroy {
+export class SearcherTableComponent implements OnInit, OnDestroy{
   static totalCountLength; // hack for paginator max length with label, no easy way to do this
   public tableData: MatTableDataSource<any> = new MatTableDataSource();
   public displayedColumns: string[] = [];
@@ -132,6 +142,10 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     } else {
       return `${startIndex + 1} - ${endIndex} of ${length}`;
     }
+  }
+
+  trackByTableData(index, val) {
+    return val.doc;
   }
 
 }

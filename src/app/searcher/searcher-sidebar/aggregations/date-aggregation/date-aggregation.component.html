@@ -24,8 +24,8 @@
     <mat-label>Interval</mat-label>
     <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" [(ngModel)]="dateInterval"
                 name="aggregationDateInterval" (selectionChange)="makeDateAggregation()">
-      <mat-option value="day" [disabled]="!dateRangeDaysSmallerThan(365)">day</mat-option>
-      <mat-option value="week" [disabled]="!dateRangeDaysSmallerThan(1095)">week</mat-option>
+      <mat-option value="day" [disabled]="!dateRangeDays">day</mat-option>
+      <mat-option value="week" [disabled]="!dateRangeWeek">week</mat-option>
       <mat-option value="month">month</mat-option>
       <mat-option value="year">year</mat-option>
     </mat-select>
