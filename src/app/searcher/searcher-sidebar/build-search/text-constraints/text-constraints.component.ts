@@ -1,9 +1,10 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {ElasticsearchQuery, TextConstraint} from '../Constraints';
 import {FormControl} from '@angular/forms';
 import {debounceTime, distinctUntilChanged, startWith, switchMap, take, takeUntil} from 'rxjs/operators';
 import {Observable, Subject} from 'rxjs';
 import {Lexicon} from '../../../../shared/types/Lexicon';
+import {MatMenuTrigger} from "@angular/material/menu";
 
 @Component({
   selector: 'app-text-constraints',
@@ -28,6 +29,7 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
   @Input() elasticSearchQuery: ElasticsearchQuery;
   @Output() change = new EventEmitter<ElasticsearchQuery>(); // search as you type, emit changes
 
+  @ViewChild(MatMenuTrigger, {static: false}) trigger: MatMenuTrigger;
   destroyed$: Subject<boolean> = new Subject<boolean>();
   constraintQuery;
   // so i dont have to rename everything if i decide to refactor something
@@ -173,6 +175,7 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
     } else {
       this.textAreaFormControl.setValue(formControlValue + '\n' + phrases);
     }
+    this.trigger.closeMenu();
   }
 
   ngOnDestroy() {

@@ -38,16 +38,16 @@
             [formControl]="textAreaFormControl"
             placeholder="Type here"></textarea>
     </mat-form-field>
-    <button mat-button [matMenuTriggerFor]="menu" *ngIf="lexicons.length > 0">Add lexicon</button>
+    <button mat-stroked-button [matMenuTriggerFor]="menu" *ngIf="lexicons.length > 0">Add lexicon</button>
     <mat-menu #menu="matMenu">
-      <button mat-menu-item *ngFor="let lexicon of lexicons">
+      <ng-container *ngFor="let lexicon of lexicons">
         <button mat-menu-item [matMenuTriggerFor]="lexiconDetailed" (click)="addLexicon(lexicon)">
           {{ lexicon.description }}
         </button>
         <mat-menu #lexiconDetailed="matMenu">
           <div mat-menu-item disabled *ngFor="let phrase of lexicon.phrases">{{ phrase }}</div>
         </mat-menu>
-      </button>
+      </ng-container>
     </mat-menu>
   </div>
 </div>
