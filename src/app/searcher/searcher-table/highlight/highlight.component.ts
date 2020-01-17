@@ -26,7 +26,6 @@ export interface HighlightConfig {
 export class HighlightComponent {
   static colors: Map<string, string> = new Map<string, string>();
   highlightArray: HighlightObject[] = [];
-  id = 0; // for trackby template
 
   @Input() set highlightConfig(highlightConfig: HighlightConfig) { // todo data
     if (highlightConfig.data[highlightConfig.currentColumn]) {
@@ -137,7 +136,7 @@ export class HighlightComponent {
       if (!originalText) {
         return [];
       }
-      return [{text: originalText, highlighted: false, id: this.id++}];
+      return [{text: originalText, highlighted: false}];
     }
     // elastic fields arent trimmed by default, so elasticsearch highlights are going to be misaligned because
     // elasticsearch highlighter trims the field, MLP also trims the field
@@ -153,7 +152,7 @@ export class HighlightComponent {
     const highlightArray: HighlightObject[] = [];
     const overLappingFacts = this.detectOverlappingFacts(facts);
     let factText = '';
-    let lowestSpanNumber = facts[0].spans[0];
+    let lowestSpanNumber: number | null = facts[0].spans[0] as number;
     for (let i = 0; i <= originalText.length; i++) {
       let fact = null;
       // performance update, dont loop over every fact on each character, get next span position instead when needed
@@ -165,19 +164,25 @@ export class HighlightComponent {
       if (fact && fact.spans[0] !== fact.spans[1]) {
         if (this.isOverLappingFact(overLappingFacts, fact)) {
           // push old non fact text into array
-          highlightArray.push({text: factText, highlighted: false, id: this.id++});
+          highlightArray.push({text: factText, highlighted: false});
           factText = '';
           // highlightarray is updated inside this function, return new loop index (where to resume from)
           i = this.makeFactNested(highlightArray, fact, overLappingFacts, i, originalText, factColors);
         } else {
           // push old non fact text into array
-          highlightArray.push({text: factText, highlighted: false, id: this.id++});
+          highlightArray.push({text: factText, highlighted: false});
           factText = '';
           // make a regular fact, highlightarray updated inside function, return new loop index
           i = this.makeFact(highlightArray, fact, i, originalText, factColors);
         }
       } else {
-        factText += originalText.charAt(i);
+        if (!lowestSpanNumber) {
+          factText += originalText.slice(i, originalText.length);
+          i = originalText.length;
+        } else {
+          factText += originalText.slice(i, lowestSpanNumber);
+          i = lowestSpanNumber - 1;
+        }
       }
     }
 
@@ -185,7 +190,7 @@ export class HighlightComponent {
       // if the last substring in the whole string wasnt a fact
       // that means there was no way for it to be added into the highlightarray,
       // push non fact text into array
-      highlightArray.push({text: factText, highlighted: false, id: this.id++});
+      highlightArray.push({text: factText, highlighted: false});
     }
 
     return highlightArray;
@@ -207,7 +212,7 @@ export class HighlightComponent {
         highlighted: true,
         fact: factToInsert,
         color,
-        nested: undefined, id: this.id++
+        nested: undefined
       };
     } else {
       this.makeFactNestedHighlightRecursive(highlightObject.nested, factToInsert, color, textToInsert);
@@ -270,7 +275,7 @@ export class HighlightComponent {
             highlighted: true,
             fact: rootFact,
             color: colors.get(rootFact.fact),
-            nested: undefined, id: this.id++
+            nested: undefined
           };
           factText = '';
           previousFact = factCurrentIndex;
@@ -290,7 +295,7 @@ export class HighlightComponent {
               highlighted: true,
               fact: rootFact,
               color: colors.get(rootFact.fact),
-              nested: undefined, id: this.id++
+              nested: undefined
             };
             factText = '';
             previousFact = factCurrentIndex;
@@ -366,15 +371,13 @@ export class HighlightComponent {
   private makeFact(highlight: HighlightObject[], fact: TextaFact, loopIndex: number, originalText: string, colors: Map<string, string>)
     : number {
     let newText = '';
-    for (let i = loopIndex; i <= originalText.length; i++) {
-      // use closing span number, otherwise we would get no text, no nested facts
-      if (fact.spans[1] === i) {
-        highlight.push({text: newText, highlighted: true, fact, color: colors.get(fact.fact), id: this.id++});
-        // - 1 because loop is escaped
-        return i - 1;
-      }
-      newText += originalText.charAt(i);
-    }
+    const factFinalSpanIndex = fact.spans[1] as number;
+    newText += originalText.slice(loopIndex, factFinalSpanIndex);
+    loopIndex = factFinalSpanIndex;
+    highlight.push({text: newText, highlighted: true, fact, color: colors.get(fact.fact)});
+    // - 1 because loop is escaped
+    return loopIndex - 1;
+
   }
 
   private removeDuplicates(myArr, prop) {
@@ -428,7 +431,7 @@ export class HighlightComponent {
         return fact.spans[0] as number;
       }
     }
-    return 0;
+    return null;
   }
 
   private sortByStartLowestSpan(a, b) {
@@ -449,13 +452,9 @@ export class HighlightComponent {
     return output;
   }
 
-  trackById(index, item) {
-    return item.id;
-  }
 }
 
 interface HighlightObject {
-  id: number; // for trackBy
   text: string;
   highlighted: boolean;
   fact?: TextaFact;
