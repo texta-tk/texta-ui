@@ -288,15 +288,6 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  hotFixPicturePlot(url: string) {
-    if (url) {
-      const returnUrl = url.split('/');
-      returnUrl[3] = 'api/v1/' + returnUrl[3];
-      return returnUrl.join('/');
-    }
-    return url;
-  }
-
   applyFilter(filterValue: string, field: string) {
     this.filteringValues[field] = filterValue;
     this.paginator.pageIndex = 0;
