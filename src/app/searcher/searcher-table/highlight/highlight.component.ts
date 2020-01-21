@@ -47,6 +47,7 @@ export class HighlightComponent {
   constructor() {
   }
 
+  // convert searcher highlight into mlp fact format
   makeSearcherHighlightFacts(searcherHighlight: any, currentColumn: string) {
     const highlightArray: TextaFact[] = [];
     for (const column in searcherHighlight) {
@@ -54,8 +55,7 @@ export class HighlightComponent {
         if (searcherHighlight[column].length === 1) {
           const columnText: string = searcherHighlight[column][0];
           const splitStartTag: string[] = columnText.split(ElasticsearchQuery.PRE_TAG);
-          const splitEndTag: string[] = [];
-          let previousIndex = 0;
+          let previousIndex = 0; // char start index of highlight
           for (const row of splitStartTag) {
             const endTagIndex = row.indexOf(ElasticsearchQuery.POST_TAG);
             if (endTagIndex > 0) {
@@ -70,10 +70,6 @@ export class HighlightComponent {
               previousIndex = previousIndex + rowClean.length;
             } else {
               previousIndex = previousIndex + row.length;
-            }
-            const splitRow: string[] = row.split(ElasticsearchQuery.POST_TAG);
-            if (splitRow) {
-              splitEndTag.push(...splitRow);
             }
           }
           // console.log(columnText);

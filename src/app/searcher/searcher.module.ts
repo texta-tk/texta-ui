@@ -18,6 +18,7 @@ import {TextAggregationComponent} from './searcher-sidebar/aggregations/text-agg
 import {AggregationResultTableComponent} from './aggregation-results/aggregation-result-table/aggregation-result-table.component';
 import {AggregationResultsDialogComponent} from './aggregation-results/aggregation-results-dialog/aggregation-results-dialog.component';
 import { AggregationResultsTreeComponent } from './aggregation-results/aggregation-results-tree/aggregation-results-tree.component';
+import {DatePipe} from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import { AggregationResultsTreeComponent } from './aggregation-results/aggregati
     SharedModule,
     SearcherRoutingModule
   ],
-  entryComponents: [SaveSearchDialogComponent, AggregationResultsDialogComponent]
+  entryComponents: [SaveSearchDialogComponent, AggregationResultsDialogComponent],
+  providers: [DatePipe]
 })
 export class SearcherModule {
   constructor() {

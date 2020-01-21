@@ -43,6 +43,7 @@ import {LineChartModule} from '@swimlane/ngx-charts';
 import {MatTreeModule} from '@angular/material/tree';
 import {MaterialFileInputModule} from 'ngx-material-file-input';
 import {FormatTextaFactsPipe} from './pipes/format-texta-facts.pipe';
+import { IsObjectPipe } from './pipes/is-object.pipe';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
@@ -52,7 +53,8 @@ import {FormatTextaFactsPipe} from './pipes/format-texta-facts.pipe';
     QueryDialogComponent,
     GenericDialogComponent,
     SavedSearchAutocompleteComponent,
-    FormatTextaFactsPipe
+    FormatTextaFactsPipe,
+    IsObjectPipe
   ],
   imports: [
     CommonModule,
@@ -128,6 +130,7 @@ import {FormatTextaFactsPipe} from './pipes/format-texta-facts.pipe';
 
     MatOptionSelectAllComponent,
     FormatTextaFactsPipe,
+    IsObjectPipe,
     LineChartModule,
     InfiniteScrollModule,
     MaterialFileInputModule,
@@ -138,8 +141,7 @@ import {FormatTextaFactsPipe} from './pipes/format-texta-facts.pipe';
     ConfirmDialogComponent,
     QueryDialogComponent,
     GenericDialogComponent
-  ],
-  providers: [DatePipe] // todo when lazy loading change this
+  ]
 })
 export class SharedModule {
 }

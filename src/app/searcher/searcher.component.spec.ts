@@ -20,6 +20,7 @@ import {DateAggregationComponent} from './searcher-sidebar/aggregations/date-agg
 import {AggregationResultTableComponent} from './aggregation-results/aggregation-result-table/aggregation-result-table.component';
 import {AggregationResultsTreeComponent} from './aggregation-results/aggregation-results-tree/aggregation-results-tree.component';
 import {AggregationResultsDialogComponent} from './aggregation-results/aggregation-results-dialog/aggregation-results-dialog.component';
+import {DatePipe} from '@angular/common';
 
 describe('SearcherComponent', () => {
   let component: SearcherComponent;
@@ -34,7 +35,7 @@ describe('SearcherComponent', () => {
         BuildSearchComponent, SavedSearchesComponent, TextConstraintsComponent,
         DateConstraintsComponent, FactConstraintsComponent, HighlightComponent, AggregationResultsComponent, AggregationsComponent,
         DateAggregationComponent, TextAggregationComponent, AggregationResultTableComponent,
-        AggregationResultsTreeComponent, AggregationResultsDialogComponent]
+        AggregationResultsTreeComponent, AggregationResultsDialogComponent], providers: [DatePipe]
     })
       .compileComponents();
   }));
