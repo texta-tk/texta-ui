@@ -10,7 +10,6 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {Embedding, EmbeddingPrediction} from '../../shared/types/tasks/Embedding';
 import {LogService} from '../../core/util/log.service';
 import {LocalStorageService} from 'src/app/core/util/local-storage.service';
-import {NgForOf} from '@angular/common';
 
 @Component({
   selector: 'app-lexicon-builder',
@@ -26,6 +25,7 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   embeddings: Embedding[];
   selectedEmbedding: Embedding;
+  isLoadingPredictions = false;
 
   @Input() set lexicon(value: Lexicon) {
     if (value) {
@@ -94,17 +94,14 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
 
   getNewSuggestions() {
     // predictions filtered out to only contain negatives
-    this.negatives = [...this.negatives, ...this.predictions];
+    this.negatives = [...this.negatives, ...this.predictions.map(y => y.phrase)];
     // update lexicon object so when changing lexicons it saves state
-    this._lexicon.discarded_phrases = this.negatives.map(y => {
-      if (y.hasOwnProperty('phrase')) {
-        return y.phrase;
-      }
-      return y;
-    });
+    this._lexicon.discarded_phrases = this.negatives;
     this._lexicon.phrases = this.newLineStringToList(this.positives);
+    this.predictions = [];
     this.projectStore.getCurrentProject().pipe(take(1), switchMap((currentProject: Project) => {
       if (currentProject) {
+        this.isLoadingPredictions = true;
         return this.embeddingService.predict({
           positives: this._lexicon.phrases,
           negatives: this._lexicon.discarded_phrases,
@@ -122,14 +119,13 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
           }
         }
       }
-    });
+    }, undefined, () => this.isLoadingPredictions = false);
   }
 
   saveLexicon() {
     // so i can save lexicon words without embedding
-    if (this.selectedEmbedding === null) {
-      this._lexicon.phrases = this.newLineStringToList(this.positives);
-    }
+    this._lexicon.phrases = this.newLineStringToList(this.positives);
+
     const requestBody = {
       description: this._lexicon.description,
       phrases: this._lexicon.phrases,
@@ -149,13 +145,21 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
     });
   }
 
-  updateLexicon(value: { phrase: string, score: number, model: string }) {
+  addPositive(value: { phrase: string, score: number, model: string }) {
     // remove selected item from predictions list
     this.predictions = this.predictions.filter((x: any) => {
       return x.phrase !== value.phrase;
     });
     this.positives += this.positives.endsWith('\n') ? value.phrase + '\n' : '\n' + value.phrase;
     this._lexicon.phrases = this.newLineStringToList(this.positives);
+  }
+
+  removeNegative(value: string) {
+    // remove selected item from predictions list
+    this.negatives = this.negatives.filter((x: any) => {
+      return x !== value;
+    });
+    this._lexicon.discarded_phrases = this.negatives;
   }
 
   stringListToString(stringList: string[]): string {

@@ -8,33 +8,28 @@
 }
 
 .wrapper {
-  .positives {
+  .card {
     margin-left: 20px;
-    height: 605px;
+    height: 705px;
     padding: 0 16px;
     width: 450px;
     max-width: 450px;
-
   }
 
-  .predictions {
-    margin-left: 20px;
-    height: 605px;
-    max-height: 605px;
-    width: 450px;
-    max-width: 450px;
+  .negative {
+    height: 55%;
 
-    .predictions-wrapper {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
+    .negatives {
+      max-height: 80%;
     }
-
-    h3 {
-      padding: 0 16px 16px;
-    }
-
   }
+  .flex-row-wrap {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    overflow-y: auto;
+  }
+
 }
 
 @media only screen and (max-width: 1450px) {
@@ -42,20 +37,27 @@
     flex-wrap: wrap;
     width: 100%;
 
-    .positives {
+    .card {
       max-width: unset;
       width: 100%;
-      height: 42vh;
+      height: 58.5vh;
     }
 
     .predictions {
-      max-width: unset;
-      width: 100%;
-      height: 42vh;
+      height: 33vh;
+    }
+
+    .list-item {
+      width: 25%;
+    }
+
+    .negative {
+      height: 50%;
+    }
+
+    .predictions {
       flex-wrap: wrap-reverse;
-      .prediction{
-        width: 25%;
-      }
+
       .mat-selection-list {
         display: flex;
         flex-wrap: wrap-reverse;
@@ -68,11 +70,15 @@
   }
 }
 
-.prediction {
-  width: 50%;
-  padding: 16px 16px;
+.item-padding {
+    padding: 16px 0;
 }
 
-.prediction:hover {
+.list-item {
+  width: 50%;
+  word-break: break-all;
+}
+
+.list-item:hover {
   background-color: #f0f0f0;
 }

@@ -81,8 +81,10 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
         // update deep copy multi_match clauses
         if (this.textAreaFormControl.value && this.textAreaFormControl.value.length > 0) {
           if (value === 'regexp') {
+            this.slopFormControl.disable(); // cant have slop in regexp
             this.buildRegexQuery(formQueries, this.textAreaFormControl.value, this._textConstraint.fields.map(x => x.path));
           } else {
+            this.slopFormControl.enable();
             this.buildTextareaMultiMatchQuery(formQueries, this.textAreaFormControl.value, multiMatchBlueprint);
           }
         }

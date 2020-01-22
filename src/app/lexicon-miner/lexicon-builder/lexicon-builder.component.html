@@ -1,46 +1,58 @@
 <div class="flex-row wrapper">
-  <div class="positives mat-elevation-z2 flex-col">
-    <h3>Lexicon words</h3>
-    <ng-container *ngIf="!!_lexicon">
-      <div class="flex-col">
-        <div class="flex-row embedding-row">
-          <mat-form-field>
-            <mat-label>Select Embedding</mat-label>
-            <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" [(value)]="selectedEmbedding" (selectionChange)="saveEmbeddingChoice($event.value)">
-              <mat-option *ngFor="let embedding of embeddings" [value]="embedding">
-                {{embedding.description}}
-              </mat-option>
-            </mat-select>
+  <div class="card mat-elevation-z2" fxLayout="column">
+    <div class="lexicon">
+      <h3>Lexicon words</h3>
+      <div *ngIf="!!_lexicon" fxLayout="column" fxFlexAlign="center">
+        <mat-form-field>
+          <mat-label>Select Embedding</mat-label>
+          <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
+                      [(value)]="selectedEmbedding" (selectionChange)="saveEmbeddingChoice($event.value)">
+            <mat-option *ngFor="let embedding of embeddings" [value]="embedding">
+              {{embedding.description}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
 
-          </mat-form-field>
-
-        </div>
-      </div>
-
-      <div class="max-width  overflow-auto">
-        <mat-form-field floatLabel="never" class="max-width" appearance="outline">
+        <mat-form-field floatLabel="never" class="textarea max-width" appearance="outline">
           <mat-label>Enter words here</mat-label>
           <textarea matInput class="max-width" placeholder="Enter words here" [(ngModel)]="positives"
-                    cdkTextareaAutosize></textarea>
+                    cdkTextareaAutosize
+                    cdkAutosizeMinRows="1"
+                    cdkAutosizeMaxRows="5"
+          ></textarea>
         </mat-form-field>
-      </div>
 
-      <div fxLayout="row" fxLayoutGap="5px">
-        <button mat-stroked-button color="accent" fxFlex [disabled]="!selectedEmbedding"
-        matTooltip="Select an embedding and get new word suggestions"
-                (click)="getNewSuggestions()">
-          New Suggestions
-        </button>
-        <button mat-stroked-button color="primary" (click)="saveLexicon()" fxFlex>Save</button>
+        <div fxLayout="row" fxLayoutGap="5px">
+          <button mat-stroked-button color="accent" fxFlex [disabled]="!selectedEmbedding"
+                  matTooltip="Select an embedding and get new word suggestions"
+                  (click)="getNewSuggestions()">
+            New Suggestions
+          </button>
+          <button mat-stroked-button color="primary" (click)="saveLexicon()" fxFlex>Save</button>
+        </div>
+
       </div>
-    </ng-container>
+    </div>
+
+    <div class="negative" *ngIf="negatives.length > 0">
+      <h3>Negative words</h3>
+      <div class="negatives flex-row-wrap">
+        <div *ngFor="let negative of negatives" class="list-item">
+          <span fxFlex="80" class="item-padding">{{negative}}</span>
+          <button fxFlex="20" class="flex-item-right" mat-icon-button (click)="removeNegative(negative)"><mat-icon >close</mat-icon></button>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="predictions mat-elevation-z2">
+  <div fxLayout="column" class="card predictions mat-elevation-z2">
     <h3>Suggestions
     </h3>
-    <div class="predictions-wrapper">
-      <div *ngFor="let prediction of predictions" class="prediction pointer" (click)="updateLexicon(prediction)">
+    <div fxLayoutAlign="center center" fxFlex="70%" *ngIf="isLoadingPredictions">
+      <mat-spinner></mat-spinner>
+    </div>
+    <div class="flex-row-wrap">
+      <div *ngFor="let prediction of predictions" class="list-item pointer item-padding" (click)="addPositive(prediction)">
         <span>{{prediction.phrase}}</span>
       </div>
     </div>

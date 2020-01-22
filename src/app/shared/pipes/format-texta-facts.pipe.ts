@@ -14,7 +14,7 @@ export class FormatTextaFactsPipe implements PipeTransform {
       if (obj && obj.val) {
         obj.val.push(val.str_val);
       } else {
-        returnValue.push({key: val.fact, val: []});
+        returnValue.push({key: val.fact, val: [val.str_val]});
       }
     });
     return returnValue;

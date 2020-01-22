@@ -1,14 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component, DoCheck,
-  EventEmitter,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  Output,
-  SimpleChanges,
-  ViewChild
-} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {SearcherComponentService} from '../services/searcher-component.service';
 import {Search} from '../../shared/types/Search';
 import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
@@ -24,10 +14,9 @@ import {Sort} from '@angular/material/sort';
 @Component({
   selector: 'app-searcher-table',
   templateUrl: './searcher-table.component.html',
-  styleUrls: ['./searcher-table.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./searcher-table.component.scss']
 })
-export class SearcherTableComponent implements OnInit, OnDestroy{
+export class SearcherTableComponent implements OnInit, OnDestroy {
   static totalCountLength; // hack for paginator max length with label, no easy way to do this
   public tableData: MatTableDataSource<any> = new MatTableDataSource();
   public displayedColumns: string[] = [];
@@ -91,7 +80,8 @@ export class SearcherTableComponent implements OnInit, OnDestroy{
     if (sort.direction === '') {
       return [];
     }
-    const field: Field = this.projectFields.map(x => x.fields.find(y => y.path === sort.active))[0]; // not flattened
+    // check if column truly exists, if it does get col object for type
+    const field: Field = this.projectFields.map(x => x.fields.find(y => y.path === sort.active)).filter(x => x && x.path === sort.active)[0];
     if (field) {
       if (field.type === 'text') {
         return [{[field.path + '.keyword']: sort.direction}];
