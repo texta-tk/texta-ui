@@ -31,7 +31,7 @@ describe('DateConstraintsComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-  it('should generate the correct query', fakeAsync(() => {
+  it('should generate the correct query', () => {
     const spy = spyOn(component, 'makeDateQuery').and.callThrough();
     const el1 = fixture.nativeElement.querySelector('#dateFrom');
     el1.value = '6/5/2019';
@@ -40,9 +40,8 @@ describe('DateConstraintsComponent', () => {
     el2.value = '10/23/2019';
     el2.dispatchEvent(new Event('input'));
     fixture.detectChanges();
-    tick(300); // debouncetime 200 valuechanges
     expect(spy).toHaveBeenCalledTimes(2);
     expect(component.elasticSearchQuery.elasticSearchQuery.query.bool.must[0].bool.must[0].range.test.gte).toBeDefined('Should create date query from');
     expect(component.elasticSearchQuery.elasticSearchQuery.query.bool.must[0].bool.must[1].range.test.lte).toBeDefined('Should create date query to');
-  }));
+  });
 });

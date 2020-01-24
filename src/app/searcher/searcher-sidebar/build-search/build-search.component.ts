@@ -24,6 +24,7 @@ import {SavedSearch} from '../../../shared/types/SavedSearch';
 import {SelectionModel} from '@angular/cdk/collections';
 import {Lexicon} from '../../../shared/types/Lexicon';
 import {LexiconService} from '../../../core/lexicon/lexicon.service';
+import {SearcherOptions} from "../../SearcherOptions";
 
 @Component({
   selector: 'app-build-search',
@@ -92,7 +93,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.searchService.getSearchQueue().pipe(debounceTime(550), takeUntil(this.destroy$), switchMap(x => {
+    this.searchService.getSearchQueue().pipe(debounceTime(SearcherOptions.SEARCH_DEBOUNCE_TIME), takeUntil(this.destroy$), switchMap(x => {
       this.searchService.setIsLoading(true);
       if (this.elasticQuery.size === 0) { // aggregations use size 0
         this.elasticQuery.size = 10;

@@ -38,10 +38,9 @@
       <h3>Negative words</h3>
       <div class="negatives flex-row-wrap">
         <mat-chip-list>
-          <div *ngFor="let negative of negatives" >
-            <mat-chip color="warn" selected removable="true" (click)="removeNegative(negative)">{{negative}}
-            </mat-chip>
-          </div>
+          <mat-chip *ngFor="let negative of negatives" color="warn" selected removable="true"
+                    (click)="removeNegative(negative)">{{negative}}
+          </mat-chip>
         </mat-chip-list>
       </div>
     </div>

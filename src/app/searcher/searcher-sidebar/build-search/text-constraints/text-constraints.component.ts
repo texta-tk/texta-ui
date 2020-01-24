@@ -81,12 +81,15 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
         // update deep copy multi_match clauses
         if (this.textAreaFormControl.value && this.textAreaFormControl.value.length > 0) {
           if (value === 'regexp') {
-            this.slopFormControl.disable(); // cant have slop in regexp
             this.buildRegexQuery(formQueries, this.textAreaFormControl.value, this._textConstraint.fields.map(x => x.path));
           } else {
-            this.slopFormControl.enable();
             this.buildTextareaMultiMatchQuery(formQueries, this.textAreaFormControl.value, multiMatchBlueprint);
           }
+        }
+        if (value === 'regexp') {
+          this.slopFormControl.disable(); // cant have slop in regexp
+        } else {
+          this.slopFormControl.enable();
         }
         this.change.emit(this.elasticSearchQuery);
       });
@@ -114,7 +117,6 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
 // gonna rebuild formqueries so delete previous
     formQueries.splice(0, formQueries.length);
     const textareaValues = this.stringToArray(formValue, '\n');
-    console.warn(fields);
 
     if (textareaValues.length > 0) {
       for (const line of textareaValues) {

@@ -19,6 +19,7 @@ import {By} from '@angular/platform-browser';
 describe('TextConstraintsComponent', () => {
   let component: TextConstraintsComponent;
   let fixture: ComponentFixture<TextConstraintsComponent>;
+  const constraintQueryAccessor = ((x, i, operator: 'must' | 'must_not' | 'should', type: 'multi_match' | 'regexp') => x.bool[operator][i].bool.should[0][type]);
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -41,25 +42,57 @@ describe('TextConstraintsComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+  it('should create the correct query when setting textarea text', () => {
 
-/*  it('should generate the correct query with text changing', fakeAsync(() => {
-    debugger;
-    const textarea = fixture.debugElement.query(By.css('textarea')).nativeElement;
-    textarea.value = 'tere';
-    textarea.dispatchEvent(new Event('input'));
-    tick(10000);
-    fixture.detectChanges();
-    tick(300); // debouncetime 200 valuechanges
-    const matSelect = fixture.debugElement.query(By.css('.selectMatch')).nativeElement;
-    matSelect.click();
-    tick(10000);
-    fixture.detectChanges();
-    const selectOptions = fixture.debugElement.queryAll(By.css('mat-option'))[2].nativeElement;
-    selectOptions.click();
-    tick(10000);
-    fixture.detectChanges();
-    console.log(selectOptions);
-    console.log(component.matchFormControl);
-    component.ngOnDestroy();
-  }));*/
+    component.matchFormControl.setValue('phrase_prefix');
+    component.textAreaFormControl.setValue('test');
+    const generatedQueryBlock = constraintQueryAccessor(component.constraintQuery, 0, 'must', 'multi_match');
+    expect(generatedQueryBlock.query).toBe('test');
+
+    component.textAreaFormControl.setValue('test\ntere');
+    const query1 = constraintQueryAccessor(component.constraintQuery, 0, 'must', 'multi_match');
+    const query2 = constraintQueryAccessor(component.constraintQuery, 1, 'must', 'multi_match');
+    expect(query1.query).toBe('test');
+    expect(query2.query).toBe('tere');
+  });
+  it('should disable slop on regexp query', () => {
+    component.matchFormControl.setValue('regexp');
+    expect(component.slopFormControl.disabled).toBeTruthy();
+  });
+  it('should generate correct query when changing match type', () => {
+    component.textAreaFormControl.setValue('test');
+    component.matchFormControl.setValue('phrase_prefix');
+    let query = constraintQueryAccessor(component.constraintQuery, 0, 'must', 'multi_match');
+    expect(query.type).toBe('phrase_prefix');
+
+    component.matchFormControl.setValue('best_fields');
+    query = constraintQueryAccessor(component.constraintQuery, 0, 'must', 'multi_match');
+    expect(query.type).toBe('best_fields');
+
+
+    component.matchFormControl.setValue('phrase');
+    query = constraintQueryAccessor(component.constraintQuery, 0, 'must', 'multi_match');
+    expect(query.type).toBe('phrase');
+
+
+    component.matchFormControl.setValue('regexp');
+    query = constraintQueryAccessor(component.constraintQuery, 0, 'must', 'multi_match');
+    expect(query.type).toBe('regexp');
+  });
+
+  it('should generate correct query when changing operator', () => {
+    component.textAreaFormControl.setValue('test');
+    for (const operator of ['must', 'should', 'must_not']) {
+      component.operatorFormControl.setValue(operator);
+      const query = constraintQueryAccessor(component.constraintQuery, 0, component.operatorFormControl.value, 'multi_match');
+      expect(query.query).toBe('test');
+    }
+  });
+
+  it('should generate correct query when using regexp', () => {
+    component.matchFormControl.setValue('regexp');
+    component.textAreaFormControl.setValue('tere');
+    const query = constraintQueryAccessor(component.constraintQuery, 0, component.operatorFormControl.value, 'regexp');
+    expect(query).toBeTruthy();
+  });
 });
