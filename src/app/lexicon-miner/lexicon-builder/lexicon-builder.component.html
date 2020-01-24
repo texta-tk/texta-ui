@@ -37,10 +37,12 @@
     <div class="negative" *ngIf="negatives.length > 0">
       <h3>Negative words</h3>
       <div class="negatives flex-row-wrap">
-        <div *ngFor="let negative of negatives" class="list-item">
-          <span fxFlex="80" class="item-padding">{{negative}}</span>
-          <button fxFlex="20" class="flex-item-right" mat-icon-button (click)="removeNegative(negative)"><mat-icon >close</mat-icon></button>
-        </div>
+        <mat-chip-list>
+          <div *ngFor="let negative of negatives" >
+            <mat-chip color="warn" selected removable="true" (click)="removeNegative(negative)">{{negative}}
+            </mat-chip>
+          </div>
+        </mat-chip-list>
       </div>
     </div>
   </div>
@@ -52,7 +54,8 @@
       <mat-spinner></mat-spinner>
     </div>
     <div class="flex-row-wrap">
-      <div *ngFor="let prediction of predictions" class="list-item pointer item-padding" (click)="addPositive(prediction)">
+      <div *ngFor="let prediction of predictions" class="list-item pointer item-padding"
+           (click)="addPositive(prediction)">
         <span>{{prediction.phrase}}</span>
       </div>
     </div>
