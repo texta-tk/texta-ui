@@ -1,6 +1,7 @@
 <h1 mat-dialog-title>New NeuroTagger</h1>
 <div mat-dialog-content>
-  <form id="neuroTaggerForm" fxLayout="column" [formGroup]="taggerForm" (ngSubmit)="onSubmit(taggerForm.value)">
+  <form id="neuroTaggerForm" fxLayout="row wrap" fxLayoutAlign="space-between" [formGroup]="taggerForm"
+        (ngSubmit)="onSubmit(taggerForm.value)">
     <mat-form-field>
       <input matInput placeholder="Description" autocomplete="off" formControlName="descriptionFormControl" required>
 
@@ -9,14 +10,31 @@
       </mat-error>
     </mat-form-field>
     <mat-form-field>
-      <input matInput type="number" step="0.1" placeholder="Validation split" formControlName="validationSplitFormControl">
+      <mat-label>Fact name</mat-label>
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
+                  formControlName="factNameFormControl">
+        <mat-option *ngFor="let fact of projectFacts" [value]="fact.name">
+          {{fact.name}}
+        </mat-option>
+      </mat-select>
     </mat-form-field>
     <mat-form-field>
-      <input matInput type="number" placeholder="Score threshold" formControlName="scoreThresholdFormControl">
+      <mat-label>Model architecture</mat-label>
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
+                  formControlName="modelArchitectureFormControl" required>
+        <mat-option *ngFor="let item of neuroTaggerOptions.actions.POST.model_architecture.choices"
+                    [value]="item.value">
+          {{item.display_name}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="taggerForm.get('modelArchitectureFormControl').hasError('required')">
+        Model architecture is <strong>required</strong>
+      </mat-error>
     </mat-form-field>
-    <mat-form-field>
+    <mat-form-field fxFlex="100%">
       <mat-label>Select Fields</mat-label>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="fieldsFormControl" multiple required>
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
+                  formControlName="fieldsFormControl" multiple required>
         <mat-optgroup *ngFor="let group of projectFields" [label]="group.index">
           <mat-option *ngFor="let fields of group.fields" [value]="fields.path">
             {{fields.path}}
@@ -27,27 +45,23 @@
         Field is <strong>required</strong>
       </mat-error>
     </mat-form-field>
-
     <mat-form-field>
-      <mat-label>Model architecture</mat-label>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="modelArchitectureFormControl" required>
-        <mat-option *ngFor="let item of neuroTaggerOptions.actions.POST.model_architecture.choices" [value]="item.value">
-          {{item.display_name}}
-        </mat-option>
-      </mat-select>
-      <mat-error *ngIf="taggerForm.get('modelArchitectureFormControl').hasError('required')">
-        Model architecture is <strong>required</strong>
-      </mat-error>
+      <input matInput type="number" step="0.1" placeholder="Validation split"
+             formControlName="validationSplitFormControl">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="number" placeholder="Score threshold" formControlName="scoreThresholdFormControl">
     </mat-form-field>
     <mat-form-field>
       <input matInput type="number" step="10" placeholder="Sequence length" formControlName="seqLenFormControl">
     </mat-form-field>
-
     <mat-form-field>
-      <input matInput type="number" step="1000" placeholder="Maximum sample size" formControlName="sampleSizeFormControl">
+      <input matInput type="number" step="1000" placeholder="Maximum sample size"
+             formControlName="sampleSizeFormControl">
     </mat-form-field>
     <mat-form-field>
-      <input matInput type="number" step="0.1" placeholder="Negative Multiplier" formControlName="negativeMultiplierFormControl">
+      <input matInput type="number" step="0.1" placeholder="Negative Multiplier"
+             formControlName="negativeMultiplierFormControl">
     </mat-form-field>
     <mat-form-field>
       <input matInput type="number" placeholder="Num Epochs" formControlName="epochNumberFormControl">
@@ -56,23 +70,19 @@
       <input matInput type="number" step="1000" placeholder="Vocab size" formControlName="vocabSizeFormControl">
     </mat-form-field>
     <mat-form-field>
-      <mat-label>Fact name</mat-label>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="factNameFormControl">
-        <mat-option *ngFor="let fact of projectFacts" [value]="fact.name">
-          {{fact.name}}
-        </mat-option>
-      </mat-select>
+      <input matInput type="number" step="50" placeholder="Min fact doc count"
+             formControlName="minFactDocCountFormControl">
     </mat-form-field>
     <mat-form-field>
-      <input matInput type="number" step="50" placeholder="Min fact doc count" formControlName="minFactDocCountFormControl">
-    </mat-form-field>
-    <mat-form-field>
-      <input matInput type="number" step="100" placeholder="Max fact doc count" formControlName="maxFactDocCountFormControl">
+      <input matInput type="number" step="100" placeholder="Max fact doc count"
+             formControlName="maxFactDocCountFormControl">
     </mat-form-field>
 
   </form>
 </div>
-<div mat-dialog-actions fxLayout="row">
+<div mat-dialog-actions fxLayout="row" fxLayoutAlign="space-between">
   <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Close</button>
-  <button form="neuroTaggerForm" type="submit" class="flex-item-right"  [disabled]="!taggerForm.valid" mat-button>Create</button>
+  <button form="neuroTaggerForm" type="submit" class="flex-item-right" [disabled]="!taggerForm.valid" mat-button>
+    Create
+  </button>
 </div>
