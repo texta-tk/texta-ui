@@ -16,6 +16,9 @@
       <mat-error *ngIf="reindexerForm?.get('newNameFormControl').hasError('required')">
         New index name is <strong>required</strong>
       </mat-error>
+      <mat-error *ngIf="reindexerForm?.get('newNameFormControl').hasError('alreadyExists')">
+        This index name is already in use
+      </mat-error>
     </mat-form-field>
 
 
@@ -58,7 +61,8 @@
 
 
     <mat-form-field>
-      <input matInput type="number" pattern="[1-9]\d*" placeholder="Random subset size" autocomplete="off" formControlName="randomSizeFormControl"
+      <input matInput type="number" pattern="[1-9]\d*" placeholder="Random subset size" autocomplete="off"
+             formControlName="randomSizeFormControl"
              [errorStateMatcher]="matcher">
       <mat-hint>If added, selects a random subset from all samples</mat-hint>
     </mat-form-field>

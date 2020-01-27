@@ -1,7 +1,7 @@
-import {Component, EventEmitter, OnDestroy, OnInit, Output,} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit, Output,} from '@angular/core';
 import {Field, Project, ProjectFact, ProjectField} from '../../../shared/types/Project';
 import {FormControl} from '@angular/forms';
-import {forkJoin, of, Subject} from 'rxjs';
+import {of, Subject} from 'rxjs';
 import {debounceTime, switchMap, takeUntil} from 'rxjs/operators';
 import {ProjectService} from '../../../core/projects/project.service';
 import {ProjectStore} from '../../../core/projects/project.store';
@@ -16,7 +16,7 @@ import {
 import {HttpErrorResponse} from '@angular/common/http';
 import {SearcherService} from '../../../core/searcher/searcher.service';
 import {MatSelectChange} from '@angular/material';
-import {Search} from '../../../shared/types/Search';
+import {Search, SearchOptions} from '../../../shared/types/Search';
 import {SearcherComponentService} from '../../services/searcher-component.service';
 import {UserStore} from '../../../core/users/user.store';
 import {UserProfile} from '../../../shared/types/UserProfile';
@@ -24,7 +24,7 @@ import {SavedSearch} from '../../../shared/types/SavedSearch';
 import {SelectionModel} from '@angular/cdk/collections';
 import {Lexicon} from '../../../shared/types/Lexicon';
 import {LexiconService} from '../../../core/lexicon/lexicon.service';
-import {SearcherOptions} from "../../SearcherOptions";
+import {SearcherOptions} from '../../SearcherOptions';
 
 @Component({
   selector: 'app-build-search',
@@ -42,8 +42,9 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject();
   // building the whole search query onto this
   elasticQuery: ElasticsearchQuery = new ElasticsearchQuery();
-  searcherOptions: { liveSearch: boolean, onlyHighlightMatching?: FactConstraint[] } = {
-    liveSearch: true
+  searchOptions: SearchOptions = {
+    liveSearch: true,
+    selectedIndexes: []
   };
   onlyHighlightMatching = false;
   currentUser: UserProfile;
@@ -107,11 +108,12 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
         this.searchService.setIsLoading(false);
         if (result && !(result instanceof HttpErrorResponse)) {
           if (this.onlyHighlightMatching) {
-            this.searcherOptions.onlyHighlightMatching = this.constraintList.filter(x => x instanceof FactConstraint) as FactConstraint[];
+            this.searchOptions.onlyHighlightMatching = this.constraintList.filter(x => x instanceof FactConstraint) as FactConstraint[];
           } else {
-            this.searcherOptions.onlyHighlightMatching = null;
+            this.searchOptions.onlyHighlightMatching = null;
           }
-          this.searchService.nextSearch(new Search(result, this.searcherOptions));
+          this.searchOptions.selectedIndexes = this.indexSelection.selected;
+          this.searchService.nextSearch(new Search(result, this.searchOptions));
         }
       });
   }
@@ -156,8 +158,6 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
   buildSavedSearch(savedSearch: SavedSearch) { // todo type
     this.constraintList.splice(0, this.constraintList.length);
     const savedConstraints: any[] = JSON.parse(savedSearch.query_constraints as string);
-    // when we are building the query dont want to emit searches
-    this.searcherOptions.liveSearch = false;
     for (const constraint of savedConstraints) {
       const formFields = constraint.fields;
       if (formFields.length >= 1) {
@@ -179,10 +179,6 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
       }
     }
     this.updateFieldsToHighlight(this.constraintList);
-    // we can turn on live search again, after building query
-    this.searcherOptions.liveSearch = true;
-    // constraints built, lets search
-    this.searchService.queryNextSearch();
     this.checkMinimumMatch();
   }
 
@@ -211,7 +207,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
 
   searchOnChange(event) {
     // dont want left focus events
-    if (event === this.elasticQuery && this.searcherOptions.liveSearch) {
+    if (event === this.elasticQuery && this.searchOptions.liveSearch) {
       // reset page when we change query
       this.elasticQuery.from = 0;
       this.searchService.queryNextSearch();

@@ -116,10 +116,13 @@ export class CreateReindexerDialogComponent implements OnInit {
       return of(null);
     })).subscribe((resp: Reindexer | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        console.log(resp);
         this.dialogRef.close(resp);
       } else if (resp instanceof HttpErrorResponse) {
-        this.dialogRef.close(resp);
+        if (resp.status === 400 && resp.error.new_index) {
+          this.reindexerForm.get('newNameFormControl').setErrors({alreadyExists: true});
+        } else {
+          this.dialogRef.close(resp);
+        }
       }
     });
   }
