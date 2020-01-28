@@ -19,6 +19,7 @@ import {AggregationResultTableComponent} from './aggregation-results/aggregation
 import {AggregationResultsDialogComponent} from './aggregation-results/aggregation-results-dialog/aggregation-results-dialog.component';
 import { AggregationResultsTreeComponent } from './aggregation-results/aggregation-results-tree/aggregation-results-tree.component';
 import {DatePipe} from '@angular/common';
+import { AggregationResultsChartComponent } from './aggregation-results/aggregation-results-chart/aggregation-results-chart.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import {DatePipe} from '@angular/common';
     AggregationResultTableComponent,
     AggregationResultsDialogComponent,
     AggregationResultsTreeComponent,
+    AggregationResultsChartComponent,
   ],
   imports: [
     SharedModule,

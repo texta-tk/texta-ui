@@ -2,41 +2,5 @@
   <app-aggregation-result-table [tableData]="aggData"></app-aggregation-result-table>
 </div>
 <div class="histo" *ngIf="type === 'histo'">
-  <ng-container *ngIf="aggData.length > 1">
-
-    <ngx-charts-line-chart [results]="aggData"
-                           [yAxis]="true" [yAxisLabel]="'document count'" showYAxisLabel="true" [legend]="true"
-                           scheme="fire"
-                           [xAxis]="true">
-      <ng-template #seriesTooltipTemplate let-model="model">
-        <div fxLayout="column" fxLayoutAlign="center" class="timeline-tooltip">
-          <span *ngIf="model.length > 0" fxLayoutAlign="center">{{model[0].name}}</span>
-          <div fxLayout="column" fxLayoutAlign="space-around start" class="timeline-tooltip">
-          <span *ngFor="let data of model" class="m-bot-5" fxLayout="row">
-            <div class="timeline-tooltip-key">{{data.series}}:</div><strong
-            class="timeline-tooltip-count">&nbsp;{{data.value}}</strong>
-          </span>
-          </div>
-        </div>
-      </ng-template>
-    </ngx-charts-line-chart>
-  </ng-container>
-  <ng-container *ngIf="aggData.length === 1">
-    <ngx-charts-line-chart [results]="aggData"
-                           [yAxis]="true" [yAxisLabel]="'document count'" showYAxisLabel="true"
-                           [xAxis]="true">
-      <ng-template #seriesTooltipTemplate let-model="model">
-        <div fxLayout="column" fxLayoutAlign="center" class="timeline-tooltip">
-          <span *ngIf="model.length > 0" fxLayoutAlign="center">{{model[0].name}}</span>
-          <div fxLayout="column" fxLayoutAlign="space-around start">
-            <span *ngFor="let data of model" class="m-bot-5" fxLayout="row">
-              <span class="tooltip-color" [style.background-color]="data.color"></span>
-              <div class="timeline-tooltip-key">{{data.series}}:</div><strong
-              class="timeline-tooltip-count">&nbsp;{{data.value}}</strong>
-            </span>
-          </div>
-        </div>
-      </ng-template>
-    </ngx-charts-line-chart>
-  </ng-container>
+  <app-aggregation-results-chart [aggregationData]="aggData"></app-aggregation-results-chart>
 </div>
