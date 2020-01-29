@@ -86,13 +86,24 @@ export class AggregationsComponent implements OnInit, OnDestroy {
   }
 
   aggregate() {
-    const agg = this.makeAggregations(this.aggregationList, this.searchQueryExcluded);
+    let agg = this.makeAggregations(this.aggregationList, this.searchQueryExcluded);
     const body = {
       query: {
         aggs: {...agg},
         size: 0 // ignore results, performance improvement
       },
     };
+    if (!this.searchQueryExcluded) {
+      for (const aggType in agg) {
+        if (agg.hasOwnProperty(aggType)) {
+          body.query.aggs['global'] = {...agg[aggType]};// relative refactor todo
+          agg = {[aggType]: {aggs: agg}};
+          agg[aggType].filter = {bool: this.searcherElasticSearchQuery.query.bool};
+          body.query.aggs[aggType] = agg[aggType];
+        }
+      }
+    }
+
     const savedSearchTemplate = this.makeAggregations(this.aggregationList, true);
     for (const savedSearch of this.searchService.savedSearchSelection.selected) {
       const finalAgg = {...savedSearchTemplate};
@@ -131,14 +142,6 @@ export class AggregationsComponent implements OnInit, OnDestroy {
       innermostAgg.aggs = aggregationToAdd;
     }
 
-    if (!searcherQueryExcluded) {
-      for (const aggType in finalAgg) {
-        if (finalAgg.hasOwnProperty(aggType)) {
-          finalAgg = {[aggType]: {aggs: finalAgg}};
-          finalAgg[aggType].filter = {bool: this.searcherElasticSearchQuery.query.bool};
-        }
-      }
-    }
     return finalAgg;
   }
 
