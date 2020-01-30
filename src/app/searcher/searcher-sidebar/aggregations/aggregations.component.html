@@ -31,7 +31,7 @@
       <app-date-aggregation
         [notSubAgg]="checkIfMainAggregation(i)"
         [fieldsFormControl]="aggregation.formControl"
-        [aggregationObj]="aggregation">
+        [aggregationObj]="aggregation" (relativeFrequency)="onRelativeFrequency($event)">
       </app-date-aggregation>
     </ng-container>
   </div>

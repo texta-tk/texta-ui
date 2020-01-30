@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {pairwise, startWith, switchMap, takeUntil} from 'rxjs/operators';
 import {Field, Project, ProjectFact, ProjectField} from '../../../shared/types/Project';
 import {ProjectStore} from '../../../core/projects/project.store';
-import {Subject} from 'rxjs';
+import {forkJoin, of, Subject} from 'rxjs';
 import {FormControl} from '@angular/forms';
 import {SearcherService} from '../../../core/searcher/searcher.service';
 import {SearcherComponentService} from '../../services/searcher-component.service';
@@ -10,7 +10,7 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {ElasticsearchQuery, ElasticsearchQueryStructure} from '../build-search/Constraints';
 import {LogService} from '../../../core/util/log.service';
 
-export interface AggregationObject {
+export interface AggregationForm {
   aggregation: any;
   formControl: FormControl;
   formDestroy: Subject<boolean>;
@@ -26,11 +26,11 @@ export class AggregationsComponent implements OnInit, OnDestroy {
   projectFields: ProjectField[] = [];
   projectFacts: ProjectFact[] = [];
   destroy$: Subject<boolean> = new Subject();
-  aggregationList: AggregationObject[] = [];
+  aggregationList: AggregationForm[] = [];
   searcherElasticSearchQuery: ElasticsearchQueryStructure;
   searchQueryExcluded = false;
   dateAlreadySelected = false;
-  aggregationAccessor = (x: any) => (x.aggs);
+  dateRelativeFrequency = false;
 
   constructor(private projectStore: ProjectStore,
               private searcherService: SearcherService,
@@ -86,49 +86,50 @@ export class AggregationsComponent implements OnInit, OnDestroy {
   }
 
   aggregate() {
-    let agg = this.makeAggregations(this.aggregationList, this.searchQueryExcluded);
+    const joinedAggregation = this.makeAggregations(this.aggregationList);
+    const aggregationType = Object.keys(joinedAggregation)[0];
     const body = {
       query: {
-        aggs: {...agg},
+        aggs: {...joinedAggregation},
         size: 0 // ignore results, performance improvement
       },
     };
-    if (!this.searchQueryExcluded) {
-      for (const aggType in agg) {
-        if (agg.hasOwnProperty(aggType)) {
-          body.query.aggs['global'] = {...agg[aggType]};// relative refactor todo
-          agg = {[aggType]: {aggs: agg}};
-          agg[aggType].filter = {bool: this.searcherElasticSearchQuery.query.bool};
-          body.query.aggs[aggType] = agg[aggType];
-        }
-      }
+    for (const savedSearch of this.searchService.savedSearchSelection.selected) {
+      const savedSearchQuery = JSON.parse(savedSearch.query);
+      body.query.aggs[savedSearch.description] = {aggs: {...joinedAggregation}, filter: {bool: savedSearchQuery.query.bool}};
     }
 
-    const savedSearchTemplate = this.makeAggregations(this.aggregationList, true);
-    for (const savedSearch of this.searchService.savedSearchSelection.selected) {
-      const finalAgg = {...savedSearchTemplate};
-      for (const aggType in finalAgg) {
-        if (finalAgg.hasOwnProperty(aggType)) {
-          body.query.aggs[savedSearch.description] = {aggs: finalAgg};
-          const savedSearchQuery = JSON.parse(savedSearch.query);
-          body.query.aggs[savedSearch.description].filter = {bool: {...savedSearchQuery.query.bool}};
-        }
-      }
+    if (!this.searchQueryExcluded) {
+      body.query.aggs[aggregationType] = {aggs: joinedAggregation, filter: {bool: this.searcherElasticSearchQuery.query.bool}};
     }
+
 
     this.searchService.setIsLoading(true);
-    this.searcherService.search(body, this.currentProject.id).subscribe(resp => {
-      if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.searchService.nextAggregation(resp);
-      } else if (resp instanceof HttpErrorResponse) {
-        this.logService.snackBarError(resp, 2000);
-        this.searchService.nextAggregation([]);
+    forkJoin({
+      globalAgg: this.dateRelativeFrequency ? this.searcherService.search({
+        query: {
+          size: 0,
+          aggs: joinedAggregation
+        }
+      }, this.currentProject.id) : of(null),
+      agg: this.searcherService.search(body, this.currentProject.id)
+    }).subscribe((resp: { globalAgg: any, agg: any }) => {
+      const aggResp = {globalAgg: {}, agg: {}};
+      if (resp.agg && !(resp.agg instanceof HttpErrorResponse)) {
+        aggResp.agg = resp.agg;
+      } else if (resp.agg instanceof HttpErrorResponse) {
+        this.logService.snackBarError(resp.agg, 2000);
       }
-      this.searchService.setIsLoading(false);
-    });
+      if (resp.globalAgg && !(resp.globalAgg instanceof HttpErrorResponse)) {
+        aggResp.globalAgg = resp.globalAgg;
+      } else if (resp.globalAgg instanceof HttpErrorResponse) {
+        this.logService.snackBarError(resp.globalAgg, 2000);
+      }
+      this.searchService.nextAggregation(aggResp);
+    }, x => console.log(x), () => this.searchService.setIsLoading(false));
   }
 
-  makeAggregations(aggregationList: { aggregation: any }[], searcherQueryExcluded: boolean) {
+  makeAggregations(aggregationList: { aggregation: any }[]) {
     let innermostAgg;
     let finalAgg: any;
     for (const aggregation of aggregationList) {
@@ -151,7 +152,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
     for (const firstLevelAgg in aggregation) {
       if (aggregation.hasOwnProperty(firstLevelAgg)) {
         if (firstLevelAgg === 'aggs') {
-          aggInner = this.aggregationAccessor(aggregation);
+          aggInner = aggregation.aggs;
           return this.getInnerMostAggs(aggInner);
         } else {
           inCaseNoAggsFound = firstLevelAgg;
@@ -165,6 +166,10 @@ export class AggregationsComponent implements OnInit, OnDestroy {
         return this.getInnerMostAggs(aggregation[inCaseNoAggsFound]);
       }
     }
+  }
+
+  onRelativeFrequency(val: boolean) {
+    this.dateRelativeFrequency = val;
   }
 
   fieldTypeTextOrFact(val: Field) {

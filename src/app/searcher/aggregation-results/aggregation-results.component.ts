@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Inject, LOCALE_ID, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
 import {SearcherComponentService} from '../services/searcher-component.service';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
@@ -6,7 +6,7 @@ import {MatTableDataSource} from '@angular/material';
 import {ArrayDataSource} from '@angular/cdk/collections';
 import {AggregationResultsDialogComponent} from './aggregation-results-dialog/aggregation-results-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
-import {DatePipe} from "@angular/common";
+import {DatePipe} from '@angular/common';
 
 @Component({
   selector: 'app-aggregation-results',
@@ -30,7 +30,12 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     }[],
     dateData?: any[]
   };
-  bucketAccessor = (x: any) => (x.buckets);
+  bucketAccessor = (x: any) => {
+    if (x && x.buckets) {
+      return (x.buckets);
+    }
+    return null;
+  };
 
   constructor(public searchService: SearcherComponentService, public dialog: MatDialog, private datePipe: DatePipe) {
   }
@@ -59,16 +64,50 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.searchService.getAggregation().pipe(takeUntil(this.destroy$)).subscribe(aggregation => {
-      if (aggregation && aggregation.aggs) {
+    this.searchService.getAggregation().pipe(takeUntil(this.destroy$)).subscribe((aggregation) => {
+      if (aggregation && aggregation.agg && aggregation.agg.aggs) {
         this.aggregationData = {
           treeData: [],
           tableData: [],
           dateData: [],
         };
-        this.parseAggregationResults(aggregation);
+        if (Object.keys(aggregation.globalAgg).length > 0) {
+          this.convertHistoToRelativeFrequency(aggregation);
+        }
+        this.parseAggregationResults(aggregation.agg);
       }
     });
+  }
+
+  private convertHistoToRelativeFrequency(aggs: { agg: any, globalAgg: any }) {
+    for (const aggKey of Object.keys(aggs.agg.aggs)) {
+      // first object is aggregation name either savedSearch description or the agg type
+      const rootAggObj = this.navNestedAggByKey(aggs.agg.aggs, aggKey);
+      const rootGlobalAggObj = this.navNestedAggByKey(aggs.globalAgg.aggs, aggKey);
+      console.log(this.findAggBuckets(rootAggObj, rootAggObj, ['agg_histo', 'agg_fact', 'agg_fact_val', 'agg_term'], rootGlobalAggObj));
+    }
+  }
+
+  findAggBuckets(rootAgg, aggregation, aggKeys: string[], rootGlobalAggObj) {
+    const globalBucket = this.bucketAccessor(rootGlobalAggObj);
+    const rawBucket = this.bucketAccessor(aggregation);
+    for (let i = 0; i < rawBucket.length; i++) {
+      for (const key of aggKeys) {
+        const innerBuckets = this.navNestedAggByKey(rawBucket[i], key);
+        const bb = this.navNestedAggByKey(globalBucket[i], key);
+        if (this.bucketAccessor(innerBuckets)) {
+          if (key === 'agg_histo') {
+            for (let x = 0; x < this.bucketAccessor(innerBuckets.length); x++) {
+              this.bucketAccessor(innerBuckets)[x].doc_count = this.bucketAccessor(innerBuckets)[x] > 0 ? this.bucketAccessor(innerBuckets)[x].doc_count / this.bucketAccessor(bb)[x].doc_count * 100 : 0;
+            }
+          } else {
+            this.findAggBuckets(rootAgg, innerBuckets, aggKeys, bb);
+          }
+        }
+
+      }
+    }
+    return aggregation;
   }
 
 
@@ -102,22 +141,12 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
             if (!rootAgg.histoBuckets) {
               rootAgg.histoBuckets = [];
             }
-            // for the combined histo chart
-            const seriesData = rootAgg.histoBuckets.find(series => series.name.toLowerCase().trim() === bucket.key.toLowerCase().trim());
-            if (seriesData) {
-              for (const element of this.bucketAccessor(innerBuckets)) {
-                seriesData.series.map(x => { // todo
-                  if (x.name.getTime() === new Date(element.key_as_string).getTime()) {
-                    x.value += element.doc_count;
-                  }
-                });
-              }
-            } else {
-              rootAgg.histoBuckets.push({
-                name: bucket.key,
-                series: this.formatDateData(this.bucketAccessor(innerBuckets))
-              });
-            }
+
+            rootAgg.histoBuckets.push({
+              name: bucket.key,
+              series: this.formatDateData(this.bucketAccessor(innerBuckets))
+            });
+
           }
           // dont delete original data to avoid major GC, (takes a while)
           rootAgg.nested = true;
