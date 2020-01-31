@@ -17,8 +17,11 @@
     <mat-label>Frequency</mat-label>
     <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" [(ngModel)]="aggregationType"
                 name="aggregationDateType">
-      <mat-option value="raw_frequency" (click)="relativeFrequency.emit(false)">raw frequency</mat-option>
-      <mat-option value="relative_frequency" (click)="relativeFrequency.emit(true)">relative frequency</mat-option>
+      <mat-option value="raw_frequency" [disabled]="!notSubAgg" (click)="relativeFrequency.emit(false)">raw frequency
+      </mat-option>
+      <mat-option value="relative_frequency" [disabled]="!notSubAgg" (click)="relativeFrequency.emit(true)">relative
+        frequency
+      </mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field appearance="outline" class="max-width bottom-padding-none">

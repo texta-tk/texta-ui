@@ -7,6 +7,7 @@ import {Component, Input, OnInit} from '@angular/core';
 })
 export class AggregationResultsChartComponent implements OnInit {
   @Input() aggregationData;
+  @Input() yLabel?;
 
   constructor() {
   }

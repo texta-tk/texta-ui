@@ -22,14 +22,14 @@
 
     <ng-container *ngIf="fieldTypeTextOrFact(aggregation.formControl.value)">
       <app-text-aggregation
-        [notSubAgg]="checkIfMainAggregation(i)"
+        [isLastAgg]="(i+1) === aggregationList.length"
         [fieldsFormControl]="aggregation.formControl"
         [aggregationObj]="aggregation">
       </app-text-aggregation>
     </ng-container>
     <ng-container *ngIf="fieldTypeDate(aggregation.formControl.value)">
       <app-date-aggregation
-        [notSubAgg]="checkIfMainAggregation(i)"
+        [notSubAgg]="i === 0"
         [fieldsFormControl]="aggregation.formControl"
         [aggregationObj]="aggregation" (relativeFrequency)="onRelativeFrequency($event)">
       </app-date-aggregation>

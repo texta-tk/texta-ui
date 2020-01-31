@@ -1,10 +1,10 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {ElasticsearchQuery, TextConstraint} from '../Constraints';
 import {FormControl} from '@angular/forms';
-import {debounceTime, distinctUntilChanged, startWith, switchMap, take, takeUntil} from 'rxjs/operators';
-import {Observable, Subject} from 'rxjs';
+import {pairwise, startWith, takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 import {Lexicon} from '../../../../shared/types/Lexicon';
-import {MatMenuTrigger} from "@angular/material/menu";
+import {MatMenuTrigger} from '@angular/material/menu';
 
 @Component({
   selector: 'app-text-constraints',
@@ -63,17 +63,17 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
       };
 
       this.elasticSearchQuery.elasticSearchQuery.query.bool.should.push(this.constraintQuery);
-
       this.textAreaFormControl.valueChanges.pipe(
-        takeUntil(this.destroyed$),
-        startWith(this.textAreaFormControl.value as object),
-        distinctUntilChanged()).subscribe(value => {
+        takeUntil(this.destroyed$), // pairwise so i can avoid emitting when new constraint, need startwith for building query when savedsearch
+        startWith(this.textAreaFormControl.value as object, this.textAreaFormControl.value as object), pairwise()).subscribe(value => {
         if (this.matchFormControl.value === 'regexp') {
-          this.buildRegexQuery(formQueries, value, this._textConstraint.fields.map(x => x.path));
+          this.buildRegexQuery(formQueries, value[1], this._textConstraint.fields.map(x => x.path));
         } else {
-          this.buildTextareaMultiMatchQuery(formQueries, value, multiMatchBlueprint);
+          this.buildTextareaMultiMatchQuery(formQueries, value[1], multiMatchBlueprint);
         }
-        this.change.emit(this.elasticSearchQuery);
+        if (value[0] !== value[1]) {
+          this.change.emit(this.elasticSearchQuery);
+        }
       });
 
       this.matchFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(value => {

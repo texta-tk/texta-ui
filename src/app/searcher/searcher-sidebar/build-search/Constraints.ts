@@ -51,7 +51,7 @@ export class FactConstraint extends Constraint {
     super(fields);
     this.factTextOperatorFormControl.setValue(factTextOperator ? factTextOperator : 'must');
     this.factNameOperatorFormControl.setValue(factNameOperator ? factNameOperator : 'must');
-    this.factNameFormControl.setValue(factName ? factName : '');
+    this.factNameFormControl.setValue(factName ? factName : []);
     this.inputGroupArray = inputGroupArray ? inputGroupArray : [];
   }
 }

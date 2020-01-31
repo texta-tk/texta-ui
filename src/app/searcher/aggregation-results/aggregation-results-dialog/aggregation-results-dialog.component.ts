@@ -26,7 +26,7 @@ export class AggregationResultsDialogComponent implements OnInit {
         }
       }
       this.aggData = this.data.aggData;
-    }, 150);
+    }, 250); // wait for dialog animation
   }
 
   closeDialog(): void {

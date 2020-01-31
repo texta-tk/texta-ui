@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2} from '@angular/core';
 import {ElasticsearchQuery, ElasticsearchQueryStructure} from '../../build-search/Constraints';
 import {FormControl} from '@angular/forms';
 import {startWith, switchMap, takeUntil} from 'rxjs/operators';
@@ -52,6 +52,8 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
         this.makeDateAggregation();
       }
     });
+    // reset selection
+    this.relativeFrequency.emit(false);
   }
 
   makeDateAggregation() {

@@ -10,7 +10,8 @@
       </mat-tab>
     </mat-tab-group>
 
-    <app-aggregation-results-chart *ngIf="aggregationData.dateData.length > 0" [aggregationData]="aggregationData">
+    <app-aggregation-results-chart *ngIf="aggregationData.dateData.length > 0" [aggregationData]="aggregationData"
+    [yLabel]="timeLineYLabel">
 
     </app-aggregation-results-chart>
 

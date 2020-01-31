@@ -180,10 +180,6 @@ export class AggregationsComponent implements OnInit, OnDestroy {
     return (val && (val.type === 'date'));
   }
 
-  checkIfMainAggregation(indx: number) {
-    return this.aggregationList.length === (indx + 1);
-  }
-
   removeAggregation(index) {
     this.dateAlreadySelected = this.aggregationList[index].formControl.value.type === 'date' ? false : this.dateAlreadySelected;
     this.aggregationList[index].formDestroy.next(true);
