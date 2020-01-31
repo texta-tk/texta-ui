@@ -37,7 +37,7 @@
 </ngx-charts-line-chart>
 
 <!--the graph that takes all agg bucket timelines and combines them into one-->
-<ngx-charts-line-chart *ngIf="aggregationData.length > 1" [results]="aggregationData" [animations]="false"
+<ngx-charts-line-chart *ngIf="aggregationData?.length > 1" [results]="aggregationData" [animations]="false"
                        [yAxis]="true" [yAxisLabel]="'document count'" showYAxisLabel="true" [legend]="true"
                        scheme="fire"
                        [xAxis]="true">
@@ -45,7 +45,7 @@
 </ngx-charts-line-chart>
 
 <!-- the graph where its only 1 bucket timeline nested -->
-<ngx-charts-line-chart *ngIf="aggregationData.length === 1" [results]="aggregationData"
+<ngx-charts-line-chart *ngIf="aggregationData?.length === 1" [results]="aggregationData"
                        [yAxis]="true" [yAxisLabel]="'document count'" showYAxisLabel="true"
                        [xAxis]="true">
   <ng-template *ngTemplateOutlet="seriesColorTooltipTemplate"></ng-template>

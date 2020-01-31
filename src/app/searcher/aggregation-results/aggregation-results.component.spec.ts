@@ -11,6 +11,7 @@ import {AggregationResultTableComponent} from './aggregation-result-table/aggreg
 import {AggregationResultsTreeComponent} from './aggregation-results-tree/aggregation-results-tree.component';
 import {AggregationResultsDialogComponent} from './aggregation-results-dialog/aggregation-results-dialog.component';
 import {DatePipe} from '@angular/common';
+import {AggregationResultsChartComponent} from './aggregation-results-chart/aggregation-results-chart.component';
 
 describe('AggregationResultsComponent', () => {
   let component: AggregationResultsComponent;
@@ -18,7 +19,8 @@ describe('AggregationResultsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [AggregationResultsComponent, AggregationResultTableComponent, AggregationResultsTreeComponent, AggregationResultsDialogComponent],
+      declarations: [AggregationResultsComponent, AggregationResultTableComponent, AggregationResultsTreeComponent,
+        AggregationResultsDialogComponent, AggregationResultsChartComponent],
       imports: [
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule,
       ], providers: [DatePipe]

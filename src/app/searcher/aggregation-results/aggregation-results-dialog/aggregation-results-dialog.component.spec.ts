@@ -7,6 +7,7 @@ import {SharedModule} from '../../../shared/shared.module';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {AggregationResultTableComponent} from '../aggregation-result-table/aggregation-result-table.component';
+import {AggregationResultsChartComponent} from '../aggregation-results-chart/aggregation-results-chart.component';
 
 describe('AggregationResultsDialogComponent', () => {
   let component: AggregationResultsDialogComponent;
@@ -21,7 +22,7 @@ describe('AggregationResultsDialogComponent', () => {
       imports: [
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule
       ],
-      declarations: [AggregationResultsDialogComponent, AggregationResultTableComponent],
+      declarations: [AggregationResultsDialogComponent, AggregationResultTableComponent, AggregationResultsChartComponent],
       providers: [
         {
           provide: MatDialogRef,

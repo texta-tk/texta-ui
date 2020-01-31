@@ -21,6 +21,7 @@ import {AggregationResultTableComponent} from './aggregation-results/aggregation
 import {AggregationResultsTreeComponent} from './aggregation-results/aggregation-results-tree/aggregation-results-tree.component';
 import {AggregationResultsDialogComponent} from './aggregation-results/aggregation-results-dialog/aggregation-results-dialog.component';
 import {DatePipe} from '@angular/common';
+import {AggregationResultsChartComponent} from './aggregation-results/aggregation-results-chart/aggregation-results-chart.component';
 
 describe('SearcherComponent', () => {
   let component: SearcherComponent;
@@ -35,7 +36,7 @@ describe('SearcherComponent', () => {
         BuildSearchComponent, SavedSearchesComponent, TextConstraintsComponent,
         DateConstraintsComponent, FactConstraintsComponent, HighlightComponent, AggregationResultsComponent, AggregationsComponent,
         DateAggregationComponent, TextAggregationComponent, AggregationResultTableComponent,
-        AggregationResultsTreeComponent, AggregationResultsDialogComponent], providers: [DatePipe]
+        AggregationResultsTreeComponent, AggregationResultsDialogComponent, AggregationResultsChartComponent], providers: [DatePipe]
     })
       .compileComponents();
   }));
