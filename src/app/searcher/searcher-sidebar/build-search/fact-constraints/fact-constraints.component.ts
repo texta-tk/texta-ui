@@ -7,6 +7,7 @@ import {of, Subject} from 'rxjs';
 import {ProjectService} from '../../../../core/projects/project.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {MatAutocompleteSelectedEvent} from '@angular/material';
+import {UtilityFunctions} from '../../../../shared/UtilityFunctions';
 
 
 @Component({
@@ -152,18 +153,22 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
       this.factNameQuery.bool = {[this.factNameOperatorFormControl.value]: formQueries};
       this.elasticSearchQuery.elasticSearchQuery.query.bool.must.push(this.factNameQuery);
       this.factNameOperatorFormControl.valueChanges.pipe(
-        startWith(this.factNameOperatorFormControl.value as object),
-        takeUntil(this.destroyed$)).subscribe((value: string) => {
-        this.factNameQuery.bool = {[value]: formQueries};
-        this.change.emit(this.elasticSearchQuery);
+        startWith(this.factNameOperatorFormControl.value as string, this.factNameOperatorFormControl.value as string),
+        pairwise(),
+        takeUntil(this.destroyed$)).subscribe((value: string[]) => {
+        this.factNameQuery.bool = {[value[1]]: formQueries};
+        if (value[0] !== value[1]) {
+          this.change.emit(this.elasticSearchQuery);
+        }
       });
       this.factNameFormControl.valueChanges.pipe(
-        startWith(this.factNameFormControl.value as object),
-        takeUntil(this.destroyed$)).subscribe((facts: string[]) => {
-        if (facts) {
+        startWith(this.factNameFormControl.value as string[], this.factNameFormControl.value as string[]),
+        pairwise(),
+        takeUntil(this.destroyed$)).subscribe((value: string[][]) => {
+        if (value) {
           formQueries.splice(0, formQueries.length);
           // filter out empty values
-          const newlineString = facts.filter(x => x !== '');
+          const newlineString = value[1].filter(x => x !== '');
           if (newlineString.length > 0) {
             for (const line of newlineString) {
               // json for deep copy
@@ -173,16 +178,21 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
               formQueries.push(newFormQuery);
             }
           }
-          this.change.emit(this.elasticSearchQuery);
+          if (!UtilityFunctions.arrayValuesEqual(value[0], value[1])) {
+            this.change.emit(this.elasticSearchQuery);
+          }
         }
       });
       this.inputGroupQuery.bool = {[this.factTextOperatorFormControl.value]: this.inputGroupQueryArray};
       this.elasticSearchQuery.elasticSearchQuery.query.bool.must.push(this.inputGroupQuery);
       this.factTextOperatorFormControl.valueChanges.pipe(
-        startWith(this.factTextOperatorFormControl.value as object),
-        takeUntil(this.destroyed$)).subscribe((value: string) => {
-        this.inputGroupQuery.bool = {[value]: this.inputGroupQueryArray};
-        this.change.emit(this.elasticSearchQuery);
+        startWith(this.factTextOperatorFormControl.value as string, this.factTextOperatorFormControl.value as string),
+        pairwise(),
+        takeUntil(this.destroyed$)).subscribe((value: string[]) => {
+        this.inputGroupQuery.bool = {[value[1]]: this.inputGroupQueryArray};
+        if (value[0] !== value[1]) {
+          this.change.emit(this.elasticSearchQuery);
+        }
       });
 
     }

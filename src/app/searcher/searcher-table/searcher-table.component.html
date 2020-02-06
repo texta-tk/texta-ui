@@ -21,9 +21,15 @@
                 <ng-template matMenuContent let-data="data">
                   <button mat-menu-item
                           *ngFor="let fact of data | formatTextaFacts">
-                    {{fact.key}}: {{fact.val.length}}
+                    <button mat-menu-item [matMenuTriggerFor]="factValuesList"
+                            [matMenuTriggerData]="{factValues: fact.val}">{{fact.key}}: {{fact.val.length}}
+                    </button>
                   </button>
-
+                  <mat-menu #factValuesList="matMenu">
+                    <ng-template matMenuContent let-factValues="factValues">
+                      <button mat-menu-item *ngFor="let factVal of factValues">{{factVal}}</button>
+                    </ng-template>
+                  </mat-menu>
                 </ng-template>
               </mat-menu>
             </ng-container>

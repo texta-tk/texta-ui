@@ -1,18 +1,11 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit, Output,} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit, Output,} from '@angular/core';
 import {Field, Project, ProjectFact, ProjectField} from '../../../shared/types/Project';
 import {FormControl} from '@angular/forms';
 import {of, Subject} from 'rxjs';
 import {debounceTime, switchMap, takeUntil} from 'rxjs/operators';
 import {ProjectService} from '../../../core/projects/project.service';
 import {ProjectStore} from '../../../core/projects/project.store';
-import {
-  Constraint,
-  DateConstraint,
-  ElasticsearchQuery,
-  FactConstraint,
-  FactTextInputGroup,
-  TextConstraint
-} from './Constraints';
+import {Constraint, DateConstraint, ElasticsearchQuery, FactConstraint, FactTextInputGroup, TextConstraint} from './Constraints';
 import {HttpErrorResponse} from '@angular/common/http';
 import {SearcherService} from '../../../core/searcher/searcher.service';
 import {MatSelectChange} from '@angular/material';
@@ -180,6 +173,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     }
     this.updateFieldsToHighlight(this.constraintList);
     this.checkMinimumMatch();
+    this.searchService.queryNextSearch();
   }
 
   removeConstraint(index) {

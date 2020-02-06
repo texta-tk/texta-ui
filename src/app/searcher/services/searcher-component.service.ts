@@ -7,7 +7,7 @@ import {SavedSearch} from '../../shared/types/SavedSearch';
 export class SearcherComponentService {
   public savedSearchSelection = new SelectionModel<SavedSearch>(true, []);
   private searchSubject = new BehaviorSubject<Search>(null);
-  private aggregationSubject = new BehaviorSubject<any>(null);
+  private aggregationSubject = new BehaviorSubject<{ globalAgg: any, agg: any }>(null);
   private savedSearchUpdate = new Subject<boolean>();
   private elasticQuerySubject = new BehaviorSubject<ElasticsearchQuery>(null);
   private searchQueryQueue$ = new Subject<void>();
@@ -32,11 +32,11 @@ export class SearcherComponentService {
     return this.searchSubject.asObservable();
   }
 
-  public nextAggregation(aggregation: any) {
+  public nextAggregation(aggregation: { globalAgg: any, agg: any }) {
     this.aggregationSubject.next(aggregation);
   }
 
-  public getAggregation(): Observable<any> {
+  public getAggregation(): Observable<{ globalAgg: any, agg: any }> {
     return this.aggregationSubject.asObservable();
   }
 

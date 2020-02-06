@@ -1,0 +1,66 @@
+<!-- regular date aggregation, 1 level no values, multi search-->
+<ngx-charts-line-chart
+  *ngIf="(aggregationData?.dateData && !aggregationData?.dateData[0]?.series[0]?.extra)"
+  [results]="aggregationData.dateData" [yAxis]="true" [yAxisLabel]="yLabel"
+  showYAxisLabel="true" [xAxis]="true">
+  <ng-template *ngTemplateOutlet="seriesColorTooltipTemplate"></ng-template>
+</ngx-charts-line-chart>
+
+<!--nested agg dateAgg->termAgg  2 levels deep only-->
+<ngx-charts-line-chart
+  *ngIf="aggregationData?.dateData && aggregationData?.dateData[0]?.series[0]?.extra"
+  [results]="aggregationData.dateData" [yAxis]="true" [yAxisLabel]="yLabel"
+  showYAxisLabel="true" [xAxis]="true">
+  <ng-template #seriesTooltipTemplate let-model="model">
+    <div fxLayout="column" fxLayoutAlign="center" class="timeline-tooltip">
+      <span fxLayoutAlign="center">{{model[0].name}}</span>
+
+      <ng-container *ngIf="model.length === 1">
+        <div fxLayout="column" fxLayoutAlign="space-around start">
+              <span *ngFor="let data of model[0].extra.buckets" class="m-bot-5" fxLayout="row">
+                <div class="timeline-tooltip-key">{{data.key}}</div>:<strong
+                class="timeline-tooltip-count">&nbsp;{{data.doc_count}}</strong>
+              </span>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="model.length > 1">
+        <div fxLayout="column" fxLayoutAlign="space-around start">
+              <span *ngFor="let data of model" class="m-bot-5" fxLayout="row">
+                <span class="tooltip-color" [style.background-color]="data.color"></span>
+                <div class="timeline-tooltip-key">{{data.series}}:</div><strong
+                class="timeline-tooltip-count">&nbsp;{{data.value}}</strong>
+              </span>
+        </div>
+      </ng-container>
+    </div>
+  </ng-template>
+</ngx-charts-line-chart>
+
+<!--the graph that takes all agg bucket timelines and combines them into one-->
+<ngx-charts-line-chart *ngIf="aggregationData?.length > 1" [results]="aggregationData" [animations]="false"
+                       [yAxis]="true" [yAxisLabel]="'document count'" showYAxisLabel="true" [legend]="true"
+                       scheme="fire"
+                       [xAxis]="true">
+  <ng-template *ngTemplateOutlet="seriesColorTooltipTemplate"></ng-template>
+</ngx-charts-line-chart>
+
+<!-- the graph where its only 1 bucket timeline nested -->
+<ngx-charts-line-chart *ngIf="aggregationData?.length === 1" [results]="aggregationData"
+                       [yAxis]="true" [yAxisLabel]="'document count'" showYAxisLabel="true"
+                       [xAxis]="true">
+  <ng-template *ngTemplateOutlet="seriesColorTooltipTemplate"></ng-template>
+</ngx-charts-line-chart>
+
+
+<ng-template #seriesColorTooltipTemplate let-model="model">
+  <div fxLayout="column" fxLayoutAlign="center" class="timeline-tooltip">
+    <span *ngIf="model?.length > 0" fxLayoutAlign="center">{{model[0].name}}</span>
+    <div fxLayout="column" fxLayoutAlign="space-around start">
+            <span *ngFor="let data of model" class="m-bot-5" fxLayout="row">
+              <span class="tooltip-color" [style.background-color]="data.color"></span>
+              <div class="timeline-tooltip-key">{{data.series}}:</div><strong
+              class="timeline-tooltip-count">&nbsp;{{data.value}}</strong>
+            </span>
+    </div>
+  </div>
+</ng-template>

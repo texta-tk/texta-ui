@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2} from '@angular/core';
 import {ElasticsearchQuery, ElasticsearchQueryStructure} from '../../build-search/Constraints';
 import {FormControl} from '@angular/forms';
 import {startWith, switchMap, takeUntil} from 'rxjs/operators';
@@ -17,7 +17,8 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
   @Input() notSubAgg: boolean;
   searcherElasticSearchQuery: ElasticsearchQueryStructure;
   dateInterval = 'year';
-  aggregationType;
+  @Output() relativeFrequency = new EventEmitter<boolean>();
+  aggregationType = 'raw_frequency';
   startDate = new Date('1999-01-01');
   toDate = new Date();
   dateRangeFrom: { range?: any } = {};
@@ -51,6 +52,8 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
         this.makeDateAggregation();
       }
     });
+    // reset selection
+    this.relativeFrequency.emit(false);
   }
 
   makeDateAggregation() {

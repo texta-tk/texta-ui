@@ -1,0 +1,24 @@
+
+.timeline-tooltip {
+  max-height: 80vh;
+  max-width: 600px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  padding: 5px 5px 5px;
+
+  > .timeline-tooltip-key {
+    max-width: 250px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+}
+
+.tooltip-color {
+  display: inline-block;
+  height: 15px;
+  width: 15px;
+  margin-right: 5px;
+  border-radius: 3px;
+}

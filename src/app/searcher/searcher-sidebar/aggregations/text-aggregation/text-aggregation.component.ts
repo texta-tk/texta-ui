@@ -15,7 +15,7 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
   @Input() fieldsFormControl: FormControl;
   isMainAgg: boolean;
 
-  @Input() set notSubAgg(val: boolean) {
+  @Input() set isLastAgg(val: boolean) {
     this.isMainAgg = val;
     if (!this.isMainAgg) {
       this.aggregationType = 'terms';
