@@ -64,7 +64,7 @@
     </mat-menu>
 
     <div class="flex-item-right login" *ngIf="!user">
-      <button mat-stroked-button class="nav-button" (click)="registerDialog()">REGISTER</button>
+      <button mat-stroked-button class="nav-button" (click)="registerDialog()" data-cy="navbarRegister">REGISTER</button>
       <button mat-stroked-button class="nav-button" id="loginButton" (click)="loginDialog()">LOG IN</button>
     </div>
 
@@ -81,7 +81,7 @@
       </mat-form-field>
 
       <div class="flex-row logout">
-        <button mat-button [matMenuTriggerFor]="menu"><span>{{user.username}}
+        <button mat-button [matMenuTriggerFor]="menu" data-cy="navbarLoggedInUserMenu"><span>{{user.username}}
           <mat-icon>arrow_drop_down</mat-icon></span>
         </button>
         <mat-menu #menu="matMenu">
@@ -91,7 +91,7 @@
           <a mat-menu-item [routerLink]="['settings']">
             <mat-icon inline="true">settings</mat-icon>
             <span>Settings </span> </a>
-          <a mat-menu-item (click)="logout()">
+          <a mat-menu-item (click)="logout()" data-cy="navbarlogOutMenuItem">
             <mat-icon inline="true">power_settings_new</mat-icon>
             <span>Log out</span> </a>
         </mat-menu>

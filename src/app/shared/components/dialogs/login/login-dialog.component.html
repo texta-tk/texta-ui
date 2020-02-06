@@ -2,7 +2,9 @@
 <div class="dialog-content-wrapper" mat-dialog-content>
   <form class="flex-col" [formGroup]="profileForm" (ngSubmit)="onSubmit(profileForm.value)">
     <mat-form-field>
-      <input matInput placeholder="Username" autocomplete="username" formControlName="usernameFormControl"
+      <input matInput placeholder="Username" autocomplete="username"
+             data-cy="username"
+             formControlName="usernameFormControl"
              [errorStateMatcher]="matcher">
 
       <mat-error *ngIf="profileForm.get('usernameFormControl').hasError('required')">
@@ -12,6 +14,7 @@
 
     <mat-form-field>
       <input matInput placeholder="Enter your password" autocomplete="current-password"
+             data-cy="password"
              formControlName="passwordFormControl"
              [type]="hide ? 'password' : 'text'" [errorStateMatcher]="matcher">
       <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
@@ -22,10 +25,12 @@
     <div class="flex-col">
       <div class="flex-row">
         <div class="flex-item-left">
-          <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">No Thanks</button>
+          <button type="button" data-cy="close" class="flex-item-left" mat-button (click)="closeDialog()">No Thanks
+          </button>
         </div>
         <div class="flex-item-right">
-          <button type="submit" [disabled]="!profileForm.valid || makingRequest" mat-button>Login</button>
+          <button type="submit" data-cy="submit" [disabled]="!profileForm.valid || makingRequest" mat-button>Login
+          </button>
         </div>
       </div>
     </div>
@@ -35,5 +40,5 @@
 </div>
 
 <mat-error class="center-text" *ngIf="loginError">
-  <small>{{loginError}}</small>
+  <small data-cy="loginErrorMsg">{{loginError}}</small>
 </mat-error>
