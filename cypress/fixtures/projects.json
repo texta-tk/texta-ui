@@ -1,0 +1,26 @@
+[
+  {
+    "url": "http://localhost:8000/api/v1/projects/1/",
+    "id": 1,
+    "title": "article_tags_v2",
+    "users": [
+      "http://localhost:8000/api/v1/users/1/"
+    ],
+    "indices": [
+      "articles_tags_v2",
+      "erdhb",
+      "erdhbh"
+    ],
+    "resources": {
+      "lexicons": "http://localhost:8000/projects/1/lexicons/",
+      "reindexer": "http://localhost:8000/projects/1/reindexer/",
+      "dataset_imports": "http://localhost:8000/projects/1/dataset_imports/",
+      "searches": "http://localhost:8000/projects/1/searches/",
+      "embeddings": "http://localhost:8000/projects/1/embeddings/",
+      "embedding_clusters": "http://localhost:8000/projects/1/embedding_clusters/",
+      "taggers": "http://localhost:8000/projects/1/taggers/",
+      "tagger_groups": "http://localhost:8000/projects/1/tagger_groups/",
+      "neurotaggers": "http://localhost:8000/projects/1/neurotaggers/"
+    }
+  }
+]

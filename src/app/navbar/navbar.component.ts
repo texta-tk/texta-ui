@@ -63,10 +63,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
     this.projectStore.getProjects().pipe(takeUntil(this.destroyed$)).subscribe(projects => {
       if (projects) {
+        console.log(projects);
         this.projects = projects;
         // dont select first when already have something selected
         const cachedProject = !!this.localStorageService.getCurrentlySelectedProject() ?
           this.projects.find(x => x.id === this.localStorageService.getCurrentlySelectedProject().id) : null;
+        console.log(cachedProject);
         if (cachedProject) {
           this.projectControl.setValue(cachedProject);
           this.projectStore.setCurrentProject(cachedProject);

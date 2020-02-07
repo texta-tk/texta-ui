@@ -23,21 +23,16 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
-Cypress.Commands.add('login', function () {
-  cy.fixture('users').as('usersJSON');
-  console.log(this.usersJSON);
-  // todo
-
+Cypress.Commands.add('login', (username, password) => {
   cy.request({
     method: 'POST',
-    url: '/api/v1/rest-auth/login',
+    url: `${Cypress.env('api_host')}${Cypress.env('api_basePath')}/rest-auth/login/`,
     body: {
-      username: this.usersJSON.username,
-      password: this.usersJSON.password,
+      username: username,
+      password: password,
     }
   }).then((resp) => {
-    console.log(resp);
-    window.localStorage.setItem('user', resp.body.key)
+    window.localStorage.setItem('user', JSON.stringify({key: resp.body.key}));
   })
 
 });

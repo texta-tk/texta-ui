@@ -1,4 +1,10 @@
 {
   "baseUrl": "http://localhost:4200",
-  "chromeWebSecurity": false
+  "chromeWebSecurity": false,
+  "viewportHeight": 1080,
+  "viewportWidth": 1920,
+  "env": {
+    "api_host": "http://localhost:8000",
+    "api_basePath": "/api/v1"
+  }
 }
