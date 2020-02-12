@@ -3,7 +3,7 @@
   <form class="flex-col" [formGroup]="profileForm" (ngSubmit)="onSubmit(profileForm.value)">
     <mat-form-field>
       <input matInput placeholder="Username" autocomplete="username"
-             data-cy="username"
+             data-cy="appSharedLoginDialogUsername"
              formControlName="usernameFormControl"
              [errorStateMatcher]="matcher">
 
@@ -14,7 +14,7 @@
 
     <mat-form-field>
       <input matInput placeholder="Enter your password" autocomplete="current-password"
-             data-cy="password"
+             data-cy="appSharedLoginDialogPassword"
              formControlName="passwordFormControl"
              [type]="hide ? 'password' : 'text'" [errorStateMatcher]="matcher">
       <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
@@ -25,11 +25,11 @@
     <div class="flex-col">
       <div class="flex-row">
         <div class="flex-item-left">
-          <button type="button" data-cy="close" class="flex-item-left" mat-button (click)="closeDialog()">No Thanks
+          <button type="button" data-cy="appSharedLoginDialogClose" class="flex-item-left" mat-button (click)="closeDialog()">No Thanks
           </button>
         </div>
         <div class="flex-item-right">
-          <button type="submit" data-cy="submit" [disabled]="!profileForm.valid || makingRequest" mat-button>Login
+          <button type="submit" data-cy="appSharedLoginDialogSubmit" [disabled]="!profileForm.valid || makingRequest" mat-button>Login
           </button>
         </div>
       </div>
@@ -40,5 +40,5 @@
 </div>
 
 <mat-error class="center-text" *ngIf="loginError">
-  <small data-cy="loginErrorMsg">{{loginError}}</small>
+  <small data-cy="appSharedLoginDialogLoginError">{{loginError}}</small>
 </mat-error>

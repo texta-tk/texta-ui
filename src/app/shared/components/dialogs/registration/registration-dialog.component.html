@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>Register</h1>
 <div class="dialog-content-wrapper" mat-dialog-content>
   <form class="flex-col" [formGroup]="profileForm" (ngSubmit)="onSubmit(profileForm.value)">
-    <mat-form-field data-cy="registerUsername">
+    <mat-form-field data-cy="appSharedRegisterDialogUsername">
       <input matInput placeholder="Username" autocomplete="new-username" formControlName="usernameFormControl"
              [errorStateMatcher]="matcher" required>
 
@@ -9,7 +9,7 @@
         Username is <strong>required</strong>
       </mat-error>
     </mat-form-field>
-    <mat-form-field data-cy="registerEmail">
+    <mat-form-field data-cy="appSharedRegisterDialogEmail">
       <input matInput placeholder="Email" autocomplete="new-email" formControlName="emailFormControl"
              [errorStateMatcher]="matcher">
 
@@ -18,7 +18,7 @@
       </mat-error>
     </mat-form-field>
     <div class="flex-col" formGroupName="passwordForm">
-      <mat-form-field data-cy="registerPassword1">
+      <mat-form-field data-cy="appSharedRegisterDialogPassword1">
         <input matInput placeholder="Enter password" autocomplete="new-password"
                formControlName="passwordFormControl"
                type="password"
@@ -30,7 +30,7 @@
           Password must contain at least <strong>8</strong> characters.
         </mat-error>
       </mat-form-field>
-      <mat-form-field data-cy="registerPassword2">
+      <mat-form-field data-cy="appSharedRegisterDialogPassword2">
         <input matInput placeholder="Confirm password" autocomplete="new-password"
                formControlName="passwordConfirmFormControl"
                type="password"
@@ -45,18 +45,17 @@
     <div class="flex-col">
       <div class="flex-row">
         <div class="flex-item-left">
-          <button type="button" class="flex-item-left" mat-button (click)="closeDialog()"
-                  data-cy="registerClose">No Thanks
+          <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">No Thanks
           </button>
         </div>
         <div class="flex-item-right">
           <button type="submit" mat-button [disabled]="!profileForm.valid || makingRequest"
-                  data-cy="registerSubmit">Register
+                  data-cy="appSharedRegisterDialogSubmit">Register
           </button>
         </div>
       </div>
       <mat-error class="center-text" *ngIf="registrationError">
-        <small data-cy="registerErrorMsg">{{registrationError}}</small>
+        <small data-cy="appSharedRegisterDialogError">{{registrationError}}</small>
       </mat-error>
     </div>
 

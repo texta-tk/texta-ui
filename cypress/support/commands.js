@@ -36,3 +36,13 @@ Cypress.Commands.add('login', (username, password) => {
   })
 
 });
+Cypress.Commands.add('matFormFieldShouldHaveError', (element, containsError) => {
+  cy.wrap(element)
+    .find('mat-error')
+    .should('be.visible')
+    .find('strong')
+    .contains(containsError);
+});
+Cypress.Commands.add('closeCurrentCdkOverlay', () => {
+  cy.get('body').type('{esc}'); // todo better way?
+});

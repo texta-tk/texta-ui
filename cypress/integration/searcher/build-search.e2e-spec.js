@@ -7,12 +7,12 @@ describe('should be able to build searches', function () {
       cy.visit('/searcher');
     });
 
-    cy.get('[data-cy=navbarLoggedInUserMenu]').should('be.visible');
-    cy.get('[data-cy=navbarProjectSelect]').click();
+    cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible');
+    cy.get('[data-cy=appNavbarProjectSelect]').click();
     cy.get('mat-option').should('to.have.length', 1).click();
   });
   it('should display search results in a table', function () {
-    cy.get('[data-cy=buildSearchSubmit]').click();
+    cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
     cy.route('POST', 'search_by_query').as('searcherQuery');
     cy.wait('@searcherQuery');
     cy.get('.mat-paginator-navigation-next').click();

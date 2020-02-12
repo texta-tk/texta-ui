@@ -102,7 +102,7 @@
       <mat-progress-bar mode="indeterminate" *ngIf="isLoadingResults"></mat-progress-bar>
     </div>
     <div class="paginator-row">
-      <button *ngIf="currentUser && currentUser.is_superuser"
+      <button *ngIf="currentUser && currentUser.is_superuser" data-cy="appProjectCreateProject"
               class="new-resource-btn"
               mat-button
               color="primary"

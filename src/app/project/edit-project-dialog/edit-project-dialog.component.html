@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>Edit</h1>
 <form class="flex-col" [formGroup]="projectForm" (ngSubmit)="onSubmit(projectForm.value)">
   <div class="dialog-content-wrapper" mat-dialog-content>
-    <mat-form-field class="max-width">
+    <mat-form-field class="max-width" data-cy="appProjectEditDialogIndices">
       <mat-label>Select Indices</mat-label>
       <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
                   formControlName="indicesFormControl" required multiple>
