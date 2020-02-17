@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import {environment} from '../../../environments/environment';
+import {environment} from '../../../../environments/environment';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {catchError, tap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
-import {LogService} from '../util/log.service';
-import {EmbeddingCluster} from '../../shared/types/tasks/Embedding';
+import {LogService} from '../../util/log.service';
+import {EmbeddingCluster} from '../../../shared/types/tasks/Embedding';
 
 @Injectable({
   providedIn: 'root'

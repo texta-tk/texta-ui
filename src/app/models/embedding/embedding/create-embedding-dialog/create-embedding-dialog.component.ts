@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ErrorStateMatcher, MatDialogRef} from '@angular/material';
-import {EmbeddingsService} from '../../../../core/embeddings/embeddings.service';
+import {EmbeddingsService} from '../../../../core/models/embeddings/embeddings.service';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {LiveErrorStateMatcher} from '../../../../shared/CustomerErrorStateMatchers';
 import {mergeMap, take} from 'rxjs/operators';

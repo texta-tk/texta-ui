@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import {environment} from '../../../environments/environment';
+import {environment} from '../../../../environments/environment';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {catchError, tap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
-import {TaggerGroup, LightTagger} from '../../shared/types/tasks/Tagger';
-import {LocalStorageService} from '../util/local-storage.service';
-import {LogService} from '../util/log.service';
+import {TaggerGroup, LightTagger} from '../../../shared/types/tasks/Tagger';
+import {LocalStorageService} from '../../util/local-storage.service';
+import {LogService} from '../../util/log.service';
 
 @Injectable({
   providedIn: 'root'

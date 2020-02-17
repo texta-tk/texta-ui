@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { TorchTagger } from '../../shared/types/tasks/TorchTagger';
-import { LogService } from '../../core/util/log.service';
+import { TorchTagger } from '../../../shared/types/tasks/TorchTagger';
+import { LogService } from '../../util/log.service';
 import { Observable } from 'rxjs';
 import { HttpErrorResponse, HttpClient } from '@angular/common/http';
 import { tap, catchError } from 'rxjs/operators';

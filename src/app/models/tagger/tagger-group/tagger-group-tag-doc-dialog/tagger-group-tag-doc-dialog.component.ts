@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { TaggerGroupService } from 'src/app/core/taggers/tagger-group.service';
+import { TaggerGroupService } from 'src/app/core/models/taggers/tagger-group.service';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { HttpErrorResponse } from '@angular/common/http';
 

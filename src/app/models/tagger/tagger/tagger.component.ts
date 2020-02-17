@@ -3,7 +3,7 @@ import {merge, Subject, Subscription, timer} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import {LogService} from '../../../core/util/log.service';
-import {TaggerService} from '../../../core/taggers/tagger.service';
+import {TaggerService} from '../../../core/models/taggers/tagger.service';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {Tagger, TaggerVectorizerChoices} from '../../../shared/types/tasks/Tagger';
 import {debounceTime, startWith, switchMap} from 'rxjs/operators';
@@ -246,8 +246,8 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
           // Delete selected taggers
-          const idsToDelede = this.selectedRows.selected.map((tagger: Tagger) => tagger.id);
-          const body = {ids: idsToDelede};
+          const idsToDelete = this.selectedRows.selected.map((tagger: Tagger) => tagger.id);
+          const body = {ids: idsToDelete};
           // Refresh taggers
           this.taggerService.bulkDeleteTaggers(this.currentProject.id, body).subscribe(() => {
             this.logService.snackBarMessage(`${this.selectedRows.selected.length} Taggers deleted`, 2000);
@@ -280,7 +280,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     if (tagger.vectorizer === TaggerVectorizerChoices.HASHING) {
       this.logService.snackBarMessage('Hashing Vectorizer is not supported for listing features', 4500);
     } else {
-      const dialogRef = this.dialog.open(ListFeaturesDialogComponent, {
+      this.dialog.open(ListFeaturesDialogComponent, {
         data: {taggerId: tagger.id, currentProjectId: this.currentProject.id},
         maxHeight: '665px',
         width: '700px',

@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { TaggerGroupService } from 'src/app/core/taggers/tagger-group.service';
+import { TaggerGroupService } from 'src/app/core/models/taggers/tagger-group.service';
 import { TaggerGroup } from 'src/app/shared/types/tasks/Tagger';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { LogService } from 'src/app/core/util/log.service';
@@ -13,7 +13,7 @@ interface TaggerGroupRandomDocTag {
 }
 
 
-interface TaggerGroupRandomDocResult   { 
+interface TaggerGroupRandomDocResult   {
   document: any;
   tags: TaggerGroupRandomDocTag[];
 };

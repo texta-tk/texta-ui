@@ -1,5 +1,12 @@
 import {Injectable} from '@angular/core';
-import {HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpXsrfTokenExtractor} from '@angular/common/http';
+import {
+  HttpErrorResponse,
+  HttpEvent,
+  HttpHandler,
+  HttpInterceptor,
+  HttpRequest,
+  HttpXsrfTokenExtractor
+} from '@angular/common/http';
 
 import {Observable, throwError} from 'rxjs';
 import {catchError, map} from 'rxjs/operators';
@@ -36,8 +43,7 @@ export class HttpAuthInterceptor implements HttpInterceptor {
 
         }
         if (error && error.status === 502 || error.status === 503 || error.status === 504 || error.status === 0) {
-          console.log('here, ', error, error.status)
-          this.logService.snackBarMessage(`WARNING: Failed connecting to server. (Status: ${error.status})`, 15000)
+          this.logService.snackBarMessage(`WARNING: Failed connecting to server. (Status: ${error.status})`, 15000);
         }
         return throwError(error);
       }));

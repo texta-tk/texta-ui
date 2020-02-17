@@ -5,7 +5,7 @@ import {ProjectStore} from '../../core/projects/project.store';
 import {mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
 import {Project} from '../../shared/types/Project';
 import {of, Subject} from 'rxjs';
-import {EmbeddingsService} from '../../core/embeddings/embeddings.service';
+import {EmbeddingsService} from '../../core/models/embeddings/embeddings.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Embedding, EmbeddingPrediction} from '../../shared/types/tasks/Embedding';
 import {LogService} from '../../core/util/log.service';
@@ -33,9 +33,6 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
       this.positives = this.stringListToString(value.phrases);
       this.predictions = [];
       this.negatives = value.discarded_phrases;
-      // todo temp values
-      /*this._lexicon.discarded_phrases_parsed = ['tere', 'hey', 'vangla'];
-      this._lexicon.discarded_phrases_parsed.map(x => this.negatives.push({phrase: x}));*/
     } else {
       this._lexicon = null;
       this.predictions = [];

@@ -2,7 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { ListFeaturesResponse } from 'src/app/shared/types/tasks/Tagger';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { TaggerService } from 'src/app/core/taggers/tagger.service';
+import { TaggerService } from 'src/app/core/models/taggers/tagger.service';
 import { LogService } from 'src/app/core/util/log.service';
 
 @Component({

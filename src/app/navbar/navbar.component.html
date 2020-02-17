@@ -52,10 +52,8 @@
         *ngIf="projectResourceCounts?.num_embeddings">({{projectResourceCounts?.num_embeddings}})</span></a>
       <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['taggers']">Taggers <span
         *ngIf="projectResourceCounts?.num_taggers">({{projectResourceCounts?.num_taggers}})</span></a>
-      <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['neurotaggers']">NeuroTaggers <span
-        *ngIf="projectResourceCounts?.num_neurotaggers">({{projectResourceCounts?.num_neurotaggers}})</span></a>
-   <!--   <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['torchtaggers']">TorchTaggers <span
-        *ngIf="projectResourceCounts?.num_torchtaggers">({{projectResourceCounts.num_torchtaggers}})</span></a>-->
+      <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['torchtaggers']">TorchTaggers <span
+        *ngIf="projectResourceCounts?.num_torchtaggers">({{projectResourceCounts?.num_torchtaggers}})</span></a>
     </mat-menu>
 
     <mat-menu #tools="matMenu">

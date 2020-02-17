@@ -5,14 +5,14 @@ import {LiveErrorStateMatcher} from '../../../../shared/CustomerErrorStateMatche
 import {ProjectService} from '../../../../core/projects/project.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ProjectField} from '../../../../shared/types/Project';
-import {TaggerService} from '../../../../core/taggers/tagger.service';
+import {TaggerService} from '../../../../core/models/taggers/tagger.service';
 import {ProjectStore} from '../../../../core/projects/project.store';
 import {mergeMap, take} from 'rxjs/operators';
 import {merge, of} from 'rxjs';
 import {TaggerOptions} from '../../../../shared/types/tasks/TaggerOptions';
 import {LogService} from '../../../../core/util/log.service';
 import {Embedding} from '../../../../shared/types/tasks/Embedding';
-import {EmbeddingsService} from '../../../../core/embeddings/embeddings.service';
+import {EmbeddingsService} from '../../../../core/models/embeddings/embeddings.service';
 import {Tagger} from '../../../../shared/types/tasks/Tagger';
 
 @Component({

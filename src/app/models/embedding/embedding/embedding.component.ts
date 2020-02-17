@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {EmbeddingsService} from '../../../core/embeddings/embeddings.service';
+import {EmbeddingsService} from '../../../core/models/embeddings/embeddings.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Embedding} from '../../../shared/types/tasks/Embedding';
 import {ProjectStore} from '../../../core/projects/project.store';

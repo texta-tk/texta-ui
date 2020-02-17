@@ -16,10 +16,9 @@ import {EmbeddingModule} from './models/embedding/embedding.module';
 import {ProjectModule} from './project/project.module';
 import {LexiconBuilderComponent} from './lexicon-miner/lexicon-builder/lexicon-builder.component';
 import {SearcherModule} from './searcher/searcher.module';
-import {NeuroTaggerModule} from './models/neuro-tagger/neuro-tagger.module';
 import {MAT_HAMMER_OPTIONS} from '@angular/material';
 import { ToolsModule } from './tools/tools.module';
-import { TorchTaggerModule } from './models/torch-tagger/torch-tagger/torch-tagger.module';
+import { TorchTaggerModule } from './models/torch-tagger/torch-tagger.module';
 import { ManagementComponent } from './management/management.component';
 
 
@@ -47,7 +46,6 @@ import { ManagementComponent } from './management/management.component';
     EmbeddingModule,
     ProjectModule,
     SearcherModule,
-    NeuroTaggerModule,
     TorchTaggerModule,
     ToolsModule
   ],
