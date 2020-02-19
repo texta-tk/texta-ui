@@ -1,15 +1,14 @@
 import {Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {SearcherComponentService} from '../services/searcher-component.service';
 import {Search, SearchOptions} from '../../shared/types/Search';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import {MatPaginator, PageEvent} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
+import {MatTableDataSource} from '@angular/material/table';
 import {FormControl} from '@angular/forms';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {ProjectStore} from '../../core/projects/project.store';
 import {ElasticsearchQuery, FactConstraint} from '../searcher-sidebar/build-search/Constraints';
-import {PageEvent} from '@angular/material/typings/paginator';
 import {Field, ProjectField} from '../../shared/types/Project';
 import {Sort} from '@angular/material/sort';
 import {UtilityFunctions} from '../../shared/UtilityFunctions';

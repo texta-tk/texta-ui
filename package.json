@@ -27,7 +27,7 @@
     "core-js": "^2.5.4",
     "ngx-infinite-scroll": "^8.0.0",
     "ngx-material-file-input": "^2.1.0",
-    "rxjs": "~6.5.3",
+    "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"
   },
