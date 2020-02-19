@@ -94,6 +94,12 @@ describe('HighlightComponent', () => {
       jsonData = {
         text: 'these are some words: OÜ Hansa Medicalist, Eesti Energia Joonas xxxxxx', texta_facts: [
           {
+            str_val: 'DOCUMENT WIDE FACT (TAG)',
+            spans: '[[0, 0]]',
+            fact: 'DOC WIDE TAG',
+            doc_path: 'text'
+          },
+          {
             str_val: 'OÜ Hansa',
             spans: '[[22, 30]]',
             fact: 'ORG',
@@ -398,6 +404,27 @@ describe('HighlightComponent', () => {
 
       expect(highlightedText).toEqual(['Eesti']);
       // expect(component.highlightArray[1].nested.fact.searcherHighlight).toBe(true);
+    });
+
+    it('should highlight searcher term when it starts at index 0 (same index as document wide fact)', () => {
+      component.highlightConfig = {
+        searcherHighlight: {
+          text:
+            [`${ElasticsearchQuery.PRE_TAG}these${ElasticsearchQuery.POST_TAG} are some words: OÜ Hansa Medicalist, Eesti Energia Joonas xxxxxx`]
+        },
+        data: jsonData,
+        currentColumn: 'text',
+      };
+      const highlightedText: string[] = [];
+      for (const element of component.highlightArray) {
+        if (element.highlighted) {
+          highlightedText.push(element.text);
+          loopThroughNestedHighlightObject(element, highlightedText);
+        }
+      }
+      fixture.detectChanges(); // todo clean up empty highlight when search term overwrites fact highlight?
+      expect(highlightedText).toEqual(['these', 'OÜ Hansa', ' Medicalist', 'Eesti', ' ', 'Energia Joonas']);
+      expect(component.highlightArray[1].fact.searcherHighlight).toBe(true);
     });
   });
 

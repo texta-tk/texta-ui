@@ -127,6 +127,13 @@ export class HighlightComponent {
 
 
   private makeHighLights(originalText: string | number, facts: TextaFact[], factColors: Map<string, string>): HighlightObject[] {
+    // spans are strings, convert them to 2d array and flatten
+    facts.forEach(fact => {
+      (fact.spans) = JSON.parse(fact.spans as string).flat();
+    });
+    // remove document wide facts and empty facts (facts that have same span start and end index)
+    facts = facts.filter(x => x.spans[0] !== x.spans[1]);
+    // column content can be number, convert to string
     originalText = originalText.toString();
     if (facts.length === 0) {
       if (!originalText) {
@@ -138,10 +145,6 @@ export class HighlightComponent {
     // elasticsearch highlighter trims the field, MLP also trims the field
     originalText = originalText.trim(); // todo, will MLP always trim fields? is this fine?
 
-    // spans are strings, convert them to 2d array and flatten
-    facts.forEach(fact => {
-      (fact.spans) = JSON.parse(fact.spans as string).flat();
-    });
     // need this sort for fact priority
     facts.sort(this.sortByStartLowestSpan);
 
