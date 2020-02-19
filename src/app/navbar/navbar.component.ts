@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {MatDialog} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import {UserStore} from '../core/users/user.store';
 import {LoginDialogComponent} from '../shared/components/dialogs/login/login-dialog.component';
 import {UserProfile} from '../shared/types/UserProfile';

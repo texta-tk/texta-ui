@@ -1,6 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormGroup, FormControl, Validators} from '@angular/forms';
-import {ErrorStateMatcher, MatDialogRef} from '@angular/material';
+import { ErrorStateMatcher } from '@angular/material/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import {LiveErrorStateMatcher} from 'src/app/shared/CustomerErrorStateMatchers';
 import {Embedding} from 'src/app/shared/types/tasks/Embedding';
 import {ProjectField, ProjectFact, Project} from 'src/app/shared/types/Project';

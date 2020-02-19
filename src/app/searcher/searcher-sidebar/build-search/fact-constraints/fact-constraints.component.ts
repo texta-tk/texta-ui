@@ -6,7 +6,7 @@ import {Project, ProjectFact} from '../../../../shared/types/Project';
 import {of, Subject} from 'rxjs';
 import {ProjectService} from '../../../../core/projects/project.service';
 import {HttpErrorResponse} from '@angular/common/http';
-import {MatAutocompleteSelectedEvent} from '@angular/material';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import {UtilityFunctions} from '../../../../shared/UtilityFunctions';
 
 

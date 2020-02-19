@@ -5,7 +5,7 @@ import {SharedModule} from '../../shared/shared.module';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {Project} from '../../shared/types/Project';
 
 describe('EditProjectDialogComponent', () => {

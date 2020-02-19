@@ -3,7 +3,8 @@ import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers'
 import {ProjectStore} from '../../../core/projects/project.store';
 import {Project} from '../../../shared/types/Project';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {ErrorStateMatcher, MatDialogRef} from '@angular/material';
+import { ErrorStateMatcher } from '@angular/material/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import {ProjectService} from '../../../core/projects/project.service';
 import {LogService} from '../../../core/util/log.service';
 import {auditTime, takeUntil} from 'rxjs/operators';

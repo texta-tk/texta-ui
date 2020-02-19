@@ -5,7 +5,7 @@ import {SharedModule} from '../../../../shared/shared.module';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MatDialogRef} from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 
 describe('CreateProjectDialogComponent', () => {
   let component: CreateEmbeddingDialogComponent;

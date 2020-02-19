@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {SearcherComponentService} from '../services/searcher-component.service';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
-import {MatTableDataSource} from '@angular/material';
+import { MatTableDataSource } from '@angular/material/table';
 import {ArrayDataSource} from '@angular/cdk/collections';
 import {AggregationResultsDialogComponent} from './aggregation-results-dialog/aggregation-results-dialog.component';
 import {MatDialog} from '@angular/material/dialog';

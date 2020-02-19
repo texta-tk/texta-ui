@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {ErrorStateMatcher, MatDialogRef} from '@angular/material';
+import { ErrorStateMatcher } from '@angular/material/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import {EmbeddingsService} from '../../../../core/models/embeddings/embeddings.service';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {LiveErrorStateMatcher} from '../../../../shared/CustomerErrorStateMatchers';

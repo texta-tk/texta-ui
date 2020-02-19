@@ -5,7 +5,7 @@ import {SharedModule} from '../../../../shared/shared.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {Tagger} from '../../../../shared/types/tasks/Tagger';
 
 describe('TagRandomDocDialogComponent', () => {

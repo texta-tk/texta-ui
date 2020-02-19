@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {MatDialogRef} from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 import {ProjectStore} from '../../../../core/projects/project.store';
 import {LogService} from '../../../../core/util/log.service';
 import {FormControl, FormGroup, Validators} from '@angular/forms';

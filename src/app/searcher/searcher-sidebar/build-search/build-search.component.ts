@@ -8,7 +8,7 @@ import {ProjectStore} from '../../../core/projects/project.store';
 import {Constraint, DateConstraint, ElasticsearchQuery, FactConstraint, FactTextInputGroup, TextConstraint} from './Constraints';
 import {HttpErrorResponse} from '@angular/common/http';
 import {SearcherService} from '../../../core/searcher/searcher.service';
-import {MatSelectChange} from '@angular/material';
+import { MatSelectChange } from '@angular/material/select';
 import {Search, SearchOptions} from '../../../shared/types/Search';
 import {SearcherComponentService} from '../../services/searcher-component.service';
 import {UserStore} from '../../../core/users/user.store';

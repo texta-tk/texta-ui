@@ -1,7 +1,7 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {CrossFieldErrorMatcher, LiveErrorStateMatcher} from '../../../CustomerErrorStateMatchers';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {UserService} from '../../../../core/users/user.service';
 import {LocalStorageService} from '../../../../core/util/local-storage.service';
 import {UserStore} from '../../../../core/users/user.store';

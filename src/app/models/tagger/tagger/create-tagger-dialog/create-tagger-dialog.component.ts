@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {ErrorStateMatcher, MatDialogRef} from '@angular/material';
+import { ErrorStateMatcher } from '@angular/material/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import {LiveErrorStateMatcher} from '../../../../shared/CustomerErrorStateMatchers';
 import {ProjectService} from '../../../../core/projects/project.service';
 import {HttpErrorResponse} from '@angular/common/http';

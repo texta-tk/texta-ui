@@ -1,5 +1,6 @@
 import {Component, OnInit, Host, AfterViewInit, OnDestroy} from '@angular/core';
-import {MatPseudoCheckboxState, MatSelect} from '@angular/material';
+import { MatPseudoCheckboxState } from '@angular/material/core';
+import { MatSelect } from '@angular/material/select';
 import {ControlContainer, FormControl} from '@angular/forms';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';

@@ -1,7 +1,10 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {merge, Subject, Subscription, timer} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
-import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import {LogService} from '../../../core/util/log.service';
 import {TaggerService} from '../../../core/models/taggers/tagger.service';
 import {ProjectStore} from '../../../core/projects/project.store';

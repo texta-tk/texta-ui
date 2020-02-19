@@ -16,7 +16,7 @@ import {EmbeddingModule} from './models/embedding/embedding.module';
 import {ProjectModule} from './project/project.module';
 import {LexiconBuilderComponent} from './lexicon-miner/lexicon-builder/lexicon-builder.component';
 import {SearcherModule} from './searcher/searcher.module';
-import {MAT_HAMMER_OPTIONS} from '@angular/material';
+import { MAT_HAMMER_OPTIONS } from '@angular/material/core';
 import { ToolsModule } from './tools/tools.module';
 import { TorchTaggerModule } from './models/torch-tagger/torch-tagger.module';
 import { ManagementComponent } from './management/management.component';

@@ -1,6 +1,6 @@
 import {Component, Inject} from '@angular/core';
 import {TaggerService} from '../../../../core/models/taggers/tagger.service';
-import {MAT_DIALOG_DATA} from '@angular/material';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LogService} from 'src/app/core/util/log.service';
 

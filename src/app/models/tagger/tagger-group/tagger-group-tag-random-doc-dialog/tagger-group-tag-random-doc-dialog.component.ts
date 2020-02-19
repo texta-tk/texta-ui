@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { TaggerGroupService } from 'src/app/core/models/taggers/tagger-group.service';
 import { TaggerGroup } from 'src/app/shared/types/tasks/Tagger';
-import { MAT_DIALOG_DATA } from '@angular/material';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { LogService } from 'src/app/core/util/log.service';
 import { HttpErrorResponse } from '@angular/common/http';
 

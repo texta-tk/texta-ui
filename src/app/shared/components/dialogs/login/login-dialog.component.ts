@@ -1,6 +1,6 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {LiveErrorStateMatcher} from '../../../CustomerErrorStateMatchers';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LocalStorageService} from '../../../../core/util/local-storage.service';

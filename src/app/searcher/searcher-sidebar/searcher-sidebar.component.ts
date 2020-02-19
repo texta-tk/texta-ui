@@ -3,7 +3,7 @@ import {Subject} from 'rxjs';
 import {BuildSearchComponent} from './build-search/build-search.component';
 import {take, takeUntil} from 'rxjs/operators';
 import {SaveSearchDialogComponent} from './dialogs/save-search-dialog/save-search-dialog.component';
-import {MatDialog} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import {SavedSearchesComponent} from './saved-searches/saved-searches.component';
 import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {SearcherService} from '../../core/searcher/searcher.service';

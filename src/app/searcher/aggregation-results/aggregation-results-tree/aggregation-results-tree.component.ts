@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {NestedTreeControl} from '@angular/cdk/tree';
-import {MatTableDataSource} from '@angular/material';
+import { MatTableDataSource } from '@angular/material/table';
 import {AggregationResultsDialogComponent} from '../aggregation-results-dialog/aggregation-results-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {DatePipe} from '@angular/common';

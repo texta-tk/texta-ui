@@ -1,6 +1,9 @@
 import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import {TaggerGroupService} from 'src/app/core/models/taggers/tagger-group.service';
-import {MAT_DIALOG_DATA, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LogService} from 'src/app/core/util/log.service';
 import {LightTagger} from 'src/app/shared/types/tasks/Tagger';

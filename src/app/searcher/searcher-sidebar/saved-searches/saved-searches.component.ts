@@ -1,6 +1,6 @@
 import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
 import {SelectionModel} from '@angular/cdk/collections';
-import {MatTableDataSource} from '@angular/material';
+import { MatTableDataSource } from '@angular/material/table';
 import {SearcherService} from '../../../core/searcher/searcher.service';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {of, Subject} from 'rxjs';

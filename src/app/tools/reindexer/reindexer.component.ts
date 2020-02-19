@@ -1,6 +1,9 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Reindexer} from 'src/app/shared/types/tools/Elastic';
-import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import {SelectionModel} from '@angular/cdk/collections';
 import {merge, Subject, timer} from 'rxjs';
 import {Project} from 'src/app/shared/types/Project';
