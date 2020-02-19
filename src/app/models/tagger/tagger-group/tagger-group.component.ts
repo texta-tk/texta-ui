@@ -8,7 +8,7 @@ import {ProjectStore} from '../../../core/projects/project.store';
 import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import {TaggerGroup} from '../../../shared/types/tasks/Tagger';
 import {CreateTaggerGroupDialogComponent} from './create-tagger-group-dialog/create-tagger-group-dialog.component';
-import {TaggerGroupService} from '../../../core/taggers/tagger-group.service';
+import {TaggerGroupService} from '../../../core/models/taggers/tagger-group.service';
 import {SelectionModel} from '@angular/cdk/collections';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {ModelsListDialogComponent} from './models-list-dialog/models-list-dialog.component';

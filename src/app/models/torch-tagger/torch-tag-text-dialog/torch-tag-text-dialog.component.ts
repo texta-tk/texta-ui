@@ -1,8 +1,8 @@
-import { Component, Inject } from '@angular/core';
-import { TorchTaggerService } from '../torch-tagger.service';
-import { LogService } from 'src/app/core/util/log.service';
-import { MAT_DIALOG_DATA } from '@angular/material';
-import { HttpErrorResponse } from '@angular/common/http';
+import {Component, Inject} from '@angular/core';
+import {TorchTaggerService} from '../../../core/models/taggers/torch-tagger.service';
+import {LogService} from 'src/app/core/util/log.service';
+import {MAT_DIALOG_DATA} from '@angular/material';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-torch-tag-text-dialog',
@@ -18,13 +18,16 @@ export class TorchTagTextDialogComponent {
   }
 
   onSubmit(value) {
-    this.torchTorchTaggerService.tagText({text: value, lemmatize: this.lemmatize}, this.data.currentProjectId, this.data.torchTorchTaggerId)
+    this.torchTorchTaggerService.tagText({
+      text: value,
+      lemmatize: this.lemmatize
+    }, this.data.currentProjectId, this.data.torchTorchTaggerId)
       .subscribe((resp: { result: boolean, probability: number } | HttpErrorResponse) => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
           this.result = resp;
-        } else if (resp instanceof HttpErrorResponse){
+        } else if (resp instanceof HttpErrorResponse) {
           this.logService.snackBarError(resp, 4000);
         }
-    });
+      });
   }
 }

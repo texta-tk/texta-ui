@@ -1,11 +1,11 @@
 import {TestBed} from '@angular/core/testing';
 
-import {EmbeddingsGroupService} from './embeddings-group.service';
-import {SharedModule} from '../../shared/shared.module';
+import {EmbeddingsService} from './embeddings.service';
+import {SharedModule} from '../../../shared/shared.module';
 import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 
-describe('EmbeddingsGroupService', () => {
+describe('EmbeddingsService', () => {
   beforeEach(() => TestBed.configureTestingModule({
     imports: [
       RouterTestingModule,
@@ -15,7 +15,7 @@ describe('EmbeddingsGroupService', () => {
   }));
 
   it('should be created', () => {
-    const service: EmbeddingsGroupService = TestBed.get(EmbeddingsGroupService);
+    const service: EmbeddingsService = TestBed.get(EmbeddingsService);
     expect(service).toBeTruthy();
   });
 });

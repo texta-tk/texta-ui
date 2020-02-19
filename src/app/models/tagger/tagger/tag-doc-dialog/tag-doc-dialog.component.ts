@@ -1,5 +1,5 @@
 import {Component, OnInit, Inject} from '@angular/core';
-import {TaggerService} from '../../../../core/taggers/tagger.service';
+import {TaggerService} from '../../../../core/models/taggers/tagger.service';
 import {MAT_DIALOG_DATA} from '@angular/material';
 import {Tagger} from 'src/app/shared/types/tasks/Tagger';
 import {HttpErrorResponse} from '@angular/common/http';

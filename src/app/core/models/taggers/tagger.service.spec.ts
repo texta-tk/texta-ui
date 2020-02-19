@@ -1,11 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 
-import { NeuroTaggerService } from './neuro-tagger.service';
-import {SharedModule} from '../../shared/shared.module';
-import {HttpClientTestingModule} from '@angular/common/http/testing';
+import { TaggerService } from './tagger.service';
+import {SharedModule} from '../../../shared/shared.module';
 import {RouterTestingModule} from '@angular/router/testing';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
 
-describe('NeuroTaggerService', () => {
+describe('TaggerService', () => {
   beforeEach(() => TestBed.configureTestingModule({    imports: [
       RouterTestingModule,
       SharedModule,
@@ -13,7 +13,7 @@ describe('NeuroTaggerService', () => {
     ]}));
 
   it('should be created', () => {
-    const service: NeuroTaggerService = TestBed.get(NeuroTaggerService);
+    const service: TaggerService = TestBed.get(TaggerService);
     expect(service).toBeTruthy();
   });
 });

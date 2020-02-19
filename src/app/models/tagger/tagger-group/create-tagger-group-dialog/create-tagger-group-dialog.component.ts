@@ -9,11 +9,11 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ProjectService} from '../../../../core/projects/project.service';
 import {ProjectStore} from '../../../../core/projects/project.store';
 import {LiveErrorStateMatcher} from '../../../../shared/CustomerErrorStateMatchers';
-import {EmbeddingsService} from '../../../../core/embeddings/embeddings.service';
+import {EmbeddingsService} from '../../../../core/models/embeddings/embeddings.service';
 import {Embedding} from '../../../../shared/types/tasks/Embedding';
-import {TaggerService} from '../../../../core/taggers/tagger.service';
+import {TaggerService} from '../../../../core/models/taggers/tagger.service';
 import {merge, of, forkJoin} from 'rxjs';
-import {TaggerGroupService} from '../../../../core/taggers/tagger-group.service';
+import {TaggerGroupService} from '../../../../core/models/taggers/tagger-group.service';
 import {TaggerGroup} from '../../../../shared/types/tasks/Tagger';
 
 @Component({

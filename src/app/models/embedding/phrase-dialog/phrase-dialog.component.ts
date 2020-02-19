@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
-import { EmbeddingsService } from 'src/app/core/embeddings/embeddings.service';
+import { EmbeddingsService } from 'src/app/core/models/embeddings/embeddings.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { LogService } from 'src/app/core/util/log.service';
 
