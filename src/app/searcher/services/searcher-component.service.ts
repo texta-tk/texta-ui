@@ -3,7 +3,9 @@ import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {ElasticsearchQuery} from '../searcher-sidebar/build-search/Constraints';
 import {SelectionModel} from '@angular/cdk/collections';
 import {SavedSearch} from '../../shared/types/SavedSearch';
+import { Injectable } from "@angular/core";
 
+@Injectable()
 export class SearcherComponentService {
   public savedSearchSelection = new SelectionModel<SavedSearch>(true, []);
   private searchSubject = new BehaviorSubject<Search>(null);

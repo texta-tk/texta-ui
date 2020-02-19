@@ -43,8 +43,8 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     'task__time_completed', 'f1_score', 'precision', 'recall', 'task__status', 'Modify'];
   public isLoadingResults = true;
 
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   filteredSubject = new Subject();
   // For custom filtering, such as text search in description
   inputFilterQuery = '';

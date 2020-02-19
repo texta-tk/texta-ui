@@ -21,13 +21,13 @@ import {GenericDialogComponent} from '../../shared/components/dialogs/generic-di
 })
 export class SearcherSidebarComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject();
-  @ViewChild(BuildSearchComponent, {static: false})
+  @ViewChild(BuildSearchComponent)
   private buildSearchComponent: BuildSearchComponent;
-  @ViewChild(SavedSearchesComponent, {static: false})
+  @ViewChild(SavedSearchesComponent)
   private savedSearchesComponent: SavedSearchesComponent;
-  @ViewChild('buildSearchPanel', {static: false}) buildSearchPanel: any;
-  @ViewChild('savedSearchesPanel', {static: false}) savedSearchesPanel: any;
-  @ViewChild('aggregationsPanel', {static: false}) aggregationsPanel: any;
+  @ViewChild('buildSearchPanel') buildSearchPanel: any;
+  @ViewChild('savedSearchesPanel') savedSearchesPanel: any;
+  @ViewChild('aggregationsPanel') aggregationsPanel: any;
 
   buildSearchExpanded = true;
   savedSearchesExpanded = true;

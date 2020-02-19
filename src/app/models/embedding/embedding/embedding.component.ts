@@ -36,8 +36,8 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
 
   destroyed$: Subject<boolean> = new Subject<boolean>();
 
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   filteredSubject = new Subject();
   // For custom filtering, such as text search in description
   inputFilterQuery = '';

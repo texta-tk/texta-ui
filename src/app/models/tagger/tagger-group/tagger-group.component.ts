@@ -39,8 +39,8 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
     'num_tags', 'f1_score', 'precision', 'recall', 'progress', 'Modify'];
   public isLoadingResults = true;
 
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   filteredSubject = new Subject();
   // For custom filtering, such as text search in description
   inputFilterQuery = '';

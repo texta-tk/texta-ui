@@ -29,7 +29,7 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
   @Input() elasticSearchQuery: ElasticsearchQuery;
   @Output() change = new EventEmitter<ElasticsearchQuery>(); // search as you type, emit changes
 
-  @ViewChild(MatMenuTrigger, {static: false}) trigger: MatMenuTrigger;
+  @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
   destroyed$: Subject<boolean> = new Subject<boolean>();
   constraintQuery;
   // so i dont have to rename everything if i decide to refactor something
