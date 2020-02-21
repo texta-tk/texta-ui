@@ -99,7 +99,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
       return [];
     }
     // check if column truly exists, if it does get col object for type
-    const field: Field = this.projectFields.map(x => x.fields.find(y => y.path === sort.active)).filter(x => x && x.path === sort.active)[0];
+    const field = this.projectFields.map(x => x.fields.find(y => y.path === sort.active)).filter(x => x && x.path === sort.active)[0];
     if (field) {
       if (field.type === 'text') {
         return [{[field.path + '.keyword']: sort.direction}];

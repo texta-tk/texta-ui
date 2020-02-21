@@ -71,16 +71,12 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(
-      (resp: HttpErrorResponse | Project) => {
-        if (resp && !(resp instanceof HttpErrorResponse)) {
-          this.currentProject = resp;
-          this.setUpPaginator();
-        } else if (resp instanceof HttpErrorResponse) {
-          this.logService.snackBarError(resp, 5000);
-          this.isLoadingResults = false;
-        }
-      });
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(proj => {
+      if (proj) {
+        this.currentProject = proj;
+        this.setUpPaginator();
+      }
+    });
   }
 
   setUpPaginator() {

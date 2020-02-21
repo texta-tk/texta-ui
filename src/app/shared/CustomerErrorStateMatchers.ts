@@ -12,6 +12,6 @@ export class LiveErrorStateMatcher implements ErrorStateMatcher {
 /** Error when the parent is invalid */
 export class CrossFieldErrorMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
-    return control.dirty && control.parent.invalid;
+    return !!(control && control.dirty && control.parent && control.parent.invalid);
   }
 }

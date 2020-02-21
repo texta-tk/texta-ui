@@ -6,7 +6,7 @@ import {LogService} from '../../../core/util/log.service';
 import {TaggerService} from '../../../core/models/taggers/tagger.service';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {Tagger, TaggerVectorizerChoices} from '../../../shared/types/tasks/Tagger';
-import {debounceTime, startWith, switchMap} from 'rxjs/operators';
+import {debounceTime, startWith, switchMap, takeUntil} from 'rxjs/operators';
 import {CreateTaggerDialogComponent} from './create-tagger-dialog/create-tagger-dialog.component';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {Project} from '../../../shared/types/Project';
@@ -32,10 +32,6 @@ import {ListFeaturesDialogComponent} from '../list-features-dialog/list-features
 })
 export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  private dialogAfterClosedSubscription: Subscription;
-  private currentProjectSubscription: Subscription;
-  private updateTaggersSubscription: Subscription;
-
   expandedElement: Tagger | null;
   public tableData: MatTableDataSource<Tagger> = new MatTableDataSource();
   selectedRows = new SelectionModel<Tagger>(true, []);
@@ -52,7 +48,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   currentProject: Project;
   resultsLength: number;
-
+  destroyed$ = new Subject<boolean>();
 
   constructor(private projectStore: ProjectStore,
               private taggerService: TaggerService,
@@ -65,7 +61,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.tableData.paginator = this.paginator;
 
     // Check for updates after 30s every 30s
-    this.updateTaggersSubscription = timer(30000, 30000).pipe(switchMap(_ =>
+    timer(30000, 30000).pipe(takeUntil(this.destroyed$), switchMap(_ =>
       this.taggerService.getTaggers(this.currentProject.id,
         `page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`)))
       .subscribe((resp: { count: number, results: Tagger[] } | HttpErrorResponse) => {
@@ -79,16 +75,14 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.currentProjectSubscription = this.projectStore.getCurrentProject().subscribe(
-      (resp: HttpErrorResponse | Project) => {
-        if (resp && !(resp instanceof HttpErrorResponse)) {
-          this.currentProject = resp;
-          this.setUpPaginator();
-        } else if (resp instanceof HttpErrorResponse) {
-          this.logService.snackBarError(resp, 5000);
-          this.isLoadingResults = false;
-        }
-      });
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(resp => {
+      if (resp) {
+        this.currentProject = resp;
+        this.setUpPaginator();
+      } else {
+        this.isLoadingResults = false;
+      }
+    });
   }
 
   setUpPaginator() {
@@ -142,15 +136,8 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy() {
-    if (this.dialogAfterClosedSubscription) {
-      this.dialogAfterClosedSubscription.unsubscribe();
-    }
-    if (this.currentProjectSubscription) {
-      this.currentProjectSubscription.unsubscribe();
-    }
-    if (this.updateTaggersSubscription) {
-      this.updateTaggersSubscription.unsubscribe();
-    }
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
   }
 
   openCreateDialog() {
@@ -158,7 +145,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
       maxHeight: '700px',
       width: '700px',
     });
-    this.dialogAfterClosedSubscription = dialogRef.afterClosed().subscribe((resp: Tagger | HttpErrorResponse) => {
+    dialogRef.afterClosed().subscribe((resp: Tagger | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.tableData.data = [...this.tableData.data, resp];
         this.logService.snackBarMessage(`Created tagger ${resp.description}`, 2000);

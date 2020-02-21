@@ -14,10 +14,10 @@ import {ElasticsearchQuery} from '../../searcher/searcher-sidebar/build-search/C
   providedIn: 'root'
 })
 export class ProjectStore {
-  private selectedProject$: BehaviorSubject<Project> = new BehaviorSubject(null);
-  private projects$: BehaviorSubject<Project[]> = new BehaviorSubject(null);
-  private projectFields$: BehaviorSubject<ProjectField[]> = new BehaviorSubject(null);
-  private projectFacts$: BehaviorSubject<ProjectFact[]> = new BehaviorSubject(null);
+  private selectedProject$: BehaviorSubject<Project | null> = new BehaviorSubject(null);
+  private projects$: BehaviorSubject<Project[] | null> = new BehaviorSubject(null);
+  private projectFields$: BehaviorSubject<ProjectField[] | null> = new BehaviorSubject(null);
+  private projectFacts$: BehaviorSubject<ProjectFact[] | null> = new BehaviorSubject(null);
 
   constructor(private projectService: ProjectService,
               private logService: LogService,
@@ -31,15 +31,15 @@ export class ProjectStore {
     this.loadProjectFieldsAndFacts();
   }
 
-  getProjects(): Observable<Project[]> {
+  getProjects(): Observable<Project[] | null> {
     return this.projects$.asObservable();
   }
 
-  getProjectFields(): Observable<ProjectField[]> {
+  getProjectFields(): Observable<ProjectField[] | null> {
     return this.projectFields$.asObservable();
   }
 
-  getProjectFacts(): Observable<ProjectFact[]> {
+  getProjectFacts(): Observable<ProjectFact[] | null> {
     return this.projectFacts$.asObservable();
   }
 
@@ -75,11 +75,11 @@ export class ProjectStore {
     });
   }
 
-  getCurrentProject(): Observable<Project> {
+  getCurrentProject(): Observable<Project | null> {
     return this.selectedProject$.asObservable();
   }
 
-  setCurrentProject(project: Project) {
+  setCurrentProject(project: Project | null) {
     this.selectedProject$.next(project);
   }
 }

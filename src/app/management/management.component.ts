@@ -42,13 +42,15 @@ export class ManagementComponent implements OnInit, OnDestroy {
     this.tableData.paginator = this.paginator;
     this.sort.sortChange.pipe(takeUntil(this.destroyed$)).subscribe(() => this.paginator.pageIndex = 0);
     this.userService.getAllUsers().pipe(takeUntil(this.destroyed$)).subscribe(resp => {
-      if (resp) {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
         this.tableData.data = resp;
         this.isLoadingResults = false;
       }
     });
     this.userStore.getCurrentUser().pipe(takeUntil(this.destroyed$)).subscribe(user => {
-      this.currentUser = user;
+      if (user) {
+        this.currentUser = user;
+      }
     });
   }
 
@@ -58,7 +60,7 @@ export class ManagementComponent implements OnInit, OnDestroy {
         if (resp instanceof HttpErrorResponse) {
           this.logService.snackBarError(resp, 2000);
         } else {
-          if (row.id === this.currentUser.id) {
+          if (this.currentUser && row.id === this.currentUser.id) {
             row.is_superuser = false; // can only access this view as superuser
             this.userStore.setCurrentUser(row); // removed our own admin status
             this.router.navigateByUrl('');

@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {startWith, switchMap, debounceTime} from 'rxjs/operators';
+import {startWith, switchMap, debounceTime, takeUntil} from 'rxjs/operators';
 import {LogService} from '../../../core/util/log.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Project} from '../../../shared/types/Project';
@@ -29,8 +29,6 @@ import {TaggerGroupTagRandomDocDialogComponent} from './tagger-group-tag-random-
     ])]
 })
 export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
-  private projectSubscription: Subscription;
-  private dialogAfterClosedSubscription: Subscription;
 
   expandedElement: TaggerGroup | null;
   public tableData: MatTableDataSource<TaggerGroup> = new MatTableDataSource();
@@ -48,6 +46,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
 
   currentProject: Project;
   resultsLength: number;
+  destroyed$ = new Subject<boolean>();
 
 
   constructor(public dialog: MatDialog,
@@ -62,16 +61,14 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.projectSubscription = this.projectStore.getCurrentProject().subscribe(
-      (resp: HttpErrorResponse | Project) => {
-        if (resp && !(resp instanceof HttpErrorResponse)) {
-          this.currentProject = resp;
-          this.setUpPaginator();
-        } else if (resp instanceof HttpErrorResponse) {
-          this.logService.snackBarError(resp, 5000);
-          this.isLoadingResults = false;
-        }
-      });
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(proj => {
+      if (proj) {
+        this.currentProject = proj;
+        this.setUpPaginator();
+      } else {
+        this.isLoadingResults = false;
+      }
+    });
   }
 
   setUpPaginator() {
@@ -97,12 +94,8 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy() {
-    if (this.projectSubscription) {
-      this.projectSubscription.unsubscribe();
-    }
-    if (this.dialogAfterClosedSubscription) {
-      this.dialogAfterClosedSubscription.unsubscribe();
-    }
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
   }
 
 
@@ -111,7 +104,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
       maxHeight: '860px',
       width: '700px',
     });
-    this.dialogAfterClosedSubscription = dialogRef.afterClosed().subscribe((resp: TaggerGroup | HttpErrorResponse) => {
+    dialogRef.afterClosed().subscribe((resp: TaggerGroup | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.tableData.data = [...this.tableData.data, resp];
       } else if (resp instanceof HttpErrorResponse) {
@@ -241,7 +234,9 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
   filterQueriesToString() {
     this.inputFilterQuery = '';
     for (const field in this.filteringValues) {
-      this.inputFilterQuery += `&${field}=${this.filteringValues[field]}`;
+      if (this.filteringValues.hasOwnProperty(field)) {
+        this.inputFilterQuery += `&${field}=${this.filteringValues[field]}`;
+      }
     }
   }
 }

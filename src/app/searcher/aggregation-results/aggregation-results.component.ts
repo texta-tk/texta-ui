@@ -14,12 +14,12 @@ interface AggregationData {
     treeData?: ArrayDataSource<any>,
     name?: string,
     histoBuckets?: any[]
-  }[],
+  }[];
   tableData?: {
     tableData?: MatTableDataSource<any>,
     name?: string
-  }[],
-  dateData?: any[]
+  }[];
+  dateData?: any[];
 
 }
 
@@ -45,7 +45,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   }
 
   formatDateData(buckets: { key_as_string: string, key: number, doc_count: number }[]): { value: number, name: Date }[] {
-    const dateData = [];
+    const dateData: any[] = [];
     for (const element of buckets) {
       dateData.push({
         value: element.doc_count,
@@ -55,8 +55,11 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     return dateData;
   }
 
-  formatDateDataExtraBucket(buckets: { key_as_string: string, key: number, doc_count: number, buckets: any }[]): { value: number, name: Date }[] {
-    const dateData = [];
+  formatDateDataExtraBucket(buckets: {
+    key_as_string: string, key: number, doc_count: number,
+    buckets: any
+  }[]): { value: number, name: Date }[] {
+    const dateData: any[] = [];
     for (const element of buckets) {
       dateData.push({
         value: element.doc_count,
@@ -77,7 +80,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
         };
         if (Object.keys(aggregation.globalAgg).length > 0) {
           this.timeLineYLabel = 'frequency';
-          this.convertHistoToRelativeFrequency(aggregation);// doesnt work for deeply nested histo
+          this.convertHistoToRelativeFrequency(aggregation); // doesnt work for deeply nested histo
         } else {
           this.timeLineYLabel = 'document count';
         }
@@ -100,7 +103,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   }
 
   parseAggregationResults(aggregation: any) {
-    const aggData = {
+    const aggData: any = {
       treeData: [],
       tableData: [],
       dateData: [],
@@ -176,7 +179,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
             series: this.formatDateDataExtraBucket(this.bucketAccessor(formattedData))
           });
         } else {
-          returnData.treeData.push({
+          aggDataAccessor(returnData).push({
             name: aggName === aggregationType ? 'aggregation_results' : aggName,
             histoBuckets: formattedData.histoBuckets ? formattedData.histoBuckets : [],
             treeData: new ArrayDataSource(this.bucketAccessor(formattedData))

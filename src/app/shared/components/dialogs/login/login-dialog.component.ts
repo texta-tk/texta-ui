@@ -30,7 +30,7 @@ export class LoginDialogComponent implements OnInit, OnDestroy {
   });
   public hide = true;
   matcher = new LiveErrorStateMatcher();
-  loginError = undefined;
+  loginError = '';
   makingRequest = false;
 
 

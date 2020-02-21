@@ -17,9 +17,9 @@ import {ProjectModule} from './project/project.module';
 import {LexiconBuilderComponent} from './lexicon-miner/lexicon-builder/lexicon-builder.component';
 import {SearcherModule} from './searcher/searcher.module';
 import {MAT_HAMMER_OPTIONS} from '@angular/material';
-import { ToolsModule } from './tools/tools.module';
-import { TorchTaggerModule } from './models/torch-tagger/torch-tagger.module';
-import { ManagementComponent } from './management/management.component';
+import {ToolsModule} from './tools/tools.module';
+import {TorchTaggerModule} from './models/torch-tagger/torch-tagger.module';
+import {ManagementComponent} from './management/management.component';
 
 
 @NgModule({
@@ -36,7 +36,6 @@ import { ManagementComponent } from './management/management.component';
     BrowserModule,
     BrowserAnimationsModule,
     SharedModule,
-    AppRoutingModule,
     HttpClientModule,
     HttpClientXsrfModule.withOptions({
       cookieName: 'XSRF-TOKEN',
@@ -47,7 +46,8 @@ import { ManagementComponent } from './management/management.component';
     ProjectModule,
     SearcherModule,
     TorchTaggerModule,
-    ToolsModule
+    ToolsModule,
+    AppRoutingModule,
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: HttpAuthInterceptor, multi: true},

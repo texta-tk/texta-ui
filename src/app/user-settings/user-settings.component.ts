@@ -11,7 +11,9 @@ import {LogService} from '../core/util/log.service';
 import {environment} from '../../environments/environment';
 
 function passwordMatchValidator(g: FormGroup) {
-  return g.get('passwordFormControl').value === g.get('passwordConfirmFormControl').value
+  const password1 = g.get('passwordFormControl');
+  const password2 = g.get('passwordConfirmFormControl');
+  return (password1 && password2 && password1.value === password2.value)
     ? null : {mismatch: true};
 }
 

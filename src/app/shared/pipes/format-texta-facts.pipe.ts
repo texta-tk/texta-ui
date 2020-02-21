@@ -8,7 +8,7 @@ import {TextaFact} from '../../searcher/searcher-table/highlight/highlight.compo
 export class FormatTextaFactsPipe implements PipeTransform {
 
   transform(value: TextaFact[], ...args: any[]): { key: string, val: string[] }[] {
-    const returnValue = [];
+    const returnValue: { key: string, val: string[] }[] = [];
     value.forEach(val => {
       const obj = returnValue.find(x => x.key === val.fact);
       if (obj && obj.val) {

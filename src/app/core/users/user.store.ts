@@ -11,7 +11,7 @@ import {LocalStorageService} from '../util/local-storage.service';
   providedIn: 'root'
 })
 export class UserStore {
-  private selectedUser$: BehaviorSubject<UserProfile> = new BehaviorSubject(null);
+  private selectedUser$: BehaviorSubject<UserProfile | null> = new BehaviorSubject(null);
   private userAuthObservable = this.userService.getUserProfile().pipe(shareReplay(1));
 
   constructor(private userService: UserService, private localStorageService: LocalStorageService) {
@@ -24,15 +24,15 @@ export class UserStore {
     });
   }
 
-  getUserAuthObservable(): Observable<UserProfile> {
+  getUserAuthObservable(): Observable<UserProfile | HttpErrorResponse> {
     return this.userAuthObservable;
   }
 
-  getCurrentUser(): Observable<UserProfile> {
+  getCurrentUser(): Observable<UserProfile | null> {
     return this.selectedUser$.asObservable();
   }
 
-  setCurrentUser(user: UserProfile) {
+  setCurrentUser(user: UserProfile | null) {
     this.selectedUser$.next(user);
   }
 

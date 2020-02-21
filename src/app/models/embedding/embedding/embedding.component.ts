@@ -78,12 +78,11 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(
-      (resp: HttpErrorResponse | Project) => {
-        if (resp && !(resp instanceof HttpErrorResponse)) {
+      (resp: Project | null) => {
+        if (resp) {
           this.currentProject = resp;
           this.setUpPaginator();
-        } else if (resp instanceof HttpErrorResponse) {
-          this.logService.snackBarError(resp, 5000);
+        } else {
           this.isLoadingResults = false;
         }
       });

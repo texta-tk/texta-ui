@@ -88,7 +88,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
   aggregate() {
     const joinedAggregation = this.makeAggregations(this.aggregationList);
     const aggregationType = Object.keys(joinedAggregation)[0];
-    const body = {
+    const body: any = {
       query: {
         aggs: {...joinedAggregation},
         size: 0 // ignore results, performance improvement
@@ -96,11 +96,18 @@ export class AggregationsComponent implements OnInit, OnDestroy {
     };
     for (const savedSearch of this.searchService.savedSearchSelection.selected) {
       const savedSearchQuery = JSON.parse(savedSearch.query);
-      body.query.aggs[savedSearch.description] = {aggs: {...joinedAggregation}, filter: {bool: savedSearchQuery.query.bool}};
+      body.query.aggs[savedSearch.description] = {
+        aggs: {...joinedAggregation},
+        filter: {bool: savedSearchQuery.query.bool}
+      };
     }
 
-    if (!this.searchQueryExcluded) {
-      body.query.aggs[aggregationType] = {aggs: joinedAggregation, filter: {bool: this.searcherElasticSearchQuery.query.bool}};
+    if (!this.searchQueryExcluded &&
+      this.searcherElasticSearchQuery && this.searcherElasticSearchQuery.query && this.searcherElasticSearchQuery.query.bool) {
+      body.query.aggs[aggregationType] = {
+        aggs: joinedAggregation,
+        filter: {bool: this.searcherElasticSearchQuery.query.bool}
+      };
     }
 
 

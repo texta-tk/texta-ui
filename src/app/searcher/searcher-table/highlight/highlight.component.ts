@@ -82,7 +82,7 @@ export class HighlightComponent {
   }
 
   getOnlyMatchingFacts(fieldFacts: TextaFact[], highlightConfig: HighlightConfig): TextaFact[] {
-    if (fieldFacts) {
+    if (fieldFacts && highlightConfig && highlightConfig.onlyHighlightMatching) {
       // if these exist match all facts of the type, PER, LOC, ORG etc. gets all unique global fact names
       const globalFacts = [...new Set([].concat.apply([], highlightConfig.onlyHighlightMatching.map(x => x.factNameFormControl.value)))];
       // get all unique fact names and their values as an object
@@ -153,14 +153,14 @@ export class HighlightComponent {
     let factText = '';
     let lowestSpanNumber: number | null = facts[0].spans[0] as number;
     for (let i = 0; i <= originalText.length; i++) {
-      let fact = null;
-      // performance update, dont loop over every fact on each character, get next span position instead when needed
-      if (i === lowestSpanNumber || i > lowestSpanNumber) {
+      let fact: TextaFact | undefined;
+      // get next span position when needed
+      if (lowestSpanNumber !== null && i >= lowestSpanNumber) {
         fact = this.getFactByStartSpan(i, facts);
         lowestSpanNumber = this.getFactWithStartSpanHigherThan(i, facts);
       }
 
-      if (fact && fact.spans[0] !== fact.spans[1]) {
+      if (fact !== undefined && fact.spans[0] !== fact.spans[1]) {
         if (this.isOverLappingFact(overLappingFacts, fact)) {
           // push old non fact text into array
           highlightArray.push({text: factText, highlighted: false});
@@ -234,9 +234,9 @@ export class HighlightComponent {
     for (const factNested of nestedFacts) {
       highestSpanValue.set(factNested, Math.max.apply(Math, factNested.spans));
     }
-    let highlightObject: HighlightObject;
+    let highlightObject: HighlightObject | undefined;
     let factText = '';
-    let previousFact: TextaFact;
+    let previousFact: TextaFact | undefined;
     const factsToDelete: TextaFact[] = [];
     if (rootFact) {
       for (const factNested of nestedFacts) {
@@ -280,13 +280,17 @@ export class HighlightComponent {
           previousFact = factCurrentIndex;
         } else {
           highlightObject = this.makeFactNestedHighlightRecursive(highlightObject, previousFact,
-            colors.get(previousFact.fact),
+            // todo fix in TS 3.7
+            // tslint:disable-next-line:no-non-null-assertion
+            colors.get(previousFact!.fact),
             factText);
           factText = '';
           previousFact = factCurrentIndex;
         }
       }
-      if (highestSpanValue.get(previousFact) === i || (rootFact.spans[1] === i && !nestedFacts.includes(previousFact))) {
+      // previousfact is actually current fact? todo
+      if (previousFact !== undefined &&
+        (highestSpanValue.get(previousFact) === i || (rootFact.spans[1] === i && !nestedFacts.includes(previousFact)))) {
         if (factText !== '') {
           if (!highlightObject) {
             highlightObject = {
@@ -318,7 +322,11 @@ export class HighlightComponent {
             } // nothing to loop over now
           } else {
             // highlightarray is reference to outer scope, push and return new loop index
-            highlightArray.push(highlightObject);
+            if (highlightObject) {
+              highlightArray.push(highlightObject);
+            } else {
+              console.log('highlightobject undefined, this should never happen');
+            }
             // - 1 because loop is escaped
             return i - 1;
           } // rootfact still exists so lets just continue looping with that
@@ -334,7 +342,7 @@ export class HighlightComponent {
   }
 
   // searcher prio
-  private startOfFact(nestedFacts: TextaFact[], loopIndex: number, previousFact: TextaFact): TextaFact {
+  private startOfFact(nestedFacts: TextaFact[], loopIndex: number, previousFact: TextaFact | undefined): TextaFact | undefined {
     const facts: TextaFact[] = nestedFacts.filter(e => (e.spans[0] === loopIndex));
     if (facts.length > 0) {
       if (facts.length > 1) {
@@ -396,13 +404,15 @@ export class HighlightComponent {
   }
 
   private detectOverLappingFactsDrill(factRoot: TextaFact, facts: TextaFact[], endSpan: number,
-                                      index: number, nestedArray?: Map<TextaFact, TextaFact[]>): Map<TextaFact, TextaFact[]> {
+                                      index: number, nestedArray: Map<TextaFact, TextaFact[]>): Map<TextaFact, TextaFact[]> {
     // endSpan = previous facts span ending so we can make long chains of nested facts
     if (index < facts.length) {
       if (facts[index].spans[0] < endSpan) {
         endSpan = facts[index].spans[1] as number > endSpan ? facts[index].spans[1] as number : endSpan;
         // keep iterating with current fact till it finds one who isnt nested into this fact
-        nestedArray.set(factRoot, nestedArray.has(factRoot) ? nestedArray.get(factRoot).concat(facts[index]) : [facts[index]]);
+        // todo fix in TS 3.7
+        // tslint:disable-next-line:no-non-null-assertion
+        nestedArray.set(factRoot, nestedArray.has(factRoot) ? nestedArray.get(factRoot)!.concat(facts[index]) : [facts[index]]);
         return this.detectOverLappingFactsDrill(factRoot, facts, endSpan, index + 1, nestedArray);
       }
       // this fact isnt nested, set it as new root fact and keep iterating
@@ -415,7 +425,7 @@ export class HighlightComponent {
     return nestedArray;
   }
 
-  private getFactByStartSpan(loopIndex: number, facts: TextaFact[]): TextaFact {
+  private getFactByStartSpan(loopIndex: number, facts: TextaFact[]): TextaFact | undefined {
     for (const fact of facts) {
       if ((fact.spans as number[])[0] === loopIndex) {
         return fact;
@@ -424,7 +434,7 @@ export class HighlightComponent {
     return undefined;
   }
 
-  private getFactWithStartSpanHigherThan(position: number, facts: TextaFact[]): number {
+  private getFactWithStartSpanHigherThan(position: number, facts: TextaFact[]): number | null {
     for (const fact of facts) {
       if ((fact.spans as number[])[0] > position) {
         return fact.spans[0] as number;

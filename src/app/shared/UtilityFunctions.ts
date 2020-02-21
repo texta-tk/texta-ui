@@ -1,3 +1,4 @@
+
 export class UtilityFunctions {
   static typeGuard<T>(o, className: { new(...args: any[]): T }): o is T {
     return o instanceof className;
@@ -13,4 +14,5 @@ export class UtilityFunctions {
       return false;
     }
   }
+
 }

@@ -41,7 +41,9 @@ export class CreateProjectDialogComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.userService.getAllUsers().subscribe(resp => {
-      this.users = resp;
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.users = resp;
+      }
     });
     this.projectService.getIndices().subscribe((resp: string[] | HttpErrorResponse) => {
       if (resp instanceof HttpErrorResponse) {

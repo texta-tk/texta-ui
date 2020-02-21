@@ -33,13 +33,22 @@ export class EditProjectDialogComponent implements OnInit {
               private userService: UserService,
               private projectStore: ProjectStore,
               private projectService: ProjectService) {
-    this.projectForm.get('indicesFormControl').setValue(this.data.indices);
+    const indices = this.projectForm.get('indicesFormControl')
+    if (indices) {
+      indices.setValue(this.data.indices);
+    }
+
     if (this.data.users) {
       from(this.data.users).pipe(mergeMap(url => {
         return this.userService.getUserByUrl(url);
-      })).subscribe(x => {
-        this.selectedUsers.push(x.url);
-        this.projectForm.get('usersFormControl').setValue(this.selectedUsers);
+      })).subscribe(resp => {
+        if (resp && !(resp instanceof HttpErrorResponse)) {
+          this.selectedUsers.push(resp.url);
+          const users = this.projectForm.get('usersFormControl')
+          if (users) {
+            users.setValue(this.selectedUsers);
+          }
+        }
       });
     }
   }

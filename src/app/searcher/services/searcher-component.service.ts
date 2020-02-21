@@ -6,10 +6,10 @@ import {SavedSearch} from '../../shared/types/SavedSearch';
 
 export class SearcherComponentService {
   public savedSearchSelection = new SelectionModel<SavedSearch>(true, []);
-  private searchSubject = new BehaviorSubject<Search>(null);
-  private aggregationSubject = new BehaviorSubject<{ globalAgg: any, agg: any }>(null);
+  private searchSubject = new BehaviorSubject<Search | null>(null);
+  private aggregationSubject = new BehaviorSubject<{ globalAgg: any, agg: any } | null>(null);
   private savedSearchUpdate = new Subject<boolean>();
-  private elasticQuerySubject = new BehaviorSubject<ElasticsearchQuery>(null);
+  private elasticQuerySubject = new BehaviorSubject<ElasticsearchQuery | null>(null);
   private searchQueryQueue$ = new Subject<void>();
   private isLoading = new BehaviorSubject<boolean>(false);
 
@@ -24,19 +24,19 @@ export class SearcherComponentService {
     return this.isLoading.asObservable();
   }
 
-  public nextSearch(search: Search) {
+  public nextSearch(search: Search | null) {
     this.searchSubject.next(search);
   }
 
-  public getSearch(): Observable<Search> {
+  public getSearch(): Observable<Search | null> {
     return this.searchSubject.asObservable();
   }
 
-  public nextAggregation(aggregation: { globalAgg: any, agg: any }) {
+  public nextAggregation(aggregation: { globalAgg: any, agg: any } | null) {
     this.aggregationSubject.next(aggregation);
   }
 
-  public getAggregation(): Observable<{ globalAgg: any, agg: any }> {
+  public getAggregation(): Observable<{ globalAgg: any, agg: any } | null> {
     return this.aggregationSubject.asObservable();
   }
 
@@ -48,11 +48,11 @@ export class SearcherComponentService {
     return this.savedSearchUpdate.asObservable();
   }
 
-  public nextElasticQuery(val) {
+  public nextElasticQuery(val: ElasticsearchQuery | null) {
     this.elasticQuerySubject.next(val);
   }
 
-  public getElasticQuery(): Observable<ElasticsearchQuery> {
+  public getElasticQuery(): Observable<ElasticsearchQuery | null> {
     return this.elasticQuerySubject.asObservable();
   }
 
