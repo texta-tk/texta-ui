@@ -5,7 +5,7 @@
     <mat-form-field>
       <input matInput placeholder="Description" autocomplete="off" formControlName="descriptionFormControl" required>
 
-      <mat-error *ngIf="torchTaggerForm.get('descriptionFormControl').hasError('required')">
+      <mat-error *ngIf="torchTaggerForm.get('descriptionFormControl')?.hasError('required')">
         Description is <strong>required</strong>
       </mat-error>
     </mat-form-field>
@@ -19,7 +19,7 @@
           </mat-option>
         </mat-optgroup>
       </mat-select>
-      <mat-error *ngIf="torchTaggerForm.get('fieldsFormControl').hasError('required')">
+      <mat-error *ngIf="torchTaggerForm.get('fieldsFormControl')?.hasError('required')">
         Field is <strong>required</strong>
       </mat-error>
     </mat-form-field>
@@ -33,7 +33,7 @@
           {{item.display_name}}
         </mat-option>
       </mat-select>
-      <mat-error *ngIf="torchTaggerForm.get('modelArchitectureFormControl').hasError('required')">
+      <mat-error *ngIf="torchTaggerForm.get('modelArchitectureFormControl')?.hasError('required')">
         Model architecture is <strong>required</strong>
       </mat-error>
     </mat-form-field>
@@ -48,7 +48,7 @@
           </mat-option>
         </ng-container>
       </mat-select>
-      <mat-error *ngIf="torchTaggerForm.get('embeddingFormControl').hasError('required')">
+      <mat-error *ngIf="torchTaggerForm.get('embeddingFormControl')?.hasError('required')">
         Embedding is <strong>required</strong>
       </mat-error>
     </mat-form-field>

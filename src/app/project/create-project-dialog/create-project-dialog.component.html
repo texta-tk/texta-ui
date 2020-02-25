@@ -5,7 +5,7 @@
       <input matInput placeholder="Title" autocomplete="off" formControlName="titleFormControl"
              [errorStateMatcher]="matcher" required>
 
-      <mat-error *ngIf="projectForm.get('titleFormControl').hasError('required')">
+      <mat-error *ngIf="projectForm.get('titleFormControl')?.hasError('required')">
         Title is <strong>required</strong>
       </mat-error>
     </mat-form-field>
@@ -17,7 +17,7 @@
           {{item.username}}
         </mat-option>
       </mat-select>
-      <mat-error *ngIf="projectForm.get('usersFormControl').hasError('required')">
+      <mat-error *ngIf="projectForm.get('usersFormControl')?.hasError('required')">
         User is <strong>required</strong>
       </mat-error>
     </mat-form-field>
@@ -30,7 +30,7 @@
           {{item}}
         </mat-option>
       </mat-select>
-      <mat-error *ngIf="projectForm.get('indicesFormControl').hasError('required')">
+      <mat-error *ngIf="projectForm.get('indicesFormControl')?.hasError('required')">
         Index is <strong>required</strong>
       </mat-error>
     </mat-form-field>

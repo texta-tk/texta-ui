@@ -41,7 +41,11 @@ describe('DateConstraintsComponent', () => {
     el2.dispatchEvent(new Event('input'));
     fixture.detectChanges();
     expect(spy).toHaveBeenCalledTimes(2);
+    // @ts-ignore
+    // tslint:disable-next-line:max-line-length
     expect(component.elasticSearchQuery.elasticSearchQuery.query.bool.must[0].bool.must[0].range.test.gte).toBeDefined('Should create date query from');
+    // @ts-ignore
+    // tslint:disable-next-line:max-line-length
     expect(component.elasticSearchQuery.elasticSearchQuery.query.bool.must[0].bool.must[1].range.test.lte).toBeDefined('Should create date query to');
   });
 });

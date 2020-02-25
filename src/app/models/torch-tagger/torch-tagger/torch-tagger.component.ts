@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Subscription, Subject, timer, merge} from 'rxjs';
+import {Subscription, Subject, timer, merge, of} from 'rxjs';
 import {MatTableDataSource, MatSort, MatPaginator, MatDialog} from '@angular/material';
 import {SelectionModel} from '@angular/cdk/collections';
 import {Project} from 'src/app/shared/types/Project';
@@ -68,15 +68,20 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
           this.isLoadingResults = false;
         }
       });
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(resp => {
+      if (resp) {
+        this.currentProject = resp;
+        if (this.paginator) {
+          this.paginator.pageIndex = 0;
+        }
+      } else {
+        this.isLoadingResults = false;
+      }
+    });
   }
 
   ngAfterViewInit() {
-    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(proj => {
-      if (proj) {
-        this.currentProject = proj;
-        this.setUpPaginator();
-      }
-    });
+    this.setUpPaginator();
   }
 
   setUpPaginator() {
@@ -84,21 +89,29 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
     merge(this.sort.sortChange, this.paginator.page, this.filteredSubject)
-      .pipe(debounceTime(200), startWith({}), switchMap(() => {
-        this.isLoadingResults = true;
-        // DRF backend asks for '-' or '' to declare ordering direction
-
-        const sortDirection = this.sort.direction === 'desc' ? '-' : '';
-        return this.torchtaggerService.getTorchTaggers(
-          this.currentProject.id,
-          // Add 1 to to index because Material paginator starts from 0 and DRF paginator from 1
-          `${this.inputFilterQuery}&ordering=${sortDirection}${this.sort.active}&page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`
-        );
-      })).subscribe((data: { count: number, results: TorchTagger[] }) => {
+      .pipe(debounceTime(250), startWith({}),
+        switchMap(() => {
+          this.isLoadingResults = true;
+          return this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$));
+        }))
+      .pipe(
+        switchMap(proj => {
+          if (proj) {
+            const sortDirection = this.sort.direction === 'desc' ? '-' : '';
+            return this.torchtaggerService.getTorchTaggers(
+              this.currentProject.id,
+              // Add 1 to to index because Material paginator starts from 0 and DRF paginator from 1
+              `${this.inputFilterQuery}&ordering=${sortDirection}${this.sort.active}&page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`);
+          } else {
+            return of(null);
+          }
+        })).subscribe((data: { count: number, results: TorchTagger[] }) => {
       // Flip flag to show that loading has finished.
       this.isLoadingResults = false;
-      this.resultsLength = data.count;
-      this.tableData.data = data.results;
+      if (data) {
+        this.resultsLength = data.count;
+        this.tableData.data = data.results;
+      }
     });
   }
 
@@ -108,7 +121,9 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
       if (resp.length > 0) {
         resp.map(torchtagger => {
           const indx = this.tableData.data.findIndex(x => x.id === torchtagger.id);
-          this.tableData.data[indx].task = torchtagger.task;
+          if (indx >= 0) {
+            this.tableData.data[indx].task = torchtagger.task;
+          }
         });
       }
     }

@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {merge, Subject, Subscription, timer} from 'rxjs';
+import {merge, of, Subject, Subscription, timer} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import {LogService} from '../../../core/util/log.service';
@@ -66,23 +66,26 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
         `page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`)))
       .subscribe((resp: { count: number, results: Tagger[] } | HttpErrorResponse) => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
-          this.refreshTaggers(resp.results);
+          this.refreshTaggersTask(resp.results);
         } else if (resp instanceof HttpErrorResponse) {
           this.logService.snackBarError(resp, 5000);
           this.isLoadingResults = false;
         }
       });
-  }
-
-  ngAfterViewInit() {
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(resp => {
       if (resp) {
         this.currentProject = resp;
-        this.setUpPaginator();
+        if (this.paginator) {
+          this.paginator.pageIndex = 0;
+        }
       } else {
         this.isLoadingResults = false;
       }
     });
+  }
+
+  ngAfterViewInit() {
+    this.setUpPaginator();
   }
 
   setUpPaginator() {
@@ -90,31 +93,41 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
     merge(this.sort.sortChange, this.paginator.page, this.filteredSubject)
-      .pipe(debounceTime(250), startWith({}), switchMap(() => {
-        this.isLoadingResults = true;
-        // DRF backend asks for '-' or '' to declare ordering direction
-
-        const sortDirection = this.sort.direction === 'desc' ? '-' : '';
-        return this.taggerService.getTaggers(
-          this.currentProject.id,
-          // Add 1 to to index because Material paginator starts from 0 and DRF paginator from 1
-          `${this.inputFilterQuery}&ordering=${sortDirection}${this.sort.active}&page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`
-        );
-      })).subscribe((data: { count: number, results: Tagger[] }) => {
+      .pipe(debounceTime(250), startWith({}),
+        switchMap(() => {
+          this.isLoadingResults = true;
+          return this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$));
+        }))
+      .pipe(
+        switchMap(proj => {
+          if (proj) {
+            const sortDirection = this.sort.direction === 'desc' ? '-' : '';
+            return this.taggerService.getTaggers(
+              this.currentProject.id,
+              // Add 1 to to index because Material paginator starts from 0 and DRF paginator from 1
+              `${this.inputFilterQuery}&ordering=${sortDirection}${this.sort.active}&page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`);
+          } else {
+            return of(null);
+          }
+        })).subscribe((data: { count: number, results: Tagger[] }) => {
       // Flip flag to show that loading has finished.
       this.isLoadingResults = false;
-      this.resultsLength = data.count;
-      this.tableData.data = data.results;
+      if (data) {
+        this.resultsLength = data.count;
+        this.tableData.data = data.results;
+      }
     });
   }
 
 
-  refreshTaggers(resp: Tagger[] | HttpErrorResponse) {
+  refreshTaggersTask(resp: Tagger[] | HttpErrorResponse) {
     if (resp && !(resp instanceof HttpErrorResponse)) {
       if (resp.length > 0) {
         resp.map(tagger => {
           const indx = this.tableData.data.findIndex(x => x.id === tagger.id);
-          this.tableData.data[indx].task = tagger.task;
+          if (indx >= 0) {
+            this.tableData.data[indx].task = tagger.task;
+          }
         });
       }
     }

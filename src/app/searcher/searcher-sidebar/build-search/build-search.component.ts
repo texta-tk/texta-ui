@@ -234,7 +234,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
       }
     }
     if (this.elasticQuery && this.elasticQuery.elasticSearchQuery && this.elasticQuery.elasticSearchQuery.query
-      && this.elasticQuery.elasticSearchQuery.query.bool && this.elasticQuery.elasticSearchQuery.query.bool.minimum_should_match) {
+      && this.elasticQuery.elasticSearchQuery.query.bool && this.elasticQuery.elasticSearchQuery.query.bool.minimum_should_match >= 0) {
       this.elasticQuery.elasticSearchQuery.query.bool.minimum_should_match = shouldMatch;
     } else {
       console.error('no path to minimum should match');

@@ -43,13 +43,13 @@ export class TorchTaggerService {
 
   createTorchTagger(projectId: number, payload): Observable<TorchTagger> {
     return this.http.post<TorchTagger>(`${this.apiUrl}/projects/${projectId}/torchtaggers/`, payload).pipe(
-      tap(e => this.logService.logStatus(e, 'makeTagger')),
-      catchError(this.logService.handleError<TorchTagger>('makeTagger')));
+      tap(e => this.logService.logStatus(e, 'createTorchTagger')),
+      catchError(this.logService.handleError<TorchTagger>('createTorchTagger')));
   }
 
   tagText(body: {}, projectId: number, taggerId): Observable<unknown | HttpErrorResponse> {
     return this.http.post<unknown>(`${this.apiUrl}/projects/${projectId}/torchtaggers/${taggerId}/tag_text/`, body).pipe(
-      tap(e => this.logService.logStatus(e, 'tagText')),
-      catchError(this.logService.handleError<unknown>('tagText')));
+      tap(e => this.logService.logStatus(e, 'tagTorchText')),
+      catchError(this.logService.handleError<unknown>('tagTorchText')));
   }
-}
+} 

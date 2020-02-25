@@ -289,8 +289,8 @@ export class HighlightComponent {
         }
       }
       // previousfact is actually current fact? todo
-      if (previousFact !== undefined &&
-        (highestSpanValue.get(previousFact) === i || (rootFact.spans[1] === i && !nestedFacts.includes(previousFact)))) {
+      if ((previousFact && highestSpanValue.get(previousFact) === i) ||
+        (rootFact.spans[1] === i && !(previousFact && nestedFacts.includes(previousFact)))) {
         if (factText !== '') {
           if (!highlightObject) {
             highlightObject = {
@@ -305,6 +305,7 @@ export class HighlightComponent {
           } else {
             factCurrentIndex = previousFact;
             highlightObject = this.makeFactNestedHighlightRecursive(highlightObject, factCurrentIndex,
+              // @ts-ignore
               colors.get(factCurrentIndex.fact),
               factText);
             factText = '';

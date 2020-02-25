@@ -8,7 +8,7 @@ import {SavedSearch} from '../../shared/types/SavedSearch';
 import {SelectionModel} from '@angular/cdk/collections';
 
 export class SearchServiceSpy {
-  private searchSubject = new BehaviorSubject<Search>(null);
+  private searchSubject = new BehaviorSubject<Search | null>(null);
   private searchQueryQueue$ = new Subject<void>();
   private elasticQuerySubject = new Subject<ElasticsearchQuery>();
   private savedSearchUpdate = new Subject<boolean>();

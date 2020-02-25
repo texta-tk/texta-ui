@@ -9,7 +9,7 @@
           {{item}}
         </mat-option>
       </mat-select>
-      <mat-error *ngIf="projectForm.get('indicesFormControl').hasError('required')">
+      <mat-error *ngIf="projectForm.get('indicesFormControl')?.hasError('required')">
         Select at least 1 index
       </mat-error>
     </mat-form-field>
@@ -21,7 +21,7 @@
           {{item.username}}
         </mat-option>
       </mat-select>
-      <mat-error *ngIf="projectForm.get('usersFormControl').hasError('required')">
+      <mat-error *ngIf="projectForm.get('usersFormControl')?.hasError('required')">
         Select at least 1 user
       </mat-error>
     </mat-form-field>
