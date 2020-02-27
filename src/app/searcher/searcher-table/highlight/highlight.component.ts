@@ -7,6 +7,7 @@ export interface TextaFact {
   spans: string | number[];
   str_val: string;
   id?: number;
+  urlSpan?: boolean;
   searcherHighlight?: boolean;
 }
 
@@ -35,8 +36,10 @@ export class HighlightComponent {
       }
       fieldFacts = this.removeDuplicates(fieldFacts, 'spans');
       const highlightTerms = [
+        ...this.makeHyperlinksClickable(highlightConfig.data[highlightConfig.currentColumn], highlightConfig.currentColumn),
         ...this.makeSearcherHighlightFacts(highlightConfig.searcherHighlight, highlightConfig.currentColumn),
-        ...fieldFacts];
+        ...fieldFacts
+      ];
       const colors = this.generateColorsForFacts(highlightTerms);
       this.highlightArray = this.makeHighLights(highlightConfig.data[highlightConfig.currentColumn], highlightTerms, colors);
     } else {
@@ -45,6 +48,28 @@ export class HighlightComponent {
   }
 
   constructor() {
+  }
+
+  makeHyperlinksClickable(currentColumn: string | number, colName: string): TextaFact[] {
+    const highlightArray: TextaFact[] = [];
+    if (isNaN(Number(currentColumn))) {
+      const regex = /(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?/img;
+      let matches = regex.exec(currentColumn as string);
+      while (matches !== null) {
+        if (matches.index === regex.lastIndex) {
+          regex.lastIndex++;
+        }
+        const f: TextaFact = {} as TextaFact;
+        f.doc_path = colName;
+        f.fact = '';
+        f.urlSpan = true;
+        f.spans = `[[${matches.index}, ${matches.index + matches[0].length}]]`;
+        f.str_val = matches[0];
+        highlightArray.push(f);
+        matches = regex.exec(currentColumn as string);
+      }
+    }
+    return highlightArray;
   }
 
   // convert searcher highlight into mlp fact format
