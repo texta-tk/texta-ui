@@ -1,8 +1,8 @@
 [
   {
-    "url": "http://localhost:8000/api/v1/projects/6/",
-    "id": 6,
-    "title": "fr",
+    "url": "http://localhost:8000/api/v1/projects/0/",
+    "id": 0,
+    "title": "stubProject",
     "users": [
       "http://localhost:8000/api/v1/users/1/"
     ],
@@ -10,15 +10,15 @@
       "articles_tags_v2"
     ],
     "resources": {
-      "lexicons": "http://localhost:8000/projects/6/lexicons/",
-      "reindexer": "http://localhost:8000/projects/6/reindexer/",
-      "dataset_imports": "http://localhost:8000/projects/6/dataset_imports/",
-      "searches": "http://localhost:8000/projects/6/searches/",
-      "embeddings": "http://localhost:8000/projects/6/embeddings/",
-      "embedding_clusters": "http://localhost:8000/projects/6/embedding_clusters/",
-      "taggers": "http://localhost:8000/projects/6/taggers/",
-      "tagger_groups": "http://localhost:8000/projects/6/tagger_groups/",
-      "neurotaggers": "http://localhost:8000/projects/6/neurotaggers/"
+      "lexicons": "http://localhost:8000/projects/0/lexicons/",
+      "reindexer": "http://localhost:8000/projects/0/reindexer/",
+      "dataset_imports": "http://localhost:8000/projects/0/dataset_imports/",
+      "searches": "http://localhost:8000/projects/0/searches/",
+      "embeddings": "http://localhost:8000/projects/0/embeddings/",
+      "embedding_clusters": "http://localhost:8000/projects/0/embedding_clusters/",
+      "taggers": "http://localhost:8000/projects/0/taggers/",
+      "tagger_groups": "http://localhost:8000/projects/0/tagger_groups/",
+      "neurotaggers": "http://localhost:8000/projects/0/neurotaggers/"
     }
   }
 ]
