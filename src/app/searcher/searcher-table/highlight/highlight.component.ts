@@ -1,5 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {ElasticsearchQuery, FactConstraint} from '../../searcher-sidebar/build-search/Constraints';
+import * as LinkifyIt from 'linkify-it';
 
 export interface TextaFact {
   doc_path: string;
@@ -26,6 +27,7 @@ export interface HighlightConfig {
 })
 export class HighlightComponent {
   static colors: Map<string, string> = new Map<string, string>();
+  static linkify = new LinkifyIt();
   highlightArray: HighlightObject[] = [];
 
   @Input() set highlightConfig(highlightConfig: HighlightConfig) { // todo data
@@ -51,59 +53,52 @@ export class HighlightComponent {
   }
 
   makeHyperlinksClickable(currentColumn: string | number, colName: string): TextaFact[] {
-    const highlightArray: TextaFact[] = [];
     if (isNaN(Number(currentColumn))) {
-      const regex = /(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?/img;
-      let matches = regex.exec(currentColumn as string);
-      while (matches !== null) {
-        if (matches.index === regex.lastIndex) {
-          regex.lastIndex++;
+      const highlightArray: TextaFact[] = [];
+      const matches = HighlightComponent.linkify.match(currentColumn as string);
+      if (matches && matches.length > 0) {
+        for (const match of matches) {
+          const f: TextaFact = {} as TextaFact;
+          f.doc_path = colName;
+          f.fact = '';
+          f.urlSpan = true;
+          f.spans = `[[${match.index}, ${match.lastIndex}]]`;
+          f.str_val = match.url;
+          highlightArray.push(f);
         }
-        const f: TextaFact = {} as TextaFact;
-        f.doc_path = colName;
-        f.fact = '';
-        f.urlSpan = true;
-        f.spans = `[[${matches.index}, ${matches.index + matches[0].length}]]`;
-        f.str_val = matches[0];
-        highlightArray.push(f);
-        matches = regex.exec(currentColumn as string);
       }
+      return highlightArray;
     }
-    return highlightArray;
+    return [];
   }
 
   // convert searcher highlight into mlp fact format
   makeSearcherHighlightFacts(searcherHighlight: any, currentColumn: string) {
-    const highlightArray: TextaFact[] = [];
-    for (const column in searcherHighlight) {
-      if (column === currentColumn) {
-        if (searcherHighlight[column].length === 1) {
-          const columnText: string = searcherHighlight[column][0];
-          const splitStartTag: string[] = columnText.split(ElasticsearchQuery.PRE_TAG);
-          let previousIndex = 0; // char start index of highlight
-          for (const row of splitStartTag) {
-            const endTagIndex = row.indexOf(ElasticsearchQuery.POST_TAG);
-            if (endTagIndex > 0) {
-              const f: TextaFact = {} as TextaFact;
-              f.doc_path = column;
-              f.fact = '';
-              f.searcherHighlight = true;
-              f.spans = `[[${previousIndex}, ${previousIndex + endTagIndex}]]`;
-              f.str_val = 'searcher highlight';
-              highlightArray.push(f);
-              const rowClean = row.replace(ElasticsearchQuery.POST_TAG, '');
-              previousIndex = previousIndex + rowClean.length;
-            } else {
-              previousIndex = previousIndex + row.length;
-            }
-          }
-          // console.log(columnText);
+    const highlight = searcherHighlight[currentColumn];
+    if (highlight && highlight.length === 1) {
+      const highlightArray: TextaFact[] = [];
+      const columnText: string = highlight[0]; // highlight number of fragments has to be 0
+      const splitStartTag: string[] = columnText.split(ElasticsearchQuery.PRE_TAG);
+      let previousIndex = 0; // char start index of highlight
+      for (const row of splitStartTag) {
+        const endTagIndex = row.indexOf(ElasticsearchQuery.POST_TAG);
+        if (endTagIndex > 0) {
+          const f: TextaFact = {} as TextaFact;
+          f.doc_path = currentColumn;
+          f.fact = '';
+          f.searcherHighlight = true;
+          f.spans = `[[${previousIndex}, ${previousIndex + endTagIndex}]]`;
+          f.str_val = 'searcher highlight';
+          highlightArray.push(f);
+          const rowClean = row.replace(ElasticsearchQuery.POST_TAG, '');
+          previousIndex = previousIndex + rowClean.length;
         } else {
-          console.error('highlight number of fragments has to be 0');
+          previousIndex = previousIndex + row.length;
         }
       }
+      return highlightArray;
     }
-    return highlightArray;
+    return [];
   }
 
   getOnlyMatchingFacts(fieldFacts: TextaFact[], highlightConfig: HighlightConfig): TextaFact[] {

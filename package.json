@@ -1,6 +1,6 @@
 {
   "name": "texta",
-  "version": "1.1.47",
+  "version": "1.1.48",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -24,8 +24,10 @@
     "@angular/platform-browser-dynamic": "~8.2.14",
     "@angular/router": "~8.2.14",
     "@swimlane/ngx-charts": "^12.0.1",
+    "@types/linkify-it": "^2.1.0",
     "core-js": "^2.5.4",
     "hammerjs": "^2.0.8",
+    "linkify-it": "^2.2.0",
     "ngx-infinite-scroll": "^8.0.0",
     "ngx-material-file-input": "^2.0.0",
     "rxjs": "~6.5.3",
