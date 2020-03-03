@@ -25,7 +25,10 @@
       class="pointer" [matMenuTriggerFor]="models">
       <button mat-button class="nav-button">
         <mat-icon class="margin-right">storage</mat-icon>
-        Models
+        Models({{projectResourceCounts?.num_torchtaggers +
+      projectResourceCounts?.num_taggers +
+      projectResourceCounts?.num_tagger_groups +
+      projectResourceCounts?.num_embeddings}})
         <mat-icon>arrow_drop_down</mat-icon>
       </button>
     </a>
@@ -62,7 +65,8 @@
     </mat-menu>
 
     <div class="flex-item-right login" *ngIf="!user">
-      <button mat-stroked-button class="nav-button" (click)="registerDialog()" data-cy="appNavbarRegister">REGISTER</button>
+      <button mat-stroked-button class="nav-button" (click)="registerDialog()" data-cy="appNavbarRegister">REGISTER
+      </button>
       <button mat-stroked-button class="nav-button" id="loginButton" (click)="loginDialog()">LOG IN</button>
     </div>
 

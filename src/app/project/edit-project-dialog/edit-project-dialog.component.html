@@ -2,15 +2,14 @@
 <form class="flex-col" [formGroup]="projectForm" (ngSubmit)="onSubmit(projectForm.value)">
   <div class="dialog-content-wrapper" mat-dialog-content>
     <mat-form-field class="max-width" data-cy="appProjectEditDialogIndices">
-      <mat-label>Select Indices</mat-label>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
-                  formControlName="indicesFormControl" required multiple>
-        <mat-option *ngFor="let item of indices" [value]="item">
+      <mat-select formControlName="indicesFormControl" placeholder="Select Indices" required multiple>
+        <ngx-mat-select-search [formControl]="indicesFilterFormControl" placeholderLabel="Search" #multiSelect></ngx-mat-select-search>
+        <mat-option *ngFor="let item of (filteredIndices | async)" [value]="item">
           {{item}}
         </mat-option>
       </mat-select>
       <mat-error *ngIf="projectForm.get('indicesFormControl')?.hasError('required')">
-        Select at least 1 index
+        Index is <strong>required</strong>
       </mat-error>
     </mat-form-field>
     <mat-form-field class="max-width">

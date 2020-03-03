@@ -1,4 +1,30 @@
 <div class="wrapper mat-elevation-z8">
+  <div class="table-paginator-row">
+    <div class="loading-bar">
+      <mat-progress-bar mode="indeterminate" *ngIf="isLoadingResults"></mat-progress-bar>
+    </div>
+    <div class="paginator-row">
+      <button class="new-resource-btn" mat-button color="primary" (click)="openCreateDialog()">
+        <mat-icon>add</mat-icon>
+        CREATE
+      </button>
+      <button class="new-resource-btn" mat-icon-button color="warn" (click)="onDeleteAllSelected()"
+              matTooltip="Delete selected" [disabled]="selectedRows.selected.length < 1">
+        <mat-icon>delete</mat-icon>
+      </button>
+      <mat-form-field class="m-l-15">
+        <mat-icon matSuffix>search</mat-icon>
+        <input matInput (keyup)="applyFilter($event.target.value, 'description')" placeholder="Filter description">
+      </mat-form-field>
+      <mat-form-field class="m-l-15">
+        <mat-icon matSuffix>search</mat-icon>
+        <input matInput (keyup)="applyFilter($event.target.value, 'task_status')" placeholder="Filter task status">
+      </mat-form-field>
+      <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons [length]="resultsLength">
+      </mat-paginator>
+    </div>
+  </div>
+
   <div class="table-container">
     <table mat-table [dataSource]="tableData"
            matSort matSortActive="id" matSortDisableClear matSortDirection="asc"
@@ -36,7 +62,7 @@
       </ng-container>
       <ng-container matColumnDef="fields">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Fields</th>
-        <td mat-cell *matCellDef="let element"> {{element.fields}}</td>
+        <td mat-cell *matCellDef="let element"> {{element.fields.join(', ')}}</td>
       </ng-container>
 
       <ng-container matColumnDef="id">
@@ -174,11 +200,11 @@
         </td>
       </ng-container>
       <ng-container matColumnDef="Modify">
-        <th mat-header-cell class="center-header-cell" *matHeaderCellDef>Edit</th>
+        <th mat-header-cell class="center-header-cell" *matHeaderCellDef>Actions</th>
         <td mat-cell *matCellDef="let element; let i = dataIndex" (click)="$event.stopPropagation();">
 
           <button mat-icon-button color="primary" [matMenuTriggerFor]="editMenu">
-            <mat-icon aria-label="Edit Options">more_vert</mat-icon>
+            <mat-icon aria-label="Actions">more_vert</mat-icon>
           </button>
           <mat-menu #editMenu="matMenu">
             <div *ngIf="element.task.status === 'completed'">
@@ -203,31 +229,5 @@
 
     </table>
 
-  </div>
-
-  <div class="table-paginator-row">
-    <div class="loading-bar">
-      <mat-progress-bar mode="indeterminate" *ngIf="isLoadingResults"></mat-progress-bar>
-    </div>
-    <div class="paginator-row">
-      <button class="new-resource-btn" mat-button color="primary" (click)="openCreateDialog()">
-        <mat-icon>add</mat-icon>
-        CREATE
-      </button>
-      <button class="new-resource-btn" mat-icon-button color="warn" (click)="onDeleteAllSelected()"
-              matTooltip="Delete selected" [disabled]="selectedRows.selected.length < 1">
-        <mat-icon>delete</mat-icon>
-      </button>
-      <mat-form-field class="m-l-15">
-        <mat-icon matSuffix>search</mat-icon>
-        <input matInput (keyup)="applyFilter($event.target.value, 'description')" placeholder="Filter description">
-      </mat-form-field>
-      <mat-form-field class="m-l-15">
-        <mat-icon matSuffix>search</mat-icon>
-        <input matInput (keyup)="applyFilter($event.target.value, 'task_status')" placeholder="Filter task status">
-      </mat-form-field>
-      <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons [length]="resultsLength">
-      </mat-paginator>
-    </div>
   </div>
 </div>

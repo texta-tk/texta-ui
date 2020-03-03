@@ -17,23 +17,24 @@
 
 
 .health-table {
-  max-width: 500px;
+  max-width: 725px;
   padding: 50px;
 }
 
 .usage-card {
-  max-width: 600px;
+  max-width: 725px;
   margin-bottom: 10px;
 }
 
 .service-status-card {
   margin-top: 10px;
-  max-width: 600px;
+  max-width: 725px;
+  justify-content: space-evenly;
   margin-bottom: 10px;
 }
 
 .counts-card {
-  max-width: 600px;
+  max-width: 725px;
 }
 
 .count-text {
@@ -46,6 +47,6 @@
 }
 
 .unreachable-card {
-  max-width: 600px;
+  max-width: 725px;
   margin-top: 10px;
 }

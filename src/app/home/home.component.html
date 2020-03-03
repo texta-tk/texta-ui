@@ -12,6 +12,8 @@
             MLP {{health.mlp.alive ? 'ONLINE' : 'OFFLINE'}}  </mat-chip>
           <mat-chip selected color="primary"> API VERSION {{health.version}}  </mat-chip>
           <mat-chip selected color="primary"> VERSION {{frontVersion}}  </mat-chip>
+          <mat-chip selected [color]="health.redis.alive ? 'primary' : 'accent'">
+            Redis {{health.redis.alive ? 'ONLINE' : 'OFFLINE'}}  </mat-chip>
         </mat-chip-list>
       </mat-card>
 

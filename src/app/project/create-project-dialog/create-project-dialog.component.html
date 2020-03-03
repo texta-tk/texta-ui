@@ -21,12 +21,10 @@
         User is <strong>required</strong>
       </mat-error>
     </mat-form-field>
-
     <mat-form-field data-cy="appProjectCreateDialogIndices">
-      <mat-label>Select Indices</mat-label>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
-                  formControlName="indicesFormControl" multiple required>
-        <mat-option *ngFor="let item of indices" [value]="item">
+      <mat-select formControlName="indicesFormControl" placeholder="Select Indices" required [multiple]="true">
+        <ngx-mat-select-search [formControl]="indicesFilterFormControl" placeholderLabel="Search"></ngx-mat-select-search>
+        <mat-option *ngFor="let item of (filteredIndices | async)" [value]="item">
           {{item}}
         </mat-option>
       </mat-select>

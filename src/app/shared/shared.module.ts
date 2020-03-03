@@ -44,6 +44,7 @@ import {MatTreeModule} from '@angular/material/tree';
 import {MaterialFileInputModule} from 'ngx-material-file-input';
 import {FormatTextaFactsPipe} from './pipes/format-texta-facts.pipe';
 import { IsObjectPipe } from './pipes/is-object.pipe';
+import {NgxMatSelectSearchModule} from 'ngx-mat-select-search';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
@@ -91,6 +92,7 @@ import { IsObjectPipe } from './pipes/is-object.pipe';
     LineChartModule,
     InfiniteScrollModule,
     MaterialFileInputModule,
+    NgxMatSelectSearchModule
   ],
   exports: [
     CommonModule,
@@ -127,13 +129,13 @@ import { IsObjectPipe } from './pipes/is-object.pipe';
     MatTreeModule,
     GenericTableComponent,
     SavedSearchAutocompleteComponent,
-
     MatOptionSelectAllComponent,
     FormatTextaFactsPipe,
     IsObjectPipe,
     LineChartModule,
     InfiniteScrollModule,
     MaterialFileInputModule,
+    NgxMatSelectSearchModule
   ],
   entryComponents: [
     LoginDialogComponent,

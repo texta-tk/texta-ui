@@ -9,7 +9,8 @@ import {Project} from '../../shared/types/Project';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LogService} from 'src/app/core/util/log.service';
 import {UserStore} from '../../core/users/user.store';
-import {of, Subject} from 'rxjs';
+import {of, ReplaySubject, Subject} from 'rxjs';
+import {takeUntil} from "rxjs/operators";
 
 @Component({
   selector: 'app-create-embedding-dialog',
@@ -26,9 +27,11 @@ export class CreateProjectDialogComponent implements OnInit, OnDestroy {
     indicesFormControl: new FormControl([], [Validators.required]),
   });
 
+  public filteredIndices: Subject<string[]> = new Subject<string[]>();
+  indicesFilterFormControl = new FormControl();
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   users: UserProfile[];
-  indices: unknown[] = [];
+  indices: string[] = [];
 
   destroyed$: Subject<boolean> = new Subject<boolean>();
 
@@ -50,8 +53,15 @@ export class CreateProjectDialogComponent implements OnInit, OnDestroy {
         this.logService.snackBarError(resp, 5000);
       } else {
         this.indices = resp;
+        this.filteredIndices.next(this.indices.slice());
       }
     });
+
+    this.indicesFilterFormControl.valueChanges
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe(() => {
+        this.filterIndices();
+      });
   }
 
   onSubmit(formData) {
@@ -71,6 +81,24 @@ export class CreateProjectDialogComponent implements OnInit, OnDestroy {
 
   closeDialog(): void {
     this.dialogRef.close();
+  }
+
+  protected filterIndices() {
+    if (!this.indices) {
+      return;
+    }
+    // get the search keyword
+    let search = this.indicesFilterFormControl.value;
+    if (!search) {
+      this.filteredIndices.next(this.indices.slice());
+      return;
+    } else {
+      search = search.toLowerCase();
+    }
+    // filter the banks
+    this.filteredIndices.next(
+      this.indices.filter(index => index.toLowerCase().indexOf(search) > -1)
+    );
   }
 
   ngOnDestroy(): void {
