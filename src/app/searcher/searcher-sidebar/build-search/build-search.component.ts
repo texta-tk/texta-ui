@@ -5,14 +5,7 @@ import {of, Subject} from 'rxjs';
 import {debounceTime, switchMap, takeUntil} from 'rxjs/operators';
 import {ProjectService} from '../../../core/projects/project.service';
 import {ProjectStore} from '../../../core/projects/project.store';
-import {
-  Constraint,
-  DateConstraint,
-  ElasticsearchQuery,
-  FactConstraint,
-  FactTextInputGroup,
-  TextConstraint
-} from './Constraints';
+import {Constraint, DateConstraint, ElasticsearchQuery, FactConstraint, FactTextInputGroup, TextConstraint} from './Constraints';
 import {HttpErrorResponse} from '@angular/common/http';
 import {SearcherService} from '../../../core/searcher/searcher.service';
 import {MatSelectChange} from '@angular/material';
@@ -95,14 +88,18 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     });
 
     this.searchService.getSearchQueue().pipe(debounceTime(SearcherOptions.SEARCH_DEBOUNCE_TIME), takeUntil(this.destroy$), switchMap(x => {
-      this.searchService.setIsLoading(true);
-      if (this.elasticQuery.size === 0) { // aggregations use size 0
-        this.elasticQuery.size = 10;
+      if (this.currentProject) {
+        this.searchService.setIsLoading(true);
+        if (this.elasticQuery.size === 0) { // aggregations use size 0
+          this.elasticQuery.size = 10;
+        }
+        return this.searcherService.search({
+          query: this.elasticQuery.elasticSearchQuery,
+          indices: this.indexSelection.selected
+        }, this.currentProject.id);
+      } else {
+        return of(null);
       }
-      return this.searcherService.search({
-        query: this.elasticQuery.elasticSearchQuery,
-        indices: this.indexSelection.selected
-      }, this.currentProject.id);
     })).subscribe(
       (result: { count: number, results: { highlight: any, doc: any }[] } | HttpErrorResponse) => {
         this.searchService.setIsLoading(false);

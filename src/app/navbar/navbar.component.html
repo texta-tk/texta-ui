@@ -75,9 +75,9 @@
       <mat-form-field class="project-select">
         <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
                     data-cy="appNavbarProjectSelect"
-                    [formControl]="projectControl" (selectionChange)="selectProject($event.value)"
+                    [formControl]="projectControl" (selectionChange)="projectStore.setCurrentProject($event.value)"
                     [placeholder]="projects?.length < 1 ? 'No projects' : ''">
-          <mat-option *ngFor="let item of projects" [value]="item">
+          <mat-option *ngFor="let item of projects; trackBy:trackById" [value]="item">
             {{item.id}}: {{item.title}}
           </mat-option>
         </mat-select>

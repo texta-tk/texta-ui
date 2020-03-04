@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Project} from '../shared/types/Project';
 import {HttpErrorResponse} from '@angular/common/http';
 import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
-import {from, Observable, Subject, Subscription} from 'rxjs';
+import {from, Observable, Subject} from 'rxjs';
 import {LogService} from '../core/util/log.service';
 import {CreateProjectDialogComponent} from './create-project-dialog/create-project-dialog.component';
 import {ProjectStore} from '../core/projects/project.store';
@@ -88,12 +88,17 @@ export class ProjectComponent implements OnInit, OnDestroy {
     });
     dialogRef.afterClosed().pipe(takeUntil(this.destroyed$)).subscribe((resp: Project | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.projectStore.refreshProjects();
+        this.projectStore.refreshProjects(); // we also need to keep the navbar project select in sync not just table
         this.logService.snackBarMessage(`Created project ${resp.title}`, 2000);
+        this.projectStore.setCurrentProject(resp);
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       }
     });
+  }
+
+  trackById(index, item: Project) {
+    return item.id;
   }
 
   onDelete(project: Project) {
@@ -107,12 +112,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
           if (resp && resp.status === 403) {
             this.logService.snackBarMessage(resp.error.detail, 4000);
           } else if (!(resp instanceof HttpErrorResponse)) {
+            this.projectStore.refreshProjects(); // we also need to keep the navbar project select in sync not just table
             this.logService.snackBarMessage(`Deleted project ${project.title}`, 3000);
-            const index = this.tableData.data.indexOf(project, 0);
-            if (index > -1) {
-              this.tableData.data.splice(index, 1);
-              this.tableData.data = [...this.tableData.data];
-            }
           }
         });
       }

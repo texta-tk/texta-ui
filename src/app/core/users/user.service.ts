@@ -89,4 +89,10 @@ export class UserService {
       catchError(this.logService.handleError<UserProfile>('toggleSuperUser')));
   }
 
+  deleteUser(url: string) {
+    return this.http.delete(url).pipe(
+      tap(e => this.logService.logStatus(e, 'deleteUser')),
+      catchError(this.logService.handleError<unknown>('deleteUser')));
+  }
+
 }

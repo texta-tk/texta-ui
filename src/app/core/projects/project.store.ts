@@ -1,13 +1,13 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, forkJoin, Observable, of} from 'rxjs';
 
-import {Field, Project, ProjectFact, ProjectField} from '../../shared/types/Project';
+import {Project, ProjectFact, ProjectField} from '../../shared/types/Project';
 import {ProjectService} from './project.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../util/log.service';
 import {UserStore} from '../users/user.store';
 import {switchMap} from 'rxjs/operators';
-import {ElasticsearchQuery} from '../../searcher/searcher-sidebar/build-search/Constraints';
+import {LocalStorageService} from '../util/local-storage.service';
 
 
 @Injectable({
@@ -21,6 +21,7 @@ export class ProjectStore {
 
   constructor(private projectService: ProjectService,
               private logService: LogService,
+              private localStorageService: LocalStorageService,
               private userStore: UserStore) {
     this.userStore.getCurrentUser().subscribe(currentUser => {
       if (currentUser) {
@@ -44,7 +45,7 @@ export class ProjectStore {
   }
 
   // when we change project get its fields and facts aswell
-  loadProjectFieldsAndFacts() {
+  private loadProjectFieldsAndFacts() {
     this.selectedProject$.pipe(switchMap((project: Project) => {
       if (project) {
         return forkJoin({
@@ -80,6 +81,7 @@ export class ProjectStore {
   }
 
   setCurrentProject(project: Project | null) {
+    this.localStorageService.setCurrentlySelectedProject(project);
     this.selectedProject$.next(project);
   }
 }

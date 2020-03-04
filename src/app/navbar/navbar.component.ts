@@ -12,7 +12,7 @@ import {ProjectStore} from '../core/projects/project.store';
 import {of, Subject} from 'rxjs';
 import {RegistrationDialogComponent} from '../shared/components/dialogs/registration/registration-dialog.component';
 import {LogService} from '../core/util/log.service';
-import {switchMap, takeUntil} from 'rxjs/operators';
+import {switchMap, take, takeUntil} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Router} from '@angular/router';
 
@@ -33,7 +33,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
               private userStore: UserStore,
               private userService: UserService,
               private localStorageService: LocalStorageService,
-              private projectStore: ProjectStore,
+              public projectStore: ProjectStore,
               private logService: LogService,
               public router: Router,
               private projectService: ProjectService) {
@@ -50,6 +50,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     });
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), switchMap(proj => {
       if (proj) {
+        this.projectControl.setValue(proj); // we set active project when we create a new project at proj component for example
         return this.projectService.getResourceCounts(proj.id);
       }
       return of(null);
@@ -69,19 +70,20 @@ export class NavbarComponent implements OnInit, OnDestroy {
         const cachedProject = !!selectedProj ?
           this.projects.find(x => x.id === selectedProj.id) : null;
         if (cachedProject) {
-          this.projectControl.setValue(cachedProject);
-          this.projectStore.setCurrentProject(cachedProject);
+          this.projectStore.getCurrentProject().pipe(take(1)).subscribe(y => {
+            // project from localstorage isnt active currently (happens when we reload page for example)
+            if (!y) {
+              this.projectStore.setCurrentProject(cachedProject);
+            } else {
+              // new projects list doesnt have same object identifier so it wouldnt show old selected project cause it cant find it anymore
+              this.projectControl.setValue(cachedProject);
+            }
+          });
         } else {
-          this.projectControl.setValue(projects[0]);
           this.projectStore.setCurrentProject(projects[0]);
         }
       }
     });
-  }
-
-  public selectProject(selectedOption: Project) {
-    this.localStorageService.setCurrentlySelectedProject(selectedOption);
-    this.projectStore.setCurrentProject(selectedOption);
   }
 
   registerDialog() {
@@ -110,6 +112,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
       });
   }
 
+  trackById(index, item: Project) {
+    return item.id;
+  }
 
   ngOnDestroy() {
     this.destroyed$.next(true);

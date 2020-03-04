@@ -35,7 +35,7 @@ export class LocalStorageService {
     return null;
   }
 
-  public setCurrentlySelectedProject(value: Project) {
+  public setCurrentlySelectedProject(value: Project | null) {
     localStorage.setItem('selectedProject', JSON.stringify(value));
   }
 
