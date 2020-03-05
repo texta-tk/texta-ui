@@ -3,6 +3,7 @@
 </mat-form-field>
 <mat-checkbox [(ngModel)]="lemmatize" class="margin-right">Lemmatize</mat-checkbox>
 <mat-checkbox [(ngModel)]="feedback">Feedback</mat-checkbox>
+<mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
 <div *ngIf="result" class="m-top-10">
   <span class="mat-body-strong">Result: </span>{{result.result}}
   <br>

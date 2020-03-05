@@ -24,11 +24,14 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
   users: UserProfile[] = [];
   selectedUsers: string[] = [];
   projectForm = new FormGroup({
+    titleFormControl: new FormControl('', [
+      Validators.required,
+    ]),
     indicesFormControl: new FormControl([], Validators.required),
     usersFormControl: new FormControl(this.selectedUsers, Validators.required),
   });
   destroyed$: Subject<boolean> = new Subject<boolean>();
-  @ViewChild('multiSelect', { static: true }) multiSelect: MatSelect;
+  @ViewChild('multiSelect', {static: true}) multiSelect: MatSelect;
 
   constructor(public dialogRef: MatDialogRef<EditProjectDialogComponent>,
               private logService: LogService,
@@ -41,6 +44,11 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
       indices.setValue(this.data.indices);
     }
 
+
+    const title = this.projectForm.get('titleFormControl');
+    if (title && this.data.title) {
+      title.setValue(this.data.title);
+    }
     if (this.data.users) {
       from(this.data.users).pipe(mergeMap(url => {
         return this.userService.getUserByUrl(url);
@@ -117,6 +125,7 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
   onSubmit(formData) {
     this.data.indices = formData.indicesFormControl;
     this.data.users = formData.usersFormControl;
+    this.data.title = formData.titleFormControl;
     this.projectService.editProject(this.data, this.data.id).subscribe((resp: Project | HttpErrorResponse) => {
       if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);

@@ -15,6 +15,7 @@ export class TagDocDialogComponent implements OnInit {
   defaultDoc: string;
   result: { result: boolean, probability: number, feedback?: { id: string } };
   feedback = false;
+  isLoading = false;
 
   constructor(private taggerService: TaggerService, private logService: LogService,
               @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, tagger: Tagger; }) {
@@ -27,6 +28,7 @@ export class TagDocDialogComponent implements OnInit {
   }
 
   onSubmit(doc) {
+    this.isLoading = true;
     this.taggerService.tagDocument({
       doc: JSON.parse(doc),
       lemmatize: this.lemmatize,
@@ -38,6 +40,6 @@ export class TagDocDialogComponent implements OnInit {
         } else if (resp instanceof HttpErrorResponse) {
           this.logService.snackBarError(resp, 4000);
         }
-      });
+      }, null, () => this.isLoading = false);
   }
 }

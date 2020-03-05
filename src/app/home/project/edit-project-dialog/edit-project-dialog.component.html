@@ -1,9 +1,16 @@
 <h1 mat-dialog-title>Edit</h1>
 <form class="flex-col" [formGroup]="projectForm" (ngSubmit)="onSubmit(projectForm.value)">
   <div class="dialog-content-wrapper" mat-dialog-content>
+    <mat-form-field class="max-width" data-cy="appProjectEditDialogTitle">
+      <input matInput placeholder="Title" autocomplete="off" formControlName="titleFormControl" required>
+      <mat-error *ngIf="projectForm.get('titleFormControl')?.hasError('required')">
+        Title is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
     <mat-form-field class="max-width" data-cy="appProjectEditDialogIndices">
       <mat-select formControlName="indicesFormControl" placeholder="Select Indices" required multiple>
-        <ngx-mat-select-search [formControl]="indicesFilterFormControl" placeholderLabel="Search" #multiSelect></ngx-mat-select-search>
+        <ngx-mat-select-search [formControl]="indicesFilterFormControl" placeholderLabel="Search"
+                               #multiSelect></ngx-mat-select-search>
         <mat-option *ngFor="let item of (filteredIndices | async)" [value]="item">
           {{item}}
         </mat-option>

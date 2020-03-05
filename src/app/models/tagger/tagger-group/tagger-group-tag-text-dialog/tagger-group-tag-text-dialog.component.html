@@ -8,6 +8,10 @@
 </mat-form-field>
 <mat-checkbox [(ngModel)]="lemmatize" class="margin-right">Lemmatize</mat-checkbox>
 <mat-checkbox [(ngModel)]="ner">Use NER</mat-checkbox>
+<mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+<div class="m-top-10" *ngIf="!isLoading && results && results.length < 1">
+  <span class="mat-hint"> <i>No results</i></span>
+</div>
 <div class="m-top-10" *ngFor="let result of results">
   <span class="mat-body-strong">Tagger id:</span> {{result.tagger_id}}
   <br>
