@@ -25,7 +25,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
   private urlsToRequest: Subject<string[]> = new Subject();
   public projectUsers$: Observable<(UserProfile | HttpErrorResponse)[]>;
   public tableData: MatTableDataSource<Project>;
-  public displayedColumns = ['title', 'indices_count', 'users_count'];
+  public displayedColumns = ['id', 'title', 'indices_count', 'users_count'];
   public isLoadingResults = true;
   public currentUser: UserProfile;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
