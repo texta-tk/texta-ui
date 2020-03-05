@@ -1,4 +1,26 @@
 <div class="wrapper">
+  <div class="table-paginator-row">
+    <div class="loading-bar">
+      <mat-progress-bar mode="indeterminate" *ngIf="searchService.getIsLoading() | async"></mat-progress-bar>
+    </div>
+
+    <div class="paginator-row">
+      <mat-form-field class="margin-right">
+        <mat-label>Toggle Columns</mat-label>
+        <mat-select [formControl]="columnFormControl" multiple (openedChange)="onOpenedChange($event)">
+          <app-mat-option-select-all></app-mat-option-select-all>
+          <mat-option *ngFor="let column of displayedColumns" [value]="column">
+            {{column}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button mat-stroked-button (click)="drawerToggle.emit(true)">Toggle drawer</button>
+      <mat-paginator (page)="pageChange($event)" [pageSizeOptions]="[10, 20, 50]" [length]="paginatorLength"
+                     showFirstLastButtons>
+
+      </mat-paginator>
+    </div>
+  </div>
   <div [hidden]="displayedColumns.length === 0">
     <div class="table-container">
 
@@ -51,28 +73,5 @@
       </table>
 
     </div>
-    <div class="table-paginator-row">
-      <div class="loading-bar">
-        <mat-progress-bar mode="indeterminate" *ngIf="searchService.getIsLoading() | async"></mat-progress-bar>
-      </div>
-
-      <div class="paginator-row">
-        <mat-form-field class="margin-right">
-          <mat-label>Toggle Columns</mat-label>
-          <mat-select [formControl]="columnFormControl" multiple (openedChange)="onOpenedChange($event)">
-            <app-mat-option-select-all></app-mat-option-select-all>
-            <mat-option *ngFor="let column of displayedColumns" [value]="column">
-              {{column}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-        <button mat-stroked-button (click)="drawerToggle.emit(true)">Toggle drawer</button>
-        <mat-paginator (page)="pageChange($event)" [pageSizeOptions]="[10, 20, 50]" [length]="paginatorLength"
-                       showFirstLastButtons>
-
-        </mat-paginator>
-      </div>
-    </div>
-
   </div>
 </div>

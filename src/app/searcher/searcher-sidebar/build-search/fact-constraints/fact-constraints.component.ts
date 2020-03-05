@@ -43,7 +43,7 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
   factNameOperatorFormControl = new FormControl();
   factNameFormControl = new FormControl();
   factTextOperatorFormControl = new FormControl();
-  inputGroupQueryArray = [];
+  inputGroupQueryArray: any[] = [];
   formQueryBluePrint = {
     nested: {
       query: {
@@ -58,10 +58,10 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
       }
     }
   };
-  factNameQuery = {
+  factNameQuery: any = {
     bool: {}
   };
-  inputGroupQuery = {
+  inputGroupQuery: any = {
     bool: {}
   };
 
@@ -87,7 +87,9 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
       takeUntil(this.destroyed$),
       startWith(inputGroup.factTextOperatorFormControl.value as string)).subscribe(val => {
       if (val) {
-        inputGroup.query.bool = {[val]: inputGroup.formQuery};
+        // todo fix in TS 3.7
+        // tslint:disable-next-line:no-non-null-assertion
+        inputGroup!.query!.bool = {[val]: inputGroup!.formQuery};
       }
     });
     inputGroup.factTextFactNameFormControl.valueChanges.pipe(
@@ -95,10 +97,14 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
       startWith(inputGroup.factTextFactNameFormControl.value as string),
       pairwise()).subscribe(([prev, next]: [string, string]) => {
       if (next) {
-        inputGroup.factTextInputFormControl.enable();
+        // todo fix in TS 3.7
+        // tslint:disable-next-line:no-non-null-assertion
+        inputGroup!.factTextInputFormControl.enable();
         // set inital value to autocomplete after selecting a new fact name
         if (next !== prev) {
-          inputGroup.factTextInputFormControl.setValue('');
+          // todo fix in TS 3.7
+          // tslint:disable-next-line:no-non-null-assertion
+          inputGroup!.factTextInputFormControl.setValue('');
         }
       }
     });
@@ -106,15 +112,19 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
       takeUntil(this.destroyed$),
       debounceTime(100),
       switchMap(value => {
-        if ((value || value === '' && inputGroup.factTextFactNameFormControl.value) && this.currentProject) {
+        // todo fix in TS 3.7
+        // tslint:disable-next-line:no-non-null-assertion
+        if ((value || value === '' && inputGroup!.factTextFactNameFormControl.value) && this.currentProject && inputGroup ) {
           inputGroup.filteredOptions = ['Loading...'];
           inputGroup.isLoadingOptions = true;
           return this.projectService.projectFactValueAutoComplete(this.currentProject.id,
-            inputGroup.factTextFactNameFormControl.value, 10, value);
+            // todo fix in TS 3.7
+            // tslint:disable-next-line:no-non-null-assertion
+            inputGroup!.factTextFactNameFormControl.value, 10, value);
         }
         return of(null);
       })).subscribe((val: string[] | HttpErrorResponse) => {
-      if (val && !(val instanceof HttpErrorResponse)) {
+      if (val && !(val instanceof HttpErrorResponse) && inputGroup) {
         inputGroup.isLoadingOptions = false;
         inputGroup.filteredOptions = val;
         // if it returned something then it means its a valid value
@@ -149,9 +159,11 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (this._factConstraint) {
-      const formQueries = [];
+      const formQueries: any[] = [];
       this.factNameQuery.bool = {[this.factNameOperatorFormControl.value]: formQueries};
-      this.elasticSearchQuery.elasticSearchQuery.query.bool.must.push(this.factNameQuery);
+      // todo fix in TS 3.7
+      // tslint:disable-next-line:no-non-null-assertion
+      this.elasticSearchQuery!.elasticSearchQuery!.query!.bool!.must.push(this.factNameQuery);
       this.factNameOperatorFormControl.valueChanges.pipe(
         startWith(this.factNameOperatorFormControl.value as string, this.factNameOperatorFormControl.value as string),
         pairwise(),
@@ -184,7 +196,9 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
         }
       });
       this.inputGroupQuery.bool = {[this.factTextOperatorFormControl.value]: this.inputGroupQueryArray};
-      this.elasticSearchQuery.elasticSearchQuery.query.bool.must.push(this.inputGroupQuery);
+      // todo fix in TS 3.7
+      // tslint:disable-next-line:no-non-null-assertion
+      this.elasticSearchQuery!.elasticSearchQuery!.query!.bool!.must.push(this.inputGroupQuery);
       this.factTextOperatorFormControl.valueChanges.pipe(
         startWith(this.factTextOperatorFormControl.value as string, this.factTextOperatorFormControl.value as string),
         pairwise(),
@@ -201,14 +215,21 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     console.log('destroy fact-constraint');
-    const index = this.elasticSearchQuery.elasticSearchQuery.query.bool.must.indexOf(this.factNameQuery, 0);
+    // todo fix in TS 3.7
+    // tslint:disable-next-line:no-non-null-assertion
+    const index = this.elasticSearchQuery!.elasticSearchQuery!.query!.bool!.must.indexOf(this.factNameQuery, 0);
     if (index > -1) {
-      this.elasticSearchQuery.elasticSearchQuery.query.bool.must.splice(index, 1);
+      // todo fix in TS 3.7
+      // tslint:disable-next-line:no-non-null-assertion
+      this.elasticSearchQuery!.elasticSearchQuery!.query!.bool!.must.splice(index, 1);
     }
-
-    const inputQueryIndex = this.elasticSearchQuery.elasticSearchQuery.query.bool.must.indexOf(this.inputGroupQuery, 0);
+    // todo fix in TS 3.7
+    // tslint:disable-next-line:no-non-null-assertion
+    const inputQueryIndex = this.elasticSearchQuery!.elasticSearchQuery!.query!.bool!.must.indexOf(this.inputGroupQuery, 0);
     if (inputQueryIndex > -1) {
-      this.elasticSearchQuery.elasticSearchQuery.query.bool.must.splice(inputQueryIndex, 1);
+      // todo fix in TS 3.7
+      // tslint:disable-next-line:no-non-null-assertion
+      this.elasticSearchQuery.elasticSearchQuery!.query!.bool!.must.splice(inputQueryIndex, 1);
     }
 
     this.change.emit(this.elasticSearchQuery);

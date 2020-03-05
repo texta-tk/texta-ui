@@ -7,7 +7,7 @@
              formControlName="usernameFormControl"
              [errorStateMatcher]="matcher">
 
-      <mat-error *ngIf="profileForm.get('usernameFormControl').hasError('required')">
+      <mat-error *ngIf="profileForm.get('usernameFormControl')?.hasError('required')">
         Username is <strong>required</strong>
       </mat-error>
     </mat-form-field>
@@ -18,7 +18,7 @@
              formControlName="passwordFormControl"
              [type]="hide ? 'password' : 'text'" [errorStateMatcher]="matcher">
       <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-      <mat-error *ngIf="profileForm.get('passwordFormControl').hasError('required')">
+      <mat-error *ngIf="profileForm.get('passwordFormControl')?.hasError('required')">
         Password is <strong>required</strong>
       </mat-error>
     </mat-form-field>

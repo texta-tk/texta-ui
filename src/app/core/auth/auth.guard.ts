@@ -63,6 +63,7 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
               });
               return false;
             }
+            return false;
           }
         ));
       }

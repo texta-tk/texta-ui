@@ -30,6 +30,10 @@ const routes: Routes = [
     data: {role: USERROLES.SUPERUSER},
     component: ManagementComponent,
   },
+  {
+    path: '**',
+    redirectTo: ''
+  },
 ];
 
 @NgModule({

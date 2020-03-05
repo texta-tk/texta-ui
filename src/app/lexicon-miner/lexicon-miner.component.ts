@@ -20,7 +20,7 @@ export class LexiconMinerComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   lexicons: Lexicon[] = [];
   newLexiconDescription = '';
-  selectedLexicon: Lexicon;
+  selectedLexicon: Lexicon | null;
   currentProject: Project;
   pageSize = 30;
   totalLexicons: number;

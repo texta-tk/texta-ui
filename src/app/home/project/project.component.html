@@ -1,7 +1,26 @@
 <div class="wrapper">
+
+  <div class="table-paginator-row">
+    <div class="loading-bar">
+      <mat-progress-bar mode="indeterminate" *ngIf="isLoadingResults"></mat-progress-bar>
+    </div>
+    <div class="paginator-row">
+      <button *ngIf="currentUser && currentUser.is_superuser" data-cy="appProjectCreateProject"
+              class="new-resource-btn"
+              mat-button
+              color="primary"
+              (click)="openCreateDialog()">
+        <mat-icon>add</mat-icon>
+        CREATE
+      </button>
+      <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
+      </mat-paginator>
+    </div>
+  </div>
+
   <div class="table-container">
     <table mat-table [dataSource]="tableData" matSort
-           matSort matSortActive="id" matSortDisableClear matSortDirection="asc">
+           matSort matSortActive="id" matSortDisableClear matSortDirection="desc" [trackBy]="trackById">
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
         <td mat-cell *matCellDef="let element">{{ element.id }}</td>
@@ -71,7 +90,7 @@
       </ng-container> -->
 
       <ng-container matColumnDef="Modify">
-        <th mat-header-cell class="center-header-cell" *matHeaderCellDef>Edit</th>
+        <th mat-header-cell class="center-header-cell" *matHeaderCellDef>Actions</th>
         <td mat-cell *matCellDef="let element; let i = index" (click)="$event.stopPropagation();">
           <button mat-icon-button color="primary" [matMenuTriggerFor]="editMenu">
             <mat-icon aria-label="Edit Options">more_vert</mat-icon>
@@ -97,21 +116,5 @@
     </table>
   </div>
 
-  <div class="table-paginator-row">
-    <div class="loading-bar">
-      <mat-progress-bar mode="indeterminate" *ngIf="isLoadingResults"></mat-progress-bar>
-    </div>
-    <div class="paginator-row">
-      <button *ngIf="currentUser && currentUser.is_superuser" data-cy="appProjectCreateProject"
-              class="new-resource-btn"
-              mat-button
-              color="primary"
-              (click)="openCreateDialog()">
-        <mat-icon>add</mat-icon>
-        CREATE
-      </button>
-      <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
-      </mat-paginator>
-    </div>
-  </div>
+
 </div>

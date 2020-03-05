@@ -75,12 +75,11 @@ export class ReindexerComponent implements OnInit, OnDestroy {
       });
 
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(
-      (resp: HttpErrorResponse | Project) => {
-        if (resp && !(resp instanceof HttpErrorResponse)) {
+      (resp: Project | null) => {
+        if (resp) {
           this.currentProject = resp;
           this.setUpPaginator();
-        } else if (resp instanceof HttpErrorResponse) {
-          this.logService.snackBarError(resp, 5000);
+        } else {
           this.isLoadingResults = false;
         }
       });
@@ -195,7 +194,7 @@ export class ReindexerComponent implements OnInit, OnDestroy {
 
 
   openQueryDialog(query: string) {
-    const dialogRef = this.dialog.open(QueryDialogComponent, {
+    this.dialog.open(QueryDialogComponent, {
       data: {query},
       maxHeight: '665px',
       width: '700px',
@@ -212,7 +211,9 @@ export class ReindexerComponent implements OnInit, OnDestroy {
   filterQueriesToString() {
     this.inputFilterQuery = '';
     for (const field in this.filteringValues) {
-      this.inputFilterQuery += `&${field}=${this.filteringValues[field]}`;
+      if (this.filteringValues.hasOwnProperty(field)) {
+        this.inputFilterQuery += `&${field}=${this.filteringValues[field]}`;
+      }
     }
   }
 

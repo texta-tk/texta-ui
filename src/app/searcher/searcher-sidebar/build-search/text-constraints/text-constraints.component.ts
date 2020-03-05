@@ -31,7 +31,7 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
 
   @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
   destroyed$: Subject<boolean> = new Subject<boolean>();
-  constraintQuery;
+  constraintQuery: any;
   // so i dont have to rename everything if i decide to refactor something
   textAreaFormControl: FormControl = new FormControl();
   slopFormControl: FormControl = new FormControl();
@@ -46,8 +46,8 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     if (this._textConstraint) {
       // multi line textarea, 1 formequery entry for each line
-      const formQueries = [];
-      const multiMatchBlueprint = {
+      const formQueries: any[] = [];
+      const multiMatchBlueprint: any = {
         multi_match: {
           query: '',
           type: this.matchFormControl.value,
@@ -61,8 +61,9 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
           [this.operatorFormControl.value]: formQueries
         }
       };
-
-      this.elasticSearchQuery.elasticSearchQuery.query.bool.should.push(this.constraintQuery);
+      // todo fix in TS 3.7
+      // tslint:disable-next-line:no-non-null-assertion
+      this.elasticSearchQuery!.elasticSearchQuery!.query!.bool!.should.push(this.constraintQuery);
       this.textAreaFormControl.valueChanges.pipe(
         takeUntil(this.destroyed$), // pairwise so i can avoid emitting when new constraint, need startwith for building query when savedsearch
         startWith(this.textAreaFormControl.value as object, this.textAreaFormControl.value as object), pairwise()).subscribe(value => {
@@ -120,13 +121,13 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
 
     if (textareaValues.length > 0) {
       for (const line of textareaValues) {
-        const newFormQuery = {
+        const newFormQuery: any = {
           bool: {
             should: [],
             minimum_should_match: 1
           }
         };
-        const regexQuery = {
+        const regexQuery: any = {
           regexp: {}
         };
         for (const field of fields) {
@@ -145,7 +146,7 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
     const textareaValues = this.stringToArray(formValue, '\n');
     if (textareaValues.length > 0) {
       for (const line of textareaValues) {
-        const newFormQuery = {
+        const newFormQuery: any = {
           bool: {
             should: [],
             minimum_should_match: 1
@@ -184,9 +185,13 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     console.log('destroy text-constraint');
-    const index = this.elasticSearchQuery.elasticSearchQuery.query.bool.should.indexOf(this.constraintQuery, 0);
+    // todo fix in TS 3.7
+    // tslint:disable-next-line:no-non-null-assertion
+    const index = this.elasticSearchQuery!.elasticSearchQuery!.query!.bool!.should.indexOf(this.constraintQuery, 0);
     if (index > -1) {
-      this.elasticSearchQuery.elasticSearchQuery.query.bool.should.splice(index, 1);
+      // todo fix in TS 3.7
+      // tslint:disable-next-line:no-non-null-assertion
+      this.elasticSearchQuery!.elasticSearchQuery!.query!.bool!.should!.splice(index, 1);
     }
     this.change.emit(this.elasticSearchQuery);
     this.destroyed$.next(true);

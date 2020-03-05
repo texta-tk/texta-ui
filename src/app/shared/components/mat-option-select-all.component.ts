@@ -1,30 +1,30 @@
 import {Component, OnInit, Host, AfterViewInit, OnDestroy} from '@angular/core';
 import { MatPseudoCheckboxState } from '@angular/material/core';
 import { MatSelect } from '@angular/material/select';
-import {ControlContainer, FormControl} from '@angular/forms';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
+
 @Component({
   selector: 'app-mat-option-select-all',
   template: `
-    <div class="mat-option" (click)="onSelectAllClick($event)">
-      <mat-pseudo-checkbox [state]="state" class="mat-option-pseudo-checkbox"></mat-pseudo-checkbox>
-      <span class="mat-option-text">Select all</span>
-    </div>
+      <div class="mat-option" (click)="onSelectAllClick($event)">
+          <mat-pseudo-checkbox [state]="state" class="mat-option-pseudo-checkbox"></mat-pseudo-checkbox>
+          <span class="mat-option-text">Select all</span>
+      </div>
   `,
   styles: [`
-    .mat-option {
-      border-bottom: 1px solid #ccc;
-      height: 3.5em;
-      line-height: 3.5em;
-    }`]
+      .mat-option {
+          border-bottom: 1px solid #ccc;
+          height: 3.5em;
+          line-height: 3.5em;
+      }`]
 })
 export class MatOptionSelectAllComponent implements AfterViewInit, OnDestroy {
 
   state: MatPseudoCheckboxState = 'checked';
 
-  private options = [];
-  private value = [];
+  private options: any[] = [];
+  private value: any[] | null = [];
 
   private destroyed = new Subject();
 
@@ -32,25 +32,29 @@ export class MatOptionSelectAllComponent implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.options = this.matSelect.options.map(x => x.value);
-    this.matSelect.options.changes
-      .pipe(takeUntil(this.destroyed))
-      .subscribe(res => {
-        this.options = this.matSelect.options.map(x => x.value);
-        this.updateState();
-      });
+    if (this.matSelect && this.matSelect.ngControl && this.matSelect.ngControl.control) {
+      this.options = this.matSelect.options.map(x => x.value);
+      this.matSelect.options.changes
+        .pipe(takeUntil(this.destroyed))
+        .subscribe(res => {
+          this.options = this.matSelect.options.map(x => x.value);
+          this.updateState();
+        });
 
-    this.value = this.matSelect.ngControl.control.value;
-    this.matSelect.ngControl.valueChanges
-      .pipe(takeUntil(this.destroyed))
-      .subscribe(res => {
-        this.value = res;
+      this.value = this.matSelect.ngControl.control.value;
+      // todo fix in TS 3.7
+      // tslint:disable-next-line:no-non-null-assertion
+      this.matSelect!.ngControl!.valueChanges!
+        .pipe(takeUntil(this.destroyed))
+        .subscribe(res => {
+          this.value = res;
+          this.updateState();
+        });
+      // ExpressionChangedAfterItHasBeenCheckedError fix...
+      setTimeout(() => {
         this.updateState();
       });
-    // ExpressionChangedAfterItHasBeenCheckedError fix...
-    setTimeout(() => {
-      this.updateState();
-    });
+    }
   }
 
   ngOnDestroy() {
@@ -60,9 +64,13 @@ export class MatOptionSelectAllComponent implements AfterViewInit, OnDestroy {
 
   onSelectAllClick(evt: MouseEvent) {
     if (this.state === 'checked') {
-      this.matSelect.ngControl.control.setValue([]);
+      // todo fix in TS 3.7
+      // tslint:disable-next-line:no-non-null-assertion
+      this.matSelect!.ngControl!.control!.setValue([]);
     } else {
-      this.matSelect.ngControl.control.setValue(this.options);
+      // todo fix in TS 3.7
+      // tslint:disable-next-line:no-non-null-assertion
+      this.matSelect!.ngControl!.control!.setValue(this.options);
     }
 
   }
@@ -71,7 +79,9 @@ export class MatOptionSelectAllComponent implements AfterViewInit, OnDestroy {
     const areAllSelected = this.areArraysEqual(this.value, this.options);
     if (areAllSelected) {
       this.state = 'checked';
-    } else if (this.value.length > 0) {
+      // todo fix in TS 3.7
+      // tslint:disable-next-line:no-non-null-assertion
+    } else if (this.value!.length > 0) {
       this.state = 'indeterminate';
     } else {
       this.state = 'unchecked';

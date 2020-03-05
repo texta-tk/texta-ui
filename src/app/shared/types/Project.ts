@@ -109,6 +109,7 @@ export interface Health {
       tagline: string;
     };
   };
+  redis: { alive: boolean, version: number, expired_keys: number, used_memory: string, total_memory: string };
   mlp: { url: string, alive: boolean };
   version: string;
   disk: { free: number, total: number, used: number, unit: string };

@@ -25,7 +25,10 @@
       class="pointer" [matMenuTriggerFor]="models">
       <button mat-button class="nav-button">
         <mat-icon class="margin-right">storage</mat-icon>
-        Models
+        Models({{projectResourceCounts?.num_torchtaggers +
+      projectResourceCounts?.num_taggers +
+      projectResourceCounts?.num_tagger_groups +
+      projectResourceCounts?.num_embeddings}})
         <mat-icon>arrow_drop_down</mat-icon>
       </button>
     </a>
@@ -62,7 +65,8 @@
     </mat-menu>
 
     <div class="flex-item-right login" *ngIf="!user">
-      <button mat-stroked-button class="nav-button" (click)="registerDialog()" data-cy="appNavbarRegister">REGISTER</button>
+      <button mat-stroked-button class="nav-button" (click)="registerDialog()" data-cy="appNavbarRegister">REGISTER
+      </button>
       <button mat-stroked-button class="nav-button" id="loginButton" (click)="loginDialog()">LOG IN</button>
     </div>
 
@@ -71,9 +75,9 @@
       <mat-form-field class="project-select">
         <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
                     data-cy="appNavbarProjectSelect"
-                    [formControl]="projectControl" (selectionChange)="selectProject($event.value)"
+                    [formControl]="projectControl" (selectionChange)="projectStore.setCurrentProject($event.value)"
                     [placeholder]="projects?.length < 1 ? 'No projects' : ''">
-          <mat-option *ngFor="let item of projects" [value]="item">
+          <mat-option *ngFor="let item of projects; trackBy:trackById" [value]="item">
             {{item.id}}: {{item.title}}
           </mat-option>
         </mat-select>

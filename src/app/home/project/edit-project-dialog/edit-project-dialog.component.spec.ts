@@ -1,12 +1,12 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EditProjectDialogComponent } from './edit-project-dialog.component';
-import {SharedModule} from '../../shared/shared.module';
+import {SharedModule} from '../../../shared/shared.module';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import {Project} from '../../shared/types/Project';
+import {Project} from '../../../shared/types/Project';
 
 describe('EditProjectDialogComponent', () => {
   let component: EditProjectDialogComponent;

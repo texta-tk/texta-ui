@@ -13,8 +13,11 @@ import {of} from 'rxjs';
 import {UserProfile} from '../../../types/UserProfile';
 
 
+
 function passwordMatchValidator(g: FormGroup) {
-  return g.get('passwordFormControl').value === g.get('passwordConfirmFormControl').value
+  const password1 = g.get('passwordFormControl');
+  const password2 = g.get('passwordConfirmFormControl');
+  return (password1 && password2 && password1.value === password2.value)
     ? null : {mismatch: true};
 }
 
@@ -41,7 +44,7 @@ export class RegistrationDialogComponent implements OnInit, OnDestroy {
 
   matcher = new LiveErrorStateMatcher();
   crossFieldMatcher = new CrossFieldErrorMatcher();
-  registrationError = undefined;
+  registrationError = '';
   makingRequest = false;
 
   constructor(
@@ -62,8 +65,6 @@ export class RegistrationDialogComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(formData) {
-
-    console.log(formData);
     const body = {
       username: formData.usernameFormControl,
       // email: formData.emailFormControl,

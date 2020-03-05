@@ -25,7 +25,9 @@ export class TextConstraint extends Constraint {
     this.matchFormControl.setValue(match ? match : 'phrase_prefix');
     this.slopFormControl.setValue(slop ? slop : '0');
     this.textAreaFormControl.setValue(text ? text : '');
-    this.lexicons = lexicons;
+    if (lexicons) {
+      this.lexicons = lexicons;
+    }
   }
 
 }
@@ -110,12 +112,12 @@ export class ElasticsearchQuery {
       number_of_fragments: 0,
       fields: {}
     };
-    this._elasticSearchQuery.from = 0;
-    this._elasticSearchQuery.size = 10;
+    this.from = 0;
+    this.size = 10;
   }
 
   get size(): number {
-    return this._elasticSearchQuery.size;
+    return this._elasticSearchQuery.size || 0;
   }
 
   set size(val: number) {
@@ -123,7 +125,7 @@ export class ElasticsearchQuery {
   }
 
   get from(): number {
-    return this._elasticSearchQuery.from;
+    return this._elasticSearchQuery.from || 0;
   }
 
   set from(val: number) {

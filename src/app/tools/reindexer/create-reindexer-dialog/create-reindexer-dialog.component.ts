@@ -83,12 +83,16 @@ export class CreateReindexerDialogComponent implements OnInit {
   onIndexSelected(val: MatSelectChange) {
     this.filteredProjectFields = this.projectFields.filter(x => val.value.includes(x.index));
     if (this.filteredProjectFields.length > 0) {
-      this.reindexerForm.get('fieldsFormControl').reset({
+      // todo fix in TS 3.7
+      // tslint:disable-next-line:no-non-null-assertion
+      this.reindexerForm.get('fieldsFormControl')!.reset({
         value: [].concat.apply([], this.filteredProjectFields.map(x => x.fields)),
         disabled: false
       });
     } else {
-      this.reindexerForm.get('fieldsFormControl').disable();
+      // todo fix in TS 3.7
+      // tslint:disable-next-line:no-non-null-assertion
+      this.reindexerForm.get('fieldsFormControl')!.disable();
     }
   }
 
@@ -120,7 +124,9 @@ export class CreateReindexerDialogComponent implements OnInit {
         this.dialogRef.close(resp);
       } else if (resp instanceof HttpErrorResponse) {
         if (resp.status === 400 && resp.error.new_index) {
-          this.reindexerForm.get('newNameFormControl').setErrors({alreadyExists: true});
+          // todo fix in TS 3.7
+          // tslint:disable-next-line:no-non-null-assertion
+          this.reindexerForm.get('newNameFormControl')!.setErrors({alreadyExists: true});
         } else {
           this.dialogRef.close(resp);
         }

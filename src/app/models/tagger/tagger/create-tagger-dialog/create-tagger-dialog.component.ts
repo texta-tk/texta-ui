@@ -1,15 +1,15 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import {LiveErrorStateMatcher} from '../../../../shared/CustomerErrorStateMatchers';
 import {ProjectService} from '../../../../core/projects/project.service';
 import {HttpErrorResponse} from '@angular/common/http';
-import {ProjectField} from '../../../../shared/types/Project';
+import {Project, ProjectField} from '../../../../shared/types/Project';
 import {TaggerService} from '../../../../core/models/taggers/tagger.service';
 import {ProjectStore} from '../../../../core/projects/project.store';
-import {mergeMap, take} from 'rxjs/operators';
-import {merge, of} from 'rxjs';
+import {mergeMap, take, takeUntil} from 'rxjs/operators';
+import {merge, of, Subject} from 'rxjs';
 import {TaggerOptions} from '../../../../shared/types/tasks/TaggerOptions';
 import {LogService} from '../../../../core/util/log.service';
 import {Embedding} from '../../../../shared/types/tasks/Embedding';
@@ -21,7 +21,7 @@ import {Tagger} from '../../../../shared/types/tasks/Tagger';
   templateUrl: './create-tagger-dialog.component.html',
   styleUrls: ['./create-tagger-dialog.component.scss']
 })
-export class CreateTaggerDialogComponent implements OnInit {
+export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
   defaultQuery = '{"query": {"match_all": {}}}';
   query = this.defaultQuery;
 
@@ -41,6 +41,8 @@ export class CreateTaggerDialogComponent implements OnInit {
   taggerOptions: TaggerOptions = TaggerOptions.createEmpty();
   embeddings: Embedding[];
   projectFields: ProjectField[];
+  currentProject: Project;
+  destroyed$ = new Subject<boolean>();
 
   constructor(private dialogRef: MatDialogRef<CreateTaggerDialogComponent>,
               private taggerService: TaggerService,
@@ -51,8 +53,9 @@ export class CreateTaggerDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.projectStore.getCurrentProject().pipe(take(1), mergeMap(currentProject => {
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), mergeMap(currentProject => {
       if (currentProject) {
+        this.currentProject = currentProject;
         return merge(
           this.taggerService.getTaggerOptions(currentProject.id),
           this.projectService.getProjectFields(currentProject.id),
@@ -60,21 +63,25 @@ export class CreateTaggerDialogComponent implements OnInit {
       } else {
         return of(null);
       }
-    })).subscribe((resp: TaggerOptions | ProjectField[] | Embedding[] | HttpErrorResponse) => {
+    })).subscribe((resp: TaggerOptions | ProjectField[] | { count: number, results: Embedding[] } | HttpErrorResponse | null) => {
       if (resp) {
-        if ((resp as TaggerOptions).actions !== undefined) {
+        if (this.isTaggerOptions(resp)) {
           this.taggerOptions = resp as TaggerOptions;
           this.setDefaultFormValues(this.taggerOptions);
         } else if (resp instanceof HttpErrorResponse) {
           this.logService.snackBarError(resp, 5000);
-        } else if (Embedding.isEmbedding(resp)) {
-          this.embeddings = resp;
         } else if (ProjectField.isProjectFields(resp)) {
           this.projectFields = ProjectField.cleanProjectFields(resp);
+        } else if (resp.results && Embedding.isEmbedding(resp.results)) {
+          this.embeddings = resp.results;
         }
       }
     });
 
+  }
+
+  isTaggerOptions(options): options is TaggerOptions {
+    return (options as TaggerOptions).actions !== undefined;
   }
 
   onQueryChanged(query: string) {
@@ -82,7 +89,7 @@ export class CreateTaggerDialogComponent implements OnInit {
   }
 
   onSubmit(formData) {
-    const body = {
+    const body: any = {
       description: formData.descriptionFormControl,
       fields: formData.fieldsFormControl,
       embedding: (formData.embeddingFormControl as Embedding) ? (formData.embeddingFormControl as Embedding).id : null,
@@ -112,12 +119,23 @@ export class CreateTaggerDialogComponent implements OnInit {
   }
 
   setDefaultFormValues(options: TaggerOptions) {
-    this.taggerForm.get('vectorizerFormControl').setValue(options.actions.POST.vectorizer.choices[0]);
-    this.taggerForm.get('classifierFormControl').setValue(options.actions.POST.classifier.choices[0]);
+    const vectorizer = this.taggerForm.get('vectorizerFormControl');
+    if (vectorizer) {
+      vectorizer.setValue(options.actions.POST.vectorizer.choices[0]);
+    }
+    const classifier = this.taggerForm.get('classifierFormControl');
+    if (classifier) {
+      classifier.setValue(options.actions.POST.classifier.choices[0]);
+    }
   }
 
 
   closeDialog(): void {
     this.dialogRef.close();
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
   }
 }

@@ -53,14 +53,14 @@ export class SearcherService {
   }
 
   bulkDeleteSavedSearches(projectId: number, body) {
-    return this.http.post<{'num_deleted': number, 'deleted_types': {string: number}[] }>
+    return this.http.post<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>
     (`${this.apiUrl}/projects/${projectId}/searches/bulk_delete/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'bulkDeleteSavedSearches')),
       catchError(this.logService.handleError<unknown>('bulkDeleteSavedSearches')));
   }
 
   private convertConstraintListToJson(constraintList: Constraint[]): any[] {
-    const outPutJson = [];
+    const outPutJson: any[] = [];
     for (const constraint of constraintList) {
       if (constraint instanceof TextConstraint) {
         outPutJson.push({
@@ -79,8 +79,7 @@ export class SearcherService {
         });
       }
       if (constraint instanceof FactConstraint) {
-        const inputGroupArrayJson = [];
-        console.log(constraint);
+        const inputGroupArrayJson: any[] = [];
         for (const inputGroup of constraint.inputGroupArray) {
           inputGroupArrayJson.push({
             factTextOperator: inputGroup.factTextOperatorFormControl.value,

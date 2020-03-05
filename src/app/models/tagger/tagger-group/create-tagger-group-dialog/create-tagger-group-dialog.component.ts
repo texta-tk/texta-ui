@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ProjectField, ProjectFact} from '../../../../shared/types/Project';
+import {ProjectField, ProjectFact, Project} from '../../../../shared/types/Project';
 import {mergeMap, take} from 'rxjs/operators';
 import {LogService} from '../../../../core/util/log.service';
 import {TaggerOptions} from '../../../../shared/types/tasks/TaggerOptions';
@@ -46,6 +46,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
   embeddings: Embedding[];
   projectFields: ProjectField[];
   projectFacts: ProjectFact[];
+  currentProject: Project;
 
   constructor(private dialogRef: MatDialogRef<CreateTaggerGroupDialogComponent>,
               private taggerService: TaggerService,
@@ -59,6 +60,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
   ngOnInit() {
     this.projectStore.getCurrentProject().pipe(take(1), mergeMap(currentProject => {
       if (currentProject) {
+        this.currentProject = currentProject;
         return forkJoin(
           {
             taggerOptions: this.taggerService.getTaggerOptions(currentProject.id),
@@ -97,44 +99,49 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
 
   onSubmit() {
     const formData = this.taggerGroupForm.value;
-    const tagger_body = {
+    const taggerBody: any = {
       fields: formData.taggerForm.fieldsFormControl,
       vectorizer: formData.taggerForm.vectorizerFormControl.value,
       classifier: formData.taggerForm.classifierFormControl.value,
       maximum_sample_size: formData.taggerForm.sampleSizeFormControl,
       negative_multiplier: formData.taggerForm.negativeMultiplierFormControl,
-    }
+    };
 
     if (formData.taggerForm.embeddingFormControl) {
-      tagger_body['embedding'] = formData.taggerForm.embeddingFormControl.id
+      taggerBody.embedding = formData.taggerForm.embeddingFormControl.id
     }
 
     const body = {
       description: formData.descriptionFormControl,
       fact_name: formData.factNameFormControl,
       minimum_sample_size: formData.taggerGroupSampleSizeFormControl,
-      tagger: tagger_body
+      tagger: taggerBody
     };
 
-    this.projectStore.getCurrentProject().pipe(take(1), mergeMap(currentProject => {
-      if (currentProject) {
-        return this.taggerGroupService.createTaggerGroup(body, currentProject.id);
-      } else {
-        return of(null);
-      }
-    })).subscribe((resp: TaggerGroup | HttpErrorResponse) => {
-      if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.dialogRef.close(resp);
-      } else if (resp instanceof HttpErrorResponse) {
-        this.dialogRef.close(resp);
-        this.logService.snackBarError(resp, 4000);
-      }
-    });
+    if (this.currentProject) {
+      this.taggerGroupService.createTaggerGroup(body, this.currentProject.id).subscribe((resp: TaggerGroup | HttpErrorResponse) => {
+        if (resp && !(resp instanceof HttpErrorResponse)) {
+          this.dialogRef.close(resp);
+        } else if (resp instanceof HttpErrorResponse) {
+          this.dialogRef.close(resp);
+          this.logService.snackBarError(resp, 4000);
+        }
+      });
+    }
   }
 
   setDefaultFormValues(options: TaggerOptions) {
-    this.taggerGroupForm.get('taggerForm').get('vectorizerFormControl').setValue(options.actions.POST.vectorizer.choices[0]);
-    this.taggerGroupForm.get('taggerForm').get('classifierFormControl').setValue(options.actions.POST.classifier.choices[0]);
+    const taggerForm = this.taggerGroupForm.get('taggerForm');
+    if (taggerForm) {
+      const vectorizer = taggerForm.get('vectorizerFormControl');
+      if (vectorizer) {
+        vectorizer.setValue(options.actions.POST.vectorizer.choices[0]);
+      }
+      const classifier = taggerForm.get('classifierFormControl');
+      if (classifier) {
+        classifier.setValue(options.actions.POST.classifier.choices[0]);
+      }
+    }
   }
 
 

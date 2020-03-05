@@ -76,10 +76,14 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
     });
 
     this.projectStore.getProjectFacts().pipe(takeUntil(this.destroyed$)).subscribe(projFacts => {
-      this.projectFacts = projFacts;
+      if (projFacts) {
+        this.projectFacts = projFacts;
+      }
     });
     this.projectStore.getProjectFields().pipe(takeUntil(this.destroyed$)).subscribe(projFields => {
-      this.projectFields = projFields;
+      if (projFields) {
+        this.projectFields = projFields;
+      }
     });
   }
 

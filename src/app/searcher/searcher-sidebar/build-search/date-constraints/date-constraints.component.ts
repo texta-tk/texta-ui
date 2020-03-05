@@ -3,6 +3,7 @@ import {DateConstraint, ElasticsearchQuery} from '../Constraints';
 import {FormControl} from '@angular/forms';
 import {debounceTime, distinctUntilChanged, startWith, takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
+import {UtilityFunctions} from "../../../../shared/UtilityFunctions";
 
 @Component({
   selector: 'app-date-constraints',
@@ -24,7 +25,7 @@ export class DateConstraintsComponent implements OnInit, OnDestroy {
   dateFromFormControl: FormControl = new FormControl();
   dateToFormControl: FormControl = new FormControl();
   destroyed$: Subject<boolean> = new Subject<boolean>();
-  constraintQuery = {bool: {must: []}};
+  constraintQuery: any = {bool: {must: []}};
 
   constructor() {
   }
@@ -33,7 +34,9 @@ export class DateConstraintsComponent implements OnInit, OnDestroy {
 
     if (this._dateConstraint) {
       const fieldPaths = this._dateConstraint.fields.map(x => x.path);
-      this.elasticSearchQuery.elasticSearchQuery.query.bool.must.push(this.constraintQuery);
+      // todo fix in TS 3.7
+      // tslint:disable-next-line:no-non-null-assertion
+      this.elasticSearchQuery!.elasticSearchQuery!.query!.bool!.must.push(this.constraintQuery);
       this.dateFromFormControl.valueChanges.pipe(
         takeUntil(this.destroyed$),
         startWith(this.dateFromFormControl.value as object),
@@ -67,9 +70,13 @@ export class DateConstraintsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     console.log('destroy date-constraint');
-    const index = this.elasticSearchQuery.elasticSearchQuery.query.bool.must.indexOf(this.constraintQuery, 0);
+    // todo fix in TS 3.7
+    // tslint:disable-next-line:no-non-null-assertion
+    const index = this.elasticSearchQuery!.elasticSearchQuery!.query!.bool!.must.indexOf(this.constraintQuery, 0);
     if (index > -1) {
-      this.elasticSearchQuery.elasticSearchQuery.query.bool.must.splice(index, 1);
+      // todo fix in TS 3.7
+      // tslint:disable-next-line:no-non-null-assertion
+      this.elasticSearchQuery!.elasticSearchQuery!.query!.bool!.must.splice(index, 1);
     }
     this.change.emit(this.elasticSearchQuery);
     this.destroyed$.next(true);

@@ -48,9 +48,8 @@ export class CreateEmbeddingDialogComponent implements OnInit {
       }
     })).subscribe((resp: ProjectField[] | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        console.log(resp);
         this.projectFields = ProjectField.cleanProjectFields(resp);
-      } else if (resp instanceof HttpErrorResponse) {
+      } else {
         this.dialogRef.close(resp);
       }
     });
@@ -90,7 +89,7 @@ export class CreateEmbeddingDialogComponent implements OnInit {
   }
 
   generateFieldsFormat(fields: Field[]) {
-    const output = [];
+    const output: any[] = [];
     for (const field of fields) {
       output.push(field.path);
     }

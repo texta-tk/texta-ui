@@ -5,7 +5,7 @@
       <input matInput placeholder="Title" autocomplete="off" formControlName="titleFormControl"
              [errorStateMatcher]="matcher" required>
 
-      <mat-error *ngIf="projectForm.get('titleFormControl').hasError('required')">
+      <mat-error *ngIf="projectForm.get('titleFormControl')?.hasError('required')">
         Title is <strong>required</strong>
       </mat-error>
     </mat-form-field>
@@ -17,20 +17,18 @@
           {{item.username}}
         </mat-option>
       </mat-select>
-      <mat-error *ngIf="projectForm.get('usersFormControl').hasError('required')">
+      <mat-error *ngIf="projectForm.get('usersFormControl')?.hasError('required')">
         User is <strong>required</strong>
       </mat-error>
     </mat-form-field>
-
     <mat-form-field data-cy="appProjectCreateDialogIndices">
-      <mat-label>Select Indices</mat-label>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
-                  formControlName="indicesFormControl" multiple required>
-        <mat-option *ngFor="let item of indices" [value]="item">
+      <mat-select formControlName="indicesFormControl" placeholder="Select Indices" required [multiple]="true">
+        <ngx-mat-select-search [formControl]="indicesFilterFormControl" placeholderLabel="Search"></ngx-mat-select-search>
+        <mat-option *ngFor="let item of (filteredIndices | async)" [value]="item">
           {{item}}
         </mat-option>
       </mat-select>
-      <mat-error *ngIf="projectForm.get('indicesFormControl').hasError('required')">
+      <mat-error *ngIf="projectForm.get('indicesFormControl')?.hasError('required')">
         Index is <strong>required</strong>
       </mat-error>
     </mat-form-field>

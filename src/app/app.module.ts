@@ -13,12 +13,12 @@ import {HomeComponent} from './home/home.component';
 import {LexiconMinerComponent} from './lexicon-miner/lexicon-miner.component';
 import {TaggerModule} from './models/tagger/tagger.module';
 import {EmbeddingModule} from './models/embedding/embedding.module';
-import {ProjectModule} from './project/project.module';
+import {ProjectModule} from './home/project/project.module';
 import {LexiconBuilderComponent} from './lexicon-miner/lexicon-builder/lexicon-builder.component';
 import {SearcherModule} from './searcher/searcher.module';
-import { ToolsModule } from './tools/tools.module';
-import { TorchTaggerModule } from './models/torch-tagger/torch-tagger.module';
-import { ManagementComponent } from './management/management.component';
+import {ToolsModule} from './tools/tools.module';
+import {TorchTaggerModule} from './models/torch-tagger/torch-tagger.module';
+import {ManagementComponent} from './management/management.component';
 
 
 @NgModule({
@@ -35,7 +35,6 @@ import { ManagementComponent } from './management/management.component';
     BrowserModule,
     BrowserAnimationsModule,
     SharedModule,
-    AppRoutingModule,
     HttpClientModule,
     HttpClientXsrfModule.withOptions({
       cookieName: 'XSRF-TOKEN',
@@ -46,7 +45,8 @@ import { ManagementComponent } from './management/management.component';
     ProjectModule,
     SearcherModule,
     TorchTaggerModule,
-    ToolsModule
+    ToolsModule,
+    AppRoutingModule,
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: HttpAuthInterceptor, multi: true}

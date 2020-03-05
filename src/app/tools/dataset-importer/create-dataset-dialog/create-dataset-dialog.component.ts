@@ -64,9 +64,9 @@ export class CreateDatasetDialogComponent implements OnInit, OnDestroy {
       if (response instanceof HttpErrorResponse) {
         this.logService.snackBarError(response, 2000);
       } else if (response.type === HttpEventType.UploadProgress) {
-        this.uploadedBytes = response.loaded;
-        this.totalBytes = response.total;
-        this.uploadProgressQueue.next(Math.floor((response.loaded / response.total) * 100));
+        this.uploadedBytes = response.loaded || 0;
+        this.totalBytes = response.total || 0;
+        this.uploadProgressQueue.next(Math.floor((this.uploadedBytes / this.totalBytes) * 100));
       } else if (response instanceof HttpResponse) {
         this.dialogRef.close(response.body);
       }

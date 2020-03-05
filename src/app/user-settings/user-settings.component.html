@@ -19,10 +19,10 @@
                  formControlName="passwordFormControl"
                  type="password"
                  [errorStateMatcher]="matcher" required>
-          <mat-error *ngIf="passwordResetForm.get('passwordForm').get('passwordFormControl').hasError('required')">
+          <mat-error *ngIf="passwordResetForm.get('passwordForm')?.get('passwordFormControl')?.hasError('required')">
             Password is <strong>required</strong>
           </mat-error>
-          <mat-error *ngIf="passwordResetForm.get('passwordForm').get('passwordFormControl').hasError('minlength')">
+          <mat-error *ngIf="passwordResetForm.get('passwordForm')?.get('passwordFormControl')?.hasError('minlength')">
             Password must contain at least <strong>8</strong> characters.
           </mat-error>
         </mat-form-field>
@@ -32,7 +32,7 @@
                  type="password"
                  [errorStateMatcher]="crossFieldMatcher" required>
           <mat-error
-            *ngIf="passwordResetForm.get('passwordForm').hasError('mismatch')">
+            *ngIf="passwordResetForm.get('passwordForm')?.hasError('mismatch')">
             Passwords don't <strong>match</strong>
           </mat-error>
         </mat-form-field>

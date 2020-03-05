@@ -88,14 +88,18 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     });
 
     this.searchService.getSearchQueue().pipe(debounceTime(SearcherOptions.SEARCH_DEBOUNCE_TIME), takeUntil(this.destroy$), switchMap(x => {
-      this.searchService.setIsLoading(true);
-      if (this.elasticQuery.size === 0) { // aggregations use size 0
-        this.elasticQuery.size = 10;
+      if (this.currentProject) {
+        this.searchService.setIsLoading(true);
+        if (this.elasticQuery.size === 0) { // aggregations use size 0
+          this.elasticQuery.size = 10;
+        }
+        return this.searcherService.search({
+          query: this.elasticQuery.elasticSearchQuery,
+          indices: this.indexSelection.selected
+        }, this.currentProject.id);
+      } else {
+        return of(null);
       }
-      return this.searcherService.search({
-        query: this.elasticQuery.elasticSearchQuery,
-        indices: this.indexSelection.selected
-      }, this.currentProject.id);
     })).subscribe(
       (result: { count: number, results: { highlight: any, doc: any }[] } | HttpErrorResponse) => {
         this.searchService.setIsLoading(false);
@@ -103,7 +107,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
           if (this.onlyHighlightMatching) {
             this.searchOptions.onlyHighlightMatching = this.constraintList.filter(x => x instanceof FactConstraint) as FactConstraint[];
           } else {
-            this.searchOptions.onlyHighlightMatching = null;
+            this.searchOptions.onlyHighlightMatching = undefined;
           }
           this.searchOptions.selectedIndexes = this.indexSelection.selected;
           this.searchService.nextSearch(new Search(result, this.searchOptions));
@@ -226,18 +230,29 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
         shouldMatch += 1;
       }
     }
-    this.elasticQuery.elasticSearchQuery.query.bool.minimum_should_match = shouldMatch;
+    if (this.elasticQuery && this.elasticQuery.elasticSearchQuery && this.elasticQuery.elasticSearchQuery.query
+      && this.elasticQuery.elasticSearchQuery.query.bool && this.elasticQuery.elasticSearchQuery.query.bool.minimum_should_match >= 0) {
+      this.elasticQuery.elasticSearchQuery.query.bool.minimum_should_match = shouldMatch;
+    } else {
+      console.error('no path to minimum should match');
+    }
   }
 
   updateFieldsToHighlight(constraints: Constraint[]) {
-    this.elasticQuery.elasticSearchQuery.highlight.fields = {};
-    const fieldsToHighlight = [];
-    for (const constraint of constraints) {
-      const fields = constraint.fields.map((x: Field) => x.path);
-      fieldsToHighlight.push(...fields);
-    }
-    for (const field of fieldsToHighlight) {
-      this.elasticQuery.elasticSearchQuery.highlight.fields[field] = {};
+    if (this.elasticQuery && this.elasticQuery.elasticSearchQuery && this.elasticQuery.elasticSearchQuery.highlight
+      && this.elasticQuery.elasticSearchQuery.highlight.fields) {
+      this.elasticQuery.elasticSearchQuery.highlight.fields = {};
+
+      const fieldsToHighlight: string[] = [];
+      for (const constraint of constraints) {
+        const fields = constraint.fields.map((x: Field) => x.path);
+        fieldsToHighlight.push(...fields);
+      }
+      for (const field of fieldsToHighlight) {
+        this.elasticQuery.elasticSearchQuery.highlight.fields[field] = {};
+      }
+    } else {
+      console.error('no path to highlight fields');
     }
   }
 

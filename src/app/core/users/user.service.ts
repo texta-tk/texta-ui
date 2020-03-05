@@ -48,7 +48,7 @@ export class UserService {
       catchError(this.logService.handleError<any>('change password')));
   }
 
-  getUserProfile(): Observable<UserProfile> {
+  getUserProfile(): Observable<UserProfile | HttpErrorResponse> {
     return this.http.get<UserProfile>(
       this.apiUrl + '/rest-auth/user/',
     ).pipe(
@@ -64,7 +64,7 @@ export class UserService {
     // catchError(this.logService.handleError<unknown>('logout')));
   }
 
-  getAllUsers(): Observable<UserProfile[]> {
+  getAllUsers(): Observable<UserProfile[] | HttpErrorResponse> {
     return this.http.get<UserProfile[]>(this.apiUrl + '/users/').pipe(
       tap(e => this.logService.logStatus(e, 'userProfile')),
       catchError(this.logService.handleError<UserProfile[]>('getUserProfile')));
@@ -87,6 +87,12 @@ export class UserService {
     ).pipe(
       tap(e => this.logService.logStatus(e, 'toggleSuperUser')),
       catchError(this.logService.handleError<UserProfile>('toggleSuperUser')));
+  }
+
+  deleteUser(url: string) {
+    return this.http.delete(url).pipe(
+      tap(e => this.logService.logStatus(e, 'deleteUser')),
+      catchError(this.logService.handleError<unknown>('deleteUser')));
   }
 
 }
