@@ -18,11 +18,11 @@ export class EmbeddingsService {
               private logService: LogService) {
   }
 
-  getEmbeddings(projectId: number, params = ''): Observable<{count: number, results: Embedding[]} | HttpErrorResponse> {
-    return this.http.get<{count: number, results: Embedding[]}>(
+  getEmbeddings(projectId: number, params = ''): Observable<{ count: number, results: Embedding[] } | HttpErrorResponse> {
+    return this.http.get<{ count: number, results: Embedding[] }>(
       `${this.apiUrl}/projects/${projectId}/embeddings/?${params}`).pipe(
       tap(e => this.logService.logStatus(e, 'getEmbeddings')),
-      catchError(this.logService.handleError<{count: number, results: Embedding[]}>('getEmbeddings')));
+      catchError(this.logService.handleError<{ count: number, results: Embedding[] }>('getEmbeddings')));
   }
 
   createEmbedding(body, projectId): Observable<Embedding | HttpErrorResponse> {
@@ -41,21 +41,21 @@ export class EmbeddingsService {
       catchError(this.logService.handleError<EmbeddingPrediction[]>('predict')));
   }
 
-  phrase(body: {text: string}, currentProjectId: number, embeddingId: number): Observable<string | HttpErrorResponse> {
+  phrase(body: { text: string }, currentProjectId: number, embeddingId: number): Observable<string | HttpErrorResponse> {
     return this.http.post<string>(`${this.apiUrl}/projects/${currentProjectId}/embeddings/${embeddingId}/phrase_text/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'phrase')),
       catchError(this.logService.handleError<string>('phrase')));
   }
 
   bulkDeleteEmbeddings(projectId: number, body) {
-    return this.http.post<{"num_deleted": number, "deleted_types": {string: number}[] }>
+    return this.http.post<{ "num_deleted": number, "deleted_types": { string: number }[] }>
     (`${this.apiUrl}/projects/${projectId}/embeddings/bulk_delete/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'bulkDeleteEmbeddings')),
       catchError(this.logService.handleError<unknown>('bulkDeleteEmbeddings')));
   }
 
-  deleteEmbedding(embeddingId: number, projectId: number) {
-    return this.http.delete(`${this.apiUrl}/projects/${projectId}/taggers/${embeddingId}/`).pipe(
+  deleteEmbedding(projectId: number, embeddingId: number) {
+    return this.http.delete(`${this.apiUrl}/projects/${projectId}/embeddings/${embeddingId}/`).pipe(
       tap(e => this.logService.logStatus(e, 'deleteEmbedding')),
       catchError(this.logService.handleError<unknown>('deleteEmbedding')));
   }
