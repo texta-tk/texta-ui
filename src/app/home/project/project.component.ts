@@ -1,18 +1,18 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Project} from '../shared/types/Project';
+import {Project} from '../../shared/types/Project';
 import {HttpErrorResponse} from '@angular/common/http';
 import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import {from, Observable, Subject} from 'rxjs';
-import {LogService} from '../core/util/log.service';
+import {LogService} from '../../core/util/log.service';
 import {CreateProjectDialogComponent} from './create-project-dialog/create-project-dialog.component';
-import {ProjectStore} from '../core/projects/project.store';
+import {ProjectStore} from '../../core/projects/project.store';
 import {EditProjectDialogComponent} from './edit-project-dialog/edit-project-dialog.component';
-import {UserProfile} from '../shared/types/UserProfile';
+import {UserProfile} from '../../shared/types/UserProfile';
 import {mergeMap, takeUntil, toArray} from 'rxjs/operators';
-import {UserService} from '../core/users/user.service';
-import {ConfirmDialogComponent} from '../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
-import {ProjectService} from '../core/projects/project.service';
-import {UserStore} from '../core/users/user.store';
+import {UserService} from '../../core/users/user.service';
+import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {ProjectService} from '../../core/projects/project.service';
+import {UserStore} from '../../core/users/user.store';
 
 @Component({
   selector: 'app-project',

@@ -1,14 +1,14 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ErrorStateMatcher, MatDialogRef} from '@angular/material';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {LiveErrorStateMatcher} from '../../shared/CustomerErrorStateMatchers';
-import {ProjectService} from '../../core/projects/project.service';
-import {UserService} from '../../core/users/user.service';
-import {UserProfile} from '../../shared/types/UserProfile';
-import {Project} from '../../shared/types/Project';
+import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
+import {ProjectService} from '../../../core/projects/project.service';
+import {UserService} from '../../../core/users/user.service';
+import {UserProfile} from '../../../shared/types/UserProfile';
+import {Project} from '../../../shared/types/Project';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LogService} from 'src/app/core/util/log.service';
-import {UserStore} from '../../core/users/user.store';
+import {UserStore} from '../../../core/users/user.store';
 import {of, ReplaySubject, Subject} from 'rxjs';
 import {takeUntil} from "rxjs/operators";
 

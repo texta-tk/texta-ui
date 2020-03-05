@@ -13,7 +13,7 @@ import {HomeComponent} from './home/home.component';
 import {LexiconMinerComponent} from './lexicon-miner/lexicon-miner.component';
 import {TaggerModule} from './models/tagger/tagger.module';
 import {EmbeddingModule} from './models/embedding/embedding.module';
-import {ProjectModule} from './project/project.module';
+import {ProjectModule} from './home/project/project.module';
 import {LexiconBuilderComponent} from './lexicon-miner/lexicon-builder/lexicon-builder.component';
 import {SearcherModule} from './searcher/searcher.module';
 import {MAT_HAMMER_OPTIONS} from '@angular/material';
