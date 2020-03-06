@@ -2,7 +2,7 @@ import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Lexicon} from '../../shared/types/Lexicon';
 import {LexiconService} from '../../core/lexicon/lexicon.service';
 import {ProjectStore} from '../../core/projects/project.store';
-import {mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
+import {switchMap, takeUntil} from 'rxjs/operators';
 import {Project} from '../../shared/types/Project';
 import {of, Subject} from 'rxjs';
 import {EmbeddingsService} from '../../core/models/embeddings/embeddings.service';
@@ -73,16 +73,13 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
   }
 
   getSavedDefaultEmbedding() {
-    const defaultEmbeddingId = this.localStorageService.getLexiconMinerEmbeddingId();
-    if (defaultEmbeddingId) {
+    const state = this.localStorageService.getProjectState(this.currentProject);
+    if (state?.lexicons.embeddingId) {
       this.embeddings.forEach((embedding: Embedding) => {
-        if (defaultEmbeddingId && defaultEmbeddingId === embedding.id) {
+        if (state?.lexicons.embeddingId === embedding.id) {
           this.selectedEmbedding = embedding;
         }
       });
-    }
-    if (!defaultEmbeddingId || !this.selectedEmbedding) {
-      this.localStorageService.deleteLexiconMinerEmbeddingId();
     }
   }
 
@@ -180,6 +177,10 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
   }
 
   saveEmbeddingChoice(embedding: Embedding) {
-    this.localStorageService.setLexiconMinerEmbeddingId(embedding.id);
+    const state = this.localStorageService.getProjectState(this.currentProject);
+    if (state) {
+      state.lexicons.embeddingId = embedding.id;
+      this.localStorageService.updateProjectState(this.currentProject, state);
+    }
   }
 }

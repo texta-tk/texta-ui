@@ -118,3 +118,19 @@ export interface Health {
   gpu: { count: number; devices: string[] };
   active_tasks: number;
 }
+
+// this interface is for localstorage
+export interface ProjectState {
+  searcher: {
+    itemsPerPage: number;
+    selectedFields: string[];
+  };
+  models: {
+    tagger: { itemsPerPage: number; }
+    embedding: { itemsPerPage: number; }
+    torchTagger: { itemsPerPage: number; }
+    taggerGroup: { itemsPerPage: number; }
+  };
+  tasks: {};
+  lexicons: { embeddingId: number | null; };
+}

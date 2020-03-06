@@ -2,16 +2,16 @@ import {Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@an
 import {SearcherComponentService} from '../services/searcher-component.service';
 import {Search, SearchOptions} from '../../shared/types/Search';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
-import {MatSort} from '@angular/material/sort';
+import {MatSort, Sort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {FormControl} from '@angular/forms';
-import {Subject} from 'rxjs';
-import {takeUntil} from 'rxjs/operators';
+import {of, Subject} from 'rxjs';
+import {skip, skipLast, switchMap, takeUntil} from 'rxjs/operators';
 import {ProjectStore} from '../../core/projects/project.store';
-import {ElasticsearchQuery, FactConstraint} from '../searcher-sidebar/build-search/Constraints';
-import {Field, ProjectField} from '../../shared/types/Project';
-import {Sort} from '@angular/material/sort';
+import {ElasticsearchQuery} from '../searcher-sidebar/build-search/Constraints';
+import {Project, ProjectField} from '../../shared/types/Project';
 import {UtilityFunctions} from '../../shared/UtilityFunctions';
+import {LocalStorageService} from '../../core/util/local-storage.service';
 
 @Component({
   selector: 'app-searcher-table',
@@ -24,28 +24,42 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
   public displayedColumns: string[] = [];
   public columnsToDisplay: string[] = [];
   public columnFormControl = new FormControl([]);
+  public isLoadingResults = false;
+  public paginatorLength;
+  public searchOptions: SearchOptions;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-  destroy$: Subject<boolean> = new Subject();
   @Output() drawerToggle = new EventEmitter<boolean>();
-  public paginatorLength;
+  private destroy$: Subject<boolean> = new Subject();
   private currentElasticQuery: ElasticsearchQuery;
-  isLoadingResults = false;
-  projectFields: ProjectField[];
-  searchOptions: SearchOptions;
+  private projectFields: ProjectField[];
   private selectedIndexes: string[]; // is used to remember column selection
-  constructor(public searchService: SearcherComponentService, private projectStore: ProjectStore) {
+  private currentProject: Project;
+
+  constructor(public searchService: SearcherComponentService, private projectStore: ProjectStore, private localStorage: LocalStorageService) {
   }
 
   ngOnInit() {
     // paginator label hack
     this.paginator._intl.getRangeLabel = this.countRangeLabel;
 
-    this.projectStore.getProjectFields().pipe(takeUntil(this.destroy$)).subscribe(projField => {
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$), switchMap((project => {
+      if (project) {
+        this.currentProject = project;
+        const currentProjectState = this.localStorage.getProjectState(project);
+        if (currentProjectState?.searcher?.itemsPerPage) {
+          this.paginator.pageSize = currentProjectState.searcher.itemsPerPage;
+        }
+        return this.projectStore.getProjectFields().pipe(skip(1));
+      } else {
+        return of(null);
+      }
+    }))).subscribe(projField => {
       if (projField) {
         this.projectFields = projField;
-        // combine all fields of all projects into one unique array to make columns
-        this.setTableColumns([...new Set([].concat.apply([], (projField.map(x => x.fields.map(y => y.path)))))] as string[]);
+        // combine all fields of all indexes into one unique array to make columns
+        this.displayedColumns = [...new Set([].concat.apply([], (projField.map(x => x.fields.map(y => y.path)))))] as string[];
+        this.setColumnsToDisplay();
         // project changed reset table
         this.tableData.data = [];
       }
@@ -55,15 +69,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
       if (resp) {
         this.searchOptions = resp.searchOptions;
         // filter out table columns by index, unique array(table columns have to be unique)
-        if (this.selectedIndexes && !UtilityFunctions.arrayValuesEqual(this.selectedIndexes, resp.searchOptions.selectedIndexes)) {
-          this.setTableColumns([...new Set([].concat.apply([],
-            (this.projectFields.map(x => {
-              if (this.searchOptions.selectedIndexes.includes(x.index)) {
-                return x.fields.map(y => y.path);
-              }
-              return [];
-            }))))] as string[]);
-        }
+        this.updateFieldSelection(resp);
         SearcherTableComponent.totalCountLength = resp.searchContent.count;
         this.paginatorLength = SearcherTableComponent.totalCountLength > 10000 ? 10000 : SearcherTableComponent.totalCountLength;
         this.tableData.data = resp.searchContent.results;
@@ -88,12 +94,38 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     });
   }
 
-  private setTableColumns(columnList: string[]) {
-    this.displayedColumns = columnList;
+  private updateFieldSelection(resp: Search) {
+    if (this.selectedIndexes && !UtilityFunctions.arrayValuesEqual(this.selectedIndexes, resp.searchOptions.selectedIndexes)) {
+      this.displayedColumns = [...new Set([].concat.apply([],
+        (this.projectFields.map(x => {
+          if (this.searchOptions.selectedIndexes.includes(x.index)) {
+            return x.fields.map(y => y.path);
+          }
+          return [];
+        }))))] as string[];
+    }
+    this.setColumnsToDisplay();
+
+  }
+
+  private setColumnsToDisplay(): void {
+    const currentProjectState = this.localStorage.getProjectState(this.currentProject);
+    if (currentProjectState?.searcher?.selectedFields && currentProjectState.searcher.selectedFields.length >= 1) {
+      let fieldsExist = true;
+      for (const field of currentProjectState.searcher.selectedFields) {
+        if (!this.displayedColumns.includes(field)) {
+          fieldsExist = false;
+        }
+      }
+      if (fieldsExist) {
+        this.columnsToDisplay = currentProjectState.searcher.selectedFields;
+        this.columnFormControl.setValue(this.columnsToDisplay);
+        return;
+      }
+    }
     this.columnsToDisplay = this.displayedColumns;
     this.columnFormControl.setValue(this.columnsToDisplay);
   }
-
 
   buildSortQuery(sort: Sort): any {
     if (sort.direction === '') {
@@ -120,12 +152,22 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
       this.currentElasticQuery.from = event.pageIndex * event.pageSize;
       this.searchService.queryNextSearch();
     }
+    const state = this.localStorage.getProjectState(this.currentProject);
+    if (state) {
+      state.searcher.itemsPerPage = event.pageSize;
+      this.localStorage.updateProjectState(this.currentProject, state);
+    }
   }
 
-  public onOpenedChange(opened) {
+  public onfieldSelectionChange(opened) {
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && (this.columnFormControl.value)) {
       this.columnsToDisplay = this.columnFormControl.value;
+      const currentProjectState = this.localStorage.getProjectState(this.currentProject);
+      if (currentProjectState) {
+        currentProjectState.searcher.selectedFields = this.columnsToDisplay;
+        this.localStorage.updateProjectState(this.currentProject, currentProjectState);
+      }
     }
   }
 

@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {UserAuth} from '../../shared/types/UserAuth';
-import {Project} from '../../shared/types/Project';
-import {Embedding} from 'src/app/shared/types/tasks/Embedding';
+import {Project, ProjectState} from '../../shared/types/Project';
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +8,37 @@ import {Embedding} from 'src/app/shared/types/tasks/Embedding';
 export class LocalStorageService {
 
   constructor() {
+  }
+
+  public updateProjectState(project: Project, state: ProjectState) {
+    if (project?.id) {
+      localStorage.setItem('projectState' + project.id, JSON.stringify(state));
+    }
+  }
+
+  public getProjectState(project: Project): ProjectState | null {
+    if (project?.id) {
+      const state = localStorage.getItem('projectState' + project.id);
+      if (state) {
+        return JSON.parse(state);
+      } else {
+        return {
+          searcher: {
+            itemsPerPage: 10,
+            selectedFields: []
+          },
+          models: {
+            tagger: {itemsPerPage: 25},
+            embedding: {itemsPerPage: 25},
+            torchTagger: {itemsPerPage: 25},
+            taggerGroup: {itemsPerPage: 25}
+          },
+          tasks: {},
+          lexicons: {embeddingId: null},
+        };
+      }
+    }
+    return null;
   }
 
   public getUser(): UserAuth | null {
@@ -39,19 +69,4 @@ export class LocalStorageService {
     localStorage.setItem('selectedProject', JSON.stringify(value));
   }
 
-  public setLexiconMinerEmbeddingId(embeddingId: number) {
-    localStorage.setItem('lexiconMinerEmbedding', JSON.stringify(embeddingId));
-  }
-
-  public getLexiconMinerEmbeddingId(): number | null {
-    const lexiconEmbedding = localStorage.getItem('lexiconMinerEmbedding');
-    if (lexiconEmbedding) {
-      return JSON.parse(lexiconEmbedding);
-    }
-    return null;
-  }
-
-  public deleteLexiconMinerEmbeddingId() {
-    localStorage.removeItem('lexiconMinerEmbedding');
-  }
 }
