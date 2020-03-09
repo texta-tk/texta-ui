@@ -1,4 +1,3 @@
-
 export class UtilityFunctions {
   static typeGuard<T>(o, className: { new(...args: any[]): T }): o is T {
     return o instanceof className;
@@ -13,6 +12,21 @@ export class UtilityFunctions {
     } else {
       return false;
     }
+  }
+
+  static sortByStringProperty(object: any[], propertyAccsessor: (x: any) => string) {
+    return object.sort((a, b) => {
+      const propertyA = propertyAccsessor(a).toUpperCase();
+      const propertyB = propertyAccsessor(b).toUpperCase();
+      if (propertyA < propertyB) {
+        return -1;
+      }
+      if (propertyA > propertyB) {
+        return 1;
+      }
+      // names must be equal
+      return 0;
+    });
   }
 
 }

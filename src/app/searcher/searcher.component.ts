@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
 import {SearcherComponentService} from './services/searcher-component.service';
 import {Search} from '../shared/types/Search';
 import {takeUntil} from 'rxjs/operators';
@@ -8,7 +8,8 @@ import {Subject} from 'rxjs';
   selector: 'app-searcher',
   templateUrl: './searcher.component.html',
   styleUrls: ['./searcher.component.scss'],
-  providers: [SearcherComponentService]
+  providers: [SearcherComponentService],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearcherComponent implements OnInit, OnDestroy {
 

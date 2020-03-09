@@ -1,12 +1,12 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {UserStore} from '../core/users/user.store';
 import {LoginDialogComponent} from '../shared/components/dialogs/login/login-dialog.component';
 import {UserProfile} from '../shared/types/UserProfile';
 import {UserService} from '../core/users/user.service';
 import {LocalStorageService} from '../core/util/local-storage.service';
 import {ProjectService} from '../core/projects/project.service';
-import {Project, ProjectResourceCounts} from '../shared/types/Project';
+import {Project, ProjectField, ProjectResourceCounts} from '../shared/types/Project';
 import {FormControl} from '@angular/forms';
 import {ProjectStore} from '../core/projects/project.store';
 import {of, Subject} from 'rxjs';
@@ -15,6 +15,7 @@ import {LogService} from '../core/util/log.service';
 import {switchMap, take, takeUntil} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Router} from '@angular/router';
+import {UtilityFunctions} from '../shared/UtilityFunctions';
 
 @Component({
   selector: 'app-navbar',
@@ -24,7 +25,9 @@ import {Router} from '@angular/router';
 export class NavbarComponent implements OnInit, OnDestroy {
   user: UserProfile;
   projects: Project[];
+  projectFields: ProjectField[];
   projectControl = new FormControl();
+  projectFieldsControl = new FormControl();
   currentProject: Project;
   projectResourceCounts: ProjectResourceCounts | null;
   destroyed$: Subject<boolean> = new Subject<boolean>();
@@ -50,6 +53,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     });
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), switchMap(proj => {
       if (proj) {
+        this.currentProject = proj;
         this.projectControl.setValue(proj); // we set active project when we create a new project at proj component for example
         return this.projectService.getResourceCounts(proj.id);
       }
@@ -89,6 +93,33 @@ export class NavbarComponent implements OnInit, OnDestroy {
         }
       }
     });
+    this.projectStore.getProjectFields().pipe(takeUntil(this.destroyed$)).subscribe((x) => {
+      if (x) {
+        this.projectFields = UtilityFunctions.sortByStringProperty(x, y => y.index);
+        if (this.currentProject) {
+          const state = this.localStorageService.getProjectState(this.currentProject);
+          if (state?.global?.selectedIndices && state.global.selectedIndices.length > 0) {
+            this.projectFieldsControl.setValue(this.projectFields.filter(b => state.global.selectedIndices.includes(b.index)));
+            this.projectStore.setCurrentProjectFields(this.projectFieldsControl.value);
+          } else {
+            this.projectFieldsControl.setValue(this.projectFields);
+            this.projectStore.setCurrentProjectFields(this.projectFields);
+          }
+        }
+      }
+    });
+  }
+
+  indexSelectionChanged(indices: ProjectField[]) {
+    this.projectStore.setCurrentProjectFields(indices);
+    const state = this.localStorageService.getProjectState(this.currentProject);
+    if (state) {
+      if (!state?.global?.selectedIndices) {
+        state.global = {selectedIndices: []};
+      }
+      state.global.selectedIndices = indices.map(x => x.index);
+      this.localStorageService.updateProjectState(this.currentProject, state);
+    }
   }
 
   registerDialog() {

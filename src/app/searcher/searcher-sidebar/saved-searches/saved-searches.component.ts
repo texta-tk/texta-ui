@@ -1,6 +1,6 @@
-import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
 import {SelectionModel} from '@angular/cdk/collections';
-import { MatTableDataSource } from '@angular/material/table';
+import {MatTableDataSource} from '@angular/material/table';
 import {SearcherService} from '../../../core/searcher/searcher.service';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {of, Subject} from 'rxjs';
@@ -13,16 +13,19 @@ import {SearcherComponentService} from '../../services/searcher-component.servic
 @Component({
   selector: 'app-saved-searches',
   templateUrl: './saved-searches.component.html',
-  styleUrls: ['./saved-searches.component.scss']
+  styleUrls: ['./saved-searches.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SavedSearchesComponent implements OnInit, OnDestroy {
   @Output() savedSearchClick = new EventEmitter<number>(); // search object future todo
   displayedColumns: string[] = ['select', 'name'];
-  dataSource: MatTableDataSource<SavedSearch>;
+  dataSource: MatTableDataSource<SavedSearch> = new MatTableDataSource();
   destroyed$: Subject<boolean> = new Subject<boolean>();
   currentProject: Project;
 
-  constructor(private searcherService: SearcherService, private projectStore: ProjectStore, public searchService: SearcherComponentService) {
+  constructor(private searcherService: SearcherService,
+              private projectStore: ProjectStore,
+              public searchService: SearcherComponentService) {
   }
 
   ngOnInit() {
@@ -35,7 +38,8 @@ export class SavedSearchesComponent implements OnInit, OnDestroy {
       }
     })).subscribe((response: SavedSearch[] | HttpErrorResponse) => {
       if (response && !(response instanceof HttpErrorResponse)) {
-        this.dataSource = new MatTableDataSource(response);
+        console.log(response);
+        this.dataSource.data = response;
         this.searchService.savedSearchSelection = new SelectionModel<SavedSearch>(true, []);
       }
     });
@@ -47,13 +51,9 @@ export class SavedSearchesComponent implements OnInit, OnDestroy {
       return of(null);
     })).subscribe((response: SavedSearch[] | HttpErrorResponse) => {
       if (response && !(response instanceof HttpErrorResponse)) {
-        this.dataSource = new MatTableDataSource(response);
+        this.dataSource.data = response;
       }
     });
-  }
-
-  copy(url) {
-    navigator.clipboard.writeText(url);
   }
 
   displaySavedSearch(element) {

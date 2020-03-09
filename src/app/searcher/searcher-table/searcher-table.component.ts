@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {SearcherComponentService} from '../services/searcher-component.service';
 import {Search, SearchOptions} from '../../shared/types/Search';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
@@ -6,7 +6,7 @@ import {MatSort, Sort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {FormControl} from '@angular/forms';
 import {of, Subject} from 'rxjs';
-import {skip, skipLast, switchMap, takeUntil} from 'rxjs/operators';
+import {skip, switchMap, takeUntil} from 'rxjs/operators';
 import {ProjectStore} from '../../core/projects/project.store';
 import {ElasticsearchQuery} from '../searcher-sidebar/build-search/Constraints';
 import {Project, ProjectField} from '../../shared/types/Project';
@@ -16,7 +16,8 @@ import {LocalStorageService} from '../../core/util/local-storage.service';
 @Component({
   selector: 'app-searcher-table',
   templateUrl: './searcher-table.component.html',
-  styleUrls: ['./searcher-table.component.scss']
+  styleUrls: ['./searcher-table.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearcherTableComponent implements OnInit, OnDestroy {
   static totalCountLength; // hack for paginator max length with label, no easy way to do this

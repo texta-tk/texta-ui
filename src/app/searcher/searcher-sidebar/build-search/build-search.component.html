@@ -6,22 +6,15 @@
                 multiple (openedChange)="onOpenedChange($event)"
 
                 (selectionChange)="onSelectionChange($event)">
-      <mat-optgroup *ngFor="let group of projectFieldsFiltered">
-        <mat-checkbox class="mat-option-pseudo-checkbox"
-                      (change)="$event ? indexSelection.toggle(group.index) : null"
-                      color="primary"
-                      [checked]="indexSelection.isSelected(group.index)"
-                      matTooltip="Only search selected indices">{{group.index}}</mat-checkbox>
-        <mat-option *ngFor="let fields of group.fields" [value]="fields">
-          {{fields.path}}
-        </mat-option>
-      </mat-optgroup>
+      <mat-option *ngFor="let fields of (fieldsFiltered|async);trackBy:trackByPath" [value]="fields">
+        {{fields.path}}
+      </mat-option>
     </mat-select>
   </mat-form-field>
-  <div *ngFor="let constraint of constraintList; let i = index;" class="filters bg-grey">
+  <div *ngFor="let constraint of constraintList; let i = index;trackBy:trackByIndex" class="filters bg-grey">
     <div fxLayout="row" class="header">
       <div fxLayout="row wrap" class="field-titles">
-        <h4 *ngFor="let field of constraint.fields">{{field.path}};</h4>
+        <h4 *ngFor="let field of constraint.fields;trackBy:trackByPath">{{field.path}};</h4>
       </div>
       <div fxFlex fxLayoutAlign="end">
         <button mat-icon-button aria-label="Close" (click)="removeConstraint(i)" class="mat-icon-button">
@@ -45,9 +38,11 @@
   </div>
   <div fxLayout="column" class="bg-grey search-options">
     <h4 class="flex-item-center">Search options</h4>
-      <mat-checkbox labelPosition="before" [(ngModel)]=onlyHighlightMatching>Only highlight matching facts:</mat-checkbox>
+    <mat-checkbox labelPosition="before" [(ngModel)]=onlyHighlightMatching>Only highlight matching facts:</mat-checkbox>
   </div>
   <div class="max-width">
-    <button class="max-width" mat-stroked-button (click)="searchService.queryNextSearch()" data-cy="appSearcherBuildSearchSubmit">Search</button>
+    <button class="max-width" mat-stroked-button (click)="searchService.queryNextSearch()"
+            data-cy="appSearcherBuildSearchSubmit">Search
+    </button>
   </div>
 </div>

@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Subject} from 'rxjs';
 import {BuildSearchComponent} from './build-search/build-search.component';
 import {take, takeUntil} from 'rxjs/operators';
@@ -17,7 +17,8 @@ import {GenericDialogComponent} from '../../shared/components/dialogs/generic-di
 @Component({
   selector: 'app-searcher-sidebar',
   templateUrl: './searcher-sidebar.component.html',
-  styleUrls: ['./searcher-sidebar.component.scss']
+  styleUrls: ['./searcher-sidebar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearcherSidebarComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject();

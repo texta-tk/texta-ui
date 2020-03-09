@@ -14,9 +14,10 @@ import {LocalStorageService} from '../util/local-storage.service';
   providedIn: 'root'
 })
 export class ProjectStore {
-  private selectedProject$: BehaviorSubject<Project | null> = new BehaviorSubject(null);
   private projects$: BehaviorSubject<Project[] | null> = new BehaviorSubject(null);
+  private selectedProject$: BehaviorSubject<Project | null> = new BehaviorSubject(null);
   private projectFields$: BehaviorSubject<ProjectField[] | null> = new BehaviorSubject(null);
+  private selectedProjectFields$: BehaviorSubject<ProjectField[] | null> = new BehaviorSubject(null);
   private projectFacts$: BehaviorSubject<ProjectFact[] | null> = new BehaviorSubject(null);
 
   constructor(private projectService: ProjectService,
@@ -30,18 +31,6 @@ export class ProjectStore {
     });
 
     this.loadProjectFieldsAndFacts();
-  }
-
-  getProjects(): Observable<Project[] | null> {
-    return this.projects$.asObservable();
-  }
-
-  getProjectFields(): Observable<ProjectField[] | null> {
-    return this.projectFields$.asObservable();
-  }
-
-  getProjectFacts(): Observable<ProjectFact[] | null> {
-    return this.projectFacts$.asObservable();
   }
 
   // when we change project get its fields and facts aswell
@@ -77,6 +66,27 @@ export class ProjectStore {
     });
   }
 
+  getProjects(): Observable<Project[] | null> {
+    return this.projects$.asObservable();
+  }
+
+  getProjectFields(): Observable<ProjectField[] | null> {
+    return this.projectFields$.asObservable();
+  }
+
+  getCurrentProjectFields(): Observable<ProjectField[] | null> {
+    return this.selectedProjectFields$.asObservable();
+  }
+
+  setCurrentProjectFields(projectFields: ProjectField[]) {
+    this.selectedProjectFields$.next(projectFields);
+  }
+
+  getProjectFacts(): Observable<ProjectFact[] | null> {
+    return this.projectFacts$.asObservable();
+  }
+
+
   getCurrentProject(): Observable<Project | null> {
     return this.selectedProject$.asObservable();
   }
@@ -85,4 +95,5 @@ export class ProjectStore {
     this.localStorageService.setCurrentlySelectedProject(project);
     this.selectedProject$.next(project);
   }
+
 }

@@ -26,11 +26,10 @@ import {ScrollingModule} from '@angular/cdk/scrolling';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatDatepickerModule} from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import {MatNativeDateModule} from '@angular/material/core';
+import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatSliderModule} from '@angular/material/slider';
 import {FlexLayoutModule} from '@angular/flex-layout';
-
 import {LoginDialogComponent} from './components/dialogs/login/login-dialog.component';
 import {GenericTableComponent} from './components/generic-table/generic-table.component';
 import {RegistrationDialogComponent} from './components/dialogs/registration/registration-dialog.component';
@@ -44,7 +43,7 @@ import {LineChartModule} from '@swimlane/ngx-charts';
 import {MatTreeModule} from '@angular/material/tree';
 import {MaterialFileInputModule} from 'ngx-material-file-input';
 import {FormatTextaFactsPipe} from './pipes/format-texta-facts.pipe';
-import { IsObjectPipe } from './pipes/is-object.pipe';
+import {IsObjectPipe} from './pipes/is-object.pipe';
 import {NgxMatSelectSearchModule} from 'ngx-mat-select-search';
 
 @NgModule({

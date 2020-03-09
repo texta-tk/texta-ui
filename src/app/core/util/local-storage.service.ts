@@ -35,6 +35,7 @@ export class LocalStorageService {
           },
           tasks: {},
           lexicons: {embeddingId: null},
+          global: {selectedIndices: []}
         };
       }
     }

@@ -40,12 +40,15 @@ mat-toolbar {
 
     .project-select {
       font-size: 14px;
+      margin-right: 10px;
     }
   }
 }
+
 .is-active-menu {
   color: $primary;
 }
+
 .mat-icon {
   vertical-align: middle;
 }

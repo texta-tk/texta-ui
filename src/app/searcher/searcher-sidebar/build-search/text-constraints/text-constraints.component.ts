@@ -1,4 +1,13 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild
+} from '@angular/core';
 import {ElasticsearchQuery, TextConstraint} from '../Constraints';
 import {FormControl} from '@angular/forms';
 import {pairwise, startWith, takeUntil} from 'rxjs/operators';
@@ -9,7 +18,8 @@ import {MatMenuTrigger} from '@angular/material/menu';
 @Component({
   selector: 'app-text-constraints',
   templateUrl: './text-constraints.component.html',
-  styleUrls: ['./text-constraints.component.scss']
+  styleUrls: ['./text-constraints.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TextConstraintsComponent implements OnInit, OnDestroy {
   public _textConstraint: TextConstraint;

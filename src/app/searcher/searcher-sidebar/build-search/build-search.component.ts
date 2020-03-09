@@ -1,20 +1,34 @@
-import {Component, EventEmitter, OnDestroy, OnInit, Output,} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import {Field, Project, ProjectFact, ProjectField} from '../../../shared/types/Project';
 import {FormControl} from '@angular/forms';
 import {of, Subject} from 'rxjs';
 import {debounceTime, switchMap, takeUntil} from 'rxjs/operators';
 import {ProjectService} from '../../../core/projects/project.service';
 import {ProjectStore} from '../../../core/projects/project.store';
-import {Constraint, DateConstraint, ElasticsearchQuery, FactConstraint, FactTextInputGroup, TextConstraint} from './Constraints';
+import {
+  Constraint,
+  DateConstraint,
+  ElasticsearchQuery,
+  FactConstraint,
+  FactTextInputGroup,
+  TextConstraint
+} from './Constraints';
 import {HttpErrorResponse} from '@angular/common/http';
 import {SearcherService} from '../../../core/searcher/searcher.service';
-import { MatSelectChange } from '@angular/material/select';
+import {MatSelectChange} from '@angular/material/select';
 import {Search, SearchOptions} from '../../../shared/types/Search';
 import {SearcherComponentService} from '../../services/searcher-component.service';
 import {UserStore} from '../../../core/users/user.store';
 import {UserProfile} from '../../../shared/types/UserProfile';
 import {SavedSearch} from '../../../shared/types/SavedSearch';
-import {SelectionModel} from '@angular/cdk/collections';
 import {Lexicon} from '../../../shared/types/Lexicon';
 import {LexiconService} from '../../../core/lexicon/lexicon.service';
 import {SearcherOptions} from '../../SearcherOptions';
@@ -22,13 +36,15 @@ import {SearcherOptions} from '../../SearcherOptions';
 @Component({
   selector: 'app-build-search',
   templateUrl: './build-search.component.html',
-  styleUrls: ['./build-search.component.scss']
+  styleUrls: ['./build-search.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BuildSearchComponent implements OnInit, OnDestroy {
   @Output() searchButtonClick = new EventEmitter<Search>();
   currentProject: Project;
   projectFields: ProjectField[] = [];
-  projectFieldsFiltered: ProjectField[] = [];
+  fieldsUnique: Field[] = [];
+  public fieldsFiltered: Subject<Field[]> = new Subject<Field[]>();
   fieldsFormControl = new FormControl();
   constraintList: (Constraint)[] = [];
   projectFacts: ProjectFact[] = [];
@@ -41,12 +57,12 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
   };
   onlyHighlightMatching = false;
   currentUser: UserProfile;
-  indexSelection = new SelectionModel<string>(true, []);
   lexicons: Lexicon[] = [];
 
   constructor(private projectService: ProjectService,
               private projectStore: ProjectStore,
               private searcherService: SearcherService,
+              private changeDetectorRef: ChangeDetectorRef,
               private userStore: UserStore,
               private lexiconService: LexiconService,
               public searchService: SearcherComponentService) {
@@ -72,12 +88,20 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
         this.projectFacts = projectFacts;
       }
     });
-    this.projectStore.getProjectFields().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectField[]) => {
+    this.projectStore.getCurrentProjectFields().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectField[]) => {
       if (projectFields) {
         this.projectFields = ProjectField.sortTextaFactsAsFirstItem(projectFields);
-        this.projectFieldsFiltered = this.projectFields;
-        this.indexSelection.clear();
-        this.projectFieldsFiltered.forEach(x => this.indexSelection.select(x.index));
+        const fields: Field[] = this.projectFields.map(x => x.fields).flat();
+        const distinct: Field[] = [];
+        const unique: string[] = [];
+        for (const el of fields) {
+          if (!unique[el.path]) {
+            distinct.push(el);
+            unique[el.path] = true;
+          }
+        }
+        this.fieldsFiltered.next(distinct);
+        this.fieldsUnique = distinct;
       }
     });
 
@@ -95,7 +119,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
         }
         return this.searcherService.search({
           query: this.elasticQuery.elasticSearchQuery,
-          indices: this.indexSelection.selected
+          indices: this.projectFields.map(y => y.index)
         }, this.currentProject.id);
       } else {
         return of(null);
@@ -109,7 +133,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
           } else {
             this.searchOptions.onlyHighlightMatching = undefined;
           }
-          this.searchOptions.selectedIndexes = this.indexSelection.selected;
+          this.searchOptions.selectedIndexes = this.projectFields.map(y => y.index);
           this.searchService.nextSearch(new Search(result, this.searchOptions));
         }
       });
@@ -130,30 +154,21 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
       this.checkMinimumMatch(); // query minimum_should_match
       // reset field selection
       this.fieldsFormControl.reset();
-      this.projectFieldsFiltered = this.projectFields; // remove field filter by type
+      this.fieldsFiltered.next(this.fieldsUnique); // remove field filter by type
     }
   }
 
   onSelectionChange(event: MatSelectChange) {
     if (event.value.length > 0 && event.value[0].type) {
-      this.filterFieldsByConstraintType(event.value[0].type);
+      this.fieldsFiltered.next(this.fieldsUnique.filter((field) => field.type === event.value[0].type));
     } else {
-      this.projectFieldsFiltered = this.projectFields; // no selection remove field filter
-    }
-  }
-
-  filterFieldsByConstraintType(constraintType: string) {
-    this.projectFieldsFiltered = [];
-    for (const index of this.projectFields) {
-      const filteredFields = index.fields.filter((field) => field.type === constraintType);
-      const filteredIndex = {...index}; // deep copy, shallow would change the original projectFields
-      filteredIndex.fields = filteredFields;
-      this.projectFieldsFiltered.push(filteredIndex);
+      this.fieldsFiltered.next(this.fieldsUnique); // no selection remove field filter
     }
   }
 
   buildSavedSearch(savedSearch: SavedSearch) { // todo type
     this.constraintList.splice(0, this.constraintList.length);
+    this.changeDetectorRef.detectChanges(); // so old ones trigger onDestroy
     const savedConstraints: any[] = JSON.parse(savedSearch.query_constraints as string);
     for (const constraint of savedConstraints) {
       const formFields = constraint.fields;
@@ -177,6 +192,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     }
     this.updateFieldsToHighlight(this.constraintList);
     this.checkMinimumMatch();
+    this.changeDetectorRef.detectChanges();
     this.searchService.queryNextSearch();
   }
 
@@ -254,6 +270,14 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     } else {
       console.error('no path to highlight fields');
     }
+  }
+
+  trackByPath(index, item: Field) {
+    return item.path;
+  }
+
+  trackByIndex(index, item: any) {
+    return index;
   }
 
 }

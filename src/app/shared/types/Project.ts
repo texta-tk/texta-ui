@@ -133,4 +133,5 @@ export interface ProjectState {
   };
   tasks: {};
   lexicons: { embeddingId: number | null; };
+  global: { selectedIndices: string[] };
 }

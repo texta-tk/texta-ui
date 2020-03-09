@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {ElasticsearchQuery, FactConstraint, FactTextInputGroup} from '../Constraints';
 import {FormControl} from '@angular/forms';
 import {debounceTime, pairwise, startWith, switchMap, takeUntil} from 'rxjs/operators';
@@ -13,7 +13,8 @@ import {UtilityFunctions} from '../../../../shared/UtilityFunctions';
 @Component({
   selector: 'app-fact-constraints',
   templateUrl: './fact-constraints.component.html',
-  styleUrls: ['./fact-constraints.component.scss']
+  styleUrls: ['./fact-constraints.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FactConstraintsComponent implements OnInit, OnDestroy {
   // inner hits name counter

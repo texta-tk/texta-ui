@@ -1,14 +1,14 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {DateConstraint, ElasticsearchQuery} from '../Constraints';
 import {FormControl} from '@angular/forms';
 import {debounceTime, distinctUntilChanged, startWith, takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
-import {UtilityFunctions} from "../../../../shared/UtilityFunctions";
 
 @Component({
   selector: 'app-date-constraints',
   templateUrl: './date-constraints.component.html',
-  styleUrls: ['./date-constraints.component.scss']
+  styleUrls: ['./date-constraints.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DateConstraintsComponent implements OnInit, OnDestroy {
   _dateConstraint: DateConstraint;
