@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, forkJoin, Observable, of} from 'rxjs';
+import {BehaviorSubject, forkJoin, merge, Observable, of} from 'rxjs';
 
 import {Project, ProjectFact, ProjectField} from '../../shared/types/Project';
 import {ProjectService} from './project.service';
@@ -48,20 +48,21 @@ export class ProjectStore {
   private loadProjectFieldsAndFacts() {
     this.selectedProject$.pipe(switchMap((project: Project) => {
       if (project) {
-        return forkJoin({
-          facts: this.projectService.getProjectFacts(project.id),
-          fields: this.projectService.getProjectFields(project.id)
-        });
+        return merge(this.projectService.getProjectFacts(project.id),
+          this.projectService.getProjectFields(project.id)
+        );
       }
       return of(null);
-    })).subscribe((resp: { facts: ProjectFact[] | HttpErrorResponse, fields: ProjectField[] | HttpErrorResponse }) => {
-      if (resp) {
-        if (!(resp.facts instanceof HttpErrorResponse)) {
-          this.projectFacts$.next(resp.facts);
+    })).subscribe((resp: any | HttpErrorResponse) => {
+      if (resp && !(resp instanceof HttpErrorResponse) && resp.length > 0) {
+        if (resp[0].hasOwnProperty('name')) {
+          this.projectFacts$.next(resp);
         }
-        if (!(resp.fields instanceof HttpErrorResponse)) {
-          this.projectFields$.next(resp.fields);
+        if (resp[0].hasOwnProperty('index')) {
+          this.projectFields$.next(resp);
         }
+      } else if (resp instanceof HttpErrorResponse) {
+        this.logService.snackBarError(resp, 2000);
       }
     });
   }
