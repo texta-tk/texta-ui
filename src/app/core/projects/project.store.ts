@@ -36,6 +36,8 @@ export class ProjectStore {
   // when we change project get its fields and facts aswell
   private loadProjectFieldsAndFacts() {
     this.selectedProject$.pipe(switchMap((project: Project) => {
+      this.projectFacts$.next(null);
+      this.projectFields$.next(null); // null old project properties until we get new ones
       if (project) {
         return merge(this.projectService.getProjectFacts(project.id),
           this.projectService.getProjectFields(project.id)

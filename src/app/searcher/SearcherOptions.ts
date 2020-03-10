@@ -1,3 +1,3 @@
 export class SearcherOptions {
-  static readonly SEARCH_DEBOUNCE_TIME = 500;
+  static readonly SEARCH_DEBOUNCE_TIME = 600;
 }

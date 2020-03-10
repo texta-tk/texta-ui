@@ -38,7 +38,6 @@ export class SavedSearchesComponent implements OnInit, OnDestroy {
       }
     })).subscribe((response: SavedSearch[] | HttpErrorResponse) => {
       if (response && !(response instanceof HttpErrorResponse)) {
-        console.log(response);
         this.dataSource.data = response;
         this.searchService.savedSearchSelection = new SelectionModel<SavedSearch>(true, []);
       }

@@ -6,7 +6,7 @@ import {MatSort, Sort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {FormControl} from '@angular/forms';
 import {of, Subject} from 'rxjs';
-import {skip, switchMap, takeUntil} from 'rxjs/operators';
+import {debounceTime, skip, switchMap, takeUntil} from 'rxjs/operators';
 import {ProjectStore} from '../../core/projects/project.store';
 import {ElasticsearchQuery} from '../searcher-sidebar/build-search/Constraints';
 import {Project, ProjectField} from '../../shared/types/Project';
@@ -51,7 +51,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
         if (currentProjectState?.searcher?.itemsPerPage) {
           this.paginator.pageSize = currentProjectState.searcher.itemsPerPage;
         }
-        return this.projectStore.getProjectFields().pipe(skip(1));
+        return this.projectStore.getProjectFields();
       } else {
         return of(null);
       }

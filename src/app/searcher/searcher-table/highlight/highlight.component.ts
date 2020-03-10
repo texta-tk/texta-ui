@@ -30,16 +30,20 @@ export class HighlightComponent {
   static linkify = new LinkifyIt();
   highlightArray: HighlightObject[] = [];
 
-  @Input() set highlightConfig(highlightConfig: HighlightConfig) { // todo data
+  @Input() set highlightConfig(highlightConfig: HighlightConfig) {
     if (highlightConfig.data[highlightConfig.currentColumn]) {
       let fieldFacts = this.getFactsByField(highlightConfig.data, highlightConfig.currentColumn);
       if (highlightConfig.onlyHighlightMatching && fieldFacts.length > 0) {
-        fieldFacts = this.getOnlyMatchingFacts(fieldFacts, highlightConfig);
+        fieldFacts = this.getOnlyMatchingFacts(fieldFacts, highlightConfig); // todo
       }
       fieldFacts = this.removeDuplicates(fieldFacts, 'spans');
+      // elastic fields arent trimmed by default, so elasticsearch highlights are going to be misaligned because
+      // elasticsearch highlighter trims the field, MLP also trims the field
+      // trim it here cause we need to get hyperlinks with trimmed columndata so it wouldnt be misaligned
+      highlightConfig.data[highlightConfig.currentColumn] = highlightConfig.data[highlightConfig.currentColumn].trim();
       const highlightTerms = [
         ...this.makeHyperlinksClickable(highlightConfig.data[highlightConfig.currentColumn], highlightConfig.currentColumn),
-        ...this.makeSearcherHighlightFacts(highlightConfig.searcherHighlight, highlightConfig.currentColumn),
+        ...this.makeSearcherHighlights(highlightConfig.searcherHighlight, highlightConfig.currentColumn),
         ...fieldFacts
       ];
       const colors = this.generateColorsForFacts(highlightTerms);
@@ -73,7 +77,7 @@ export class HighlightComponent {
   }
 
   // convert searcher highlight into mlp fact format
-  makeSearcherHighlightFacts(searcherHighlight: any, currentColumn: string) {
+  makeSearcherHighlights(searcherHighlight: any, currentColumn: string) {
     const highlight = searcherHighlight[currentColumn];
     if (highlight && highlight.length === 1) {
       const highlightArray: TextaFact[] = [];
@@ -161,9 +165,6 @@ export class HighlightComponent {
       }
       return [{text: originalText, highlighted: false}];
     }
-    // elastic fields arent trimmed by default, so elasticsearch highlights are going to be misaligned because
-    // elasticsearch highlighter trims the field, MLP also trims the field
-    originalText = originalText.trim(); // todo, will MLP always trim fields? is this fine?
 
     // need this sort for fact priority
     facts.sort(this.sortByStartLowestSpan);
