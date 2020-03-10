@@ -58,7 +58,7 @@ export class ProjectField {
     }
   }
 
-  static cleanProjectFields(fields: ProjectField[], whiteList?: string[], blackList?: string[]): ProjectField[] {
+  static cleanProjectFields(fields: ProjectField[], whiteList: string[], blackList: string[]): ProjectField[] {
     fields = JSON.parse(JSON.stringify(fields)); // deep clone, dont want to change original
     const filteredField: ProjectField[] = [];
     const whiteListTypes = whiteList && whiteList.length > 0 ? whiteList : null;
@@ -71,12 +71,6 @@ export class ProjectField {
         if (blackListTypes && blackListTypes.includes(element.type)) {
           return false;
         }
-        return (
-          element.type !== 'fact' &&
-          element.path !== '_texta_id' &&
-          element.type !== 'float' &&
-          element.type !== 'boolean'
-        );
       });
       if (index.fields.length > 0) {
         filteredField.push(index);

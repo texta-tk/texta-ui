@@ -1,16 +1,17 @@
 import {Component, OnInit} from '@angular/core';
-import { ErrorStateMatcher } from '@angular/material/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import {ErrorStateMatcher} from '@angular/material/core';
+import {MatDialogRef} from '@angular/material/dialog';
 import {EmbeddingsService} from '../../../../core/models/embeddings/embeddings.service';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {LiveErrorStateMatcher} from '../../../../shared/CustomerErrorStateMatchers';
-import {mergeMap, take} from 'rxjs/operators';
-import {of} from 'rxjs';
+import {mergeMap, take, takeUntil} from 'rxjs/operators';
+import {of, Subject} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ProjectStore} from '../../../../core/projects/project.store';
 import {Field, Project, ProjectField} from '../../../../shared/types/Project';
 import {ProjectService} from '../../../../core/projects/project.service';
 import {Embedding} from '../../../../shared/types/tasks/Embedding';
+import {UtilityFunctions} from '../../../../shared/UtilityFunctions';
 
 @Component({
   selector: 'app-create-embedding-dialog',
@@ -32,6 +33,8 @@ export class CreateEmbeddingDialogComponent implements OnInit {
   query = this.defaultQuery;
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   projectFields: ProjectField[];
+  destroyed$ = new Subject<boolean>();
+  fieldsUnique: Field[] = [];
 
   constructor(private dialogRef: MatDialogRef<CreateEmbeddingDialogComponent>,
               private projectService: ProjectService,
@@ -40,17 +43,11 @@ export class CreateEmbeddingDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.projectStore.getCurrentProject().pipe(take(1), mergeMap(currentProject => {
-      if (currentProject) {
-        return this.projectService.getProjectFields(currentProject.id);
-      } else {
-        return of(null);
-      }
-    })).subscribe((resp: ProjectField[] | HttpErrorResponse) => {
-      if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.projectFields = ProjectField.cleanProjectFields(resp);
-      } else {
-        this.dialogRef.close(resp);
+
+    this.projectStore.getCurrentProjectFields().pipe(takeUntil(this.destroyed$)).subscribe(x => {
+      if (x) {
+        this.projectFields = ProjectField.cleanProjectFields(x, ['text'], []);
+        this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
       }
     });
   }

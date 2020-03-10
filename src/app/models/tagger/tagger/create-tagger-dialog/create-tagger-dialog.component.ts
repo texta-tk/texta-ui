@@ -1,20 +1,21 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import { ErrorStateMatcher } from '@angular/material/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import {ErrorStateMatcher} from '@angular/material/core';
+import {MatDialogRef} from '@angular/material/dialog';
 import {LiveErrorStateMatcher} from '../../../../shared/CustomerErrorStateMatchers';
 import {ProjectService} from '../../../../core/projects/project.service';
 import {HttpErrorResponse} from '@angular/common/http';
-import {Project, ProjectField} from '../../../../shared/types/Project';
+import {Field, Project, ProjectField} from '../../../../shared/types/Project';
 import {TaggerService} from '../../../../core/models/taggers/tagger.service';
 import {ProjectStore} from '../../../../core/projects/project.store';
 import {mergeMap, take, takeUntil} from 'rxjs/operators';
-import {merge, of, Subject} from 'rxjs';
+import {BehaviorSubject, merge, of, Subject} from 'rxjs';
 import {TaggerOptions} from '../../../../shared/types/tasks/TaggerOptions';
 import {LogService} from '../../../../core/util/log.service';
 import {Embedding} from '../../../../shared/types/tasks/Embedding';
 import {EmbeddingsService} from '../../../../core/models/embeddings/embeddings.service';
 import {Tagger} from '../../../../shared/types/tasks/Tagger';
+import {UtilityFunctions} from '../../../../shared/UtilityFunctions';
 
 @Component({
   selector: 'app-create-tagger-dialog',
@@ -43,6 +44,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
   projectFields: ProjectField[];
   currentProject: Project;
   destroyed$ = new Subject<boolean>();
+  fieldsUnique: Field[] = [];
 
   constructor(private dialogRef: MatDialogRef<CreateTaggerDialogComponent>,
               private taggerService: TaggerService,
@@ -58,23 +60,26 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
         this.currentProject = currentProject;
         return merge(
           this.taggerService.getTaggerOptions(currentProject.id),
-          this.projectService.getProjectFields(currentProject.id),
           this.embeddingService.getEmbeddings(currentProject.id));
       } else {
         return of(null);
       }
-    })).subscribe((resp: TaggerOptions | ProjectField[] | { count: number, results: Embedding[] } | HttpErrorResponse | null) => {
+    })).subscribe((resp: TaggerOptions | { count: number, results: Embedding[] } | HttpErrorResponse | null) => {
       if (resp) {
         if (this.isTaggerOptions(resp)) {
           this.taggerOptions = resp as TaggerOptions;
           this.setDefaultFormValues(this.taggerOptions);
         } else if (resp instanceof HttpErrorResponse) {
           this.logService.snackBarError(resp, 5000);
-        } else if (ProjectField.isProjectFields(resp)) {
-          this.projectFields = ProjectField.cleanProjectFields(resp);
         } else if (resp.results && Embedding.isEmbedding(resp.results)) {
           this.embeddings = resp.results;
         }
+      }
+    });
+    this.projectStore.getCurrentProjectFields().pipe(takeUntil(this.destroyed$)).subscribe(x => {
+      if (x) {
+        this.projectFields = ProjectField.cleanProjectFields(x, ['text'], []);
+        this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
       }
     });
 

@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {ProjectField, ProjectFact, Project} from '../../../../shared/types/Project';
-import {mergeMap, take} from 'rxjs/operators';
+import {ProjectField, ProjectFact, Project, Field} from '../../../../shared/types/Project';
+import {mergeMap, take, takeUntil} from 'rxjs/operators';
 import {LogService} from '../../../../core/util/log.service';
 import {TaggerOptions} from '../../../../shared/types/tasks/TaggerOptions';
-import { ErrorStateMatcher } from '@angular/material/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import {ErrorStateMatcher} from '@angular/material/core';
+import {MatDialogRef} from '@angular/material/dialog';
 import {HttpErrorResponse} from '@angular/common/http';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ProjectService} from '../../../../core/projects/project.service';
@@ -13,9 +13,10 @@ import {LiveErrorStateMatcher} from '../../../../shared/CustomerErrorStateMatche
 import {EmbeddingsService} from '../../../../core/models/embeddings/embeddings.service';
 import {Embedding} from '../../../../shared/types/tasks/Embedding';
 import {TaggerService} from '../../../../core/models/taggers/tagger.service';
-import {merge, of, forkJoin} from 'rxjs';
+import {merge, of, forkJoin, Subject} from 'rxjs';
 import {TaggerGroupService} from '../../../../core/models/taggers/tagger-group.service';
 import {TaggerGroup} from '../../../../shared/types/tasks/Tagger';
+import {UtilityFunctions} from '../../../../shared/UtilityFunctions';
 
 @Component({
   selector: 'app-create-tagger-group-dialog',
@@ -47,6 +48,8 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
   projectFields: ProjectField[];
   projectFacts: ProjectFact[];
   currentProject: Project;
+  destroyed$ = new Subject<boolean>();
+  fieldsUnique: Field[] = [];
 
   constructor(private dialogRef: MatDialogRef<CreateTaggerGroupDialogComponent>,
               private taggerService: TaggerService,
@@ -64,33 +67,35 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
         return forkJoin(
           {
             taggerOptions: this.taggerService.getTaggerOptions(currentProject.id),
-            projectFields: this.projectService.getProjectFields(currentProject.id),
             embeddings: this.embeddingService.getEmbeddings(currentProject.id),
-            projectFacts: this.projectService.getProjectFacts(currentProject.id)
           });
       } else {
         return of(null);
       }
     })).subscribe((resp: {
       taggerOptions: TaggerOptions | HttpErrorResponse,
-      projectFields: ProjectField[] | HttpErrorResponse,
       embeddings: { count: number, results: Embedding[] } | HttpErrorResponse,
-      projectFacts: ProjectFact[] | HttpErrorResponse,
+      projectFacts: ProjectFact[],
     }) => {
       if (resp) {
         if (!(resp.taggerOptions instanceof HttpErrorResponse)) {
           this.taggerOptions = resp.taggerOptions;
           this.setDefaultFormValues(this.taggerOptions);
         }
-        if (!(resp.projectFacts instanceof HttpErrorResponse)) {
-          this.projectFacts = resp.projectFacts;
-        }
         if (!(resp.embeddings instanceof HttpErrorResponse)) {
           this.embeddings = resp.embeddings.results;
         }
-        if (!(resp.projectFields instanceof HttpErrorResponse)) {
-          this.projectFields = ProjectField.cleanProjectFields(resp.projectFields);
-        }
+      }
+    });
+    this.projectStore.getProjectFacts().pipe(takeUntil(this.destroyed$)).subscribe(x => {
+      if (x) {
+        this.projectFacts = x;
+      }
+    });
+    this.projectStore.getCurrentProjectFields().pipe(takeUntil(this.destroyed$)).subscribe(x => {
+      if (x) {
+        this.projectFields = ProjectField.cleanProjectFields(x, ['text'], []);
+        this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
       }
     });
 

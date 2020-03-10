@@ -14,11 +14,9 @@
       <mat-label>Select Fields</mat-label>
       <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
                   formControlName="fieldsFormControl" multiple required>
-        <mat-optgroup *ngFor="let group of projectFields" [label]="group.index">
-          <mat-option *ngFor="let fields of group.fields" [value]="fields">
-            {{fields.path}}
-          </mat-option>
-        </mat-optgroup>
+        <mat-option *ngFor="let fields of fieldsUnique" [value]="fields">
+          {{fields.path}}
+        </mat-option>
       </mat-select>
       <mat-error *ngIf="embeddingForm.get('fieldsFormControl')?.hasError('required')">
         Field is <strong>required</strong>

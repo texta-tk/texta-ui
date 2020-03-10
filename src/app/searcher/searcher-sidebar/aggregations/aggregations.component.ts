@@ -71,7 +71,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
     });
     this.projectStore.getCurrentProjectFields().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectField[]) => {
       if (projectFields) {
-        this.projectFields = ProjectField.cleanProjectFields(projectFields, ['fact'], ['keyword']);
+        this.projectFields = ProjectField.cleanProjectFields(projectFields, ['fact', 'text', 'date'], []);
         this.projectFields = ProjectField.sortTextaFactsAsFirstItem(this.projectFields);
         const distinct = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(x => x.fields).flat(), (x => x.path));
         this.fieldsFiltered.next(distinct);

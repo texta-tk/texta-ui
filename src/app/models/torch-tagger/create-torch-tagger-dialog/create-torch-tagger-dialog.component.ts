@@ -1,10 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormGroup, FormControl, Validators} from '@angular/forms';
-import { ErrorStateMatcher } from '@angular/material/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import {ErrorStateMatcher} from '@angular/material/core';
+import {MatDialogRef} from '@angular/material/dialog';
 import {LiveErrorStateMatcher} from 'src/app/shared/CustomerErrorStateMatchers';
 import {Embedding} from 'src/app/shared/types/tasks/Embedding';
-import {ProjectField, ProjectFact, Project} from 'src/app/shared/types/Project';
+import {ProjectField, ProjectFact, Project, Field} from 'src/app/shared/types/Project';
 import {TorchTaggerService} from '../../../core/models/taggers/torch-tagger.service';
 import {ProjectService} from 'src/app/core/projects/project.service';
 import {ProjectStore} from 'src/app/core/projects/project.store';
@@ -13,6 +13,7 @@ import {of, forkJoin, Subject} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {TorchTagger} from 'src/app/shared/types/tasks/TorchTagger';
 import {EmbeddingsService} from 'src/app/core/models/embeddings/embeddings.service';
+import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 
 @Component({
   selector: 'app-create-torch-tagger-dialog',
@@ -40,6 +41,7 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
   projectFields: ProjectField[];
   projectFacts: ProjectFact[];
   destroyed$ = new Subject<boolean>();
+  fieldsUnique: Field[] = [];
   currentProject: Project;
 
   constructor(private dialogRef: MatDialogRef<CreateTorchTaggerDialogComponent>,
@@ -80,9 +82,11 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
         this.projectFacts = projFacts;
       }
     });
-    this.projectStore.getProjectFields().pipe(takeUntil(this.destroyed$)).subscribe(projFields => {
-      if (projFields) {
-        this.projectFields = projFields;
+
+    this.projectStore.getCurrentProjectFields().pipe(takeUntil(this.destroyed$)).subscribe(x => {
+      if (x) {
+        this.projectFields = ProjectField.cleanProjectFields(x, ['text'], []);
+        this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
       }
     });
   }
