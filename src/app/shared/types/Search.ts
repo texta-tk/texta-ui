@@ -10,5 +10,4 @@ export class Search {
 export class SearchOptions {
   liveSearch: boolean;
   onlyHighlightMatching?: FactConstraint[];
-  selectedIndexes: string[];
 }

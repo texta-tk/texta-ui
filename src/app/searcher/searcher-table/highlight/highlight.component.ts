@@ -40,7 +40,9 @@ export class HighlightComponent {
       // elastic fields arent trimmed by default, so elasticsearch highlights are going to be misaligned because
       // elasticsearch highlighter trims the field, MLP also trims the field
       // trim it here cause we need to get hyperlinks with trimmed columndata so it wouldnt be misaligned
-      highlightConfig.data[highlightConfig.currentColumn] = highlightConfig.data[highlightConfig.currentColumn].trim();
+      if ((isNaN(Number(highlightConfig.data[highlightConfig.currentColumn])))) {
+        highlightConfig.data[highlightConfig.currentColumn] = highlightConfig.data[highlightConfig.currentColumn].trim();
+      }
       const highlightTerms = [
         ...this.makeHyperlinksClickable(highlightConfig.data[highlightConfig.currentColumn], highlightConfig.currentColumn),
         ...this.makeSearcherHighlights(highlightConfig.searcherHighlight, highlightConfig.currentColumn),

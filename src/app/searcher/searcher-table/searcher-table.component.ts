@@ -34,10 +34,10 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
   private destroy$: Subject<boolean> = new Subject();
   private currentElasticQuery: ElasticsearchQuery;
   private projectFields: ProjectField[];
-  private selectedIndexes: string[]; // is used to remember column selection
   private currentProject: Project;
 
-  constructor(public searchService: SearcherComponentService, private projectStore: ProjectStore, private localStorage: LocalStorageService) {
+  constructor(public searchService: SearcherComponentService, private projectStore: ProjectStore,
+              private localStorage: LocalStorageService) {
   }
 
   ngOnInit() {
@@ -51,7 +51,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
         if (currentProjectState?.searcher?.itemsPerPage) {
           this.paginator.pageSize = currentProjectState.searcher.itemsPerPage;
         }
-        return this.projectStore.getProjectFields();
+        return this.projectStore.getCurrentProjectFields();
       } else {
         return of(null);
       }
@@ -77,7 +77,6 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
         if (this.currentElasticQuery) {
           this.paginator.pageIndex = this.currentElasticQuery.from / this.currentElasticQuery.size;
         }
-        this.selectedIndexes = resp.searchOptions.selectedIndexes;
 
       }
     });
@@ -96,15 +95,6 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
   }
 
   private updateFieldSelection(resp: Search) {
-    if (this.selectedIndexes && !UtilityFunctions.arrayValuesEqual(this.selectedIndexes, resp.searchOptions.selectedIndexes)) {
-      this.displayedColumns = [...new Set([].concat.apply([],
-        (this.projectFields.map(x => {
-          if (this.searchOptions.selectedIndexes.includes(x.index)) {
-            return x.fields.map(y => y.path);
-          }
-          return [];
-        }))))] as string[];
-    }
     this.setColumnsToDisplay();
 
   }

@@ -38,6 +38,7 @@ export class ProjectStore {
     this.selectedProject$.pipe(switchMap((project: Project) => {
       this.projectFacts$.next(null);
       this.projectFields$.next(null); // null old project properties until we get new ones
+      this.selectedProjectFields$.next(null);
       if (project) {
         return merge(this.projectService.getProjectFacts(project.id),
           this.projectService.getProjectFields(project.id)

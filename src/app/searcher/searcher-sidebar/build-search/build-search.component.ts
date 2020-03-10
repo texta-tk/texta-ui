@@ -52,8 +52,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
   // building the whole search query onto this
   elasticQuery: ElasticsearchQuery = new ElasticsearchQuery();
   searchOptions: SearchOptions = {
-    liveSearch: true,
-    selectedIndexes: []
+    liveSearch: true
   };
   onlyHighlightMatching = false;
   currentUser: UserProfile;
@@ -133,7 +132,6 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
           } else {
             this.searchOptions.onlyHighlightMatching = undefined;
           }
-          this.searchOptions.selectedIndexes = this.projectFields.map(y => y.index);
           this.searchService.nextSearch(new Search(result, this.searchOptions));
         }
       });
@@ -230,7 +228,11 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
 
   saveSearch(description: string) {
     if (this.currentUser) {
-      this.searcherService.saveSearch(this.currentProject.id, [...this.constraintList], this.elasticQuery.elasticSearchQuery, description).subscribe(resp => {
+      this.searcherService.saveSearch(
+        this.currentProject.id,
+        [...this.constraintList],
+        this.elasticQuery.elasticSearchQuery,
+        description).subscribe(resp => {
         if (resp) {
           this.searchService.nextSavedSearchUpdate();
         }
