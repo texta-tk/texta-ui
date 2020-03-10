@@ -95,7 +95,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     });
     this.projectStore.getProjectFields().pipe(takeUntil(this.destroyed$)).subscribe((x) => {
       if (x) {
-        this.projectFields = UtilityFunctions.sortByStringProperty(x, y => y.index);
+        this.projectFields = UtilityFunctions.sortByStringProperty<ProjectField>(x, y => y.index);
         if (this.currentProject) {
           const state = this.localStorageService.getProjectState(this.currentProject);
           if (state?.global?.selectedIndices && state.global.selectedIndices.length > 0) {

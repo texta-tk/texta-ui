@@ -11,12 +11,10 @@
       <mat-label>Select Fields</mat-label>
       <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
                   [formControl]="aggregation.formControl">
-        <mat-optgroup *ngFor="let group of projectFields" [label]="group.index">
-          <mat-option *ngFor="let fields of group.fields" [value]="fields"
-                      [disabled]="fields.type === 'date' && aggregation.formControl.value.type !== 'date' && dateAlreadySelected">
-            {{fields.path}}
-          </mat-option>
-        </mat-optgroup>
+        <mat-option *ngFor="let fields of (fieldsFiltered | async)" [value]="fields"
+                    [disabled]="fields.type === 'date' && aggregation.formControl.value.type !== 'date' && dateAlreadySelected">
+          {{fields.path}}
+        </mat-option>
       </mat-select>
     </mat-form-field>
 

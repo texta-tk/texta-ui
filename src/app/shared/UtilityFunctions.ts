@@ -14,10 +14,10 @@ export class UtilityFunctions {
     }
   }
 
-  static sortByStringProperty(object: any[], propertyAccsessor: (x: any) => string) {
+  static sortByStringProperty<T>(object: T[], propertyAccessor: (x: T) => string): T[] {
     return object.sort((a, b) => {
-      const propertyA = propertyAccsessor(a).toUpperCase();
-      const propertyB = propertyAccsessor(b).toUpperCase();
+      const propertyA = propertyAccessor(a).toUpperCase();
+      const propertyB = propertyAccessor(b).toUpperCase();
       if (propertyA < propertyB) {
         return -1;
       }
@@ -27,6 +27,18 @@ export class UtilityFunctions {
       // names must be equal
       return 0;
     });
+  }
+
+  static getDistinctByProperty<T>(objectArray: T[], propertyAccessor: (x: T) => any): T[] {
+    const distinct: T[] = [];
+    const unique: boolean[] = [];
+    for (const el of objectArray) {
+      if (!unique[propertyAccessor(el)]) {
+        distinct.push(el);
+        unique[propertyAccessor(el)] = true;
+      }
+    }
+    return distinct;
   }
 
 }

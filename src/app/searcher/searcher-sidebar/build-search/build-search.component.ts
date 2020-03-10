@@ -32,6 +32,7 @@ import {SavedSearch} from '../../../shared/types/SavedSearch';
 import {Lexicon} from '../../../shared/types/Lexicon';
 import {LexiconService} from '../../../core/lexicon/lexicon.service';
 import {SearcherOptions} from '../../SearcherOptions';
+import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 
 @Component({
   selector: 'app-build-search',
@@ -90,15 +91,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     this.projectStore.getCurrentProjectFields().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectField[]) => {
       if (projectFields) {
         this.projectFields = ProjectField.sortTextaFactsAsFirstItem(projectFields);
-        const fields: Field[] = this.projectFields.map(x => x.fields).flat();
-        const distinct: Field[] = [];
-        const unique: string[] = [];
-        for (const el of fields) {
-          if (!unique[el.path]) {
-            distinct.push(el);
-            unique[el.path] = true;
-          }
-        }
+        const distinct = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(x => x.fields).flat(), (x => x.path));
         this.fieldsFiltered.next(distinct);
         this.fieldsUnique = distinct;
       }

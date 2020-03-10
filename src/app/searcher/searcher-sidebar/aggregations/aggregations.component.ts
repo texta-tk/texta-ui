@@ -2,13 +2,14 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {pairwise, startWith, switchMap, takeUntil} from 'rxjs/operators';
 import {Field, Project, ProjectFact, ProjectField} from '../../../shared/types/Project';
 import {ProjectStore} from '../../../core/projects/project.store';
-import {forkJoin, of, Subject} from 'rxjs';
+import {BehaviorSubject, forkJoin, of, Subject} from 'rxjs';
 import {FormControl} from '@angular/forms';
 import {SearcherService} from '../../../core/searcher/searcher.service';
 import {SearcherComponentService} from '../../services/searcher-component.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ElasticsearchQuery, ElasticsearchQueryStructure} from '../build-search/Constraints';
 import {LogService} from '../../../core/util/log.service';
+import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 
 export interface AggregationForm {
   aggregation: any;
@@ -25,6 +26,8 @@ export class AggregationsComponent implements OnInit, OnDestroy {
   currentProject: Project;
   projectFields: ProjectField[] = [];
   projectFacts: ProjectFact[] = [];
+  fieldsUnique: Field[] = [];
+  public fieldsFiltered: BehaviorSubject<Field[]> = new BehaviorSubject<Field[]>([]);
   destroy$: Subject<boolean> = new Subject();
   aggregationList: AggregationForm[] = [];
   searcherElasticSearchQuery: ElasticsearchQueryStructure;
@@ -49,7 +52,9 @@ export class AggregationsComponent implements OnInit, OnDestroy {
         this.dateAlreadySelected = false;
       }
     });
-    form.setValue(this.projectFields[0].fields[0]);
+    if (this.projectFields.length > 0 && this.projectFields[0].fields.length > 0) {
+      form.setValue(this.projectFields[0].fields[0]);
+    }
     this.aggregationList.push({aggregation: {}, formControl: form, formDestroy});
   }
 
@@ -64,14 +69,16 @@ export class AggregationsComponent implements OnInit, OnDestroy {
         this.projectFacts = projectFacts;
       }
     });
-    this.projectStore.getProjectFields().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectField[]) => {
+    this.projectStore.getCurrentProjectFields().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectField[]) => {
       if (projectFields) {
         this.projectFields = ProjectField.cleanProjectFields(projectFields, ['fact'], ['keyword']);
         this.projectFields = ProjectField.sortTextaFactsAsFirstItem(this.projectFields);
+        const distinct = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(x => x.fields).flat(), (x => x.path));
+        this.fieldsFiltered.next(distinct);
+        this.fieldsUnique = distinct;
         this.dateAlreadySelected = false;
         this.aggregationList = [];
         this.addNewAggregation();
-        this.aggregationList[0].formControl.setValue(this.projectFields[0].fields[0]);
       }
     });
     this.searchService.getSearch().pipe(takeUntil(this.destroy$), startWith({}), switchMap(search => {
@@ -93,6 +100,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
         aggs: {...joinedAggregation},
         size: 0 // ignore results, performance improvement
       },
+      indices: this.projectFields.map(y => y.index)
     };
     for (const savedSearch of this.searchService.savedSearchSelection.selected) {
       const savedSearchQuery = JSON.parse(savedSearch.query);
@@ -112,12 +120,14 @@ export class AggregationsComponent implements OnInit, OnDestroy {
 
 
     this.searchService.setIsLoading(true);
+    // need 2 seperate requests to calculate relative frequency
     forkJoin({
       globalAgg: this.dateRelativeFrequency ? this.searcherService.search({
         query: {
           size: 0,
           aggs: joinedAggregation
-        }
+        },
+        indices: this.projectFields.map(y => y.index)
       }, this.currentProject.id) : of(null),
       agg: this.searcherService.search(body, this.currentProject.id)
     }).subscribe((resp: { globalAgg: any, agg: any }) => {
