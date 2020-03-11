@@ -1,0 +1,37 @@
+<mat-form-field appearance="outline" class="max-width">
+  <mat-label>Select Fields</mat-label>
+  <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
+              [formControl]="fieldsFormControl"
+              multiple (openedChange)="onOpenedChange($event)"
+
+              (selectionChange)="onSelectionChange($event)">
+    <mat-option *ngFor="let fields of (fieldsFiltered|async);trackBy:trackByPath" [value]="fields">
+      {{fields.path}}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+<div *ngFor="let constraint of constraintList; let i = index;trackBy:trackByIndex" class="filters bg-grey">
+  <div fxLayout="row" class="header">
+    <div fxLayout="row wrap" class="field-titles">
+      <h4 *ngFor="let field of constraint.fields;trackBy:trackByPath">{{field.path}};</h4>
+    </div>
+    <div fxFlex fxLayoutAlign="end">
+      <button mat-icon-button aria-label="Close" (click)="removeConstraint(i)" class="mat-icon-button">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+  <div class="content" *ngIf="isTextConstraint(constraint)">
+    <app-text-constraints [textConstraint]="constraint" [elasticSearchQuery]="elasticQuery"
+                          (change)="searchOnChange($event)"></app-text-constraints>
+  </div>
+  <div class="content" *ngIf="isDateConstraint(constraint)">
+    <app-date-constraints [dateConstraint]="constraint" [elasticSearchQuery]="elasticQuery"
+                          (change)="searchOnChange($event)"></app-date-constraints>
+  </div>
+  <div class="content" *ngIf="isFactNameConstraint(constraint)">
+    <app-fact-constraints [factConstraint]="constraint" [elasticSearchQuery]="elasticQuery"
+                          [projectFacts]="projectFacts" [currentProject]="currentProject"
+                          (change)="searchOnChange($event)"></app-fact-constraints>
+  </div>
+</div>

@@ -3,7 +3,7 @@ import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {ElasticsearchQuery} from '../searcher-sidebar/build-search/Constraints';
 import {SelectionModel} from '@angular/cdk/collections';
 import {SavedSearch} from '../../shared/types/SavedSearch';
-import { Injectable } from "@angular/core";
+import {Injectable} from '@angular/core';
 
 @Injectable()
 export class SearcherComponentService {
@@ -12,7 +12,6 @@ export class SearcherComponentService {
   private aggregationSubject = new BehaviorSubject<{ globalAgg: any, agg: any } | null>(null);
   private savedSearchUpdate = new Subject<boolean>();
   private elasticQuerySubject = new BehaviorSubject<ElasticsearchQuery | null>(null);
-  private searchQueryQueue$ = new Subject<void>();
   private isLoading = new BehaviorSubject<boolean>(false);
 
   constructor() {
@@ -26,6 +25,8 @@ export class SearcherComponentService {
     return this.isLoading.asObservable();
   }
 
+  // when we search_by_query, the response is passed as a Search Object to the table component through this function
+  // also used in aggregations, to know, when to request a new query via getElasticQuery() (we got results so the query is viable to use)
   public nextSearch(search: Search | null) {
     this.searchSubject.next(search);
   }
@@ -50,19 +51,14 @@ export class SearcherComponentService {
     return this.savedSearchUpdate.asObservable();
   }
 
+  // we use these elasticQuery functions to pass on current searcher query to aggregations
+  // because aggregations need to build some of their queries based off of the current search query
+  // also used by the searcher table to edit the query, to change sort order, or to navigate pages
   public nextElasticQuery(val: ElasticsearchQuery | null) {
     this.elasticQuerySubject.next(val);
   }
 
   public getElasticQuery(): Observable<ElasticsearchQuery | null> {
     return this.elasticQuerySubject.asObservable();
-  }
-
-  public queryNextSearch() {
-    this.searchQueryQueue$.next();
-  }
-
-  public getSearchQueue() {
-    return this.searchQueryQueue$;
   }
 }

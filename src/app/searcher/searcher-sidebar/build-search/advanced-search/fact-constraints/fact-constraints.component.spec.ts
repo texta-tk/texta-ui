@@ -1,14 +1,14 @@
 import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 
 import {FactConstraintsComponent} from './fact-constraints.component';
-import {SharedModule} from '../../../../shared/shared.module';
+import {SharedModule} from '../../../../../shared/shared.module';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {ElasticsearchQuery, FactConstraint, TextConstraint} from '../Constraints';
+import {ElasticsearchQuery, FactConstraint, TextConstraint} from '../../Constraints';
 import {of} from 'rxjs';
-import {ProjectService} from '../../../../core/projects/project.service';
-import {Project} from '../../../../shared/types/Project';
+import {ProjectService} from '../../../../../core/projects/project.service';
+import {Project} from '../../../../../shared/types/Project';
 
 describe('FactConstraintsComponent', () => {
   let component: FactConstraintsComponent;

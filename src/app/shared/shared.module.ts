@@ -1,7 +1,6 @@
 import {NgModule} from '@angular/core';
 import {CommonModule, DatePipe} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-
 import {MatIconModule} from '@angular/material/icon';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatInputModule} from '@angular/material/input';
@@ -45,6 +44,7 @@ import {MaterialFileInputModule} from 'ngx-material-file-input';
 import {FormatTextaFactsPipe} from './pipes/format-texta-facts.pipe';
 import {IsObjectPipe} from './pipes/is-object.pipe';
 import {NgxMatSelectSearchModule} from 'ngx-mat-select-search';
+import {MatRadioModule} from '@angular/material/radio';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
@@ -89,6 +89,7 @@ import {NgxMatSelectSearchModule} from 'ngx-mat-select-search';
     MatTooltipModule,
     MatSliderModule,
     MatTreeModule,
+    MatRadioModule,
     LineChartModule,
     InfiniteScrollModule,
     MaterialFileInputModule,
@@ -127,6 +128,7 @@ import {NgxMatSelectSearchModule} from 'ngx-mat-select-search';
     MatTooltipModule,
     MatSliderModule,
     MatTreeModule,
+    MatRadioModule,
     GenericTableComponent,
     SavedSearchAutocompleteComponent,
     MatOptionSelectAllComponent,

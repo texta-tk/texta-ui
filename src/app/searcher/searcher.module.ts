@@ -1,9 +1,9 @@
 import {NgModule} from '@angular/core';
 import {SharedModule} from '../shared/shared.module';
 import {SearcherRoutingModule} from './searcher-routing.module';
-import {TextConstraintsComponent} from './searcher-sidebar/build-search/text-constraints/text-constraints.component';
-import {DateConstraintsComponent} from './searcher-sidebar/build-search/date-constraints/date-constraints.component';
-import {FactConstraintsComponent} from './searcher-sidebar/build-search/fact-constraints/fact-constraints.component';
+import {TextConstraintsComponent} from './searcher-sidebar/build-search/advanced-search/text-constraints/text-constraints.component';
+import {DateConstraintsComponent} from './searcher-sidebar/build-search/advanced-search/date-constraints/date-constraints.component';
+import {FactConstraintsComponent} from './searcher-sidebar/build-search/advanced-search/fact-constraints/fact-constraints.component';
 import {SearcherComponent} from './searcher.component';
 import {SearcherSidebarComponent} from './searcher-sidebar/searcher-sidebar.component';
 import {SearcherTableComponent} from './searcher-table/searcher-table.component';
@@ -20,6 +20,8 @@ import {AggregationResultsDialogComponent} from './aggregation-results/aggregati
 import { AggregationResultsTreeComponent } from './aggregation-results/aggregation-results-tree/aggregation-results-tree.component';
 import {DatePipe} from '@angular/common';
 import { AggregationResultsChartComponent } from './aggregation-results/aggregation-results-chart/aggregation-results-chart.component';
+import { SimpleSearchComponent } from './searcher-sidebar/build-search/simple-search/simple-search.component';
+import { AdvancedSearchComponent } from './searcher-sidebar/build-search/advanced-search/advanced-search.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +43,8 @@ import { AggregationResultsChartComponent } from './aggregation-results/aggregat
     AggregationResultsDialogComponent,
     AggregationResultsTreeComponent,
     AggregationResultsChartComponent,
+    SimpleSearchComponent,
+    AdvancedSearchComponent,
   ],
   imports: [
     SharedModule,

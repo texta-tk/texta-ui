@@ -8,11 +8,11 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
-import {ElasticsearchQuery, TextConstraint} from '../Constraints';
+import {ElasticsearchQuery, TextConstraint} from '../../Constraints';
 import {FormControl} from '@angular/forms';
 import {pairwise, startWith, takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
-import {Lexicon} from '../../../../shared/types/Lexicon';
+import {Lexicon} from '../../../../../shared/types/Lexicon';
 import {MatMenuTrigger} from '@angular/material/menu';
 
 @Component({

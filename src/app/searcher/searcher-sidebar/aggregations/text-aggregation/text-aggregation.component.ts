@@ -1,9 +1,9 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {ElasticsearchQuery, ElasticsearchQueryStructure} from '../../build-search/Constraints';
+import {ElasticsearchQuery} from '../../build-search/Constraints';
 import {FormControl} from '@angular/forms';
-import {of, Subject} from 'rxjs';
+import {Subject} from 'rxjs';
 import {SearcherComponentService} from '../../../services/searcher-component.service';
-import {startWith, switchMap, takeUntil} from 'rxjs/operators';
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-text-aggregation',
@@ -22,7 +22,6 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
     }
   }
 
-  searcherElasticSearchQuery: ElasticsearchQueryStructure;
   aggregationType: 'terms' | 'significant_text' | 'significant_terms' = 'terms';
   aggregationSize = 30;
   destroy$: Subject<boolean> = new Subject();
@@ -33,15 +32,8 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // every time we get new search result refresh the query
-    this.searchService.getSearch().pipe(takeUntil(this.destroy$), startWith({}), switchMap(search => {
-      if (search) {
-        return this.searchService.getElasticQuery();
-      }
-      return of(null);
-    })).subscribe((query: ElasticsearchQuery | null) => {
+    this.searchService.getElasticQuery().pipe(takeUntil(this.destroy$)).subscribe((query: ElasticsearchQuery | null) => {
       if (query) {
-        // deep clone
-        this.searcherElasticSearchQuery = JSON.parse(JSON.stringify(query.elasticSearchQuery));
         this.updateAggregations();
       }
     });
@@ -54,12 +46,10 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
   }
 
   updateAggregations() {
-    if (this.searcherElasticSearchQuery && this.searcherElasticSearchQuery.query && this.searcherElasticSearchQuery.query.bool) {
-      if (this.isFormControlTypeOfFact()) {
-        this.makeFactAggregation();
-      } else {
-        this.makeTextAggregation();
-      }
+    if (this.isFormControlTypeOfFact()) {
+      this.makeFactAggregation();
+    } else {
+      this.makeTextAggregation();
     }
   }
 

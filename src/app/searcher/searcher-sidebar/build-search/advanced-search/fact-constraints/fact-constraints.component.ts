@@ -1,13 +1,13 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {ElasticsearchQuery, FactConstraint, FactTextInputGroup} from '../Constraints';
+import {ElasticsearchQuery, FactConstraint, FactTextInputGroup} from '../../Constraints';
 import {FormControl} from '@angular/forms';
 import {debounceTime, pairwise, startWith, switchMap, takeUntil} from 'rxjs/operators';
-import {Project, ProjectFact} from '../../../../shared/types/Project';
+import {Project, ProjectFact} from '../../../../../shared/types/Project';
 import {of, Subject} from 'rxjs';
-import {ProjectService} from '../../../../core/projects/project.service';
+import {ProjectService} from '../../../../../core/projects/project.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import {UtilityFunctions} from '../../../../shared/UtilityFunctions';
+import {UtilityFunctions} from '../../../../../shared/UtilityFunctions';
 
 
 @Component({

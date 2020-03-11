@@ -169,13 +169,14 @@ interface HighlightStructure {
 }
 
 interface QueryStructure {
-  bool: {
+  bool?: {
     must: any[],
     filter: any[],
     must_not: any[],
     should: any[],
     minimum_should_match: number,
   };
+  multi_match?: any;
 }
 
 interface AggregationStructure {

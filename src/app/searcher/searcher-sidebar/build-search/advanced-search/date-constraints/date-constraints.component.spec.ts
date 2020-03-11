@@ -1,11 +1,11 @@
 import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 
 import {DateConstraintsComponent} from './date-constraints.component';
-import {SharedModule} from '../../../../shared/shared.module';
+import {SharedModule} from '../../../../../shared/shared.module';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {DateConstraint, ElasticsearchQuery} from '../Constraints';
+import {DateConstraint, ElasticsearchQuery} from '../../Constraints';
 
 describe('DateConstraintsComponent', () => {
   let component: DateConstraintsComponent;

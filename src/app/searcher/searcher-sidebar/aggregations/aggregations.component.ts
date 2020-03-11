@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {pairwise, startWith, switchMap, takeUntil} from 'rxjs/operators';
+import {pairwise, takeUntil} from 'rxjs/operators';
 import {Field, Project, ProjectFact, ProjectField} from '../../../shared/types/Project';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {BehaviorSubject, forkJoin, of, Subject} from 'rxjs';
@@ -81,11 +81,8 @@ export class AggregationsComponent implements OnInit, OnDestroy {
         this.addNewAggregation();
       }
     });
-    this.searchService.getSearch().pipe(takeUntil(this.destroy$), startWith({}), switchMap(search => {
-      return this.searchService.getElasticQuery();
-    })).subscribe((query: ElasticsearchQuery | null) => {
+    this.searchService.getElasticQuery().pipe(takeUntil(this.destroy$)).subscribe((query: ElasticsearchQuery | null) => {
       if (query) {
-        // deep clone
         this.searcherElasticSearchQuery = JSON.parse(JSON.stringify(query.elasticSearchQuery));
       }
     });
@@ -110,12 +107,18 @@ export class AggregationsComponent implements OnInit, OnDestroy {
       };
     }
 
-    if (!this.searchQueryExcluded &&
-      this.searcherElasticSearchQuery && this.searcherElasticSearchQuery.query && this.searcherElasticSearchQuery.query.bool) {
-      body.query.aggs[aggregationType] = {
-        aggs: joinedAggregation,
-        filter: {bool: this.searcherElasticSearchQuery.query.bool}
-      };
+    if (!this.searchQueryExcluded) {
+      if (this.searcherElasticSearchQuery?.query?.bool) {
+        body.query.aggs[aggregationType] = {
+          aggs: joinedAggregation,
+          filter: {bool: this.searcherElasticSearchQuery.query.bool}
+        };
+      } else if (this.searcherElasticSearchQuery?.query?.multi_match) {
+        body.query.aggs[aggregationType] = {
+          aggs: joinedAggregation,
+          filter: {multi_match: this.searcherElasticSearchQuery.query.multi_match}
+        };
+      }
     }
 
 

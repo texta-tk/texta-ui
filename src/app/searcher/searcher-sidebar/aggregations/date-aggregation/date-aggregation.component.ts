@@ -15,7 +15,6 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
   @Input() aggregationObj: { aggregation: any };
   @Input() fieldsFormControl: FormControl;
   @Input() notSubAgg: boolean;
-  searcherElasticSearchQuery: ElasticsearchQueryStructure;
   dateInterval = 'year';
   @Output() relativeFrequency = new EventEmitter<boolean>();
   aggregationType = 'raw_frequency';
@@ -34,14 +33,8 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // every time we get new search result refresh the query
-    this.searchService.getSearch().pipe(takeUntil(this.destroy$), startWith({}), switchMap(search => {
-      if (search) {
-        return this.searchService.getElasticQuery();
-      }
-      return of(null);
-    })).subscribe((query: ElasticsearchQuery | null) => {
+    this.searchService.getElasticQuery().pipe(takeUntil(this.destroy$)).subscribe((query: ElasticsearchQuery | null) => {
       if (query) {
-        this.searcherElasticSearchQuery = JSON.parse(JSON.stringify(query.elasticSearchQuery));
         this.dateRangeFrom = {range: {[this.fieldsFormControl.value.path]: {gte: this.startDate}}};
         this.dateRangeTo = {range: {[this.fieldsFormControl.value.path]: {lte: this.toDate}}};
         this.makeDateAggregation();

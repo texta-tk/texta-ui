@@ -1,47 +1,17 @@
 <div class="wrapper">
-  <mat-form-field appearance="outline" class="max-width">
-    <mat-label>Select Fields</mat-label>
-    <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
-                [formControl]="fieldsFormControl"
-                multiple (openedChange)="onOpenedChange($event)"
+  <mat-radio-group aria-label="Select an option" fxLayoutAlign="space-between" [(ngModel)]="searcherType">
+    <mat-radio-button [value]="1">Simple searcher</mat-radio-button>
+    <mat-radio-button [value]="2">Advanced searcher</mat-radio-button>
+  </mat-radio-group>
+  <app-advanced-search [hidden]="searcherType === 1" [onlyHighlightMatching]="onlyHighlightMatching"></app-advanced-search>
+  <app-simple-search [hidden]="searcherType === 2" [onlyHighlightMatching]="onlyHighlightMatching"></app-simple-search>
 
-                (selectionChange)="onSelectionChange($event)">
-      <mat-option *ngFor="let fields of (fieldsFiltered|async);trackBy:trackByPath" [value]="fields">
-        {{fields.path}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-  <div *ngFor="let constraint of constraintList; let i = index;trackBy:trackByIndex" class="filters bg-grey">
-    <div fxLayout="row" class="header">
-      <div fxLayout="row wrap" class="field-titles">
-        <h4 *ngFor="let field of constraint.fields;trackBy:trackByPath">{{field.path}};</h4>
-      </div>
-      <div fxFlex fxLayoutAlign="end">
-        <button mat-icon-button aria-label="Close" (click)="removeConstraint(i)" class="mat-icon-button">
-          <mat-icon>close</mat-icon>
-        </button>
-      </div>
-    </div>
-    <div class="content" *ngIf="isTextConstraint(constraint)">
-      <app-text-constraints [textConstraint]="constraint" [elasticSearchQuery]="elasticQuery"
-                            (change)="searchOnChange($event)"></app-text-constraints>
-    </div>
-    <div class="content" *ngIf="isDateConstraint(constraint)">
-      <app-date-constraints [dateConstraint]="constraint" [elasticSearchQuery]="elasticQuery"
-                            (change)="searchOnChange($event)"></app-date-constraints>
-    </div>
-    <div class="content" *ngIf="isFactNameConstraint(constraint)">
-      <app-fact-constraints [factConstraint]="constraint" [elasticSearchQuery]="elasticQuery"
-                            [projectFacts]="projectFacts" [currentProject]="currentProject"
-                            (change)="searchOnChange($event)"></app-fact-constraints>
-    </div>
-  </div>
   <div fxLayout="column" class="bg-grey search-options">
     <h4 class="flex-item-center">Search options</h4>
     <mat-checkbox labelPosition="before" [(ngModel)]=onlyHighlightMatching>Only highlight matching facts:</mat-checkbox>
   </div>
   <div class="max-width">
-    <button class="max-width" mat-stroked-button (click)="searchService.queryNextSearch()"
+    <button class="max-width" mat-stroked-button (click)="queryNewSearch()"
             data-cy="appSearcherBuildSearchSubmit">Search
     </button>
   </div>

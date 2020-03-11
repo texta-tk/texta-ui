@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {DateConstraint, ElasticsearchQuery} from '../Constraints';
+import {DateConstraint, ElasticsearchQuery} from '../../Constraints';
 import {FormControl} from '@angular/forms';
 import {debounceTime, distinctUntilChanged, startWith, takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';

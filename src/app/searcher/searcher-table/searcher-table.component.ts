@@ -8,10 +8,13 @@ import {FormControl} from '@angular/forms';
 import {of, Subject} from 'rxjs';
 import {debounceTime, skip, switchMap, takeUntil} from 'rxjs/operators';
 import {ProjectStore} from '../../core/projects/project.store';
-import {ElasticsearchQuery} from '../searcher-sidebar/build-search/Constraints';
+import {ElasticsearchQuery, FactConstraint} from '../searcher-sidebar/build-search/Constraints';
 import {Project, ProjectField} from '../../shared/types/Project';
 import {UtilityFunctions} from '../../shared/UtilityFunctions';
 import {LocalStorageService} from '../../core/util/local-storage.service';
+import {SearcherOptions} from '../SearcherOptions';
+import {HttpErrorResponse} from '@angular/common/http';
+import {SearcherService} from '../../core/searcher/searcher.service';
 
 @Component({
   selector: 'app-searcher-table',
@@ -35,8 +38,10 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
   private currentElasticQuery: ElasticsearchQuery;
   private projectFields: ProjectField[];
   private currentProject: Project;
+  searchQueue$: Subject<void> = new Subject<void>();
 
   constructor(public searchService: SearcherComponentService, private projectStore: ProjectStore,
+              private searcherService: SearcherService,
               private localStorage: LocalStorageService) {
   }
 
@@ -89,9 +94,26 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     this.sort.sortChange.pipe(takeUntil(this.destroy$)).subscribe(x => {
       if (x && x.active && this.projectFields) {
         this.currentElasticQuery.sort = this.buildSortQuery(x);
-        this.searchService.queryNextSearch();
+        this.searchQueue$.next();
       }
     });
+    this.searchQueue$.pipe(debounceTime(SearcherOptions.SEARCH_DEBOUNCE_TIME), takeUntil(this.destroy$), switchMap(x => {
+      if (this.currentProject) {
+        this.searchService.setIsLoading(true);
+        return this.searcherService.search({
+          query: this.currentElasticQuery.elasticSearchQuery,
+          indices: this.projectFields.map(y => y.index)
+        }, this.currentProject.id);
+      } else {
+        return of(null);
+      }
+    })).subscribe(
+      (result: { count: number, results: { highlight: any, doc: any }[] } | HttpErrorResponse) => {
+        this.searchService.setIsLoading(false);
+        if (result && !(result instanceof HttpErrorResponse)) {
+          this.searchService.nextSearch(new Search(result, this.searchOptions));
+        }
+      });
   }
 
   private updateFieldSelection(resp: Search) {
@@ -141,7 +163,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     if (this.currentElasticQuery) {
       this.currentElasticQuery.size = event.pageSize;
       this.currentElasticQuery.from = event.pageIndex * event.pageSize;
-      this.searchService.queryNextSearch();
+      this.searchQueue$.next();
     }
     const state = this.localStorage.getProjectState(this.currentProject);
     if (state) {

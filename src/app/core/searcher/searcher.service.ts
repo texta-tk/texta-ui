@@ -6,7 +6,7 @@ import {LocalStorageService} from '../util/local-storage.service';
 import {
   Constraint,
   DateConstraint,
-  ElasticsearchQuery, ElasticsearchQueryStructure,
+  ElasticsearchQueryStructure,
   FactConstraint,
   TextConstraint
 } from '../../searcher/searcher-sidebar/build-search/Constraints';
@@ -46,10 +46,10 @@ export class SearcherService {
       catchError(this.logService.handleError<unknown>('saveSearch')));
   }
 
-  search(body, projectId: number) {
-    return this.http.post(`${this.apiUrl}/projects/${projectId}/search_by_query/`, body).pipe(
+  search(body, projectId: number): Observable<{ count: number, results: { highlight: any, doc: any }[] } | HttpErrorResponse> {
+    return this.http.post<{ count: number, results: { highlight: any, doc: any }[] } | HttpErrorResponse>(`${this.apiUrl}/projects/${projectId}/search_by_query/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'search')),
-      catchError(this.logService.handleError<unknown>('search')));
+      catchError(this.logService.handleError<{ count: number, results: { highlight: any, doc: any }[] } | HttpErrorResponse>('search')));
   }
 
   bulkDeleteSavedSearches(projectId: number, body) {
