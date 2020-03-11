@@ -59,7 +59,8 @@ export class HighlightComponent {
   }
 
   makeHyperlinksClickable(currentColumn: string | number, colName: string): TextaFact[] {
-    if (isNaN(Number(currentColumn))) {
+    // Very quick check, that can give false positives.
+    if (isNaN(Number(currentColumn)) && HighlightComponent.linkify.pretest(currentColumn as string)) {
       const highlightArray: TextaFact[] = [];
       const matches = HighlightComponent.linkify.match(currentColumn as string);
       if (matches && matches.length > 0) {
@@ -486,6 +487,8 @@ export class HighlightComponent {
   }
 
 }
+
+HighlightComponent.linkify.set({fuzzyLink: false, fuzzyEmail: false});
 
 interface HighlightObject {
   text: string;
