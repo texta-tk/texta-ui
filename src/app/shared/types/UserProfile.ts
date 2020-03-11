@@ -7,6 +7,7 @@ export class UserProfile {
   username = '';
   date_joined: string;
   is_superuser = false;
+  last_login: Date;
   // only sometimes?? nullable
   active_project?: '';
 }
