@@ -16,6 +16,7 @@ import {switchMap, take, takeUntil} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {UtilityFunctions} from '../shared/UtilityFunctions';
+import {EditProjectDialogComponent} from '../home/project/edit-project-dialog/edit-project-dialog.component';
 
 @Component({
   selector: 'app-navbar',
@@ -79,15 +80,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
         const cachedProject = !!selectedProj ?
           this.projects.find(x => x.id === selectedProj.id) : null;
         if (cachedProject) {
-          this.projectStore.getCurrentProject().pipe(take(1)).subscribe(y => {
-            // project from localstorage isnt active currently (happens when we reload page for example)
-            if (!y) {
-              this.projectStore.setCurrentProject(cachedProject);
-            } else {
-              // new projects list doesnt have same object identifier so it wouldnt show old selected project cause it cant find it anymore
-              this.projectControl.setValue(cachedProject);
-            }
-          });
+          this.projectStore.setCurrentProject(cachedProject);
         } else {
           this.projectStore.setCurrentProject(projects[0]);
         }
@@ -107,6 +100,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
           }
         }
       }
+    });
+  }
+
+  edit(project) {
+    this.dialog.open(EditProjectDialogComponent, {
+      width: '750px',
+      data: project
     });
   }
 
@@ -146,10 +146,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
       error => {
         this.logService.snackBarError(error, 5000);
       });
-  }
-
-  trackById(index, item: Project) {
-    return item.id;
   }
 
   ngOnDestroy() {

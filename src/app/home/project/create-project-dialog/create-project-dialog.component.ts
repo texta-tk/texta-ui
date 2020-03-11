@@ -11,7 +11,7 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {LogService} from 'src/app/core/util/log.service';
 import {UserStore} from '../../../core/users/user.store';
 import {of, ReplaySubject, Subject} from 'rxjs';
-import {takeUntil} from "rxjs/operators";
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-create-embedding-dialog',

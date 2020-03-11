@@ -6,11 +6,10 @@
     </div>
     <div class="paginator-row">
       <button *ngIf="currentUser && currentUser.is_superuser" data-cy="appProjectCreateProject"
-              class="new-resource-btn"
-              mat-button
+              class="paginator-margin-left"
+              mat-raised-button
               color="primary"
               (click)="openCreateDialog()">
-        <mat-icon>add</mat-icon>
         CREATE
       </button>
       <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>

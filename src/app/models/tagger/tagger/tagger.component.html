@@ -5,8 +5,8 @@
       <mat-progress-bar mode="indeterminate" *ngIf="isLoadingResults"></mat-progress-bar>
     </div>
     <div class="paginator-row">
-      <button class="new-resource-btn" mat-button color="primary" (click)="openCreateDialog()">
-        <mat-icon>add</mat-icon>
+      <button class="paginator-margin-left"
+              mat-raised-button  color="primary" (click)="openCreateDialog()">
         CREATE
       </button>
       <button class="new-resource-btn" mat-icon-button color="warn" (click)="onDeleteAllSelected()"

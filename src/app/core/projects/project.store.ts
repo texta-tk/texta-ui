@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, forkJoin, merge, Observable, of} from 'rxjs';
+import {BehaviorSubject, merge, Observable, of} from 'rxjs';
 
 import {Project, ProjectFact, ProjectField} from '../../shared/types/Project';
 import {ProjectService} from './project.service';

@@ -49,14 +49,14 @@
     <mat-menu #models="matMenu">
       <!-- Embedding Clusters disabled until more functionality for them is added -->
       <!-- <a mat-menu-item routerLinkActive="is-active" [routerLink]="['embedding-groups']">Embedding Clusters <span *ngIf="projectResourceCounts">({{projectResourceCounts?.num_embedding_clusters}})</span></a> -->
-      <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['tagger-groups']">Tagger Groups <span
-        *ngIf="projectResourceCounts?.num_tagger_groups">({{projectResourceCounts?.num_tagger_groups}})</span></a>
-      <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['embeddings']">Embeddings <span
-        *ngIf="projectResourceCounts?.num_embeddings">({{projectResourceCounts?.num_embeddings}})</span></a>
       <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['taggers']">Taggers <span
         *ngIf="projectResourceCounts?.num_taggers">({{projectResourceCounts?.num_taggers}})</span></a>
+      <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['tagger-groups']">Tagger Groups <span
+        *ngIf="projectResourceCounts?.num_tagger_groups">({{projectResourceCounts?.num_tagger_groups}})</span></a>
       <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['torchtaggers']">TorchTaggers <span
         *ngIf="projectResourceCounts?.num_torchtaggers">({{projectResourceCounts?.num_torchtaggers}})</span></a>
+      <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['embeddings']">Embeddings <span
+        *ngIf="projectResourceCounts?.num_embeddings">({{projectResourceCounts?.num_embeddings}})</span></a>
     </mat-menu>
 
     <mat-menu #tools="matMenu">
@@ -71,7 +71,7 @@
     </div>
 
 
-    <div class="flex-item-right flex-row user-name" *ngIf="user">
+    <div class="flex-item-right flex-row user-name" *ngIf="user" fxLayoutAlign="center center">
       <mat-form-field class="project-select">
         <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
                     data-cy="appNavbarProjectFieldsSelect"
@@ -89,12 +89,14 @@
                     data-cy="appNavbarProjectSelect"
                     [formControl]="projectControl" (selectionChange)="projectStore.setCurrentProject($event.value)"
                     [placeholder]="projects?.length < 1 ? 'No projects' : ''">
-          <mat-option *ngFor="let item of projects; trackBy:trackById" [value]="item">
+          <mat-option *ngFor="let item of projects" [value]="item">
             {{item.id}}: {{item.title}}
           </mat-option>
         </mat-select>
       </mat-form-field>
-
+      <button mat-icon-button (click)="edit(projectControl.value)" matTooltip="Edit project">
+        <mat-icon aria-label="Edit Project">edit</mat-icon>
+      </button>
       <div class="flex-row logout">
         <button mat-button [matMenuTriggerFor]="menu" data-cy="appNavbarLoggedInUserMenu"><span>{{user.username}}
           <mat-icon>arrow_drop_down</mat-icon></span>
