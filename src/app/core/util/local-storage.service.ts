@@ -25,7 +25,8 @@ export class LocalStorageService {
         return {
           searcher: {
             itemsPerPage: 10,
-            selectedFields: []
+            selectedFields: [],
+            searcherType: 1
           },
           models: {
             tagger: {itemsPerPage: 25},

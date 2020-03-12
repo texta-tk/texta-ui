@@ -74,8 +74,22 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     this.searchService.getSearch().pipe(takeUntil(this.destroy$)).subscribe((resp: Search) => {
       if (resp) {
         this.searchOptions = resp.searchOptions;
-        // filter out table columns by index, unique array(table columns have to be unique)
-        this.updateFieldSelection(resp);
+        if (this.searchOptions.onlyShowMatchingColumns) {
+          const highlights = resp.searchContent.results.map(x => x.highlight).flat();
+          const columnsToHighlight: string[] = [];
+          highlights.forEach(x => {
+            for (const col in x) {
+              if (x.hasOwnProperty(col)) {
+                columnsToHighlight.push(col);
+              }
+            }
+          });
+          this.columnsToDisplay = [...new Set([].concat.apply([], columnsToHighlight))] as string[];
+          this.columnFormControl.setValue(this.columnsToDisplay);
+        } else {
+          // filter out table columns by index, unique array(table columns have to be unique)
+          this.setColumnsToDisplay();
+        }
         SearcherTableComponent.totalCountLength = resp.searchContent.count;
         this.paginatorLength = SearcherTableComponent.totalCountLength > 10000 ? 10000 : SearcherTableComponent.totalCountLength;
         this.tableData.data = resp.searchContent.results;
@@ -114,11 +128,6 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
           this.searchService.nextSearch(new Search(result, this.searchOptions));
         }
       });
-  }
-
-  private updateFieldSelection(resp: Search) {
-    this.setColumnsToDisplay();
-
   }
 
   private setColumnsToDisplay(): void {

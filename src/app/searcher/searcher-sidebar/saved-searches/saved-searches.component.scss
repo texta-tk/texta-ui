@@ -2,6 +2,14 @@ td.mat-cell:first-of-type, td.mat-footer-cell:first-of-type, th.mat-header-cell:
   padding: 0;
 }
 
+td.mat-cell:first-of-type {
+  max-width: 18px;
+}
+
+.description {
+  padding-left: 16px;
+}
+
 .saved-search-description {
   max-width: 300px;
   overflow: hidden;

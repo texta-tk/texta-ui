@@ -118,6 +118,7 @@ export interface ProjectState {
   searcher: {
     itemsPerPage: number;
     selectedFields: string[];
+    searcherType: 1 | 2;
   };
   models: {
     tagger: { itemsPerPage: number; }

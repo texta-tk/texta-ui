@@ -6,10 +6,13 @@ import {ProjectStore} from '../../../../core/projects/project.store';
 import {of, Subject} from 'rxjs';
 import {SearcherService} from '../../../../core/searcher/searcher.service';
 import {SearcherComponentService} from '../../../services/searcher-component.service';
-import {ElasticsearchQuery} from '../Constraints';
+import {ElasticsearchQuery, ElasticsearchQueryStructure} from '../Constraints';
 import {SearcherOptions} from '../../../SearcherOptions';
 import {Search} from '../../../../shared/types/Search';
 import {HttpErrorResponse} from '@angular/common/http';
+import {UserStore} from '../../../../core/users/user.store';
+import {UserProfile} from '../../../../shared/types/UserProfile';
+import {SavedSearch} from '../../../../shared/types/SavedSearch';
 
 @Component({
   selector: 'app-simple-search',
@@ -24,9 +27,12 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
   elasticSearchQuery = new ElasticsearchQuery();
   searchQueue$: Subject<void> = new Subject<void>();
   @Input() onlyHighlightMatching: boolean;
+  currentUser: UserProfile;
 
-  constructor(private projectStore: ProjectStore, private searcherComponentService: SearcherComponentService,
-              private searcherService: SearcherService) {
+  constructor(private projectStore: ProjectStore,
+              private searcherComponentService: SearcherComponentService,
+              private searcherService: SearcherService,
+              private userStore: UserStore) {
 
   }
 
@@ -34,6 +40,7 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
     this.projectStore.getCurrentProjectFields().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectField[]) => {
       if (projectFields) {
         this.projectFields = ProjectField.sortTextaFactsAsFirstItem(projectFields);
+        this.makeQuery(this.searchFormControl.value);
       }
     });
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$)).subscribe((project: Project) => {
@@ -45,6 +52,7 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)).subscribe(value => {
       if (value && this.projectFields && this.currentProject) {
         this.makeQuery(value);
+        this.searchQueue$.next();
       }
     });
     this.searchQueue$.pipe(debounceTime(SearcherOptions.SEARCH_DEBOUNCE_TIME), takeUntil(this.destroy$),
@@ -63,8 +71,14 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
         this.searcherComponentService.nextSearch(new Search(result, {
           liveSearch: true,
           onlyShowMatchingColumns: true,
-          // onlyhighlightmatching todo
+          onlyHighlightMatching: this.onlyHighlightMatching ? [] : undefined
         }));
+      }
+    });
+
+    this.userStore.getCurrentUser().pipe(takeUntil(this.destroy$)).subscribe(user => {
+      if (user) {
+        this.currentUser = user;
       }
     });
   }
@@ -85,7 +99,30 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
         this.elasticSearchQuery.elasticSearchQuery.highlight.fields[field] = {};
       }
       this.searcherComponentService.nextElasticQuery(this.elasticSearchQuery);
-      this.searchQueue$.next();
+    }
+  }
+
+  // THIS IS TEMPORARY todo, think of a way to save simple searches and advanced searches with a clear cut difference
+  saveSearch(description: string) {
+    if (this.currentUser) {
+      this.searcherService.saveSearch(
+        this.currentProject.id,
+        [],
+        this.elasticSearchQuery.elasticSearchQuery,
+        description).subscribe(resp => {
+        if (resp) {
+          this.searcherComponentService.nextSavedSearchUpdate();
+        }
+      });
+    }
+  }
+
+  buildSavedSearch(search: SavedSearch) {
+    if (search.query) {
+      const query = JSON.parse(search.query);
+      if (query?.query?.multi_match?.query) {
+        this.searchFormControl.setValue(query.query.multi_match.query);
+      }
     }
   }
 
