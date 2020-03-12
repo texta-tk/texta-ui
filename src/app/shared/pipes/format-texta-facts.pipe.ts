@@ -1,5 +1,5 @@
 import {Pipe, PipeTransform} from '@angular/core';
-import {TextaFact} from '../../searcher/searcher-table/highlight/highlight.component';
+import {HighlightSpan} from '../../searcher/searcher-table/highlight/highlight.component';
 
 @Pipe({
   name: 'formatTextaFacts',
@@ -7,7 +7,7 @@ import {TextaFact} from '../../searcher/searcher-table/highlight/highlight.compo
 })
 export class FormatTextaFactsPipe implements PipeTransform {
 
-  transform(value: TextaFact[], ...args: any[]): { key: string, val: string[] }[] {
+  transform(value: HighlightSpan[], ...args: any[]): { key: string, val: string[] }[] {
     const returnValue: { key: string, val: string[] }[] = [];
     value.forEach(val => {
       const obj = returnValue.find(x => x.key === val.fact);

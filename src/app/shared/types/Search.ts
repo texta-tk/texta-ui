@@ -10,5 +10,6 @@ export class Search {
 export class SearchOptions {
   liveSearch: boolean;
   onlyHighlightMatching?: FactConstraint[];
-  onlyShowMatchingColumns?: boolean; // todo
+  onlyShowMatchingColumns?: boolean;
+  showShortVersion?: boolean;
 }

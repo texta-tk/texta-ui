@@ -2,7 +2,7 @@ import {Component, Input} from '@angular/core';
 import {ElasticsearchQuery, FactConstraint} from '../../searcher-sidebar/build-search/Constraints';
 import * as LinkifyIt from 'linkify-it';
 
-export interface TextaFact {
+export interface HighlightSpan {
   doc_path: string;
   fact: string;
   spans: string | number[];
@@ -58,14 +58,14 @@ export class HighlightComponent {
   constructor() {
   }
 
-  makeHyperlinksClickable(currentColumn: string | number, colName: string): TextaFact[] {
+  makeHyperlinksClickable(currentColumn: string | number, colName: string): HighlightSpan[] {
     // Very quick check, that can give false positives.
     if (isNaN(Number(currentColumn)) && HighlightComponent.linkify.pretest(currentColumn as string)) {
-      const highlightArray: TextaFact[] = [];
+      const highlightArray: HighlightSpan[] = [];
       const matches = HighlightComponent.linkify.match(currentColumn as string);
       if (matches && matches.length > 0) {
         for (const match of matches) {
-          const f: TextaFact = {} as TextaFact;
+          const f: HighlightSpan = {} as HighlightSpan;
           f.doc_path = colName;
           f.fact = '';
           f.urlSpan = true;
@@ -83,14 +83,14 @@ export class HighlightComponent {
   makeSearcherHighlights(searcherHighlight: any, currentColumn: string) {
     const highlight = searcherHighlight[currentColumn];
     if (highlight && highlight.length === 1) {
-      const highlightArray: TextaFact[] = [];
+      const highlightArray: HighlightSpan[] = [];
       const columnText: string = highlight[0]; // highlight number of fragments has to be 0
       const splitStartTag: string[] = columnText.split(ElasticsearchQuery.PRE_TAG);
       let previousIndex = 0; // char start index of highlight
       for (const row of splitStartTag) {
         const endTagIndex = row.indexOf(ElasticsearchQuery.POST_TAG);
         if (endTagIndex > 0) {
-          const f: TextaFact = {} as TextaFact;
+          const f: HighlightSpan = {} as HighlightSpan;
           f.doc_path = currentColumn;
           f.fact = '';
           f.searcherHighlight = true;
@@ -108,7 +108,7 @@ export class HighlightComponent {
     return [];
   }
 
-  getOnlyMatchingFacts(fieldFacts: TextaFact[], highlightConfig: HighlightConfig): TextaFact[] {
+  getOnlyMatchingFacts(fieldFacts: HighlightSpan[], highlightConfig: HighlightConfig): HighlightSpan[] {
     if (fieldFacts && highlightConfig && highlightConfig.onlyHighlightMatching) {
       // if these exist match all facts of the type, PER, LOC, ORG etc. gets all unique global fact names
       const globalFacts = [...new Set([].concat.apply([], highlightConfig.onlyHighlightMatching.map(x => x.factNameFormControl.value)))];
@@ -116,7 +116,7 @@ export class HighlightComponent {
       const factValues = [...new Set([].concat.apply([], (highlightConfig.onlyHighlightMatching.map(x => x.inputGroupArray.map(y => {
         return {value: y.factTextInputFormControl.value, name: y.factTextFactNameFormControl.value};
       })))))] as { value: string, name: string }[];
-      return JSON.parse(JSON.stringify(fieldFacts.filter((fact: TextaFact) => {
+      return JSON.parse(JSON.stringify(fieldFacts.filter((fact: HighlightSpan) => {
         if (globalFacts.includes(fact.fact)) {
           return fact;
         } else if (factValues.find(x => x.name === fact.fact)) {
@@ -129,10 +129,10 @@ export class HighlightComponent {
     return fieldFacts;
   }
 
-  getFactsByField(factArray, columnName): TextaFact[] {
+  getFactsByField(factArray, columnName): HighlightSpan[] {
     factArray = factArray.texta_facts;
     if (factArray) {
-      return JSON.parse(JSON.stringify(factArray.filter((fact: TextaFact) => {
+      return JSON.parse(JSON.stringify(factArray.filter((fact: HighlightSpan) => {
         if (fact.doc_path === columnName) {
           return fact;
         }
@@ -141,7 +141,7 @@ export class HighlightComponent {
     return [];
   }
 
-  generateColorsForFacts(facts: TextaFact[]): Map<string, string> {
+  generateColorsForFacts(facts: HighlightSpan[]): Map<string, string> {
     const colorPallette = this.generateRandomColors(facts.length);
     facts.forEach(fact => {
       if (!HighlightComponent.colors.has(fact.fact) && colorPallette) {
@@ -153,7 +153,7 @@ export class HighlightComponent {
   }
 
 
-  private makeHighLights(originalText: string | number, facts: TextaFact[], factColors: Map<string, string>): HighlightObject[] {
+  private makeHighLights(originalText: string | number, facts: HighlightSpan[], factColors: Map<string, string>): HighlightObject[] {
     // spans are strings, convert them to 2d array and flatten
     facts.forEach(fact => {
       (fact.spans) = JSON.parse(fact.spans as string).flat();
@@ -177,7 +177,7 @@ export class HighlightComponent {
     let factText = '';
     let lowestSpanNumber: number | null = facts[0].spans[0] as number;
     for (let i = 0; i <= originalText.length; i++) {
-      let fact: TextaFact | undefined;
+      let fact: HighlightSpan | undefined;
       // get next span position when needed
       if (lowestSpanNumber !== null && i >= lowestSpanNumber) {
         fact = this.getFactByStartSpan(i, facts);
@@ -219,7 +219,7 @@ export class HighlightComponent {
     return highlightArray;
   }
 
-  private isOverLappingFact(overLappingFacts: Map<TextaFact, TextaFact[]>, fact: TextaFact): boolean {
+  private isOverLappingFact(overLappingFacts: Map<HighlightSpan, HighlightSpan[]>, fact: HighlightSpan): boolean {
     for (let i = 0; i < overLappingFacts.size; i++) {
       if (Array.from(overLappingFacts.keys()).includes(fact)) {
         return true;
@@ -246,22 +246,22 @@ export class HighlightComponent {
   // need to write tests to see if this works, might refactor
   private makeFactNested(
     highlightArray: HighlightObject[],
-    rootFact: TextaFact,
-    overLappingFacts: Map<TextaFact, TextaFact[]>,
+    rootFact: HighlightSpan,
+    overLappingFacts: Map<HighlightSpan, HighlightSpan[]>,
     loopIndex: number,
     originalText: string,
     colors: Map<string, string>): number {
     // deep copy
-    const nestedFacts: TextaFact[] = JSON.parse(JSON.stringify(overLappingFacts.get(rootFact)));
+    const nestedFacts: HighlightSpan[] = JSON.parse(JSON.stringify(overLappingFacts.get(rootFact)));
     // highest span value in nestedfacts
-    const highestSpanValue = new Map<TextaFact, number>();
+    const highestSpanValue = new Map<HighlightSpan, number>();
     for (const factNested of nestedFacts) {
       highestSpanValue.set(factNested, Math.max.apply(Math, factNested.spans));
     }
     let highlightObject: HighlightObject | undefined;
     let factText = '';
-    let previousFact: TextaFact | undefined;
-    const factsToDelete: TextaFact[] = [];
+    let previousFact: HighlightSpan | undefined;
+    const factsToDelete: HighlightSpan[] = [];
     if (rootFact) {
       for (const factNested of nestedFacts) {
         let factStartSpan = (factNested.spans[0] as number);
@@ -367,8 +367,8 @@ export class HighlightComponent {
   }
 
   // searcher prio
-  private startOfFact(nestedFacts: TextaFact[], loopIndex: number, previousFact: TextaFact | undefined): TextaFact | undefined {
-    const facts: TextaFact[] = nestedFacts.filter(e => (e.spans[0] === loopIndex));
+  private startOfFact(nestedFacts: HighlightSpan[], loopIndex: number, previousFact: HighlightSpan | undefined): HighlightSpan | undefined {
+    const facts: HighlightSpan[] = nestedFacts.filter(e => (e.spans[0] === loopIndex));
     if (facts.length > 0) {
       if (facts.length > 1) {
         for (const fact of facts) {
@@ -400,7 +400,7 @@ export class HighlightComponent {
     return undefined;
   }
 
-  private makeFact(highlight: HighlightObject[], fact: TextaFact, loopIndex: number, originalText: string, colors: Map<string, string>)
+  private makeFact(highlight: HighlightObject[], fact: HighlightSpan, loopIndex: number, originalText: string, colors: Map<string, string>)
     : number {
     let newText = '';
     const factFinalSpanIndex = fact.spans[1] as number;
@@ -418,8 +418,8 @@ export class HighlightComponent {
     });
   }
 
-  private detectOverlappingFacts(facts: TextaFact[]): Map<TextaFact, TextaFact[]> {
-    let overLappingFacts: Map<TextaFact, TextaFact[]> = new Map<TextaFact, TextaFact[]>();
+  private detectOverlappingFacts(facts: HighlightSpan[]): Map<HighlightSpan, HighlightSpan[]> {
+    let overLappingFacts: Map<HighlightSpan, HighlightSpan[]> = new Map<HighlightSpan, HighlightSpan[]>();
     if (facts.length > 0) {
       facts[0].id = 0;
       overLappingFacts = this.detectOverLappingFactsDrill(facts[0], facts, facts[0].spans[1] as number, 1, overLappingFacts);
@@ -428,8 +428,8 @@ export class HighlightComponent {
     return overLappingFacts;
   }
 
-  private detectOverLappingFactsDrill(factRoot: TextaFact, facts: TextaFact[], endSpan: number,
-                                      index: number, nestedArray: Map<TextaFact, TextaFact[]>): Map<TextaFact, TextaFact[]> {
+  private detectOverLappingFactsDrill(factRoot: HighlightSpan, facts: HighlightSpan[], endSpan: number,
+                                      index: number, nestedArray: Map<HighlightSpan, HighlightSpan[]>): Map<HighlightSpan, HighlightSpan[]> {
     // endSpan = previous facts span ending so we can make long chains of nested facts
     if (index < facts.length) {
       if (facts[index].spans[0] < endSpan) {
@@ -450,7 +450,7 @@ export class HighlightComponent {
     return nestedArray;
   }
 
-  private getFactByStartSpan(loopIndex: number, facts: TextaFact[]): TextaFact | undefined {
+  private getFactByStartSpan(loopIndex: number, facts: HighlightSpan[]): HighlightSpan | undefined {
     for (const fact of facts) {
       if ((fact.spans as number[])[0] === loopIndex) {
         return fact;
@@ -459,7 +459,7 @@ export class HighlightComponent {
     return undefined;
   }
 
-  private getFactWithStartSpanHigherThan(position: number, facts: TextaFact[]): number | null {
+  private getFactWithStartSpanHigherThan(position: number, facts: HighlightSpan[]): number | null {
     for (const fact of facts) {
       if ((fact.spans as number[])[0] > position) {
         return fact.spans[0] as number;
@@ -493,7 +493,7 @@ HighlightComponent.linkify.set({fuzzyLink: false, fuzzyEmail: false});
 interface HighlightObject {
   text: string;
   highlighted: boolean;
-  fact?: TextaFact;
+  fact?: HighlightSpan;
   color?: string;
   nested?: HighlightObject;
 }
