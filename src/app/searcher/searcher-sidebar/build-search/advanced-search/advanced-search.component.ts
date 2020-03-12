@@ -35,7 +35,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
   searchOptions: SearchOptions = {
     liveSearch: true
   };
-  @Input() onlyHighlightMatching: boolean;
+  @Input() highlightMatching: boolean;
   currentProject: Project;
   projectFields: ProjectField[] = [];
   fieldsUnique: Field[] = [];
@@ -106,7 +106,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
       (result: { count: number, results: { highlight: any, doc: any }[] } | HttpErrorResponse) => {
         this.searchService.setIsLoading(false);
         if (result && !(result instanceof HttpErrorResponse)) {
-          if (this.onlyHighlightMatching) {
+          if (this.highlightMatching) {
             this.searchOptions.onlyHighlightMatching = this.constraintList.filter(x => x instanceof FactConstraint) as FactConstraint[];
           } else {
             this.searchOptions.onlyHighlightMatching = undefined;

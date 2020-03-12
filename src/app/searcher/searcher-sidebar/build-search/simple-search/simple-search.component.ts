@@ -26,7 +26,7 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
   currentProject: Project;
   elasticSearchQuery = new ElasticsearchQuery();
   searchQueue$: Subject<void> = new Subject<void>();
-  @Input() onlyHighlightMatching: boolean;
+  @Input() highlightMatching: boolean;
   currentUser: UserProfile;
 
   constructor(private projectStore: ProjectStore,
@@ -71,7 +71,7 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
         this.searcherComponentService.nextSearch(new Search(result, {
           liveSearch: true,
           onlyShowMatchingColumns: true,
-          onlyHighlightMatching: this.onlyHighlightMatching ? [] : undefined
+          onlyHighlightMatching: this.highlightMatching ? [] : undefined
         }));
       }
     });

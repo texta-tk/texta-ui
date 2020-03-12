@@ -5,12 +5,12 @@
     <mat-radio-button [value]="2">Advanced searcher</mat-radio-button>
   </mat-radio-group>
   <app-advanced-search [hidden]="searcherType === 1"
-                       [onlyHighlightMatching]="onlyHighlightMatching"></app-advanced-search>
-  <app-simple-search [hidden]="searcherType === 2" [onlyHighlightMatching]="onlyHighlightMatching"></app-simple-search>
+                       [highlightMatching]="highlightMatching"></app-advanced-search>
+  <app-simple-search [hidden]="searcherType === 2" [highlightMatching]="highlightMatching"></app-simple-search>
 
   <div fxLayout="column" class="bg-grey search-options">
     <h4 class="flex-item-center">Search options</h4>
-    <mat-checkbox labelPosition="before" [(ngModel)]=onlyHighlightMatching>Only highlight matching facts:</mat-checkbox>
+    <mat-checkbox labelPosition="before" [(ngModel)]=highlightMatching>Only highlight matching facts:</mat-checkbox>
   </div>
   <div class="max-width">
     <button class="max-width" mat-stroked-button (click)="queryNewSearch()"

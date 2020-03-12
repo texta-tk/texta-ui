@@ -18,7 +18,7 @@ import {Project} from '../../../shared/types/Project';
 })
 export class BuildSearchComponent implements OnInit, OnDestroy {
   @Output() searchButtonClick = new EventEmitter<Search>();
-  onlyHighlightMatching = false;
+  highlightMatching = false;
   searcherType;
   @ViewChild(AdvancedSearchComponent)
   private advancedSearchComponent: AdvancedSearchComponent;
