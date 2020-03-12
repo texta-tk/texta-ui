@@ -19,6 +19,14 @@ export interface HighlightConfig {
   data: any;
 }
 
+interface HighlightObject {
+  text: string;
+  highlighted: boolean;
+  span?: HighlightSpan;
+  color?: string;
+  nested?: HighlightObject;
+}
+
 
 @Component({
   selector: 'app-highlight',
@@ -233,7 +241,7 @@ export class HighlightComponent {
       highlightObject.nested = {
         text: textToInsert,
         highlighted: true,
-        fact: factToInsert,
+        span: factToInsert,
         color,
         nested: undefined
       };
@@ -296,7 +304,7 @@ export class HighlightComponent {
           highlightObject = {
             text: factText,
             highlighted: true,
-            fact: rootFact,
+            span: rootFact,
             color: colors.get(rootFact.fact),
             nested: undefined
           };
@@ -320,7 +328,7 @@ export class HighlightComponent {
             highlightObject = {
               text: factText,
               highlighted: true,
-              fact: rootFact,
+              span: rootFact,
               color: colors.get(rootFact.fact),
               nested: undefined
             };
@@ -406,7 +414,7 @@ export class HighlightComponent {
     const factFinalSpanIndex = fact.spans[1] as number;
     newText += originalText.slice(loopIndex, factFinalSpanIndex);
     loopIndex = factFinalSpanIndex;
-    highlight.push({text: newText, highlighted: true, fact, color: colors.get(fact.fact)});
+    highlight.push({text: newText, highlighted: true, span: fact, color: colors.get(fact.fact)});
     // - 1 because loop is escaped
     return loopIndex - 1;
 
@@ -489,11 +497,3 @@ export class HighlightComponent {
 }
 
 HighlightComponent.linkify.set({fuzzyLink: false, fuzzyEmail: false});
-
-interface HighlightObject {
-  text: string;
-  highlighted: boolean;
-  fact?: HighlightSpan;
-  color?: string;
-  nested?: HighlightObject;
-}

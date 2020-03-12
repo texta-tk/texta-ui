@@ -265,7 +265,7 @@ describe('HighlightComponent', () => {
       fixture.detectChanges();
       expect(highlightedText).toEqual(['OÜ Hansa', ' Medicalist', 'Eesti', ' ', 'Energia Joonas']);
       // @ts-ignore
-      expect(component.highlightArray[1].fact.searcherHighlight).toBe(true);
+      expect(component.highlightArray[1].span.searcherHighlight).toBe(true);
     });
     it('should highlight searcher terms ending at the exact position of the last fact of a nestedfact', () => {
       component.highlightConfig = {
@@ -287,7 +287,7 @@ describe('HighlightComponent', () => {
       fixture.detectChanges();
       expect(highlightedText).toEqual(['OÜ Hansa', ' Medicalist', 'Eesti', ' ', 'Energia Joonas']);
       // @ts-ignore
-      expect(component.highlightArray[3].nested.nested.fact.searcherHighlight).toBe(true);
+      expect(component.highlightArray[3].nested.nested.span.searcherHighlight).toBe(true);
     });
     it('should highlight searcher term at the exact position of a nestedfact', () => {
       component.highlightConfig = {
@@ -309,7 +309,7 @@ describe('HighlightComponent', () => {
       fixture.detectChanges(); // todo clean up empty highlight when search term overwrites fact highlight?
       expect(highlightedText).toEqual(['', 'OÜ Hansa Medicalist', 'Eesti', ' ', 'Energia Joonas']);
       // @ts-ignore
-      expect(component.highlightArray[1].nested.fact.searcherHighlight).toBe(true);
+      expect(component.highlightArray[1].nested.span.searcherHighlight).toBe(true);
     });
     it('should highlight searcher term cutting out of the nesterdfacts ending', () => {
       component.highlightConfig = {
@@ -427,7 +427,7 @@ describe('HighlightComponent', () => {
       fixture.detectChanges(); // todo clean up empty highlight when search term overwrites fact highlight?
       expect(highlightedText).toEqual(['these', 'OÜ Hansa', ' Medicalist', 'Eesti', ' ', 'Energia Joonas']);
       // @ts-ignore
-      expect(component.highlightArray[1].fact.searcherHighlight).toBe(true);
+      expect(component.highlightArray[1].span.searcherHighlight).toBe(true);
     });
   });
 
