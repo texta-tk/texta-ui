@@ -55,7 +55,7 @@
                 </ng-template>
               </mat-menu>
             </ng-container>
-            <app-highlight *ngIf="!(row.doc[column] | isObject)"
+            <app-highlight *ngIf="!searchOptions.showShortVersion && !(row.doc[column] | isObject)"
                            [highlightConfig]="{
                           currentColumn: column,
                           searcherHighlight: row.highlight,
@@ -63,6 +63,7 @@
                           data: row.doc}">
 
             </app-highlight>
+            <app-short-version *ngIf="searchOptions.showShortVersion" [params]="{data: row.doc, currentColumn: column, searcherHighlight: row.highlight}"></app-short-version>
           </td>
         </ng-container>
 

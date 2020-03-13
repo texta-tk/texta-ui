@@ -36,6 +36,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     liveSearch: true
   };
   @Input() highlightMatching: boolean;
+  @Input() showShortVersion: boolean;
   currentProject: Project;
   projectFields: ProjectField[] = [];
   fieldsUnique: Field[] = [];
@@ -111,6 +112,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
           } else {
             this.searchOptions.onlyHighlightMatching = undefined;
           }
+          this.searchOptions.showShortVersion = this.showShortVersion;
           this.searchService.nextSearch(new Search(result, this.searchOptions));
         }
       });

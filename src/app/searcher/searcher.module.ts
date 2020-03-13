@@ -22,6 +22,7 @@ import {DatePipe} from '@angular/common';
 import { AggregationResultsChartComponent } from './aggregation-results/aggregation-results-chart/aggregation-results-chart.component';
 import { SimpleSearchComponent } from './searcher-sidebar/build-search/simple-search/simple-search.component';
 import { AdvancedSearchComponent } from './searcher-sidebar/build-search/advanced-search/advanced-search.component';
+import { ShortVersionComponent } from './searcher-table/short-version/short-version.component';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import { AdvancedSearchComponent } from './searcher-sidebar/build-search/advance
     AggregationResultsChartComponent,
     SimpleSearchComponent,
     AdvancedSearchComponent,
+    ShortVersionComponent,
   ],
   imports: [
     SharedModule,

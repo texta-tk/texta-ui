@@ -6,7 +6,7 @@ import {ProjectStore} from '../../../../core/projects/project.store';
 import {of, Subject} from 'rxjs';
 import {SearcherService} from '../../../../core/searcher/searcher.service';
 import {SearcherComponentService} from '../../../services/searcher-component.service';
-import {ElasticsearchQuery, ElasticsearchQueryStructure} from '../Constraints';
+import {ElasticsearchQuery} from '../Constraints';
 import {SearcherOptions} from '../../../SearcherOptions';
 import {Search} from '../../../../shared/types/Search';
 import {HttpErrorResponse} from '@angular/common/http';
@@ -27,6 +27,7 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
   elasticSearchQuery = new ElasticsearchQuery();
   searchQueue$: Subject<void> = new Subject<void>();
   @Input() highlightMatching: boolean;
+  @Input() showShortVersion: boolean;
   currentUser: UserProfile;
 
   constructor(private projectStore: ProjectStore,
@@ -71,6 +72,7 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
         this.searcherComponentService.nextSearch(new Search(result, {
           liveSearch: true,
           onlyShowMatchingColumns: true,
+          showShortVersion: this.showShortVersion,
           onlyHighlightMatching: this.highlightMatching ? [] : undefined
         }));
       }
