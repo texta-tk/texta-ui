@@ -11,7 +11,9 @@ export class SearcherComponentService {
   private searchSubject = new BehaviorSubject<Search | null>(null);
   private aggregationSubject = new BehaviorSubject<{ globalAgg: any, agg: any } | null>(null);
   private savedSearchUpdate = new Subject<boolean>();
-  private elasticQuerySubject = new BehaviorSubject<ElasticsearchQuery | null>(null);
+  // so query wouldnt be null (we use current query in aggs so we dont want null even if user hasnt searched everything,
+  // we still want to be able to make aggs)
+  private elasticQuerySubject = new BehaviorSubject<ElasticsearchQuery>(new ElasticsearchQuery());
   private isLoading = new BehaviorSubject<boolean>(false);
 
   constructor() {
@@ -54,11 +56,11 @@ export class SearcherComponentService {
   // we use these elasticQuery functions to pass on current searcher query to aggregations
   // because aggregations need to build some of their queries based off of the current search query
   // also used by the searcher table to edit the query, to change sort order, or to navigate pages
-  public nextElasticQuery(val: ElasticsearchQuery | null) {
+  public nextElasticQuery(val: ElasticsearchQuery) {
     this.elasticQuerySubject.next(val);
   }
 
-  public getElasticQuery(): Observable<ElasticsearchQuery | null> {
+  public getElasticQuery(): Observable<ElasticsearchQuery> {
     return this.elasticQuerySubject.asObservable();
   }
 }

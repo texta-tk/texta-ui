@@ -53,7 +53,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
       }
     });
     if (this.projectFields.length > 0 && this.projectFields[0].fields.length > 0) {
-      form.setValue(this.projectFields[0].fields[0]);
+      form.setValue(this.fieldsFiltered.value[0]);
     }
     this.aggregationList.push({aggregation: {}, formControl: form, formDestroy});
   }

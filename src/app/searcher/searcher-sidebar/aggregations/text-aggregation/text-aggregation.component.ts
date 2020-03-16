@@ -99,7 +99,7 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
         }
       }
     };
-
+    
     this.aggregationObj.aggregation = returnquery;
   }
 

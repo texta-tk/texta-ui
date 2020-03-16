@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {SearcherComponentService} from '../services/searcher-component.service';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
-import { MatTableDataSource } from '@angular/material/table';
+import {MatTableDataSource} from '@angular/material/table';
 import {ArrayDataSource} from '@angular/cdk/collections';
 import {AggregationResultsDialogComponent} from './aggregation-results-dialog/aggregation-results-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
@@ -103,11 +103,6 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   }
 
   parseAggregationResults(aggregation: any) {
-    const aggData: any = {
-      treeData: [],
-      tableData: [],
-      dateData: [],
-    };
     if (aggregation && aggregation.aggs) {
       for (const aggKey of Object.keys(aggregation.aggs)) {
         // first object is aggregation name either savedSearch description or the agg type
@@ -115,17 +110,15 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
         const rootAggPropKeys: string[] = Object.keys(rootAggObj);
         if (rootAggPropKeys.includes('agg_term') || aggKey === 'agg_term') { // agg_term without filter has no depth
           rootAggObj = this.navNestedAggByKey(rootAggObj, 'agg_term');
-          this.populateAggData(rootAggObj, aggKey, (x => x.tableData), 'agg_term', aggData);
+          this.aggregationData = this.populateAggData(rootAggObj, aggKey, (x => x.tableData), 'agg_term');
         } else if (rootAggPropKeys.includes('agg_histo')) {
           rootAggObj = this.navNestedAggByKey(rootAggObj, 'agg_histo');
-          this.populateAggData(rootAggObj, aggKey, (x => x.dateData), 'agg_histo', aggData);
+          this.aggregationData = this.populateAggData(rootAggObj, aggKey, (x => x.dateData), 'agg_histo');
         } else if (rootAggPropKeys.includes('agg_fact')) {
           rootAggObj = this.navNestedAggByKey(rootAggObj, 'agg_fact');
-          this.populateAggData(rootAggObj, aggKey, (x => x.treeData), 'agg_fact', aggData);
-
+          this.aggregationData = this.populateAggData(rootAggObj, aggKey, (x => x.treeData), 'agg_fact');
         }
       }
-      this.aggregationData = aggData;
     }
   }
 
@@ -166,10 +159,11 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     return aggregation;
   }
 
-  populateAggData(rootAggObj, aggName, aggDataAccessor: (x: any) => any, aggregationType: 'agg_histo' | 'agg_fact' | 'agg_term', aggData): AggregationData {
+  // refactor todo, why is aggData passed into here?
+  populateAggData(rootAggObj, aggName, aggDataAccessor: (x: any) => any, aggregationType: 'agg_histo' | 'agg_fact' | 'agg_term'): AggregationData {
     const formattedData = this.formatAggDataStructure(rootAggObj, rootAggObj,
       ['agg_histo', 'agg_fact', 'agg_fact_val', 'agg_term']);
-    const returnData: AggregationData = aggData;
+    const returnData: AggregationData = {treeData: [], dateData: [], tableData: []};
     if (this.bucketAccessor(formattedData).length > 0) {
       if (formattedData.nested) {
         // depth of 3 means this structure: agg -> sub-agg
@@ -179,7 +173,8 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
             series: this.formatDateDataExtraBucket(this.bucketAccessor(formattedData))
           });
         } else {
-          aggDataAccessor(returnData).push({
+          // @ts-ignore
+          returnData.treeData.push({
             name: aggName === aggregationType ? 'aggregation_results' : aggName,
             histoBuckets: formattedData.histoBuckets ? formattedData.histoBuckets : [],
             treeData: new ArrayDataSource(this.bucketAccessor(formattedData))
