@@ -27,7 +27,7 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
   elasticSearchQuery = new ElasticsearchQuery();
   searchQueue$: Subject<void> = new Subject<void>();
   @Input() highlightMatching: boolean;
-  @Input() showShortVersion: boolean;
+  @Input() showShortVersion: number;
   currentUser: UserProfile;
 
   constructor(private projectStore: ProjectStore,

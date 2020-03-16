@@ -20,6 +20,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
   @Output() searchButtonClick = new EventEmitter<Search>();
   highlightMatching = false;
   showShortVersion = false;
+  showShortVersionContext = 6;
   searcherType;
   @ViewChild(AdvancedSearchComponent)
   private advancedSearchComponent: AdvancedSearchComponent;

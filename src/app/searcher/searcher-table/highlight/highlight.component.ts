@@ -88,7 +88,7 @@ export class HighlightComponent {
   }
 
   // convert searcher highlight into mlp fact format
-  makeSearcherHighlights(searcherHighlight: any, currentColumn: string) {
+  makeSearcherHighlights(searcherHighlight: any, currentColumn: string): HighlightSpan[] {
     const highlight = searcherHighlight[currentColumn];
     if (highlight && highlight.length === 1) {
       const highlightArray: HighlightSpan[] = [];

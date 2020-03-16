@@ -11,5 +11,5 @@ export class SearchOptions {
   liveSearch: boolean;
   onlyHighlightMatching?: FactConstraint[];
   onlyShowMatchingColumns?: boolean;
-  showShortVersion?: boolean;
+  showShortVersion?: number;
 }

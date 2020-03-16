@@ -36,7 +36,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     liveSearch: true
   };
   @Input() highlightMatching: boolean;
-  @Input() showShortVersion: boolean;
+  @Input() showShortVersion: number;
   currentProject: Project;
   projectFields: ProjectField[] = [];
   fieldsUnique: Field[] = [];

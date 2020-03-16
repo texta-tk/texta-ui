@@ -1,13 +1,11 @@
 <ng-container *ngFor="let highlight of highlightArray;let i = index">
-  <ng-template [ngIf]="highlight.highlighted">
-    <span style="cursor: pointer;" [style.background-color]="highlight.color">{{highlight.text}}</span>
+  <ng-template [ngIf]="highlight.type === 'text'">
+    <span style="cursor: pointer;" (click)="toggleSpanText(highlight)"> {{highlight.displayText}} </span>
   </ng-template>
-  <ng-container *ngIf="!highlight.highlighted && highlight.text !== ''">
-
-    <span data-text="{{highlight.text}}"><button [matTooltip]="highlight.text"
-                                                 *ngIf="highlight.textContext !== highlight.text && highlight.before">...</button>
-      {{highlight.textContext}}<button [matTooltip]="highlight.text"
-                                       *ngIf="highlight.textContext !== highlight.text && highlight.after">...</button>
-      </span>
-  </ng-container>
+  <ng-template [ngIf]="highlight.type === 'context'">
+    <span>{{highlight.text}}</span>
+  </ng-template>
+  <ng-template [ngIf]="highlight.type === 'highlight'">
+    <span [style.background-color]="highlight.color">{{highlight.text}}</span>
+  </ng-template>
 </ng-container>

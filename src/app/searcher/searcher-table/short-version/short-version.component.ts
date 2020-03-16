@@ -1,13 +1,14 @@
 import {Component, Input} from '@angular/core';
 import {HighlightComponent, HighlightSpan} from '../highlight/highlight.component';
 
-interface ShortVersionSpan {
+interface ContextSpan {
   text: string;
   highlighted: boolean;
-  textContext?: string;
-  before?: boolean;
-  after?: boolean;
+  type: 'highlight' | 'context' | 'text';
+  highlightSpan?: HighlightSpan;
   color?: string;
+  hidden?: boolean;
+  displayText?: string;
 }
 
 @Component({
@@ -16,16 +17,18 @@ interface ShortVersionSpan {
   styleUrls: ['./short-version.component.scss']
 })
 export class ShortVersionComponent {
-  highlightArray: ShortVersionSpan[] = [];
+  highlightArray: ContextSpan[] = [];
 
-  @Input() set params(params: { data: any, currentColumn: string, searcherHighlight: any }) {
-    if (params?.data && params?.searcherHighlight && params.currentColumn && params.data[params.currentColumn] !== '' && params.data[params.currentColumn]) {
+  @Input() set params(params: { data: any, currentColumn: string, searcherHighlight: any, contextWindow: number }) {
+    if (params?.data && params?.searcherHighlight && params.currentColumn && params.data[params.currentColumn] !== '' &&
+      params.data[params.currentColumn] && params?.contextWindow > 0) {
       const f = new HighlightComponent();
       const highlightTerms = [
         ...f.makeSearcherHighlights(params.searcherHighlight, params.currentColumn),
       ];
       const colors = f.generateColorsForFacts(highlightTerms);
-      this.highlightArray = this.makeShortVersionSpans(params.data[params.currentColumn], highlightTerms, colors, 7);
+      this.highlightArray = this.makeShortVersionSpans(params.data[params.currentColumn].toString(),
+        highlightTerms, colors, params.contextWindow);
     } else {
       this.highlightArray = [];
     }
@@ -34,12 +37,10 @@ export class ShortVersionComponent {
   constructor() {
   }
 
-  private makeShortVersionSpans(originalText: string | number, facts: HighlightSpan[], factColors: Map<string, string>,
-                                wordContextDistance: number): ShortVersionSpan[] {
-    // column content can be number, convert to string
-    originalText = originalText.toString();
+  private makeShortVersionSpans(originalText: string, facts: HighlightSpan[], factColors: Map<string, string>,
+                                wordContextDistance: number): ContextSpan[] {
     if (facts.length === 0) {
-      return [{text: originalText, highlighted: false}];
+      return [{text: originalText, highlighted: false, type: 'context'}];
     }
     // spans are strings, convert them to 2d array and flatten
     facts.forEach(fact => {
@@ -47,89 +48,87 @@ export class ShortVersionComponent {
     });
 
     facts.sort(this.sortByStartLowestSpan);
-    const highlightArray: ShortVersionSpan[] = [];
-    let spanText = '';
-    let lowestSpanNumber: number | null = facts[0].spans[0] as number;
-    for (let i = 0; i <= originalText.length; i++) {
-      let fact: HighlightSpan | undefined;
-      // get next span position when needed
-      if (lowestSpanNumber !== null && i >= lowestSpanNumber) {
-        fact = this.getFactByStartSpan(i, facts);
-        lowestSpanNumber = this.getFactWithStartSpanHigherThan(i, facts);
-      }
-
-      if (fact !== undefined && fact.spans[0] !== fact.spans[1]) {
-
-        // push old non fact text into array
+    const highlightArray: ContextSpan[] = [];
+    let index = 0;
+    for (let i = 0; i < facts.length; i++) {
+      const fact = facts[i];
+      const factStart = fact.spans[0] as number;
+      const factEnd = fact.spans[1] as number;
+      const spanBeforeText = originalText.slice(index, factStart);
+      const beforeHighlightContext = this.getHighlightContext(spanBeforeText, wordContextDistance, 'end');
+      if (beforeHighlightContext.text.length !== spanBeforeText.length) { // if it has any hidden text, push that in
         highlightArray.push({
-          text: spanText,
+          text: originalText.slice(index, factStart - beforeHighlightContext.text.length),
           highlighted: false,
-          before: highlightArray.length === 0,
-          after: highlightArray.length >= 1,
-          textContext: this.getContext(spanText, wordContextDistance)
+          type: 'text',
+          displayText: ' ... ',
+          hidden: true
         });
-        spanText = '';
-        // make a regular fact, highlightarray updated inside function, return new loop index
-        i = this.makeHighlight(highlightArray, fact, i, originalText, factColors);
-
+      }
+      highlightArray.push(beforeHighlightContext); // then push the highlight context
+      highlightArray.push({ // push in the actual highlight
+        text: originalText.slice(factStart, factEnd),
+        highlighted: true,
+        highlightSpan: fact,
+        color: factColors.get(fact.fact),
+        type: 'highlight'
+      });
+      let spanAfterText;
+      if (facts.length > i + 1) {
+        spanAfterText = originalText.slice(factEnd, facts[i + 1].spans[0] as number);
       } else {
-        if (!lowestSpanNumber) {
-          spanText += originalText.slice(i, originalText.length);
-          i = originalText.length;
-        } else {
-          spanText += originalText.slice(i, lowestSpanNumber);
-          i = lowestSpanNumber - 1;
-        }
+        spanAfterText = originalText.slice(factEnd, originalText.length);
+      }
+      if (spanAfterText) { // if there still is text left over push the context after the highlight
+        const afterHighlightContext = this.getHighlightContext(spanAfterText, wordContextDistance, 'start');
+        highlightArray.push(afterHighlightContext);
+        index = factEnd + afterHighlightContext.text.length;
+      } else {
+        index = factEnd;
       }
     }
-
-    if (spanText !== '') {
-      // if the last substring in the whole string wasnt a fact
-      // that means there was no way for it to be added into the highlightarray,
-      // push non fact text into array
-      highlightArray.push({text: spanText, highlighted: false, after: true, textContext: this.getContext(spanText, wordContextDistance)});
+    if (index !== originalText.length) {
+      highlightArray.push({
+        text: originalText.slice(index, originalText.length),
+        highlighted: false,
+        type: 'text',
+        displayText: ' ... ',
+        hidden: true
+      });
     }
-
     return highlightArray;
   }
 
-  private makeHighlight(highlight: ShortVersionSpan[], fact: HighlightSpan, loopIndex: number, originalText: string,
-                        colors: Map<string, string>)
-    : number {
-    let newText = '';
-    const factFinalSpanIndex = fact.spans[1] as number;
-    newText += originalText.slice(loopIndex, factFinalSpanIndex);
-    loopIndex = factFinalSpanIndex;
-    highlight.push({text: newText, highlighted: true, color: colors.get(fact.fact)});
-    // - 1 because loop is escaped
-    return loopIndex - 1;
-  }
-
-  private getContext(text: string, wordLimit: number) {
-    const split = text.split(' ');
-    if (split.length <= wordLimit) {
-      return text;
-    } else {
-      return split.slice(0, wordLimit).join(' ');
+  // (from) parameter marks where to split the context from: for example with "start"
+  // sample text: "bla bla bla bla bla" output: "{highlight} bla bla bla ..."
+  // for example with "end"
+  // sample text: "bla bla bla bla bla" output: "... bla bla bla {highlight}"
+  // @ts-ignore
+  private getHighlightContext(context: string, contextWordLimit: number, from: 'start' | 'end'): ContextSpan {
+    const split = context.trim().split(' ');
+    if (split.length <= contextWordLimit) { // nothing to hide
+      return {
+        text: context,
+        highlighted: false,
+        type: 'context'
+      };
     }
-  }
-
-  private getFactByStartSpan(loopIndex: number, facts: HighlightSpan[]): HighlightSpan | undefined {
-    for (const fact of facts) {
-      if ((fact.spans as number[])[0] === loopIndex) {
-        return fact;
-      }
+    if (from === 'start') {
+      const contextText = split.slice(0, contextWordLimit).join(' ');
+      return {
+        text: ' ' + contextText,
+        highlighted: false,
+        type: 'context'
+      };
     }
-    return undefined;
-  }
-
-  private getFactWithStartSpanHigherThan(position: number, facts: HighlightSpan[]): number | null {
-    for (const fact of facts) {
-      if ((fact.spans as number[])[0] > position) {
-        return fact.spans[0] as number;
-      }
+    if (from === 'end') {
+      const contextText = split.slice(split.length - contextWordLimit, split.length).join(' ');
+      return {
+        text: contextText + ' ',
+        highlighted: false,
+        type: 'context'
+      };
     }
-    return null;
   }
 
   private sortByStartLowestSpan(a, b) {
@@ -138,6 +137,15 @@ export class ShortVersionComponent {
     } else {
       return (a.spans[0] < b.spans[0]) ? -1 : 1;
     }
+  }
+
+  public toggleSpanText(span: ContextSpan) {
+    if (span.hidden) {
+      span.displayText = span.text;
+    } else {
+      span.displayText = ' ... ';
+    }
+    span.hidden = !span.hidden;
   }
 
 }
