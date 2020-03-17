@@ -1,6 +1,8 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ShortVersionComponent } from './short-version.component';
+import {ShortVersionComponent} from './short-version.component';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {SharedModule} from '../../../shared/shared.module';
 
 describe('ShortVersionComponent', () => {
   let component: ShortVersionComponent;
@@ -8,9 +10,12 @@ describe('ShortVersionComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ShortVersionComponent ]
+      imports: [
+        BrowserAnimationsModule, SharedModule
+      ],
+      declarations: [ShortVersionComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
