@@ -29,7 +29,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
   public columnFormControl = new FormControl([]);
   public isLoadingResults = false;
   public paginatorLength;
-  public searchOptions: SearchOptions;
+  public searchOptions: SearchOptions = {liveSearch: true};
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @Output() drawerToggle = new EventEmitter<boolean>();
@@ -71,7 +71,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     });
 
     this.searchService.getSearch().pipe(takeUntil(this.destroy$)).subscribe((resp: Search) => {
-      if (resp) {
+      if (resp && resp.searchOptions) {
         this.searchOptions = resp.searchOptions;
         if (this.searchOptions.onlyShowMatchingColumns) {
           const highlights = resp.searchContent.results.map(x => x.highlight).flat();
@@ -83,8 +83,12 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
               }
             }
           });
-          this.columnsToDisplay = [...new Set([].concat.apply([], columnsToHighlight))] as string[];
-          this.columnFormControl.setValue(this.columnsToDisplay);
+          if (columnsToHighlight.length > 0) {
+            this.columnsToDisplay = [...new Set([].concat.apply([], columnsToHighlight))] as string[];
+            this.columnFormControl.setValue(this.columnsToDisplay);
+          } else {
+            this.setColumnsToDisplay();
+          }
         } else {
           // filter out table columns by index, unique array(table columns have to be unique)
           this.setColumnsToDisplay();

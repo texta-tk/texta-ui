@@ -21,7 +21,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
   highlightMatching = false;
   showShortVersion = false;
   showShortVersionContext = 6;
-  searcherType;
+  searcherType: 1 | 2;
   @ViewChild(AdvancedSearchComponent)
   private advancedSearchComponent: AdvancedSearchComponent;
   @ViewChild(SimpleSearchComponent)

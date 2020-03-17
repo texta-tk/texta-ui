@@ -13,6 +13,7 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {UserStore} from '../../../../core/users/user.store';
 import {UserProfile} from '../../../../shared/types/UserProfile';
 import {SavedSearch} from '../../../../shared/types/SavedSearch';
+import {LocalStorageService} from '../../../../core/util/local-storage.service';
 
 @Component({
   selector: 'app-simple-search',
@@ -33,6 +34,7 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
   constructor(private projectStore: ProjectStore,
               private searcherComponentService: SearcherComponentService,
               private searcherService: SearcherService,
+              private localStorage: LocalStorageService,
               private userStore: UserStore) {
 
   }
@@ -47,6 +49,10 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$)).subscribe((project: Project) => {
       if (project) {
         this.currentProject = project;
+        const currentProjectState = this.localStorage.getProjectState(project);
+        if (currentProjectState?.searcher?.itemsPerPage) {
+          this.elasticSearchQuery.size = currentProjectState.searcher.itemsPerPage;
+        }
       }
     });
     this.searchFormControl.valueChanges.pipe(debounceTime(SearcherOptions.SEARCH_DEBOUNCE_TIME),

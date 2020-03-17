@@ -18,6 +18,7 @@ import {LexiconService} from '../../../../core/lexicon/lexicon.service';
 import {UserProfile} from '../../../../shared/types/UserProfile';
 import {Lexicon} from '../../../../shared/types/Lexicon';
 import {SearcherComponentService} from '../../../services/searcher-component.service';
+import {LocalStorageService} from '../../../../core/util/local-storage.service';
 
 @Component({
   selector: 'app-advanced-search',
@@ -52,6 +53,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
               private changeDetectorRef: ChangeDetectorRef,
               private userStore: UserStore,
               private lexiconService: LexiconService,
+              private localStorage: LocalStorageService,
               public searchService: SearcherComponentService) {
   }
 
@@ -60,6 +62,10 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
       if (currentProject) {
         this.constraintList = [];
         this.currentProject = currentProject;
+        const currentProjectState = this.localStorage.getProjectState(currentProject);
+        if (currentProjectState?.searcher?.itemsPerPage) {
+          this.elasticQuery.size = currentProjectState.searcher.itemsPerPage;
+        }
         this.elasticQuery = new ElasticsearchQuery();
         return this.lexiconService.getLexicons(currentProject.id);
       }
@@ -93,9 +99,6 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
       this.searchService.nextElasticQuery(this.elasticQuery);
       if (this.currentProject) {
         this.searchService.setIsLoading(true);
-        if (this.elasticQuery.size === 0) { // aggregations use size 0
-          this.elasticQuery.size = 10;
-        }
         return this.searcherService.search({
           query: this.elasticQuery.elasticSearchQuery,
           indices: this.projectFields.map(y => y.index)

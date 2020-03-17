@@ -21,50 +21,49 @@
       </mat-paginator>
     </div>
   </div>
-  <div [hidden]="displayedColumns.length === 0">
-    <div class="table-container">
+  <div [hidden]="displayedColumns.length === 0" class="table-container">
 
-      <table mat-table [dataSource]="tableData" class="generic-table" matSort [trackBy]="trackByTableData">
+    <table mat-table [dataSource]="tableData" matSort [trackBy]="trackByTableData">
 
-        <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header><span class="column-header-text"
-                                                                      [title]="column">{{column}}</span></th>
-          <td mat-cell *matCellDef="let row" class="table-row">
-            <ng-container *ngIf="(row.doc[column] | isObject)"><!--pure pipe does memoization for us-->
-              <ng-container *ngIf="column === 'texta_facts'">
-                <button mat-button [matMenuTriggerFor]="factMenu" [matMenuTriggerData]="{data: row.doc[column]}">
-                  View facts
-                </button>
-              </ng-container>
-              <pre *ngIf="column !== 'texta_facts'">
+      <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header><span class="column-header-text"
+                                                                    [title]="column">{{column}}</span></th>
+        <td mat-cell *matCellDef="let row" class="table-row">
+          <ng-container *ngIf="(row.doc[column] | isObject)"><!--pure pipe does memoization for us-->
+            <ng-container *ngIf="column === 'texta_facts'">
+              <button mat-button [matMenuTriggerFor]="factMenu" [matMenuTriggerData]="{data: row.doc[column]}">
+                View facts
+              </button>
+            </ng-container>
+            <pre *ngIf="column !== 'texta_facts'">
                  {{row.doc[column] | json}}
               </pre>
-            </ng-container>
-            <ng-container *ngIf="!(!!searchOptions.showShortVersion) && !(row.doc[column] | isObject)">
-              <app-highlight
-                [highlightConfig]="{
+          </ng-container>
+          <ng-container *ngIf="!(!!searchOptions.showShortVersion) && !(row.doc[column] | isObject)">
+            <app-highlight
+              [highlightConfig]="{
                           currentColumn: column,
                           searcherHighlight: row.highlight,
                           onlyHighlightMatching: this.searchOptions.onlyHighlightMatching,
                           data: row.doc}">
 
-              </app-highlight>
-            </ng-container>
-            <ng-container *ngIf="!!searchOptions.showShortVersion">
-              <app-short-version
-                [params]="{data: row.doc, currentColumn: column, searcherHighlight: row.highlight, contextWindow: searchOptions.showShortVersion}"></app-short-version>
-            </ng-container>
-          </td>
-        </ng-container>
+            </app-highlight>
+          </ng-container>
+          <ng-container *ngIf="!!searchOptions.showShortVersion">
+            <app-short-version
+              [params]="{data: row.doc, currentColumn: column, searcherHighlight: row.highlight, contextWindow: searchOptions.showShortVersion}"></app-short-version>
+          </ng-container>
+        </td>
+      </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
-        <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
+      <tr mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
 
 
-      </table>
+    </table>
 
-    </div>
   </div>
+
 </div>
 <mat-menu #factMenu="matMenu">
   <ng-template matMenuContent let-data="data">

@@ -20,6 +20,7 @@ interface ContextSpan {
 export class ShortVersionComponent {
   highlightArray: ContextSpan[] = [];
   textHidden = true;
+  hiddenPlaceHolder = ' ... ';
 
   @Input() set params(params: { data: any, currentColumn: string, searcherHighlight: any, contextWindow: number }) {
     if (params?.data && params?.searcherHighlight && params.currentColumn && params.data[params.currentColumn] !== '' &&
@@ -63,7 +64,7 @@ export class ShortVersionComponent {
           text: originalText.slice(index, factStart - beforeHighlightContext.text.length),
           highlighted: false,
           type: 'text',
-          displayText: ' ... ',
+          displayText: this.hiddenPlaceHolder,
           hidden: true
         });
       }
@@ -94,7 +95,7 @@ export class ShortVersionComponent {
         text: originalText.slice(index, originalText.length),
         highlighted: false,
         type: 'text',
-        displayText: ' ... ',
+        displayText: this.hiddenPlaceHolder,
         hidden: true
       });
     }
@@ -145,7 +146,7 @@ export class ShortVersionComponent {
     if (span.hidden) {
       span.displayText = span.text;
     } else {
-      span.displayText = ' ... ';
+      span.displayText = this.hiddenPlaceHolder;
     }
     span.hidden = !span.hidden;
   }
@@ -158,7 +159,7 @@ export class ShortVersionComponent {
           x.displayText = x.text;
         } else {
           x.hidden = true;
-          x.displayText = ' ... ';
+          x.displayText = this.hiddenPlaceHolder;
         }
       }
     });
