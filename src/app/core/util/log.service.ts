@@ -1,12 +1,15 @@
 import {Injectable} from '@angular/core';
 import {Observable, of} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {environment} from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LogService {
+  isProduction = environment.production;
+
   constructor(private snackBar: MatSnackBar) {
   }
 
@@ -21,7 +24,9 @@ export class LogService {
 
 
   public logStatus(val, msg) {
-    console.warn(msg, val);
+    if (!this.isProduction) {
+      console.warn(msg, val);
+    }
   }
 
   public snackBarError(error: HttpErrorResponse, time: number) {

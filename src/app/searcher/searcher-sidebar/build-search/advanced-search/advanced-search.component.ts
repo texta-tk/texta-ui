@@ -4,7 +4,7 @@ import {Field, Project, ProjectFact, ProjectField} from '../../../../shared/type
 import {Constraint, DateConstraint, ElasticsearchQuery, FactConstraint, FactTextInputGroup, TextConstraint} from '../Constraints';
 import {SavedSearch} from '../../../../shared/types/SavedSearch';
 import {debounceTime, switchMap, takeUntil} from 'rxjs/operators';
-import {of, Subject} from 'rxjs';
+import {BehaviorSubject, of, Subject} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {UtilityFunctions} from '../../../../shared/UtilityFunctions';
 import {SearcherOptions} from '../../../SearcherOptions';
@@ -40,7 +40,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
   currentProject: Project;
   projectFields: ProjectField[] = [];
   fieldsUnique: Field[] = [];
-  public fieldsFiltered: Subject<Field[]> = new Subject<Field[]>();
+  public fieldsFiltered: BehaviorSubject<Field[]> = new BehaviorSubject<Field[]>([]);
   projectFacts: ProjectFact[] = [];
   destroy$: Subject<boolean> = new Subject();
   lexicons: Lexicon[] = [];

@@ -39,31 +39,21 @@
               <pre *ngIf="column !== 'texta_facts'">
                  {{row.doc[column] | json}}
               </pre>
-              <mat-menu #factMenu="matMenu">
-                <ng-template matMenuContent let-data="data">
-                  <button mat-menu-item
-                          *ngFor="let fact of data | formatTextaFacts">
-                    <button mat-menu-item [matMenuTriggerFor]="factValuesList"
-                            [matMenuTriggerData]="{factValues: fact.val}">{{fact.key}}: {{fact.val.length}}
-                    </button>
-                  </button>
-                  <mat-menu #factValuesList="matMenu">
-                    <ng-template matMenuContent let-factValues="factValues">
-                      <button mat-menu-item *ngFor="let factVal of factValues">{{factVal}}</button>
-                    </ng-template>
-                  </mat-menu>
-                </ng-template>
-              </mat-menu>
             </ng-container>
-            <app-highlight *ngIf="!(!!searchOptions.showShortVersion) && !(row.doc[column] | isObject)"
-                           [highlightConfig]="{
+            <ng-container *ngIf="!(!!searchOptions.showShortVersion) && !(row.doc[column] | isObject)">
+              <app-highlight
+                [highlightConfig]="{
                           currentColumn: column,
                           searcherHighlight: row.highlight,
                           onlyHighlightMatching: this.searchOptions.onlyHighlightMatching,
                           data: row.doc}">
 
-            </app-highlight>
-            <app-short-version *ngIf="!!searchOptions.showShortVersion" [params]="{data: row.doc, currentColumn: column, searcherHighlight: row.highlight, contextWindow: searchOptions.showShortVersion}"></app-short-version>
+              </app-highlight>
+            </ng-container>
+            <ng-container *ngIf="!!searchOptions.showShortVersion">
+              <app-short-version
+                [params]="{data: row.doc, currentColumn: column, searcherHighlight: row.highlight, contextWindow: searchOptions.showShortVersion}"></app-short-version>
+            </ng-container>
           </td>
         </ng-container>
 
@@ -76,3 +66,18 @@
     </div>
   </div>
 </div>
+<mat-menu #factMenu="matMenu">
+  <ng-template matMenuContent let-data="data">
+    <button mat-menu-item
+            *ngFor="let fact of data | formatTextaFacts">
+      <button mat-menu-item [matMenuTriggerFor]="factValuesList"
+              [matMenuTriggerData]="{factValues: fact.val}">{{fact.key}}: {{fact.val.length}}
+      </button>
+    </button>
+    <mat-menu #factValuesList="matMenu">
+      <ng-template matMenuContent let-factValues="factValues">
+        <button mat-menu-item *ngFor="let factVal of factValues">{{factVal}}</button>
+      </ng-template>
+    </mat-menu>
+  </ng-template>
+</mat-menu>

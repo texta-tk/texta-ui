@@ -1,6 +1,9 @@
-<ng-container *ngFor="let highlight of highlightArray;let i = index">
+<ng-container *ngFor="let highlight of highlightArray">
   <ng-template [ngIf]="highlight.type === 'text'">
-    <span style="cursor: pointer;" (click)="toggleSpanText(highlight)"> {{highlight.displayText}} </span>
+    <span style="cursor: pointer;" [matMenuTriggerFor]="contextOptions" [matMenuTriggerData]="{highlight: highlight}">
+      {{highlight.displayText}}
+    </span>
+
   </ng-template>
   <ng-template [ngIf]="highlight.type === 'context'">
     <span>{{highlight.text}}</span>
@@ -9,3 +12,9 @@
     <span [style.background-color]="highlight.color">{{highlight.text}}</span>
   </ng-template>
 </ng-container>
+<mat-menu #contextOptions="matMenu">
+  <ng-template matMenuContent let-highlight="highlight">
+    <button mat-menu-item (click)="toggleSpanText(highlight)">Toggle content</button>
+    <button mat-menu-item (click)="toggleAll()">Toggle all</button>
+  </ng-template>
+</mat-menu>
