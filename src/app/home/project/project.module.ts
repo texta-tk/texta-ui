@@ -26,6 +26,5 @@ import {CreateProjectDialogComponent} from './create-project-dialog/create-proje
 })
 export class ProjectModule {
   constructor() {
-    console.warn('ProjectModule');
   }
 }

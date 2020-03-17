@@ -51,6 +51,5 @@ import { ListFeaturesDialogComponent } from './list-features-dialog/list-feature
 })
 export class TaggerModule {
   constructor() {
-    console.warn('TaggerModule');
   }
 }

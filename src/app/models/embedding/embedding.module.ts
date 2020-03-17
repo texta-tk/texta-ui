@@ -23,6 +23,5 @@ import { PhraseDialogComponent } from './phrase-dialog/phrase-dialog.component';
 })
 export class EmbeddingModule {
   constructor() {
-    console.warn('EmbeddingModule');
   }
 }

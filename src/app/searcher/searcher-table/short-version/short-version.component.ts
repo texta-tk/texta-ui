@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {HighlightComponent, HighlightSpan} from '../highlight/highlight.component';
 
 interface ContextSpan {
@@ -14,10 +14,12 @@ interface ContextSpan {
 @Component({
   selector: 'app-short-version',
   templateUrl: './short-version.component.html',
-  styleUrls: ['./short-version.component.scss']
+  styleUrls: ['./short-version.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ShortVersionComponent {
   highlightArray: ContextSpan[] = [];
+  textHidden = true;
 
   @Input() set params(params: { data: any, currentColumn: string, searcherHighlight: any, contextWindow: number }) {
     if (params?.data && params?.searcherHighlight && params.currentColumn && params.data[params.currentColumn] !== '' &&
@@ -146,6 +148,22 @@ export class ShortVersionComponent {
       span.displayText = ' ... ';
     }
     span.hidden = !span.hidden;
+  }
+
+  public toggleAll() {
+    this.highlightArray.forEach(x => {
+      if (x.type === 'text') {
+        if (this.textHidden) {
+          x.hidden = false;
+          x.displayText = x.text;
+        } else {
+          x.hidden = true;
+          x.displayText = ' ... ';
+        }
+      }
+    });
+
+    this.textHidden = !this.textHidden;
   }
 
 }

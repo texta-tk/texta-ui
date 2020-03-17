@@ -57,6 +57,5 @@ import { ShortVersionComponent } from './searcher-table/short-version/short-vers
 })
 export class SearcherModule {
   constructor() {
-    console.warn('SearcherModule');
   }
 }

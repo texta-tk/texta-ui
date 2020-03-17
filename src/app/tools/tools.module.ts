@@ -23,6 +23,5 @@ import {CreateDatasetDialogComponent} from './dataset-importer/create-dataset-di
 })
 export class ToolsModule {
   constructor() {
-    console.warn('Tools');
   }
 }
