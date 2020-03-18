@@ -15,11 +15,7 @@ import { PhraseDialogComponent } from './phrase-dialog/phrase-dialog.component';
   imports: [
     SharedModule,
     EmbeddingRoutingModule,
-  ],
-  entryComponents: [
-    CreateEmbeddingDialogComponent,
-    PhraseDialogComponent,
-  ],
+  ]
 })
 export class EmbeddingModule {
   constructor() {

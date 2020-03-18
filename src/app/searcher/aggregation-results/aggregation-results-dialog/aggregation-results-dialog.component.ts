@@ -9,11 +9,13 @@ import {MatTableDataSource} from '@angular/material/table';
 })
 export class AggregationResultsDialogComponent implements OnInit {
   type: 'table' | 'histo' | undefined = undefined;
-  aggData = [];
+  aggData: MatTableDataSource<any> | any;
 
   constructor(private dialogRef: MatDialogRef<AggregationResultsDialogComponent>,
               @Inject(MAT_DIALOG_DATA) public data: { type: 'table' | 'histo', aggData: MatTableDataSource<any> | any }) {
-
+    if (data.type === 'table') {
+      this.aggData = data.aggData as MatTableDataSource<any>;
+    }
   }
 
   ngOnInit() {

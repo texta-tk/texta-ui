@@ -28,7 +28,7 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
   isLoadingPredictions = false;
   currentProject: Project;
 
-  @Input() set lexicon(value: Lexicon) {
+  @Input() set lexicon(value: Lexicon | null) {
     if (value) {
       this._lexicon = value;
       this.positives = this.stringListToString(value.phrases);

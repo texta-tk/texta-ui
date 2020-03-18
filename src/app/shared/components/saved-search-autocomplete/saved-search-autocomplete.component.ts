@@ -1,11 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
-import { SearcherService } from 'src/app/core/searcher/searcher.service';
-import { takeUntil, switchMap } from 'rxjs/operators';
-import { Project } from '../../types/Project';
-import { of, Subject } from 'rxjs';
-import { SavedSearch } from '../../types/SavedSearch';
-import { HttpErrorResponse } from '@angular/common/http';
-import { ProjectStore } from 'src/app/core/projects/project.store';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {SearcherService} from 'src/app/core/searcher/searcher.service';
+import {switchMap, takeUntil} from 'rxjs/operators';
+import {Project} from '../../types/Project';
+import {of, Subject} from 'rxjs';
+import {SavedSearch} from '../../types/SavedSearch';
+import {HttpErrorResponse} from '@angular/common/http';
+import {ProjectStore} from 'src/app/core/projects/project.store';
 
 @Component({
   selector: 'app-saved-search-autocomplete',
@@ -13,7 +13,7 @@ import { ProjectStore } from 'src/app/core/projects/project.store';
   styleUrls: ['./saved-search-autocomplete.component.scss']
 })
 export class SavedSearchAutocompleteComponent implements OnInit, OnDestroy {
-  @Input() appearance = '';
+  @Input() appearance: 'legacy' | 'standard' | 'fill' | 'outline' | undefined = undefined;
   @Output() queryChanged = new EventEmitter<string>();
 
   defaultQuery = '{"query": {"match_all": {}}}';
@@ -22,7 +22,8 @@ export class SavedSearchAutocompleteComponent implements OnInit, OnDestroy {
 
   destroyed$: Subject<boolean> = new Subject<boolean>();
 
-  constructor(private searcherService: SearcherService, private projectStore: ProjectStore) { }
+  constructor(private searcherService: SearcherService, private projectStore: ProjectStore) {
+  }
 
   ngOnInit() {
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), switchMap((currentProject: Project) => {

@@ -28,7 +28,7 @@
     <mat-form-field>
       <ngx-mat-file-input formControlName="fileFormControl" placeholder="File" valuePlaceholder="No file selected"
                           [accept]="'.xls,.xlsx,.csv,.jl'"
-                          required></ngx-mat-file-input>
+                          [required]="true"></ngx-mat-file-input>
       <mat-icon matSuffix>folder</mat-icon>
       <mat-error *ngIf="importerForm.get('fileFormControl')?.hasError('required')">
         Please select a file

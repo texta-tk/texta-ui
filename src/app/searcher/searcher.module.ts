@@ -52,7 +52,6 @@ import { ShortVersionComponent } from './searcher-table/short-version/short-vers
     SharedModule,
     SearcherRoutingModule
   ],
-  entryComponents: [SaveSearchDialogComponent, AggregationResultsDialogComponent],
   providers: [DatePipe]
 })
 export class SearcherModule {

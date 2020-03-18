@@ -16,9 +16,6 @@ import {CreateDatasetDialogComponent} from './dataset-importer/create-dataset-di
   imports: [
     SharedModule,
     ToolsRoutingModule,
-  ], entryComponents: [
-    CreateReindexerDialogComponent,
-    CreateDatasetDialogComponent
   ]
 })
 export class ToolsModule {

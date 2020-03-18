@@ -138,13 +138,6 @@ import {MatRadioModule} from '@angular/material/radio';
     InfiniteScrollModule,
     MaterialFileInputModule,
     NgxMatSelectSearchModule
-  ],
-  entryComponents: [
-    LoginDialogComponent,
-    RegistrationDialogComponent,
-    ConfirmDialogComponent,
-    QueryDialogComponent,
-    GenericDialogComponent
   ]
 })
 export class SharedModule {

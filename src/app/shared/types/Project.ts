@@ -12,14 +12,14 @@ export class Project {
   };
 }
 
-export interface ProjectResourceCounts {
-  num_lexicons: number;
-  num_taggers: number;
-  num_tagger_groups: number;
-  num_neurotaggers: number;
-  num_embeddings: number;
-  num_embedding_clusters: number;
-  num_torchtaggers?: number;
+export class ProjectResourceCounts {
+  num_lexicons = 0;
+  num_taggers = 0;
+  num_tagger_groups = 0;
+  num_neurotaggers = 0;
+  num_embeddings = 0;
+  num_embedding_clusters = 0;
+  num_torchtaggers = 0;
 }
 
 export interface ProjectFact {

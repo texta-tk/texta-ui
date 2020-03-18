@@ -95,7 +95,6 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
     if (value && this.projectFields) {
       const fields = ProjectField.cleanProjectFields(this.projectFields, ['text'], []).map(x => x.fields).flat();
       const fieldPathArray = fields.map(y => y.path);
-      this.elasticSearchQuery = new ElasticsearchQuery();
       this.elasticSearchQuery.elasticSearchQuery.query = {
         multi_match: {
           fields: fieldPathArray,

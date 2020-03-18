@@ -202,7 +202,8 @@ export class ReindexerComponent implements OnInit, OnDestroy {
   }
 
 
-  applyFilter(filterValue: string, field: string) {
+  applyFilter(filterValue: any, field: string) {
+    filterValue = filterValue.value ? filterValue.value : '';
     this.filteringValues[field] = filterValue;
     this.filterQueriesToString();
     this.filteredSubject.next();

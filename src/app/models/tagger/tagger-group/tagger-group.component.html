@@ -15,7 +15,7 @@
       </button>
       <mat-form-field class="m-l-15">
         <mat-icon matSuffix>search</mat-icon>
-        <input matInput (keyup)="applyFilter($event.target.value, 'description')" placeholder="Filter description">
+        <input matInput (keyup)="applyFilter($event.target, 'description')" placeholder="Filter description">
       </mat-form-field>
 
       <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons [length]="resultsLength">

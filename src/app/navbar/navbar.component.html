@@ -25,10 +25,11 @@
       class="pointer" [matMenuTriggerFor]="models">
       <button mat-button class="nav-button">
         <mat-icon class="margin-right">storage</mat-icon>
-        Models ({{projectResourceCounts?.num_torchtaggers +
-      projectResourceCounts?.num_taggers +
-      projectResourceCounts?.num_tagger_groups +
-      projectResourceCounts?.num_embeddings}})
+        Models
+        <ng-container *ngIf="projectResourceCounts">
+          ({{projectResourceCounts.num_torchtaggers + projectResourceCounts.num_taggers + projectResourceCounts.num_tagger_groups + projectResourceCounts.num_embeddings}})
+        </ng-container>
+
         <mat-icon>arrow_drop_down</mat-icon>
       </button>
     </a>
@@ -41,14 +42,7 @@
       </button>
     </a>
 
-    <!-- <mat-menu #models="matMenu">
-      <button mat-menu-item>Get Facts</button>
-      <button mat-menu-item>Get Fields</button>
-    </mat-menu> -->
-
     <mat-menu #models="matMenu">
-      <!-- Embedding Clusters disabled until more functionality for them is added -->
-      <!-- <a mat-menu-item routerLinkActive="is-active" [routerLink]="['embedding-groups']">Embedding Clusters <span *ngIf="projectResourceCounts">({{projectResourceCounts?.num_embedding_clusters}})</span></a> -->
       <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['taggers']">Taggers <span
         *ngIf="projectResourceCounts?.num_taggers">({{projectResourceCounts?.num_taggers}})</span></a>
       <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['tagger-groups']">Tagger Groups <span
@@ -77,7 +71,7 @@
                     data-cy="appNavbarProjectFieldsSelect"
                     [formControl]="projectFieldsControl"
                     (selectionChange)="indexSelectionChanged($event.value)"
-                    [placeholder]="projectFields?.length < 1 ? 'No indices' : ''"
+                    [placeholder]="projectFields.length < 1 ? 'No indices' : ''"
                     multiple>
           <mat-option *ngFor="let item of projectFields" [value]="item">
             {{item.index}}
@@ -88,7 +82,7 @@
         <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
                     data-cy="appNavbarProjectSelect"
                     [formControl]="projectControl" (selectionChange)="projectStore.setCurrentProject($event.value)"
-                    [placeholder]="projects?.length < 1 ? 'No projects' : ''">
+                    [placeholder]="projects.length < 1 ? 'No projects' : ''">
           <mat-option *ngFor="let item of projects" [value]="item">
             {{item.id}}: {{item.title}}
           </mat-option>

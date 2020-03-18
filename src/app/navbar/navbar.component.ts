@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {UserStore} from '../core/users/user.store';
 import {LoginDialogComponent} from '../shared/components/dialogs/login/login-dialog.component';
@@ -12,7 +12,7 @@ import {ProjectStore} from '../core/projects/project.store';
 import {of, Subject} from 'rxjs';
 import {RegistrationDialogComponent} from '../shared/components/dialogs/registration/registration-dialog.component';
 import {LogService} from '../core/util/log.service';
-import {switchMap, take, takeUntil} from 'rxjs/operators';
+import {switchMap, takeUntil} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {UtilityFunctions} from '../shared/UtilityFunctions';
@@ -21,7 +21,8 @@ import {EditProjectDialogComponent} from '../home/project/edit-project-dialog/ed
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.scss']
+  styleUrls: ['./navbar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   user: UserProfile;
@@ -30,7 +31,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   projectControl = new FormControl();
   projectFieldsControl = new FormControl();
   currentProject: Project;
-  projectResourceCounts: ProjectResourceCounts | null;
+  projectResourceCounts: ProjectResourceCounts = new ProjectResourceCounts();
   destroyed$: Subject<boolean> = new Subject<boolean>();
 
   constructor(public dialog: MatDialog,
@@ -40,6 +41,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
               public projectStore: ProjectStore,
               private logService: LogService,
               public router: Router,
+              private cdrf: ChangeDetectorRef,
               private projectService: ProjectService) {
 
   }
@@ -49,7 +51,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       if (resp) {
         this.user = resp;
       } else {
-        this.projectResourceCounts = null;
+        this.projectResourceCounts = new ProjectResourceCounts();
       }
     });
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), switchMap(proj => {
@@ -63,7 +65,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       if (response && !(response instanceof HttpErrorResponse)) {
         this.projectResourceCounts = response;
       } else {
-        this.projectResourceCounts = null;
+        this.projectResourceCounts = new ProjectResourceCounts();
       }
     });
 
@@ -98,6 +100,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
             this.projectFieldsControl.setValue(this.projectFields);
             this.projectStore.setCurrentProjectFields(this.projectFields);
           }
+          this.cdrf.detectChanges();
         }
       }
     });

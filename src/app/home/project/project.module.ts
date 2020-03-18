@@ -19,10 +19,6 @@ import {CreateProjectDialogComponent} from './create-project-dialog/create-proje
   exports: [
     ProjectComponent,
   ],
-  entryComponents: [
-    CreateProjectDialogComponent,
-    EditProjectDialogComponent,
-  ],
 })
 export class ProjectModule {
   constructor() {

@@ -1,5 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {ThemePalette} from '@angular/material/core';
 
 @Component({
   selector: 'app-confirm-dialog',
@@ -11,16 +12,16 @@ export class ConfirmDialogComponent implements OnInit {
   cancelText = 'Cancel';
   mainText = 'Unsaved progress';
   title = 'Are you sure?';
-  confirmBtnColor = 'warn';
+  confirmBtnColor: ThemePalette = 'warn';
 
   constructor(
     public dialogRef: MatDialogRef<ConfirmDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { confirmText: string, cancelText: string, mainText: string, title: string, confirmBtnColor: 'warn' | 'accent' | 'primary' | '' }) {
-      this.confirmText = data.confirmText ? data.confirmText : this.confirmText;
-      this.cancelText = data.cancelText ? data.cancelText : this.cancelText;
-      this.mainText = data.mainText ? data.mainText : this.mainText;
-      this.title = data.title ? data.title : this.title;
-      this.confirmBtnColor = data.confirmBtnColor ? data.confirmBtnColor : this.confirmBtnColor;
+    @Inject(MAT_DIALOG_DATA) public data: { confirmText: string, cancelText: string, mainText: string, title: string, confirmBtnColor: ThemePalette }) {
+    this.confirmText = data.confirmText ? data.confirmText : this.confirmText;
+    this.cancelText = data.cancelText ? data.cancelText : this.cancelText;
+    this.mainText = data.mainText ? data.mainText : this.mainText;
+    this.title = data.title ? data.title : this.title;
+    this.confirmBtnColor = data.confirmBtnColor ? data.confirmBtnColor : this.confirmBtnColor;
   }
 
   ngOnInit() {

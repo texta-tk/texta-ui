@@ -1,9 +1,9 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {TaggerService} from 'src/app/core/models/taggers/tagger.service';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {Tagger} from 'src/app/shared/types/tasks/Tagger';
-import { HttpErrorResponse } from '@angular/common/http';
-import { LogService } from 'src/app/core/util/log.service';
+import {HttpErrorResponse} from '@angular/common/http';
+import {LogService} from 'src/app/core/util/log.service';
 
 @Component({
   selector: 'app-tag-random-doc-dialog',
@@ -11,7 +11,7 @@ import { LogService } from 'src/app/core/util/log.service';
   styleUrls: ['./tag-random-doc-dialog.component.scss']
 })
 export class TagRandomDocDialogComponent implements OnInit {
-  result: { document: any, result: { result: boolean, probability: number } };
+  result: { document: any, prediction: { result: boolean, probability: number } };
   isLoading = false;
 
   constructor(private taggerService: TaggerService, private logService: LogService,
@@ -28,7 +28,7 @@ export class TagRandomDocDialogComponent implements OnInit {
       .subscribe((resp: any | HttpErrorResponse) => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
           this.result = resp;
-        } else if (resp instanceof HttpErrorResponse){
+        } else if (resp instanceof HttpErrorResponse) {
           this.logService.snackBarError(resp, 4000);
         }
         this.isLoading = false;

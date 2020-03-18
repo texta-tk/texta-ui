@@ -84,8 +84,8 @@
 </mat-menu>
 <mat-menu #userMenu="matMenu">
   <ng-template matMenuContent>
-    <ng-template ngFor let-user [ngForOf]="projectUsers$ | async">
-      <button mat-menu-item [matMenuTriggerFor]="userDetailed">
+    <ng-container *ngFor="let user of projectUsers$ | async">
+      <button mat-menu-item [matMenuTriggerFor]="userDetailed" *ngIf="user.username">
         {{ user.username }}
       </button>
       <mat-menu #userDetailed="matMenu">
@@ -95,7 +95,7 @@
         </button>
         <button mat-menu-item>ID: {{ user.id }}</button>
       </mat-menu>
-    </ng-template>
+    </ng-container>
   </ng-template>
 </mat-menu>
 <mat-menu #editMenu="matMenu">

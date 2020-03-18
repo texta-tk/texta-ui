@@ -4,23 +4,29 @@
     <mat-spinner></mat-spinner>
   </div>
   <ng-container *ngIf="aggregationData">
-    <mat-tab-group mat-stretch-tabs *ngIf="aggregationData.tableData.length > 0">
+    <mat-tab-group mat-stretch-tabs
+                   *ngIf="aggregationData.tableData !== undefined && aggregationData.tableData.length > 0">
       <mat-tab *ngFor="let tableAggregation of aggregationData.tableData" [label]="tableAggregation.name">
-        <app-aggregation-result-table [tableData]="tableAggregation.tableData"></app-aggregation-result-table>
+        <app-aggregation-result-table *ngIf="tableAggregation.tableData !== undefined"
+                                      [tableData]="tableAggregation.tableData"></app-aggregation-result-table>
       </mat-tab>
     </mat-tab-group>
 
-    <app-aggregation-results-chart *ngIf="aggregationData.dateData.length > 0" [aggregationData]="aggregationData"
-    [yLabel]="timeLineYLabel">
+    <app-aggregation-results-chart
+      *ngIf="aggregationData.dateData !== undefined && aggregationData.dateData.length > 0"
+      [aggregationData]="aggregationData"
+      [yLabel]="timeLineYLabel">
 
     </app-aggregation-results-chart>
 
-    <mat-tab-group mat-stretch-tabs *ngIf="aggregationData.treeData.length > 0">
+    <mat-tab-group mat-stretch-tabs
+                   *ngIf="aggregationData.treeData !== undefined && aggregationData.treeData.length > 0">
       <mat-tab *ngFor="let nestedAggregation of aggregationData.treeData">
 
         <ng-template mat-tab-label>
           {{nestedAggregation.name}}
-          <button *ngIf="nestedAggregation.histoBuckets && nestedAggregation.histoBuckets.length > 0"
+          <button
+            *ngIf="nestedAggregation !== undefined && nestedAggregation.histoBuckets!== undefined && nestedAggregation.histoBuckets.length > 0"
             mat-icon-button (click)="openUnifiedTimeline(nestedAggregation.histoBuckets)">
             <mat-icon>assessment</mat-icon>
           </button>

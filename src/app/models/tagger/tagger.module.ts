@@ -34,19 +34,6 @@ import { ListFeaturesDialogComponent } from './list-features-dialog/list-feature
   imports: [
     SharedModule,
     TaggerRoutingModule,
-  ],
-  entryComponents: [
-    CreateTaggerDialogComponent,
-    EditStopwordsDialogComponent,
-    TagTextDialogComponent,
-    TagDocDialogComponent,
-    TagRandomDocDialogComponent,
-    CreateTaggerGroupDialogComponent,
-    ModelsListDialogComponent,
-    TaggerGroupTagTextDialogComponent,
-    TaggerGroupTagDocDialogComponent,
-    TaggerGroupTagRandomDocDialogComponent,
-    ListFeaturesDialogComponent,
   ]
 })
 export class TaggerModule {

@@ -1,13 +1,13 @@
 <ng-container *ngFor="let highlight of highlightArray">
-  <ng-template [ngIf]="highlight.highlighted && !highlight.span.searcherHighlight && !highlight.span.urlSpan">
-      <span title="{{highlight.span.fact}}: {{highlight.span.str_val}}" style="cursor: pointer;"
+  <ng-template [ngIf]="highlight.highlighted && !highlight.span?.searcherHighlight && !highlight.span?.urlSpan">
+      <span title="{{highlight.span?.fact}}: {{highlight.span?.str_val}}" style="cursor: pointer;"
             [style.background-color]="highlight.color">{{highlight.text}}</span>
   </ng-template>
-  <ng-template [ngIf]="highlight.highlighted && highlight.span.searcherHighlight">
+  <ng-template [ngIf]="highlight.highlighted && highlight.span?.searcherHighlight">
     <span style="cursor: pointer;" [style.background-color]="highlight.color">{{highlight.text}}</span>
   </ng-template>
-  <ng-template [ngIf]="highlight.highlighted && highlight.span.urlSpan">
-    <a href="{{highlight.span.str_val}}" target="_blank">{{highlight.text}}</a>
+  <ng-template [ngIf]="highlight.highlighted && highlight.span?.urlSpan">
+    <a href="{{highlight.span?.str_val}}" target="_blank">{{highlight.text}}</a>
   </ng-template>
   <ng-template [ngIf]="highlight.nested">
     <ng-container [ngTemplateOutlet]="factTemplate" [ngTemplateOutletContext]={highlight:highlight.nested}>
@@ -17,11 +17,11 @@
 </ng-container>
 
 <ng-template #factTemplate let-highlight="highlight">
-  <ng-template [ngIf]="highlight.span.urlSpan">
-    <a href="{{highlight.span.str_val}}" target="_blank">{{highlight.text}}</a>
+  <ng-template [ngIf]="highlight.span?.urlSpan">
+    <a href="{{highlight.span?.str_val}}" target="_blank">{{highlight.text}}</a>
   </ng-template>
-  <ng-template [ngIf]="!highlight.span.urlSpan">
-  <span title="{{highlight.span.fact}} {{highlight.span.str_val}}" style="cursor: pointer;"
+  <ng-template [ngIf]="!highlight.span?.urlSpan">
+  <span title="{{highlight.span?.fact}} {{highlight.span?.str_val}}" style="cursor: pointer;"
         [style.background-color]="highlight.color">{{highlight.text}}</span>
   </ng-template>
   <ng-template [ngIf]="highlight.nested">

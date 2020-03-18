@@ -7,7 +7,7 @@ import {ProjectStore} from '../core/projects/project.store';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {Project} from '../shared/types/Project';
 import {HttpErrorResponse} from '@angular/common/http';
-import { MatDialog } from '@angular/material/dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {ConfirmDialogComponent} from '../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 
 

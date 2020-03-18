@@ -66,7 +66,6 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
         if (currentProjectState?.searcher?.itemsPerPage) {
           this.elasticQuery.size = currentProjectState.searcher.itemsPerPage;
         }
-        this.elasticQuery = new ElasticsearchQuery();
         return this.lexiconService.getLexicons(currentProject.id);
       }
       return of(null);

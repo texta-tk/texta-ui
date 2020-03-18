@@ -231,7 +231,8 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  applyFilter(filterValue: string, field: string) {
+  applyFilter(filterValue: any, field: string) {
+    filterValue = filterValue.value ? filterValue.value : '';
     this.filteringValues[field] = filterValue;
     this.paginator.pageIndex = 0;
     this.filterQueriesToString();

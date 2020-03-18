@@ -229,7 +229,8 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
 
-  applyFilter(filterValue: string, field: string) {
+  applyFilter(filterValue: any, field: string) {
+    filterValue = filterValue.value ? filterValue.value : '';
     this.filteringValues[field] = filterValue;
     this.filterQueriesToString();
     this.filteredSubject.next();

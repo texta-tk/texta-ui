@@ -239,7 +239,8 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
     this.selectedRows.clear();
   }
 
-  applyFilter(filterValue: string, field: string) {
+  applyFilter(filterValue: any, field: string) {
+    filterValue = filterValue.value ? filterValue.value : '';
     this.filteringValues[field] = filterValue;
     this.paginator.pageIndex = 0;
     this.filterQueriesToString();

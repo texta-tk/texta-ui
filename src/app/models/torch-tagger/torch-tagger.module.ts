@@ -15,6 +15,5 @@ import { TorchTagTextDialogComponent } from './torch-tag-text-dialog/torch-tag-t
     SharedModule,
     TorchTaggerRoutingModule,
   ],
-  entryComponents: [CreateTorchTaggerDialogComponent, TorchTagTextDialogComponent]
 })
 export class TorchTaggerModule { }
