@@ -108,7 +108,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
   onDelete(project: Project) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: {confirmText: 'Delete', mainText: 'Are you sure you want to delete this Project?'}
+      data: {confirmText: 'Delete', mainText: `Delete the project \"${project.id}: ${project.title}\"?`}
     });
 
     dialogRef.afterClosed().pipe(takeUntil(this.destroyed$)).subscribe(result => {

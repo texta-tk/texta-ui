@@ -1,55 +1,10 @@
-<div class="wrapper">
-  <div class="table-paginator-row">
-    <div class="loading-bar">
-      <mat-progress-bar mode="indeterminate" *ngIf="isLoadingResults"></mat-progress-bar>
-    </div>
-    <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
-    </mat-paginator>
-  </div>
-  <div class="table-container">
-
-    <table mat-table [dataSource]="tableData" matSort
-           matSort matSortActive="id" matSortDisableClear matSortDirection="asc" [trackBy]="trackById">
-      <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
-        <td mat-cell *matCellDef="let element">{{ element.id }}</td>
-      </ng-container>
-      <ng-container matColumnDef="is_superuser">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Superuser</th>
-        <td mat-cell *matCellDef="let element">
-          <mat-checkbox (click)="togglePermissions(element)" [(ngModel)]="element.is_superuser"
-                        [disabled]="element.id===1 || element.id === currentUser.id"></mat-checkbox>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="username">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Username</th>
-        <td mat-cell *matCellDef="let element">{{ element.username }}</td>
-      </ng-container>
-      <ng-container matColumnDef="email">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
-        <td mat-cell *matCellDef="let element">{{element.email}}</td>
-      </ng-container>
-      <ng-container matColumnDef="date_joined">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Joined</th>
-        <td mat-cell *matCellDef="let element">{{element.date_joined  | date: 'mediumDate'}}</td>
-      </ng-container>
-      <ng-container matColumnDef="last_login">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Last login</th>
-        <td mat-cell *matCellDef="let element">{{ element.last_login  | date: 'MMM d, h:mm:ss a'}}</td>
-      </ng-container>
-      <ng-container matColumnDef="delete">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Delete</th>
-        <td mat-cell *matCellDef="let element">
-          <button class="new-resource-btn" mat-icon-button color="warn" (click)="deleteUser(element)"
-                  [disabled]="element.id===1"
-                  matTooltip="Delete user">
-            <mat-icon>cancel</mat-icon>
-          </button>
-        </td>
-      </ng-container>
-      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-    </table>
-  </div>
-
-</div>
+<mat-tab-group>
+  <mat-tab label="Users">
+    <app-users></app-users>
+  </mat-tab>
+<!--  <mat-tab label="Indices">
+    <ng-template matTabContent>
+      <app-indices></app-indices>
+    </ng-template>
+  </mat-tab>-->
+</mat-tab-group>

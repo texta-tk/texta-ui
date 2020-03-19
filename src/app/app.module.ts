@@ -18,7 +18,6 @@ import {LexiconBuilderComponent} from './lexicon-miner/lexicon-builder/lexicon-b
 import {SearcherModule} from './searcher/searcher.module';
 import {ToolsModule} from './tools/tools.module';
 import {TorchTaggerModule} from './models/torch-tagger/torch-tagger.module';
-import {ManagementComponent} from './management/management.component';
 
 
 @NgModule({
@@ -29,7 +28,6 @@ import {ManagementComponent} from './management/management.component';
     HomeComponent,
     LexiconMinerComponent,
     LexiconBuilderComponent,
-    ManagementComponent,
   ],
   imports: [
     BrowserModule,

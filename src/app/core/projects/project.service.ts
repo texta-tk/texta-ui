@@ -4,7 +4,9 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../util/log.service';
 import {Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
-import {Project, ProjectFact, ProjectField, ProjectResourceCounts, Health} from '../../shared/types/Project';
+import {Health, Project, ProjectFact, ProjectField, ProjectResourceCounts} from '../../shared/types/Project';
+import {Index} from '../../shared/types';
+import {ResultsWrapper} from '../../shared/types/Generic';
 
 @Injectable({
   providedIn: 'root'
@@ -56,9 +58,9 @@ export class ProjectService {
       catchError(this.logService.handleError<ProjectField[]>('getProjectFields')));
   }
 
-  projectFactValueAutoComplete(id: number, factName: string, limit: number, startsWith: string): Observable<string[] | HttpErrorResponse> {
+  projectFactValueAutoComplete(id: number, factName: string, limitN: number, startsWith: string): Observable<string[] | HttpErrorResponse> {
     const body = {
-      limit: limit,
+      limit: limitN,
       startswith: startsWith,
       fact_name: factName
     };
@@ -93,6 +95,24 @@ export class ProjectService {
     return this.http.get<string[]>(`${this.apiUrl}/get_indices/`).pipe(
       tap(e => this.logService.logStatus(e, 'get Indices')),
       catchError(this.logService.handleError<string[]>('getIndices')));
+  }
+
+  getElasticIndices(projectId: number, params = ''): Observable<ResultsWrapper<Index> | HttpErrorResponse> {
+    return this.http.get<ResultsWrapper<Index>>(`${this.apiUrl}/projects/${projectId}/index/?${params}`).pipe(
+      tap(e => this.logService.logStatus(e, 'getElasticIndices')),
+      catchError(this.logService.handleError<ResultsWrapper<Index>>('getElasticIndices')));
+  }
+
+  deleteElasticIndex(projectId: number, indexId: number): Observable<ResultsWrapper<Index> | HttpErrorResponse> {
+    return this.http.delete<ResultsWrapper<Index>>(`${this.apiUrl}/projects/${projectId}/index/${indexId}`).pipe(
+      tap(e => this.logService.logStatus(e, 'deleteElasticIndex')),
+      catchError(this.logService.handleError<ResultsWrapper<Index>>('deleteElasticIndex')));
+  }
+
+  editElasticIndex(projectId: number, index: Index): Observable<ResultsWrapper<Index> | HttpErrorResponse> {
+    return this.http.post<ResultsWrapper<Index>>(`${this.apiUrl}/projects/${projectId}/index/`, index).pipe(
+      tap(e => this.logService.logStatus(e, 'editElasticIndex')),
+      catchError(this.logService.handleError<ResultsWrapper<Index>>('editElasticIndex')));
   }
 
   deleteProject(id: number) {

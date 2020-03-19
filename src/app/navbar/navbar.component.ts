@@ -21,8 +21,7 @@ import {EditProjectDialogComponent} from '../home/project/edit-project-dialog/ed
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   user: UserProfile;
@@ -41,7 +40,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
               public projectStore: ProjectStore,
               private logService: LogService,
               public router: Router,
-              private cdrf: ChangeDetectorRef,
               private projectService: ProjectService) {
 
   }
@@ -70,7 +68,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     });
 
     this.projectStore.getProjects().pipe(takeUntil(this.destroyed$)).subscribe(projects => {
-      if (projects) {
+      if (projects && projects.length > 0) {
         this.projects = projects.sort((a, b) => {
           if (a.id > b.id) {
             return -1;
@@ -86,6 +84,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
         } else {
           this.projectStore.setCurrentProject(projects[0]);
         }
+      } else {
+        this.projects = [];
       }
     });
     this.projectStore.getProjectFields().pipe(takeUntil(this.destroyed$)).subscribe((x) => {
@@ -100,8 +100,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
             this.projectFieldsControl.setValue(this.projectFields);
             this.projectStore.setCurrentProjectFields(this.projectFields);
           }
-          this.cdrf.detectChanges();
         }
+      } else {
+        this.projectFields = [];
       }
     });
   }
