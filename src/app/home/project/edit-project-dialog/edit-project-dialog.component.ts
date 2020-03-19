@@ -11,6 +11,7 @@ import {UserProfile} from '../../../shared/types/UserProfile';
 import {mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
 import {from, of, ReplaySubject, Subject} from 'rxjs';
 import {MatSelect} from '@angular/material/select';
+import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 
 @Component({
   selector: 'app-edit-project-dialog',
@@ -69,7 +70,7 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
       if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       } else {
-        this.indices = resp;
+        this.indices = resp.sort();
         this.filteredIndices.next(this.indices.slice());
       }
     });

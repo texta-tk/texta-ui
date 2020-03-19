@@ -9,7 +9,7 @@ import {Field, Project, ProjectField} from '../../../../shared/types/Project';
 import {TaggerService} from '../../../../core/models/taggers/tagger.service';
 import {ProjectStore} from '../../../../core/projects/project.store';
 import {mergeMap, take, takeUntil} from 'rxjs/operators';
-import {BehaviorSubject, merge, of, Subject} from 'rxjs';
+import {merge, of, Subject} from 'rxjs';
 import {TaggerOptions} from '../../../../shared/types/tasks/TaggerOptions';
 import {LogService} from '../../../../core/util/log.service';
 import {Embedding} from '../../../../shared/types/tasks/Embedding';

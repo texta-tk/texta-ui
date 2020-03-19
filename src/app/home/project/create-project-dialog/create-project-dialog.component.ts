@@ -53,7 +53,7 @@ export class CreateProjectDialogComponent implements OnInit, OnDestroy {
       if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       } else {
-        this.indices = resp;
+        this.indices = resp.sort();
         this.filteredIndices.next(this.indices.slice());
       }
     });
