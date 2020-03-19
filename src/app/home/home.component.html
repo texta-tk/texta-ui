@@ -6,13 +6,13 @@
     <div *ngIf="health" data-cy="appHomeHealth">
       <mat-card fxLayout="row wrap" fxLayoutGap="5px" class="service-status-card center-margin">
         <mat-chip-list class="center-margin" disabled>
-          <mat-chip selected [color]="health.elastic.alive ? 'primary' : 'accent'">
-            ElasticSearch {{health.elastic.alive ? 'ONLINE' : 'OFFLINE'}}  </mat-chip>
-          <mat-chip selected [color]="health.mlp.alive ? 'primary' : 'accent'">
-            MLP {{health.mlp.alive ? 'ONLINE' : 'OFFLINE'}}  </mat-chip>
-          <mat-chip selected [color]="health.redis.alive ? 'primary' : 'accent'">
-            Redis {{health.redis.alive ? 'ONLINE' : 'OFFLINE'}}  </mat-chip>
-          <mat-chip selected color="primary"> API VERSION {{health.version}}  </mat-chip>
+          <mat-chip selected [color]="health.services.elastic.alive ? 'primary' : 'accent'">
+            ElasticSearch {{health.services.elastic.alive ? 'ONLINE' : 'OFFLINE'}}  </mat-chip>
+          <mat-chip selected [color]="health.services.mlp.alive ? 'primary' : 'accent'">
+            MLP {{health.services.mlp.alive ? 'ONLINE' : 'OFFLINE'}}  </mat-chip>
+          <mat-chip selected [color]="health.services.redis.alive ? 'primary' : 'accent'">
+            Redis {{health.services.redis.alive ? 'ONLINE' : 'OFFLINE'}}  </mat-chip>
+          <mat-chip selected color="primary"> API VERSION {{health.toolkit.version}}  </mat-chip>
           <mat-chip selected color="primary"> VERSION {{frontVersion}}  </mat-chip>
         </mat-chip-list>
       </mat-card>
@@ -21,46 +21,48 @@
         <div fxFlex="1 0 125px">
           <h4 class="mat-h4 center-text"> DISK SPACE </h4>
           <mat-progress-spinner
-            [color]="((health.disk.used / health.disk.total) * 100) < 90 ? 'primary' : 'warn'"
+            [color]="((health.host.disk.used / health.host.disk.total) * 100) < 90 ? 'primary' : 'warn'"
             [mode]="'determinate'"
-            [value]="(health.disk.used / health.disk.total) * 100"
+            [value]="(health.host.disk.used / health.host.disk.total) * 100"
             class="center-margin"
           >
           </mat-progress-spinner>
           <div style="position:relative; top: -60px;">
-            <span class="block center-text">{{(round((health.disk.used / health.disk.total) * 100)) }}% </span>
+            <span class="block center-text">{{(round((health.host.disk.used / health.host.disk.total) * 100)) }}
+              % </span>
           </div>
-          <span class="mat-hint mat-small center-text block"> {{health.disk.used | number}}
-            /  {{health.disk.total| number}} {{health.disk.unit}} </span>
+          <span class="mat-hint mat-small center-text block"> {{health.host.disk.used | number}}
+            /  {{health.host.disk.total| number}} {{health.host.disk.unit}} </span>
         </div>
 
         <div fxFlex="1 0 125px">
           <h4 class="mat-h4 center-text">MEMORY</h4>
           <mat-progress-spinner
-            [color]="((health.memory.used / health.memory.total) * 100) < 90 ? 'primary' : 'warn'"
+            [color]="((health.host.memory.used / health.host.memory.total) * 100) < 90 ? 'primary' : 'warn'"
             [mode]="'determinate'"
-            [value]="(health.memory.used / health.memory.total) * 100"
+            [value]="(health.host.memory.used / health.host.memory.total) * 100"
             class="center-margin"
           >
           </mat-progress-spinner>
           <div style="position:relative; top: -60px;">
-            <span class="block center-text">{{(round((health.memory.used / health.memory.total) * 100)) }}% </span>
+            <span class="block center-text">{{(round((health.host.memory.used / health.host.memory.total) * 100)) }}
+              % </span>
           </div>
-          <span class="mat-hint mat-small center-text block">  {{health.memory.used | number}}
-            /  {{health.memory.total| number}} {{health.memory.unit}} </span>
+          <span class="mat-hint mat-small center-text block">  {{health.host.memory.used | number}}
+            /  {{health.host.memory.total| number}} {{health.host.memory.unit}} </span>
         </div>
 
         <div fxFlex="1 0 125px">
           <h4 class="mat-h4 center-text"> CPU USAGE </h4>
           <mat-progress-spinner
-            [color]="health.cpu.percent < 90 ? 'primary' : 'warn'"
+            [color]="health.host.cpu.percent < 90 ? 'primary' : 'warn'"
             [mode]="'determinate'"
-            [value]="health.cpu.percent"
+            [value]="health.host.cpu.percent"
             class="center-margin"
           >
           </mat-progress-spinner>
           <div style="position:relative; top: -60px">
-            <span class="block center-text">{{health.cpu.percent}}%</span>
+            <span class="block center-text">{{health.host.cpu.percent}}%</span>
           </div>
         </div>
       </mat-card>
@@ -70,13 +72,13 @@
 
         <div fxFlex>
           <span class="count-text center-text block"
-                [ngClass]="health.gpu.count > 0 ? 'primary-text' : 'accent-text'">  {{health.gpu.count}} </span>
+                [ngClass]="health.host.gpu.count > 0 ? 'primary-text' : 'accent-text'">  {{health.host.gpu.count}} </span>
           <span class="mat-hint center-text block">GPUs</span>
         </div>
 
         <div fxFlex>
           <span class="count-text center-text block"
-                [ngClass]="health.active_tasks > 0 ? 'accent-text' : 'primary-text'">  {{health.active_tasks}} </span>
+                [ngClass]="health.toolkit.active_tasks > 0 ? 'accent-text' : 'primary-text'">  {{health.toolkit.active_tasks}} </span>
           <span class="mat-hint center-text block">Active Tasks</span>
         </div>
 
