@@ -28,7 +28,7 @@
           >
           </mat-progress-spinner>
           <div style="position:relative; top: -60px;">
-            <span class="block center-text">{{(round((health.host.disk.used / health.host.disk.total) * 100)) }}
+            <span class="block center-text">{{(((health.host.disk.used / health.host.disk.total) * 100))| number:'1.0-0' }}
               % </span>
           </div>
           <span class="mat-hint mat-small center-text block"> {{health.host.disk.used | number}}
@@ -45,7 +45,7 @@
           >
           </mat-progress-spinner>
           <div style="position:relative; top: -60px;">
-            <span class="block center-text">{{(round((health.host.memory.used / health.host.memory.total) * 100)) }}
+            <span class="block center-text">{{((health.host.memory.used / health.host.memory.total) * 100)| number:'1.0-0' }}
               % </span>
           </div>
           <span class="mat-hint mat-small center-text block">  {{health.host.memory.used | number}}

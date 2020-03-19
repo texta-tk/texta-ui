@@ -42,7 +42,4 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.userSub.unsubscribe();
     }
 
-    round(value: number) {
-        return Math.round(value);
-    }
 }
