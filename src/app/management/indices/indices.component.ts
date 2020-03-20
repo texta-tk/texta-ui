@@ -11,7 +11,7 @@ import {ProjectStore} from '../../core/projects/project.store';
 import {debounceTime, switchMap, takeUntil} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
-import {Index} from '../../shared/types';
+import {Index} from '../../shared/types/Index';
 import {ProjectService} from '../../core/projects/project.service';
 
 
