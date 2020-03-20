@@ -19,17 +19,15 @@ import {TaggerGroupTagTextDialogComponent} from './tagger-group-tag-text-dialog/
 import {TaggerGroupTagDocDialogComponent} from './tagger-group-tag-doc-dialog/tagger-group-tag-doc-dialog.component';
 import {ConfirmDialogComponent} from 'src/app/shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {TaggerGroupTagRandomDocDialogComponent} from './tagger-group-tag-random-doc-dialog/tagger-group-tag-random-doc-dialog.component';
+import {expandRowAnimation} from '../../../shared/animations';
 
 @Component({
   selector: 'app-tagger-group',
   templateUrl: './tagger-group.component.html',
   styleUrls: ['./tagger-group.component.scss'],
   animations: [
-    trigger('detailExpand', [
-      state('collapsed', style({height: '0px', minHeight: '0'})),
-      state('expanded', style({height: '*'})),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ])]
+    expandRowAnimation
+  ]
 })
 export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
 

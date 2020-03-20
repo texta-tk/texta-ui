@@ -17,17 +17,15 @@ import {PhraseDialogComponent} from '../phrase-dialog/phrase-dialog.component';
 import {SelectionModel} from '@angular/cdk/collections';
 import {QueryDialogComponent} from 'src/app/shared/components/dialogs/query-dialog/query-dialog.component';
 import {ConfirmDialogComponent} from 'src/app/shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {expandRowAnimation} from '../../../shared/animations';
 
 @Component({
   selector: 'app-embedding',
   templateUrl: './embedding.component.html',
   styleUrls: ['./embedding.component.scss'],
   animations: [
-    trigger('detailExpand', [
-      state('collapsed', style({height: '0px', minHeight: '0'})),
-      state('expanded', style({height: '*'})),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ])]
+    expandRowAnimation
+  ]
 })
 export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: Embedding | null;

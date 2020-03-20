@@ -17,17 +17,13 @@ import {CreateTorchTaggerDialogComponent} from '../create-torch-tagger-dialog/cr
 import {TorchTaggerService} from '../../../core/models/taggers/torch-tagger.service';
 import {trigger, state, style, transition, animate} from '@angular/animations';
 import {TorchTagTextDialogComponent} from '../torch-tag-text-dialog/torch-tag-text-dialog.component';
+import {expandRowAnimation} from '../../../shared/animations';
 
 @Component({
   selector: 'app-torch-tagger',
   templateUrl: './torch-tagger.component.html',
   styleUrls: ['./torch-tagger.component.scss'],
-  animations: [
-    trigger('detailExpand', [
-      state('collapsed', style({height: '0px', minHeight: '0'})),
-      state('expanded', style({height: '*'})),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ])]
+  animations: [expandRowAnimation]
 })
 export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: TorchTagger | null;
