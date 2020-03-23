@@ -96,7 +96,7 @@
           <mat-icon>arrow_drop_down</mat-icon></span>
         </button>
         <mat-menu #menu="matMenu">
-          <a mat-menu-item [routerLink]="['management']" *ngIf="user.is_superuser">
+          <a mat-menu-item data-cy="appNavbarUserMenuManagement" [routerLink]="['management']" *ngIf="user.is_superuser">
             <mat-icon inline="true">account_box</mat-icon>
             <span>Management </span> </a>
           <a mat-menu-item [routerLink]="['settings']">

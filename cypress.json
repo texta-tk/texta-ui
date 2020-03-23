@@ -1,10 +1,9 @@
 {
   "baseUrl": "http://localhost:4200",
-  "chromeWebSecurity": false,
   "viewportHeight": 1080,
   "viewportWidth": 1920,
   "env": {
-    "api_host": "http://localhost:8000",
+    "api_host": "https://rest-dev.texta.ee",
     "api_basePath": "/api/v1"
   }
 }

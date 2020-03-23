@@ -24,17 +24,10 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 Cypress.Commands.add('login', (username, password) => {
-  cy.request({
-    method: 'POST',
-    url: `${Cypress.env('api_host')}${Cypress.env('api_basePath')}/rest-auth/login/`,
-    body: {
-      username: username,
-      password: password,
-    }
-  }).then((resp) => {
-    window.localStorage.setItem('user', JSON.stringify({key: resp.body.key}));
-  })
-
+  cy.get('[data-cy=appSharedLoginDialogUsername]').type(username);
+  cy.get('[data-cy=appSharedLoginDialogPassword]').type(password);
+  cy.get('[data-cy=appSharedLoginDialogSubmit]').click();
+  cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible');
 });
 Cypress.Commands.add('matFormFieldShouldHaveError', (element, containsError) => {
   cy.wrap(element)

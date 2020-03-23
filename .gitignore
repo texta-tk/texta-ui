@@ -46,3 +46,4 @@ testem.log
 Thumbs.db
 
 data-volumes/*
+cypress/fixtures/users.json

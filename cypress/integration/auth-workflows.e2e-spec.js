@@ -4,11 +4,10 @@ describe('register and login workflows', function () {
     cy.fixture('users').as('usersJSON');
   });
   it('Should display a popup on navigation and be able to log in and logout', function () {
-    cy.get('[data-cy=appSharedLoginDialogUsername]').type(this.usersJSON.username);
-    cy.get('[data-cy=appSharedLoginDialogPassword]').type(this.usersJSON.password);
-    cy.get('[data-cy=appSharedLoginDialogSubmit]').click();
-    cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible').click();
-    cy.get('[data-cy=appNavbarlogOutMenuItem]').should('be.visible').click();
+    cy.login(this.usersJSON.username, this.usersJSON.password);
+/*    cy.get('[data-cy=appNavbarlogOutMenuItem]').should('be.visible').click();
+    cy.route('POST', 'logout').as('logout');
+    cy.wait('@logout');*/
   });
 
   it('Should display error messages on failed logins', function () {
@@ -32,7 +31,7 @@ describe('register and login workflows', function () {
         .should('be.visible')
         .find('strong')
         .contains('required');
-      cy.wrap(username).type('tesgtutser');
+      cy.wrap(username).type('delete_me_im_test_account_btw_please_dont_take_my_username');
       cy.wrap(username).should('have.class', 'ng-valid');
     });
     // email validators
@@ -87,8 +86,24 @@ describe('register and login workflows', function () {
     cy.get('[data-cy=appSharedRegisterDialogSubmit]').click();
     cy.get('[data-cy=appSharedRegisterDialogError]').contains('username');
     cy.server({enable: false});
-
     cy.get('[data-cy=appSharedRegisterDialogSubmit]').click();
-    cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible');// register successful, logged in
+    cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible').click();
+    cy.server();
+    cy.route('POST', 'logout').as('logout');
+    cy.get('[data-cy=appNavbarlogOutMenuItem]').should('be.visible').click();
+    cy.wait('@logout');
+    cy.server({enable: false});
+
+    // now delete the user we just registered with
+    cy.visit('/');
+    cy.get('[data-cy=appSharedLoginDialogUsername]').type(this.usersJSON.username);
+    cy.get('[data-cy=appSharedLoginDialogPassword]').type(this.usersJSON.password);
+    cy.get('[data-cy=appSharedLoginDialogSubmit]').click();
+    cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible').click();
+    cy.get('[data-cy=appNavbarUserMenuManagement]').should('be.visible').click();
+    cy.get('.mat-header-row > .cdk-column-id').should('be.visible').click();
+    cy.get('tbody > :nth-child(1) > .cdk-column-username').contains('delete_me_im_test_account_btw_please_dont_take_my_username');
+    cy.get('tbody > :nth-child(1) > .cdk-column-delete').should('be.visible').click('left');
+    cy.get('[data-cy=appConfirmDialogSubmit]').should('be.visible').click();
   })
 });
