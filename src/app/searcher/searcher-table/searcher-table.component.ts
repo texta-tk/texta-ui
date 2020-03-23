@@ -160,12 +160,12 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     const field = this.projectFields.map(x => x.fields.find(y => y.path === sort.active)).filter(x => x && x.path === sort.active)[0];
     if (field) {
       if (field.type === 'text') {
-        return [{[field.path + '.keyword']: sort.direction}];
+        return [{[field.path + '.keyword']: {order: sort.direction, unmapped_type: 'text'}}];
       } else if (field.type === 'fact') { // fact is nested type
         // no sorting for facts right now
         return [];
       } else {
-        return [{[field.path]: sort.direction}];
+        return [{[field.path]: {order: sort.direction, unmapped_type: field.type}}];
       }
     }
     return [];
