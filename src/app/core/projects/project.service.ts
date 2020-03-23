@@ -97,22 +97,23 @@ export class ProjectService {
       catchError(this.logService.handleError<string[]>('getIndices')));
   }
 
-  getElasticIndices(projectId: number, params = ''): Observable<ResultsWrapper<Index> | HttpErrorResponse> {
-    return this.http.get<ResultsWrapper<Index>>(`${this.apiUrl}/projects/${projectId}/index/?${params}`).pipe(
+  getElasticIndices(params = ''): Observable<ResultsWrapper<Index> | HttpErrorResponse> {
+    return this.http.get<ResultsWrapper<Index>>(`${this.apiUrl}/index/?${params}`).pipe(
       tap(e => this.logService.logStatus(e, 'getElasticIndices')),
       catchError(this.logService.handleError<ResultsWrapper<Index>>('getElasticIndices')));
   }
 
-  deleteElasticIndex(projectId: number, indexId: number): Observable<ResultsWrapper<Index> | HttpErrorResponse> {
-    return this.http.delete<ResultsWrapper<Index>>(`${this.apiUrl}/projects/${projectId}/index/${indexId}`).pipe(
+  deleteElasticIndex(indexId: number): Observable<ResultsWrapper<Index> | HttpErrorResponse> {
+    return this.http.delete<ResultsWrapper<Index>>(`${this.apiUrl}/index/${indexId}/`).pipe(
       tap(e => this.logService.logStatus(e, 'deleteElasticIndex')),
       catchError(this.logService.handleError<ResultsWrapper<Index>>('deleteElasticIndex')));
   }
 
-  editElasticIndex(projectId: number, index: Index): Observable<ResultsWrapper<Index> | HttpErrorResponse> {
-    return this.http.post<ResultsWrapper<Index>>(`${this.apiUrl}/projects/${projectId}/index/`, index).pipe(
+  toggleElasticIndexOpenState(index: Index): Observable<{message: string} | HttpErrorResponse> {
+    const endpoint = index.is_open ? 'close_index' : 'open_index';
+    return this.http.patch<{message: string}>(`${this.apiUrl}/index/${index.id}/${endpoint}/`, {}).pipe(
       tap(e => this.logService.logStatus(e, 'editElasticIndex')),
-      catchError(this.logService.handleError<ResultsWrapper<Index>>('editElasticIndex')));
+      catchError(this.logService.handleError<{message: string}>('editElasticIndex')));
   }
 
   deleteProject(id: number) {

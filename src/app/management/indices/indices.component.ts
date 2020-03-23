@@ -8,7 +8,7 @@ import {UserService} from '../../core/users/user.service';
 import {LogService} from '../../core/util/log.service';
 import {MatDialog} from '@angular/material/dialog';
 import {ProjectStore} from '../../core/projects/project.store';
-import {debounceTime, switchMap, takeUntil} from 'rxjs/operators';
+import {debounceTime, startWith, switchMap, takeUntil} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {Index} from '../../shared/types/Index';
@@ -30,7 +30,6 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  currentProject: Project;
   resultsLength = 0;
 
   constructor(private userService: UserService,
@@ -48,19 +47,11 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.sort.sortChange.pipe(takeUntil(this.destroyed$)).subscribe(() => this.paginator.pageIndex = 0);
 
-    merge(this.sort.sortChange, this.paginator.page,
-      this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$))).pipe(debounceTime(250),
+    merge(this.sort.sortChange, this.paginator.page).pipe(startWith({}), debounceTime(250),
       switchMap((x: any) => {
-        if (x.title) {
-          this.currentProject = x;
-          this.paginator.pageIndex = 0;
-        }
-        if (this.currentProject) {
           const sortDirection = this.sort.direction === 'desc' ? '-' : '';
-          return this.projectService.getElasticIndices(this.currentProject.id,
+          return this.projectService.getElasticIndices(
             `&ordering=${sortDirection}${this.sort.active}&page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`);
-        }
-        return of(null);
       })).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.resultsLength = resp.count;
@@ -71,8 +62,7 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   toggleIndexState(row: Index) {
-    row.is_open = !row.is_open;
-    this.projectService.editElasticIndex(row.id, row).subscribe((resp) => {
+    this.projectService.toggleElasticIndexOpenState(row).subscribe((resp) => {
       if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 2000);
       }
@@ -83,13 +73,13 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
         confirmText: 'Delete',
-        mainText: `Are you sure you want to delete index: ${index.id}: ${index.name}?`
+        mainText: `Delete index: ${index.id}: ${index.name}?`
       }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.projectService.deleteElasticIndex(this.currentProject.id, index.id).subscribe(x => {
+        this.projectService.deleteElasticIndex(index.id).subscribe(x => {
           if (!(x instanceof HttpErrorResponse)) {
             this.tableData.data = this.tableData.data.filter(y => y.id !== index.id);
           }

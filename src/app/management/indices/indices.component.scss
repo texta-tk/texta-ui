@@ -10,3 +10,6 @@ table {
   min-height: calc(100vh - #{$navbar-height} - #{$tasks-table-paginator-row} - 49px);
   overflow: auto;
 }
+.mat-column-delete{
+  width: 60px;
+}
