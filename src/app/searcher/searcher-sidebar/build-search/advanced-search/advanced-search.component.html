@@ -16,20 +16,20 @@
       <h4 *ngFor="let field of constraint.fields;trackBy:trackByPath">{{field.path}};</h4>
     </div>
     <div fxFlex fxLayoutAlign="end">
-      <button mat-icon-button aria-label="Close" (click)="removeConstraint(i)" class="mat-icon-button">
+      <button data-cy="appSearcherSideBarBuildSearchCloseConstraint" mat-icon-button aria-label="Close" (click)="removeConstraint(i)" class="mat-icon-button">
         <mat-icon>close</mat-icon>
       </button>
     </div>
   </div>
-  <div class="content" *ngIf="isTextConstraint(constraint)">
+  <div class="content" *ngIf="isTextConstraint(constraint)" data-cy="appSearcherSideBarBuildSearchTextConstraint">
     <app-text-constraints [textConstraint]="constraint" [elasticSearchQuery]="elasticQuery"
                           (change)="searchOnChange($event)"></app-text-constraints>
   </div>
-  <div class="content" *ngIf="isDateConstraint(constraint)">
+  <div class="content" *ngIf="isDateConstraint(constraint)" data-cy="appSearcherSideBarBuildSearchDateConstraint">
     <app-date-constraints [dateConstraint]="constraint" [elasticSearchQuery]="elasticQuery"
                           (change)="searchOnChange($event)"></app-date-constraints>
   </div>
-  <div class="content" *ngIf="isFactNameConstraint(constraint)">
+  <div class="content" *ngIf="isFactNameConstraint(constraint)" data-cy="appSearcherSideBarBuildSearchFactConstraint">
     <app-fact-constraints [factConstraint]="constraint" [elasticSearchQuery]="elasticQuery"
                           [projectFacts]="projectFacts" [currentProject]="currentProject"
                           (change)="searchOnChange($event)"></app-fact-constraints>

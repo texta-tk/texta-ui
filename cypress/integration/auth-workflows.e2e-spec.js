@@ -1,13 +1,17 @@
 describe('register and login workflows', function () {
   beforeEach(function () {
     cy.visit('/');
+    cy.server();
     cy.fixture('users').as('usersJSON');
+    cy.route('GET', '**user**').as('getUser');
   });
   it('Should display a popup on navigation and be able to log in and logout', function () {
     cy.login(this.usersJSON.username, this.usersJSON.password);
-/*    cy.get('[data-cy=appNavbarlogOutMenuItem]').should('be.visible').click();
+    cy.wait('@getUser');
+    cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible').click();
     cy.route('POST', 'logout').as('logout');
-    cy.wait('@logout');*/
+    cy.get('[data-cy=appNavbarlogOutMenuItem]').should('be.visible').click();
+    cy.wait('@logout');
   });
 
   it('Should display error messages on failed logins', function () {
@@ -101,6 +105,7 @@ describe('register and login workflows', function () {
     cy.get('[data-cy=appSharedLoginDialogSubmit]').click();
     cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible').click();
     cy.get('[data-cy=appNavbarUserMenuManagement]').should('be.visible').click();
+    cy.wait('@getUser');
     cy.get('.mat-header-row > .cdk-column-id').should('be.visible').click();
     cy.get('tbody > :nth-child(1) > .cdk-column-username').contains('delete_me_im_test_account_btw_please_dont_take_my_username');
     cy.get('tbody > :nth-child(1) > .cdk-column-delete').should('be.visible').click('left');

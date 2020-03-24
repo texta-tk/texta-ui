@@ -27,7 +27,6 @@ Cypress.Commands.add('login', (username, password) => {
   cy.get('[data-cy=appSharedLoginDialogUsername]').type(username);
   cy.get('[data-cy=appSharedLoginDialogPassword]').type(password);
   cy.get('[data-cy=appSharedLoginDialogSubmit]').click();
-  cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible');
 });
 Cypress.Commands.add('matFormFieldShouldHaveError', (element, containsError) => {
   cy.wrap(element)
@@ -37,5 +36,5 @@ Cypress.Commands.add('matFormFieldShouldHaveError', (element, containsError) => 
     .contains(containsError);
 });
 Cypress.Commands.add('closeCurrentCdkOverlay', () => {
-  cy.get('body').type('{esc}'); // todo better way?
+  cy.get('.cdk-overlay-backdrop:last()').click(-50, -50, { force: true });
 });

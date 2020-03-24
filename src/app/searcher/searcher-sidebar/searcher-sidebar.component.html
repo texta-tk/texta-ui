@@ -10,7 +10,10 @@
                 (click)="openViewQueryDialog();$event.preventDefault();$event.stopPropagation()">
           <mat-icon>visibility</mat-icon>
         </button>
-        <button mat-icon-button class="flex-item-right panel-button" aria-label="save search" matTooltip="save search"
+        <button mat-icon-button class="flex-item-right panel-button"
+                data-cy="appSearcherSidebarSaveSearchButton"
+                aria-label="save search"
+                matTooltip="save search"
                 (click)="openSaveSearchDialog();$event.preventDefault();$event.stopPropagation()">
           <mat-icon>save</mat-icon>
         </button>
@@ -45,6 +48,7 @@
       <mat-panel-description fxLayoutAlign="end start">
         <button mat-icon-button class="flex-item-right panel-button" aria-label="delete search"
 
+                data-cy="appSearcherSidebarDeleteSavedSearches"
                 (click)="onDeleteAllSelected();$event.preventDefault();$event.stopPropagation()"
         >
           <mat-icon>delete</mat-icon>

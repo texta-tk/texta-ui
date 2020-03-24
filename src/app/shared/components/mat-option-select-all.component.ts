@@ -7,7 +7,7 @@ import {takeUntil} from 'rxjs/operators';
 @Component({
   selector: 'app-mat-option-select-all',
   template: `
-      <div class="mat-option" (click)="onSelectAllClick($event)">
+      <div class="mat-option" data-cy="matOptionSelectAll" (click)="onSelectAllClick($event)">
           <mat-pseudo-checkbox [state]="state" class="mat-option-pseudo-checkbox"></mat-pseudo-checkbox>
           <span class="mat-option-text">Select all</span>
       </div>

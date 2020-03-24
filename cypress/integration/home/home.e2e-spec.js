@@ -8,16 +8,15 @@ describe('should be able to build searches', function () {
     cy.route('GET', 'get_indices').as('getIndices');
     cy.fixture('users').then((user) => {
       cy.login(user.username, user.password);
+      cy.wait('@user');
+      cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible');
     });
-
-    cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible');
   });
   it('should check if /health endpoint stats are visible', function () {
     cy.wait('@health', {timeout: 6000});
     cy.get('[data-cy=appHomeHealth]').should('be.visible');
   });
   it('should be able to create a project', function () {
-    cy.wait('@user');
     cy.get('[data-cy=appProjectCreateProject]').should('be.visible').click();
     cy.wait('@getUsers');
     cy.wait('@getIndices');
@@ -51,7 +50,9 @@ describe('should be able to build searches', function () {
       cy.wrap(projIndices).find('mat-error').should('have.length', 0);
     }));
     cy.get('[data-cy=appProjectCreateDialogSubmit]').should('be.visible').click();
-    cy.wait(2000);
+    cy.route('GET', 'projects').as('createProject');
+    cy.wait('@createProject');
+    cy.wait(1000); // projectStore, update table
     cy.get('tbody > :nth-child(1) > .cdk-column-title').contains('testProject');
     cy.get(':nth-child(1) > .cdk-column-Modify > .mat-focus-indicator > .mat-button-wrapper > .mat-icon').click();
     cy.get(':nth-child(1) > .mat-focus-indicator.ng-star-inserted').should('be.visible').contains('Delete').click();
