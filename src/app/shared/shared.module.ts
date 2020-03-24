@@ -45,6 +45,7 @@ import {FormatTextaFactsPipe} from './pipes/format-texta-facts.pipe';
 import {IsObjectPipe} from './pipes/is-object.pipe';
 import {NgxMatSelectSearchModule} from 'ngx-mat-select-search';
 import {MatRadioModule} from '@angular/material/radio';
+import { GroupSameValuesPipe } from './pipes/group-same-values.pipe';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
@@ -55,7 +56,8 @@ import {MatRadioModule} from '@angular/material/radio';
     GenericDialogComponent,
     SavedSearchAutocompleteComponent,
     FormatTextaFactsPipe,
-    IsObjectPipe
+    IsObjectPipe,
+    GroupSameValuesPipe
   ],
   imports: [
     CommonModule,
@@ -135,6 +137,7 @@ import {MatRadioModule} from '@angular/material/radio';
     FormatTextaFactsPipe,
     IsObjectPipe,
     LineChartModule,
+    GroupSameValuesPipe,
     InfiniteScrollModule,
     MaterialFileInputModule,
     NgxMatSelectSearchModule

@@ -75,7 +75,7 @@
     </button>
     <mat-menu #factValuesList="matMenu">
       <ng-template matMenuContent let-factValues="factValues">
-        <button mat-menu-item *ngFor="let factVal of factValues">{{factVal}}</button>
+        <button mat-menu-item *ngFor="let factVal of factValues | groupSameValues">{{factVal.key}}: {{factVal.val}}</button>
       </ng-template>
     </mat-menu>
   </ng-template>
