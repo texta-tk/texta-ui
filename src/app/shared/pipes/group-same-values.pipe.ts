@@ -7,7 +7,7 @@ import {HighlightSpan} from '../../searcher/searcher-table/highlight/highlight.c
 })
 export class GroupSameValuesPipe implements PipeTransform {
 
-  transform(value: string[], ...args: unknown[]): unknown {
+  transform(value: string[], ...args: unknown[]): { key: string, val: number }[] {
     const returnValue: { key: string, val: number }[] = [];
     value.forEach(val => {
       const obj = returnValue.find(x => x.key === val);
