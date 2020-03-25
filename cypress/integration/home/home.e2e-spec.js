@@ -49,12 +49,13 @@ describe('should be able to build searches', function () {
       cy.wrap(projIndices).find('mat-error').should('have.length', 0);
     }));
     cy.get('[data-cy=appProjectCreateDialogSubmit]').should('be.visible').click();
-    cy.route('GET', 'projects').as('createProject');
-    cy.wait('@createProject');
+    cy.route('GET', 'projects').as('getProjects');
+    cy.wait('@getProjects');
     cy.wait(1000); // projectStore, update table
     cy.get('tbody > :nth-child(1) > .cdk-column-title').contains('testProject');
     cy.get(':nth-child(1) > .cdk-column-Modify > .mat-focus-indicator > .mat-button-wrapper > .mat-icon').click();
     cy.get(':nth-child(1) > .mat-focus-indicator.ng-star-inserted').should('be.visible').contains('Delete').click();
     cy.get('[data-cy=appConfirmDialogSubmit]').should('be.visible').click();
+    cy.wait('@getProjects');
   });
 });
