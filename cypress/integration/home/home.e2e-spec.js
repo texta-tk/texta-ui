@@ -40,7 +40,6 @@ describe('should be able to build searches', function () {
     }));
     cy.get('[data-cy=appProjectCreateDialogIndices]').click().then((projIndices => {
       cy.wrap(projIndices).should('have.class', 'mat-focused');
-      // todo currently best way to close a mat select?
       cy.closeCurrentCdkOverlay();
       cy.matFormFieldShouldHaveError(projIndices, 'required');
       cy.wrap(projIndices).click();

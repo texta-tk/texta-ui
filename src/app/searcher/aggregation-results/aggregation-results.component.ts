@@ -34,15 +34,16 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   aggregation: any;
   aggregationData: AggregationData;
   timeLineYLabel = 'document count';
+
+  constructor(public searchService: SearcherComponentService, public dialog: MatDialog, private datePipe: DatePipe) {
+  }
+
   bucketAccessor = (x: any) => {
     if (x && x.buckets) {
       return (x.buckets);
     }
     return null;
   };
-
-  constructor(public searchService: SearcherComponentService, public dialog: MatDialog, private datePipe: DatePipe) {
-  }
 
   formatDateData(buckets: { key_as_string: string, key: number, doc_count: number }[]): { value: number, name: Date }[] {
     const dateData: any[] = [];
@@ -89,20 +90,13 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     });
   }
 
-  private convertHistoToRelativeFrequency(aggs: { agg: any, globalAgg: any }) {
-    for (const aggKey of Object.keys(aggs.agg.aggs)) {
-      if (aggs.agg.aggs[aggKey].hasOwnProperty('agg_histo')) {
-        // when the first key is agg_histo then the results are aligned with eachother, when the date is nested just skip relative
-        const rawBucket = this.bucketAccessor(this.navNestedAggByKey(aggs.agg.aggs[aggKey], 'agg_histo'));
-        const globalBucket = this.bucketAccessor(this.navNestedAggByKey(aggs.globalAgg.aggs, 'agg_histo'));
-        for (let i = 0; i < rawBucket.length; i++) {
-          rawBucket[i].doc_count = rawBucket[i].doc_count > 0 ? rawBucket[i].doc_count / globalBucket[i].doc_count * 100 : 0;
-        }
-      }
-    }
-  }
-
   parseAggregationResults(aggregation: any) {
+    const aggData: AggregationData = {
+      treeData: [],
+      tableData: [],
+      dateData: [],
+    };
+
     if (aggregation && aggregation.aggs) {
       for (const aggKey of Object.keys(aggregation.aggs)) {
         // first object is aggregation name either savedSearch description or the agg type
@@ -110,15 +104,16 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
         const rootAggPropKeys: string[] = Object.keys(rootAggObj);
         if (rootAggPropKeys.includes('agg_term') || aggKey === 'agg_term') { // agg_term without filter has no depth
           rootAggObj = this.navNestedAggByKey(rootAggObj, 'agg_term');
-          this.aggregationData = this.populateAggData(rootAggObj, aggKey, (x => x.tableData), 'agg_term');
+          this.populateAggData(rootAggObj, aggKey, (x => x.tableData), 'agg_term', aggData);
         } else if (rootAggPropKeys.includes('agg_histo')) {
           rootAggObj = this.navNestedAggByKey(rootAggObj, 'agg_histo');
-          this.aggregationData = this.populateAggData(rootAggObj, aggKey, (x => x.dateData), 'agg_histo');
+          this.populateAggData(rootAggObj, aggKey, (x => x.dateData), 'agg_histo', aggData);
         } else if (rootAggPropKeys.includes('agg_fact')) {
           rootAggObj = this.navNestedAggByKey(rootAggObj, 'agg_fact');
-          this.aggregationData = this.populateAggData(rootAggObj, aggKey, (x => x.treeData), 'agg_fact');
+          this.populateAggData(rootAggObj, aggKey, (x => x.treeData), 'agg_fact', aggData);
         }
       }
+      this.aggregationData = aggData;
     }
   }
 
@@ -159,40 +154,38 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     return aggregation;
   }
 
-  // refactor todo, why is aggData passed into here?
-  populateAggData(rootAggObj, aggName, aggDataAccessor: (x: any) => any, aggregationType: 'agg_histo' | 'agg_fact' | 'agg_term'): AggregationData {
+  // aggData because we can have multiple aggs so we need to push instead of returning new object
+  populateAggData(rootAggObj, aggName, aggDataAccessor: (x: any) => any, aggregationType: 'agg_histo' | 'agg_fact' | 'agg_term', aggData: AggregationData): void {
     const formattedData = this.formatAggDataStructure(rootAggObj, rootAggObj,
       ['agg_histo', 'agg_fact', 'agg_fact_val', 'agg_term']);
-    const returnData: AggregationData = {treeData: [], dateData: [], tableData: []};
     if (this.bucketAccessor(formattedData).length > 0) {
       if (formattedData.nested) {
         // depth of 3 means this structure: agg -> sub-agg
         if (aggregationType === 'agg_histo' && this.determineDepthOfObject(formattedData, (x: any) => x.buckets) === 3) {
-          aggDataAccessor(returnData).push({
+          aggDataAccessor(aggData).push({
             name: aggName === 'agg_histo' ? 'aggregation_results' : aggName,
             series: this.formatDateDataExtraBucket(this.bucketAccessor(formattedData))
           });
         } else {
           // @ts-ignore
-          returnData.treeData.push({
+          aggData.treeData.push({
             name: aggName === aggregationType ? 'aggregation_results' : aggName,
             histoBuckets: formattedData.histoBuckets ? formattedData.histoBuckets : [],
             treeData: new ArrayDataSource(this.bucketAccessor(formattedData))
           });
         }
       } else if (aggregationType === 'agg_term') {
-        aggDataAccessor(returnData).push({
+        aggDataAccessor(aggData).push({
           tableData: new MatTableDataSource(this.bucketAccessor(formattedData)),
           name: aggName === aggregationType ? 'aggregation_results' : aggName
         });
       } else if (aggregationType === 'agg_histo') {
-        aggDataAccessor(returnData).push({
+        aggDataAccessor(aggData).push({
           name: aggName === 'agg_histo' ? 'aggregation_results' : aggName,
           series: this.formatDateData(this.bucketAccessor(formattedData))
         });
       }
     }
-    return returnData;
   }
 
   openUnifiedTimeline(buckets: any[]) {
@@ -221,5 +214,18 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();
+  }
+
+  private convertHistoToRelativeFrequency(aggs: { agg: any, globalAgg: any }) {
+    for (const aggKey of Object.keys(aggs.agg.aggs)) {
+      if (aggs.agg.aggs[aggKey].hasOwnProperty('agg_histo')) {
+        // when the first key is agg_histo then the results are aligned with eachother, when the date is nested just skip relative
+        const rawBucket = this.bucketAccessor(this.navNestedAggByKey(aggs.agg.aggs[aggKey], 'agg_histo'));
+        const globalBucket = this.bucketAccessor(this.navNestedAggByKey(aggs.globalAgg.aggs, 'agg_histo'));
+        for (let i = 0; i < rawBucket.length; i++) {
+          rawBucket[i].doc_count = rawBucket[i].doc_count > 0 ? rawBucket[i].doc_count / globalBucket[i].doc_count * 100 : 0;
+        }
+      }
+    }
   }
 }

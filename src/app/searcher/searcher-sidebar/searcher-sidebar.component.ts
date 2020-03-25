@@ -63,7 +63,7 @@ export class SearcherSidebarComponent implements OnInit, OnDestroy {
     this.savedSearchesExpanded = !this.savedSearchesExpanded;
   }
 
-  expandAggregationspanel() {
+  expandAggregationsPanel() {
     this.aggregationsExpanded = !this.aggregationsExpanded;
   }
 

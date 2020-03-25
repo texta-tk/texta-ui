@@ -9,7 +9,7 @@
     </div>
     <mat-form-field appearance="outline" class="max-width">
       <mat-label>Select Fields</mat-label>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" data-cy="appSearcherSideBarAggregationsSelectField"
                   [formControl]="aggregation.formControl">
         <mat-option *ngFor="let fields of (fieldsFiltered | async)" [value]="fields"
                     [disabled]="fields.type === 'date' && aggregation.formControl.value.type !== 'date' && dateAlreadySelected">
@@ -44,7 +44,7 @@
   </mat-checkbox>
 
   <div class="max-width">
-    <button class="max-width" mat-stroked-button (click)="aggregate()"
+    <button class="max-width" mat-stroked-button (click)="aggregate()" data-cy="appSearcherSidebarAggregationsSubmit"
             [disabled]="!(aggregationList.length > 0 && aggregationList[0].formControl.value) || (searchService.getIsLoading() | async)">
       Aggregate
     </button>

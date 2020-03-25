@@ -16,7 +16,7 @@
   <mat-form-field appearance="outline" class="max-width">
     <mat-label>Frequency</mat-label>
     <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" [(ngModel)]="aggregationType"
-                name="aggregationDateType">
+                name="aggregationDateType" data-cy="appSearcherSidebarAggregationsDateAggregationType">
       <mat-option value="raw_frequency" [disabled]="!notSubAgg" (click)="relativeFrequency.emit(false)">raw frequency
       </mat-option>
       <mat-option value="relative_frequency" [disabled]="!notSubAgg" (click)="relativeFrequency.emit(true)">relative
@@ -27,6 +27,7 @@
   <mat-form-field appearance="outline" class="max-width bottom-padding-none">
     <mat-label>Interval</mat-label>
     <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" [(ngModel)]="dateInterval"
+                data-cy="appSearcherSidebarAggregationsDateInterval"
                 name="aggregationDateInterval" (selectionChange)="makeDateAggregation()">
       <mat-option value="day" [disabled]="!dateRangeDays">day</mat-option>
       <mat-option value="week" [disabled]="!dateRangeWeek">week</mat-option>
