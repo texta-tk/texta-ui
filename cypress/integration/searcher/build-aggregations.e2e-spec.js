@@ -1,4 +1,4 @@
-describe('should be able to build non nested aggregations', function () {
+describe('should be able to build aggregations', function () {
   beforeEach(function () {
     cy.visit('/');
     cy.server();
@@ -30,7 +30,7 @@ describe('should be able to build non nested aggregations', function () {
     cy.get('[data-cy=appSearcherSidebarAggregationsPanel]').should('be.visible').click();
 
     // check text aggregations
-    cy.get('[data-cy=appSearcherSideBarAggregationsSelectField]').should('be.visible').click();
+    cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]').should('be.visible').click();
     cy.get('mat-option').contains('content').scrollIntoView().should('be.visible').click();
     cy.closeCurrentCdkOverlay();
     submitAndCheckTableResult();
@@ -47,7 +47,7 @@ describe('should be able to build non nested aggregations', function () {
     cy.get('[data-cy=appSearcherSidebarSavedSearches] .cdk-column-select:nth(1)').should('be.visible').click('left');
 
     // check date aggregations
-    cy.get('[data-cy=appSearcherSideBarAggregationsSelectField]').should('be.visible').click();
+    cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]').should('be.visible').click();
     cy.get('mat-option').contains('post_date').scrollIntoView().should('be.visible').click();
     cy.closeCurrentCdkOverlay();
     submitAndCheckGraphResult(1);
@@ -62,7 +62,23 @@ describe('should be able to build non nested aggregations', function () {
     cy.get('mat-option').contains('month').should('be.visible').click();
     cy.closeCurrentCdkOverlay();
     submitAndCheckGraphResult(1);
-    // todo test appSearcherSidebarSavedSearches
+
+    // check nested aggregations
+    cy.get('[data-cy=appSearcherSidebarAggregationsAddNew]').scrollIntoView().should('be.visible').click();
+    cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]:last()').scrollIntoView().should('be.visible').click();
+    cy.get('mat-option.mat-option-disabled .mat-option-text').contains('post_date');
+    cy.get('mat-option').contains('content').should('be.visible').click();
+    submitAndCheckGraphResult(1);
+    cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]:first()').scrollIntoView().should('be.visible').click();
+    cy.get('mat-option').contains('topic').should('be.visible').click();
+    cy.get('[data-cy=appSearcherSidebarAggregationsSubmit]').should('be.visible').click();
+    cy.wait('@searcherQuery');
+    cy.get('.mat-tree-node').should('be.visible');
+    cy.get('[data-cy=appSearcherSidebarSavedSearches] .cdk-column-select:nth(1)').should('be.visible').click('left');
+    cy.get('[data-cy=appSearcherSidebarAggregationsSubmit]').should('be.visible').click();
+    cy.wait('@searcherQuery');
+    cy.get('.mat-tree-node').should('be.visible');
+    cy.get('app-aggregation-results .mat-tab-label').should('have.length', 2);
   });
 
 

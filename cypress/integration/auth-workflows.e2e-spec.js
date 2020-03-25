@@ -106,9 +106,12 @@ describe('register and login workflows', function () {
     cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible').click();
     cy.get('[data-cy=appNavbarUserMenuManagement]').should('be.visible').click();
     cy.wait('@getUser');
-    cy.get('.mat-header-row > .cdk-column-id').should('be.visible').click();
+    cy.get('app-users .mat-header-row > .cdk-column-id').should('be.visible').click();
     cy.get('tbody > :nth-child(1) > .cdk-column-username').contains('delete_me_im_test_account_btw_please_dont_take_my_username');
     cy.get('tbody > :nth-child(1) > .cdk-column-delete').should('be.visible').click('left');
+    cy.server();
+    cy.route('DELETE', 'api/v1/users/*/').as('deleteUser');
     cy.get('[data-cy=appConfirmDialogSubmit]').should('be.visible').click();
+    cy.wait('@deleteUser');
   })
 });

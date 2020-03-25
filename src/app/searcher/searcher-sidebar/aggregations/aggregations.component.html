@@ -9,7 +9,7 @@
     </div>
     <mat-form-field appearance="outline" class="max-width">
       <mat-label>Select Fields</mat-label>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" data-cy="appSearcherSideBarAggregationsSelectField"
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" data-cy="appSearcherSidebarAggregationsSelectField"
                   [formControl]="aggregation.formControl">
         <mat-option *ngFor="let fields of (fieldsFiltered | async)" [value]="fields"
                     [disabled]="fields.type === 'date' && aggregation.formControl.value.type !== 'date' && dateAlreadySelected">
@@ -33,7 +33,9 @@
       </app-date-aggregation>
     </ng-container>
   </div>
-  <button class="flex-item-center" mat-icon-button aria-label="add sub aggregation" (click)="addNewAggregation()"
+  <button class="flex-item-center" mat-icon-button aria-label="add sub aggregation"
+          data-cy="appSearcherSidebarAggregationsAddNew"
+          (click)="addNewAggregation()"
           [disabled]="!(aggregationList.length > 0 && aggregationList[0].formControl.value)">
     <mat-icon>add</mat-icon>
   </button>
