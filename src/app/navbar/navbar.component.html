@@ -23,7 +23,7 @@
     <a
       [ngClass]="{'is-active': ['/tagger-groups', '/taggers', '/embeddings', '/neurotaggers'].includes(router.url)}"
       class="pointer" [matMenuTriggerFor]="models">
-      <button mat-button class="nav-button">
+      <button mat-button class="nav-button" data-cy="appNavbarModels">
         <mat-icon class="margin-right">storage</mat-icon>
         Models
         <ng-container *ngIf="projectResourceCounts">
