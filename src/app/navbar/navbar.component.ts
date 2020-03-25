@@ -53,7 +53,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       }
     });
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), switchMap(proj => {
-      if (proj) {
+      if (proj && proj.users.includes(this.user.url)) {
         this.currentProject = proj;
         this.projectControl.setValue(proj); // we set active project when we create a new project at proj component for example
         return this.projectService.getResourceCounts(proj.id);
@@ -69,7 +69,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
     this.projectStore.getProjects().pipe(takeUntil(this.destroyed$)).subscribe(projects => {
       if (projects && projects.length > 0) {
-        this.projects = projects.sort((a, b) => {
+        this.projects = projects.filter(x => x.users.includes(this.user.url)).sort((a, b) => {
           if (a.id > b.id) {
             return -1;
           }
@@ -79,10 +79,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
         const selectedProj = this.localStorageService.getCurrentlySelectedProject();
         const cachedProject = !!selectedProj ?
           this.projects.find(x => x.id === selectedProj.id) : null;
-        if (cachedProject) {
+        if (cachedProject && cachedProject.users.includes(this.user.url)) {
           this.projectStore.setCurrentProject(cachedProject);
         } else {
-          this.projectStore.setCurrentProject(projects[0]);
+          this.projectStore.setCurrentProject(this.projects[0]);
         }
       } else {
         this.projects = [];
