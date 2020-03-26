@@ -3,19 +3,51 @@ image: circleci/node:10-browsers
 stages:
   - test
   - build
+# to cache both npm modules and Cypress binary we use environment variables
+# to point at the folders we can list as paths in "cache" job settings
+variables:
+  npm_config_cache: "$CI_PROJECT_DIR/.npm"
+  CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/Cypress"
 
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .npm
+    - cache/Cypress
+    - node_modules
+
+install:
+  image: cypress/base:10
+  stage: build
+
+  script:
+    - npm ci
+    # check Cypress binary path and cached versions
+    # useful to make sure we are not carrying around old versions
+    - npx cypress cache path
+    - npx cypress cache list
+    - $(npm bin)/print-env CI
+    - npm run cy:verify
+    - npm run cy:info
 Test:
-  cache:
-    paths:
-      - node_modules
-  before_script:
-  - npm install @angular/cli
-  - npm install
+  image: cypress/base:10
   stage: test
   tags:
   - ci-test
   script:
+  # print CI environment variables for reference
+  - $(npm bin)/print-env CI
+  # start the server in the background
+  - npm run start:ci &
+  # run Cypress test in load balancing mode
+  - npm run e2e:record -- --parallel --group "electrons on GitLab CI"
   - npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
+  artifacts:
+    when: always
+    paths:
+      - cypress/videos/**/*.mp4
+      - cypress/screenshots/**/*.png
+    expire_in: 1 day
 #  except:
 #  - tags
 

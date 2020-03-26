@@ -212,22 +212,22 @@
 <mat-menu #editMenu="matMenu">
   <ng-template matMenuContent let-element="element" let-i="i">
     <div *ngIf="element.task && element.task.status === 'completed'">
-      <button mat-menu-item (click)="listFeatures(element)">
+      <button mat-menu-item (click)="listFeatures(element)" data-cy="appTaggerMenuListFeatures">
         List features
       </button>
-      <button mat-menu-item (click)="retrainTagger(element)">
+      <button mat-menu-item (click)="retrainTagger(element)" data-cy="appTaggerMenuRetrain">
         Retrain tagger
       </button>
-      <button mat-menu-item (click)="editStopwordsDialog(element)">
+      <button mat-menu-item (click)="editStopwordsDialog(element)" data-cy="appTaggerMenuStopWords">
         Stop words
       </button>
-      <button mat-menu-item (click)="tagTextDialog(element)">
+      <button mat-menu-item (click)="tagTextDialog(element)" data-cy="appTaggerMenuTagText">
         Tag text
       </button>
-      <button mat-menu-item (click)="tagDocDialog(element)">
+      <button mat-menu-item (click)="tagDocDialog(element)" data-cy="appTaggerMenuTagDoc">
         Tag doc
       </button>
-      <button mat-menu-item (click)="tagRandomDocDialog(element)">
+      <button mat-menu-item (click)="tagRandomDocDialog(element)" data-cy="appTaggerMenuTagRandomDoc">
         Tag random doc
       </button>
       <mat-divider></mat-divider>

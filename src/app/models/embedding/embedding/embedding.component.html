@@ -193,7 +193,7 @@
 <mat-menu #editMenu="matMenu">
   <ng-template matMenuContent let-element="element" let-i="i">
   <div *ngIf="element.task.status === 'completed'">
-    <button mat-menu-item (click)="phrase(element)">
+    <button mat-menu-item (click)="phrase(element)" data-cy="appEmbeddingMenuPhrase">
       Phrase
     </button>
     <mat-divider></mat-divider>

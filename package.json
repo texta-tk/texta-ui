@@ -8,7 +8,16 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "cypress:open": "cypress open"
+    "cy:verify": "cypress verify",
+    "cy:info": "cypress info",
+    "cy:version": "cypress version",
+    "cy:cache:list": "cypress cache list",
+    "cy:run": "cypress run",
+    "cy:run:record": "cypress run --record",
+    "cy:open": "cypress open",
+    "start:ci": "serve --no-clipboard --listen ${PORT:-8080}",
+    "print-env": "print-env",
+    "e2e:record": "cypress run --record"
   },
   "private": true,
   "dependencies": {
