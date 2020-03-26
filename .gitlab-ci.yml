@@ -15,7 +15,7 @@ cache:
     - .npm
     - cache/Cypress
 
-UnitTest:
+Karma:
   image: circleci/node:10-browsers
   script:
     - npm ci
@@ -24,7 +24,7 @@ UnitTest:
   tags:
   - ci-test
 
-e2eTest:
+Cypress:
   image: cypress/base:10
   stage: e2e-test
   tags:
@@ -32,7 +32,7 @@ e2eTest:
   script:
     # check Cypress binary path and cached versions
     # useful to make sure we are not carrying around old versions
-    
+    - npm ci
     - npx cypress cache path
     - npx cypress cache list
     - npm run cy:verify
