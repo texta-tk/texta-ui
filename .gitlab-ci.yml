@@ -1,6 +1,7 @@
 
 stages:
-  - test
+  - unit-test
+  - e2e-test
   - build
 # to cache both npm modules and Cypress binary we use environment variables
 # to point at the folders we can list as paths in "cache" job settings
@@ -13,16 +14,25 @@ cache:
   paths:
     - .npm
     - cache/Cypress
-Test:
+
+UnitTest:
+  image: circleci/node:10-browsers
+  script:
+    - npm ci
+    - npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
+  stage: unit-test
+  tags:
+  - ci-test
+
+e2eTest:
   image: cypress/base:10
-  stage: test
+  stage: e2e-test
   tags:
   - ci-test
   script:
-    - npm ci
     # check Cypress binary path and cached versions
     # useful to make sure we are not carrying around old versions
-    - npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
+    
     - npx cypress cache path
     - npx cypress cache list
     - npm run cy:verify
