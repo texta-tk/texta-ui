@@ -15,7 +15,7 @@
     "cy:open": "cypress open",
     "cypress:run": "cypress run --record --key e97c960a-b48d-42b3-94fa-6af3718345b9 --parallel --group 'electrons on GitLab CI'",
     "cypress:ci": "ng build --prod && run-p --race start:ci cypress:run ",
-    "start:ci": "http-server ./dist/TEXTA -a localhost -p 8000 -c-1"
+    "start:ci": "http-server ./dist/TEXTA -a localhost -p 4200 -c-1"
   },
   "private": true,
   "dependencies": {
