@@ -1,4 +1,3 @@
-image: circleci/node:10-browsers
 
 stages:
   - test
@@ -26,7 +25,6 @@ install:
     # useful to make sure we are not carrying around old versions
     - npx cypress cache path
     - npx cypress cache list
-    - $(npm bin)/print-env CI
     - npm run cy:verify
     - npm run cy:info
 Test:
@@ -35,8 +33,6 @@ Test:
   tags:
   - ci-test
   script:
-  # print CI environment variables for reference
-  - $(npm bin)/print-env CI
   # start the server in the background
   - npm run start:ci &
   # run Cypress test in load balancing mode
@@ -48,7 +44,7 @@ Test:
       - cypress/videos/**/*.mp4
       - cypress/screenshots/**/*.png
     expire_in: 1 day
-#  except:
+  #  except:
 #  - tags
 
 Build:
