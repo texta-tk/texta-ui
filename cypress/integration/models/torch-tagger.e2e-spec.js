@@ -10,7 +10,7 @@ describe('torchTagger extra actions should work', function () {
       cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible');
       cy.get('[data-cy=appNavbarModels]').should('be.visible').click();
       cy.route('GET','**/torchtaggers/**').as('getTorchTaggers');
-      cy.get('[ng-reflect-router-link="torchtaggers"]').should('be.visible').click();
+      cy.get('[data-cy=appNavbarModelMenuTorchTaggers]').should('be.visible').click();
       cy.wait('@getTorchTaggers');
     });
     cy.wait('@getProjectFields');

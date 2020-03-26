@@ -6,7 +6,7 @@
         Projects
       </button>
     </a>
-    <a routerLinkActive="is-active" [routerLink]="['searcher']">
+    <a routerLinkActive="is-active" [routerLink]="['searcher']" data-cy="appNavbarSearcher">
       <button mat-button class="nav-button">
         <mat-icon class="margin-right">search</mat-icon>
         Search
@@ -43,13 +43,17 @@
     </a>
 
     <mat-menu #models="matMenu">
-      <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['taggers']">Taggers <span
+      <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['taggers']"
+         data-cy="appNavbarModelMenuTaggers">Taggers <span
         *ngIf="projectResourceCounts?.num_taggers">({{projectResourceCounts?.num_taggers}})</span></a>
-      <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['tagger-groups']">Tagger Groups <span
+      <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['tagger-groups']"
+         data-cy="appNavbarModelMenuTaggerGroups">Tagger Groups <span
         *ngIf="projectResourceCounts?.num_tagger_groups">({{projectResourceCounts?.num_tagger_groups}})</span></a>
-      <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['torchtaggers']">TorchTaggers <span
+      <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['torchtaggers']"
+         data-cy="appNavbarModelMenuTorchTaggers">TorchTaggers <span
         *ngIf="projectResourceCounts?.num_torchtaggers">({{projectResourceCounts?.num_torchtaggers}})</span></a>
-      <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['embeddings']">Embeddings <span
+      <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['embeddings']"
+         data-cy="appNavbarModelMenuEmbeddings">Embeddings <span
         *ngIf="projectResourceCounts?.num_embeddings">({{projectResourceCounts?.num_embeddings}})</span></a>
     </mat-menu>
 

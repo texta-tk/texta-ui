@@ -10,7 +10,7 @@ describe('tagger extra actions should work', function () {
       cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible');
       cy.get('[data-cy=appNavbarModels]').should('be.visible').click();
       cy.route('GET','**/taggers/**').as('getTaggers');
-      cy.get('[ng-reflect-router-link="taggers"]').should('be.visible').click();
+      cy.get('[data-cy=appNavbarModelMenuTaggers]').should('be.visible').click();
       cy.wait('@getTaggers');
     });
     cy.wait('@getProjectFields');

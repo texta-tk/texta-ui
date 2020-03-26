@@ -10,7 +10,7 @@ describe('embedding extra actions should work', function () {
       cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible');
       cy.get('[data-cy=appNavbarModels]').should('be.visible').click();
       cy.route('GET','**/embeddings/**').as('getEmbeddings');
-      cy.get('[ng-reflect-router-link="embeddings"]').should('be.visible').click();
+      cy.get('[data-cy=appNavbarModelMenuEmbeddings]').should('be.visible').click();
       cy.wait('@getEmbeddings');
     });
     cy.wait('@getProjectFields');

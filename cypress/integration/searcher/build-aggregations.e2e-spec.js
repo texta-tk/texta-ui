@@ -10,7 +10,7 @@ describe('should be able to build aggregations', function () {
       cy.login(user.username, user.password);
       cy.wait('@getUser');
       cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible');
-      cy.get('[ng-reflect-router-link="searcher"]').click();
+      cy.get('[data-cy=appNavbarSearcher]').click();
     });
     cy.wait('@getProjectFields');
     cy.get('[data-cy=appNavbarProjectSelect]').click();
