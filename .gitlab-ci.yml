@@ -50,6 +50,17 @@ Cypress:
   #  except:
 #  - tags
 
+electrons-1:
+  extends: .Cypress
+electrons-2:
+  extends: .Cypress
+electrons-3:
+  extends: .Cypress
+electrons-4:
+  extends: .Cypress
+electrons-5:
+  extends: .Cypress
+
 Build:
   stage: build
   tags:

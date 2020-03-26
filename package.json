@@ -12,12 +12,10 @@
     "cy:info": "cypress info",
     "cy:version": "cypress version",
     "cy:cache:list": "cypress cache list",
-    "cy:run": "cypress run",
-    "cy:run:record": "cypress run --record",
     "cy:open": "cypress open",
-    "start:ci": "serve --no-clipboard --listen ${PORT:-8080}",
-    "print-env": "print-env",
-    "e2e:record": "cypress run --record"
+    "cypress:run": "cypress run --record --key e97c960a-b48d-42b3-94fa-6af3718345b9 --parallel --group 'electrons on GitLab CI'",
+    "cypress:ci": "ng build --prod && run-p --race start:ci cypress:run ",
+    "start:ci": "http-server ./dist/TEXTA -a localhost -p 8000 -c-1"
   },
   "private": true,
   "dependencies": {
@@ -34,10 +32,12 @@
     "@angular/router": "~9.0.5",
     "@swimlane/ngx-charts": "^13.0.2",
     "core-js": "^2.5.4",
+    "http-server": "^0.12.1",
     "linkify-it": "^2.2.0",
     "ngx-infinite-scroll": "^8.0.1",
     "ngx-mat-select-search": "^2.1.2",
     "ngx-material-file-input": "^2.1.0",
+    "npm-run-all": "^4.1.5",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"

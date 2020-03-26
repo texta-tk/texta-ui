@@ -5,5 +5,6 @@
   "env": {
     "api_host": "https://rest-dev.texta.ee",
     "api_basePath": "/api/v1"
-  }
+  },
+  "projectId": "8nu659"
 }
