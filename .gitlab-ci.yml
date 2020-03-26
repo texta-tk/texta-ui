@@ -49,15 +49,15 @@ Cypress:
 #  - tags
 
 electrons-1:
-  extends: .Cypress
+  extends: Cypress
 electrons-2:
-  extends: .Cypress
+  extends: Cypress
 electrons-3:
-  extends: .Cypress
+  extends: Cypress
 electrons-4:
-  extends: .Cypress
+  extends: Cypress
 electrons-5:
-  extends: .Cypress
+  extends: Cypress
 
 Build:
   stage: build
