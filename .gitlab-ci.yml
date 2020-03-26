@@ -1,5 +1,6 @@
 
 stages:
+  - install
   - test
   - build
 # to cache both npm modules and Cypress binary we use environment variables
@@ -15,9 +16,9 @@ cache:
     - cache/Cypress
     - node_modules
 
-install:
+Install:
   image: cypress/base:10
-  stage: build
+  stage: install
 
   script:
     - npm ci
