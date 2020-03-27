@@ -1,7 +1,7 @@
 
 stages:
   - unit-test
-  - e2e-test
+#  - e2e-test
   - build
 # to cache both npm modules and Cypress binary we use environment variables
 # to point at the folders we can list as paths in "cache" job settings
@@ -24,27 +24,27 @@ Karma:
   tags:
   - ci-test
 
-Cypress:
-  image: cypress/base:10
-  stage: e2e-test
-  tags:
-  - ci-test
-  script:
+#Cypress:
+#  image: cypress/base:10
+#  stage: e2e-test
+#  tags:
+#  - ci-test
+#  script:
     # check Cypress binary path and cached versions
     # useful to make sure we are not carrying around old versions
-    - npm ci
-    - npx cypress cache path
-    - npx cypress cache list
-    - npm run cy:verify
-    - npm run cy:info
+#    - npm ci
+#    - npx cypress cache path
+#    - npx cypress cache list
+#    - npm run cy:verify
+#    - npm run cy:info
     # start the server in the background
-    - npm run cypress:ci
-  artifacts:
-    when: always
-    paths:
-      - cypress/videos/**/*.mp4
-      - cypress/screenshots/**/*.png
-    expire_in: 1 day
+#    - npm run cypress:ci
+#  artifacts:
+#    when: always
+#    paths:
+#      - cypress/videos/**/*.mp4
+#      - cypress/screenshots/**/*.png
+#    expire_in: 1 day
   #  except:
 #  - tags
 
