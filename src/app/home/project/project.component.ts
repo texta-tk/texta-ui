@@ -11,11 +11,12 @@ import {CreateProjectDialogComponent} from './create-project-dialog/create-proje
 import {ProjectStore} from '../../core/projects/project.store';
 import {EditProjectDialogComponent} from './edit-project-dialog/edit-project-dialog.component';
 import {UserProfile} from '../../shared/types/UserProfile';
-import {delay, map, mergeMap, takeUntil, toArray} from 'rxjs/operators';
+import {delay, map, mergeMap, startWith, takeUntil, toArray} from 'rxjs/operators';
 import {UserService} from '../../core/users/user.service';
 import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {ProjectService} from '../../core/projects/project.service';
 import {UserStore} from '../../core/users/user.store';
+import {FormControl} from '@angular/forms';
 
 @Component({
   selector: 'app-project',
@@ -26,6 +27,7 @@ import {UserStore} from '../../core/users/user.store';
 export class ProjectComponent implements OnInit, OnDestroy {
 
   destroyed$: Subject<boolean> = new Subject<boolean>();
+  filteredUsers: Observable<UserProfile[]>;
   private urlsToRequest: Subject<string[]> = new Subject();
   public projectUsers$: Observable<UserProfile[]>;
   public tableData: MatTableDataSource<Project> = new MatTableDataSource<Project>([]);
@@ -34,6 +36,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
   public currentUser: UserProfile;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  public authorFilterControl = new FormControl();
 
   constructor(
     private projectStore: ProjectStore,
@@ -47,6 +50,24 @@ export class ProjectComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
+    this.tableData.filterPredicate = (data, element) => {
+      return data.author_username === element;
+    };
+    this.userService.getAllUsers().subscribe(users => {
+      if (users && !(users instanceof HttpErrorResponse)) {
+        this.filteredUsers = this.authorFilterControl.valueChanges
+          .pipe(
+            startWith(''),
+            map(value => {
+              const filterVal = value.toLowerCase();
+              if (value === '') {
+                this.applyFilter({value: ''});
+              }
+              return users.filter(option => option.username.toLowerCase().includes(filterVal));
+            })
+          );
+      }
+    });
     // delay so we could navigate to the page smoothly, and then start rendering the table which takes resources
     this.projectStore.getProjects().pipe(delay(100), takeUntil(this.destroyed$)).subscribe((projects: Project[]) => {
       if (projects) {
@@ -123,5 +144,10 @@ export class ProjectComponent implements OnInit, OnDestroy {
         });
       }
     });
+  }
+
+  applyFilter(filterValue: any) {
+    filterValue = filterValue.value ? filterValue.value : '';
+    this.tableData.filter = filterValue;
   }
 }

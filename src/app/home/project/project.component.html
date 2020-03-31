@@ -12,6 +12,19 @@
               (click)="openCreateDialog()">
         CREATE
       </button>
+      <mat-form-field class="m-l-15">
+        <input matInput
+               placeholder="Filter by author"
+               aria-label="Filter by author"
+               [matAutocomplete]="auto"
+               [formControl]="authorFilterControl">
+        <mat-icon matSuffix>search</mat-icon>
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="applyFilter($event.option)">
+          <mat-option *ngFor="let user of filteredUsers | async" [value]="user.username">
+            <span>{{user.username}}</span>
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
       <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
       </mat-paginator>
     </div>
