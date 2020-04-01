@@ -35,7 +35,7 @@
       </ng-container>
       <ng-container matColumnDef="last_login">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Last login</th>
-        <td mat-cell *matCellDef="let element">{{ element.last_login  | date: 'MMM d, h:mm:ss a'}}</td>
+        <td mat-cell *matCellDef="let element">{{ element.last_login  | date: 'y-M-d H:mm:ss'}}</td>
       </ng-container>
       <ng-container matColumnDef="delete">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Delete</th>
