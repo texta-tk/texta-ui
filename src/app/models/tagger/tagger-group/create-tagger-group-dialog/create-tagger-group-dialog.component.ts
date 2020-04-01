@@ -33,6 +33,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
     taggerGroupSampleSizeFormControl: new FormControl(50, [Validators.required]),
     taggerForm: new FormGroup({
       fieldsFormControl: new FormControl([], [Validators.required]),
+      indicesFormControl: new FormControl([], [Validators.required]),
       embeddingFormControl: new FormControl(),
       vectorizerFormControl: new FormControl([Validators.required]),
       classifierFormControl: new FormControl([Validators.required]),
@@ -50,6 +51,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
   currentProject: Project;
   destroyed$ = new Subject<boolean>();
   fieldsUnique: Field[] = [];
+  projectIndices: ProjectField[] = [];
 
   constructor(private dialogRef: MatDialogRef<CreateTaggerGroupDialogComponent>,
               private taggerService: TaggerService,
@@ -61,6 +63,20 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.projectStore.getCurrentProjectFields().pipe(takeUntil(this.destroyed$)).subscribe(currentProjIndices => {
+      if (currentProjIndices) {
+        const indicesForm = this.taggerGroupForm.get('taggerForm')?.get('indicesFormControl');
+        indicesForm?.setValue(currentProjIndices);
+        this.getFieldsForIndices(currentProjIndices);
+      }
+    });
+
+    this.projectStore.getProjectFields().pipe(takeUntil(this.destroyed$)).subscribe(projIndices => {
+      if (projIndices) {
+        this.projectIndices = projIndices;
+      }
+    });
+
     this.projectStore.getCurrentProject().pipe(take(1), mergeMap(currentProject => {
       if (currentProject) {
         this.currentProject = currentProject;
@@ -92,20 +108,27 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
         this.projectFacts = x;
       }
     });
-    this.projectStore.getCurrentProjectFields().pipe(takeUntil(this.destroyed$)).subscribe(x => {
-      if (x) {
-        this.projectFields = ProjectField.cleanProjectFields(x, ['text'], []);
-        this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
-      }
-    });
 
   }
 
+  getFieldsForIndices(indices: ProjectField[]) {
+    this.projectFields = ProjectField.cleanProjectFields(indices, ['text'], []);
+    this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
+  }
+
+  public indicesOpenedChange(opened) {
+    const indicesForm = this.taggerGroupForm.get('taggerForm')?.get('indicesFormControl');
+    // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
+    if (!opened && (indicesForm?.value && indicesForm.value.length > 0)) {
+      this.getFieldsForIndices(indicesForm?.value);
+    }
+  }
 
   onSubmit() {
     const formData = this.taggerGroupForm.value;
     const taggerBody: any = {
       fields: formData.taggerForm.fieldsFormControl,
+      indices: formData.taggerForm.indicesFormControl.map(x => [{name: x.index}]).flat(),
       vectorizer: formData.taggerForm.vectorizerFormControl.value,
       classifier: formData.taggerForm.classifierFormControl.value,
       maximum_sample_size: formData.taggerForm.sampleSizeFormControl,
@@ -113,7 +136,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
     };
 
     if (formData.taggerForm.embeddingFormControl) {
-      taggerBody.embedding = formData.taggerForm.embeddingFormControl.id
+      taggerBody.embedding = formData.taggerForm.embeddingFormControl.id;
     }
 
     const body = {

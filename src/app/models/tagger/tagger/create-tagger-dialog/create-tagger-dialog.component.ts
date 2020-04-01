@@ -30,6 +30,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
     descriptionFormControl: new FormControl('', [
       Validators.required,
     ]),
+    indicesFormControl: new FormControl([], [Validators.required]),
     fieldsFormControl: new FormControl([], [Validators.required]),
     embeddingFormControl: new FormControl(),
     vectorizerFormControl: new FormControl([Validators.required]),
@@ -45,6 +46,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
   currentProject: Project;
   destroyed$ = new Subject<boolean>();
   fieldsUnique: Field[] = [];
+  projectIndices: ProjectField[] = [];
 
   constructor(private dialogRef: MatDialogRef<CreateTaggerDialogComponent>,
               private taggerService: TaggerService,
@@ -55,6 +57,20 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.projectStore.getCurrentProjectFields().pipe(takeUntil(this.destroyed$)).subscribe(currentProjIndices => {
+      if (currentProjIndices) {
+        const indicesForm = this.taggerForm.get('indicesFormControl');
+        indicesForm?.setValue(currentProjIndices);
+        this.getFieldsForIndices(currentProjIndices);
+      }
+    });
+
+    this.projectStore.getProjectFields().pipe(takeUntil(this.destroyed$)).subscribe(projIndices => {
+      if (projIndices) {
+        this.projectIndices = projIndices;
+      }
+    });
+
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), mergeMap(currentProject => {
       if (currentProject) {
         this.currentProject = currentProject;
@@ -76,13 +92,19 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
         }
       }
     });
-    this.projectStore.getCurrentProjectFields().pipe(takeUntil(this.destroyed$)).subscribe(x => {
-      if (x) {
-        this.projectFields = ProjectField.cleanProjectFields(x, ['text'], []);
-        this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
-      }
-    });
+  }
 
+  getFieldsForIndices(indices: ProjectField[]) {
+    this.projectFields = ProjectField.cleanProjectFields(indices, ['text'], []);
+    this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
+  }
+
+  public indicesOpenedChange(opened) {
+    const indicesForm = this.taggerForm.get('indicesFormControl');
+    // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
+    if (!opened && (indicesForm?.value && indicesForm.value.length > 0)) {
+      this.getFieldsForIndices(indicesForm?.value);
+    }
   }
 
   isTaggerOptions(options): options is TaggerOptions {
@@ -96,6 +118,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
   onSubmit(formData) {
     const body: any = {
       description: formData.descriptionFormControl,
+      indices: formData.indicesFormControl.map(x => [{name: x.index}]).flat(),
       fields: formData.fieldsFormControl,
       embedding: (formData.embeddingFormControl as Embedding) ? (formData.embeddingFormControl as Embedding).id : null,
       vectorizer: formData.vectorizerFormControl.value,

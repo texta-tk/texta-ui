@@ -155,8 +155,9 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   openCreateDialog() {
     const dialogRef = this.dialog.open(CreateTaggerDialogComponent, {
-      maxHeight: '700px',
+      maxHeight: '800px',
       width: '700px',
+      disableClose: true
     });
     dialogRef.afterClosed().subscribe((resp: Tagger | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
