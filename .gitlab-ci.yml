@@ -1,19 +1,22 @@
+services:
+    - name: docker.texta.ee/texta/texta-rest:latest
+      alias: texta-rest
+    - name: docker.texta.ee/texta/mlp:latest
+      alias: texta-mlp
+    - name: redis:latest
 
+variables:
+    TEXTA_ES_URL: http://172.17.0.1:9200
+    TEXTA_MLP_URL: http://texta-mlp:5000
+    TEXTA_REDIS_URL: redis://redis:6379/0
+    TEXTA_API_URL: http://texta-rest
+    TEXTA_USE_CSRF: "False"
+    npm_config_cache: "$CI_PROJECT_DIR/.npm"
+    CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/Cypress"
 stages:
   - unit-test
-#  - e2e-test
+  - e2e-test
   - build
-# to cache both npm modules and Cypress binary we use environment variables
-# to point at the folders we can list as paths in "cache" job settings
-variables:
-  npm_config_cache: "$CI_PROJECT_DIR/.npm"
-  CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/Cypress"
-
-cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:
-    - .npm
-    - cache/Cypress
 
 Karma:
   image: circleci/node:10-browsers
@@ -24,29 +27,28 @@ Karma:
   tags:
   - ci-test
 
-#Cypress:
-#  image: cypress/base:10
-#  stage: e2e-test
-#  tags:
-#  - ci-test
-#  script:
-    # check Cypress binary path and cached versions
-    # useful to make sure we are not carrying around old versions
-#    - npm ci
-#    - npx cypress cache path
-#    - npx cypress cache list
-#    - npm run cy:verify
-#    - npm run cy:info
-    # start the server in the background
-#    - npm run cypress:ci
-#  artifacts:
-#    when: always
-#    paths:
-#      - cypress/videos/**/*.mp4
-#      - cypress/screenshots/**/*.png
-#    expire_in: 1 day
-  #  except:
-#  - tags
+
+Cypress:
+  image: cypress/base:10
+  stage: e2e-test
+  tags:
+    - ci-test
+  variables:
+  before_script:
+    - npm ci
+  script:
+    - npm run cy:verify
+    - npm run cy:info
+    - npm run cypress:ci
+  artifacts:
+    when: always
+    paths:
+      - cypress/videos/**/*.mp4
+      - cypress/screenshots/**/*.png
+    expire_in: 1 day
+  except:
+    - tags
+
 
 Build:
   stage: build
@@ -58,3 +60,4 @@ Build:
   - docker system prune --volumes -f
   only:
   - master
+  - tags

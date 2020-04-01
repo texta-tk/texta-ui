@@ -1,19 +1,20 @@
-describe('should be able to build searches', function () {
+describe('/health and project table tests', function () {
   beforeEach(function () {
-    cy.visit('/');
-    cy.server();
-    cy.route('GET', 'health').as('health');
-    cy.route('GET', 'user').as('user');
-    cy.route('GET', 'users').as('getUsers');
-    cy.route('GET', 'get_indices').as('getIndices');
     cy.fixture('users').then((user) => {
       cy.login(user.username, user.password);
+      cy.server();
+      cy.route('GET', 'health').as('health');
+      cy.route('GET', 'user').as('user');
+      cy.route('GET', 'users').as('getUsers');
+      cy.route('GET', 'get_indices').as('getIndices');
+      cy.visit('/');
       cy.wait('@user');
       cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible');
     });
+
   });
   it('should check if /health endpoint stats are visible', function () {
-    cy.wait('@health', {timeout: 6000});
+    cy.wait('@health', {timeout: 30000});
     cy.get('[data-cy=appHomeHealth]').should('be.visible');
   });
   it('should be able to create a project', function () {
