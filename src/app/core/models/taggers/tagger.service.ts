@@ -33,6 +33,14 @@ export class TaggerService {
       catchError(this.logService.handleError<Tagger>('makeTagger')));
   }
 
+  editTagger(body: {}, projectId, taggerId): Observable<Tagger | HttpErrorResponse> {
+    return this.http.patch<Tagger>(
+      `${this.apiUrl}/projects/${projectId}/taggers/${taggerId}/`, body
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'editTagger')),
+      catchError(this.logService.handleError<Tagger>('editTagger')));
+  }
+
   getTaggerById(id: number, projectId: number): Observable<Tagger | HttpErrorResponse> {
     return this.http.get<Tagger>(
       this.apiUrl + '/projects/' + projectId + '/taggers/' + id,

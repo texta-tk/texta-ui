@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
-import { environment } from 'src/environments/environment';
-import { TorchTagger } from '../../../shared/types/tasks/TorchTagger';
-import { LogService } from '../../util/log.service';
-import { Observable } from 'rxjs';
-import { HttpErrorResponse, HttpClient } from '@angular/common/http';
-import { tap, catchError } from 'rxjs/operators';
+import {Injectable} from '@angular/core';
+import {environment} from 'src/environments/environment';
+import {TorchTagger} from '../../../shared/types/tasks/TorchTagger';
+import {LogService} from '../../util/log.service';
+import {Observable} from 'rxjs';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import {catchError, tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -12,17 +12,26 @@ import { tap, catchError } from 'rxjs/operators';
 export class TorchTaggerService {
   apiUrl = environment.apiHost + environment.apiBasePath;
 
-  constructor(private http: HttpClient, private logService: LogService) {}
+  constructor(private http: HttpClient, private logService: LogService) {
+  }
 
-  getTorchTaggers(projectId: number, params = ''): Observable<{count: number, results: TorchTagger[]} | HttpErrorResponse> {
-    return this.http.get<{count: number, results: TorchTagger[]}>(`${this.apiUrl}/projects/${projectId}/torchtaggers/?${params}`,
+  getTorchTaggers(projectId: number, params = ''): Observable<{ count: number, results: TorchTagger[] } | HttpErrorResponse> {
+    return this.http.get<{ count: number, results: TorchTagger[] }>(`${this.apiUrl}/projects/${projectId}/torchtaggers/?${params}`,
     ).pipe(
       tap(e => this.logService.logStatus(e, 'getTorchTaggers')),
-      catchError(this.logService.handleError<{count: number, results: TorchTagger[]}>('getTorchTaggers')));
+      catchError(this.logService.handleError<{ count: number, results: TorchTagger[] }>('getTorchTaggers')));
+  }
+
+  editTorchTagger(body: {}, projectId, taggerId): Observable<TorchTagger | HttpErrorResponse> {
+    return this.http.patch<TorchTagger>(
+      `${this.apiUrl}/projects/${projectId}/torchtaggers/${taggerId}/`, body
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'editTorchTagger')),
+      catchError(this.logService.handleError<TorchTagger>('editTorchTagger')));
   }
 
   bulkDeleteTorchTaggers(projectId: number, body: { ids: number[]; }) {
-    return this.http.post<{'num_deleted': number, 'deleted_types': {string: number}[] }>
+    return this.http.post<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>
     (`${this.apiUrl}/projects/${projectId}/torchtaggers/bulk_delete/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'bulkDeleteTorchTaggers')),
       catchError(this.logService.handleError<unknown>('bulkDeleteTorchTaggers')));
@@ -52,4 +61,4 @@ export class TorchTaggerService {
       tap(e => this.logService.logStatus(e, 'tagTorchText')),
       catchError(this.logService.handleError<unknown>('tagTorchText')));
   }
-} 
+}

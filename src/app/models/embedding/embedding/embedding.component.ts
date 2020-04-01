@@ -12,12 +12,12 @@ import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {CreateEmbeddingDialogComponent} from './create-embedding-dialog/create-embedding-dialog.component';
 import {LogService} from '../../../core/util/log.service';
-import {animate, state, style, transition, trigger} from '@angular/animations';
 import {PhraseDialogComponent} from '../phrase-dialog/phrase-dialog.component';
 import {SelectionModel} from '@angular/cdk/collections';
 import {QueryDialogComponent} from 'src/app/shared/components/dialogs/query-dialog/query-dialog.component';
 import {ConfirmDialogComponent} from 'src/app/shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {expandRowAnimation} from '../../../shared/animations';
+import {EditEmbeddingDialogComponent} from './edit-embedding-dialog/edit-embedding-dialog.component';
 
 @Component({
   selector: 'app-embedding',
@@ -156,6 +156,18 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  edit(embedding: Embedding) {
+    this.dialog.open(EditEmbeddingDialogComponent, {
+      width: '750px',
+      data: embedding
+    }).afterClosed().subscribe((x: Embedding | HttpErrorResponse) => {
+      if (x && !(x instanceof HttpErrorResponse)) {
+        embedding.description = x.description;
+      } else {
+        this.logService.snackBarError(x, 3000);
+      }
+    });
+  }
 
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {

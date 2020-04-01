@@ -21,6 +21,7 @@ import {QueryDialogComponent} from 'src/app/shared/components/dialogs/query-dial
 import {ConfirmDialogComponent} from 'src/app/shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {ListFeaturesDialogComponent} from '../list-features-dialog/list-features-dialog.component';
 import {expandRowAnimation} from '../../../shared/animations';
+import {EditTaggerDialogComponent} from './edit-tagger-dialog/edit-tagger-dialog.component';
 
 @Component({
   selector: 'app-tagger',
@@ -165,6 +166,19 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
         this.logService.snackBarMessage(`Created tagger ${resp.description}`, 2000);
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
+      }
+    });
+  }
+
+  edit(tagger: Tagger) {
+    this.dialog.open(EditTaggerDialogComponent, {
+      width: '700px',
+      data: tagger
+    }).afterClosed().subscribe((x: Tagger | HttpErrorResponse) => {
+      if (x && !(x instanceof HttpErrorResponse)) {
+        tagger.description = x.description;
+      } else {
+        this.logService.snackBarError(x, 3000);
       }
     });
   }

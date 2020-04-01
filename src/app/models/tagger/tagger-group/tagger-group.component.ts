@@ -1,9 +1,9 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {startWith, switchMap, debounceTime, takeUntil} from 'rxjs/operators';
+import {debounceTime, startWith, switchMap, takeUntil} from 'rxjs/operators';
 import {LogService} from '../../../core/util/log.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Project} from '../../../shared/types/Project';
-import {Subscription, Subject, merge, of} from 'rxjs';
+import {merge, of, Subject} from 'rxjs';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {MatDialog} from '@angular/material/dialog';
 import {MatPaginator} from '@angular/material/paginator';
@@ -13,13 +13,13 @@ import {TaggerGroup} from '../../../shared/types/tasks/Tagger';
 import {CreateTaggerGroupDialogComponent} from './create-tagger-group-dialog/create-tagger-group-dialog.component';
 import {TaggerGroupService} from '../../../core/models/taggers/tagger-group.service';
 import {SelectionModel} from '@angular/cdk/collections';
-import {animate, state, style, transition, trigger} from '@angular/animations';
 import {ModelsListDialogComponent} from './models-list-dialog/models-list-dialog.component';
 import {TaggerGroupTagTextDialogComponent} from './tagger-group-tag-text-dialog/tagger-group-tag-text-dialog.component';
 import {TaggerGroupTagDocDialogComponent} from './tagger-group-tag-doc-dialog/tagger-group-tag-doc-dialog.component';
 import {ConfirmDialogComponent} from 'src/app/shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {TaggerGroupTagRandomDocDialogComponent} from './tagger-group-tag-random-doc-dialog/tagger-group-tag-random-doc-dialog.component';
 import {expandRowAnimation} from '../../../shared/animations';
+import {EditTaggerGroupDialogComponent} from './edit-tagger-group-dialog/edit-tagger-group-dialog.component';
 
 @Component({
   selector: 'app-tagger-group',
@@ -123,6 +123,19 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
         this.tableData.data = [...this.tableData.data, resp];
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
+      }
+    });
+  }
+
+  edit(taggerGroup: TaggerGroup) {
+    this.dialog.open(EditTaggerGroupDialogComponent, {
+      width: '700px',
+      data: taggerGroup
+    }).afterClosed().subscribe((x: TaggerGroup | HttpErrorResponse) => {
+      if (x && !(x instanceof HttpErrorResponse)) {
+        taggerGroup.description = x.description;
+      } else {
+        this.logService.snackBarError(x, 3000);
       }
     });
   }

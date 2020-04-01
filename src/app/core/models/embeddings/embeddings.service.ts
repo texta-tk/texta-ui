@@ -33,6 +33,14 @@ export class EmbeddingsService {
       catchError(this.logService.handleError<Embedding>('getEmbeddings')));
   }
 
+  editEmbedding(body: {}, projectId, embeddingId): Observable<Embedding | HttpErrorResponse> {
+    return this.http.patch<Embedding>(
+      `${this.apiUrl}/projects/${projectId}/embeddings/${embeddingId}/`, body
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'editEmbedding')),
+      catchError(this.logService.handleError<Embedding>('editEmbedding')));
+  }
+
   predict(body, projectId, embeddingId): Observable<EmbeddingPrediction[] | HttpErrorResponse> {
     return this.http.post<EmbeddingPrediction[]>(
       this.apiUrl + '/projects/' + projectId + '/embeddings/' + embeddingId + '/predict_similar/', body
@@ -48,7 +56,7 @@ export class EmbeddingsService {
   }
 
   bulkDeleteEmbeddings(projectId: number, body) {
-    return this.http.post<{ "num_deleted": number, "deleted_types": { string: number }[] }>
+    return this.http.post<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>
     (`${this.apiUrl}/projects/${projectId}/embeddings/bulk_delete/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'bulkDeleteEmbeddings')),
       catchError(this.logService.handleError<unknown>('bulkDeleteEmbeddings')));
@@ -59,4 +67,5 @@ export class EmbeddingsService {
       tap(e => this.logService.logStatus(e, 'deleteEmbedding')),
       catchError(this.logService.handleError<unknown>('deleteEmbedding')));
   }
+
 }

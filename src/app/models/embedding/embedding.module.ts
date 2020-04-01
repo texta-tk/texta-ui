@@ -4,6 +4,7 @@ import {EmbeddingComponent} from './embedding/embedding.component';
 import {CreateEmbeddingDialogComponent} from './embedding/create-embedding-dialog/create-embedding-dialog.component';
 import {EmbeddingRoutingModule} from './embedding-routing.module';
 import { PhraseDialogComponent } from './phrase-dialog/phrase-dialog.component';
+import { EditEmbeddingDialogComponent } from './embedding/edit-embedding-dialog/edit-embedding-dialog.component';
 
 
 @NgModule({
@@ -11,6 +12,7 @@ import { PhraseDialogComponent } from './phrase-dialog/phrase-dialog.component';
     EmbeddingComponent,
     CreateEmbeddingDialogComponent,
     PhraseDialogComponent,
+    EditEmbeddingDialogComponent,
   ],
   imports: [
     SharedModule,

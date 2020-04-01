@@ -230,6 +230,9 @@
       <button mat-menu-item (click)="tagRandomDocDialog(element)" data-cy="appTaggerMenuTagRandomDoc">
         Tag random doc
       </button>
+      <button (click)="edit(element)" mat-menu-item>
+        Edit
+      </button>
       <mat-divider></mat-divider>
     </div>
     <button mat-menu-item (click)="onDelete(element, i)">

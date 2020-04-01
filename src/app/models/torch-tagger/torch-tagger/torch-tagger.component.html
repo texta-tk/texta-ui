@@ -227,6 +227,9 @@
       <button mat-menu-item (click)="tagTextDialog(element)" data-cy="appTorchTaggerMenuTagText">
         Tag text
       </button>
+      <button (click)="edit(element)" mat-menu-item>
+        Edit
+      </button>
       <mat-divider></mat-divider>
     </div>
     <button mat-menu-item (click)="onDelete(element, i)">

@@ -3,7 +3,7 @@ import {environment} from '../../../../environments/environment';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {catchError, tap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
-import {TaggerGroup, LightTagger} from '../../../shared/types/tasks/Tagger';
+import {TaggerGroup, LightTagger, Tagger} from '../../../shared/types/tasks/Tagger';
 import {LocalStorageService} from '../../util/local-storage.service';
 import {LogService} from '../../util/log.service';
 
@@ -32,6 +32,14 @@ export class TaggerGroupService {
     ).pipe(
       tap(e => this.logService.logStatus(e, 'createTaggerGroup')),
       catchError(this.logService.handleError<TaggerGroup>('createTaggerGroup')));
+  }
+
+  editTaggerGroup(body: {}, projectId, taggerId): Observable<TaggerGroup | HttpErrorResponse> {
+    return this.http.patch<TaggerGroup>(
+      `${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/${taggerId}/`, body
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'editTaggerGroup')),
+      catchError(this.logService.handleError<TaggerGroup>('editTaggerGroup')));
   }
 
   modelsRetrain(taggerGroupId: number, projectId: number) {

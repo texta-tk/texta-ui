@@ -1,0 +1,21 @@
+<h1 mat-dialog-title>Edit Embedding</h1>
+<div mat-dialog-content>
+  <mat-form-field class="max-width">
+    <input [errorStateMatcher]="matcher" autocomplete="off" matInput
+           placeholder="Description" required [(ngModel)]="this.data.description" #ctrl="ngModel">
+    <mat-error *ngIf="ctrl?.hasError('required')">
+      Description is <strong>required</strong>
+    </mat-error>
+  </mat-form-field>
+  <div class="flex-col">
+    <div class="flex-row">
+      <div class="flex-item-left">
+        <button (click)="closeDialog()" class="flex-item-left" mat-button type="button">Close</button>
+      </div>
+      <div class="flex-item-right">
+        <button [disabled]="this.data.description == ''" mat-button type="submit" (click)="onSubmit()">Edit</button>
+      </div>
+    </div>
+
+  </div>
+</div>

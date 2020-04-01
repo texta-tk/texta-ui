@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Subscription, Subject, timer, merge, of} from 'rxjs';
+import {merge, of, Subject, timer} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
@@ -8,16 +8,16 @@ import {SelectionModel} from '@angular/cdk/collections';
 import {Project} from 'src/app/shared/types/Project';
 import {ProjectStore} from 'src/app/core/projects/project.store';
 import {LogService} from 'src/app/core/util/log.service';
-import {switchMap, debounceTime, startWith, takeUntil} from 'rxjs/operators';
+import {debounceTime, startWith, switchMap, takeUntil} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ConfirmDialogComponent} from 'src/app/shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {QueryDialogComponent} from 'src/app/shared/components/dialogs/query-dialog/query-dialog.component';
 import {TorchTagger} from 'src/app/shared/types/tasks/TorchTagger';
 import {CreateTorchTaggerDialogComponent} from '../create-torch-tagger-dialog/create-torch-tagger-dialog.component';
 import {TorchTaggerService} from '../../../core/models/taggers/torch-tagger.service';
-import {trigger, state, style, transition, animate} from '@angular/animations';
 import {TorchTagTextDialogComponent} from '../torch-tag-text-dialog/torch-tag-text-dialog.component';
 import {expandRowAnimation} from '../../../shared/animations';
+import {EditTorchTaggerDialogComponent} from '../edit-torch-tagger-dialog/edit-torch-tagger-dialog.component';
 
 @Component({
   selector: 'app-torch-tagger',
@@ -150,6 +150,18 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  edit(torchTagger: TorchTagger) {
+    this.dialog.open(EditTorchTaggerDialogComponent, {
+      width: '700px',
+      data: torchTagger
+    }).afterClosed().subscribe((x: TorchTagger | HttpErrorResponse) => {
+      if (x && !(x instanceof HttpErrorResponse)) {
+        torchTagger.description = x.description;
+      } else {
+        this.logService.snackBarError(x, 3000);
+      }
+    });
+  }
 
   onDelete(torchtagger: TorchTagger, index: number) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
