@@ -6,7 +6,6 @@
   }
 }
 
-
 .ok-text {
   color: green;
 }
@@ -15,38 +14,24 @@
   color: red;
 }
 
-
-.health-table {
-  max-width: 725px;
-  padding: 50px;
-}
-
 .usage-card {
-  max-width: 725px;
+  max-width: 625px;
   margin-bottom: 10px;
 }
 
 .service-status-card {
   margin-top: 10px;
-  max-width: 725px;
-  justify-content: space-evenly;
+  max-width: 625px;
   margin-bottom: 10px;
 }
 
 .counts-card {
-  max-width: 725px;
+  max-width: 625px;
 }
 
 .count-text {
   font-size: 30px;
 }
-
-
-.unreachable {
-  font-size: 30px;
-}
-
-.unreachable-card {
-  max-width: 725px;
-  margin-top: 10px;
+.project-table{
+  min-width: 785px;
 }

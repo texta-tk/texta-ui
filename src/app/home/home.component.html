@@ -1,19 +1,19 @@
 <div fxLayout="row" *ngIf="user">
-  <div fxFlex="50%">
+  <div fxFlex="60%" class="project-table">
     <app-project></app-project>
   </div>
-  <div fxFlex="50%" class="health-wrapper">
+  <div fxFlex="40%" class="health-wrapper">
     <div *ngIf="health" data-cy="appHomeHealth">
       <mat-card fxLayout="row wrap" fxLayoutGap="5px" class="service-status-card center-margin">
-        <mat-chip-list class="center-margin" disabled>
+        <mat-chip-list class="center-margin chip-list-space-evenly" disabled>
           <mat-chip selected [color]="health.services.elastic.alive ? 'primary' : 'accent'">
-            ElasticSearch {{health.services.elastic.alive ? 'ONLINE' : 'OFFLINE'}}  </mat-chip>
+            Elasticsearch {{health.services.elastic.alive ? 'ONLINE' : 'OFFLINE'}}  </mat-chip>
           <mat-chip selected [color]="health.services.mlp.alive ? 'primary' : 'accent'">
             MLP {{health.services.mlp.alive ? 'ONLINE' : 'OFFLINE'}}  </mat-chip>
           <mat-chip selected [color]="health.services.redis.alive ? 'primary' : 'accent'">
             Redis {{health.services.redis.alive ? 'ONLINE' : 'OFFLINE'}}  </mat-chip>
-          <mat-chip selected color="primary"> API VERSION {{health.toolkit.version}}  </mat-chip>
-          <mat-chip selected color="primary"> VERSION {{frontVersion}}  </mat-chip>
+          <mat-chip selected color="primary"> API {{health.toolkit.version}}  </mat-chip>
+          <mat-chip selected color="primary"> GUI {{frontVersion}}  </mat-chip>
         </mat-chip-list>
       </mat-card>
 

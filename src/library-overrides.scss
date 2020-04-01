@@ -20,3 +20,8 @@ mat-optgroup {
     padding-left: 30px;
   }
 }
+mat-chip-list.chip-list-space-evenly{
+    div{
+      justify-content: space-evenly !important;
+    }
+}
