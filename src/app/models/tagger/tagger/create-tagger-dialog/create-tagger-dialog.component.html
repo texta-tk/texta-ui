@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>New Tagger</h1>
 <div mat-dialog-content>
   <form class="flex-col" [formGroup]="taggerForm" (ngSubmit)="onSubmit(taggerForm.value)">
-    <mat-form-field>
+    <mat-form-field data-cy="appTaggerCreateDialogDesc">
       <input matInput placeholder="Description" autocomplete="off" formControlName="descriptionFormControl"
              [errorStateMatcher]="matcher" required>
 
@@ -9,7 +9,7 @@
         Description is <strong>required</strong>
       </mat-error>
     </mat-form-field>
-    <mat-form-field>
+    <mat-form-field data-cy="appTaggerCreateDialogIndices">
       <mat-label>Indices</mat-label>
       <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
                   formControlName="indicesFormControl" multiple required (openedChange)="indicesOpenedChange($event)">
@@ -21,7 +21,7 @@
         Need atleast 1 index
       </mat-error>
     </mat-form-field>
-    <mat-form-field>
+    <mat-form-field data-cy="appTaggerCreateDialogFields">
       <mat-label>Select Fields</mat-label>
       <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
                   formControlName="fieldsFormControl" multiple required>
@@ -34,10 +34,10 @@
       </mat-error>
     </mat-form-field>
 
-    <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"></app-saved-search-autocomplete>
+    <app-saved-search-autocomplete data-cy="appTaggerCreateDialogQuery" (queryChanged)="onQueryChanged($event)"></app-saved-search-autocomplete>
 
 
-    <mat-form-field>
+    <mat-form-field data-cy="appTaggerCreateDialogEmbedding">
       <mat-label>Select Embedding</mat-label>
       <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
                   formControlName="embeddingFormControl">

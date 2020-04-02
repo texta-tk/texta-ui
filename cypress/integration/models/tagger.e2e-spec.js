@@ -3,18 +3,26 @@ describe('tagger extra actions should work', function () {
     cy.fixture('users').then((user) => {
       cy.server();
       cy.login(user.username, user.password);
-      cy.createTestProject();
-      cy.route('GET', '**user**').as('getUser');
-      cy.route('GET', '**get_fields**').as('getProjectFields');
-      cy.route('GET', '**/taggers/**').as('getTaggers');
-      cy.visit('/taggers');
-      cy.wait('@getProjectFields');
-      cy.get('[data-cy=appNavbarProjectSelect]').click();
-      cy.get('mat-option').contains('integration_test_project').click();
+      cy.createTestProject().then(x => {
+        assert.isNotNull(x.body.id, 'should have project id');
+        cy.wrap(x.body.id).as('projectId');
+        cy.route('GET', '**user**').as('getUser');
+        cy.route('GET', '**get_fields**').as('getProjectFields');
+        cy.route('GET', '**/taggers/**').as('getTaggers');
+        cy.visit('/taggers');
+        cy.wait('@getProjectFields');
+        cy.get('[data-cy=appNavbarProjectSelect]').click();
+        cy.get('mat-option').contains('integration_test_project').click();
+      });
     });
-  });
-  /*  it('extra_actions should work', function () {
-      // list features
+  });/*
+  it('should be able to create a new tagger', function () {
+    cy.get('[data-cy=appModelsTaggerCreateBtn]').should('be.visible').click();
+  });*/
+/*  it('extra_actions should work', function () {
+    // list features
+    cy.importTestTagger(this.projectId).then(x => {
+      cy.visit('/taggers');
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
       cy.get('[data-cy=appTaggerMenuListFeatures]').should('be.visible').click();
       cy.wait('@getTaggers');
@@ -67,5 +75,6 @@ describe('tagger extra actions should work', function () {
       cy.wait('@getTaggers');
       cy.get('app-tag-random-doc-dialog .code-wrapper pre').should('be.visible');
       cy.closeCurrentCdkOverlay();
-    });*/
+    });
+  });*/
 });

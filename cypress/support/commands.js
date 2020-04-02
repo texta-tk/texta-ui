@@ -24,7 +24,7 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 Cypress.Commands.add('login', (username, password) => {
-  return cy.clearCookies({domain: null}).then(()=>{ cy.request('POST', `${Cypress.env('api_host')}${Cypress.env('api_basePath')}/rest-auth/login/`, {
+  cy.clearCookies({domain: null}).then(()=>{ cy.request('POST', `${Cypress.env('api_host')}${Cypress.env('api_basePath')}/rest-auth/login/`, {
     username: username,
     password: password
   }).then(resp => {
@@ -32,18 +32,42 @@ Cypress.Commands.add('login', (username, password) => {
   })});
 });
 Cypress.Commands.add('createTestProject', () => {
-  return cy.clearCookies({domain: null}).then(()=>{ cy.request({method: 'POST', url:`${Cypress.env('api_host')}${Cypress.env('api_basePath')}/projects/`,
+  cy.clearCookies({domain: null}).then(()=>{ cy.request({method: 'POST', url:`${Cypress.env('api_host')}${Cypress.env('api_basePath')}/projects/`,
     body:{"indices": ["texta_test_index"], "users": ["http://localhost/api/v1/users/1/"], "title": "integration_test_project"},
     headers: {'Authorization':'Token ' + JSON.parse(localStorage.getItem('user')).key}}).then(x => {
     console.log(x);
   })});
 });
 Cypress.Commands.add('createTestSavedSearch', (projectId) => {
-  return cy.clearCookies({domain: null}).then(()=>{ cy.request({method: 'POST', url:`${Cypress.env('api_host')}${Cypress.env('api_basePath')}/projects/${projectId}/searches/`,
+  cy.clearCookies({domain: null}).then(()=>{ cy.request({method: 'POST', url:`${Cypress.env('api_host')}${Cypress.env('api_basePath')}/projects/${projectId}/searches/`,
     body:{"query_constraints":"[{\"fields\":[{\"path\":\"comment_content\",\"type\":\"text\"}],\"match\":\"phrase_prefix\",\"slop\":\"0\",\"text\":\"tere\",\"operator\":\"must\"}]","description":"tere","query":"{\"query\":{\"bool\":{\"must\":[],\"filter\":[],\"must_not\":[],\"should\":[{\"bool\":{\"must\":[{\"bool\":{\"should\":[{\"multi_match\":{\"query\":\"tere\",\"type\":\"phrase_prefix\",\"slop\":\"0\",\"fields\":[\"comment_content\"]}}],\"minimum_should_match\":1}}]}}],\"minimum_should_match\":1}},\"highlight\":{\"pre_tags\":[\"<TEXTA_SEARCHER_HIGHLIGHT_START_TAG>\"],\"post_tags\":[\"<TEXTA_SEARCHER_HIGHLIGHT_END_TAG>\"],\"number_of_fragments\":0,\"fields\":{\"comment_content\":{}}},\"from\":0,\"size\":10}"},
     headers: {'Authorization':'Token ' + JSON.parse(localStorage.getItem('user')).key}}).then(x => {
     console.log(x);
   })});
+});
+Cypress.Commands.add('importTestTagger', (projectId) => {
+  cy.fixture('tagger_model_141495.zip', 'base64').then(x=>{
+    Cypress.Blob.base64StringToBlob(x).then(blob=>{
+      let formData = new FormData();
+      formData.append('file',new File([blob],'tagger_model_141495.zip'));
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', `${Cypress.env('api_host')}${Cypress.env('api_basePath')}/projects/${projectId}/taggers/import_model/`);
+      xhr.setRequestHeader('Authorization', 'Token ' + JSON.parse(localStorage.getItem('user')).key);
+      xhr.send(formData);
+      return xhr;
+    });
+
+   /* cy.request({method: 'POST', url:`${Cypress.env('api_host')}${Cypress.env('api_basePath')}/projects/${projectId}/taggers/import_model/`,
+      body:{file: x},
+      headers: {'Authorization':'Token ' + JSON.parse(localStorage.getItem('user')).key}, "Content-type": "multipart/form-data"}).then(x => {
+      console.log(x);
+    });*/
+  });
+/*  return cy.clearCookies({domain: null}).then(()=>{ cy.request({method: 'POST', url:`${Cypress.env('api_host')}${Cypress.env('api_basePath')}/projects/${projectId}/taggers/import_model/`,
+    body:{},
+    headers: {'Authorization':'Token ' + JSON.parse(localStorage.getItem('user')).key}}).then(x => {
+    console.log(x);
+  })});*/
 });
 Cypress.Commands.add('deleteUser', (url) => {
   cy.clearCookies({domain: null}).then(cookie=>{

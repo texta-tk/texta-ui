@@ -5,7 +5,7 @@
       <mat-progress-bar mode="indeterminate" *ngIf="isLoadingResults"></mat-progress-bar>
     </div>
     <div class="paginator-row">
-      <button class="paginator-margin-left"
+      <button class="paginator-margin-left" data-cy="appModelsTaggerCreateBtn"
               mat-raised-button color="primary" (click)="openCreateDialog()">
         CREATE
       </button>
