@@ -35,11 +35,7 @@ export class EditTaggerGroupDialogComponent implements OnInit {
       }
       return of(null);
     })).subscribe((resp: TaggerGroup | HttpErrorResponse) => {
-      if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.dialogRef.close(resp);
-      } else if (resp instanceof HttpErrorResponse) {
-        this.dialogRef.close(resp);
-      }
+      this.dialogRef.close(resp);
     });
   }
 

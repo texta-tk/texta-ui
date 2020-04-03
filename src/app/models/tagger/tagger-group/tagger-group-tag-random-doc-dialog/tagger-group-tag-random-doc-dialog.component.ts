@@ -16,7 +16,7 @@ interface TaggerGroupRandomDocTag {
 interface TaggerGroupRandomDocResult   {
   document: any;
   tags: TaggerGroupRandomDocTag[];
-};
+}
 
 @Component({
   selector: 'app-tagger-group-tag-random-doc-dialog',
@@ -25,8 +25,6 @@ interface TaggerGroupRandomDocResult   {
 })
 export class TaggerGroupTagRandomDocDialogComponent implements OnInit {
   result: TaggerGroupRandomDocResult;
-
-
   isLoading = false;
 
   constructor(private taggerGroupService: TaggerGroupService, private logService: LogService,

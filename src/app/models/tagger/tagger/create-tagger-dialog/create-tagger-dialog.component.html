@@ -74,7 +74,7 @@
       </mat-error>
     </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field data-cy="appTaggerCreateDialogSampleSize">
       <input matInput type="number" pattern="[1-9]\d*" step="1000" placeholder="Maximum sample size"
              formControlName="sampleSizeFormControl">
     </mat-form-field>
@@ -88,7 +88,7 @@
           <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Close</button>
         </div>
         <div class="flex-item-right">
-          <button type="submit" [disabled]="!taggerForm.valid" mat-button>Create</button>
+          <button type="submit" [disabled]="!taggerForm.valid" mat-button data-cy="appTaggerCreateDialogSubmit">Create</button>
         </div>
       </div>
 

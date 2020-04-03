@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>New Tagger Group</h1>
 <div mat-dialog-content>
   <form class="flex-col" [formGroup]="taggerGroupForm" (ngSubmit)="onSubmit()">
-    <mat-form-field>
+    <mat-form-field data-cy="appTaggerGroupCreateDialogDesc">
       <input matInput placeholder="Description" autocomplete="off" formControlName="descriptionFormControl"
              [errorStateMatcher]="matcher" required>
 
@@ -35,7 +35,7 @@
           Need atleast 1 index
         </mat-error>
       </mat-form-field>
-      <mat-form-field>
+      <mat-form-field data-cy="appTaggerGroupCreateDialogFields">
         <mat-label>Select Fields</mat-label>
         <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="fieldsFormControl" multiple required>
             <mat-option *ngFor="let fields of fieldsUnique" [value]="fields.path">
@@ -81,7 +81,7 @@
         </mat-error>
       </mat-form-field>
 
-      <mat-form-field>
+      <mat-form-field data-cy="appTaggerGroupCreateDialogSample">
         <input matInput type="number" step="1000" placeholder="Maximum sample size" formControlName="sampleSizeFormControl">
       </mat-form-field>
       <mat-form-field>
@@ -96,7 +96,8 @@
           <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Close</button>
         </div>
         <div class="flex-item-right">
-          <button type="submit" [disabled]="!taggerGroupForm.valid" mat-button>Create</button>
+          <button type="submit" [disabled]="!taggerGroupForm.valid"
+                  data-cy="appTaggerGroupCreateDialogSubmit" mat-button>Create</button>
         </div>
       </div>
 

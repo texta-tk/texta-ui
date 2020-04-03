@@ -2,14 +2,15 @@
 <div mat-dialog-content>
   <form id="torchTaggerForm" fxLayout="column" [formGroup]="torchTaggerForm"
         (ngSubmit)="onSubmit(torchTaggerForm.value)">
-    <mat-form-field>
-      <input matInput placeholder="Description" autocomplete="off" formControlName="descriptionFormControl" required>
+    <mat-form-field data-cy="appTorchTaggerCreateDialogDesc">
+      <input matInput placeholder="Description" autocomplete="off"
+             [errorStateMatcher]="matcher" formControlName="descriptionFormControl" required>
 
       <mat-error *ngIf="torchTaggerForm.get('descriptionFormControl')?.hasError('required')">
         Description is <strong>required</strong>
       </mat-error>
     </mat-form-field>
-    <mat-form-field>
+    <mat-form-field data-cy="appTorchTaggerCreateDialogFields">
       <mat-label>Select Fields</mat-label>
       <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
                   formControlName="fieldsFormControl" multiple required>
@@ -22,7 +23,7 @@
       </mat-error>
     </mat-form-field>
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"></app-saved-search-autocomplete>
-    <mat-form-field>
+    <mat-form-field data-cy="appTorchTaggerCreateDialogArchitecture">
       <mat-label>Model architecture</mat-label>
       <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
                   formControlName="modelArchitectureFormControl" required>
@@ -36,7 +37,7 @@
       </mat-error>
     </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field data-cy="appTorchTaggerCreateDialogEmbedding">
       <mat-label>Select Embedding</mat-label>
       <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
                   formControlName="embeddingFormControl" required>
@@ -61,13 +62,12 @@
       </mat-select>
     </mat-form-field>
 
-
     <mat-form-field>
       <input matInput type="number" step="50" placeholder="Minimum sample size"
              formControlName="minSampleSizeFormControl">
     </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field data-cy="appTorchTaggerCreateDialogMaxSample">
       <input matInput type="number" step="1000" placeholder="Maximum sample size"
              formControlName="sampleSizeFormControl">
     </mat-form-field>
@@ -80,7 +80,8 @@
 <div mat-dialog-actions fxLayout="row">
   <button type="button" mat-button (click)="closeDialog()">Close</button>
   <div class="flex-item-right">
-    <button form="torchTaggerForm" type="submit" [disabled]="!torchTaggerForm.valid" mat-button>
+    <button form="torchTaggerForm" type="submit" [disabled]="!torchTaggerForm.valid"
+            data-cy="appTorchTaggerCreateDialogSubmit" mat-button>
       Create
     </button>
   </div>

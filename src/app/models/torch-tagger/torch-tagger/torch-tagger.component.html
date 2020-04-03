@@ -5,6 +5,7 @@
     </div>
     <div class="paginator-row">
       <button class="paginator-margin-left"
+              data-cy="appModelsTorchTaggerCreateBtn"
               mat-raised-button  color="primary" (click)="openCreateDialog()">
         CREATE
       </button>
@@ -227,12 +228,12 @@
       <button mat-menu-item (click)="tagTextDialog(element)" data-cy="appTorchTaggerMenuTagText">
         Tag text
       </button>
-      <button (click)="edit(element)" mat-menu-item>
+      <button (click)="edit(element)" mat-menu-item data-cy="appTorchTaggerMenuEdit">
         Edit
       </button>
       <mat-divider></mat-divider>
     </div>
-    <button mat-menu-item (click)="onDelete(element, i)">
+    <button mat-menu-item (click)="onDelete(element, i)" data-cy="appTorchTaggerMenuDelete">
       Delete
     </button>
   </ng-template>

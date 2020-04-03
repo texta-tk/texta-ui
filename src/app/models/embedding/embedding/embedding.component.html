@@ -6,6 +6,7 @@
     </div>
     <div class="paginator-row">
       <button class="paginator-margin-left"
+              data-cy="appModelsEmbeddingCreateBtn"
               mat-raised-button color="primary" (click)="openCreateDialog()">
         CREATE
       </button>
@@ -196,12 +197,12 @@
     <button mat-menu-item (click)="phrase(element)" data-cy="appEmbeddingMenuPhrase">
       Phrase
     </button>
-    <button (click)="edit(element)" mat-menu-item>
+    <button (click)="edit(element)" mat-menu-item data-cy="appEmbeddingMenuEdit">
       Edit
     </button>
     <mat-divider></mat-divider>
   </div>
-  <button mat-menu-item (click)="onDelete(element, i)">
+  <button mat-menu-item (click)="onDelete(element, i)" data-cy="appEmbeddingMenuDelete">
     Delete
   </button>
   </ng-template>
