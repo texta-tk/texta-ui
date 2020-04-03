@@ -6,13 +6,14 @@
 
     <mat-action-list class="overflow-auto" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50"
       [scrollWindow]="false" (scrolled)="onScrollLexicons($event)">
-      <mat-list-item disableRipple="true">
+      <mat-list-item disableRipple="true" data-cy="appLexiconNewListItem">
         <input matInput type="text" placeholder="New lexicon..." [(ngModel)]="newLexiconDescription">
         <button mat-button *ngIf="newLexiconDescription" matSuffix aria-label="Add" (click)="createNewLexicon()">Add
         </button>
       </mat-list-item>
 
       <mat-list-item [ngClass]="{'active-lexicon': selectedLexicon? item.id === selectedLexicon.id : false}"
+                     data-cy="appLexiconListItem"
         *ngFor="let item of lexicons" (click)="selectLexicon(item)">
         <span matLine>{{item.description}}</span>
         <button mat-icon-button (mousedown)="$event.stopPropagation();" (click)="deleteLexicon(item);">

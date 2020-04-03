@@ -28,7 +28,7 @@ describe('embeddings should work', function () {
     cy.get('[data-cy=appEmbeddingCreateDialogDesc]').then((desc => {
       cy.wrap(desc).should('have.class', 'mat-focused').type('b').find('input').clear();
       cy.matFormFieldShouldHaveError(desc, 'required');
-      cy.wrap(desc).type('testTagger');
+      cy.wrap(desc).type('testEmbedding');
     }));
     cy.get('[data-cy=appEmbeddingCreateDialogFields]').click().then((fields => {
       cy.wrap(fields).should('have.class', 'mat-focused');

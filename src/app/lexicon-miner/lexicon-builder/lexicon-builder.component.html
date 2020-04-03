@@ -3,7 +3,7 @@
     <div class="lexicon">
       <h3>Lexicon words</h3>
       <div *ngIf="!!_lexicon" fxLayout="column" fxFlexAlign="center">
-        <mat-form-field>
+        <mat-form-field data-cy="appLexiconEmbedding">
           <mat-label>Select Embedding</mat-label>
           <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
                       [(value)]="selectedEmbedding" (selectionChange)="saveEmbeddingChoice($event.value)">
@@ -13,7 +13,7 @@
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field floatLabel="never" class="textarea max-width" appearance="outline">
+        <mat-form-field floatLabel="never" class="textarea max-width" appearance="outline" data-cy="appLexiconWords">
           <mat-label>Enter words here</mat-label>
           <textarea matInput class="max-width" placeholder="Enter words here" [(ngModel)]="positives"
                     cdkTextareaAutosize
@@ -24,11 +24,13 @@
 
         <div fxLayout="row" fxLayoutGap="5px">
           <button mat-stroked-button color="accent" fxFlex [disabled]="!selectedEmbedding"
+                  data-cy="appLexiconNewSuggestionsBtn"
                   matTooltip="Select an embedding and get new word suggestions"
                   (click)="getNewSuggestions()">
             New Suggestions
           </button>
-          <button mat-stroked-button color="primary" (click)="saveLexicon()" fxFlex>Save</button>
+          <button mat-stroked-button color="primary"
+                  data-cy="appLexiconSaveBtn" (click)="saveLexicon()" fxFlex>Save</button>
         </div>
 
       </div>
@@ -38,7 +40,7 @@
       <h3>Negative words</h3>
       <div class="negatives flex-row-wrap">
         <mat-chip-list>
-          <mat-chip *ngFor="let negative of negatives" color="warn" selected removable="true"
+          <mat-chip data-cy="appLexiconNegatives" *ngFor="let negative of negatives" color="warn" selected removable="true"
                     (click)="removeNegative(negative)">{{negative}}
           </mat-chip>
         </mat-chip-list>
@@ -53,7 +55,9 @@
       <mat-spinner></mat-spinner>
     </div>
     <div class="flex-row-wrap">
-      <div *ngFor="let prediction of predictions" class="list-item pointer item-padding"
+      <div *ngFor="let prediction of predictions"
+           data-cy="appLexiconPredictions"
+           class="list-item pointer item-padding"
            (click)="addPositive(prediction)">
         <span>{{prediction.phrase}}</span>
       </div>
