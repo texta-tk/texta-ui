@@ -15,7 +15,7 @@ describe('taggers should work', function () {
       });
     });
   });
- /* function initTaggersPage(){
+  function initTaggersPage(){
     cy.visit('/taggers');
     cy.wait('@getProjectFields');
     cy.get('[data-cy=appNavbarProjectSelect]').click();
@@ -66,7 +66,7 @@ describe('taggers should work', function () {
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
       cy.get('[data-cy=appTaggerMenuStopWords]').should('be.visible').click();
       cy.get('.mat-dialog-container textarea').should('be.visible').click().clear().type('ja');
-      cy.route('POST', '**!/taggers/!**').as('postTagger');
+      cy.route('POST', '**/taggers/**').as('postTagger');
       cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
       cy.wait('@postTagger');
       cy.closeCurrentCdkOverlay();
@@ -111,5 +111,5 @@ describe('taggers should work', function () {
       cy.get('[data-cy=appConfirmDialogSubmit]').should('be.visible').click();
       cy.wait('@deleteTaggers');
     });
-  });*/
+  });
 });

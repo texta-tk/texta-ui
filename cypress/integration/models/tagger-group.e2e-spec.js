@@ -15,7 +15,6 @@ describe('tagger groups should work', function () {
       });
     });
   });
-/*
   function initTaggerGroupPage() {
     cy.visit('/tagger-groups');
     cy.wait('@getProjectFields');
@@ -110,5 +109,5 @@ describe('tagger groups should work', function () {
       cy.get('[data-cy=appConfirmDialogSubmit]').should('be.visible').click();
       cy.wait('@deleteTaggerGroups');
     });
-  });*/
+  });
 });
