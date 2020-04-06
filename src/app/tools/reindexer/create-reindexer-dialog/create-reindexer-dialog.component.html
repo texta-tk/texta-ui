@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>New Reindexer</h1>
 <div mat-dialog-content>
   <form class="flex-col" [formGroup]="reindexerForm" (ngSubmit)="onSubmit(reindexerForm?.value)">
-    <mat-form-field>
+    <mat-form-field data-cy="appReindexerCreateDialogDesc">
       <input matInput placeholder="Description" autocomplete="off" formControlName="descriptionFormControl"
              [errorStateMatcher]="matcher" required>
 
@@ -9,7 +9,7 @@
         Description is <strong>required</strong>
       </mat-error>
     </mat-form-field>
-    <mat-form-field>
+    <mat-form-field data-cy="appReindexerCreateDialogIndexName">
       <input matInput placeholder="New index name" autocomplete="off" formControlName="newNameFormControl"
              [errorStateMatcher]="matcher" required>
 
@@ -22,7 +22,7 @@
     </mat-form-field>
 
 
-    <mat-form-field>
+    <mat-form-field data-cy="appReindexerCreateDialogIndices">
       <mat-label>Indices</mat-label>
       <mat-select (selectionChange)="onIndexSelected($event)" panelClass="select-panel-reveal-input"
                   [disableOptionCentering]="true" formControlName="indicesFormControl" multiple required>
@@ -30,6 +30,9 @@
           {{index}}
         </mat-option>
       </mat-select>
+      <mat-error *ngIf="reindexerForm?.get('indicesFormControl')?.hasError('required')">
+        Index is <strong>required</strong>
+      </mat-error>
     </mat-form-field>
 
 
@@ -74,7 +77,7 @@
           <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Close</button>
         </div>
         <div class="flex-item-right">
-          <button type="submit" [disabled]="!reindexerForm?.valid" mat-button>Create</button>
+          <button type="submit" [disabled]="!reindexerForm?.valid" mat-button data-cy="appReindexerCreateDialogSubmit">Create</button>
         </div>
       </div>
 
