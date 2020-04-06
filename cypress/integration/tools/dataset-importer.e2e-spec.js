@@ -21,7 +21,6 @@ describe('dataset-importer should work', function () {
     cy.get('mat-option').contains('integration_test_project').click();
   }
   it('should be able to create a new dataset task', function () {
-/*    // file inputs are not supported
     initImporterPage();
     cy.get('[data-cy=appToolsDatasetImporterCreateBtn]').should('be.visible').click();
     cy.get('[data-cy=appDatasetImporterCreateDialogDesc]').then((desc => {
@@ -30,45 +29,17 @@ describe('dataset-importer should work', function () {
       cy.wrap(desc).type('testImporter');
     }));
     cy.get('[data-cy=appDatasetImporterCreateDialogName]').click().then((name => {
-      cy.wrap(name).should('have.class', 'mat-focused').type('b').find('input').clear();
+      cy.wrap(name).should('have.class', 'mat-focused').type('asd').find('input').clear();
       cy.matFormFieldShouldHaveError(name, 'required');
       cy.wrap(name).type('newIndex');
     }));
-    cy.get('[data-cy=appDatasetImporterCreateDialogFile]').then((fileForm => {
-      const el = $el[0]  // get the DOM element from the jquery element
-      const win = el.ownerDocument.defaultView // get the window from the DOM element
-      const component = win.ng.probe(el).componentInstance
-      cy.fixture('testSample.csv', 'base64').then(x=>{
-        return Cypress.Blob.base64StringToBlob(x).then(blob=>{
-          fileForm.val(new File([blob],'testSample.csv'));
-          cy.wrap(fileForm).trigger('value', new File([blob],'testSample.csv'));
-          cy.get(fileForm).trigger('change', new File([blob],'testSample.csv'));
-        });
-      })
-    }));
+    cy.get('input[type=file]').attachFile({
+      filePath: "testSample.csv",
+    });
     cy.get('[data-cy=appDatasetImporterCreateDialogSubmit]').should('be.visible').click();
     cy.wait('@postDatasets').then(created=>{
       expect(created.status).to.eq(201);
       assert.equal(created.response.body.task.status, 'created');
-    });*/
-  });
-  it('extra_actions should work', function () {
-    // list features
-    cy.fixture('testSample.csv', 'base64').then(x=>{
-      return Cypress.Blob.base64StringToBlob(x).then(blob=>{
-        let formData = new FormData();
-        formData.append('file',new File([blob],'testSample.csv'));
-        formData.append('description', 'test');
-        formData.append('separator', ',');
-        formData.append('index', 'dsfsdf');
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', `${Cypress.env('api_host')}${Cypress.env('api_basePath')}/projects/${this.projectId}/dataset_imports/`);
-        xhr.setRequestHeader('Authorization', 'Token ' + JSON.parse(localStorage.getItem('user')).key);
-        xhr.send(formData);
-        return xhr;
-      });
-    }).then(x=>{
-      initImporterPage();
       // delete dataset task
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
       cy.get('[data-cy=appDatasetImportMenuDelete]').should('be.visible').click();

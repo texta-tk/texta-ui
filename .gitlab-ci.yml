@@ -15,18 +15,18 @@ variables:
     CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/Cypress"
     FF_NETWORK_PER_BUILD: 1
 stages:
-#  - unit-test
+  - unit-test
   - e2e-test
-#  - build
+  - build
 
-#Karma:
-#  image: circleci/node:10-browsers
-#  script:
-#    - npm ci
-#    - npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
-#  stage: unit-test
-#  tags:
-#  - ci-test
+Karma:
+  image: circleci/node:10-browsers
+  script:
+    - npm ci
+    - npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
+  stage: unit-test
+  tags:
+  - ci-test
 
 
 Cypress:
@@ -50,14 +50,14 @@ Cypress:
     - tags
 
 
-#Build:
-#  stage: build
-#  tags:
-#  - docker
-#  script:
-#  - docker login -u $CI_DEPLOY_USER -p $CI_DEPLOY_PASSWORD docker.texta.ee
-#  - python ./docker/build_and_push.py
-#  - docker system prune --volumes -f
-#  only:
-#  - master
-#  - tags
+Build:
+  stage: build
+  tags:
+  - docker
+  script:
+  - docker login -u $CI_DEPLOY_USER -p $CI_DEPLOY_PASSWORD docker.texta.ee
+  - python ./docker/build_and_push.py
+  - docker system prune --volumes -f
+  only:
+  - master
+  - tags
