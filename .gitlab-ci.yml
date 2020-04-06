@@ -13,6 +13,7 @@ variables:
     TEXTA_USE_CSRF: "False"
     npm_config_cache: "$CI_PROJECT_DIR/.npm"
     CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/Cypress"
+    FF_NETWORK_PER_BUILD: 1
 stages:
   - unit-test
   - e2e-test
@@ -34,6 +35,7 @@ Cypress:
   tags:
     - ci-test
   variables:
+      FF_NETWORK_PER_BUILD: 1
   before_script:
     - npm ci
   script:
