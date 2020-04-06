@@ -15,7 +15,6 @@ describe('torchTaggers should work', function () {
       });
     });
   });
-/*
   function initTorchTagger() {
     cy.visit('/torchtaggers');
     cy.wait('@getProjectFields');
@@ -97,5 +96,5 @@ describe('torchTaggers should work', function () {
       cy.get('[data-cy=appConfirmDialogSubmit]').should('be.visible').click();
       cy.wait('@deleteTorchTaggers');
     });
-  });*/
+  });
 });

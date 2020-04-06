@@ -15,7 +15,7 @@ describe('embeddings should work', function () {
       });
     });
   });
- /* function initEmbeddingsPage(){
+  function initEmbeddingsPage(){
     cy.visit('/embeddings');
     cy.wait('@getEmbeddings');
     cy.wait('@getProjectFields');
@@ -58,7 +58,7 @@ describe('embeddings should work', function () {
       cy.get('app-phrase-dialog input:first()').should('be.visible').click()
         .clear()
         .type('Kinnipeetavate arvu vähenedes nende ülalpidamiskulud suurenevad. ');
-      cy.route('POST', '**!/embeddings/!**').as('postEmbeddings');
+      cy.route('POST', '**/embeddings/**').as('postEmbeddings');
       cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
       cy.wait('@postEmbeddings');
       cy.closeCurrentCdkOverlay();
@@ -77,5 +77,5 @@ describe('embeddings should work', function () {
       cy.get('[data-cy=appConfirmDialogSubmit]').should('be.visible').click();
       cy.wait('@deleteEmbeddings');
     });
-  });*/
+  });
 });

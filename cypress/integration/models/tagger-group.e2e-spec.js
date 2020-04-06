@@ -15,7 +15,6 @@ describe('tagger groups should work', function () {
       });
     });
   });
-/*
   function initTaggerGroupPage() {
     cy.visit('/tagger-groups');
     cy.wait('@getProjectFields');
@@ -67,7 +66,8 @@ describe('tagger groups should work', function () {
         .clear()
         .type('Kinnipeetavate arvu vähenedes nende ülalpidamiskulud suurenevad. ');
       cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
-      cy.wait('@postTaggerGroups').then(x=>{
+      // this can take a long time
+      cy.wait('@postTaggerGroups', {timeout: 60000}).then(x=>{
         expect(x.status).to.eq(200);
       });
       cy.closeCurrentCdkOverlay();
@@ -110,5 +110,5 @@ describe('tagger groups should work', function () {
       cy.get('[data-cy=appConfirmDialogSubmit]').should('be.visible').click();
       cy.wait('@deleteTaggerGroups');
     });
-  });*/
+  });
 });
