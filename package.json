@@ -15,7 +15,7 @@
     "cy:open": "cypress open",
     "cypress:run": "cypress run --record --key e97c960a-b48d-42b3-94fa-6af3718345b9",
     "cypress:ci": "ng build --configuration=cypress-production && run-p --race start:ci cypress:run",
-    "start:ci": "http-server ./dist/TEXTA -a localhost -p 4200 -c-1"
+    "start:ci": "http-server ./dist/TEXTA -a localhost -p 4200 -c-1 --proxy http://localhost:4200/index.html?"
   },
   "private": true,
   "dependencies": {
