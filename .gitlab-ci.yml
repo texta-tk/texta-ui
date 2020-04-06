@@ -34,8 +34,6 @@ Cypress:
   stage: e2e-test
   tags:
     - ci-test
-  variables:
-      FF_NETWORK_PER_BUILD: 1
   before_script:
     - npm ci
   script:
