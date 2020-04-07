@@ -3,7 +3,7 @@
     <app-project></app-project>
   </div>
   <div fxFlex="40%" class="health-wrapper">
-    <div *ngIf="health" data-cy="appHomeHealth">
+    <div *ngIf="health?.services" data-cy="appHomeHealth">
       <mat-card fxLayout="row wrap" fxLayoutGap="5px" class="service-status-card center-margin">
         <mat-chip-list class="center-margin chip-list-space-evenly" disabled>
           <mat-chip selected [color]="health.services.elastic.alive ? 'primary' : 'accent'">

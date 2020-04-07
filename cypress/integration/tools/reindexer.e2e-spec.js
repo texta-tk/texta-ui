@@ -1,5 +1,6 @@
 describe('reindexer should work', function () {
   beforeEach(function () {
+    cy.wait(100);
     cy.fixture('users').then((user) => {
       cy.server();
       cy.login(user.username, user.password);
