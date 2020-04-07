@@ -4,8 +4,19 @@ services:
     - name: docker.texta.ee/texta/mlp:latest
       alias: texta-mlp
     - name: redis:latest
+    - name: postgres:11
+      alias: texta-postgres
 
 variables:
+    DJANGO_DATABASE_ENGINE: "django.db.backends.postgresql"
+    DJANGO_DATABASE_NAME: docker
+    DJANGO_DATABASE_USER: docker
+    DJANGO_DATABASE_PASSWORD: docker
+    DJANGO_DATABASE_HOST: texta-postgres
+    DJANGO_DATABASE_PORT: 5432
+    POSTGRES_DATABASE: docker
+    POSTGRES_USER: docker
+    POSTGRES_PASSWORD: docker
     TEXTA_ES_URL: http://172.17.0.1:9200
     TEXTA_MLP_URL: http://texta-mlp:5000
     TEXTA_REDIS_URL: redis://redis:6379/0
@@ -14,6 +25,7 @@ variables:
     npm_config_cache: "$CI_PROJECT_DIR/.npm"
     CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/Cypress"
     FF_NETWORK_PER_BUILD: 1
+
 stages:
   - unit-test
   - e2e-test
@@ -27,7 +39,6 @@ Karma:
   stage: unit-test
   tags:
   - ci-test
-
 
 Cypress:
   image: cypress/base:10
@@ -48,7 +59,6 @@ Cypress:
     expire_in: 1 day
   except:
     - tags
-
 
 Build:
   stage: build
