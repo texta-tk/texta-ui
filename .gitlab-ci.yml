@@ -69,5 +69,4 @@ Build:
   - python ./docker/build_and_push.py
   - docker system prune --volumes -f
   only:
-  - master
   - tags
