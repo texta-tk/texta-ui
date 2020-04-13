@@ -10,6 +10,8 @@ export class Tagger {
   fields: string[];
   embedding: null;
   vectorizer: TaggerVectorizerChoices;
+  num_positives: number;
+  num_negatives: number;
   feature_selector: string;
   stop_words: string;
   maximum_sample_size: number;
