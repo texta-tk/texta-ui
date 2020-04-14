@@ -101,7 +101,7 @@ describe('tagger groups should work', function () {
         .type('newName');
       cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
       cy.wait('@patchTaggerGroups').then(x=>{
-        expect(x.status).to.eq(405); // fix tagger grp
+        expect(x.status).to.eq(200);
       });
       cy.closeCurrentCdkOverlay();
       // delete
