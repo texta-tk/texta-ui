@@ -219,12 +219,9 @@
 </div>
 <mat-menu #editMenu="matMenu">
   <ng-template matMenuContent let-element="element" let-i="i">
-    <div *ngIf="element.task && element.task.status === 'completed'">
+    <ng-container *ngIf="element.task && element.task.status === 'completed'">
       <button mat-menu-item (click)="listFeatures(element)" data-cy="appTaggerMenuListFeatures">
         List features
-      </button>
-      <button mat-menu-item (click)="retrainTagger(element)" data-cy="appTaggerMenuRetrain">
-        Retrain tagger
       </button>
       <button mat-menu-item (click)="editStopwordsDialog(element)" data-cy="appTaggerMenuStopWords">
         Stop words
@@ -241,8 +238,11 @@
       <button (click)="edit(element)" mat-menu-item data-cy="appTaggerMenuEdit">
         Edit
       </button>
-      <mat-divider></mat-divider>
-    </div>
+    </ng-container>
+    <button mat-menu-item (click)="retrainTagger(element)" data-cy="appTaggerMenuRetrain">
+      Retrain tagger
+    </button>
+    <mat-divider></mat-divider>
     <button mat-menu-item (click)="onDelete(element, i)" data-cy="appTaggerMenuDelete">
       Delete
     </button>

@@ -10,6 +10,19 @@
       </mat-error>
     </mat-form-field>
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"></app-saved-search-autocomplete>
+    <mat-form-field>
+      <mat-label>Indices</mat-label>
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
+                  formControlName="indicesFormControl" multiple required (openedChange)="indicesOpenedChange($event)">
+        <mat-option *ngFor="let projectIndex of projectIndices" [value]="projectIndex">
+          {{projectIndex.index}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="embeddingForm.get('indicesFormControl')?.hasError('required')">
+        Need atleast 1 index
+      </mat-error>
+    </mat-form-field>
+
     <mat-form-field data-cy="appEmbeddingCreateDialogFields">
       <mat-label>Select Fields</mat-label>
       <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"

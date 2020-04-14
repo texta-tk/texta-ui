@@ -142,7 +142,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
 
   openCreateDialog() {
     const dialogRef = this.dialog.open(CreateEmbeddingDialogComponent, {
-      height: '490px',
+      maxHeight: '600px',
       width: '700px',
       disableClose: true
     });

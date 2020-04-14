@@ -24,6 +24,7 @@ export class CreateEmbeddingDialogComponent implements OnInit {
     descriptionFormControl: new FormControl('', [
       Validators.required,
     ]),
+    indicesFormControl: new FormControl([], [Validators.required]),
     fieldsFormControl: new FormControl([], [Validators.required]),
     dimensionsFormControl: new FormControl(100, [Validators.required]),
     frequencyFormControl: new FormControl(5, [Validators.required])
@@ -35,6 +36,7 @@ export class CreateEmbeddingDialogComponent implements OnInit {
   projectFields: ProjectField[];
   destroyed$ = new Subject<boolean>();
   fieldsUnique: Field[] = [];
+  projectIndices: ProjectField[] = [];
 
   constructor(private dialogRef: MatDialogRef<CreateEmbeddingDialogComponent>,
               private projectService: ProjectService,
@@ -43,13 +45,32 @@ export class CreateEmbeddingDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-
-    this.projectStore.getCurrentProjectFields().pipe(takeUntil(this.destroyed$)).subscribe(x => {
-      if (x) {
-        this.projectFields = ProjectField.cleanProjectFields(x, ['text'], []);
-        this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
+    this.projectStore.getCurrentProjectFields().pipe(takeUntil(this.destroyed$)).subscribe(currentProjIndices => {
+      if (currentProjIndices) {
+        const indicesForm = this.embeddingForm.get('indicesFormControl');
+        indicesForm?.setValue(currentProjIndices);
+        this.getFieldsForIndices(currentProjIndices);
       }
     });
+
+    this.projectStore.getProjectFields().pipe(takeUntil(this.destroyed$)).subscribe(projIndices => {
+      if (projIndices) {
+        this.projectIndices = projIndices;
+      }
+    });
+  }
+
+  getFieldsForIndices(indices: ProjectField[]) {
+    this.projectFields = ProjectField.cleanProjectFields(indices, ['text'], []);
+    this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
+  }
+
+  public indicesOpenedChange(opened) {
+    const indicesForm = this.embeddingForm.get('indicesFormControl');
+    // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
+    if (!opened && (indicesForm?.value && indicesForm.value.length > 0)) {
+      this.getFieldsForIndices(indicesForm?.value);
+    }
   }
 
   onQueryChanged(query: string) {
@@ -59,15 +80,16 @@ export class CreateEmbeddingDialogComponent implements OnInit {
   onSubmit(formData) {
     // temp
     const fieldsToSend = this.generateFieldsFormat(formData.fieldsFormControl);
-    const body = {
+    const body: any = {
       description: formData.descriptionFormControl,
       fields: fieldsToSend,
+      indices: formData.indicesFormControl.map(x => [{name: x.index}]).flat(),
       num_dimensions: formData.dimensionsFormControl,
       min_freq: formData.frequencyFormControl
     };
 
     if (this.query) {
-      body['query'] = this.query;
+      body.query = this.query;
     }
 
     this.projectStore.getCurrentProject().pipe(take(1), mergeMap((project: Project) => {
@@ -77,7 +99,6 @@ export class CreateEmbeddingDialogComponent implements OnInit {
       return of(null);
     })).subscribe((resp: Embedding | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        console.log(resp);
         this.dialogRef.close(resp);
       } else if (resp instanceof HttpErrorResponse) {
         this.dialogRef.close(resp);

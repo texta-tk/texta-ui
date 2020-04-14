@@ -7,5 +7,6 @@
     "api_host": "http://texta-rest",
     "api_basePath": "/api/v1"
   },
-  "projectId": "8nu659"
+  "projectId": "8nu659",
+  "responseTimeout": 70000
 }
