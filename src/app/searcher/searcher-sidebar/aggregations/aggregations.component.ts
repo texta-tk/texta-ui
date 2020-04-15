@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {pairwise, takeUntil} from 'rxjs/operators';
-import {Field, Project, ProjectFact, ProjectField} from '../../../shared/types/Project';
+import {Field, Project, ProjectFact, ProjectIndex} from '../../../shared/types/Project';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {BehaviorSubject, forkJoin, of, Subject} from 'rxjs';
 import {FormControl} from '@angular/forms';
@@ -24,7 +24,7 @@ export interface AggregationForm {
 })
 export class AggregationsComponent implements OnInit, OnDestroy {
   currentProject: Project;
-  projectFields: ProjectField[] = [];
+  projectFields: ProjectIndex[] = [];
   projectFacts: ProjectFact[] = [];
   fieldsUnique: Field[] = [];
   public fieldsFiltered: BehaviorSubject<Field[]> = new BehaviorSubject<Field[]>([]);
@@ -69,10 +69,10 @@ export class AggregationsComponent implements OnInit, OnDestroy {
         this.projectFacts = projectFacts;
       }
     });
-    this.projectStore.getCurrentProjectFields().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectField[]) => {
+    this.projectStore.getCurrentProjectIndices().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectIndex[]) => {
       if (projectFields) {
-        this.projectFields = ProjectField.cleanProjectFields(projectFields, ['fact', 'text', 'date'], []);
-        this.projectFields = ProjectField.sortTextaFactsAsFirstItem(this.projectFields);
+        this.projectFields = ProjectIndex.cleanProjectFields(projectFields, ['fact', 'text', 'date'], []);
+        this.projectFields = ProjectIndex.sortTextaFactsAsFirstItem(this.projectFields);
         const distinct = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(x => x.fields).flat(), (x => x.path));
         this.fieldsFiltered.next(distinct);
         this.fieldsUnique = distinct;

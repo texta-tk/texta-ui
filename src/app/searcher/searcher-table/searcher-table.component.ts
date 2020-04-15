@@ -9,7 +9,7 @@ import {of, Subject} from 'rxjs';
 import {debounceTime, switchMap, takeUntil} from 'rxjs/operators';
 import {ProjectStore} from '../../core/projects/project.store';
 import {ElasticsearchQuery} from '../searcher-sidebar/build-search/Constraints';
-import {Project, ProjectField} from '../../shared/types/Project';
+import {Project, ProjectIndex} from '../../shared/types/Project';
 import {LocalStorageService} from '../../core/util/local-storage.service';
 import {SearcherOptions} from '../SearcherOptions';
 import {HttpErrorResponse} from '@angular/common/http';
@@ -35,7 +35,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
   @Output() drawerToggle = new EventEmitter<boolean>();
   private destroy$: Subject<boolean> = new Subject();
   private currentElasticQuery: ElasticsearchQuery;
-  private projectFields: ProjectField[];
+  private projectFields: ProjectIndex[];
   private currentProject: Project;
   searchQueue$: Subject<void> = new Subject<void>();
 
@@ -55,7 +55,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
         if (currentProjectState?.searcher?.itemsPerPage) {
           this.paginator.pageSize = currentProjectState.searcher.itemsPerPage;
         }
-        return this.projectStore.getCurrentProjectFields();
+        return this.projectStore.getCurrentProjectIndices();
       } else {
         return of(null);
       }

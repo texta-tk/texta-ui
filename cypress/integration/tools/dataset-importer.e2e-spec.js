@@ -7,7 +7,7 @@ describe('dataset-importer should work', function () {
         assert.isNotNull(x.body.id, 'should have project id');
         cy.wrap(x.body.id).as('projectId');
         cy.route('GET', '**user**').as('getUser');
-        cy.route('GET', '**get_fields**').as('getProjectFields');
+        cy.route('GET', '**get_fields**').as('getProjectIndices');
         cy.route('GET', '**/dataset_imports/**').as('getDatasets');
         cy.route('DELETE', '**/dataset_imports/**').as('deleteDatasets');
         cy.route('POST', '**/dataset_imports/**').as('postDatasets');
@@ -16,7 +16,7 @@ describe('dataset-importer should work', function () {
   });
   function initImporterPage(){
     cy.visit('/dataset-importer');
-    cy.wait('@getProjectFields');
+    cy.wait('@getProjectIndices');
     cy.get('[data-cy=appNavbarProjectSelect]').click();
     cy.get('mat-option').contains('integration_test_project').click();
   }

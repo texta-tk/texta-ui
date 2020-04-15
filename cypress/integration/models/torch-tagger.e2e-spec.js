@@ -7,7 +7,7 @@ describe('torchTaggers should work', function () {
         assert.isNotNull(x.body.id, 'should have project id');
         cy.wrap(x.body.id).as('projectId');
         cy.route('GET', '**user**').as('getUser');
-        cy.route('GET', '**get_fields**').as('getProjectFields');
+        cy.route('GET', '**get_fields**').as('getProjectIndices');
         cy.route('GET', '**/torchtaggers/**').as('getTorchTaggers');
         cy.route('DELETE', '**/torchtaggers/**').as('deleteTorchTaggers');
         cy.route('POST', '**/torchtaggers/**').as('postTorchTaggers');
@@ -17,7 +17,7 @@ describe('torchTaggers should work', function () {
   });
   function initTorchTagger() {
     cy.visit('/torchtaggers');
-    cy.wait('@getProjectFields');
+    cy.wait('@getProjectIndices');
     cy.get('[data-cy=appNavbarProjectSelect]').click();
     cy.get('mat-option').contains('integration_test_project').click();
   }

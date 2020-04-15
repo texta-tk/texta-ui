@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ProjectField, ProjectFact, Project, Field} from '../../../../shared/types/Project';
+import {ProjectIndex, ProjectFact, Project, Field} from '../../../../shared/types/Project';
 import {mergeMap, take, takeUntil} from 'rxjs/operators';
 import {LogService} from '../../../../core/util/log.service';
 import {TaggerOptions} from '../../../../shared/types/tasks/TaggerOptions';
@@ -46,12 +46,12 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   taggerOptions: TaggerOptions = TaggerOptions.createEmpty();
   embeddings: Embedding[];
-  projectFields: ProjectField[];
+  projectFields: ProjectIndex[];
   projectFacts: ProjectFact[];
   currentProject: Project;
   destroyed$ = new Subject<boolean>();
   fieldsUnique: Field[] = [];
-  projectIndices: ProjectField[] = [];
+  projectIndices: ProjectIndex[] = [];
 
   constructor(private dialogRef: MatDialogRef<CreateTaggerGroupDialogComponent>,
               private taggerService: TaggerService,
@@ -63,7 +63,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.projectStore.getCurrentProjectFields().pipe(takeUntil(this.destroyed$)).subscribe(currentProjIndices => {
+    this.projectStore.getCurrentProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(currentProjIndices => {
       if (currentProjIndices) {
         const indicesForm = this.taggerGroupForm.get('taggerForm')?.get('indicesFormControl');
         indicesForm?.setValue(currentProjIndices);
@@ -71,7 +71,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
       }
     });
 
-    this.projectStore.getProjectFields().pipe(takeUntil(this.destroyed$)).subscribe(projIndices => {
+    this.projectStore.getProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(projIndices => {
       if (projIndices) {
         this.projectIndices = projIndices;
       }
@@ -111,8 +111,8 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
 
   }
 
-  getFieldsForIndices(indices: ProjectField[]) {
-    this.projectFields = ProjectField.cleanProjectFields(indices, ['text'], []);
+  getFieldsForIndices(indices: ProjectIndex[]) {
+    this.projectFields = ProjectIndex.cleanProjectFields(indices, ['text'], []);
     this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
   }
 

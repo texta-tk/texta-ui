@@ -8,7 +8,7 @@ describe('reindexer should work', function () {
         assert.isNotNull(x.body.id, 'should have project id');
         cy.wrap(x.body.id).as('projectId');
         cy.route('GET', '**user**').as('getUser');
-        cy.route('GET', '**get_fields**').as('getProjectFields');
+        cy.route('GET', '**get_fields**').as('getProjectIndices');
         cy.route('GET', '**/reindexer/**').as('getIndices');
         cy.route('DELETE', '**/reindexer/**').as('deleteIndices');
         cy.route('POST', '**/reindexer/**').as('postIndices');

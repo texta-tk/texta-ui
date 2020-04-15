@@ -5,7 +5,7 @@ import {FormGroup, FormControl, Validators} from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import {LiveErrorStateMatcher} from 'src/app/shared/CustomerErrorStateMatchers';
-import {ProjectField, Project, Field} from 'src/app/shared/types/Project';
+import {ProjectIndex, Project, Field} from 'src/app/shared/types/Project';
 import {ProjectService} from 'src/app/core/projects/project.service';
 import {ProjectStore} from 'src/app/core/projects/project.store';
 import {take, mergeMap} from 'rxjs/operators';
@@ -32,8 +32,8 @@ export class CreateReindexerDialogComponent implements OnInit {
   defaultQuery = '{"query": {"match_all": {}}}';
   query = this.defaultQuery;
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
-  projectFields: ProjectField[];
-  filteredProjectFields: ProjectField[] = [];
+  projectFields: ProjectIndex[];
+  filteredProjectFields: ProjectIndex[] = [];
   indices: string[];
   reindexerOptions: any;
 
@@ -52,18 +52,18 @@ export class CreateReindexerDialogComponent implements OnInit {
         return forkJoin(
           {
             reindexerOptions: this.reindexerService.getReindexerOptions(currentProject.id),
-            projectFields: this.projectService.getProjectFields(currentProject.id),
+            projectFields: this.projectService.getProjectIndices(currentProject.id),
           });
       } else {
         return of(null);
       }
     })).subscribe((resp: {
       reindexerOptions: any | HttpErrorResponse,
-      projectFields: ProjectField[] | HttpErrorResponse,
+      projectFields: ProjectIndex[] | HttpErrorResponse,
     }) => {
       if (resp) {
         if (!(resp.projectFields instanceof HttpErrorResponse)) {
-          this.projectFields = ProjectField.sortTextaFactsAsFirstItem(resp.projectFields);
+          this.projectFields = ProjectIndex.sortTextaFactsAsFirstItem(resp.projectFields);
         } else {
           this.logService.snackBarError(resp.projectFields, 2000);
         }

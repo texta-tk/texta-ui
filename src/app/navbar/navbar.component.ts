@@ -6,7 +6,7 @@ import {UserProfile} from '../shared/types/UserProfile';
 import {UserService} from '../core/users/user.service';
 import {LocalStorageService} from '../core/util/local-storage.service';
 import {ProjectService} from '../core/projects/project.service';
-import {Project, ProjectField, ProjectResourceCounts} from '../shared/types/Project';
+import {Project, ProjectIndex, ProjectResourceCounts} from '../shared/types/Project';
 import {FormControl} from '@angular/forms';
 import {ProjectStore} from '../core/projects/project.store';
 import {of, Subject} from 'rxjs';
@@ -26,7 +26,7 @@ import {EditProjectDialogComponent} from '../home/project/edit-project-dialog/ed
 export class NavbarComponent implements OnInit, OnDestroy {
   user: UserProfile;
   projects: Project[];
-  projectFields: ProjectField[];
+  projectFields: ProjectIndex[];
   projectControl = new FormControl();
   projectFieldsControl = new FormControl();
   currentProject: Project;
@@ -77,6 +77,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
         });
         // dont select first when already have something selected
         const selectedProj = this.localStorageService.getCurrentlySelectedProject();
+        console.log(selectedProj);
         const cachedProject = !!selectedProj ?
           this.projects.find(x => x.id === selectedProj.id) : null;
         if (cachedProject && cachedProject.users.includes(this.user.url)) {
@@ -88,17 +89,17 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.projects = [];
       }
     });
-    this.projectStore.getProjectFields().pipe(takeUntil(this.destroyed$)).subscribe((x) => {
+    this.projectStore.getProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe((x) => {
       if (x) {
-        this.projectFields = UtilityFunctions.sortByStringProperty<ProjectField>(x, y => y.index);
+        this.projectFields = UtilityFunctions.sortByStringProperty<ProjectIndex>(x, y => y.index);
         if (this.currentProject) {
           const state = this.localStorageService.getProjectState(this.currentProject);
           if (state?.global?.selectedIndices && state.global.selectedIndices.length > 0) {
             this.projectFieldsControl.setValue(this.projectFields.filter(b => state.global.selectedIndices.includes(b.index)));
-            this.projectStore.setCurrentProjectFields(this.projectFieldsControl.value);
+            this.projectStore.setCurrentProjectIndices(this.projectFieldsControl.value);
           } else {
             this.projectFieldsControl.setValue(this.projectFields);
-            this.projectStore.setCurrentProjectFields(this.projectFields);
+            this.projectStore.setCurrentProjectIndices(this.projectFields);
           }
         }
       } else {
@@ -114,8 +115,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
     });
   }
 
-  indexSelectionChanged(indices: ProjectField[]) {
-    this.projectStore.setCurrentProjectFields(indices);
+  indexSelectionChanged(indices: ProjectIndex[]) {
+    this.projectStore.setCurrentProjectIndices(indices);
     const state = this.localStorageService.getProjectState(this.currentProject);
     if (state) {
       if (!state?.global?.selectedIndices) {

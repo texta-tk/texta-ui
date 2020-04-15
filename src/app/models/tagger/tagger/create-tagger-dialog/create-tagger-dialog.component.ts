@@ -5,7 +5,7 @@ import {MatDialogRef} from '@angular/material/dialog';
 import {LiveErrorStateMatcher} from '../../../../shared/CustomerErrorStateMatchers';
 import {ProjectService} from '../../../../core/projects/project.service';
 import {HttpErrorResponse} from '@angular/common/http';
-import {Field, Project, ProjectField} from '../../../../shared/types/Project';
+import {Field, Project, ProjectIndex} from '../../../../shared/types/Project';
 import {TaggerService} from '../../../../core/models/taggers/tagger.service';
 import {ProjectStore} from '../../../../core/projects/project.store';
 import {mergeMap, take, takeUntil} from 'rxjs/operators';
@@ -42,11 +42,11 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   taggerOptions: TaggerOptions = TaggerOptions.createEmpty();
   embeddings: Embedding[];
-  projectFields: ProjectField[];
+  projectFields: ProjectIndex[];
   currentProject: Project;
   destroyed$ = new Subject<boolean>();
   fieldsUnique: Field[] = [];
-  projectIndices: ProjectField[] = [];
+  projectIndices: ProjectIndex[] = [];
 
   constructor(private dialogRef: MatDialogRef<CreateTaggerDialogComponent>,
               private taggerService: TaggerService,
@@ -57,7 +57,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.projectStore.getCurrentProjectFields().pipe(takeUntil(this.destroyed$)).subscribe(currentProjIndices => {
+    this.projectStore.getCurrentProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(currentProjIndices => {
       if (currentProjIndices) {
         const indicesForm = this.taggerForm.get('indicesFormControl');
         indicesForm?.setValue(currentProjIndices);
@@ -65,7 +65,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.projectStore.getProjectFields().pipe(takeUntil(this.destroyed$)).subscribe(projIndices => {
+    this.projectStore.getProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(projIndices => {
       if (projIndices) {
         this.projectIndices = projIndices;
       }
@@ -94,8 +94,8 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
     });
   }
 
-  getFieldsForIndices(indices: ProjectField[]) {
-    this.projectFields = ProjectField.cleanProjectFields(indices, ['text'], []);
+  getFieldsForIndices(indices: ProjectIndex[]) {
+    this.projectFields = ProjectIndex.cleanProjectFields(indices, ['text'], []);
     this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
   }
 

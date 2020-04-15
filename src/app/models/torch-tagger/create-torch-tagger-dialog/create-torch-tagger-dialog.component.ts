@@ -4,7 +4,7 @@ import {ErrorStateMatcher} from '@angular/material/core';
 import {MatDialogRef} from '@angular/material/dialog';
 import {LiveErrorStateMatcher} from 'src/app/shared/CustomerErrorStateMatchers';
 import {Embedding} from 'src/app/shared/types/tasks/Embedding';
-import {ProjectField, ProjectFact, Project, Field} from 'src/app/shared/types/Project';
+import {ProjectIndex, ProjectFact, Project, Field} from 'src/app/shared/types/Project';
 import {TorchTaggerService} from '../../../core/models/taggers/torch-tagger.service';
 import {ProjectService} from 'src/app/core/projects/project.service';
 import {ProjectStore} from 'src/app/core/projects/project.store';
@@ -38,7 +38,7 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   torchTaggerOptions: any;
   embeddings: Embedding[] = [];
-  projectFields: ProjectField[];
+  projectFields: ProjectIndex[];
   projectFacts: ProjectFact[];
   destroyed$ = new Subject<boolean>();
   fieldsUnique: Field[] = [];
@@ -83,9 +83,9 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.projectStore.getCurrentProjectFields().pipe(takeUntil(this.destroyed$)).subscribe(x => {
+    this.projectStore.getCurrentProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(x => {
       if (x) {
-        this.projectFields = ProjectField.cleanProjectFields(x, ['text'], []);
+        this.projectFields = ProjectIndex.cleanProjectFields(x, ['text'], []);
         this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
       }
     });

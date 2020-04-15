@@ -1,7 +1,7 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {debounceTime, switchMap, takeUntil} from 'rxjs/operators';
-import {Project, ProjectField} from '../../../../shared/types/Project';
+import {Project, ProjectIndex} from '../../../../shared/types/Project';
 import {ProjectStore} from '../../../../core/projects/project.store';
 import {of, Subject} from 'rxjs';
 import {SearcherService} from '../../../../core/searcher/searcher.service';
@@ -23,7 +23,7 @@ import {LocalStorageService} from '../../../../core/util/local-storage.service';
 export class SimpleSearchComponent implements OnInit, OnDestroy {
   searchFormControl = new FormControl();
   destroy$ = new Subject<boolean>();
-  projectFields: ProjectField[];
+  projectFields: ProjectIndex[];
   currentProject: Project;
   elasticSearchQuery = new ElasticsearchQuery();
   searchQueue$: Subject<void> = new Subject<void>();
@@ -40,9 +40,9 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.projectStore.getCurrentProjectFields().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectField[]) => {
+    this.projectStore.getCurrentProjectIndices().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectIndex[]) => {
       if (projectFields) {
-        this.projectFields = ProjectField.sortTextaFactsAsFirstItem(projectFields);
+        this.projectFields = ProjectIndex.sortTextaFactsAsFirstItem(projectFields);
         this.makeQuery(this.searchFormControl.value);
       }
     });
@@ -93,7 +93,7 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
 
   makeQuery(value: string) {
     if (value && this.projectFields) {
-      const fields = ProjectField.cleanProjectFields(this.projectFields, ['text'], []).map(x => x.fields).flat();
+      const fields = ProjectIndex.cleanProjectFields(this.projectFields, ['text'], []).map(x => x.fields).flat();
       const fieldPathArray = fields.map(y => y.path);
       this.elasticSearchQuery.elasticSearchQuery.query = {
         multi_match: {

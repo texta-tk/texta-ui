@@ -7,7 +7,7 @@ describe('lexicons should work', function () {
         assert.isNotNull(x.body.id, 'should have project id');
         cy.wrap(x.body.id).as('projectId');
         cy.route('GET', '**user**').as('getUser');
-        cy.route('GET', '**get_fields**').as('getProjectFields');
+        cy.route('GET', '**get_fields**').as('getProjectIndices');
         cy.route('GET', '**/lexicons/**').as('getLexicons');
         cy.route('DELETE', '**/lexicons/**').as('deleteLexicons');
         cy.route('POST', '**/lexicons/**').as('postLexicons');
@@ -19,7 +19,7 @@ describe('lexicons should work', function () {
   it('should be able to create a new lexcion, save words, get new suggestions', function () {
     cy.importTestEmbedding(this.projectId).then(x => {
       cy.visit('/lexicon-miner');
-      cy.wait('@getProjectFields');
+      cy.wait('@getProjectIndices');
       cy.get('[data-cy=appNavbarProjectSelect]').click();
       cy.get('mat-option').contains('integration_test_project').click();
       cy.get('[data-cy=appLexiconNewListItem]:first() input').should('be.visible').click().type('testLex');

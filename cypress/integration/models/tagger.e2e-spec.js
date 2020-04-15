@@ -7,7 +7,7 @@ describe('taggers should work', function () {
         assert.isNotNull(x.body.id, 'should have project id');
         cy.wrap(x.body.id).as('projectId');
         cy.route('GET', '**user**').as('getUser');
-        cy.route('GET', '**get_fields**').as('getProjectFields');
+        cy.route('GET', '**get_fields**').as('getProjectIndices');
         cy.route('GET', '**/taggers/**').as('getTaggers');
         cy.route('DELETE', '**/taggers/**').as('deleteTaggers');
         cy.route('POST', '**/taggers/**').as('postTaggers');
@@ -17,7 +17,7 @@ describe('taggers should work', function () {
   });
   function initTaggersPage(){
     cy.visit('/taggers');
-    cy.wait('@getProjectFields');
+    cy.wait('@getProjectIndices');
     cy.get('[data-cy=appNavbarProjectSelect]').click();
     cy.get('mat-option').contains('integration_test_project').click();
   }

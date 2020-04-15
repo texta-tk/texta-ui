@@ -9,14 +9,14 @@ describe('should be able to build aggregations', function () {
       });
       cy.route('GET', '**user**').as('getUser');
       cy.route('GET', '**projects**').as('projects');
-      cy.route('GET', '**get_fields**').as('getProjectFields');
+      cy.route('GET', '**get_fields**').as('getProjectIndices');
       cy.route('POST', 'search_by_query').as('searcherQuery');
       cy.visit('/');
       cy.wait('@getUser');
       cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible');
       cy.get('[data-cy=appNavbarSearcher]').click();
 
-      cy.wait('@getProjectFields');
+      cy.wait('@getProjectIndices');
       cy.get('[data-cy=appNavbarProjectSelect]').click();
       cy.get('mat-option').contains('integration_test_project').click();
     });

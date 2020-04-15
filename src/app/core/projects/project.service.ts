@@ -4,7 +4,7 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../util/log.service';
 import {Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
-import {Health, Project, ProjectFact, ProjectField, ProjectResourceCounts} from '../../shared/types/Project';
+import {Health, Project, ProjectFact, ProjectIndex, ProjectResourceCounts} from '../../shared/types/Project';
 import {Index} from '../../shared/types/Index';
 import {ResultsWrapper} from '../../shared/types/Generic';
 
@@ -50,12 +50,12 @@ export class ProjectService {
       catchError(this.logService.handleError<Project>('getProject')));
   }
 
-  getProjectFields(id: number): Observable<ProjectField[] | HttpErrorResponse> {
-    return this.http.get<ProjectField[]>(
+  getProjectIndices(id: number): Observable<ProjectIndex[] | HttpErrorResponse> {
+    return this.http.get<ProjectIndex[]>(
       this.apiUrl + '/projects/' + id + '/get_fields/',
     ).pipe(
       tap(e => this.logService.logStatus(e, 'get Project Fields')),
-      catchError(this.logService.handleError<ProjectField[]>('getProjectFields')));
+      catchError(this.logService.handleError<ProjectIndex[]>('getProjectIndices')));
   }
 
   projectFactValueAutoComplete(id: number, factName: string, limitN: number, startsWith: string): Observable<string[] | HttpErrorResponse> {
@@ -71,9 +71,9 @@ export class ProjectService {
       catchError(this.logService.handleError<string[]>('projectFactValueAutoComplete')));
   }
 
-  getProjectFacts(id: number): Observable<ProjectFact[] | HttpErrorResponse> {
-    return this.http.get<ProjectFact[]>(
-      this.apiUrl + '/projects/' + id + '/get_facts/',
+  getProjectFacts(id: number, index: any): Observable<ProjectFact[] | HttpErrorResponse> {
+    return this.http.post<ProjectFact[]>(
+      this.apiUrl + '/projects/' + id + '/get_facts/', {index, output_type: false}
     ).pipe(
       tap(e => this.logService.logStatus(e, 'get Project Facts')),
       catchError(this.logService.handleError<ProjectFact[]>('getProjectFacts')));

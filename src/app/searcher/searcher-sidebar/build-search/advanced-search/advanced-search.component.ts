@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {FormControl} from '@angular/forms';
-import {Field, Project, ProjectFact, ProjectField} from '../../../../shared/types/Project';
+import {Field, Project, ProjectFact, ProjectIndex} from '../../../../shared/types/Project';
 import {Constraint, DateConstraint, ElasticsearchQuery, FactConstraint, FactTextInputGroup, TextConstraint} from '../Constraints';
 import {SavedSearch} from '../../../../shared/types/SavedSearch';
 import {debounceTime, switchMap, takeUntil} from 'rxjs/operators';
@@ -39,7 +39,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
   @Input() highlightMatching: boolean;
   @Input() showShortVersion: number;
   currentProject: Project;
-  projectFields: ProjectField[] = [];
+  projectFields: ProjectIndex[] = [];
   fieldsUnique: Field[] = [];
   public fieldsFiltered: BehaviorSubject<Field[]> = new BehaviorSubject<Field[]>([]);
   projectFacts: ProjectFact[] = [];
@@ -79,9 +79,9 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
         this.projectFacts = projectFacts;
       }
     });
-    this.projectStore.getCurrentProjectFields().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectField[]) => {
+    this.projectStore.getCurrentProjectIndices().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectIndex[]) => {
       if (projectFields) {
-        this.projectFields = ProjectField.sortTextaFactsAsFirstItem(projectFields);
+        this.projectFields = ProjectIndex.sortTextaFactsAsFirstItem(projectFields);
         const distinct = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(x => x.fields).flat(), (x => x.path));
         this.fieldsFiltered.next(distinct);
         this.fieldsUnique = distinct;

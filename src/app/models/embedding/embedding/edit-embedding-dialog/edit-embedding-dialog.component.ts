@@ -2,7 +2,7 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {LiveErrorStateMatcher} from '../../../../shared/CustomerErrorStateMatchers';
-import {Field, Project, ProjectField} from '../../../../shared/types/Project';
+import {Field, Project, ProjectIndex} from '../../../../shared/types/Project';
 import {of, Subject} from 'rxjs';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {EmbeddingsService} from '../../../../core/models/embeddings/embeddings.service';

@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, merge, Observable, of} from 'rxjs';
+import {BehaviorSubject, Observable, of} from 'rxjs';
 
-import {Project, ProjectFact, ProjectField} from '../../shared/types/Project';
+import {Project, ProjectFact, ProjectIndex} from '../../shared/types/Project';
 import {ProjectService} from './project.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../util/log.service';
 import {UserStore} from '../users/user.store';
-import {switchMap} from 'rxjs/operators';
+import {skip, switchMap} from 'rxjs/operators';
 import {LocalStorageService} from '../util/local-storage.service';
 
 
@@ -16,9 +16,10 @@ import {LocalStorageService} from '../util/local-storage.service';
 export class ProjectStore {
   private projects$: BehaviorSubject<Project[] | null> = new BehaviorSubject(null);
   private selectedProject$: BehaviorSubject<Project | null> = new BehaviorSubject(null);
-  private projectFields$: BehaviorSubject<ProjectField[] | null> = new BehaviorSubject(null);
-  private selectedProjectFields$: BehaviorSubject<ProjectField[] | null> = new BehaviorSubject(null);
+  private projectIndices$: BehaviorSubject<ProjectIndex[] | null> = new BehaviorSubject(null);
+  private selectedProjectIndices$: BehaviorSubject<ProjectIndex[] | null> = new BehaviorSubject(null);
   private projectFacts$: BehaviorSubject<ProjectFact[] | null> = new BehaviorSubject(null);
+  private _selectedProject: Project | null;
 
   constructor(private projectService: ProjectService,
               private logService: LogService,
@@ -31,32 +32,6 @@ export class ProjectStore {
     });
 
     this.loadProjectFieldsAndFacts();
-  }
-
-  // when we change project get its fields and facts aswell
-  private loadProjectFieldsAndFacts() {
-    this.selectedProject$.pipe(switchMap((project: Project) => {
-      this.projectFacts$.next(null);
-      this.projectFields$.next(null); // null old project properties until we get new ones
-      this.selectedProjectFields$.next(null);
-      if (project) {
-        return merge(this.projectService.getProjectFacts(project.id),
-          this.projectService.getProjectFields(project.id)
-        );
-      }
-      return of(null);
-    })).subscribe((resp: any | HttpErrorResponse) => {
-      if (resp && !(resp instanceof HttpErrorResponse) && resp.length > 0) {
-        if (resp[0].hasOwnProperty('name')) {
-          this.projectFacts$.next(resp);
-        }
-        if (resp[0].hasOwnProperty('index')) {
-          this.projectFields$.next(resp);
-        }
-      } else if (resp instanceof HttpErrorResponse) {
-        this.logService.snackBarError(resp, 2000);
-      }
-    });
   }
 
   refreshProjects() {
@@ -73,30 +48,65 @@ export class ProjectStore {
     return this.projects$.asObservable();
   }
 
-  getProjectFields(): Observable<ProjectField[] | null> {
-    return this.projectFields$.asObservable();
+  getProjectIndices(): Observable<ProjectIndex[] | null> {
+    return this.projectIndices$.asObservable();
   }
 
-  getCurrentProjectFields(): Observable<ProjectField[] | null> {
-    return this.selectedProjectFields$.asObservable();
+  getCurrentProjectIndices(): Observable<ProjectIndex[] | null> {
+    return this.selectedProjectIndices$.asObservable();
   }
 
-  setCurrentProjectFields(projectFields: ProjectField[]) {
-    this.selectedProjectFields$.next(projectFields);
+  setCurrentProjectIndices(projectIndices: ProjectIndex[]) {
+    this.selectedProjectIndices$.next(projectIndices);
   }
 
   getProjectFacts(): Observable<ProjectFact[] | null> {
     return this.projectFacts$.asObservable();
   }
 
-
   getCurrentProject(): Observable<Project | null> {
     return this.selectedProject$.asObservable();
   }
 
   setCurrentProject(project: Project | null) {
-    this.localStorageService.setCurrentlySelectedProject(project);
     this.selectedProject$.next(project);
+  }
+
+  // when we change project get its indices and facts as well
+  // skip(1) cause they all start out with null, behavioursubject
+  private loadProjectFieldsAndFacts() {
+    this.getCurrentProject().pipe(skip(1), switchMap((project: Project) => {
+      this._selectedProject = project;
+      this.localStorageService.setCurrentlySelectedProject(project);
+      this.projectFacts$.next(null);
+      this.projectIndices$.next(null); // null old project properties until we get new ones
+      this.selectedProjectIndices$.next(null); // this is set in nav bar, cause nav bar handles selections, cache logic etc
+
+      if (project) {
+        return this.projectService.getProjectIndices(project.id);
+      }
+      return of(null);
+    })).subscribe((resp: any | HttpErrorResponse) => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.projectIndices$.next(resp);
+      } else if (resp instanceof HttpErrorResponse) {
+        this.logService.snackBarError(resp, 2000);
+      }
+    });
+
+    this.getCurrentProjectIndices().pipe(skip(1), switchMap(projectIndices => {
+      if (this._selectedProject && projectIndices) {
+        return this.projectService.getProjectFacts(this._selectedProject.id, projectIndices.map(x => [{name: x.index}]).flat());
+      } else {
+        return of(null);
+      }
+    })).subscribe((resp: any | HttpErrorResponse) => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.projectFacts$.next(resp);
+      } else if (resp instanceof HttpErrorResponse) {
+        this.logService.snackBarError(resp, 2000);
+      }
+    });
   }
 
 }

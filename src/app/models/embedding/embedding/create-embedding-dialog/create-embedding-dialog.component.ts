@@ -8,7 +8,7 @@ import {mergeMap, take, takeUntil} from 'rxjs/operators';
 import {of, Subject} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ProjectStore} from '../../../../core/projects/project.store';
-import {Field, Project, ProjectField} from '../../../../shared/types/Project';
+import {Field, Project, ProjectIndex} from '../../../../shared/types/Project';
 import {ProjectService} from '../../../../core/projects/project.service';
 import {Embedding} from '../../../../shared/types/tasks/Embedding';
 import {UtilityFunctions} from '../../../../shared/UtilityFunctions';
@@ -33,10 +33,10 @@ export class CreateEmbeddingDialogComponent implements OnInit {
   defaultQuery = '{"query": {"match_all": {}}}';
   query = this.defaultQuery;
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
-  projectFields: ProjectField[];
+  projectFields: ProjectIndex[];
   destroyed$ = new Subject<boolean>();
   fieldsUnique: Field[] = [];
-  projectIndices: ProjectField[] = [];
+  projectIndices: ProjectIndex[] = [];
 
   constructor(private dialogRef: MatDialogRef<CreateEmbeddingDialogComponent>,
               private projectService: ProjectService,
@@ -45,7 +45,7 @@ export class CreateEmbeddingDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.projectStore.getCurrentProjectFields().pipe(takeUntil(this.destroyed$)).subscribe(currentProjIndices => {
+    this.projectStore.getCurrentProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(currentProjIndices => {
       if (currentProjIndices) {
         const indicesForm = this.embeddingForm.get('indicesFormControl');
         indicesForm?.setValue(currentProjIndices);
@@ -53,15 +53,15 @@ export class CreateEmbeddingDialogComponent implements OnInit {
       }
     });
 
-    this.projectStore.getProjectFields().pipe(takeUntil(this.destroyed$)).subscribe(projIndices => {
+    this.projectStore.getProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(projIndices => {
       if (projIndices) {
         this.projectIndices = projIndices;
       }
     });
   }
 
-  getFieldsForIndices(indices: ProjectField[]) {
-    this.projectFields = ProjectField.cleanProjectFields(indices, ['text'], []);
+  getFieldsForIndices(indices: ProjectIndex[]) {
+    this.projectFields = ProjectIndex.cleanProjectFields(indices, ['text'], []);
     this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
   }
 
