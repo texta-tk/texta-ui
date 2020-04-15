@@ -71,9 +71,9 @@ export class ProjectService {
       catchError(this.logService.handleError<string[]>('projectFactValueAutoComplete')));
   }
 
-  getProjectFacts(id: number, index: any): Observable<ProjectFact[] | HttpErrorResponse> {
+  getProjectFacts(id: number, indices: any): Observable<ProjectFact[] | HttpErrorResponse> {
     return this.http.post<ProjectFact[]>(
-      this.apiUrl + '/projects/' + id + '/get_facts/', {index, output_type: false}
+      this.apiUrl + '/projects/' + id + '/get_facts/', {indices, output_type: false}
     ).pipe(
       tap(e => this.logService.logStatus(e, 'get Project Facts')),
       catchError(this.logService.handleError<ProjectFact[]>('getProjectFacts')));
