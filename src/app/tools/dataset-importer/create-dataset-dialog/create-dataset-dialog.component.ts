@@ -55,7 +55,7 @@ export class CreateDatasetDialogComponent implements OnInit, OnDestroy {
   onSubmit(formData) {
     const postData = new FormData();
     postData.set('description', formData.descriptionFormControl);
-    postData.set('index', formData.descriptionFormControl);
+    postData.set('index', formData.newNameFormControl);
     postData.set('separator', formData.separatorFormControl);
     postData.set('file', formData.fileFormControl.files[0]);
 

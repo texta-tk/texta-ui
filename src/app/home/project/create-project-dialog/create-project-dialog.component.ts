@@ -25,7 +25,7 @@ export class CreateProjectDialogComponent implements OnInit, OnDestroy {
       Validators.required,
     ]),
     usersFormControl: new FormControl([], [Validators.required]),
-    indicesFormControl: new FormControl([], [Validators.required]),
+    indicesFormControl: new FormControl([]),
   });
 
   public filteredIndices: Subject<string[]> = new Subject<string[]>();

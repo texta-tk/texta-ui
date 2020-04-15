@@ -21,6 +21,7 @@ export class Tagger {
   recall: number;
   f1_score: number;
   num_features: number;
+  indices: string[];
   plot: unknown;
   task: TaskStatus;
 }
@@ -35,6 +36,7 @@ export class TaggerGroup {
   // todo
   url = '';
   id: number;
+  indices: string[];
   description = '';
   embedding: number;
   num_dimensions = 0;

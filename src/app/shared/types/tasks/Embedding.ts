@@ -6,6 +6,7 @@ export class Embedding {
   id: number;
   description = '';
   query = '';
+  indices: string[];
   fields: string[];
   num_dimensions = 0;
   min_freq = 0;

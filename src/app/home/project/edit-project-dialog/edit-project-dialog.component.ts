@@ -28,7 +28,7 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
     titleFormControl: new FormControl('', [
       Validators.required,
     ]),
-    indicesFormControl: new FormControl([], Validators.required),
+    indicesFormControl: new FormControl([]),
     usersFormControl: new FormControl(this.selectedUsers, Validators.required),
   });
   destroyed$: Subject<boolean> = new Subject<boolean>();
