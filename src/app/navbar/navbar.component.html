@@ -76,6 +76,7 @@
                     [formControl]="projectFieldsControl"
                     (selectionChange)="indexSelectionChanged($event.value)"
                     [placeholder]="projectFields.length < 1 ? 'No indices' : ''"
+                    (openedChange)="indexSelectionOpenedChange($event)"
                     multiple>
           <mat-option *ngFor="let item of projectFields" [value]="item">
             {{item.index}}

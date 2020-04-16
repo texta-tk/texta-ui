@@ -74,7 +74,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
         this.lexicons = resp.results;
       }
     });
-    this.projectStore.getProjectFacts().pipe(takeUntil(this.destroy$)).subscribe((projectFacts: ProjectFact[]) => {
+    this.projectStore.getCurrentIndicesFacts().pipe(takeUntil(this.destroy$)).subscribe((projectFacts: ProjectFact[]) => {
       if (projectFacts) {
         this.projectFacts = projectFacts;
       }

@@ -1,6 +1,6 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Field, Project, ProjectFact, ProjectIndex} from '../../../../shared/types/Project';
-import {mergeMap, take, takeUntil} from 'rxjs/operators';
+import {mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
 import {LogService} from '../../../../core/util/log.service';
 import {TaggerOptions} from '../../../../shared/types/tasks/TaggerOptions';
 import {ErrorStateMatcher} from '@angular/material/core';
@@ -17,13 +17,14 @@ import {forkJoin, of, Subject} from 'rxjs';
 import {TaggerGroupService} from '../../../../core/models/taggers/tagger-group.service';
 import {TaggerGroup} from '../../../../shared/types/tasks/Tagger';
 import {UtilityFunctions} from '../../../../shared/UtilityFunctions';
+import {MatSelect} from '@angular/material/select';
 
 @Component({
   selector: 'app-create-tagger-group-dialog',
   templateUrl: './create-tagger-group-dialog.component.html',
   styleUrls: ['./create-tagger-group-dialog.component.scss']
 })
-export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy {
+export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, AfterViewInit {
 
   taggerGroupForm = new FormGroup({
     descriptionFormControl: new FormControl('', [
@@ -52,6 +53,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy {
   destroyed$ = new Subject<boolean>();
   fieldsUnique: Field[] = [];
   projectIndices: ProjectIndex[] = [];
+  @ViewChild('indicesSelect') indicesSelect: MatSelect;
 
   constructor(private dialogRef: MatDialogRef<CreateTaggerGroupDialogComponent>,
               private taggerService: TaggerService,
@@ -103,12 +105,21 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy {
         }
       }
     });
-    this.projectStore.getProjectFacts().pipe(takeUntil(this.destroyed$)).subscribe(x => {
-      if (x) {
-        this.projectFacts = x;
+
+    this.projectStore.getCurrentIndicesFacts().pipe(take(1)).subscribe(x => this.projectFacts = x ? x : []);
+  }
+
+  ngAfterViewInit(): void {
+    this.indicesSelect.openedChange.pipe(takeUntil(this.destroyed$), switchMap(opened => {
+      if (!opened && this.indicesSelect.value) {
+        return this.projectService.getProjectFacts(this.currentProject.id, this.indicesSelect.value.map(x => [{name: x.index}]).flat());
+      }
+      return of(null);
+    })).subscribe(resp => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.projectFacts = resp;
       }
     });
-
   }
 
   getFieldsForIndices(indices: ProjectIndex[]) {

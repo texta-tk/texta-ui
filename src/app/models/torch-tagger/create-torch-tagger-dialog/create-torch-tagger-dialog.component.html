@@ -12,7 +12,7 @@
     </mat-form-field>
     <mat-form-field data-cy="appTorchTaggerCreateDialogIndices">
       <mat-label>Indices</mat-label>
-      <mat-select (openedChange)="indicesOpenedChange($event)" [disableOptionCentering]="true"
+      <mat-select (openedChange)="indicesOpenedChange($event)" [disableOptionCentering]="true" #indicesSelect
                   formControlName="indicesFormControl" multiple panelClass="select-panel-reveal-input" required>
         <mat-option *ngFor="let projectIndex of projectIndices" [value]="projectIndex">
           {{projectIndex.index}}
@@ -68,6 +68,7 @@
       <mat-label>Fact name</mat-label>
       <mat-select [disableOptionCentering]="true" formControlName="factNameFormControl"
                   panelClass="select-panel-reveal-input">
+        <mat-option>None</mat-option>
         <mat-option *ngFor="let fact of projectFacts" [value]="fact">
           {{fact}}
         </mat-option>

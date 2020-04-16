@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {MatDialogRef} from '@angular/material/dialog';
@@ -8,19 +8,20 @@ import {Field, Project, ProjectFact, ProjectIndex} from 'src/app/shared/types/Pr
 import {TorchTaggerService} from '../../../core/models/taggers/torch-tagger.service';
 import {ProjectService} from 'src/app/core/projects/project.service';
 import {ProjectStore} from 'src/app/core/projects/project.store';
-import {mergeMap, take, takeUntil} from 'rxjs/operators';
+import {mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
 import {forkJoin, of, Subject} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {TorchTagger} from 'src/app/shared/types/tasks/TorchTagger';
 import {EmbeddingsService} from 'src/app/core/models/embeddings/embeddings.service';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
+import {MatSelect} from '@angular/material/select';
 
 @Component({
     selector: 'app-create-torch-tagger-dialog',
     templateUrl: './create-torch-tagger-dialog.component.html',
     styleUrls: ['./create-torch-tagger-dialog.component.scss']
 })
-export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
+export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy, AfterViewInit {
     readonly defaultQuery = '{"query": {"match_all": {}}}';
     query = this.defaultQuery;
 
@@ -45,6 +46,7 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
     fieldsUnique: Field[] = [];
     currentProject: Project;
     projectIndices: ProjectIndex[] = [];
+    @ViewChild('indicesSelect') indicesSelect: MatSelect;
 
     constructor(private dialogRef: MatDialogRef<CreateTorchTaggerDialogComponent>,
                 private torchTaggerService: TorchTaggerService,
@@ -79,12 +81,6 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
             }
         });
 
-        this.projectStore.getProjectFacts().pipe(takeUntil(this.destroyed$)).subscribe(projFacts => {
-            if (projFacts) {
-                this.projectFacts = projFacts;
-            }
-        });
-
         this.projectStore.getProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(x => {
             if (x) {
                 this.projectIndices = x;
@@ -96,6 +92,21 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
                 const indicesForm = this.torchTaggerForm.get('indicesFormControl');
                 indicesForm?.setValue(x);
                 this.getFieldsForIndices(x);
+            }
+        });
+
+        this.projectStore.getCurrentIndicesFacts().pipe(take(1)).subscribe(x => this.projectFacts = x ? x : []);
+    }
+
+    ngAfterViewInit(): void {
+        this.indicesSelect.openedChange.pipe(takeUntil(this.destroyed$), switchMap(opened => {
+            if (!opened && this.indicesSelect.value) {
+                return this.projectService.getProjectFacts(this.currentProject.id, this.indicesSelect.value.map(x => [{name: x.index}]).flat());
+            }
+            return of(null);
+        })).subscribe(resp => {
+            if (resp && !(resp instanceof HttpErrorResponse)) {
+                this.projectFacts = resp;
             }
         });
     }
@@ -111,7 +122,7 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
 
     public indicesOpenedChange(opened) {
         const indicesForm = this.torchTaggerForm.get('indicesFormControl');
-// true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
+        // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
         if (!opened && (indicesForm?.value && indicesForm.value.length > 0)) {
             this.getFieldsForIndices(indicesForm?.value);
         }

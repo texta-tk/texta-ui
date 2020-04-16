@@ -18,7 +18,7 @@ export class ProjectStore {
   private selectedProject$: BehaviorSubject<Project | null> = new BehaviorSubject(null);
   private projectIndices$: BehaviorSubject<ProjectIndex[] | null> = new BehaviorSubject(null);
   private selectedProjectIndices$: BehaviorSubject<ProjectIndex[] | null> = new BehaviorSubject(null);
-  private projectFacts$: BehaviorSubject<ProjectFact[] | null> = new BehaviorSubject(null);
+  private currentIndicesFacts$: BehaviorSubject<ProjectFact[] | null> = new BehaviorSubject(null);
   private _selectedProject: Project | null;
 
   constructor(private projectService: ProjectService,
@@ -47,11 +47,11 @@ export class ProjectStore {
   getProjects(): Observable<Project[] | null> {
     return this.projects$.asObservable();
   }
-
+  // all indices in proj
   getProjectIndices(): Observable<ProjectIndex[] | null> {
     return this.projectIndices$.asObservable();
   }
-
+  // selected indices
   getCurrentProjectIndices(): Observable<ProjectIndex[] | null> {
     return this.selectedProjectIndices$.asObservable();
   }
@@ -60,8 +60,8 @@ export class ProjectStore {
     this.selectedProjectIndices$.next(projectIndices);
   }
 
-  getProjectFacts(): Observable<ProjectFact[] | null> {
-    return this.projectFacts$.asObservable();
+  getCurrentIndicesFacts(): Observable<ProjectFact[] | null> {
+    return this.currentIndicesFacts$.asObservable();
   }
 
   getCurrentProject(): Observable<Project | null> {
@@ -78,7 +78,7 @@ export class ProjectStore {
     this.getCurrentProject().pipe(skip(1), switchMap((project: Project) => {
       this._selectedProject = project;
       this.localStorageService.setCurrentlySelectedProject(project);
-      this.projectFacts$.next(null);
+      this.currentIndicesFacts$.next(null);
       this.projectIndices$.next(null); // null old project properties until we get new ones
       this.selectedProjectIndices$.next(null); // this is set in nav bar, cause nav bar handles selections, cache logic etc
 
@@ -102,7 +102,7 @@ export class ProjectStore {
       }
     })).subscribe((resp: any | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.projectFacts$.next(resp);
+        this.currentIndicesFacts$.next(resp);
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 2000);
       }

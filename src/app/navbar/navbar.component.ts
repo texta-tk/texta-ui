@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {UserStore} from '../core/users/user.store';
 import {LoginDialogComponent} from '../shared/components/dialogs/login/login-dialog.component';
@@ -77,7 +77,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
         });
         // dont select first when already have something selected
         const selectedProj = this.localStorageService.getCurrentlySelectedProject();
-        console.log(selectedProj);
         const cachedProject = !!selectedProj ?
           this.projects.find(x => x.id === selectedProj.id) : null;
         if (cachedProject && cachedProject.users.includes(this.user.url)) {
@@ -116,7 +115,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   indexSelectionChanged(indices: ProjectIndex[]) {
-    this.projectStore.setCurrentProjectIndices(indices);
     const state = this.localStorageService.getProjectState(this.currentProject);
     if (state) {
       if (!state?.global?.selectedIndices) {
@@ -124,6 +122,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
       }
       state.global.selectedIndices = indices.map(x => x.index);
       this.localStorageService.updateProjectState(this.currentProject, state);
+    }
+  }
+
+  indexSelectionOpenedChange(value) {
+    if (!value) {
+      // get the current facts based on the selected indices
+      // searcher uses this
+      this.projectStore.setCurrentProjectIndices(this.projectFieldsControl.value);
     }
   }
 

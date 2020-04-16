@@ -12,6 +12,7 @@
     <mat-form-field>
       <mat-label>Fact name</mat-label>
       <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="factNameFormControl">
+        <mat-option>None</mat-option>
         <mat-option *ngFor="let fact of projectFacts" [value]="fact">
           {{fact}}
         </mat-option>
@@ -25,7 +26,7 @@
       <h3>Tagger</h3>
       <mat-form-field>
         <mat-label>Indices</mat-label>
-        <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
+        <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" #indicesSelect
                     formControlName="indicesFormControl" multiple required (openedChange)="indicesOpenedChange($event)">
           <mat-option *ngFor="let projectIndex of projectIndices" [value]="projectIndex">
             {{projectIndex.index}}
@@ -50,6 +51,7 @@
       <mat-form-field>
         <mat-label>Select Embedding</mat-label>
         <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="embeddingFormControl">
+          <mat-option>None</mat-option>
           <mat-option *ngFor="let item of embeddings" [value]="item">
             {{item.description}}
           </mat-option>

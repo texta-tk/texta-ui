@@ -28,16 +28,10 @@ describe('/health and project table tests', function () {
     }));
     cy.get('[data-cy=appProjectCreateDialogUsers]').click().then((projUsers => {
       cy.wrap(projUsers).should('have.class', 'mat-focused');
-      // todo currently best way to close a mat select?
-      cy.wait(500);
-      cy.closeCurrentCdkOverlay();
-      cy.matFormFieldShouldHaveError(projUsers, 'required');
-      cy.wrap(projUsers).click();
       cy.fixture('users').then((user) => {
         cy.get('.mat-option-text').contains(user.username).should('be.visible').click();
       });
       cy.closeCurrentCdkOverlay();
-      cy.wrap(projUsers).find('mat-error').should('have.length', 0)
     }));
     cy.get('[data-cy=appProjectCreateDialogIndices]').click().then((projIndices => {
       cy.wrap(projIndices).should('have.class', 'mat-focused');

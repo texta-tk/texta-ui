@@ -41,6 +41,7 @@
       <mat-label>Select Embedding</mat-label>
       <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
                   formControlName="embeddingFormControl">
+        <mat-option>None</mat-option>
         <mat-option *ngFor="let item of embeddings" [value]="item">
           {{item.description}}
         </mat-option>
