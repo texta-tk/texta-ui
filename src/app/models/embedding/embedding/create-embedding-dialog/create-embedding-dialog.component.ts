@@ -61,7 +61,7 @@ export class CreateEmbeddingDialogComponent implements OnInit {
   }
 
   getFieldsForIndices(indices: ProjectIndex[]) {
-    this.projectFields = ProjectIndex.cleanProjectFields(indices, ['text'], []);
+    this.projectFields = ProjectIndex.cleanProjectIndicesFields(indices, ['text'], []);
     this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
   }
 

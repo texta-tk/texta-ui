@@ -10,8 +10,8 @@
   <mat-form-field fxFlex>
     <mat-label>Fact name</mat-label>
     <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" [formControl]="factNameFormControl" multiple>
-      <mat-option *ngFor="let fact of projectFacts" [value]="fact.name">
-        {{fact.name}}
+      <mat-option *ngFor="let fact of projectFacts" [value]="fact">
+        {{fact}}
       </mat-option>
     </mat-select>
   </mat-form-field>
@@ -37,8 +37,8 @@
     <mat-form-field fxFlex="36">
       <mat-label>Fact name</mat-label>
       <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" [formControl]="inputGroup.factTextFactNameFormControl">
-        <mat-option *ngFor="let fact of projectFacts" [value]="fact.name">
-          {{fact.name}}
+        <mat-option *ngFor="let fact of projectFacts" [value]="fact">
+          {{fact}}
         </mat-option>
       </mat-select>
     </mat-form-field>

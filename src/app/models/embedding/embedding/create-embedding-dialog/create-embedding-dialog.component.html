@@ -19,7 +19,7 @@
         </mat-option>
       </mat-select>
       <mat-error *ngIf="embeddingForm.get('indicesFormControl')?.hasError('required')">
-        Need atleast 1 index
+        Need at least 1 index
       </mat-error>
     </mat-form-field>
 
@@ -46,7 +46,7 @@
     <div class="flex-col">
       <div class="flex-row">
         <div class="flex-item-left">
-          <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Close</button>
+          <button type="button" class="flex-item-left" mat-button mat-dialog-close>Close</button>
         </div>
         <div class="flex-item-right">
           <button type="submit" [disabled]="!embeddingForm.valid" mat-button data-cy="appEmbeddingCreateDialogSubmit">Create</button>

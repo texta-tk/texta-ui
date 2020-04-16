@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {ProjectIndex, ProjectFact, Project, Field} from '../../../../shared/types/Project';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Field, Project, ProjectFact, ProjectIndex} from '../../../../shared/types/Project';
 import {mergeMap, take, takeUntil} from 'rxjs/operators';
 import {LogService} from '../../../../core/util/log.service';
 import {TaggerOptions} from '../../../../shared/types/tasks/TaggerOptions';
@@ -13,7 +13,7 @@ import {LiveErrorStateMatcher} from '../../../../shared/CustomerErrorStateMatche
 import {EmbeddingsService} from '../../../../core/models/embeddings/embeddings.service';
 import {Embedding} from '../../../../shared/types/tasks/Embedding';
 import {TaggerService} from '../../../../core/models/taggers/tagger.service';
-import {merge, of, forkJoin, Subject} from 'rxjs';
+import {forkJoin, of, Subject} from 'rxjs';
 import {TaggerGroupService} from '../../../../core/models/taggers/tagger-group.service';
 import {TaggerGroup} from '../../../../shared/types/tasks/Tagger';
 import {UtilityFunctions} from '../../../../shared/UtilityFunctions';
@@ -23,7 +23,7 @@ import {UtilityFunctions} from '../../../../shared/UtilityFunctions';
   templateUrl: './create-tagger-group-dialog.component.html',
   styleUrls: ['./create-tagger-group-dialog.component.scss']
 })
-export class CreateTaggerGroupDialogComponent implements OnInit {
+export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy {
 
   taggerGroupForm = new FormGroup({
     descriptionFormControl: new FormControl('', [
@@ -112,7 +112,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
   }
 
   getFieldsForIndices(indices: ProjectIndex[]) {
-    this.projectFields = ProjectIndex.cleanProjectFields(indices, ['text'], []);
+    this.projectFields = ProjectIndex.cleanProjectIndicesFields(indices, ['text'], []);
     this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
   }
 
@@ -172,8 +172,9 @@ export class CreateTaggerGroupDialogComponent implements OnInit {
     }
   }
 
-
-  closeDialog(): void {
-    this.dialogRef.close();
+  ngOnDestroy(): void {
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
   }
+
 }

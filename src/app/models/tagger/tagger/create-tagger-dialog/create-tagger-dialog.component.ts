@@ -95,7 +95,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
   }
 
   getFieldsForIndices(indices: ProjectIndex[]) {
-    this.projectFields = ProjectIndex.cleanProjectFields(indices, ['text'], []);
+    this.projectFields = ProjectIndex.cleanProjectIndicesFields(indices, ['text'], []);
     this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
   }
 
@@ -155,11 +155,6 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
     if (classifier) {
       classifier.setValue(options.actions.POST.classifier.choices[0]);
     }
-  }
-
-
-  closeDialog(): void {
-    this.dialogRef.close();
   }
 
   ngOnDestroy(): void {

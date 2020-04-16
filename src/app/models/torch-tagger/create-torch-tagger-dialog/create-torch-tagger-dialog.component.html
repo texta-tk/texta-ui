@@ -1,19 +1,31 @@
 <h1 mat-dialog-title>New TorchTagger</h1>
 <div mat-dialog-content>
-  <form id="torchTaggerForm" fxLayout="column" [formGroup]="torchTaggerForm"
-        (ngSubmit)="onSubmit(torchTaggerForm.value)">
+  <form (ngSubmit)="onSubmit(torchTaggerForm.value)" [formGroup]="torchTaggerForm" fxLayout="column"
+        id="torchTaggerForm">
     <mat-form-field data-cy="appTorchTaggerCreateDialogDesc">
-      <input matInput placeholder="Description" autocomplete="off"
-             [errorStateMatcher]="matcher" formControlName="descriptionFormControl" required>
+      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl"
+             matInput placeholder="Description" required>
 
       <mat-error *ngIf="torchTaggerForm.get('descriptionFormControl')?.hasError('required')">
         Description is <strong>required</strong>
       </mat-error>
     </mat-form-field>
+    <mat-form-field data-cy="appTorchTaggerCreateDialogIndices">
+      <mat-label>Indices</mat-label>
+      <mat-select (openedChange)="indicesOpenedChange($event)" [disableOptionCentering]="true"
+                  formControlName="indicesFormControl" multiple panelClass="select-panel-reveal-input" required>
+        <mat-option *ngFor="let projectIndex of projectIndices" [value]="projectIndex">
+          {{projectIndex.index}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="torchTaggerForm.get('indicesFormControl')?.hasError('required')">
+        Need at least 1 index
+      </mat-error>
+    </mat-form-field>
     <mat-form-field data-cy="appTorchTaggerCreateDialogFields">
       <mat-label>Select Fields</mat-label>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
-                  formControlName="fieldsFormControl" multiple required>
+      <mat-select [disableOptionCentering]="true" formControlName="fieldsFormControl"
+                  multiple panelClass="select-panel-reveal-input" required>
         <mat-option *ngFor="let fields of fieldsUnique" [value]="fields.path">
           {{fields.path}}
         </mat-option>
@@ -25,8 +37,8 @@
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"></app-saved-search-autocomplete>
     <mat-form-field data-cy="appTorchTaggerCreateDialogArchitecture">
       <mat-label>Model architecture</mat-label>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
-                  formControlName="modelArchitectureFormControl" required>
+      <mat-select [disableOptionCentering]="true" formControlName="modelArchitectureFormControl"
+                  panelClass="select-panel-reveal-input" required>
         <mat-option *ngFor="let item of torchTaggerOptions?.actions.POST.model_architecture.choices"
                     [value]="item.value">
           {{item.display_name}}
@@ -39,8 +51,8 @@
 
     <mat-form-field data-cy="appTorchTaggerCreateDialogEmbedding">
       <mat-label>Select Embedding</mat-label>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
-                  formControlName="embeddingFormControl" required>
+      <mat-select [disableOptionCentering]="true" formControlName="embeddingFormControl"
+                  panelClass="select-panel-reveal-input" required>
         <ng-container *ngFor="let item of embeddings">
           <mat-option *ngIf="item.task.status === 'completed'" [value]="item.id">
             {{item.description}}
@@ -54,35 +66,36 @@
 
     <mat-form-field>
       <mat-label>Fact name</mat-label>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
-                  formControlName="factNameFormControl">
-        <mat-option *ngFor="let fact of projectFacts" [value]="fact.name">
-          {{fact.name}}
+      <mat-select [disableOptionCentering]="true" formControlName="factNameFormControl"
+                  panelClass="select-panel-reveal-input">
+        <mat-option *ngFor="let fact of projectFacts" [value]="fact">
+          {{fact}}
         </mat-option>
       </mat-select>
     </mat-form-field>
 
     <mat-form-field>
-      <input matInput type="number" step="50" placeholder="Minimum sample size"
-             formControlName="minSampleSizeFormControl">
+      <input formControlName="minSampleSizeFormControl" matInput placeholder="Minimum sample size" step="50"
+             type="number">
     </mat-form-field>
 
     <mat-form-field data-cy="appTorchTaggerCreateDialogMaxSample">
-      <input matInput type="number" step="1000" placeholder="Maximum sample size"
-             formControlName="sampleSizeFormControl">
+      <input formControlName="sampleSizeFormControl" matInput placeholder="Maximum sample size" step="1000"
+             type="number">
     </mat-form-field>
     <mat-form-field>
-      <input matInput type="number" placeholder="Number of epochs" formControlName="numEpochsFormControl">
+      <input formControlName="numEpochsFormControl" matInput placeholder="Number of epochs" type="number">
     </mat-form-field>
 
   </form>
-</div>
-<div mat-dialog-actions fxLayout="row">
-  <button type="button" mat-button (click)="closeDialog()">Close</button>
-  <div class="flex-item-right">
-    <button form="torchTaggerForm" type="submit" [disabled]="!torchTaggerForm.valid"
-            data-cy="appTorchTaggerCreateDialogSubmit" mat-button>
-      Create
-    </button>
+  <div fxLayout="row">
+    <button mat-dialog-close mat-button type="button">Close</button>
+    <div class="flex-item-right">
+      <button [disabled]="!torchTaggerForm.valid" data-cy="appTorchTaggerCreateDialogSubmit" form="torchTaggerForm"
+              mat-button type="submit">
+        Create
+      </button>
+    </div>
   </div>
+
 </div>

@@ -12,8 +12,8 @@
     <mat-form-field>
       <mat-label>Fact name</mat-label>
       <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="factNameFormControl">
-        <mat-option *ngFor="let fact of projectFacts" [value]="fact.name">
-          {{fact.name}}
+        <mat-option *ngFor="let fact of projectFacts" [value]="fact">
+          {{fact}}
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -32,7 +32,7 @@
           </mat-option>
         </mat-select>
         <mat-error *ngIf="taggerGroupForm.get('taggerForm')?.get('indicesFormControl')?.hasError('required')">
-          Need atleast 1 index
+          Need at least 1 index
         </mat-error>
       </mat-form-field>
       <mat-form-field data-cy="appTaggerGroupCreateDialogFields">
@@ -93,7 +93,7 @@
     <div class="flex-col">
       <div class="flex-row">
         <div class="flex-item-left">
-          <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Close</button>
+          <button type="button" class="flex-item-left" mat-button mat-dialog-close>Close</button>
         </div>
         <div class="flex-item-right">
           <button type="submit" [disabled]="!taggerGroupForm.valid"

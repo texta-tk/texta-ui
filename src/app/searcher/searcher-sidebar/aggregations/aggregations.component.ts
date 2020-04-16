@@ -25,7 +25,6 @@ export interface AggregationForm {
 export class AggregationsComponent implements OnInit, OnDestroy {
   currentProject: Project;
   projectFields: ProjectIndex[] = [];
-  projectFacts: ProjectFact[] = [];
   fieldsUnique: Field[] = [];
   public fieldsFiltered: BehaviorSubject<Field[]> = new BehaviorSubject<Field[]>([]);
   destroy$: Subject<boolean> = new Subject();
@@ -64,14 +63,9 @@ export class AggregationsComponent implements OnInit, OnDestroy {
         this.currentProject = currentProject;
       }
     });
-    this.projectStore.getProjectFacts().pipe(takeUntil(this.destroy$)).subscribe((projectFacts: ProjectFact[]) => {
-      if (projectFacts) {
-        this.projectFacts = projectFacts;
-      }
-    });
     this.projectStore.getCurrentProjectIndices().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectIndex[]) => {
       if (projectFields) {
-        this.projectFields = ProjectIndex.cleanProjectFields(projectFields, ['fact', 'text', 'date'], []);
+        this.projectFields = ProjectIndex.cleanProjectIndicesFields(projectFields, ['fact', 'text', 'date'], []);
         this.projectFields = ProjectIndex.sortTextaFactsAsFirstItem(this.projectFields);
         const distinct = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(x => x.fields).flat(), (x => x.path));
         this.fieldsFiltered.next(distinct);

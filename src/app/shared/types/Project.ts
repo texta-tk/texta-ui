@@ -59,7 +59,7 @@ export class ProjectIndex {
     }
   }
 
-  static cleanProjectFields(fields: ProjectIndex[], whiteList: string[], blackList: string[]): ProjectIndex[] {
+  static cleanProjectIndicesFields(fields: ProjectIndex[], whiteList: string[], blackList: string[]): ProjectIndex[] {
     fields = JSON.parse(JSON.stringify(fields)); // deep clone, dont want to change original
     const filteredField: ProjectIndex[] = [];
     const whiteListTypes = whiteList && whiteList.length > 0 ? whiteList : null;

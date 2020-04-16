@@ -1,137 +1,155 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FormGroup, FormControl, Validators} from '@angular/forms';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {MatDialogRef} from '@angular/material/dialog';
 import {LiveErrorStateMatcher} from 'src/app/shared/CustomerErrorStateMatchers';
 import {Embedding} from 'src/app/shared/types/tasks/Embedding';
-import {ProjectIndex, ProjectFact, Project, Field} from 'src/app/shared/types/Project';
+import {Field, Project, ProjectFact, ProjectIndex} from 'src/app/shared/types/Project';
 import {TorchTaggerService} from '../../../core/models/taggers/torch-tagger.service';
 import {ProjectService} from 'src/app/core/projects/project.service';
 import {ProjectStore} from 'src/app/core/projects/project.store';
-import {take, mergeMap, takeUntil} from 'rxjs/operators';
-import {of, forkJoin, Subject} from 'rxjs';
+import {mergeMap, take, takeUntil} from 'rxjs/operators';
+import {forkJoin, of, Subject} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {TorchTagger} from 'src/app/shared/types/tasks/TorchTagger';
 import {EmbeddingsService} from 'src/app/core/models/embeddings/embeddings.service';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 
 @Component({
-  selector: 'app-create-torch-tagger-dialog',
-  templateUrl: './create-torch-tagger-dialog.component.html',
-  styleUrls: ['./create-torch-tagger-dialog.component.scss']
+    selector: 'app-create-torch-tagger-dialog',
+    templateUrl: './create-torch-tagger-dialog.component.html',
+    styleUrls: ['./create-torch-tagger-dialog.component.scss']
 })
 export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
-  readonly defaultQuery = '{"query": {"match_all": {}}}';
-  query = this.defaultQuery;
+    readonly defaultQuery = '{"query": {"match_all": {}}}';
+    query = this.defaultQuery;
 
-  torchTaggerForm = new FormGroup({
-    descriptionFormControl: new FormControl('', [Validators.required]),
-    fieldsFormControl: new FormControl([], [Validators.required]),
-    embeddingFormControl: new FormControl('', [Validators.required]),
-    sampleSizeFormControl: new FormControl(10000, [Validators.required]),
-    minSampleSizeFormControl: new FormControl(50, [Validators.required]),
-    factNameFormControl: new FormControl(),
-    modelArchitectureFormControl: new FormControl('', [Validators.required]),
-    numEpochsFormControl: new FormControl(5, [Validators.required]),
-  });
-
-  matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
-  torchTaggerOptions: any;
-  embeddings: Embedding[] = [];
-  projectFields: ProjectIndex[];
-  projectFacts: ProjectFact[];
-  destroyed$ = new Subject<boolean>();
-  fieldsUnique: Field[] = [];
-  currentProject: Project;
-
-  constructor(private dialogRef: MatDialogRef<CreateTorchTaggerDialogComponent>,
-              private torchTaggerService: TorchTaggerService,
-              private projectService: ProjectService,
-              private embeddingService: EmbeddingsService,
-              private projectStore: ProjectStore) {
-  }
-
-  ngOnInit() {
-    this.projectStore.getCurrentProject().pipe(take(1), mergeMap(currentProject => {
-      if (currentProject) {
-        this.currentProject = currentProject;
-        return forkJoin(
-          {
-            torchTaggerOptions: this.torchTaggerService.getTorchTaggerOptions(currentProject.id),
-            projectEmbeddings: this.embeddingService.getEmbeddings(currentProject.id)
-          });
-      } else {
-        return of(null);
-      }
-    })).subscribe((resp: {
-      torchTaggerOptions: any | HttpErrorResponse,
-      projectEmbeddings: { count: number; results: Embedding[] } | HttpErrorResponse
-    }) => {
-      if (resp) {
-        if (!(resp.projectEmbeddings instanceof HttpErrorResponse)) {
-          this.embeddings = resp.projectEmbeddings.results;
-        }
-        if (!(resp.torchTaggerOptions instanceof HttpErrorResponse)) {
-          this.torchTaggerOptions = resp.torchTaggerOptions;
-        }
-      }
+    torchTaggerForm = new FormGroup({
+        descriptionFormControl: new FormControl('', [Validators.required]),
+        indicesFormControl: new FormControl([], [Validators.required]),
+        fieldsFormControl: new FormControl([], [Validators.required]),
+        embeddingFormControl: new FormControl('', [Validators.required]),
+        sampleSizeFormControl: new FormControl(10000, [Validators.required]),
+        minSampleSizeFormControl: new FormControl(50, [Validators.required]),
+        factNameFormControl: new FormControl(),
+        modelArchitectureFormControl: new FormControl('', [Validators.required]),
+        numEpochsFormControl: new FormControl(5, [Validators.required]),
     });
 
-    this.projectStore.getProjectFacts().pipe(takeUntil(this.destroyed$)).subscribe(projFacts => {
-      if (projFacts) {
-        this.projectFacts = projFacts;
-      }
-    });
+    matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
+    torchTaggerOptions: any;
+    embeddings: Embedding[] = [];
+    projectFields: ProjectIndex[];
+    projectFacts: ProjectFact[];
+    destroyed$ = new Subject<boolean>();
+    fieldsUnique: Field[] = [];
+    currentProject: Project;
+    projectIndices: ProjectIndex[] = [];
 
-    this.projectStore.getCurrentProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(x => {
-      if (x) {
-        this.projectFields = ProjectIndex.cleanProjectFields(x, ['text'], []);
-        this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
-      }
-    });
-  }
-
-  onQueryChanged(query: string) {
-    this.query = query ? query : this.defaultQuery;
-  }
-
-  onSubmit(formData) {
-    if (this.currentProject.id) {
-      const body: any = {
-        description: formData.descriptionFormControl,
-        fields: formData.fieldsFormControl,
-        embedding: formData.embeddingFormControl,
-        maximum_sample_size: formData.sampleSizeFormControl,
-        minimum_sample_size: formData.minSampleSizeFormControl,
-        num_epochs: formData.numEpochsFormControl,
-        model_architecture: formData.modelArchitectureFormControl,
-      };
-
-      if (this.query) {
-        body.query = this.query;
-      }
-
-      if (formData.factNameFormControl) {
-        body.fact_name = formData.factNameFormControl;
-      }
-
-      this.torchTaggerService.createTorchTagger(this.currentProject.id, body).subscribe((resp: TorchTagger | HttpErrorResponse) => {
-        if (resp && !(resp instanceof HttpErrorResponse)) {
-          this.dialogRef.close(resp);
-        } else if (resp instanceof HttpErrorResponse) {
-          this.dialogRef.close(resp);
-        }
-      });
+    constructor(private dialogRef: MatDialogRef<CreateTorchTaggerDialogComponent>,
+                private torchTaggerService: TorchTaggerService,
+                private projectService: ProjectService,
+                private embeddingService: EmbeddingsService,
+                private projectStore: ProjectStore) {
     }
-  }
 
+    ngOnInit() {
+        this.projectStore.getCurrentProject().pipe(take(1), mergeMap(currentProject => {
+            if (currentProject) {
+                this.currentProject = currentProject;
+                return forkJoin(
+                    {
+                        torchTaggerOptions: this.torchTaggerService.getTorchTaggerOptions(currentProject.id),
+                        projectEmbeddings: this.embeddingService.getEmbeddings(currentProject.id)
+                    });
+            } else {
+                return of(null);
+            }
+        })).subscribe((resp: {
+            torchTaggerOptions: any | HttpErrorResponse,
+            projectEmbeddings: { count: number; results: Embedding[] } | HttpErrorResponse
+        }) => {
+            if (resp) {
+                if (!(resp.projectEmbeddings instanceof HttpErrorResponse)) {
+                    this.embeddings = resp.projectEmbeddings.results;
+                }
+                if (!(resp.torchTaggerOptions instanceof HttpErrorResponse)) {
+                    this.torchTaggerOptions = resp.torchTaggerOptions;
+                }
+            }
+        });
 
-  closeDialog(): void {
-    this.dialogRef.close();
-  }
+        this.projectStore.getProjectFacts().pipe(takeUntil(this.destroyed$)).subscribe(projFacts => {
+            if (projFacts) {
+                this.projectFacts = projFacts;
+            }
+        });
 
-  ngOnDestroy(): void {
-    this.destroyed$.next(true);
-    this.destroyed$.complete();
-  }
+        this.projectStore.getProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(x => {
+            if (x) {
+                this.projectIndices = x;
+            }
+        });
+
+        this.projectStore.getCurrentProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(x => {
+            if (x) {
+                const indicesForm = this.torchTaggerForm.get('indicesFormControl');
+                indicesForm?.setValue(x);
+                this.getFieldsForIndices(x);
+            }
+        });
+    }
+
+    onQueryChanged(query: string) {
+        this.query = query ? query : this.defaultQuery;
+    }
+
+    getFieldsForIndices(indices: ProjectIndex[]) {
+        this.projectFields = ProjectIndex.cleanProjectIndicesFields(indices, ['text'], []);
+        this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
+    }
+
+    public indicesOpenedChange(opened) {
+        const indicesForm = this.torchTaggerForm.get('indicesFormControl');
+// true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
+        if (!opened && (indicesForm?.value && indicesForm.value.length > 0)) {
+            this.getFieldsForIndices(indicesForm?.value);
+        }
+    }
+
+    onSubmit(formData) {
+        if (this.currentProject.id) {
+            const body: any = {
+                description: formData.descriptionFormControl,
+                fields: formData.fieldsFormControl,
+                indices: formData.indicesFormControl.map(x => [{name: x.index}]).flat(),
+                embedding: formData.embeddingFormControl,
+                maximum_sample_size: formData.sampleSizeFormControl,
+                minimum_sample_size: formData.minSampleSizeFormControl,
+                num_epochs: formData.numEpochsFormControl,
+                model_architecture: formData.modelArchitectureFormControl,
+            };
+
+            if (this.query) {
+                body.query = this.query;
+            }
+
+            if (formData.factNameFormControl) {
+                body.fact_name = formData.factNameFormControl;
+            }
+
+            this.torchTaggerService.createTorchTagger(this.currentProject.id, body).subscribe((resp: TorchTagger | HttpErrorResponse) => {
+                if (resp && !(resp instanceof HttpErrorResponse)) {
+                    this.dialogRef.close(resp);
+                } else if (resp instanceof HttpErrorResponse) {
+                    this.dialogRef.close(resp);
+                }
+            });
+        }
+    }
+
+    ngOnDestroy(): void {
+        this.destroyed$.next(true);
+        this.destroyed$.complete();
+    }
 }
