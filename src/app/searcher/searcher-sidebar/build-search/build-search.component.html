@@ -2,8 +2,8 @@
   <mat-radio-group aria-label="Select an option" fxLayoutAlign="space-between" [(ngModel)]="searcherType"
                    data-cy="appSearcherSidebarBuildSearchRadio"
                    (change)="saveTypeSelection($event.value)">
-    <mat-radio-button [value]="1">Simple searcher</mat-radio-button>
-    <mat-radio-button [value]="2">Advanced searcher</mat-radio-button>
+    <mat-radio-button [value]="1">Simple search</mat-radio-button>
+    <mat-radio-button [value]="2">Advanced search</mat-radio-button>
   </mat-radio-group>
   <app-advanced-search [hidden]="searcherType === 1 || searcherType === undefined"
                        [highlightMatching]="highlightMatching"

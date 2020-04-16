@@ -98,7 +98,9 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
       this.elasticSearchQuery.elasticSearchQuery.query = {
         multi_match: {
           fields: fieldPathArray,
-          query: value
+          query: value,
+          type: 'best_fields',
+          operator: 'and',
         }
       };
       for (const field of fieldPathArray) {

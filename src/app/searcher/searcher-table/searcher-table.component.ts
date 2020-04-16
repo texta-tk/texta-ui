@@ -214,7 +214,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
       Math.min(startIndex + pageSize, length) :
       startIndex + pageSize;
     if (length >= 10000) {
-      return `${startIndex + 1} - ${endIndex} of 10000(${SearcherTableComponent.totalCountLength})`;
+      return `${startIndex + 1} - ${endIndex} of 10000 (${SearcherTableComponent.totalCountLength})`;
     } else {
       return `${startIndex + 1} - ${endIndex} of ${length}`;
     }
