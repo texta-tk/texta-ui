@@ -25,7 +25,7 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
       this.factNameOperatorFormControl = this._factConstraint.factNameOperatorFormControl;
       this.factNameFormControl = this._factConstraint.factNameFormControl;
       this.factTextOperatorFormControl = this._factConstraint.factTextOperatorFormControl;
-      if (this._factConstraint.inputGroupArray.length === 0) {
+      if (this._factConstraint.isFactValue) { // saved searches work because im checking inputGroupArray length in html
         this.createGroupListeners();
       } else {
         for (const inputGroup of this._factConstraint.inputGroupArray) { // saved search, already has array
