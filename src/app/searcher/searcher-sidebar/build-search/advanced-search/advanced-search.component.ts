@@ -83,6 +83,14 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
       if (projectFields) {
         this.projectFields = ProjectIndex.sortTextaFactsAsFirstItem(projectFields);
         const distinct = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(x => x.fields).flat(), (x => x.path));
+        // seperate fact adding (fact_values and fact_names)
+        for (const x of distinct) {
+          if (x.type === 'fact') {
+            distinct.unshift({path: x.path, type: 'factName'});
+            break;
+          }
+        }
+
         this.fieldsFiltered.next(distinct);
         this.fieldsUnique = distinct;
       }
@@ -138,7 +146,11 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
       } else if (formFields[0].type === 'date') {
         this.constraintList.push(new DateConstraint(formFields));
       } else {
-        this.constraintList.push(new FactConstraint(formFields));
+        const newFactConstraint = new FactConstraint(formFields);
+        if (formFields[0].type !== 'factName') {
+          newFactConstraint.isFactValue = true;
+        }
+        this.constraintList.push(newFactConstraint);
       }
       this.updateFieldsToHighlight(this.constraintList);
       this.checkMinimumMatch(); // query minimum_should_match

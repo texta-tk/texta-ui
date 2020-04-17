@@ -48,6 +48,7 @@ export class FactConstraint extends Constraint {
   factNameFormControl = new FormControl();
   factTextOperatorFormControl = new FormControl();
   inputGroupArray: FactTextInputGroup[] = [];
+  isFactValue: boolean;
 
   constructor(fields: Field[], factNameOperator?, factName?, factTextOperator?, inputGroupArray?: FactTextInputGroup[]) {
     super(fields);

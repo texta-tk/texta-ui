@@ -1,7 +1,8 @@
-<div fxLayout="row">
-  <mat-form-field fxFlex="40" class="margin-right">
+<div *ngIf="!(_factConstraint?.inputGroupArray && _factConstraint.inputGroupArray.length>0)" fxLayout="row">
+  <mat-form-field class="margin-right" fxFlex="40">
     <mat-label>Operator</mat-label>
-    <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" [formControl]="factNameOperatorFormControl">
+    <mat-select [disableOptionCentering]="true" [formControl]="factNameOperatorFormControl"
+                panelClass="select-panel-reveal-input">
       <mat-option value="must">and</mat-option>
       <mat-option value="should">or</mat-option>
       <mat-option value="must_not">not</mat-option>
@@ -9,7 +10,8 @@
   </mat-form-field>
   <mat-form-field fxFlex>
     <mat-label>Fact name</mat-label>
-    <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" [formControl]="factNameFormControl" multiple>
+    <mat-select [disableOptionCentering]="true" [formControl]="factNameFormControl"
+                multiple panelClass="select-panel-reveal-input">
       <mat-option *ngFor="let fact of projectFacts" [value]="fact">
         {{fact}}
       </mat-option>
@@ -17,52 +19,57 @@
   </mat-form-field>
 </div>
 
-<div fxLayout="column">
+<div *ngIf="_factConstraint?.inputGroupArray && _factConstraint.inputGroupArray.length>0" fxLayout="column">
   <div fxLayout="row">
     <mat-form-field fxFlex="25">
       <mat-label>Operator</mat-label>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" [formControl]="factTextOperatorFormControl">
+      <mat-select [disableOptionCentering]="true" [formControl]="factTextOperatorFormControl"
+                  panelClass="select-panel-reveal-input">
         <mat-option value="must">and</mat-option>
         <mat-option value="should">or</mat-option>
         <mat-option value="must_not">not</mat-option>
       </mat-select>
     </mat-form-field>
     <div fxFlex fxLayoutAlign="end">
-      <button mat-icon-button aria-label="Add" class="addFact mat-icon-button" (click)="createGroupListeners()">
+      <button (click)="createGroupListeners()" aria-label="Add" class="addFact mat-icon-button" mat-icon-button>
         <mat-icon>add</mat-icon>
       </button>
     </div>
   </div>
-  <div fxLayout="row" *ngFor="let inputGroup of _factConstraint.inputGroupArray; let i=index;">
+  <div *ngFor="let inputGroup of _factConstraint.inputGroupArray; let i=index;" fxLayout="row">
     <mat-form-field fxFlex="36">
       <mat-label>Fact name</mat-label>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" [formControl]="inputGroup.factTextFactNameFormControl">
+      <mat-select [disableOptionCentering]="true" [formControl]="inputGroup.factTextFactNameFormControl"
+                  panelClass="select-panel-reveal-input">
         <mat-option *ngFor="let fact of projectFacts" [value]="fact">
           {{fact}}
         </mat-option>
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field fxFlex="15" class="m-l-r-5">
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" [formControl]="inputGroup.factTextOperatorFormControl">
+    <mat-form-field class="m-l-r-5" fxFlex="15">
+      <mat-select [disableOptionCentering]="true" [formControl]="inputGroup.factTextOperatorFormControl"
+                  panelClass="select-panel-reveal-input">
         <mat-option value="must">is</mat-option>
         <mat-option value="must_not">not</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field fxFlex="36">
-      <input type="text" placeholder="Value"
+      <input [formControl]="inputGroup.factTextInputFormControl" [matAutocomplete]="auto"
              aria-label="Number"
              matInput
-             [formControl]="inputGroup.factTextInputFormControl"
-             [matAutocomplete]="auto">
-      <mat-autocomplete #auto="matAutocomplete" panelWidth="auto" (optionSelected)="factValueSelected($event, inputGroup)">
-        <mat-option *ngFor="let option of inputGroup.filteredOptions" [value]="option" [disabled]="inputGroup.isLoadingOptions">
+             placeholder="Value"
+             type="text">
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="factValueSelected($event, inputGroup)"
+                        panelWidth="auto">
+        <mat-option *ngFor="let option of inputGroup.filteredOptions" [disabled]="inputGroup.isLoadingOptions"
+                    [value]="option">
           {{option}}
         </mat-option>
       </mat-autocomplete>
     </mat-form-field>
-    <div fxFlex fxLayoutAlign="end" fxFlexAlign="center">
-      <button mat-icon-button aria-label="Close" class="mat-icon-button" (click)="deleteInputGroup(inputGroup)">
+    <div fxFlex fxFlexAlign="center" fxLayoutAlign="end">
+      <button (click)="deleteInputGroup(inputGroup)" aria-label="Close" class="mat-icon-button" mat-icon-button>
         <mat-icon>close</mat-icon>
       </button>
     </div>

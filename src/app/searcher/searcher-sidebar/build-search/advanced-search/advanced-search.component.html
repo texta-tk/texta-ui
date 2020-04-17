@@ -6,7 +6,13 @@
 
               (selectionChange)="onSelectionChange($event)">
     <mat-option *ngFor="let fields of (fieldsFiltered|async);trackBy:trackByPath" [value]="fields">
-      {{fields.path}}
+      <ng-container *ngIf="fields.type === 'fact' || fields.type === 'factName'">
+        <ng-container *ngIf="fields.type === 'fact'">{{fields.path}}[fact_value]</ng-container>
+        <ng-container *ngIf="fields.type === 'factName'">{{fields.path}}[fact_name]</ng-container>
+      </ng-container>
+      <ng-container *ngIf="fields.type !== 'fact' && fields.type !== 'factName'">
+        {{fields.path}}
+      </ng-container>
     </mat-option>
   </mat-select>
 </mat-form-field>
