@@ -46,6 +46,10 @@ import {IsObjectPipe} from './pipes/is-object.pipe';
 import {NgxMatSelectSearchModule} from 'ngx-mat-select-search';
 import {MatRadioModule} from '@angular/material/radio';
 import { GroupSameValuesPipe } from './pipes/group-same-values.pipe';
+import { GetPropertyListPipe } from './pipes/get-property-list.pipe';
+import { JoinPipe } from './pipes/join.pipe';
+import { BreadcrumbComponent } from './components/breadcrumb/breadcrumb.component';
+import {RouterModule} from '@angular/router';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
@@ -57,9 +61,14 @@ import { GroupSameValuesPipe } from './pipes/group-same-values.pipe';
     SavedSearchAutocompleteComponent,
     FormatTextaFactsPipe,
     IsObjectPipe,
-    GroupSameValuesPipe
+    GroupSameValuesPipe,
+    GetPropertyListPipe,
+    JoinPipe,
+    BreadcrumbComponent
   ],
   imports: [
+    RouterModule,
+
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
@@ -140,7 +149,10 @@ import { GroupSameValuesPipe } from './pipes/group-same-values.pipe';
     GroupSameValuesPipe,
     InfiniteScrollModule,
     MaterialFileInputModule,
-    NgxMatSelectSearchModule
+    NgxMatSelectSearchModule,
+    GetPropertyListPipe,
+    JoinPipe,
+    BreadcrumbComponent
   ]
 })
 export class SharedModule {

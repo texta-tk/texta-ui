@@ -1,0 +1,30 @@
+@import "../../../../../../../variables/variables";
+
+table {
+  width: 100%;
+}
+
+.table-container {
+  position: relative;
+  height: calc(90vh - #{$tasks-table-paginator-row});
+  overflow: auto;
+  .mat-cell {
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-bottom-color: rgba(0, 0, 0, 0.23);
+  }
+
+  .table-row {
+    padding: 5px;
+    border-right: solid 1px rgba(0, 0, 0, 0.23);
+  }
+}
+
+.paginator-margin-left {
+  margin-left: 5px;
+}
+.paginator-row{
+  padding-left: 14px;
+}

@@ -119,7 +119,7 @@
                   </tr>
                   <tr>
                     <th class="mat-body-strong">Indices</th>
-                    <td>{{element.indices.join(', ')}}</td>
+                    <td>{{element.indices| join: ', '}}</td>
                   </tr>
                 </table>
               </div>
@@ -145,7 +145,7 @@
                   <th colspan="2" class="mat-body-strong">Tagger parameters</th>
                   <tr>
                     <th class="mat-body-strong">Fields</th>
-                    <td>{{element.tagger_params.fields.join(', ')}}</td>
+                    <td>{{element.tagger_params.fields| join: ', '}}</td>
                   </tr>
                   <tr>
                     <th class="mat-body-strong">Vectorizer</th>

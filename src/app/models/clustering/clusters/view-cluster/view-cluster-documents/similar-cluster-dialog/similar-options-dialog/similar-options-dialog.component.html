@@ -1,0 +1,79 @@
+<h1 mat-dialog-title>Options</h1>
+<div mat-dialog-content>
+  <form (ngSubmit)="onSubmit(optionsForm.value)" [formGroup]="optionsForm" class="flex-col">
+    <mat-form-field data-cy="appTagMLTMinTermFreq">
+      <input [errorStateMatcher]="matcher" formControlName="minTermFreqFormControl" matInput pattern="[1-9]\d*"
+             placeholder="Min term freq"
+             step="1" type="number">
+      <mat-hint>The minimum term frequency below which the terms will be ignored from the input document.</mat-hint>
+      <mat-error *ngIf="optionsForm.get('minTermFreqFormControl')?.hasError('pattern')">
+        Must be a positive number
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field data-cy="appTagMLTMaxQueryTerms">
+      <input [errorStateMatcher]="matcher" formControlName="maxQueryTermsFormControl" matInput pattern="[1-9]\d*"
+             placeholder="Max query terms"
+             step="1" type="number">
+      <mat-hint>The maximum number of query terms that will be selected.</mat-hint>
+      <mat-error *ngIf="optionsForm.get('maxQueryTermsFormControl')?.hasError('pattern')">
+        Must be a positive number
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field data-cy="appTagMLTMinDocFreq">
+      <input [errorStateMatcher]="matcher" formControlName="minDocFreqFormControl" matInput pattern="[1-9]\d*"
+             placeholder="Min doc freq"
+             step="1" type="number">
+      <mat-hint>The minimum document frequency below which the terms will be ignored from the input document.</mat-hint>
+      <mat-error *ngIf="optionsForm.get('minDocFreqFormControl')?.hasError('pattern')">
+        Must be a positive number
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field data-cy="appTagMLTMinWordLength">
+      <input [errorStateMatcher]="matcher" formControlName="minWordLengthFormControl" matInput pattern="[0-9]\d*"
+             placeholder="Min word length"
+             step="1" type="number">
+      <mat-hint>The minimum word length below which the terms will be ignored.</mat-hint>
+      <mat-error *ngIf="optionsForm.get('minWordLengthFormControl')?.hasError('pattern')">
+        Must be a positive number
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field data-cy="appTagMLTMaxWordLength">
+      <input [errorStateMatcher]="matcher" formControlName="maxWordLengthFormControl" matInput pattern="[0-9]\d*"
+             placeholder="Max word length"
+             step="1" type="number">
+      <mat-hint>The maximum word length above which the terms will be ignored.</mat-hint>
+      <mat-error *ngIf="optionsForm.get('maxWordLengthFormControl')?.hasError('pattern')">
+        Must be a positive number
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field>
+  <textarea cdkAutosizeMaxRows="10"
+            cdkAutosizeMinRows="1"
+            cdkTextareaAutosize
+            formControlName="stopWordsFormControl"
+            matInput placeholder="Stop words"></textarea>
+      <mat-hint>Newline separated</mat-hint>
+    </mat-form-field>
+    <mat-form-field data-cy="appTagMLTSize">
+      <input [errorStateMatcher]="matcher" formControlName="sizeFormControl" matInput max="10000" pattern="[1-9]\d*"
+             placeholder="Size" step="1" type="number">
+      <mat-hint>How many documents to return with the end result.</mat-hint>
+      <mat-error *ngIf="optionsForm.get('sizeFormControl')?.hasError('max')">
+        Maximum size is 10 000
+      </mat-error>
+      <mat-error *ngIf="optionsForm.get('sizeFormControl')?.hasError('pattern')">
+        Must be a positive number
+      </mat-error>
+    </mat-form-field>
+    <div class="flex-col">
+      <div class="flex-row">
+        <div class="flex-item-left">
+          <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
+        </div>
+        <div class="flex-item-right">
+          <button [disabled]="!optionsForm.valid" mat-button type="submit" data-cy="appTagMLTSubmit">Search</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

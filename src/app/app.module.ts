@@ -18,6 +18,7 @@ import {LexiconBuilderComponent} from './lexicon-miner/lexicon-builder/lexicon-b
 import {SearcherModule} from './searcher/searcher.module';
 import {ToolsModule} from './tools/tools.module';
 import {TorchTaggerModule} from './models/torch-tagger/torch-tagger.module';
+import {ClusterModule} from './models/clustering/cluster.module';
 
 
 @NgModule({
@@ -43,6 +44,7 @@ import {TorchTaggerModule} from './models/torch-tagger/torch-tagger.module';
     ProjectModule,
     SearcherModule,
     TorchTaggerModule,
+    ClusterModule,
     ToolsModule,
     AppRoutingModule,
   ],

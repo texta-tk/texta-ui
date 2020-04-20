@@ -25,3 +25,6 @@ mat-chip-list.chip-list-space-evenly{
       justify-content: space-evenly !important;
     }
 }
+.dialog-container-no-padding .mat-dialog-container {
+  padding: 0;
+}

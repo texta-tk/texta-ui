@@ -21,7 +21,7 @@
       </button>
     </a>
     <a
-      [ngClass]="{'is-active': ['/tagger-groups', '/taggers', '/embeddings', '/neurotaggers'].includes(router.url)}"
+      [ngClass]="{'is-active': ['/tagger-groups', '/taggers', '/embeddings', '/neurotaggers', '/clustering'].includes(router.url)}"
       class="pointer" [matMenuTriggerFor]="models">
       <button mat-button class="nav-button" data-cy="appNavbarModels">
         <mat-icon class="margin-right">storage</mat-icon>
@@ -55,6 +55,8 @@
       <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['embeddings']"
          data-cy="appNavbarModelMenuEmbeddings">Embeddings <span
         *ngIf="projectResourceCounts?.num_embeddings">({{projectResourceCounts?.num_embeddings}})</span></a>
+      <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['clustering']"
+         data-cy="appNavbarModelMenuClusters">Clustering </a>
     </mat-menu>
 
     <mat-menu #tools="matMenu">
