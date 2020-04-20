@@ -63,7 +63,7 @@
       </ng-container>
       <ng-container matColumnDef="fields">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Fields</th>
-        <td mat-cell *matCellDef="let element"> {{element.fields.join(', ')}}</td>
+        <td mat-cell *matCellDef="let element"> {{element.fields| join: ', '}}</td>
       </ng-container>
 
       <ng-container matColumnDef="id">

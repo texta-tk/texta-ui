@@ -1,12 +1,12 @@
-import {TestBed} from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 
-import {EmbeddingsService} from './embeddings.service';
-import {SharedModule} from '../../../shared/shared.module';
+import { ClusterService } from './cluster.service';
 import {RouterTestingModule} from '@angular/router/testing';
+import {SharedModule} from '../../../shared/shared.module';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 
-describe('EmbeddingsService', () => {
-  let service: EmbeddingsService;
+describe('ClusterService', () => {
+  let service: ClusterService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -16,7 +16,7 @@ describe('EmbeddingsService', () => {
         HttpClientTestingModule
       ]
     });
-    service = TestBed.inject(EmbeddingsService);
+    service = TestBed.inject(ClusterService);
   });
 
   it('should be created', () => {

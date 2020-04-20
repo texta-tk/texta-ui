@@ -1,0 +1,66 @@
+<div class="wrapper mat-elevation-z8">
+  <div class="table-paginator-row">
+    <div class="loading-bar">
+      <mat-progress-bar *ngIf="isLoadingResults" mode="indeterminate"></mat-progress-bar>
+    </div>
+    <div class="paginator-row">
+      <app-breadcrumb></app-breadcrumb>
+      <button (click)="onDeleteAllSelected()" [disabled]="selectedRows.selected.length < 1" class="new-resource-btn"
+              color="warn"
+              mat-icon-button matTooltip="Delete selected" data-cy="appClusterDocumentsDeleteBtn">
+        <mat-icon>delete</mat-icon>
+      </button>
+      <button (click)="moreLikeThis()" class="paginator-margin-left"
+              color="primary" mat-raised-button data-cy="appClusterDocumentsMLTBtn">
+        More like this
+      </button>
+      <button (click)="tag()" class="paginator-margin-left"
+              color="primary" mat-raised-button data-cy="appClusterDocumentsTagBtn">
+        Tag
+      </button>
+      <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
+      </mat-paginator>
+    </div>
+  </div>
+  <div class="table-container">
+    <table [dataSource]="tableData" [trackBy]="trackById" mat-table
+           matSort>
+      <ng-container matColumnDef="select">
+        <th *matHeaderCellDef mat-header-cell>
+          <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selectedRows.hasValue() && isAllSelected()"
+                        [indeterminate]="selectedRows.hasValue() && !isAllSelected()">
+          </mat-checkbox>
+        </th>
+        <td *matCellDef="let row" mat-cell>
+          <mat-checkbox (change)="$event ? selectedRows.toggle(row) : null" (click)="$event.stopPropagation()"
+                        [checked]="selectedRows.isSelected(row)">
+          </mat-checkbox>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="id">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Id</th>
+        <td *matCellDef="let element" class="table-row" mat-cell> {{element.id}}</td>
+      </ng-container>
+      <ng-container matColumnDef="index">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> index</th>
+        <td *matCellDef="let element" class="table-row" mat-cell> {{element.index}}</td>
+      </ng-container>
+      <ng-container *ngFor="let column of infiniteColumns" [matColumnDef]="column">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{column}}</th>
+        <td *matCellDef="let row"
+            [title]="(row.content[column] | isObject) ? (row.content[column] | json) :row.content[column]"
+            class="table-row" mat-cell>
+          <ng-container *ngIf="(row.content[column] | isObject)">{{row.content[column] | json}}</ng-container>
+          <ng-container *ngIf="!(row.content[column] | isObject)">{{row.content[column]}}</ng-container>
+        </td>
+      </ng-container>
+
+      <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
+      <tr *matRowDef="let element; columns: displayedColumns;" class="element-row" mat-row></tr>
+
+    </table>
+
+  </div>
+
+
+</div>

@@ -1,0 +1,131 @@
+<h1 mat-dialog-title>New Clustering</h1>
+<div mat-dialog-content>
+  <form (ngSubmit)="onSubmit(clusterForm.value)" [formGroup]="clusterForm" class="flex-col">
+    <mat-form-field data-cy="appClusterCreateDialogDesc">
+      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
+             placeholder="Description" required>
+
+      <mat-error *ngIf="clusterForm.get('descriptionFormControl')?.hasError('required')">
+        Description is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"
+                                   data-cy="appClusterCreateDialogQuery">
+    </app-saved-search-autocomplete>
+
+    <mat-form-field data-cy="appClusterCreateDialogIndices">
+      <mat-label>Indices</mat-label>
+      <mat-select (openedChange)="indicesOpenedChange($event)" [disableOptionCentering]="true"
+                  formControlName="indicesFormControl" multiple panelClass="select-panel-reveal-input" required>
+        <mat-option *ngFor="let projectIndex of projectIndices" [value]="projectIndex">
+          {{projectIndex.index}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="clusterForm.get('indicesFormControl')?.hasError('required')">
+        Need atleast 1 index
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field data-cy="appClusterCreateDialogFields">
+      <mat-label>Select Fields</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="fieldsFormControl"
+                  multiple panelClass="select-panel-reveal-input" required>
+        <mat-option *ngFor="let fields of fieldsUnique" [value]="fields.path">
+          {{fields.path}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="clusterForm.get('fieldsFormControl')?.hasError('required')">
+        Field is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Original text field</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="origTextFormControl"
+                  panelClass="select-panel-reveal-input">
+        <mat-option *ngFor="let fields of fieldsUnique" [value]="fields.path">
+          {{fields.path}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <textarea cdkAutosizeMaxRows="10"
+                cdkAutosizeMinRows="1"
+                cdkTextareaAutosize
+                formControlName="stopWordsFormControl"
+                matInput placeholder="Stopwords"></textarea>
+    </mat-form-field>
+
+    <mat-form-field>
+      <textarea cdkAutosizeMaxRows="10"
+                cdkAutosizeMinRows="1"
+                cdkTextareaAutosize
+                formControlName="ignoredIdsFormControl"
+                matInput placeholder="Ignored ids"></textarea>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Clustering algorithm</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="clusteringAlgorithmFormControl"
+                  panelClass="select-panel-reveal-input">
+        <ng-container *ngIf="clusterOptions">
+          <mat-option *ngFor="let item of clusterOptions.actions.POST.clustering_algorithm.choices" [value]="item">
+            {{item.display_name}}
+          </mat-option>
+        </ng-container>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Vectorizer</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="vectorizerFormControl"
+                  panelClass="select-panel-reveal-input">
+        <ng-container *ngIf="clusterOptions">
+          <mat-option *ngFor="let item of clusterOptions.actions.POST.vectorizer.choices" [value]="item">
+            {{item.display_name}}
+          </mat-option>
+        </ng-container>
+      </mat-select>
+    </mat-form-field>
+
+    <div fxLayout="row" fxLayoutGap="24px">
+      <mat-form-field fxFlex="calc(25%-24px)">
+        <input formControlName="documentLimitFormControl" matInput pattern="[1-9]\d*" placeholder="Document limit"
+               step="10"
+               type="number">
+      </mat-form-field>
+
+      <mat-form-field fxFlex="calc(25%-24px)">
+        <input formControlName="numClusterFormControl" matInput pattern="[1-9]\d*" placeholder="Num cluster" step="1"
+               type="number">
+      </mat-form-field>
+
+      <mat-form-field fxFlex="calc(25%-24px)">
+        <input formControlName="numDimsFormControl" matInput pattern="[1-9]\d*" placeholder="Num dims" step="100"
+               type="number">
+      </mat-form-field>
+
+      <mat-form-field fxFlex="calc(25%-24px)">
+        <input formControlName="numTopicsFormControl" matInput pattern="[1-9]\d*" placeholder="Num topics" step="100"
+               type="number">
+      </mat-form-field>
+
+    </div>
+    <mat-checkbox formControlName="useLSIFormControl">Use lsi</mat-checkbox>
+
+    <div class="flex-col">
+      <div class="flex-row">
+        <div class="flex-item-left">
+          <button (click)="closeDialog()" class="flex-item-left" mat-button type="button">Close</button>
+        </div>
+        <div class="flex-item-right">
+          <button [disabled]="!clusterForm.valid" data-cy="appClusterCreateDialogSubmit" mat-button type="submit">
+            Create
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

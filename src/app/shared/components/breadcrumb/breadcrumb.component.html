@@ -1,0 +1,7 @@
+<div fxLayout="row" class="breadcrumb mat-typography">
+  <span *ngFor="let breadcrumb of breadcrumbs">
+    <a [routerLink]="breadcrumb.url" class="action-text mat-body-strong pointer" matTooltip="{{breadcrumb.tooltip}}">
+      {{ breadcrumb.label }}
+    </a>
+  </span>
+</div>

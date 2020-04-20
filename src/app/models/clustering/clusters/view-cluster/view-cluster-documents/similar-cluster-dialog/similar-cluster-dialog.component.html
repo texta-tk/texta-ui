@@ -1,0 +1,60 @@
+<div class="wrapper mat-elevation-z8">
+  <div class="table-paginator-row">
+    <div class="loading-bar">
+      <mat-progress-bar *ngIf="isLoadingResults" mode="indeterminate"></mat-progress-bar>
+    </div>
+    <div class="paginator-row">
+      <button (click)="addAllSelected()" [disabled]="selectedRows.selected.length < 1"
+              color="primary"
+              mat-icon-button matTooltip="Add selected documents to cluster">
+        <mat-icon>add</mat-icon>
+      </button>
+      <button (click)="similarOptions()"
+              class="paginator-margin-left"
+              color="primary" mat-raised-button>
+        Options
+      </button>
+      <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
+      </mat-paginator>
+    </div>
+  </div>
+  <div class="table-container">
+    <table [dataSource]="tableData" [trackBy]="trackById" mat-table
+           matSort>
+      <ng-container matColumnDef="select">
+        <th *matHeaderCellDef mat-header-cell>
+          <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selectedRows.hasValue() && isAllSelected()"
+                        [indeterminate]="selectedRows.hasValue() && !isAllSelected()">
+          </mat-checkbox>
+        </th>
+        <td *matCellDef="let row" mat-cell>
+          <mat-checkbox (change)="$event ? selectedRows.toggle(row) : null" (click)="$event.stopPropagation()"
+                        [checked]="selectedRows.isSelected(row)">
+          </mat-checkbox>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="_id">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Id</th>
+        <td *matCellDef="let element" class="table-row" mat-cell> {{element._id}}</td>
+      </ng-container>
+      <ng-container matColumnDef="_index">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> index</th>
+        <td *matCellDef="let element" class="table-row" mat-cell> {{element._index}}</td>
+      </ng-container>
+      <ng-container *ngFor="let column of infiniteColumns" [matColumnDef]="column">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{column}}</th>
+        <td *matCellDef="let row"
+            [title]="(row._source[column] | isObject) ? (row._source[column] | json) :row._source[column]"
+            class="table-row" mat-cell>
+          <ng-container *ngIf="(row._source[column] | isObject)">{{row._source[column] | json}}</ng-container>
+          <ng-container *ngIf="!(row._source[column] | isObject)">{{row._source[column]}}</ng-container>
+        </td>
+      </ng-container>
+
+      <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
+      <tr *matRowDef="let element; columns: displayedColumns;" class="element-row" mat-row></tr>
+
+    </table>
+
+  </div>
+</div>
