@@ -26,17 +26,21 @@
   border-right: solid 1px rgba(0, 0, 0, 0.23);
   padding: 5px;
 }
-.mat-header-row{
+
+.mat-header-row {
   height: 50px;
 }
-.column-header-text{
+
+.column-header-text {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 .mat-header-cell {
   border-right: solid 1px rgba(0, 0, 0, 0.23);
   padding-left: 12px;
   white-space: nowrap;
+
   ::ng-deep .mat-sort-header-container {
     justify-content: center;
   }
@@ -55,4 +59,8 @@ td.mat-cell {
 
 .mat-cell-dense {
   max-width: 150px;
+}
+
+app-highlight {
+  white-space: pre-line;
 }
