@@ -20,7 +20,8 @@ import {ConfirmDialogComponent} from '../../../../../../shared/components/dialog
 })
 export class SimilarClusterDialogComponent implements OnInit, AfterViewInit, OnDestroy {
   public tableData: MatTableDataSource<any> = new MatTableDataSource();
-  public displayedColumns;
+  public displayedColumns: string[] = [];
+  public filterColumns: string[] = [];
   public infiniteColumns: string[] = [];
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -46,7 +47,8 @@ export class SimilarClusterDialogComponent implements OnInit, AfterViewInit, OnD
       if (resp && !(resp instanceof HttpErrorResponse)) {
         // @ts-ignore
         this.infiniteColumns = Object.getOwnPropertyNames(resp[0]._source);
-        this.displayedColumns = ['select', '_id', '_index', ...this.infiniteColumns];
+        this.displayedColumns = ['select', '_id', ...this.infiniteColumns];
+        this.filterColumns = [...this.displayedColumns];
         this.tableData.data = resp;
         this.isLoadingResults = false;
       } else if (resp instanceof HttpErrorResponse) {

@@ -24,7 +24,8 @@ import {TagClusterDialogComponent} from './tag-cluster-dialog/tag-cluster-dialog
 })
 export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnDestroy {
   public tableData: MatTableDataSource<ClusterDocument> = new MatTableDataSource();
-  public displayedColumns;
+  public displayedColumns: string[] = [];
+  public filterColumns: string[] = [];
   public infiniteColumns: string[] = [];
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -55,7 +56,8 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
     })).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.infiniteColumns = Object.getOwnPropertyNames(resp.documents[0].content);
-        this.displayedColumns = ['select', 'id', 'index', ...this.infiniteColumns];
+        this.filterColumns = ['select', 'id', ...this.infiniteColumns];
+        this.displayedColumns = [...this.filterColumns];
         this.tableData.data = resp.documents;
         this.isLoadingResults = false;
       } else if (resp instanceof HttpErrorResponse) {

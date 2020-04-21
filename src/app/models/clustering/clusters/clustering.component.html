@@ -69,12 +69,12 @@
       </ng-container>
 
       <ng-container matColumnDef="num_cluster">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header> num_cluster</th>
-        <td *matCellDef="let element" mat-cell> {{element.num_cluster | number:'0.2-2'}}</td>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Clusters</th>
+        <td *matCellDef="let element" mat-cell> {{element.num_cluster}}</td>
       </ng-container>
 
       <ng-container matColumnDef="use_lsi">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header> use_lsi</th>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>LSI</th>
         <td *matCellDef="let element" mat-cell> {{element.use_lsi}}</td>
       </ng-container>
 
@@ -95,7 +95,7 @@
       <ng-container matColumnDef="expandedDetail">
         <td *matCellDef="let element" [attr.colspan]="displayedColumns.length" mat-cell>
           <div *ngIf="element == expandedElement" [@detailExpand] class="element-detail">
-            <div class="flex-col m-l-r-5" fxFlex="33">
+            <div class="flex-col m-l-r-5" fxFlex="25">
               <table class="simple-table">
                 <tr>
                   <th class="mat-body-strong">Resource id</th>
@@ -131,7 +131,7 @@
                 </tr>
               </table>
             </div>
-            <div class="flex-col m-l-r-5" fxFlex="33">
+            <div class="flex-col m-l-r-5" fxFlex="50">
               <table class="simple-table">
                 <tr>
                   <th class="mat-body-strong">Number of clusters</th>
@@ -150,7 +150,7 @@
                   <td>{{element.num_dims}}</td>
                 </tr>
                 <tr>
-                  <th class="mat-body-strong">Use lsi</th>
+                  <th class="mat-body-strong">LSI</th>
                   <td>{{element.use_lsi}}</td>
                 </tr>
                 <tr>
@@ -175,7 +175,7 @@
                 </tr>
               </table>
             </div>
-            <div class="flex-col m-l-r-5" fxFlex="33">
+            <div class="flex-col m-l-r-5" fxFlex="25">
               <table class="simple-table">
                 <tr>
                   <th class="mat-body-strong">Fields</th>

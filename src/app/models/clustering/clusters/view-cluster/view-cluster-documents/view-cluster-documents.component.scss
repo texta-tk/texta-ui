@@ -19,9 +19,14 @@ table {
   }
   .table-row{
     padding: 5px;
-    border-right: solid 1px rgba(0, 0, 0, 0.23);
+    border-left: solid 1px rgba(0, 0, 0, 0.23);
   }
 }
 .paginator-margin-left{
-  margin-left: 5px;
+  margin-left: 10px;
+}
+.paginator-row{
+  mat-form-field{
+    line-height: 1.6;
+  }
 }

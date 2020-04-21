@@ -41,29 +41,15 @@
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>Original text field</mat-label>
-      <mat-select [disableOptionCentering]="true" formControlName="origTextFormControl"
-                  panelClass="select-panel-reveal-input">
-        <mat-option *ngFor="let fields of fieldsUnique" [value]="fields.path">
-          {{fields.path}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field>
-      <textarea cdkAutosizeMaxRows="10"
-                cdkAutosizeMinRows="1"
-                cdkTextareaAutosize
+      <textarea
                 formControlName="stopWordsFormControl"
-                matInput placeholder="Stopwords"></textarea>
+                matInput placeholder="Stopwords (newline separated)"></textarea>
     </mat-form-field>
 
     <mat-form-field>
-      <textarea cdkAutosizeMaxRows="10"
-                cdkAutosizeMinRows="1"
-                cdkTextareaAutosize
+      <textarea
                 formControlName="ignoredIdsFormControl"
-                matInput placeholder="Ignored ids"></textarea>
+                matInput placeholder="Ignored ids (newline separated)"></textarea>
     </mat-form-field>
 
     <mat-form-field>
@@ -113,7 +99,7 @@
       </mat-form-field>
 
     </div>
-    <mat-checkbox formControlName="useLSIFormControl">Use lsi</mat-checkbox>
+    <mat-checkbox formControlName="useLSIFormControl">Use LSI</mat-checkbox>
 
     <div class="flex-col">
       <div class="flex-row">

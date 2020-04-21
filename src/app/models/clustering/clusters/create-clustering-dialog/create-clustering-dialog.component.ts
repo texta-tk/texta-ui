@@ -35,7 +35,6 @@ export class CreateClusteringDialogComponent implements OnInit, OnDestroy {
     numDimsFormControl: new FormControl(1000),
     useLSIFormControl: new FormControl(false),
     numTopicsFormControl: new FormControl(50),
-    origTextFormControl: new FormControl(),
     stopWordsFormControl: new FormControl([]),
     ignoredIdsFormControl: new FormControl([]),
     fieldsFormControl: new FormControl([], [Validators.required]),
@@ -122,18 +121,14 @@ export class CreateClusteringDialogComponent implements OnInit, OnDestroy {
       num_dims: formData.numDimsFormControl,
       use_lsi: formData.useLSIFormControl,
       num_topics: formData.numTopicsFormControl,
-      stop_words: formData.stopWordsFormControl,
-      ignored_ids: formData.ignoredIdsFormControl,
+      stop_words: formData.stopWordsFormControl.length > 0 ? formData.stopWordsFormControl.split('\n') : [],
+      ignored_ids: formData.ignoredIdsFormControl.length > 0  ? formData.ignoredIdsFormControl.split('\n') : [],
       fields: formData.fieldsFormControl,
       document_limit: formData.documentLimitFormControl,
     };
 
     if (this.query) {
       body.query = this.query;
-    }
-
-    if (formData.origTextFormControl) {
-      body.original_text_field = formData.origTextFormControl;
     }
 
 

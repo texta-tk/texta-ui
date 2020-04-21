@@ -49,3 +49,9 @@ tr.element-row:not(.expanded-row):active {
   display: flex;
   flex-direction: row;
 }
+.simple-table{
+  th{
+    min-width: 100px;
+    white-space: pre
+  }
+}

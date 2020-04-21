@@ -10,7 +10,7 @@
               mat-icon-button matTooltip="Delete selected" data-cy="appClustersDeleteBtn">
         <mat-icon>delete</mat-icon>
       </button>
-      <mat-form-field class="m-l-15">
+      <mat-form-field class="m-l-15" floatLabel="never">
         <mat-icon matSuffix>search</mat-icon>
         <input matInput (keyup)="applyFilter($event)" placeholder="Filter words">
       </mat-form-field>
@@ -41,17 +41,17 @@
         <td mat-cell *matCellDef="let element"> {{element.id}}</td>
       </ng-container>
       <ng-container matColumnDef="document_count">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Document_count</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Document count</th>
         <td mat-cell *matCellDef="let element"><span>{{element.document_count}}</span>
         </td>
       </ng-container>
       <ng-container matColumnDef="average_similarity">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>average_similarity</th>
-        <td mat-cell *matCellDef="let element"><span>{{element.average_similarity}}</span>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Average similarity</th>
+        <td mat-cell *matCellDef="let element"><span>{{element.average_similarity | number: '0.2'}}</span>
         </td>
       </ng-container>
       <ng-container matColumnDef="significant_words">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>significant_words</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Significant words</th>
         <td mat-cell *matCellDef="let element"><span>{{(element.significant_words | getPropertyList: propertyAccessor) | join: ', '}}</span>
         </td>
       </ng-container>

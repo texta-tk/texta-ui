@@ -18,6 +18,17 @@
               color="primary" mat-raised-button data-cy="appClusterDocumentsTagBtn">
         Tag
       </button>
+      <mat-form-field class="paginator-margin-left">
+        <mat-label>Toggle Columns</mat-label>
+        <mat-select [(ngModel)]="displayedColumns"
+                    data-cy="appClusterDocumentsTableColumnSelect"
+                    multiple>
+          <app-mat-option-select-all></app-mat-option-select-all>
+          <mat-option *ngFor="let column of filterColumns" [value]="column">
+            {{column}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
       <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
       </mat-paginator>
     </div>
@@ -38,15 +49,11 @@
         </td>
       </ng-container>
       <ng-container matColumnDef="id">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header> Id</th>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header class="table-row"> Id</th>
         <td *matCellDef="let element" class="table-row" mat-cell> {{element.id}}</td>
       </ng-container>
-      <ng-container matColumnDef="index">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header> index</th>
-        <td *matCellDef="let element" class="table-row" mat-cell> {{element.index}}</td>
-      </ng-container>
       <ng-container *ngFor="let column of infiniteColumns" [matColumnDef]="column">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{column}}</th>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header class="table-row">{{column}}</th>
         <td *matCellDef="let row"
             [title]="(row.content[column] | isObject) ? (row.content[column] | json) :row.content[column]"
             class="table-row" mat-cell>

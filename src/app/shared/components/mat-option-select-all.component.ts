@@ -1,28 +1,27 @@
 import {Component, OnInit, Host, AfterViewInit, OnDestroy} from '@angular/core';
-import { MatPseudoCheckboxState } from '@angular/material/core';
-import { MatSelect } from '@angular/material/select';
+import {MatPseudoCheckboxState} from '@angular/material/core';
+import {MatSelect} from '@angular/material/select';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-mat-option-select-all',
   template: `
-      <div class="mat-option" data-cy="matOptionSelectAll" (click)="onSelectAllClick($event)">
-          <mat-pseudo-checkbox [state]="state" class="mat-option-pseudo-checkbox"></mat-pseudo-checkbox>
-          <span class="mat-option-text">Select all</span>
-      </div>
+    <div class="mat-option" data-cy="matOptionSelectAll" (click)="onSelectAllClick($event)">
+      <mat-pseudo-checkbox [state]="state" class="mat-option-pseudo-checkbox"></mat-pseudo-checkbox>
+      <span class="mat-option-text">Select all</span>
+    </div>
   `,
   styles: [`
-      .mat-option {
-          border-bottom: 1px solid #ccc;
-          height: 3.5em;
-          line-height: 3.5em;
-      }`]
+    .mat-option {
+      border-bottom: 1px solid #ccc;
+      height: 3.5em;
+      line-height: 3.5em;
+    }`]
 })
 export class MatOptionSelectAllComponent implements AfterViewInit, OnDestroy {
 
   state: MatPseudoCheckboxState = 'checked';
-
   private options: any[] = [];
   private value: any[] | null = [];
 
@@ -64,13 +63,13 @@ export class MatOptionSelectAllComponent implements AfterViewInit, OnDestroy {
 
   onSelectAllClick(evt: MouseEvent) {
     if (this.state === 'checked') {
-      // todo fix in TS 3.7
-      // tslint:disable-next-line:no-non-null-assertion
-      this.matSelect!.ngControl!.control!.setValue([]);
+      if (this.matSelect?.ngControl?.control) {
+        this.matSelect.ngControl.control.setValue([]);
+      }
     } else {
-      // todo fix in TS 3.7
-      // tslint:disable-next-line:no-non-null-assertion
-      this.matSelect!.ngControl!.control!.setValue(this.options);
+      if (this.matSelect?.ngControl?.control) {
+        this.matSelect.ngControl.control.setValue(this.options);
+      }
     }
 
   }
