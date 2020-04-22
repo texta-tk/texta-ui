@@ -222,6 +222,9 @@
         View clusters
       </button>
     </div>
+    <button mat-menu-item (click)="editStopwordsDialog(element)" data-cy="appClusteringMenuStopWords">
+      Stop words
+    </button>
     <button (click)="retrainCluster(element)" data-cy="appClusteringMenuRetrain" mat-menu-item>
       Retrain
     </button>

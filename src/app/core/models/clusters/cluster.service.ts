@@ -41,7 +41,7 @@ export class ClusterService {
       catchError(this.logService.handleError<Cluster>('createCluster')));
   }
 
-  editCluster(body: {}, projectId, clusterId): Observable<Cluster | HttpErrorResponse> {
+  editCluster(projectId, clusterId, body: any): Observable<Cluster | HttpErrorResponse> {
     return this.http.patch<Cluster>(
       `${this.apiUrl}/projects/${projectId}/clustering/${clusterId}/`, body
     ).pipe(
@@ -110,7 +110,7 @@ export class ClusterService {
       tap(e => this.logService.logStatus(e, 'clusterDetails')),
       catchError(this.logService.handleError<ClusterDetails>('clusterDetails')));
   }
-
+  
   getClusterOptions(projectId: number): Observable<ClusterOptions | HttpErrorResponse> {
     return this.http.options<ClusterOptions>(
       this.apiUrl + '/projects/' + projectId + '/clustering/'

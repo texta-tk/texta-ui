@@ -17,6 +17,7 @@ import {expandRowAnimation} from '../../../shared/animations';
 import {CreateClusteringDialogComponent} from './create-clustering-dialog/create-clustering-dialog.component';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Router} from '@angular/router';
+import {EditStopwordsDialogComponent} from './edit-stopwords-dialog/edit-stopwords-dialog.component';
 
 @Component({
   selector: 'app-clustering',
@@ -46,13 +47,14 @@ export class ClusteringComponent implements OnInit, OnDestroy, AfterViewInit {
   resultsLength: number;
   destroyed$ = new Subject<boolean>();
 
-  public propertyAccessor = (x) => x.name;
   constructor(private projectStore: ProjectStore,
               private clusterService: ClusterService,
               public dialog: MatDialog,
               private router: Router,
               public logService: LogService) {
   }
+
+  public propertyAccessor = (x) => x.name;
 
   ngOnInit() {
     this.tableData.sort = this.sort;
@@ -103,6 +105,14 @@ export class ClusteringComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy() {
     this.destroyed$.next(true);
     this.destroyed$.complete();
+  }
+
+  editStopwordsDialog(element) {
+    const dialogRef = this.dialog.open(EditStopwordsDialogComponent, {
+      data: {cluster: element, currentProjectId: this.currentProject.id},
+      maxHeight: '665px',
+      width: '700px',
+    });
   }
 
   openCreateDialog() {

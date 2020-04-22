@@ -12,9 +12,6 @@ table {
 
   .mat-cell{
     max-width: 300px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
     border-bottom-color: rgba(0, 0, 0, 0.23);
   }
   .table-row{

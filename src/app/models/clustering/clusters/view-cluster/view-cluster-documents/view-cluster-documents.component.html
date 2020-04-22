@@ -48,10 +48,6 @@
           </mat-checkbox>
         </td>
       </ng-container>
-      <ng-container matColumnDef="id">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header class="table-row"> Id</th>
-        <td *matCellDef="let element" class="table-row" mat-cell> {{element.id}}</td>
-      </ng-container>
       <ng-container *ngFor="let column of infiniteColumns" [matColumnDef]="column">
         <th *matHeaderCellDef mat-header-cell mat-sort-header class="table-row">{{column}}</th>
         <td *matCellDef="let row"

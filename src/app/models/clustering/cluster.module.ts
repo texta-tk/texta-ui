@@ -8,6 +8,7 @@ import {ViewClusterDocumentsComponent} from './clusters/view-cluster/view-cluste
 import {SimilarClusterDialogComponent} from './clusters/view-cluster/view-cluster-documents/similar-cluster-dialog/similar-cluster-dialog.component';
 import {SimilarOptionsDialogComponent} from './clusters/view-cluster/view-cluster-documents/similar-cluster-dialog/similar-options-dialog/similar-options-dialog.component';
 import {TagClusterDialogComponent} from './clusters/view-cluster/view-cluster-documents/tag-cluster-dialog/tag-cluster-dialog.component';
+import { EditStopwordsDialogComponent } from './clusters/edit-stopwords-dialog/edit-stopwords-dialog.component';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import {TagClusterDialogComponent} from './clusters/view-cluster/view-cluster-do
     ViewClusterDocumentsComponent,
     SimilarClusterDialogComponent,
     SimilarOptionsDialogComponent,
-    TagClusterDialogComponent],
+    TagClusterDialogComponent,
+    EditStopwordsDialogComponent],
   imports: [
     SharedModule,
     ClusterRoutingModule

@@ -39,7 +39,7 @@ export class ClusterDetails {
   id: number;
   intracluster_similarity: number;
   document_count: number;
-  significant_words: { key: string, count: number };
+  significant_words: { key: string, count: number }[];
   documents: ClusterDocument[];
 }
 

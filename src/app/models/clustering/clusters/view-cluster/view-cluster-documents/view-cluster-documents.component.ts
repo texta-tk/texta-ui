@@ -56,8 +56,10 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
     })).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.infiniteColumns = Object.getOwnPropertyNames(resp.documents[0].content);
-        this.filterColumns = ['select', 'id', ...this.infiniteColumns];
-        this.displayedColumns = [...this.filterColumns];
+        if (this.displayedColumns.length === 0) {
+          this.filterColumns = ['select', ...this.infiniteColumns];
+          this.displayedColumns = [...this.filterColumns];
+        }
         this.tableData.data = resp.documents;
         this.isLoadingResults = false;
       } else if (resp instanceof HttpErrorResponse) {
