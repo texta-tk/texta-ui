@@ -1,0 +1,12 @@
+span {
+  border-radius: 20px;
+  padding: 5px 10px;
+  line-height: 2.3;
+  margin-right: 5px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: .2s filter;
+}
+span:hover{
+  filter: brightness(80%);
+}

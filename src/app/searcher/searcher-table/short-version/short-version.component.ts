@@ -25,11 +25,10 @@ export class ShortVersionComponent {
   @Input() set params(params: { data: any, currentColumn: string, searcherHighlight: any, contextWindow: number }) {
     if (params?.data && params?.searcherHighlight && params.currentColumn && params.data[params.currentColumn] !== '' &&
       params.data[params.currentColumn] && params?.contextWindow > 0) {
-      const f = new HighlightComponent();
       const highlightTerms = [
-        ...f.makeSearcherHighlights(params.searcherHighlight, params.currentColumn),
+        ...HighlightComponent.makeSearcherHighlights(params.searcherHighlight, params.currentColumn),
       ];
-      const colors = f.generateColorsForFacts(highlightTerms);
+      const colors = HighlightComponent.generateColorsForFacts(highlightTerms);
       this.highlightArray = this.makeShortVersionSpans(params.data[params.currentColumn].toString(),
         highlightTerms, colors, params.contextWindow);
     } else {

@@ -126,6 +126,12 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
           this.searchService.nextSearch(new Search(result, this.searchOptions));
         }
       });
+
+    this.searchService.getBuildAdvancedSearch().pipe(takeUntil(this.destroy$)).subscribe(x => {
+      if (x) {
+        this.buildSavedSearch(x);
+      }
+    });
   }
 
 

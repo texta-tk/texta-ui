@@ -34,9 +34,7 @@
         <td mat-cell *matCellDef="let row" class="table-row">
           <ng-container *ngIf="(row.doc[column] | isObject)"><!--pure pipe does memoization for us-->
             <ng-container *ngIf="column === 'texta_facts'">
-              <button mat-button [matMenuTriggerFor]="factMenu" [matMenuTriggerData]="{data: row.doc[column]}">
-                View facts
-              </button>
+              <app-texta-facts-chips [facts]="row.doc[column]"></app-texta-facts-chips>
             </ng-container>
             <pre *ngIf="column !== 'texta_facts'">
                  {{row.doc[column] | json}}
