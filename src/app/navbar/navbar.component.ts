@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {UserStore} from '../core/users/user.store';
 import {LoginDialogComponent} from '../shared/components/dialogs/login/login-dialog.component';
@@ -21,7 +21,8 @@ import {EditProjectDialogComponent} from '../home/project/edit-project-dialog/ed
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.scss']
+  styleUrls: ['./navbar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   user: UserProfile;
@@ -40,6 +41,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
               public projectStore: ProjectStore,
               private logService: LogService,
               public router: Router,
+              private changeDetectorRef: ChangeDetectorRef,
               private projectService: ProjectService) {
 
   }
@@ -48,6 +50,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.userStore.getCurrentUser().pipe(takeUntil(this.destroyed$)).subscribe(resp => {
       if (resp) {
         this.user = resp;
+        this.changeDetectorRef.markForCheck();
       } else {
         this.projectResourceCounts = new ProjectResourceCounts();
       }

@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {ElasticsearchQuery, FactConstraint} from '../../searcher-sidebar/build-search/Constraints';
 import * as LinkifyIt from 'linkify-it';
 
@@ -31,7 +31,8 @@ interface HighlightObject {
 @Component({
   selector: 'app-highlight',
   templateUrl: './highlight.component.html',
-  styleUrls: ['./highlight.component.sass']
+  styleUrls: ['./highlight.component.sass'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HighlightComponent {
   static colors: Map<string, string> = new Map<string, string>();
@@ -42,7 +43,7 @@ export class HighlightComponent {
   }
 
   @Input() set highlightConfig(highlightConfig: HighlightConfig) {
-    if (highlightConfig.data[highlightConfig.currentColumn]) {
+    if (highlightConfig.data[highlightConfig.currentColumn] !== null) {
       let fieldFacts = this.getFactsByField(highlightConfig.data, highlightConfig.currentColumn);
       if (highlightConfig.onlyHighlightMatching && fieldFacts.length > 0) {
         fieldFacts = this.getOnlyMatchingFacts(fieldFacts, highlightConfig); // todo
@@ -179,9 +180,6 @@ export class HighlightComponent {
     // column content can be number, convert to string
     originalText = originalText.toString();
     if (facts.length === 0) {
-      if (!originalText) {
-        return [];
-      }
       return [{text: originalText, highlighted: false}];
     }
 

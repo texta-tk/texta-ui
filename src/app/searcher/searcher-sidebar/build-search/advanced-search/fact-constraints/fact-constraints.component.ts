@@ -233,7 +233,6 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
       this.elasticSearchQuery.elasticSearchQuery!.query!.bool!.must.splice(inputQueryIndex, 1);
     }
 
-    this.change.emit(this.elasticSearchQuery);
     this.destroyed$.next(true);
     this.destroyed$.complete();
   }

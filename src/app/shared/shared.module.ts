@@ -50,6 +50,7 @@ import { GetPropertyListPipe } from './pipes/get-property-list.pipe';
 import { JoinPipe } from './pipes/join.pipe';
 import { BreadcrumbComponent } from './components/breadcrumb/breadcrumb.component';
 import {RouterModule} from '@angular/router';
+import { FromToInputComponent } from './components/from-to-input/from-to-input.component';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
@@ -64,7 +65,8 @@ import {RouterModule} from '@angular/router';
     GroupSameValuesPipe,
     GetPropertyListPipe,
     JoinPipe,
-    BreadcrumbComponent
+    BreadcrumbComponent,
+    FromToInputComponent
   ],
   imports: [
     RouterModule,
@@ -152,7 +154,8 @@ import {RouterModule} from '@angular/router';
     NgxMatSelectSearchModule,
     GetPropertyListPipe,
     JoinPipe,
-    BreadcrumbComponent
+    BreadcrumbComponent,
+    FromToInputComponent
   ]
 })
 export class SharedModule {
