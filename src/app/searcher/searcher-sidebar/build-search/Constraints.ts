@@ -202,4 +202,3 @@ interface AggregationStructure {
   post_tags: string;
 }
 
-export type MappingNumeric = 'long' | 'integer' | 'short' | 'byte' | 'double' | 'float';

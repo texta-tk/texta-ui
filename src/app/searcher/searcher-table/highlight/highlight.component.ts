@@ -43,7 +43,7 @@ export class HighlightComponent {
   }
 
   @Input() set highlightConfig(highlightConfig: HighlightConfig) {
-    if (highlightConfig.data[highlightConfig.currentColumn] !== null) {
+    if (highlightConfig.data[highlightConfig.currentColumn] !== null && highlightConfig.data[highlightConfig.currentColumn] !== undefined) {
       let fieldFacts = this.getFactsByField(highlightConfig.data, highlightConfig.currentColumn);
       if (highlightConfig.onlyHighlightMatching && fieldFacts.length > 0) {
         fieldFacts = this.getOnlyMatchingFacts(fieldFacts, highlightConfig); // todo

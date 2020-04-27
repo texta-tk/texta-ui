@@ -6,7 +6,7 @@ import {
   DateConstraint,
   ElasticsearchQuery,
   FactConstraint,
-  FactTextInputGroup, MappingNumeric,
+  FactTextInputGroup,
   NumberConstraint,
   TextConstraint
 } from '../Constraints';
@@ -36,6 +36,7 @@ import {LocalStorageService} from '../../../../core/util/local-storage.service';
 })
 export class AdvancedSearchComponent implements OnInit, OnDestroy {
 
+  mappingNumeric = ['long', 'integer', 'short', 'byte', 'double', 'float'];
   fieldsFormControl = new FormControl();
   constraintList: (Constraint)[] = [];
   currentUser: UserProfile;
@@ -159,7 +160,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
         this.constraintList.push(new TextConstraint(formFields, this.lexicons));
       } else if (formFields[0].type === 'date') {
         this.constraintList.push(new DateConstraint(formFields));
-      } else if (formFields[0].type as MappingNumeric) {
+      } else if (this.mappingNumeric.includes(formFields[0].type)) {
         this.constraintList.push(new NumberConstraint(formFields));
       } else if (formFields[0].path === 'texta_facts') {
         const newFactConstraint = new FactConstraint(formFields);
@@ -264,7 +265,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     return constraintType instanceof NumberConstraint;
   }
 
-  buildSavedSearch(savedSearch: SavedSearch) { // todo type
+  buildSavedSearch(savedSearch: SavedSearch): void {
     this.constraintList.splice(0, this.constraintList.length);
     this.changeDetectorRef.detectChanges(); // so old ones trigger onDestroy
     const savedConstraints: any[] = JSON.parse(savedSearch.query_constraints as string);
@@ -275,7 +276,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
           this.constraintList.push(new TextConstraint(formFields, this.lexicons, constraint.match, constraint.text, constraint.operator, constraint.slop));
         } else if (formFields[0].type === 'date') {
           this.constraintList.push(new DateConstraint(formFields, constraint.dateFrom, constraint.dateTo));
-        }  else if (formFields[0].type as MappingNumeric) {
+        }  else if (this.mappingNumeric.includes(formFields[0].type)) {
           this.constraintList.push(new NumberConstraint(formFields, constraint.fromToInput, constraint.operator));
         } else {
           const inputGroupArray: FactTextInputGroup[] = [];
