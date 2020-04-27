@@ -38,7 +38,7 @@ export class NumberConstraintsComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   ngAfterViewInit(): void {
-    if (this._numberConstraint.fromToInput) {
+    if (this._numberConstraint?.fromToInput) {
       this.fromToInput.writeValue({...this._numberConstraint.fromToInput});
     }
     if (this.fromToInput?.parts) {
