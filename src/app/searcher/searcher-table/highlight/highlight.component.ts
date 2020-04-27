@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {ElasticsearchQuery, FactConstraint} from '../../searcher-sidebar/build-search/Constraints';
 import * as LinkifyIt from 'linkify-it';
 
@@ -31,15 +31,19 @@ interface HighlightObject {
 @Component({
   selector: 'app-highlight',
   templateUrl: './highlight.component.html',
-  styleUrls: ['./highlight.component.sass']
+  styleUrls: ['./highlight.component.sass'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HighlightComponent {
   static colors: Map<string, string> = new Map<string, string>();
   static linkify = new LinkifyIt();
   highlightArray: HighlightObject[] = [];
 
+  constructor() {
+  }
+
   @Input() set highlightConfig(highlightConfig: HighlightConfig) {
-    if (highlightConfig.data[highlightConfig.currentColumn]) {
+    if (highlightConfig.data[highlightConfig.currentColumn] !== null && highlightConfig.data[highlightConfig.currentColumn] !== undefined) {
       let fieldFacts = this.getFactsByField(highlightConfig.data, highlightConfig.currentColumn);
       if (highlightConfig.onlyHighlightMatching && fieldFacts.length > 0) {
         fieldFacts = this.getOnlyMatchingFacts(fieldFacts, highlightConfig); // todo
@@ -53,42 +57,38 @@ export class HighlightComponent {
       }
       const highlightTerms = [
         ...this.makeHyperlinksClickable(highlightConfig.data[highlightConfig.currentColumn], highlightConfig.currentColumn),
-        ...this.makeSearcherHighlights(highlightConfig.searcherHighlight, highlightConfig.currentColumn),
+        ...HighlightComponent.makeSearcherHighlights(highlightConfig.searcherHighlight, highlightConfig.currentColumn),
         ...fieldFacts
       ];
-      const colors = this.generateColorsForFacts(highlightTerms);
+      const colors = HighlightComponent.generateColorsForFacts(highlightTerms);
       this.highlightArray = this.makeHighLights(highlightConfig.data[highlightConfig.currentColumn], highlightTerms, colors);
     } else {
       this.highlightArray = [];
     }
   }
 
-  constructor() {
+  static generateColorsForFacts(facts: HighlightSpan[]): Map<string, string> {
+    const colorPallette = this.generateRandomColors(facts.length);
+    facts.forEach(fact => {
+      if (!HighlightComponent.colors.has(fact.fact) && colorPallette) {
+        HighlightComponent.colors.set(fact.fact, colorPallette[0]);
+        colorPallette.shift();
+      }
+    });
+    return HighlightComponent.colors;
   }
 
-  makeHyperlinksClickable(currentColumn: string | number, colName: string): HighlightSpan[] {
-    // Very quick check, that can give false positives.
-    if (isNaN(Number(currentColumn)) && HighlightComponent.linkify.pretest(currentColumn as string)) {
-      const highlightArray: HighlightSpan[] = [];
-      const matches = HighlightComponent.linkify.match(currentColumn as string);
-      if (matches && matches.length > 0) {
-        for (const match of matches) {
-          const f: HighlightSpan = {} as HighlightSpan;
-          f.doc_path = colName;
-          f.fact = '';
-          f.urlSpan = true;
-          f.spans = `[[${match.index}, ${match.lastIndex}]]`;
-          f.str_val = match.url;
-          highlightArray.push(f);
-        }
-      }
-      return highlightArray;
+  static generateRandomColors(numberOfRandomColors: number) {
+    const output: string[] = [];
+    const max = 0xfff;
+    for (let i = 0; i < numberOfRandomColors; i++) {
+      output.push('#' + (Math.round(Math.random() * (max - 0xf77)) + 0xf77).toString(16));
     }
-    return [];
+    return output;
   }
 
   // convert searcher highlight into mlp fact format
-  makeSearcherHighlights(searcherHighlight: any, currentColumn: string): HighlightSpan[] {
+  static makeSearcherHighlights(searcherHighlight: any, currentColumn: string): HighlightSpan[] {
     const highlight = searcherHighlight[currentColumn];
     if (highlight && highlight.length === 1) {
       const highlightArray: HighlightSpan[] = [];
@@ -109,6 +109,27 @@ export class HighlightComponent {
           previousIndex = previousIndex + rowClean.length;
         } else {
           previousIndex = previousIndex + row.length;
+        }
+      }
+      return highlightArray;
+    }
+    return [];
+  }
+
+  makeHyperlinksClickable(currentColumn: string | number, colName: string): HighlightSpan[] {
+    // Very quick check, that can give false positives.
+    if (isNaN(Number(currentColumn)) && HighlightComponent.linkify.pretest(currentColumn as string)) {
+      const highlightArray: HighlightSpan[] = [];
+      const matches = HighlightComponent.linkify.match(currentColumn as string);
+      if (matches && matches.length > 0) {
+        for (const match of matches) {
+          const f: HighlightSpan = {} as HighlightSpan;
+          f.doc_path = colName;
+          f.fact = '';
+          f.urlSpan = true;
+          f.spans = `[[${match.index}, ${match.lastIndex}]]`;
+          f.str_val = match.url;
+          highlightArray.push(f);
         }
       }
       return highlightArray;
@@ -149,18 +170,6 @@ export class HighlightComponent {
     return [];
   }
 
-  generateColorsForFacts(facts: HighlightSpan[]): Map<string, string> {
-    const colorPallette = this.generateRandomColors(facts.length);
-    facts.forEach(fact => {
-      if (!HighlightComponent.colors.has(fact.fact) && colorPallette) {
-        HighlightComponent.colors.set(fact.fact, colorPallette[0]);
-        colorPallette.shift();
-      }
-    });
-    return HighlightComponent.colors;
-  }
-
-
   private makeHighLights(originalText: string | number, facts: HighlightSpan[], factColors: Map<string, string>): HighlightObject[] {
     // spans are strings, convert them to 2d array and flatten
     facts.forEach(fact => {
@@ -171,9 +180,6 @@ export class HighlightComponent {
     // column content can be number, convert to string
     originalText = originalText.toString();
     if (facts.length === 0) {
-      if (!originalText) {
-        return [];
-      }
       return [{text: originalText, highlighted: false}];
     }
 
@@ -482,16 +488,6 @@ export class HighlightComponent {
     } else {
       return (a.spans[0] < b.spans[0]) ? -1 : 1;
     }
-  }
-
-
-  generateRandomColors(numberOfRandomColors: number) {
-    const output: string[] = [];
-    const max = 0xfff;
-    for (let i = 0; i < numberOfRandomColors; i++) {
-      output.push('#' + (Math.round(Math.random() * (max - 0xf77)) + 0xf77).toString(16));
-    }
-    return output;
   }
 
 }

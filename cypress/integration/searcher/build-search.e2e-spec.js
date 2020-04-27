@@ -89,7 +89,6 @@ describe('searching and search related activities should be working correctly', 
     cy.wait('@saveSearch');
     cy.get('[data-cy=appSearcherSidebarSavedSearches] .cdk-column-name').contains('delete_me').should('be.visible');
     cy.get('[data-cy=appSearcherSideBarBuildSearchCloseConstraint]').click();
-    cy.wait('@searcherQuery');
     cy.get('[data-cy=appSearcherSidebarSavedSearches] .cdk-column-select:not(:first,:nth(1))').each(($el, index, $list) => {
       cy.wrap($el).click('left');
     });

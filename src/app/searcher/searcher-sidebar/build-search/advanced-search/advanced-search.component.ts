@@ -1,7 +1,15 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {Field, Project, ProjectFact, ProjectIndex} from '../../../../shared/types/Project';
-import {Constraint, DateConstraint, ElasticsearchQuery, FactConstraint, FactTextInputGroup, TextConstraint} from '../Constraints';
+import {
+  Constraint,
+  DateConstraint,
+  ElasticsearchQuery,
+  FactConstraint,
+  FactTextInputGroup,
+  NumberConstraint,
+  TextConstraint
+} from '../Constraints';
 import {SavedSearch} from '../../../../shared/types/SavedSearch';
 import {debounceTime, switchMap, takeUntil} from 'rxjs/operators';
 import {BehaviorSubject, of, Subject} from 'rxjs';
@@ -28,6 +36,7 @@ import {LocalStorageService} from '../../../../core/util/local-storage.service';
 })
 export class AdvancedSearchComponent implements OnInit, OnDestroy {
 
+  mappingNumeric = ['long', 'integer', 'short', 'byte', 'double', 'float'];
   fieldsFormControl = new FormControl();
   constraintList: (Constraint)[] = [];
   currentUser: UserProfile;
@@ -126,6 +135,12 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
           this.searchService.nextSearch(new Search(result, this.searchOptions));
         }
       });
+
+    this.searchService.getBuildAdvancedSearch().pipe(takeUntil(this.destroy$)).subscribe(x => {
+      if (x) {
+        this.buildSavedSearch(x);
+      }
+    });
   }
 
 
@@ -145,7 +160,9 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
         this.constraintList.push(new TextConstraint(formFields, this.lexicons));
       } else if (formFields[0].type === 'date') {
         this.constraintList.push(new DateConstraint(formFields));
-      } else {
+      } else if (this.mappingNumeric.includes(formFields[0].type)) {
+        this.constraintList.push(new NumberConstraint(formFields));
+      } else if (formFields[0].path === 'texta_facts') {
         const newFactConstraint = new FactConstraint(formFields);
         if (formFields[0].type !== 'factName') {
           newFactConstraint.isFactValue = true;
@@ -164,7 +181,8 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     // need this for fact query to work standalone
     let shouldMatch = 0;
     for (let i = 0; i < this.constraintList.length; i++) {
-      if (!(this.constraintList[i] instanceof FactConstraint) && !(this.constraintList[i] instanceof DateConstraint)) {
+      if (!(this.constraintList[i] instanceof FactConstraint) && !(this.constraintList[i] instanceof DateConstraint)
+        && !(this.constraintList[i] instanceof NumberConstraint)) {
         shouldMatch += 1;
       }
     }
@@ -243,7 +261,11 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     return constraintType instanceof DateConstraint;
   }
 
-  buildSavedSearch(savedSearch: SavedSearch) { // todo type
+  isNumberConstraint(constraintType: Constraint) {
+    return constraintType instanceof NumberConstraint;
+  }
+
+  buildSavedSearch(savedSearch: SavedSearch): void {
     this.constraintList.splice(0, this.constraintList.length);
     this.changeDetectorRef.detectChanges(); // so old ones trigger onDestroy
     const savedConstraints: any[] = JSON.parse(savedSearch.query_constraints as string);
@@ -254,6 +276,8 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
           this.constraintList.push(new TextConstraint(formFields, this.lexicons, constraint.match, constraint.text, constraint.operator, constraint.slop));
         } else if (formFields[0].type === 'date') {
           this.constraintList.push(new DateConstraint(formFields, constraint.dateFrom, constraint.dateTo));
+        }  else if (this.mappingNumeric.includes(formFields[0].type)) {
+          this.constraintList.push(new NumberConstraint(formFields, constraint.fromToInput, constraint.operator));
         } else {
           const inputGroupArray: FactTextInputGroup[] = [];
           if (constraint.hasOwnProperty('inputGroup')) {

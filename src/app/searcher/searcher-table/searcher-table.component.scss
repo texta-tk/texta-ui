@@ -56,11 +56,13 @@ td.mat-cell {
   line-height: 1.5;
   border-bottom-color: rgba(0, 0, 0, 0.23);
 }
+td.mat-cell.mat-column-texta_facts{
+  max-width: 280px;
+}
 
 .mat-cell-dense {
   max-width: 150px;
 }
-
 app-highlight {
   white-space: pre-line;
 }

@@ -1,6 +1,7 @@
 import {Field} from '../../../shared/types/Project';
 import {FormControl} from '@angular/forms';
 import {Lexicon} from '../../../shared/types/Lexicon';
+import {FromToInput} from '../../../shared/components/from-to-input/from-to-input.component';
 
 export class Constraint {
   fields: Field[];
@@ -27,6 +28,20 @@ export class TextConstraint extends Constraint {
     this.textAreaFormControl.setValue(text ? text : '');
     if (lexicons) {
       this.lexicons = lexicons;
+    }
+  }
+
+}
+
+export class NumberConstraint extends Constraint {
+  fromToInput: FromToInput;
+  operatorFormControl = new FormControl();
+
+  constructor(fields: Field[], fromTo?: FromToInput, operator?) {
+    super(fields);
+    this.operatorFormControl.setValue(operator ? operator : 'must');
+    if (fromTo) {
+      this.fromToInput = fromTo;
     }
   }
 
@@ -95,8 +110,6 @@ export class ElasticsearchQuery {
   static PRE_TAG = '<TEXTA_SEARCHER_HIGHLIGHT_START_TAG>';
   static POST_TAG = '<TEXTA_SEARCHER_HIGHLIGHT_END_TAG>';
 
-  private _elasticSearchQuery: ElasticsearchQueryStructure = {};
-
   constructor() {
     this._elasticSearchQuery.query = {
       bool: {
@@ -115,6 +128,16 @@ export class ElasticsearchQuery {
     };
     this.from = 0;
     this.size = 10;
+  }
+
+  private _elasticSearchQuery: ElasticsearchQueryStructure = {};
+
+  get elasticSearchQuery(): ElasticsearchQueryStructure {
+    return this._elasticSearchQuery;
+  }
+
+  set elasticSearchQuery(elasticQuery: ElasticsearchQueryStructure) {
+    this._elasticSearchQuery = elasticQuery;
   }
 
   get size(): number {
@@ -139,14 +162,6 @@ export class ElasticsearchQuery {
 
   set sort(val) {
     this._elasticSearchQuery.sort = val;
-  }
-
-  get elasticSearchQuery(): ElasticsearchQueryStructure {
-    return this._elasticSearchQuery;
-  }
-
-  set elasticSearchQuery(elasticQuery: ElasticsearchQueryStructure) {
-    this._elasticSearchQuery = elasticQuery;
   }
 }
 
@@ -186,3 +201,4 @@ interface AggregationStructure {
   pre_tags: string;
   post_tags: string;
 }
+

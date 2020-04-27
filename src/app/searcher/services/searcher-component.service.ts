@@ -15,6 +15,7 @@ export class SearcherComponentService {
   // we still want to be able to make aggs)
   private elasticQuerySubject = new BehaviorSubject<ElasticsearchQuery>(new ElasticsearchQuery());
   private isLoading = new BehaviorSubject<boolean>(false);
+  private buildAdvancedSearch$ = new Subject<SavedSearch>();
 
   constructor() {
   }
@@ -62,5 +63,13 @@ export class SearcherComponentService {
 
   public getElasticQuery(): Observable<ElasticsearchQuery> {
     return this.elasticQuerySubject.asObservable();
+  }
+
+  public buildAdvancedSearch(search: SavedSearch) {
+    this.buildAdvancedSearch$.next(search);
+  }
+
+  public getBuildAdvancedSearch() {
+    return this.buildAdvancedSearch$.asObservable();
   }
 }

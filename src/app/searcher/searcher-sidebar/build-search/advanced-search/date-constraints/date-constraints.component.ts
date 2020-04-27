@@ -78,7 +78,6 @@ export class DateConstraintsComponent implements OnInit, OnDestroy {
       // tslint:disable-next-line:no-non-null-assertion
       this.elasticSearchQuery!.elasticSearchQuery!.query!.bool!.must.splice(index, 1);
     }
-    this.change.emit(this.elasticSearchQuery);
     this.destroyed$.next(true);
     this.destroyed$.complete();
   }

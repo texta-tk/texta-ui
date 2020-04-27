@@ -1,0 +1,16 @@
+<div fxLayout="column">
+  <div fxLayout="row" fxLayoutGap="5px">
+    <mat-form-field fxFlex="20">
+      <mat-label>Operator</mat-label>
+      <mat-select [disableOptionCentering]="true" [formControl]="operatorFormControl"
+                  panelClass="select-panel-reveal-input">
+        <mat-option value="must">and</mat-option>
+        <mat-option value="should">or</mat-option>
+        <mat-option value="must_not">not</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field floatLabel="always" fxFlex>
+      <app-from-to-input></app-from-to-input>
+    </mat-form-field>
+  </div>
+</div>

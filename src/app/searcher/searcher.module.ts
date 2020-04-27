@@ -23,6 +23,8 @@ import { AggregationResultsChartComponent } from './aggregation-results/aggregat
 import { SimpleSearchComponent } from './searcher-sidebar/build-search/simple-search/simple-search.component';
 import { AdvancedSearchComponent } from './searcher-sidebar/build-search/advanced-search/advanced-search.component';
 import { ShortVersionComponent } from './searcher-table/short-version/short-version.component';
+import { TextaFactsChipsComponent } from './searcher-table/texta-facts-chips/texta-facts-chips.component';
+import { NumberConstraintsComponent } from './searcher-sidebar/build-search/advanced-search/number-constraints/number-constraints.component';
 
 @NgModule({
   declarations: [
@@ -47,6 +49,8 @@ import { ShortVersionComponent } from './searcher-table/short-version/short-vers
     SimpleSearchComponent,
     AdvancedSearchComponent,
     ShortVersionComponent,
+    TextaFactsChipsComponent,
+    NumberConstraintsComponent,
   ],
   imports: [
     SharedModule,

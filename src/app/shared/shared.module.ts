@@ -51,6 +51,7 @@ import { JoinPipe } from './pipes/join.pipe';
 import { BreadcrumbComponent } from './components/breadcrumb/breadcrumb.component';
 import {RouterModule} from '@angular/router';
 import { LimitTextComponent } from './components/limit-text/limit-text.component';
+import { FromToInputComponent } from './components/from-to-input/from-to-input.component';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
@@ -66,7 +67,8 @@ import { LimitTextComponent } from './components/limit-text/limit-text.component
     GetPropertyListPipe,
     JoinPipe,
     BreadcrumbComponent,
-    LimitTextComponent
+    LimitTextComponent,
+    FromToInputComponent
   ],
   imports: [
     RouterModule,
@@ -155,7 +157,8 @@ import { LimitTextComponent } from './components/limit-text/limit-text.component
         GetPropertyListPipe,
         JoinPipe,
         BreadcrumbComponent,
-        LimitTextComponent
+        LimitTextComponent,
+        FromToInputComponent
     ]
 })
 export class SharedModule {

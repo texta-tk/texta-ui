@@ -55,7 +55,6 @@
       <ng-container *ngFor="let column of infiniteColumns" [matColumnDef]="column">
         <th *matHeaderCellDef class="table-row" mat-header-cell mat-sort-header>{{column}}</th>
         <td *matCellDef="let row"
-            [title]="(row.content[column] | isObject) ? (row.content[column] | json) :row.content[column]"
             class="table-row" mat-cell>
           <app-limit-text *ngIf="(row.content[column] | isObject)"
                           [params]="{text: row.content[column] | json,

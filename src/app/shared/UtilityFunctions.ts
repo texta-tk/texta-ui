@@ -3,6 +3,9 @@ export class UtilityFunctions {
     return o instanceof className;
   }
 
+  static propertiesToArray<T, K extends keyof T>(o: T, propertyNames: K[]): T[K][] {
+    return propertyNames.map(n => o[n]);
+  }
   /*
   * check if each array element exists in both arrays for each element
   * */

@@ -40,4 +40,8 @@
                           [projectFacts]="projectFacts" [currentProject]="currentProject"
                           (change)="searchOnChange($event)"></app-fact-constraints>
   </div>
+  <div class="content" *ngIf="isNumberConstraint(constraint)" data-cy="appSearcherSideBarBuildSearchNumberConstraint">
+    <app-number-constraints [numberConstraint]="constraint" [elasticSearchQuery]="elasticQuery"
+                          (change)="searchOnChange($event)"></app-number-constraints>
+  </div>
 </div>

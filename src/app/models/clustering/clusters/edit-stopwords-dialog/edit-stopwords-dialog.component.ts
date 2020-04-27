@@ -20,7 +20,9 @@ export class EditStopwordsDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.stopwords = this.data.cluster.stop_words.join('\n');
+    if (this.data?.cluster?.stop_words) {
+      this.stopwords = this.data.cluster.stop_words.join('\n');
+    }
   }
 
 

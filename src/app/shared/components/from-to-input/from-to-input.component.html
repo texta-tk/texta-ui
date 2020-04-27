@@ -1,0 +1,7 @@
+<div [formGroup]="parts" class="input-container">
+  <input placeholder="from" formControlName="from" size="5" aria-label="From"
+         (input)="_handleInput()">
+  <span class="spacer">&ndash;</span>
+  <input placeholder="to" formControlName="to" size="5" aria-label="To"
+         (input)="_handleInput()">
+</div>

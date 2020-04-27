@@ -2,6 +2,9 @@
 
 .container {
   height: calc(100vh - #{$navbar-height});
+  app-aggregation-results-chart{
+    height: 50%;
+  }
 }
 
 app-aggregation-results-chart {

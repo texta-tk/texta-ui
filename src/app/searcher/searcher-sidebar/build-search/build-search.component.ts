@@ -57,7 +57,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
       this.searcherType = 1;
       this.saveTypeSelection(1);
     } else {
-      this.advancedSearchComponent.buildSavedSearch(savedSearch);
+      this.searchService.buildAdvancedSearch(savedSearch);
       this.searcherType = 2;
       this.saveTypeSelection(2);
     }
