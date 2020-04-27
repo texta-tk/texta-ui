@@ -97,7 +97,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
       const savedSearchQuery = JSON.parse(savedSearch.query);
       body.query.aggs[savedSearch.description] = {
         aggs: {...joinedAggregation},
-        filter: {bool: savedSearchQuery.query.bool}
+        filter: savedSearchQuery.query
       };
     }
 

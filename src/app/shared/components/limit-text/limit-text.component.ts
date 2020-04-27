@@ -14,13 +14,18 @@ export class LimitTextComponent implements OnInit {
   }
 
   @Input() set params(params: { text: string | number, charLimit: number }) {
-    if (typeof params.text === 'number') {
-      params.text = params.text.toString();
-    }
-    this.fullText = params.text;
-    if (params.text.length > params.charLimit) {
-      this.cutText = params.text.slice(0, params.charLimit);
+    if (params.text) {
+      if (typeof params.text === 'number') {
+        params.text = params.text.toString();
+      }
+      this.fullText = params.text;
+      if (params.text.length > params.charLimit) {
+        this.cutText = params.text.slice(0, params.charLimit);
+      } else {
+        this.cutText = this.fullText;
+      }
     } else {
+      this.fullText = '';
       this.cutText = this.fullText;
     }
   }
