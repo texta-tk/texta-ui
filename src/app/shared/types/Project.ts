@@ -21,6 +21,7 @@ export class ProjectResourceCounts {
   num_embeddings = 0;
   num_embedding_clusters = 0;
   num_torchtaggers = 0;
+  num_clusterings = 0;
 }
 
 export interface ProjectFact {

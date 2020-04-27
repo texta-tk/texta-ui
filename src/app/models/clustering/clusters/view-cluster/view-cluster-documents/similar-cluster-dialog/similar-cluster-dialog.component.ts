@@ -30,6 +30,7 @@ export class SimilarClusterDialogComponent implements OnInit, AfterViewInit, OnD
   moreLikeQuery$: Subject<Observable<unknown[] | HttpErrorResponse>> = new Subject<Observable<unknown[] | HttpErrorResponse>>();
   destroyed$: Subject<boolean> = new Subject<boolean>();
   queryOptions: any;
+  charLimit = 300;
 
   constructor(private clusterService: ClusterService, private logService: LogService,
               public dialog: MatDialog,

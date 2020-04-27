@@ -27,7 +27,10 @@
         <mat-icon class="margin-right">storage</mat-icon>
         Models
         <ng-container *ngIf="projectResourceCounts">
-          ({{projectResourceCounts.num_torchtaggers + projectResourceCounts.num_taggers + projectResourceCounts.num_tagger_groups + projectResourceCounts.num_embeddings}})
+          ({{projectResourceCounts.num_torchtaggers +
+        projectResourceCounts.num_taggers +
+        projectResourceCounts.num_tagger_groups +
+        projectResourceCounts.num_embeddings + projectResourceCounts.num_clusterings}})
         </ng-container>
 
         <mat-icon>arrow_drop_down</mat-icon>
@@ -56,7 +59,8 @@
          data-cy="appNavbarModelMenuEmbeddings">Embeddings <span
         *ngIf="projectResourceCounts?.num_embeddings">({{projectResourceCounts?.num_embeddings}})</span></a>
       <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['clustering']"
-         data-cy="appNavbarModelMenuClusters">Clustering </a>
+         data-cy="appNavbarModelMenuClusters">Clustering  <span
+        *ngIf="projectResourceCounts?.num_clusterings">({{projectResourceCounts?.num_clusterings}})</span></a>
     </mat-menu>
 
     <mat-menu #tools="matMenu">

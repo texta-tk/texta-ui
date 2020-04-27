@@ -33,6 +33,7 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
   currentProject: Project;
   clusteringId: number;
   clusterId: number;
+  charLimit = 300;
   selectedRows = new SelectionModel<ClusterDocument>(true, []);
   clusterDocumentsQueue$: Subject<Observable<ClusterDetails | HttpErrorResponse>> = new Subject();
   destroyed$: Subject<boolean> = new Subject<boolean>();

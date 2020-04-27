@@ -7,15 +7,15 @@
       <app-breadcrumb></app-breadcrumb>
       <button (click)="onDeleteAllSelected()" [disabled]="selectedRows.selected.length < 1" class="new-resource-btn"
               color="warn"
-              mat-icon-button matTooltip="Delete selected" data-cy="appClusterDocumentsDeleteBtn">
+              data-cy="appClusterDocumentsDeleteBtn" mat-icon-button matTooltip="Delete selected">
         <mat-icon>delete</mat-icon>
       </button>
       <button (click)="moreLikeThis()" class="paginator-margin-left"
-              color="primary" mat-raised-button data-cy="appClusterDocumentsMLTBtn">
+              color="primary" data-cy="appClusterDocumentsMLTBtn" mat-raised-button>
         More like this
       </button>
       <button (click)="tag()" class="paginator-margin-left"
-              color="primary" mat-raised-button data-cy="appClusterDocumentsTagBtn">
+              color="primary" data-cy="appClusterDocumentsTagBtn" mat-raised-button>
         Tag
       </button>
       <mat-form-field class="paginator-margin-left">
@@ -28,6 +28,10 @@
             {{column}}
           </mat-option>
         </mat-select>
+      </mat-form-field>
+      <mat-form-field class="paginator-margin-left">
+        <mat-label>Column character limit</mat-label>
+        <input matInput [(ngModel)]="charLimit" [ngModelOptions]="{updateOn: 'blur'}" type="number" step="10">
       </mat-form-field>
       <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
       </mat-paginator>
@@ -49,12 +53,18 @@
         </td>
       </ng-container>
       <ng-container *ngFor="let column of infiniteColumns" [matColumnDef]="column">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header class="table-row">{{column}}</th>
+        <th *matHeaderCellDef class="table-row" mat-header-cell mat-sort-header>{{column}}</th>
         <td *matCellDef="let row"
             [title]="(row.content[column] | isObject) ? (row.content[column] | json) :row.content[column]"
             class="table-row" mat-cell>
-          <ng-container *ngIf="(row.content[column] | isObject)">{{row.content[column] | json}}</ng-container>
-          <ng-container *ngIf="!(row.content[column] | isObject)">{{row.content[column]}}</ng-container>
+          <app-limit-text *ngIf="(row.content[column] | isObject)"
+                          [params]="{text: row.content[column] | json,
+              charLimit: charLimit}">
+          </app-limit-text>
+          <app-limit-text *ngIf="!(row.content[column] | isObject)"
+                          [params]="{text: row.content[column],
+              charLimit: charLimit}">
+          </app-limit-text>
         </td>
       </ng-container>
 

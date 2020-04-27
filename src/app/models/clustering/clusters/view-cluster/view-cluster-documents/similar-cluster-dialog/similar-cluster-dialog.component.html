@@ -25,6 +25,10 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
+      <mat-form-field class="paginator-margin-left">
+        <mat-label>Column character limit</mat-label>
+        <input matInput [(ngModel)]="charLimit" [ngModelOptions]="{updateOn: 'blur'}" type="number" step="10">
+      </mat-form-field>
       <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
       </mat-paginator>
     </div>
@@ -45,12 +49,18 @@
         </td>
       </ng-container>
       <ng-container *ngFor="let column of infiniteColumns" [matColumnDef]="column">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header class="table-row">{{column}}</th>
+        <th *matHeaderCellDef class="table-row" mat-header-cell mat-sort-header>{{column}}</th>
         <td *matCellDef="let row"
             [title]="(row._source[column] | isObject) ? (row._source[column] | json) :row._source[column]"
             class="table-row" mat-cell>
-          <ng-container *ngIf="(row._source[column] | isObject)">{{row._source[column] | json}}</ng-container>
-          <ng-container *ngIf="!(row._source[column] | isObject)">{{row._source[column]}}</ng-container>
+          <app-limit-text *ngIf="(row._source[column] | isObject)"
+                          [params]="{text: row._source[column] | json,
+              charLimit: charLimit}">
+          </app-limit-text>
+          <app-limit-text *ngIf="!(row._source[column] | isObject)"
+                          [params]="{text: row._source[column],
+              charLimit: charLimit}">
+          </app-limit-text>
         </td>
       </ng-container>
 

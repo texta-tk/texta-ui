@@ -50,6 +50,8 @@ export class SearchServiceSpy {
   nextElasticQuery = jasmine.createSpy('nextElasticQuery').and.callFake(
     (val: ElasticsearchQuery) => this.elasticQuerySubject.next(val));
 
+y
+
 
   getElasticQuery = jasmine.createSpy('getElasticQuery').and.callFake(
     () => this.elasticQuerySubject.asObservable()
