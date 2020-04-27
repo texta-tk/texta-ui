@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {merge, of, Subject} from 'rxjs';
+import {merge, Subject} from 'rxjs';
 import {Project} from '../../shared/types/Project';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
@@ -30,7 +30,11 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  resultsLength = 0;
+  filteredSubject = new Subject();
+  inputFilterQuery = '';
+  filteringValues = {};
+
+  resultsLength: number;
 
   constructor(private userService: UserService,
               private logService: LogService,
@@ -40,18 +44,18 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.tableData.sort = this.sort;
+    this.tableData.paginator = this.paginator;
   }
 
   ngAfterViewInit(): void {
-    this.tableData.sort = this.sort;
-    this.tableData.paginator = this.paginator;
-    this.sort.sortChange.pipe(takeUntil(this.destroyed$)).subscribe(() => this.paginator.pageIndex = 0);
+    this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
-    merge(this.sort.sortChange, this.paginator.page).pipe(startWith({}), debounceTime(250),
+    merge(this.sort.sortChange, this.paginator.page, this.filteredSubject).pipe(startWith({}), debounceTime(250),
       switchMap((x: any) => {
-          const sortDirection = this.sort.direction === 'desc' ? '-' : '';
-          return this.projectService.getElasticIndices(
-            `&ordering=${sortDirection}${this.sort.active}&page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`);
+        const sortDirection = this.sort.direction === 'desc' ? '-' : '';
+        return this.projectService.getElasticIndices(
+          `${this.inputFilterQuery}&ordering=${sortDirection}${this.sort.active}&page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`);
       })).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.resultsLength = resp.count;
@@ -90,6 +94,21 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   trackById(index, item: Index) {
     return item.id;
+  }
+
+  applyFilter(filterValue: any, field: string) {
+    filterValue = filterValue.value ? filterValue.value : '';
+    this.filteringValues[field] = filterValue;
+    this.paginator.pageIndex = 0;
+    this.filterQueriesToString();
+    this.filteredSubject.next();
+  }
+
+  filterQueriesToString() {
+    this.inputFilterQuery = '';
+    for (const field in this.filteringValues) {
+      this.inputFilterQuery += `&${field}=${this.filteringValues[field]}`;
+    }
   }
 
   ngOnDestroy(): void {

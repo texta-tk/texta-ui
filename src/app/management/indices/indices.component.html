@@ -1,40 +1,47 @@
 <div class="wrapper">
   <div class="table-paginator-row">
     <div class="loading-bar">
-      <mat-progress-bar mode="indeterminate" *ngIf="isLoadingResults"></mat-progress-bar>
+      <mat-progress-bar *ngIf="isLoadingResults" mode="indeterminate"></mat-progress-bar>
     </div>
-    <mat-paginator [pageSizeOptions]="[25, 50, 100]" [length]="resultsLength" showFirstLastButtons>
-    </mat-paginator>
+
+    <div class="paginator-row">
+      <mat-form-field class="m-l-15">
+        <mat-icon matSuffix>search</mat-icon>
+        <input (keyup)="applyFilter($event.target, 'name')" matInput placeholder="Filter index name">
+      </mat-form-field>
+      <mat-paginator [length]="resultsLength" [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
+      </mat-paginator>
+    </div>
   </div>
   <div class="table-container">
 
-    <table mat-table [dataSource]="tableData"
-           matSort matSortActive="id" matSortDisableClear matSortDirection="asc" [trackBy]="trackById">
+    <table [dataSource]="tableData" [trackBy]="trackById"
+           mat-table matSort matSortActive="id" matSortDirection="asc" matSortDisableClear>
       <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
-        <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Id</th>
+        <td *matCellDef="let element" mat-cell>{{ element.id }}</td>
       </ng-container>
       <ng-container matColumnDef="is_open">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Open</th>
-        <td mat-cell *matCellDef="let element">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Open</th>
+        <td *matCellDef="let element" mat-cell>
           <mat-checkbox (click)="toggleIndexState(element)" [(ngModel)]="element.is_open"></mat-checkbox>
         </td>
       </ng-container>
       <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
-        <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Name</th>
+        <td *matCellDef="let element" mat-cell>{{ element.name }}</td>
       </ng-container>
       <ng-container matColumnDef="delete">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Delete</th>
-        <td mat-cell *matCellDef="let element">
-          <button class="new-resource-btn" mat-icon-button color="warn" (click)="deleteIndex(element)"
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Delete</th>
+        <td *matCellDef="let element" mat-cell>
+          <button (click)="deleteIndex(element)" class="new-resource-btn" color="warn" mat-icon-button
                   matTooltip="Delete index">
             <mat-icon>cancel</mat-icon>
           </button>
         </td>
       </ng-container>
-      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
+      <tr *matRowDef="let row; columns: displayedColumns" mat-row></tr>
     </table>
   </div>
 

@@ -16,8 +16,8 @@ import {QueryDialogComponent} from '../../../shared/components/dialogs/query-dia
 import {expandRowAnimation} from '../../../shared/animations';
 import {CreateClusteringDialogComponent} from './create-clustering-dialog/create-clustering-dialog.component';
 import {HttpErrorResponse} from '@angular/common/http';
-import {Router} from '@angular/router';
 import {EditStopwordsDialogComponent} from './edit-stopwords-dialog/edit-stopwords-dialog.component';
+import {ResultsWrapper} from '../../../shared/types/Generic';
 
 @Component({
   selector: 'app-clustering',
@@ -50,7 +50,6 @@ export class ClusteringComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(private projectStore: ProjectStore,
               private clusterService: ClusterService,
               public dialog: MatDialog,
-              private router: Router,
               public logService: LogService) {
   }
 
@@ -92,7 +91,7 @@ export class ClusteringComponent implements OnInit, OnDestroy, AfterViewInit {
           } else {
             return of(null);
           }
-        })).subscribe((data: { count: number, results: Cluster[] }) => {
+        })).subscribe((data: ResultsWrapper<Cluster>) => {
       // Flip flag to show that loading has finished.
       this.isLoadingResults = false;
       if (data) {
@@ -102,10 +101,6 @@ export class ClusteringComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  ngOnDestroy() {
-    this.destroyed$.next(true);
-    this.destroyed$.complete();
-  }
 
   editStopwordsDialog(element) {
     const dialogRef = this.dialog.open(EditStopwordsDialogComponent, {
@@ -232,5 +227,10 @@ export class ClusteringComponent implements OnInit, OnDestroy, AfterViewInit {
     for (const field in this.filteringValues) {
       this.inputFilterQuery += `&${field}=${this.filteringValues[field]}`;
     }
+  }
+
+  ngOnDestroy() {
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
   }
 }
