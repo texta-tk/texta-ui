@@ -1,6 +1,6 @@
 import {Search} from '../../shared/types/Search';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
-import {ElasticsearchQuery} from '../searcher-sidebar/build-search/Constraints';
+import {Constraint, ElasticsearchQuery} from '../searcher-sidebar/build-search/Constraints';
 import {SelectionModel} from '@angular/cdk/collections';
 import {SavedSearch} from '../../shared/types/SavedSearch';
 import {Injectable} from '@angular/core';
@@ -16,6 +16,7 @@ export class SearcherComponentService {
   private elasticQuerySubject = new BehaviorSubject<ElasticsearchQuery>(new ElasticsearchQuery());
   private isLoading = new BehaviorSubject<boolean>(false);
   private buildAdvancedSearch$ = new Subject<SavedSearch>();
+  private advancedSearchConstraints$ = new BehaviorSubject<Constraint[]>([]);
 
   constructor() {
   }
@@ -72,4 +73,14 @@ export class SearcherComponentService {
   public getBuildAdvancedSearch() {
     return this.buildAdvancedSearch$.asObservable();
   }
+
+  public nextAdvancedSearchConstraints$(constraintList: Constraint[]) {
+    this.advancedSearchConstraints$.next(constraintList);
+  }
+
+  public getAdvancedSearchConstraints$() {
+    return this.advancedSearchConstraints$.asObservable();
+  }
+
+
 }

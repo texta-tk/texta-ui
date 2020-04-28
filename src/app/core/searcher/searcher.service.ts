@@ -15,6 +15,7 @@ import {catchError, tap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {SavedSearch} from '../../shared/types/SavedSearch';
 import {ResultsWrapper} from '../../shared/types/Generic';
+import {UtilityFunctions} from '../../shared/UtilityFunctions';
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +39,7 @@ export class SearcherService {
 
   saveSearch(projectId: number, constraintList: Constraint[], elasticQuery: ElasticsearchQueryStructure, desc: string) {
     const body = {
-      query_constraints: JSON.stringify(this.convertConstraintListToJson(constraintList)),
+      query_constraints: JSON.stringify(UtilityFunctions.convertConstraintListToJson(constraintList)),
       description: desc,
       query: JSON.stringify(elasticQuery)
     };
@@ -59,57 +60,6 @@ export class SearcherService {
     (`${this.apiUrl}/projects/${projectId}/searches/bulk_delete/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'bulkDeleteSavedSearches')),
       catchError(this.logService.handleError<unknown>('bulkDeleteSavedSearches')));
-  }
-
-  private convertConstraintListToJson(constraintList: Constraint[]): any[] {
-    const outPutJson: any[] = [];
-    for (const constraint of constraintList) {
-      if (constraint instanceof TextConstraint) {
-        outPutJson.push({
-          fields: constraint.fields,
-          match: constraint.matchFormControl.value,
-          slop: constraint.slopFormControl.value,
-          text: constraint.textAreaFormControl.value,
-          operator: constraint.operatorFormControl.value
-        });
-      }
-      if (constraint instanceof DateConstraint) {
-        outPutJson.push({
-          fields: constraint.fields,
-          dateFrom: constraint.dateFromFormControl.value,
-          dateTo: constraint.dateToFormControl.value
-        });
-      }
-
-      if (constraint instanceof NumberConstraint) {
-        outPutJson.push({
-          fields: constraint.fields,
-          fromToInput: constraint.fromToInput,
-          operator: constraint.operatorFormControl.value
-        });
-      }
-      if (constraint instanceof FactConstraint) {
-        const inputGroupArrayJson: any[] = [];
-        for (const inputGroup of constraint.inputGroupArray) {
-          inputGroupArrayJson.push({
-            factTextOperator: inputGroup.factTextOperatorFormControl.value,
-            factTextName: inputGroup.factTextFactNameFormControl.value,
-            factTextInput: inputGroup.factTextInputFormControl.value
-          });
-        }
-
-        outPutJson.push({
-          fields: constraint.fields,
-          factName: constraint.factNameFormControl.value,
-          factNameOperator: constraint.factNameOperatorFormControl.value,
-          factTextOperator: constraint.factTextOperatorFormControl.value,
-          inputGroup: inputGroupArrayJson
-        })
-        ;
-      }
-    }
-    return outPutJson;
-
   }
 
 }

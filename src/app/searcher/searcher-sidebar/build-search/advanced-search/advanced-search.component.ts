@@ -70,6 +70,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$), switchMap((currentProject: Project) => {
       if (currentProject) {
         this.constraintList = [];
+        this.searchService.nextAdvancedSearchConstraints$(this.constraintList);
         this.currentProject = currentProject;
         const currentProjectState = this.localStorage.getProjectState(currentProject);
         if (currentProjectState?.searcher?.itemsPerPage) {

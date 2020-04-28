@@ -136,7 +136,7 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
   factValueSelected(val: MatAutocompleteSelectedEvent | string, inputGroup) {
     const factValue = (val instanceof MatAutocompleteSelectedEvent) ? val.option.value : val;
     if (factValue.length > 0) {
-      inputGroup.formQuery.nested.inner_hits.name = `${FactConstraintsComponent.componentCount}_${this._factConstraint.inputGroupArray.length}_${factValue}`;
+      inputGroup.formQuery.nested.inner_hits.name = `${FactConstraintsComponent.componentCount}_${inputGroup.factTextFactNameFormControl.value}_${factValue}`;
       inputGroup.formQuery.nested.query.bool.must = [
         {match: {'texta_facts.fact': inputGroup.factTextFactNameFormControl.value}},
         {match: {'texta_facts.str_val': factValue}}];

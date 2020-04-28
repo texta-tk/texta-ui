@@ -1,8 +1,10 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, NgZone, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, NgZone, OnInit} from '@angular/core';
 import {HighlightComponent, HighlightSpan} from '../highlight/highlight.component';
 import {SearcherComponentService} from '../../services/searcher-component.service';
 import {SavedSearch} from '../../../shared/types/SavedSearch';
-import {Subject} from 'rxjs';
+import {take} from 'rxjs/operators';
+import {UtilityFunctions} from '../../../shared/UtilityFunctions';
+import {Constraint, FactConstraint, FactTextInputGroup} from '../../searcher-sidebar/build-search/Constraints';
 
 @Component({
   selector: 'app-texta-facts-chips',
@@ -10,10 +12,10 @@ import {Subject} from 'rxjs';
   styleUrls: ['./texta-facts-chips.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TextaFactsChipsComponent implements OnInit{
+export class TextaFactsChipsComponent implements OnInit {
   readonly NUMBER_OF_CHIPS_TO_DISPLAY = 25;
   factList: { factName: string, showing: boolean, factValues: { key: string, count: number }[], color: string | undefined }[] = [];
-  constraintBluePrint = [{
+  constraintBluePrint = {
     fields: [{
       path: 'texta_facts',
       type: 'fact'
@@ -26,7 +28,7 @@ export class TextaFactsChipsComponent implements OnInit{
       factTextName: 'texta-facts-chips-placeholder',
       factTextInput: 'texta-facts-chips-placeholder'
     }]
-  }];
+  };
 
 
   constructor(public searchService: SearcherComponentService, private changeDetectorRef: ChangeDetectorRef,
@@ -44,11 +46,27 @@ export class TextaFactsChipsComponent implements OnInit{
 
   buildSearch(fact, factValue) {
     const constraint = new SavedSearch();
-    constraint.query_constraints = [...this.constraintBluePrint];
-    constraint.query_constraints[0].inputGroup[0].factTextName = fact;
-    constraint.query_constraints[0].inputGroup[0].factTextInput = factValue;
-    constraint.query_constraints = JSON.stringify(constraint.query_constraints);
-    this.searchService.buildAdvancedSearch(constraint);
+    constraint.query_constraints = [];
+    this.searchService.getAdvancedSearchConstraints$().pipe(take(1)).subscribe(constraintList => {
+      if (typeof constraint.query_constraints !== 'string') {
+        const factConstraint: Constraint | undefined = constraintList.find(y => y instanceof FactConstraint);
+        // inputGroup means its a fact_val constraint
+        if (factConstraint instanceof FactConstraint && factConstraint.inputGroupArray.length > 0) {
+          if (!factConstraint.inputGroupArray.some(group => group.factTextFactNameFormControl.value === fact &&
+            group.factTextInputFormControl.value === factValue)) {
+            factConstraint.inputGroupArray.push(new FactTextInputGroup('must', fact, factValue));
+          }
+        } else {
+          const constraintBluePrint = {...this.constraintBluePrint};
+          constraintBluePrint.inputGroup[0].factTextInput = factValue;
+          constraintBluePrint.inputGroup[0].factTextName = fact;
+          constraint.query_constraints.push(constraintBluePrint);
+        }
+        constraint.query_constraints.push(...UtilityFunctions.convertConstraintListToJson(constraintList));
+        constraint.query_constraints = JSON.stringify(constraint.query_constraints);
+        this.searchService.buildAdvancedSearch(constraint);
+      }
+    });
   }
 
   buildChipList(facts, doneCallback: () => void) {

@@ -3,7 +3,7 @@ import {TestBed} from '@angular/core/testing';
 import {SearcherComponentService} from './searcher-component.service';
 import {Search} from '../../shared/types/Search';
 import {BehaviorSubject, Subject} from 'rxjs';
-import {ElasticsearchQuery} from '../searcher-sidebar/build-search/Constraints';
+import {Constraint, ElasticsearchQuery} from '../searcher-sidebar/build-search/Constraints';
 import {SavedSearch} from '../../shared/types/SavedSearch';
 import {SelectionModel} from '@angular/cdk/collections';
 
@@ -44,11 +44,19 @@ export class SearchServiceSpy {
   private isLoading = false;
   private buildAdvancedSearch$ = new Subject<SavedSearch>();
   buildAdvancedSearch = jasmine.createSpy('buildAdvancedSearch').and.callFake(
-    () => this.buildAdvancedSearch$.asObservable()
+    (val: SavedSearch) => this.buildAdvancedSearch$.next(val)
   );
 
   getBuildAdvancedSearch = jasmine.createSpy('getSavedSearchUpdate').and.callFake(
     () => this.buildAdvancedSearch$.asObservable()
+  );
+  private advancedSearchConstraints$ = new Subject<Constraint[]>();
+  nextAdvancedSearchConstraints$ = jasmine.createSpy('nextAdvancedSearchConstraints$').and.callFake(
+    (val: Constraint[]) => this.advancedSearchConstraints$.next(val)
+  );
+
+  getAdvancedSearchConstraints$ = jasmine.createSpy('getAdvancedSearchConstraints$').and.callFake(
+    () => this.advancedSearchConstraints$.asObservable()
   );
 
   setIsLoading(val) {

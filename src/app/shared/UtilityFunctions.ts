@@ -1,3 +1,11 @@
+import {
+  Constraint,
+  DateConstraint,
+  FactConstraint,
+  NumberConstraint,
+  TextConstraint
+} from '../searcher/searcher-sidebar/build-search/Constraints';
+
 export class UtilityFunctions {
   static typeGuard<T>(o, className: { new(...args: any[]): T }): o is T {
     return o instanceof className;
@@ -44,4 +52,54 @@ export class UtilityFunctions {
     return distinct;
   }
 
+  static convertConstraintListToJson(constraintList: Constraint[]): any[] {
+    const outPutJson: any[] = [];
+    for (const constraint of constraintList) {
+      if (constraint instanceof TextConstraint) {
+        outPutJson.push({
+          fields: constraint.fields,
+          match: constraint.matchFormControl.value,
+          slop: constraint.slopFormControl.value,
+          text: constraint.textAreaFormControl.value,
+          operator: constraint.operatorFormControl.value
+        });
+      }
+      if (constraint instanceof DateConstraint) {
+        outPutJson.push({
+          fields: constraint.fields,
+          dateFrom: constraint.dateFromFormControl.value,
+          dateTo: constraint.dateToFormControl.value
+        });
+      }
+
+      if (constraint instanceof NumberConstraint) {
+        outPutJson.push({
+          fields: constraint.fields,
+          fromToInput: constraint.fromToInput,
+          operator: constraint.operatorFormControl.value
+        });
+      }
+      if (constraint instanceof FactConstraint) {
+        const inputGroupArrayJson: any[] = [];
+        for (const inputGroup of constraint.inputGroupArray) {
+          inputGroupArrayJson.push({
+            factTextOperator: inputGroup.factTextOperatorFormControl.value,
+            factTextName: inputGroup.factTextFactNameFormControl.value,
+            factTextInput: inputGroup.factTextInputFormControl.value
+          });
+        }
+
+        outPutJson.push({
+          fields: constraint.fields,
+          factName: constraint.factNameFormControl.value,
+          factNameOperator: constraint.factNameOperatorFormControl.value,
+          factTextOperator: constraint.factTextOperatorFormControl.value,
+          inputGroup: inputGroupArrayJson
+        })
+        ;
+      }
+    }
+    return outPutJson;
+
+  }
 }
