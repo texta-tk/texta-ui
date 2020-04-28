@@ -50,7 +50,7 @@ export class AggregationResultsTreeComponent implements OnInit {
     for (const element of buckets) {
       dateData.push({
         value: element.doc_count,
-        name: this.datePipe.transform(new Date(element.key_as_string), 'y-M-d')
+        name: element.key_as_string
       });
     }
     return dateData;

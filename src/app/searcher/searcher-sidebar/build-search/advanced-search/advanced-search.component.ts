@@ -178,7 +178,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
   }
 
   checkMinimumMatch() {
-    // need this for fact query to work standalone
+    // cant match ranges, facts etc
     let shouldMatch = 0;
     for (let i = 0; i < this.constraintList.length; i++) {
       if (!(this.constraintList[i] instanceof FactConstraint) && !(this.constraintList[i] instanceof DateConstraint)

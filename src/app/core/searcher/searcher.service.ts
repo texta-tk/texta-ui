@@ -7,12 +7,14 @@ import {
   Constraint,
   DateConstraint,
   ElasticsearchQueryStructure,
-  FactConstraint, NumberConstraint,
+  FactConstraint,
+  NumberConstraint,
   TextConstraint
 } from '../../searcher/searcher-sidebar/build-search/Constraints';
 import {catchError, tap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {SavedSearch} from '../../shared/types/SavedSearch';
+import {ResultsWrapper} from '../../shared/types/Generic';
 
 @Injectable({
   providedIn: 'root'
@@ -46,10 +48,10 @@ export class SearcherService {
       catchError(this.logService.handleError<unknown>('saveSearch')));
   }
 
-  search(body, projectId: number): Observable<{ count: number, results: { highlight: any, doc: any }[] } | HttpErrorResponse> {
-    return this.http.post<{ count: number, results: { highlight: any, doc: any }[] } | HttpErrorResponse>(`${this.apiUrl}/projects/${projectId}/search_by_query/`, body).pipe(
+  search(body, projectId: number): Observable<ResultsWrapper<{ highlight: any, doc: any }> | HttpErrorResponse> {
+    return this.http.post<ResultsWrapper<{ highlight: any, doc: any }> | HttpErrorResponse>(`${this.apiUrl}/projects/${projectId}/search_by_query/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'search')),
-      catchError(this.logService.handleError<{ count: number, results: { highlight: any, doc: any }[] } | HttpErrorResponse>('search')));
+      catchError(this.logService.handleError<ResultsWrapper<{ highlight: any, doc: any }> | HttpErrorResponse>('search')));
   }
 
   bulkDeleteSavedSearches(projectId: number, body) {

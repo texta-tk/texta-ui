@@ -6,7 +6,6 @@ import {MatTableDataSource} from '@angular/material/table';
 import {ArrayDataSource} from '@angular/cdk/collections';
 import {AggregationResultsDialogComponent} from './aggregation-results-dialog/aggregation-results-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
-import {DatePipe} from '@angular/common';
 
 interface AggregationData {
 
@@ -35,7 +34,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   aggregationData: AggregationData;
   timeLineYLabel = 'document count';
 
-  constructor(public searchService: SearcherComponentService, public dialog: MatDialog, private datePipe: DatePipe) {
+  constructor(public searchService: SearcherComponentService, public dialog: MatDialog) {
   }
 
   bucketAccessor = (x: any) => {
@@ -50,7 +49,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     for (const element of buckets) {
       dateData.push({
         value: element.doc_count,
-        name: this.datePipe.transform(new Date(element.key_as_string), 'y-M-d')
+        name: element.key_as_string
       });
     }
     return dateData;
@@ -64,7 +63,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     for (const element of buckets) {
       dateData.push({
         value: element.doc_count,
-        name: this.datePipe.transform(new Date(element.key_as_string), 'y-M-d'),
+        name: element.key_as_string,
         extra: {buckets: element.buckets}
       });
     }
