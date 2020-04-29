@@ -27,36 +27,39 @@ import { TextaFactsChipsComponent } from './searcher-table/texta-facts-chips/tex
 import { NumberConstraintsComponent } from './searcher-sidebar/build-search/advanced-search/number-constraints/number-constraints.component';
 
 @NgModule({
-  declarations: [
-    SearcherComponent,
-    SearcherSidebarComponent,
-    SearcherTableComponent,
-    BuildSearchComponent,
-    TextConstraintsComponent,
-    DateConstraintsComponent,
-    FactConstraintsComponent,
-    SavedSearchesComponent,
-    SaveSearchDialogComponent,
-    HighlightComponent,
-    AggregationsComponent,
-    AggregationResultsComponent,
-    DateAggregationComponent,
-    TextAggregationComponent,
-    AggregationResultTableComponent,
-    AggregationResultsDialogComponent,
-    AggregationResultsTreeComponent,
-    AggregationResultsChartComponent,
-    SimpleSearchComponent,
-    AdvancedSearchComponent,
-    ShortVersionComponent,
-    TextaFactsChipsComponent,
-    NumberConstraintsComponent,
-  ],
-  imports: [
-    SharedModule,
-    SearcherRoutingModule
-  ],
-  providers: [DatePipe]
+    declarations: [
+        SearcherComponent,
+        SearcherSidebarComponent,
+        SearcherTableComponent,
+        BuildSearchComponent,
+        TextConstraintsComponent,
+        DateConstraintsComponent,
+        FactConstraintsComponent,
+        SavedSearchesComponent,
+        SaveSearchDialogComponent,
+        HighlightComponent,
+        AggregationsComponent,
+        AggregationResultsComponent,
+        DateAggregationComponent,
+        TextAggregationComponent,
+        AggregationResultTableComponent,
+        AggregationResultsDialogComponent,
+        AggregationResultsTreeComponent,
+        AggregationResultsChartComponent,
+        SimpleSearchComponent,
+        AdvancedSearchComponent,
+        ShortVersionComponent,
+        TextaFactsChipsComponent,
+        NumberConstraintsComponent,
+    ],
+    imports: [
+        SharedModule,
+        SearcherRoutingModule
+    ],
+    exports: [
+        HighlightComponent
+    ],
+    providers: [DatePipe]
 })
 export class SearcherModule {
   constructor() {

@@ -62,10 +62,15 @@
                           [params]="{text: row.content[column] | json,
               charLimit: charLimit}">
           </app-limit-text>
-          <app-limit-text *ngIf="!(row.content[column] | isObject)"
-                          [params]="{text: row.content[column],
-              charLimit: charLimit}">
-          </app-limit-text>
+          <ng-container *ngIf="!(row.content[column] | isObject)">
+            <app-highlight
+              [highlightConfig]="{
+                          currentColumn: column,
+                          searcherHighlight: row.highlight,
+                          data: row.content}">
+
+            </app-highlight>
+          </ng-container>
         </td>
       </ng-container>
 

@@ -4,6 +4,7 @@ import {HighlightComponent} from './highlight.component';
 import {SharedModule} from '../../../shared/shared.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {ElasticsearchQuery, FactConstraint, FactTextInputGroup} from '../../searcher-sidebar/build-search/Constraints';
+import {SearcherOptions} from '../../SearcherOptions';
 
 describe('HighlightComponent', () => {
   let component: HighlightComponent;
@@ -165,7 +166,7 @@ describe('HighlightComponent', () => {
       component.highlightConfig = {
         searcherHighlight: {
           text:
-            [`these ${ElasticsearchQuery.PRE_TAG}a${ElasticsearchQuery.POST_TAG}re some words: OÜ H${ElasticsearchQuery.PRE_TAG}a${ElasticsearchQuery.POST_TAG}ns${ElasticsearchQuery.PRE_TAG}a${ElasticsearchQuery.POST_TAG} Medic${ElasticsearchQuery.PRE_TAG}a${ElasticsearchQuery.POST_TAG}list, Eesti Energi${ElasticsearchQuery.PRE_TAG}a${ElasticsearchQuery.POST_TAG} Joon${ElasticsearchQuery.PRE_TAG}a${ElasticsearchQuery.POST_TAG}s xxxxxx`]
+            [`these ${SearcherOptions.PRE_TAG}a${SearcherOptions.POST_TAG}re some words: OÜ H${SearcherOptions.PRE_TAG}a${SearcherOptions.POST_TAG}ns${SearcherOptions.PRE_TAG}a${SearcherOptions.POST_TAG} Medic${SearcherOptions.PRE_TAG}a${SearcherOptions.POST_TAG}list, Eesti Energi${SearcherOptions.PRE_TAG}a${SearcherOptions.POST_TAG} Joon${SearcherOptions.PRE_TAG}a${SearcherOptions.POST_TAG}s xxxxxx`]
         },
         data: jsonData,
         currentColumn: 'text',
@@ -187,7 +188,7 @@ describe('HighlightComponent', () => {
       component.highlightConfig = {
         searcherHighlight: {
           text:
-            [`these are some words: ${ElasticsearchQuery.PRE_TAG}OÜ${ElasticsearchQuery.POST_TAG} Hansa Medicalist, Eesti Energia Joonas xxxxxx`]
+            [`these are some words: ${SearcherOptions.PRE_TAG}OÜ${SearcherOptions.POST_TAG} Hansa Medicalist, Eesti Energia Joonas xxxxxx`]
         },
         data: jsonData,
         currentColumn: 'text',
@@ -209,7 +210,7 @@ describe('HighlightComponent', () => {
       component.highlightConfig = {
         searcherHighlight: {
           text:
-            [`these are s${ElasticsearchQuery.PRE_TAG}ome words: OÜ H${ElasticsearchQuery.POST_TAG}ansa Medicalist, Eesti Energia Joonas xxxxxx`]
+            [`these are s${SearcherOptions.PRE_TAG}ome words: OÜ H${SearcherOptions.POST_TAG}ansa Medicalist, Eesti Energia Joonas xxxxxx`]
         },
         data: jsonData,
         currentColumn: 'text',
@@ -229,7 +230,7 @@ describe('HighlightComponent', () => {
       component.highlightConfig = {
         searcherHighlight: {
           text:
-            [`${ElasticsearchQuery.PRE_TAG}these are some words: OÜ Hansa Medicalist, Ees${ElasticsearchQuery.POST_TAG}ti Energia Joonas xxxxxx`]
+            [`${SearcherOptions.PRE_TAG}these are some words: OÜ Hansa Medicalist, Ees${SearcherOptions.POST_TAG}ti Energia Joonas xxxxxx`]
         },
         data: jsonData,
         currentColumn: 'text',
@@ -249,7 +250,7 @@ describe('HighlightComponent', () => {
       component.highlightConfig = {
         searcherHighlight: {
           text:
-            [`these are some words: ${ElasticsearchQuery.PRE_TAG}OÜ Hansa${ElasticsearchQuery.POST_TAG} Medicalist, Eesti Energia Joonas xxxxxx`]
+            [`these are some words: ${SearcherOptions.PRE_TAG}OÜ Hansa${SearcherOptions.POST_TAG} Medicalist, Eesti Energia Joonas xxxxxx`]
         },
         data: jsonData,
         currentColumn: 'text',
@@ -271,7 +272,7 @@ describe('HighlightComponent', () => {
       component.highlightConfig = {
         searcherHighlight: {
           text:
-            [`these are some words: OÜ Hansa Medicalist, Eesti ${ElasticsearchQuery.PRE_TAG}Energia Joonas${ElasticsearchQuery.POST_TAG} xxxxxx`]
+            [`these are some words: OÜ Hansa Medicalist, Eesti ${SearcherOptions.PRE_TAG}Energia Joonas${SearcherOptions.POST_TAG} xxxxxx`]
         },
         data: jsonData,
         currentColumn: 'text',
@@ -293,7 +294,7 @@ describe('HighlightComponent', () => {
       component.highlightConfig = {
         searcherHighlight: {
           text:
-            [`these are some words: ${ElasticsearchQuery.PRE_TAG}OÜ Hansa Medicalist${ElasticsearchQuery.POST_TAG}, Eesti Energia Joonas xxxxxx`]
+            [`these are some words: ${SearcherOptions.PRE_TAG}OÜ Hansa Medicalist${SearcherOptions.POST_TAG}, Eesti Energia Joonas xxxxxx`]
         },
         data: jsonData,
         currentColumn: 'text',
@@ -315,7 +316,7 @@ describe('HighlightComponent', () => {
       component.highlightConfig = {
         searcherHighlight: {
           text:
-            [`these are some words: OÜ Hansa Medicalist, Eesti Energia Joon${ElasticsearchQuery.PRE_TAG}as xxx${ElasticsearchQuery.POST_TAG}xxx`]
+            [`these are some words: OÜ Hansa Medicalist, Eesti Energia Joon${SearcherOptions.PRE_TAG}as xxx${SearcherOptions.POST_TAG}xxx`]
         },
         data: jsonData,
         currentColumn: 'text',
@@ -336,7 +337,7 @@ describe('HighlightComponent', () => {
       component.highlightConfig = {
         searcherHighlight: {
           text:
-            [`these are some words: OÜ Hansa M${ElasticsearchQuery.PRE_TAG}edicalist, Eesti Ener${ElasticsearchQuery.POST_TAG}gia Joonas xxxxxx`]
+            [`these are some words: OÜ Hansa M${SearcherOptions.PRE_TAG}edicalist, Eesti Ener${SearcherOptions.POST_TAG}gia Joonas xxxxxx`]
         },
         data: jsonData,
         currentColumn: 'text',
@@ -412,7 +413,7 @@ describe('HighlightComponent', () => {
       component.highlightConfig = {
         searcherHighlight: {
           text:
-            [`${ElasticsearchQuery.PRE_TAG}these${ElasticsearchQuery.POST_TAG} are some words: OÜ Hansa Medicalist, Eesti Energia Joonas xxxxxx`]
+            [`${SearcherOptions.PRE_TAG}these${SearcherOptions.POST_TAG} are some words: OÜ Hansa Medicalist, Eesti Energia Joonas xxxxxx`]
         },
         data: jsonData,
         currentColumn: 'text',

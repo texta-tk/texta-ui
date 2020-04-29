@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {ElasticsearchQuery, FactConstraint} from '../../searcher-sidebar/build-search/Constraints';
 import * as LinkifyIt from 'linkify-it';
+import {SearcherOptions} from '../../SearcherOptions';
 
 export interface HighlightSpan {
   doc_path: string;
@@ -90,13 +91,13 @@ export class HighlightComponent {
   // convert searcher highlight into mlp fact format
   static makeSearcherHighlights(searcherHighlight: any, currentColumn: string): HighlightSpan[] {
     const highlight = searcherHighlight[currentColumn];
-    if (highlight && highlight.length === 1) {
+    if (highlight && highlight.length === 1) { // elasticsearch returns as array
       const highlightArray: HighlightSpan[] = [];
       const columnText: string = highlight[0]; // highlight number of fragments has to be 0
-      const splitStartTag: string[] = columnText.split(ElasticsearchQuery.PRE_TAG);
+      const splitStartTag: string[] = columnText.split(SearcherOptions.PRE_TAG);
       let previousIndex = 0; // char start index of highlight
       for (const row of splitStartTag) {
-        const endTagIndex = row.indexOf(ElasticsearchQuery.POST_TAG);
+        const endTagIndex = row.indexOf(SearcherOptions.POST_TAG);
         if (endTagIndex > 0) {
           const f: HighlightSpan = {} as HighlightSpan;
           f.doc_path = currentColumn;
@@ -105,7 +106,7 @@ export class HighlightComponent {
           f.spans = `[[${previousIndex}, ${previousIndex + endTagIndex}]]`;
           f.str_val = 'searcher highlight';
           highlightArray.push(f);
-          const rowClean = row.replace(ElasticsearchQuery.POST_TAG, '');
+          const rowClean = row.replace(SearcherOptions.POST_TAG, '');
           previousIndex = previousIndex + rowClean.length;
         } else {
           previousIndex = previousIndex + row.length;

@@ -2,6 +2,7 @@ import {Field} from '../../../shared/types/Project';
 import {FormControl} from '@angular/forms';
 import {Lexicon} from '../../../shared/types/Lexicon';
 import {FromToInput} from '../../../shared/components/from-to-input/from-to-input.component';
+import {SearcherOptions} from '../../SearcherOptions';
 
 export class Constraint {
   fields: Field[];
@@ -107,8 +108,6 @@ export class FactTextInputGroup {
 }
 
 export class ElasticsearchQuery {
-  static PRE_TAG = '<TEXTA_SEARCHER_HIGHLIGHT_START_TAG>';
-  static POST_TAG = '<TEXTA_SEARCHER_HIGHLIGHT_END_TAG>';
 
   constructor() {
     this._elasticSearchQuery.query = {
@@ -121,8 +120,8 @@ export class ElasticsearchQuery {
       }
     };
     this._elasticSearchQuery.highlight = {
-      pre_tags: [ElasticsearchQuery.PRE_TAG],
-      post_tags: [ElasticsearchQuery.POST_TAG],
+      pre_tags: [SearcherOptions.PRE_TAG],
+      post_tags: [SearcherOptions.POST_TAG],
       number_of_fragments: 0,
       fields: {}
     };

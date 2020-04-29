@@ -11,7 +11,9 @@ table {
   overflow: auto;
 
   .mat-cell{
-    max-width: 300px;
+    max-width: 500px;
+    overflow-wrap: break-word;
+    line-height: 1.5;
     border-bottom-color: rgba(0, 0, 0, 0.23);
   }
   .table-row{
@@ -26,4 +28,8 @@ table {
   mat-form-field{
     line-height: 1.6;
   }
+}
+
+app-highlight {
+  white-space: pre-line;
 }

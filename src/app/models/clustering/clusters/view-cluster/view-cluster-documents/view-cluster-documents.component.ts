@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ClusterDetails, ClusterDocument} from '../../../../../shared/types/tasks/Cluster';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
@@ -8,7 +8,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {ProjectStore} from '../../../../../core/projects/project.store';
 import {ClusterService} from '../../../../../core/models/clusters/cluster.service';
-import {filter, switchMap, take, takeUntil} from 'rxjs/operators';
+import {filter, switchMap, takeUntil} from 'rxjs/operators';
 import {Observable, of, Subject} from 'rxjs';
 import {LogService} from '../../../../../core/util/log.service';
 import {ConfirmDialogComponent} from '../../../../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
@@ -18,10 +18,15 @@ import {SimilarClusterDialogComponent} from './similar-cluster-dialog/similar-cl
 import {TagClusterDialogComponent} from './tag-cluster-dialog/tag-cluster-dialog.component';
 import {LocalStorageService} from '../../../../../core/util/local-storage.service';
 
+export class HighlighWebWorker {
+  static worker = new Worker('./web-worker.worker', {type: 'module'});
+}
+
 @Component({
   selector: 'app-view-cluster-documents',
   templateUrl: './view-cluster-documents.component.html',
-  styleUrls: ['./view-cluster-documents.component.scss']
+  styleUrls: ['./view-cluster-documents.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnDestroy {
   public tableData: MatTableDataSource<ClusterDocument> = new MatTableDataSource();
@@ -45,6 +50,7 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
     public dialog: MatDialog,
     private projectStore: ProjectStore,
     private logService: LogService,
+    private changeDetectorRef: ChangeDetectorRef,
     private localStorageService: LocalStorageService,
     private clusterService: ClusterService) {
   }
@@ -71,8 +77,16 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
             this.modifyClusteringSaveState('selectedFields', this.displayedColumns);
           }
         }
-        this.tableData.data = resp.documents;
-        this.isLoadingResults = false;
+        if (typeof Worker !== 'undefined') {
+          HighlighWebWorker.worker.onmessage = ({data}) => {
+            this.isLoadingResults = false;
+            this.tableData.data = data.docs;
+          };
+          HighlighWebWorker.worker.postMessage({words: resp.significant_words, docs: resp.documents});
+        } else {
+          this.isLoadingResults = false;
+          this.tableData.data = resp.documents;
+        }
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 2000);
         this.isLoadingResults = false;
