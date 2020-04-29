@@ -12,6 +12,7 @@ import {SimilarOptionsDialogComponent} from './similar-options-dialog/similar-op
 import {Observable, of, Subject} from 'rxjs';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {ConfirmDialogComponent} from '../../../../../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {LocalStorageService} from '../../../../../../core/util/local-storage.service';
 
 @Component({
   selector: 'app-similar-cluster-dialog',
@@ -32,7 +33,7 @@ export class SimilarClusterDialogComponent implements OnInit, AfterViewInit, OnD
   queryOptions: any;
   charLimit = 300;
 
-  constructor(private clusterService: ClusterService, private logService: LogService,
+  constructor(private clusterService: ClusterService, private logService: LogService, private localStorageService: LocalStorageService,
               public dialog: MatDialog,
               @Inject(MAT_DIALOG_DATA) public data: { clusterId: number, clusteringId: number, projectId: number; }) {
   }
@@ -51,6 +52,11 @@ export class SimilarClusterDialogComponent implements OnInit, AfterViewInit, OnD
         if (this.displayedColumns.length === 0) {
           this.displayedColumns = ['select', ...this.infiniteColumns];
           this.filterColumns = [...this.displayedColumns];
+          const state = this.localStorageService.getProjectState(this.data.projectId);
+          const clusteringState = `${this.data.clusteringId.toString()}_${this.data.clusterId.toString()}`;
+          if (state?.models?.clustering?.[clusteringState]) {
+            this.charLimit = state?.models.clustering[clusteringState].MLT.charLimit;
+          }
         }
         this.tableData.data = resp;
         this.isLoadingResults = false;
@@ -59,6 +65,15 @@ export class SimilarClusterDialogComponent implements OnInit, AfterViewInit, OnD
         this.isLoadingResults = false;
       }
     });
+  }
+
+  charLimitChange() {
+    const state = this.localStorageService.getProjectState(this.data.projectId);
+    const clusteringState = `${this.data.clusteringId.toString()}_${this.data.clusterId.toString()}`;
+    if (state?.models?.clustering?.[clusteringState]?.MLT) {
+      state.models.clustering[clusteringState].MLT.charLimit = this.charLimit;
+      this.localStorageService.updateProjectState(this.data.projectId, state);
+    }
   }
 
   ngAfterViewInit(): void {

@@ -21,6 +21,7 @@
       <mat-form-field class="paginator-margin-left">
         <mat-label>Toggle Columns</mat-label>
         <mat-select [(ngModel)]="displayedColumns"
+                    (ngModelChange)="modifyClusteringSaveState('selectedFields', displayedColumns)"
                     data-cy="appClusterDocumentsTableColumnSelect"
                     multiple>
           <app-mat-option-select-all></app-mat-option-select-all>
@@ -31,7 +32,8 @@
       </mat-form-field>
       <mat-form-field class="paginator-margin-left">
         <mat-label>Column character limit</mat-label>
-        <input matInput [(ngModel)]="charLimit" [ngModelOptions]="{updateOn: 'blur'}" type="number" step="10">
+        <input matInput [(ngModel)]="charLimit" [ngModelOptions]="{updateOn: 'blur'}"
+               (ngModelChange)="modifyClusteringSaveState('charLimit', charLimit)" type="number" step="10">
       </mat-form-field>
       <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
       </mat-paginator>

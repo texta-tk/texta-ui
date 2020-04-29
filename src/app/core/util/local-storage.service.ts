@@ -10,15 +10,17 @@ export class LocalStorageService {
   constructor() {
   }
 
-  public updateProjectState(project: Project, state: ProjectState) {
-    if (project?.id) {
-      localStorage.setItem('projectState' + project.id, JSON.stringify(state));
+  public updateProjectState(project: Project | number, state: ProjectState) {
+    const projectId = typeof project === 'number' ? project : project.id;
+    if (projectId) {
+      localStorage.setItem('projectState' + projectId, JSON.stringify(state));
     }
   }
 
-  public getProjectState(project: Project): ProjectState | null {
-    if (project?.id) {
-      const state = localStorage.getItem('projectState' + project.id);
+  public getProjectState(project: Project | number): ProjectState | null {
+    const projectId = typeof project === 'number' ? project : project.id;
+    if (projectId) {
+      const state = localStorage.getItem('projectState' + projectId);
       if (state) {
         return JSON.parse(state);
       } else {

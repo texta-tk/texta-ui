@@ -1,4 +1,5 @@
-import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Inject, Input, OnInit, PLATFORM_ID, Renderer2} from '@angular/core';
+import {isPlatformBrowser} from '@angular/common';
 
 @Component({
   selector: 'app-limit-text',
@@ -7,10 +8,11 @@ import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LimitTextComponent implements OnInit {
+  displayText;
   cutText;
   fullText;
 
-  constructor() {
+  constructor(@Inject(PLATFORM_ID) private platformId: any,) {
   }
 
   @Input() set params(params: { text: string | number, charLimit: number }) {
@@ -20,13 +22,14 @@ export class LimitTextComponent implements OnInit {
       }
       this.fullText = params.text;
       if (params.text.length > params.charLimit) {
-        this.cutText = params.text.slice(0, params.charLimit);
+        this.displayText = params.text.slice(0, params.charLimit);
+        this.cutText = this.displayText;
       } else {
-        this.cutText = this.fullText;
+        this.displayText = this.fullText;
       }
     } else {
       this.fullText = '';
-      this.cutText = this.fullText;
+      this.displayText = this.fullText;
     }
   }
 
@@ -35,6 +38,14 @@ export class LimitTextComponent implements OnInit {
   }
 
   showAllText() {
-    this.cutText = this.fullText;
+    if (isPlatformBrowser(this.platformId)) {
+      if (window.getSelection()?.type !== 'Range') {
+        if (this.displayText === this.fullText && this.cutText) {
+          this.displayText = this.cutText;
+        } else if (this.displayText === this.cutText && this.fullText) {
+          this.displayText = this.fullText;
+        }
+      }
+    }
   }
 }

@@ -16,6 +16,7 @@ import {SelectionModel} from '@angular/cdk/collections';
 import {Project} from '../../../../../shared/types/Project';
 import {SimilarClusterDialogComponent} from './similar-cluster-dialog/similar-cluster-dialog.component';
 import {TagClusterDialogComponent} from './tag-cluster-dialog/tag-cluster-dialog.component';
+import {LocalStorageService} from '../../../../../core/util/local-storage.service';
 
 @Component({
   selector: 'app-view-cluster-documents',
@@ -44,6 +45,7 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
     public dialog: MatDialog,
     private projectStore: ProjectStore,
     private logService: LogService,
+    private localStorageService: LocalStorageService,
     private clusterService: ClusterService) {
   }
 
@@ -59,7 +61,15 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
         this.infiniteColumns = Object.getOwnPropertyNames(resp.documents[0].content);
         if (this.displayedColumns.length === 0) {
           this.filterColumns = ['select', ...this.infiniteColumns];
-          this.displayedColumns = [...this.filterColumns];
+          const state = this.localStorageService.getProjectState(this.currentProject);
+          const clusteringState = `${this.clusteringId.toString()}_${this.clusterId.toString()}`;
+          if (state?.models?.clustering?.[clusteringState]) {
+            this.displayedColumns = [...state?.models.clustering[clusteringState].selectedFields];
+            this.charLimit = state?.models.clustering[clusteringState].charLimit;
+          } else {
+            this.displayedColumns = [...this.filterColumns];
+            this.modifyClusteringSaveState('selectedFields', this.displayedColumns);
+          }
         }
         this.tableData.data = resp.documents;
         this.isLoadingResults = false;
@@ -78,12 +88,30 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
     if (clusterId && clusteringId) {
       this.clusterId = +clusterId;
       this.clusteringId = +clusteringId;
-      this.projectStore.getCurrentProject().pipe(filter(b => !!b), take(1)).subscribe(proj => {
+      this.projectStore.getCurrentProject().pipe(filter(b => !!b), takeUntil(this.destroyed$)).subscribe(proj => {
         if (proj) {
           this.currentProject = proj;
           this.clusterDocumentsQueue$.next(this.clusterService.clusterDetails(proj.id, this.clusteringId, this.clusterId));
         }
       });
+    }
+  }
+
+
+  modifyClusteringSaveState(accessor: 'charLimit' | 'selectedFields', value: any) {
+    const state = this.localStorageService.getProjectState(this.currentProject);
+    if (state?.models?.clustering) {
+      const clusteringState = `${this.clusteringId.toString()}_${this.clusterId.toString()}`;
+      if (state.models.clustering[clusteringState]?.[accessor]) {
+        state.models.clustering[clusteringState][accessor] = value;
+      } else {
+        state.models.clustering[clusteringState] = {
+          selectedFields: this.displayedColumns,
+          charLimit: this.charLimit,
+          MLT: {charLimit: 300}
+        };
+      }
+      this.localStorageService.updateProjectState(this.currentProject, state);
     }
   }
 
@@ -151,9 +179,6 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
         projectId: this.currentProject.id,
       },
       width: '600px'
-    });
-    dialogRef.afterClosed().subscribe(x => {
-      console.log(x);
     });
   }
 
