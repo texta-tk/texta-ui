@@ -1,5 +1,5 @@
 import {NgModule} from '@angular/core';
-import {CommonModule, DatePipe} from '@angular/common';
+import {CommonModule} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 import {MatToolbarModule} from '@angular/material/toolbar';
@@ -15,7 +15,7 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatListModule} from '@angular/material/list';
 import {MatTableModule} from '@angular/material/table';
 import {MatMenuModule} from '@angular/material/menu';
-import {MatPaginatorIntl, MatPaginatorModule} from '@angular/material/paginator';
+import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSortModule} from '@angular/material/sort';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatChipsModule} from '@angular/material/chips';
@@ -45,13 +45,12 @@ import {FormatTextaFactsPipe} from './pipes/format-texta-facts.pipe';
 import {IsObjectPipe} from './pipes/is-object.pipe';
 import {NgxMatSelectSearchModule} from 'ngx-mat-select-search';
 import {MatRadioModule} from '@angular/material/radio';
-import { GroupSameValuesPipe } from './pipes/group-same-values.pipe';
-import { GetPropertyListPipe } from './pipes/get-property-list.pipe';
-import { JoinPipe } from './pipes/join.pipe';
-import { BreadcrumbComponent } from './components/breadcrumb/breadcrumb.component';
+import {GroupSameValuesPipe} from './pipes/group-same-values.pipe';
+import {GetPropertyListPipe} from './pipes/get-property-list.pipe';
+import {JoinPipe} from './pipes/join.pipe';
+import {BreadcrumbComponent} from './components/breadcrumb/breadcrumb.component';
 import {RouterModule} from '@angular/router';
-import { LimitTextComponent } from './components/limit-text/limit-text.component';
-import { FromToInputComponent } from './components/from-to-input/from-to-input.component';
+import {FromToInputComponent} from './components/from-to-input/from-to-input.component';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
@@ -67,12 +66,10 @@ import { FromToInputComponent } from './components/from-to-input/from-to-input.c
     GetPropertyListPipe,
     JoinPipe,
     BreadcrumbComponent,
-    LimitTextComponent,
     FromToInputComponent
   ],
   imports: [
     RouterModule,
-
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
@@ -110,56 +107,55 @@ import { FromToInputComponent } from './components/from-to-input/from-to-input.c
     MaterialFileInputModule,
     NgxMatSelectSearchModule
   ],
-    exports: [
-        CommonModule,
-        ReactiveFormsModule,
-        FormsModule,
-        FlexLayoutModule,
-        ScrollingModule,
-        MatFormFieldModule,
-        MatCheckboxModule,
-        MatInputModule,
-        MatToolbarModule,
-        MatSnackBarModule,
-        MatSelectModule,
-        MatAutocompleteModule,
-        MatIconModule,
-        MatDialogModule,
-        MatButtonModule,
-        MatCardModule,
-        MatSidenavModule,
-        MatListModule,
-        MatMenuModule,
-        MatTableModule,
-        MatChipsModule,
-        MatProgressSpinnerModule,
-        MatPaginatorModule,
-        MatSortModule,
-        MatTabsModule,
-        MatProgressBarModule,
-        MatExpansionModule,
-        MatDatepickerModule,
-        MatNativeDateModule,
-        MatTooltipModule,
-        MatSliderModule,
-        MatTreeModule,
-        MatRadioModule,
-        GenericTableComponent,
-        SavedSearchAutocompleteComponent,
-        MatOptionSelectAllComponent,
-        FormatTextaFactsPipe,
-        IsObjectPipe,
-        LineChartModule,
-        GroupSameValuesPipe,
-        InfiniteScrollModule,
-        MaterialFileInputModule,
-        NgxMatSelectSearchModule,
-        GetPropertyListPipe,
-        JoinPipe,
-        BreadcrumbComponent,
-        LimitTextComponent,
-        FromToInputComponent
-    ]
+  exports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    FlexLayoutModule,
+    ScrollingModule,
+    MatFormFieldModule,
+    MatCheckboxModule,
+    MatInputModule,
+    MatToolbarModule,
+    MatSnackBarModule,
+    MatSelectModule,
+    MatAutocompleteModule,
+    MatIconModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatCardModule,
+    MatSidenavModule,
+    MatListModule,
+    MatMenuModule,
+    MatTableModule,
+    MatChipsModule,
+    MatProgressSpinnerModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatTabsModule,
+    MatProgressBarModule,
+    MatExpansionModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatTooltipModule,
+    MatSliderModule,
+    MatTreeModule,
+    MatRadioModule,
+    GenericTableComponent,
+    SavedSearchAutocompleteComponent,
+    MatOptionSelectAllComponent,
+    FormatTextaFactsPipe,
+    IsObjectPipe,
+    LineChartModule,
+    GroupSameValuesPipe,
+    InfiniteScrollModule,
+    MaterialFileInputModule,
+    NgxMatSelectSearchModule,
+    GetPropertyListPipe,
+    JoinPipe,
+    BreadcrumbComponent,
+    FromToInputComponent
+  ]
 })
 export class SharedModule {
 }

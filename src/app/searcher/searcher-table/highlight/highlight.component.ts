@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, HostListener, Input} from '@angular/core';
 import {FactConstraint} from '../../searcher-sidebar/build-search/Constraints';
 import * as LinkifyIt from 'linkify-it';
 import {SearcherOptions} from '../../SearcherOptions';
@@ -20,6 +20,7 @@ export interface HighlightConfig {
   onlyHighlightMatching?: FactConstraint[];
   highlightTextaFacts: boolean;
   highlightHyperlinks: boolean;
+  charLimit?: number;
   data: any;
 }
 
@@ -42,11 +43,85 @@ export class HighlightComponent {
   static colors: Map<string, string> = new Map<string, string>();
   static linkify = new LinkifyIt();
   highlightArray: HighlightObject[] = [];
+  isTextLimited;
 
   constructor() {
   }
 
+  _highlightConfig: HighlightConfig;
+
   @Input() set highlightConfig(highlightConfig: HighlightConfig) {
+    this._highlightConfig = highlightConfig;
+    const edited = JSON.parse(JSON.stringify(highlightConfig));
+    if (edited.charLimit && edited.charLimit !== 0) {
+      edited.data[edited.currentColumn] = edited.data[edited.currentColumn].slice(0, edited.charLimit);
+      this.isTextLimited = true;
+    }
+    this.makeHighlightArray(edited);
+  }
+
+  static generateColorsForFacts(facts: HighlightSpan[]): Map<string, string> {
+    const colorPallette = this.generateRandomColors(facts.length);
+    facts.forEach(fact => {
+      if (!HighlightComponent.colors.has(fact.fact) && colorPallette) {
+        HighlightComponent.colors.set(fact.fact, colorPallette[0]);
+        colorPallette.shift();
+      }
+    });
+    return HighlightComponent.colors;
+  }
+
+  static generateRandomColors(numberOfRandomColors: number) {
+    const output: string[] = [];
+    const max = 0xfff;
+    for (let i = 0; i < numberOfRandomColors; i++) {
+      output.push('#' + (Math.round(Math.random() * (max - 0xf77)) + 0xf77).toString(16));
+    }
+    return output;
+  }
+
+  // convert searcher highlight into mlp fact format
+  static makeSearcherHighlights(searcherHighlight: any, currentColumn: string): HighlightSpan[] {
+    const highlight = searcherHighlight ? searcherHighlight[currentColumn] : null;
+    if (highlight && highlight.length === 1) { // elasticsearch returns as array
+      const highlightArray: HighlightSpan[] = [];
+      const columnText: string = highlight[0]; // highlight number of fragments has to be 0
+      const splitStartTag: string[] = columnText.split(SearcherOptions.PRE_TAG);
+      let previousIndex = 0; // char start index of highlight
+      for (const row of splitStartTag) {
+        const endTagIndex = row.indexOf(SearcherOptions.POST_TAG);
+        if (endTagIndex > 0) {
+          const f: HighlightSpan = {} as HighlightSpan;
+          f.doc_path = currentColumn;
+          f.fact = '';
+          f.searcherHighlight = true;
+          f.spans = `[[${previousIndex}, ${previousIndex + endTagIndex}]]`;
+          f.str_val = 'searcher highlight';
+          highlightArray.push(f);
+          const rowClean = row.replace(SearcherOptions.POST_TAG, '');
+          previousIndex = previousIndex + rowClean.length;
+        } else {
+          previousIndex = previousIndex + row.length;
+        }
+      }
+      return highlightArray;
+    }
+    return [];
+  }
+  // todo, dynamically add listener for performance
+  @HostListener('click') onClick() {
+    if (window.getSelection()?.type !== 'Range') {
+      const edited = JSON.parse(JSON.stringify(this._highlightConfig));
+      if (edited.charLimit !== 0 && edited && !this.isTextLimited) {
+        edited.data[edited.currentColumn] = edited.data[edited.currentColumn].slice(0, edited.charLimit);
+      }
+      this.makeHighlightArray(edited);
+      console.log(this.isTextLimited);
+      this.isTextLimited = !this.isTextLimited;
+    }
+  }
+
+  makeHighlightArray(highlightConfig) {
     if (highlightConfig.data[highlightConfig.currentColumn] !== null && highlightConfig.data[highlightConfig.currentColumn] !== undefined) {
       let fieldFacts: HighlightSpan[] = [];
       let hyperLinks: HighlightSpan[] = [];
@@ -73,55 +148,6 @@ export class HighlightComponent {
     } else {
       this.highlightArray = [];
     }
-  }
-
-  static generateColorsForFacts(facts: HighlightSpan[]): Map<string, string> {
-    const colorPallette = this.generateRandomColors(facts.length);
-    facts.forEach(fact => {
-      if (!HighlightComponent.colors.has(fact.fact) && colorPallette) {
-        HighlightComponent.colors.set(fact.fact, colorPallette[0]);
-        colorPallette.shift();
-      }
-    });
-    return HighlightComponent.colors;
-  }
-
-  static generateRandomColors(numberOfRandomColors: number) {
-    const output: string[] = [];
-    const max = 0xfff;
-    for (let i = 0; i < numberOfRandomColors; i++) {
-      output.push('#' + (Math.round(Math.random() * (max - 0xf77)) + 0xf77).toString(16));
-    }
-    return output;
-  }
-
-  // convert searcher highlight into mlp fact format
-  static makeSearcherHighlights(searcherHighlight: any, currentColumn: string): HighlightSpan[] {
-    const highlight = searcherHighlight[currentColumn];
-    if (highlight && highlight.length === 1) { // elasticsearch returns as array
-      const highlightArray: HighlightSpan[] = [];
-      const columnText: string = highlight[0]; // highlight number of fragments has to be 0
-      const splitStartTag: string[] = columnText.split(SearcherOptions.PRE_TAG);
-      let previousIndex = 0; // char start index of highlight
-      for (const row of splitStartTag) {
-        const endTagIndex = row.indexOf(SearcherOptions.POST_TAG);
-        if (endTagIndex > 0) {
-          const f: HighlightSpan = {} as HighlightSpan;
-          f.doc_path = currentColumn;
-          f.fact = '';
-          f.searcherHighlight = true;
-          f.spans = `[[${previousIndex}, ${previousIndex + endTagIndex}]]`;
-          f.str_val = 'searcher highlight';
-          highlightArray.push(f);
-          const rowClean = row.replace(SearcherOptions.POST_TAG, '');
-          previousIndex = previousIndex + rowClean.length;
-        } else {
-          previousIndex = previousIndex + row.length;
-        }
-      }
-      return highlightArray;
-    }
-    return [];
   }
 
   constructFactArray(highlightConfig: HighlightConfig): HighlightSpan[] {
@@ -200,7 +226,7 @@ export class HighlightComponent {
     if (facts.length === 0) {
       if (originalText.length < 400) {
         return [{text: originalText, highlighted: false}];
-      } else {
+      } else { // chrome cant handle rendering large chunks of text, 90% perf improvement on large texts
         const numChunks = Math.ceil(originalText.length / 400);
         const chunks = new Array(numChunks);
 

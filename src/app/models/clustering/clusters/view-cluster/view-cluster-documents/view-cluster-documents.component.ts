@@ -66,6 +66,7 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.infiniteColumns = Object.getOwnPropertyNames(resp.documents[0].content);
         if (this.displayedColumns.length === 0) {
+          this.infiniteColumns = this.infiniteColumns.filter(e => e !== 'texta_facts');
           this.filterColumns = ['select', ...this.infiniteColumns];
           const state = this.localStorageService.getProjectState(this.currentProject);
           const clusteringState = `${this.clusteringId.toString()}_${this.clusterId.toString()}`;

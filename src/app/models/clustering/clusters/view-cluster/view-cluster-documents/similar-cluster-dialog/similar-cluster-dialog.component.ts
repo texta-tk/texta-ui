@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {LogService} from '../../../../../../core/util/log.service';
 import {MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
 import {ClusterService} from '../../../../../../core/models/clusters/cluster.service';
@@ -17,7 +17,8 @@ import {LocalStorageService} from '../../../../../../core/util/local-storage.ser
 @Component({
   selector: 'app-similar-cluster-dialog',
   templateUrl: './similar-cluster-dialog.component.html',
-  styleUrls: ['./similar-cluster-dialog.component.scss']
+  styleUrls: ['./similar-cluster-dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SimilarClusterDialogComponent implements OnInit, AfterViewInit, OnDestroy {
   public tableData: MatTableDataSource<any> = new MatTableDataSource();

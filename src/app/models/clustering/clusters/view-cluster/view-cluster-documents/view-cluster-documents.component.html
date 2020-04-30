@@ -20,8 +20,8 @@
       </button>
       <mat-form-field class="paginator-margin-left">
         <mat-label>Toggle Columns</mat-label>
-        <mat-select [(ngModel)]="displayedColumns"
-                    (ngModelChange)="modifyClusteringSaveState('selectedFields', displayedColumns)"
+        <mat-select (ngModelChange)="modifyClusteringSaveState('selectedFields', displayedColumns)"
+                    [(ngModel)]="displayedColumns"
                     data-cy="appClusterDocumentsTableColumnSelect"
                     multiple>
           <app-mat-option-select-all></app-mat-option-select-all>
@@ -32,15 +32,15 @@
       </mat-form-field>
       <mat-form-field class="paginator-margin-left">
         <mat-label>Column character limit</mat-label>
-        <input matInput [(ngModel)]="charLimit" [ngModelOptions]="{updateOn: 'blur'}"
-               (ngModelChange)="modifyClusteringSaveState('charLimit', charLimit)" type="number" step="10">
+        <input (ngModelChange)="modifyClusteringSaveState('charLimit', charLimit)" [(ngModel)]="charLimit" [ngModelOptions]="{updateOn: 'blur'}"
+               matInput step="10" type="number">
       </mat-form-field>
       <mat-paginator [pageSizeOptions]="[15, 25, 50]" showFirstLastButtons>
       </mat-paginator>
     </div>
   </div>
   <div class="table-container">
-    <table [dataSource]="tableData" [trackBy]="trackById" mat-table class="readable-table"
+    <table [dataSource]="tableData" [trackBy]="trackById" class="readable-table" mat-table
            matSort>
       <ng-container matColumnDef="select">
         <th *matHeaderCellDef mat-header-cell>
@@ -58,15 +58,15 @@
         <th *matHeaderCellDef class="table-row" mat-header-cell mat-sort-header>{{column}}</th>
         <td *matCellDef="let row" mat-cell>
           <ng-container *ngIf="!(row.content[column] | isObject)">
-            <app-highlight
-              [highlightConfig]="{
+              <app-highlight class="pointer"
+                [highlightConfig]="{
                           currentColumn: column,
                           searcherHighlight: row.highlight,
                           highlightTextaFacts: false,
+                          charLimit: charLimit,
                           highlightHyperlinks: false,
                           data: row.content}">
-
-            </app-highlight>
+              </app-highlight>
           </ng-container>
         </td>
       </ng-container>

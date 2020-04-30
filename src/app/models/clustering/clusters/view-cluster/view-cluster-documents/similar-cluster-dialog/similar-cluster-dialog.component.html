@@ -53,14 +53,17 @@
       <ng-container *ngFor="let column of infiniteColumns" [matColumnDef]="column">
         <th *matHeaderCellDef class="table-row" mat-header-cell mat-sort-header>{{column}}</th>
         <td *matCellDef="let row" mat-cell>
-          <app-limit-text *ngIf="(row._source[column] | isObject)"
-                          [params]="{text: row._source[column] | json,
-              charLimit: charLimit}">
-          </app-limit-text>
-          <app-limit-text *ngIf="!(row._source[column] | isObject)"
-                          [params]="{text: row._source[column],
-              charLimit: charLimit}">
-          </app-limit-text>
+          <ng-container *ngIf="!(row._source[column] | isObject)">
+            <app-highlight class="pointer"
+                           [highlightConfig]="{
+                          currentColumn: column,
+                          searcherHighlight: row.highlight,
+                          highlightTextaFacts: false,
+                          charLimit: charLimit,
+                          highlightHyperlinks: false,
+                          data: row._source}">
+            </app-highlight>
+          </ng-container>
         </td>
       </ng-container>
 

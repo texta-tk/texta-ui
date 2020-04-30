@@ -40,6 +40,8 @@ describe('HighlightComponent', () => {
     component.highlightConfig = {
       searcherHighlight: {},
       data: jsonData,
+      highlightTextaFacts: true,
+      highlightHyperlinks: true,
       currentColumn: 'text',
     };
     console.log(component.highlightArray);
@@ -74,6 +76,8 @@ describe('HighlightComponent', () => {
     component.highlightConfig = {
       searcherHighlight: {},
       data: jsonData,
+      highlightTextaFacts: true,
+      highlightHyperlinks: true,
       currentColumn: 'text',
     };
     console.log(component.highlightArray);
@@ -139,6 +143,8 @@ describe('HighlightComponent', () => {
       component.highlightConfig = {
         searcherHighlight: {},
         data: jsonData,
+        highlightTextaFacts: true,
+        highlightHyperlinks: true,
         currentColumn: 'text',
       };
       console.log(component.highlightArray);
@@ -169,6 +175,8 @@ describe('HighlightComponent', () => {
             [`these ${SearcherOptions.PRE_TAG}a${SearcherOptions.POST_TAG}re some words: OÜ H${SearcherOptions.PRE_TAG}a${SearcherOptions.POST_TAG}ns${SearcherOptions.PRE_TAG}a${SearcherOptions.POST_TAG} Medic${SearcherOptions.PRE_TAG}a${SearcherOptions.POST_TAG}list, Eesti Energi${SearcherOptions.PRE_TAG}a${SearcherOptions.POST_TAG} Joon${SearcherOptions.PRE_TAG}a${SearcherOptions.POST_TAG}s xxxxxx`]
         },
         data: jsonData,
+        highlightTextaFacts: true,
+        highlightHyperlinks: true,
         currentColumn: 'text',
       };
       console.log(component.highlightArray);
@@ -191,6 +199,8 @@ describe('HighlightComponent', () => {
             [`these are some words: ${SearcherOptions.PRE_TAG}OÜ${SearcherOptions.POST_TAG} Hansa Medicalist, Eesti Energia Joonas xxxxxx`]
         },
         data: jsonData,
+        highlightTextaFacts: true,
+        highlightHyperlinks: true,
         currentColumn: 'text',
       };
       console.log(component.highlightArray);
@@ -213,6 +223,8 @@ describe('HighlightComponent', () => {
             [`these are s${SearcherOptions.PRE_TAG}ome words: OÜ H${SearcherOptions.POST_TAG}ansa Medicalist, Eesti Energia Joonas xxxxxx`]
         },
         data: jsonData,
+        highlightTextaFacts: true,
+        highlightHyperlinks: true,
         currentColumn: 'text',
       };
       console.log(component.highlightArray);
@@ -232,6 +244,8 @@ describe('HighlightComponent', () => {
           text:
             [`${SearcherOptions.PRE_TAG}these are some words: OÜ Hansa Medicalist, Ees${SearcherOptions.POST_TAG}ti Energia Joonas xxxxxx`]
         },
+        highlightTextaFacts: true,
+        highlightHyperlinks: true,
         data: jsonData,
         currentColumn: 'text',
       };
@@ -252,6 +266,8 @@ describe('HighlightComponent', () => {
           text:
             [`these are some words: ${SearcherOptions.PRE_TAG}OÜ Hansa${SearcherOptions.POST_TAG} Medicalist, Eesti Energia Joonas xxxxxx`]
         },
+        highlightTextaFacts: true,
+        highlightHyperlinks: true,
         data: jsonData,
         currentColumn: 'text',
       };
@@ -275,6 +291,8 @@ describe('HighlightComponent', () => {
             [`these are some words: OÜ Hansa Medicalist, Eesti ${SearcherOptions.PRE_TAG}Energia Joonas${SearcherOptions.POST_TAG} xxxxxx`]
         },
         data: jsonData,
+        highlightTextaFacts: true,
+        highlightHyperlinks: true,
         currentColumn: 'text',
       };
       console.log(component.highlightArray);
@@ -297,6 +315,8 @@ describe('HighlightComponent', () => {
             [`these are some words: ${SearcherOptions.PRE_TAG}OÜ Hansa Medicalist${SearcherOptions.POST_TAG}, Eesti Energia Joonas xxxxxx`]
         },
         data: jsonData,
+        highlightTextaFacts: true,
+        highlightHyperlinks: true,
         currentColumn: 'text',
       };
       console.log(component.highlightArray);
@@ -319,6 +339,8 @@ describe('HighlightComponent', () => {
             [`these are some words: OÜ Hansa Medicalist, Eesti Energia Joon${SearcherOptions.PRE_TAG}as xxx${SearcherOptions.POST_TAG}xxx`]
         },
         data: jsonData,
+        highlightTextaFacts: true,
+        highlightHyperlinks: true,
         currentColumn: 'text',
       };
       console.log(component.highlightArray);
@@ -340,6 +362,8 @@ describe('HighlightComponent', () => {
             [`these are some words: OÜ Hansa M${SearcherOptions.PRE_TAG}edicalist, Eesti Ener${SearcherOptions.POST_TAG}gia Joonas xxxxxx`]
         },
         data: jsonData,
+        highlightTextaFacts: true,
+        highlightHyperlinks: true,
         currentColumn: 'text',
       };
       console.log(component.highlightArray);
@@ -362,6 +386,8 @@ describe('HighlightComponent', () => {
             [`these are some words: OÜ Hansa Medicalist, Eesti Energia Joonas xxxxxx`]
         },
         data: jsonData,
+        highlightTextaFacts: true,
+        highlightHyperlinks: true,
         currentColumn: 'text',
         onlyHighlightMatching: [new FactConstraint([{
           path: 'texta_facts',
@@ -389,6 +415,8 @@ describe('HighlightComponent', () => {
             [`these are some words: OÜ Hansa Medicalist, Eesti Energia Joonas xxxxxx`]
         },
         data: jsonData,
+        highlightTextaFacts: true,
+        highlightHyperlinks: true,
         currentColumn: 'text',
         onlyHighlightMatching: [new FactConstraint([{
           path: 'texta_facts',
@@ -416,6 +444,8 @@ describe('HighlightComponent', () => {
             [`${SearcherOptions.PRE_TAG}these${SearcherOptions.POST_TAG} are some words: OÜ Hansa Medicalist, Eesti Energia Joonas xxxxxx`]
         },
         data: jsonData,
+        highlightTextaFacts: true,
+        highlightHyperlinks: true,
         currentColumn: 'text',
       };
       const highlightedText: string[] = [];
