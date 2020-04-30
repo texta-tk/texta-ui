@@ -6,6 +6,7 @@ export class Cluster {
   id: number;
   url: string;
   description: string;
+  significant_words_filter: string;
   author_username: string;
   query: string;
   indices: Index[];

@@ -39,17 +39,14 @@
         Field is <strong>required</strong>
       </mat-error>
     </mat-form-field>
-
+    <mat-form-field>
+      <input autocomplete="off" formControlName="keywordFilterFormControl" matInput
+             placeholder="Keywords filter">
+    </mat-form-field>
     <mat-form-field>
       <textarea
                 formControlName="stopWordsFormControl"
                 matInput placeholder="Stopwords (newline separated)"></textarea>
-    </mat-form-field>
-
-    <mat-form-field>
-      <textarea
-                formControlName="ignoredIdsFormControl"
-                matInput placeholder="Ignored ids (newline separated)"></textarea>
     </mat-form-field>
 
     <mat-form-field>
