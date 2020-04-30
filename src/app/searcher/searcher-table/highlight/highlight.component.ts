@@ -1,7 +1,8 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {ElasticsearchQuery, FactConstraint} from '../../searcher-sidebar/build-search/Constraints';
+import {FactConstraint} from '../../searcher-sidebar/build-search/Constraints';
 import * as LinkifyIt from 'linkify-it';
 import {SearcherOptions} from '../../SearcherOptions';
+import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 
 export interface HighlightSpan {
   doc_path: string;
@@ -17,6 +18,8 @@ export interface HighlightConfig {
   currentColumn: string;
   searcherHighlight: any;
   onlyHighlightMatching?: FactConstraint[];
+  highlightTextaFacts: boolean;
+  highlightHyperlinks: boolean;
   data: any;
 }
 
@@ -45,19 +48,23 @@ export class HighlightComponent {
 
   @Input() set highlightConfig(highlightConfig: HighlightConfig) {
     if (highlightConfig.data[highlightConfig.currentColumn] !== null && highlightConfig.data[highlightConfig.currentColumn] !== undefined) {
-      let fieldFacts = this.getFactsByField(highlightConfig.data, highlightConfig.currentColumn);
-      if (highlightConfig.onlyHighlightMatching && fieldFacts.length > 0) {
-        fieldFacts = this.getOnlyMatchingFacts(fieldFacts, highlightConfig); // todo
+      let fieldFacts: HighlightSpan[] = [];
+      let hyperLinks: HighlightSpan[] = [];
+      if (highlightConfig.highlightTextaFacts) {
+        fieldFacts = this.constructFactArray(highlightConfig);
       }
-      fieldFacts = this.removeDuplicates(fieldFacts, 'spans');
       // elastic fields arent trimmed by default, so elasticsearch highlights are going to be misaligned because
       // elasticsearch highlighter trims the field, MLP also trims the field
       // trim it here cause we need to get hyperlinks with trimmed columndata so it wouldnt be misaligned
       if ((isNaN(Number(highlightConfig.data[highlightConfig.currentColumn])))) {
         highlightConfig.data[highlightConfig.currentColumn] = highlightConfig.data[highlightConfig.currentColumn].trim();
       }
+      if (highlightConfig.highlightHyperlinks) {
+        hyperLinks = this.makeHyperlinksClickable(highlightConfig.data[highlightConfig.currentColumn], highlightConfig.currentColumn);
+      }
+
       const highlightTerms = [
-        ...this.makeHyperlinksClickable(highlightConfig.data[highlightConfig.currentColumn], highlightConfig.currentColumn),
+        ...hyperLinks,
         ...HighlightComponent.makeSearcherHighlights(highlightConfig.searcherHighlight, highlightConfig.currentColumn),
         ...fieldFacts
       ];
@@ -117,6 +124,16 @@ export class HighlightComponent {
     return [];
   }
 
+  constructFactArray(highlightConfig: HighlightConfig): HighlightSpan[] {
+    let fieldFacts: HighlightSpan[];
+    fieldFacts = this.getFactsByField(highlightConfig.data, highlightConfig.currentColumn);
+    if (highlightConfig.onlyHighlightMatching && fieldFacts.length > 0) {
+      fieldFacts = this.getOnlyMatchingFacts(fieldFacts, highlightConfig); // todo
+    }
+    fieldFacts = UtilityFunctions.getDistinctByProperty<HighlightSpan>(fieldFacts, (x => x.spans));
+    return fieldFacts;
+  }
+
   makeHyperlinksClickable(currentColumn: string | number, colName: string): HighlightSpan[] {
     // Very quick check, that can give false positives.
     if (isNaN(Number(currentColumn)) && HighlightComponent.linkify.pretest(currentColumn as string)) {
@@ -139,7 +156,7 @@ export class HighlightComponent {
   }
 
   getOnlyMatchingFacts(fieldFacts: HighlightSpan[], highlightConfig: HighlightConfig): HighlightSpan[] {
-    if (fieldFacts && highlightConfig && highlightConfig.onlyHighlightMatching) {
+    if (fieldFacts && highlightConfig?.onlyHighlightMatching && highlightConfig.onlyHighlightMatching.length > 0) {
       // if these exist match all facts of the type, PER, LOC, ORG etc. gets all unique global fact names
       const globalFacts = [...new Set([].concat.apply([], highlightConfig.onlyHighlightMatching.map(x => x.factNameFormControl.value)))];
       // get all unique fact names and their values as an object
@@ -427,11 +444,6 @@ export class HighlightComponent {
 
   }
 
-  private removeDuplicates(myArr, prop) {
-    return myArr.filter((obj, pos, arr) => {
-      return arr.map(mapObj => mapObj[prop]).indexOf(obj[prop]) === pos;
-    });
-  }
 
   private detectOverlappingFacts(facts: HighlightSpan[]): Map<HighlightSpan, HighlightSpan[]> {
     let overLappingFacts: Map<HighlightSpan, HighlightSpan[]> = new Map<HighlightSpan, HighlightSpan[]>();

@@ -26,7 +26,11 @@
   text-overflow: ellipsis;
 }
 
-
-td.mat-cell.mat-column-texta_facts {
-  max-width: 280px;
+app-texta-facts-chips{
+  display: flex;
+  flex-wrap: wrap;
+  width: 300px;
+  span{
+    display: flex;
+  }
 }
