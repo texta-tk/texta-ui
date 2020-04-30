@@ -1,0 +1,35 @@
+// searcher table, clustering view documents table, more like this table
+.readable-table {
+
+  .mat-header-cell {
+    border-right: solid 1px rgba(0, 0, 0, 0.23);
+    padding-left: 12px;
+    white-space: nowrap;
+    color: rgba(0, 0, 0, 0.87);
+
+    .mat-sort-header-container {
+      justify-content: center;
+    }
+    .mat-sort-header-button{
+      color: rgba(0, 0, 0, 0.87);
+    }
+  }
+
+  .mat-cell {
+    max-width: 500px;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    border-bottom-color: rgba(0, 0, 0, 0.23);
+    vertical-align: top;
+    border-right: solid 1px rgba(0, 0, 0, 0.23);
+    padding: 5px;
+  }
+
+  .mat-header-row {
+    height: 50px;
+  }
+
+  app-highlight {
+    white-space: pre-line;
+  }
+}

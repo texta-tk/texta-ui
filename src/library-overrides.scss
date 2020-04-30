@@ -25,6 +25,8 @@ mat-chip-list.chip-list-space-evenly{
       justify-content: space-evenly !important;
     }
 }
-.dialog-container-no-padding .mat-dialog-container {
-  padding: 0;
+
+// panelClass for mat dialog to remove padding
+.custom-no-padding-dialog .mat-dialog-container {
+  padding: 0 !important;
 }

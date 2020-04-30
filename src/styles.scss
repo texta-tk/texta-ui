@@ -2,6 +2,7 @@
 @import "./custom-theme.scss";
 @import "./variables/variables";
 @import "library-overrides";
+@import "components";
 // might be problematic todo
 div {
   box-sizing: border-box;
@@ -216,11 +217,6 @@ pre {
       margin-left: auto;
     }
   }
-}
-
-// panelClass for mat dialog to remove padding
-.custom-no-padding-dialog .mat-dialog-container {
-  padding: 0 !important;
 }
 
 

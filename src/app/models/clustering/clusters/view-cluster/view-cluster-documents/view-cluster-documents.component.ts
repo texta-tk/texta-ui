@@ -178,7 +178,7 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
       height: '90vh',
       width: '80vw',
       autoFocus: false,
-      panelClass: 'dialog-container-no-padding'
+      panelClass: 'custom-no-padding-dialog'
     });
     dialogRef.afterClosed().subscribe(x => {
       this.clusterDocumentsQueue$.next(this.clusterService.clusterDetails(this.currentProject.id, this.clusteringId, this.clusterId));

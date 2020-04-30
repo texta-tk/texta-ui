@@ -36,7 +36,7 @@
     </div>
   </div>
   <div class="table-container">
-    <table [dataSource]="tableData" [trackBy]="trackById" mat-table
+    <table [dataSource]="tableData" [trackBy]="trackById" mat-table class="readable-table"
            matSort>
       <ng-container matColumnDef="select">
         <th *matHeaderCellDef mat-header-cell>
@@ -52,8 +52,7 @@
       </ng-container>
       <ng-container *ngFor="let column of infiniteColumns" [matColumnDef]="column">
         <th *matHeaderCellDef class="table-row" mat-header-cell mat-sort-header>{{column}}</th>
-        <td *matCellDef="let row"
-            class="table-row" mat-cell>
+        <td *matCellDef="let row" mat-cell>
           <app-limit-text *ngIf="(row._source[column] | isObject)"
                           [params]="{text: row._source[column] | json,
               charLimit: charLimit}">
