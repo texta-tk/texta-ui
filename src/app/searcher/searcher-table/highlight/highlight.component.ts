@@ -198,7 +198,18 @@ export class HighlightComponent {
     // column content can be number, convert to string
     originalText = originalText.toString();
     if (facts.length === 0) {
-      return [{text: originalText, highlighted: false}];
+      if (originalText.length < 400) {
+        return [{text: originalText, highlighted: false}];
+      } else {
+        const numChunks = Math.ceil(originalText.length / 400);
+        const chunks = new Array(numChunks);
+
+        for (let i = 0, o = 0; i < numChunks; ++i, o += 400) {
+          chunks[i] = {text: originalText.substr(o, 400), highlighted: false};
+        }
+        return chunks;
+      }
+
     }
 
     // need this sort for fact priority

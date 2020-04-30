@@ -56,8 +56,8 @@
         </td>
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-      <tr mat-row *matRowDef="let element; columns: displayedColumns;" class="element-row" [routerLink]="[element.id]"
-          matTooltip="View cluster documents" matTooltipShowDelay="500"></tr>
+      <tr mat-row *matRowDef="let element; columns: displayedColumns;" class="pointer" [routerLink]="[element.id]"
+         title="View cluster documents"></tr>
 
     </table>
   </div>

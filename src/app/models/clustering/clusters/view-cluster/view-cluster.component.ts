@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ClusterService} from '../../../../core/models/clusters/cluster.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ClusterView} from '../../../../shared/types/tasks/Cluster';
@@ -27,7 +27,8 @@ interface Cluster {
 @Component({
   selector: 'app-view-cluster',
   templateUrl: './view-cluster.component.html',
-  styleUrls: ['./view-cluster.component.scss']
+  styleUrls: ['./view-cluster.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ViewClusterComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: ClusterView | null;

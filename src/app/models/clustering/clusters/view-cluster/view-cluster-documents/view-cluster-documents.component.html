@@ -35,7 +35,7 @@
         <input matInput [(ngModel)]="charLimit" [ngModelOptions]="{updateOn: 'blur'}"
                (ngModelChange)="modifyClusteringSaveState('charLimit', charLimit)" type="number" step="10">
       </mat-form-field>
-      <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
+      <mat-paginator [pageSizeOptions]="[15, 25, 50]" showFirstLastButtons>
       </mat-paginator>
     </div>
   </div>
@@ -57,10 +57,6 @@
       <ng-container *ngFor="let column of infiniteColumns" [matColumnDef]="column">
         <th *matHeaderCellDef class="table-row" mat-header-cell mat-sort-header>{{column}}</th>
         <td *matCellDef="let row" mat-cell>
-          <app-limit-text *ngIf="(row.content[column] | isObject)"
-                          [params]="{text: row.content[column] | json,
-              charLimit: charLimit}">
-          </app-limit-text>
           <ng-container *ngIf="!(row.content[column] | isObject)">
             <app-highlight
               [highlightConfig]="{
