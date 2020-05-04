@@ -62,6 +62,10 @@ export class SimilarClusterDialogComponent implements OnInit, AfterViewInit, OnD
           const clusteringState = `${this.data.clusteringId.toString()}_${this.data.clusterId.toString()}`;
           if (state?.models?.clustering?.[clusteringState]) {
             this.charLimit = state?.models.clustering[clusteringState].MLT.charLimit;
+            const selected = state?.models.clustering[clusteringState].selectedFields.filter(x => this.displayedColumns.includes(x));
+            if (selected.length > 0) {
+              this.displayedColumns = selected;
+            }
           }
         }
         if (typeof Worker !== 'undefined') {
@@ -81,11 +85,11 @@ export class SimilarClusterDialogComponent implements OnInit, AfterViewInit, OnD
     });
   }
 
-  charLimitChange() {
+  charLimitChange(val) {
     const state = this.localStorageService.getProjectState(this.data.projectId);
     const clusteringState = `${this.data.clusteringId.toString()}_${this.data.clusterId.toString()}`;
     if (state?.models?.clustering?.[clusteringState]?.MLT) {
-      state.models.clustering[clusteringState].MLT.charLimit = this.charLimit;
+      state.models.clustering[clusteringState].MLT.charLimit = val;
       this.localStorageService.updateProjectState(this.data.projectId, state);
     }
   }
