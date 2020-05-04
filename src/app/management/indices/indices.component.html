@@ -7,7 +7,7 @@
     <div class="paginator-row">
       <mat-form-field class="m-l-15">
         <mat-icon matSuffix>search</mat-icon>
-        <input (keyup)="applyFilter($event.target, 'name')" matInput placeholder="Filter index name">
+        <input (keyup)="applyFilter($event)" matInput placeholder="Filter index name">
       </mat-form-field>
       <mat-paginator [length]="resultsLength" [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
       </mat-paginator>
@@ -30,6 +30,14 @@
       <ng-container matColumnDef="name">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Name</th>
         <td *matCellDef="let element" mat-cell>{{ element.name }}</td>
+      </ng-container>
+      <ng-container matColumnDef="size">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Size</th>
+        <td *matCellDef="let element" mat-cell>{{ element.size | byteFormat}}</td>
+      </ng-container>
+      <ng-container matColumnDef="doc_count">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Document count</th>
+        <td *matCellDef="let element" mat-cell>{{ element.doc_count }}</td>
       </ng-container>
       <ng-container matColumnDef="delete">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Delete</th>
