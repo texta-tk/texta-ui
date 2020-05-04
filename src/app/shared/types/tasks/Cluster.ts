@@ -49,3 +49,10 @@ export class ClusterDocument {
   index: string;
   content: { [key: string]: string };
 }
+
+export class ClusterMoreLikeThis {
+  _id: string;
+  _index: string;
+  _type: string;
+  _source: any;
+}

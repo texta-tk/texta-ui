@@ -32,7 +32,8 @@
       </mat-form-field>
       <mat-form-field class="paginator-margin-left">
         <mat-label>Column character limit</mat-label>
-        <input (ngModelChange)="modifyClusteringSaveState('charLimit', charLimit)" [(ngModel)]="charLimit" [ngModelOptions]="{updateOn: 'blur'}"
+        <input (ngModelChange)="modifyClusteringSaveState('charLimit', charLimit)" [(ngModel)]="charLimit"
+               [ngModelOptions]="{updateOn: 'blur'}"
                matInput step="10" type="number">
       </mat-form-field>
       <mat-paginator [pageSizeOptions]="[15, 25, 50]" showFirstLastButtons>
@@ -57,17 +58,16 @@
       <ng-container *ngFor="let column of infiniteColumns" [matColumnDef]="column">
         <th *matHeaderCellDef class="table-row" mat-header-cell mat-sort-header>{{column}}</th>
         <td *matCellDef="let row" mat-cell>
-          <ng-container *ngIf="!(row.content[column] | isObject)">
-              <app-highlight class="pointer"
-                [highlightConfig]="{
+          <app-highlight #el (click)="el.toggleTextLimit()" *ngIf="!(row.content[column] | isObject)"
+                         [highlightConfig]="{
                           currentColumn: column,
                           searcherHighlight: row.highlight,
                           highlightTextaFacts: false,
                           charLimit: charLimit,
                           highlightHyperlinks: false,
-                          data: row.content}">
-              </app-highlight>
-          </ng-container>
+                          data: row.content}"
+                         [ngClass]="{'pointer': row.content[column].length > charLimit}">
+          </app-highlight>
         </td>
       </ng-container>
 

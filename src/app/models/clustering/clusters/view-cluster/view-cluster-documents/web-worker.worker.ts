@@ -5,13 +5,14 @@ import {SearcherOptions} from '../../../../../searcher/SearcherOptions';
 
 addEventListener('message', (data) => {
   // This is running in the web-worker
-  const context: { words: { key: string, count: number }[], docs: ClusterDocument[] } = data.data;
+  const context: { words: { key: string, count: number }[], docs: ClusterDocument[], accessor: string } = data.data;
   const sigWords = context.words.map(x => x.key);
+  const docAccessor = context.accessor ? context.accessor : '';
   for (const doc of context.docs) {
     doc['highlight'] = {};
-    for (const col in doc.content) {
-      if (doc.content.hasOwnProperty(col) && doc.content[col] && typeof doc.content[col] === 'string') {
-        const textSplit = doc.content[col].trim().split(/(\b[^\s]+\b)/);
+    for (const col in doc[docAccessor]) {
+      if (doc[docAccessor].hasOwnProperty(col) && doc[docAccessor][col] && typeof doc[docAccessor][col] === 'string') {
+        const textSplit = doc[docAccessor][col].trim().split(/(\b[^\s]+\b)/);
         doc['highlight'][col] = [''];
         for (const word of textSplit) {
           if (word && sigWords.includes(word)) {

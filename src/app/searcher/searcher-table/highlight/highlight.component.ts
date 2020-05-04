@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, HostListener, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {FactConstraint} from '../../searcher-sidebar/build-search/Constraints';
 import * as LinkifyIt from 'linkify-it';
 import {SearcherOptions} from '../../SearcherOptions';
@@ -54,8 +54,10 @@ export class HighlightComponent {
     this._highlightConfig = highlightConfig;
     const edited = JSON.parse(JSON.stringify(highlightConfig));
     if (edited.charLimit && edited.charLimit !== 0) {
+      if (edited.data[edited.currentColumn].length > edited.charLimit) {
+        this.isTextLimited = true;
+      }
       edited.data[edited.currentColumn] = edited.data[edited.currentColumn].slice(0, edited.charLimit);
-      this.isTextLimited = true;
     }
     this.makeHighlightArray(edited);
   }
@@ -108,15 +110,14 @@ export class HighlightComponent {
     }
     return [];
   }
-  // todo, dynamically add listener for performance
-  @HostListener('click') onClick() {
+
+  public toggleTextLimit() {
     if (window.getSelection()?.type !== 'Range') {
       const edited = JSON.parse(JSON.stringify(this._highlightConfig));
       if (edited.charLimit !== 0 && edited && !this.isTextLimited) {
         edited.data[edited.currentColumn] = edited.data[edited.currentColumn].slice(0, edited.charLimit);
       }
       this.makeHighlightArray(edited);
-      console.log(this.isTextLimited);
       this.isTextLimited = !this.isTextLimited;
     }
   }

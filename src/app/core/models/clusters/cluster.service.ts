@@ -4,7 +4,7 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {LocalStorageService} from '../../util/local-storage.service';
 import {LogService} from '../../util/log.service';
 import {Observable} from 'rxjs';
-import {Cluster, ClusterDetails, ClusterView} from '../../../shared/types/tasks/Cluster';
+import {Cluster, ClusterDetails, ClusterMoreLikeThis, ClusterView} from '../../../shared/types/tasks/Cluster';
 import {catchError, tap} from 'rxjs/operators';
 import {ClusterOptions} from '../../../shared/types/tasks/ClusterOptions';
 import {ResultsWrapper} from '../../../shared/types/Generic';
@@ -84,11 +84,11 @@ export class ClusterService {
       catchError(this.logService.handleError<unknown>('tagCluster')));
   }
 
-  moreLikeCluster(projectId: number, clusteringId: number, clusterId: number, body): Observable<unknown[] | HttpErrorResponse> {
-    return this.http.post<unknown[]>
+  moreLikeCluster(projectId: number, clusteringId: number, clusterId: number, body): Observable<ClusterMoreLikeThis[] | HttpErrorResponse> {
+    return this.http.post<ClusterMoreLikeThis[]>
     (`${this.apiUrl}/projects/${projectId}/clustering/${clusteringId}/clusters/${clusterId}/more_like_cluster/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'moreLikeCluster')),
-      catchError(this.logService.handleError<unknown[]>('moreLikeCluster')));
+      catchError(this.logService.handleError<ClusterMoreLikeThis[]>('moreLikeCluster')));
   }
 
   deleteCluster(projectId: number, clusterId: number) {
@@ -110,7 +110,7 @@ export class ClusterService {
       tap(e => this.logService.logStatus(e, 'clusterDetails')),
       catchError(this.logService.handleError<ClusterDetails>('clusterDetails')));
   }
-  
+
   getClusterOptions(projectId: number): Observable<ClusterOptions | HttpErrorResponse> {
     return this.http.options<ClusterOptions>(
       this.apiUrl + '/projects/' + projectId + '/clustering/'

@@ -4,7 +4,7 @@ import {MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
 import {ClusterService} from '../../../../../../core/models/clusters/cluster.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {MatTableDataSource} from '@angular/material/table';
-import {ClusterDocument} from '../../../../../../shared/types/tasks/Cluster';
+import {ClusterDocument, ClusterMoreLikeThis} from '../../../../../../shared/types/tasks/Cluster';
 import {MatSort} from '@angular/material/sort';
 import {MatPaginator} from '@angular/material/paginator';
 import {SelectionModel} from '@angular/cdk/collections';
@@ -13,6 +13,7 @@ import {Observable, of, Subject} from 'rxjs';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {ConfirmDialogComponent} from '../../../../../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {LocalStorageService} from '../../../../../../core/util/local-storage.service';
+import {SignificantWordsWorker} from '../SignificantWordsWorker';
 
 @Component({
   selector: 'app-similar-cluster-dialog',
@@ -29,14 +30,19 @@ export class SimilarClusterDialogComponent implements OnInit, AfterViewInit, OnD
   @ViewChild(MatPaginator) paginator: MatPaginator;
   isLoadingResults = true;
   selectedRows = new SelectionModel<ClusterDocument>(true, []);
-  moreLikeQuery$: Subject<Observable<unknown[] | HttpErrorResponse>> = new Subject<Observable<unknown[] | HttpErrorResponse>>();
+  moreLikeQuery$: Subject<Observable<ClusterMoreLikeThis[] | HttpErrorResponse>> = new Subject<Observable<ClusterMoreLikeThis[] | HttpErrorResponse>>();
   destroyed$: Subject<boolean> = new Subject<boolean>();
   queryOptions: any;
   charLimit = 300;
 
   constructor(private clusterService: ClusterService, private logService: LogService, private localStorageService: LocalStorageService,
               public dialog: MatDialog,
-              @Inject(MAT_DIALOG_DATA) public data: { clusterId: number, clusteringId: number, projectId: number; }) {
+              @Inject(MAT_DIALOG_DATA) public data: {
+                clusterId: number,
+                clusteringId: number,
+                projectId: number;
+                significantWords: { key: string, count: number }[]
+              }) {
   }
 
   ngOnInit(): void {
@@ -48,7 +54,6 @@ export class SimilarClusterDialogComponent implements OnInit, AfterViewInit, OnD
       return of(null);
     })).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        // @ts-ignore
         this.infiniteColumns = Object.getOwnPropertyNames(resp[0]._source);
         if (this.displayedColumns.length === 0) {
           this.displayedColumns = ['select', ...this.infiniteColumns];
@@ -59,8 +64,16 @@ export class SimilarClusterDialogComponent implements OnInit, AfterViewInit, OnD
             this.charLimit = state?.models.clustering[clusteringState].MLT.charLimit;
           }
         }
-        this.tableData.data = resp;
-        this.isLoadingResults = false;
+        if (typeof Worker !== 'undefined') {
+          SignificantWordsWorker.worker.onmessage = ({data}) => {
+            this.isLoadingResults = false;
+            this.tableData.data = data.docs;
+          };
+          SignificantWordsWorker.worker.postMessage({words: this.data.significantWords, docs: resp, accessor: '_source'});
+        } else {
+          this.isLoadingResults = false;
+          this.tableData.data = resp;
+        }
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 2000);
         this.isLoadingResults = false;

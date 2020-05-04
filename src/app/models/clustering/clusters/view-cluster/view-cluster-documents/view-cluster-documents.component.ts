@@ -1,4 +1,14 @@
-import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  QueryList,
+  ViewChild,
+  ViewChildren
+} from '@angular/core';
 import {ClusterDetails, ClusterDocument} from '../../../../../shared/types/tasks/Cluster';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
@@ -17,10 +27,9 @@ import {Project} from '../../../../../shared/types/Project';
 import {SimilarClusterDialogComponent} from './similar-cluster-dialog/similar-cluster-dialog.component';
 import {TagClusterDialogComponent} from './tag-cluster-dialog/tag-cluster-dialog.component';
 import {LocalStorageService} from '../../../../../core/util/local-storage.service';
+import {SignificantWordsWorker} from './SignificantWordsWorker';
+import {HighlightComponent} from '../../../../../searcher/searcher-table/highlight/highlight.component';
 
-export class HighlighWebWorker {
-  static worker = new Worker('./web-worker.worker', {type: 'module'});
-}
 
 @Component({
   selector: 'app-view-cluster-documents',
@@ -40,6 +49,7 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
   clusteringId: number;
   clusterId: number;
   charLimit = 300;
+  significantWords: { key: string, count: number }[];
   selectedRows = new SelectionModel<ClusterDocument>(true, []);
   clusterDocumentsQueue$: Subject<Observable<ClusterDetails | HttpErrorResponse>> = new Subject();
   destroyed$: Subject<boolean> = new Subject<boolean>();
@@ -64,6 +74,7 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
       return of(null);
     })).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.significantWords = resp.significant_words;
         this.infiniteColumns = Object.getOwnPropertyNames(resp.documents[0].content);
         if (this.displayedColumns.length === 0) {
           this.infiniteColumns = this.infiniteColumns.filter(e => e !== 'texta_facts');
@@ -79,11 +90,11 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
           }
         }
         if (typeof Worker !== 'undefined') {
-          HighlighWebWorker.worker.onmessage = ({data}) => {
+          SignificantWordsWorker.worker.onmessage = ({data}) => {
             this.isLoadingResults = false;
             this.tableData.data = data.docs;
           };
-          HighlighWebWorker.worker.postMessage({words: resp.significant_words, docs: resp.documents});
+          SignificantWordsWorker.worker.postMessage({words: resp.significant_words, docs: resp.documents, accessor: 'content'});
         } else {
           this.isLoadingResults = false;
           this.tableData.data = resp.documents;
@@ -175,6 +186,7 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
         clusterId: this.clusterId,
         clusteringId: this.clusteringId,
         projectId: this.currentProject.id,
+        significantWords: this.significantWords
       },
       height: '90vh',
       width: '80vw',
