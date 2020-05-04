@@ -25,37 +25,37 @@ describe('searching and search related activities should be working correctly', 
   it('should display search results in a table', function () {
     cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
     cy.wait('@searcherQuery');
-    cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted').should('be.visible');
+    cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted div').should('be.visible');
     cy.get('.mat-paginator-navigation-next').click();
     cy.wait('@searcherQuery');
-    cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted').should('be.visible');
+    cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted div').should('be.visible');
     cy.get('.mat-paginator-navigation-last').click();
     cy.wait('@searcherQuery');
-    cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted').should('be.visible');
+    cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted div').should('be.visible');
     cy.get('.mat-paginator-navigation-first').click();
     cy.wait('@searcherQuery');
-    cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted').should('be.visible');
+    cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted div').should('be.visible');
     cy.get('[data-cy=appSearcherTableColumnSelect]').should('be.visible').click();
     cy.get('[data-cy=matOptionSelectAll]').should('be.visible').click();
     cy.get('mat-option').contains('comment_content').click();
     cy.closeCurrentCdkOverlay();
-    cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted').should('be.visible');
+    cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted div').should('be.visible');
     cy.get('mat-paginator .mat-paginator-page-size .mat-form-field').should('be.visible').click();
     cy.get('mat-option').contains('20').click();
     cy.wait('@searcherQuery');
     cy.get('.cdk-column-comment_content').should('have.length', 21);
     cy.get('.cdk-column-comment_content:first()').click();
     cy.wait('@searcherQuery');
-    cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted').should('be.visible');
+    cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted div').should('be.visible');
     cy.get('.cdk-column-comment_content:first()').click();
     cy.wait('@searcherQuery');
-    cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted').should('be.visible');
+    cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted div').should('be.visible');
     // todo test appSearcherSidebarSavedSearches
   });
   it('should work when building various queries with simple and advanced search', function () {
     cy.get('app-simple-search input').click().type('tere');
     cy.wait('@searcherQuery');
-    cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted').should('be.visible');
+    cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted div').should('be.visible');
     cy.get('[data-cy=appSearcherSidebarBuildSearchRadio] mat-radio-button:not(:first())').should('be.visible').click();
     cy.get('app-advanced-search > .mat-form-field ').click();
     cy.get('mat-option').contains('@timestamp').scrollIntoView().click();
@@ -69,19 +69,19 @@ describe('searching and search related activities should be working correctly', 
       .click()
       .type('3/24/2020');
     cy.wait('@searcherQuery');
-    cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted').should('be.visible');
+    cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted div').should('be.visible');
     // todo test appSearcherSideBarBuildSearchCloseConstraint
   });
   it('saved search should be working', function () {
     cy.get('[data-cy=appSearcherSidebarSavedSearches] .cdk-column-name:nth(1)').should('be.visible').click('left');
     cy.wait('@searcherQuery');
-    cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted').should('be.visible');
+    cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted div').should('be.visible');
     cy.get('[data-cy=appSearcherSideBarBuildSearchTextConstraint] textarea').should('be.visible')
       .click()
       .clear()
       .type('tere');
     cy.wait('@searcherQuery');
-    cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted').should('be.visible');
+    cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted div').should('be.visible');
     cy.get('[data-cy=appSearcherSidebarSaveSearchButton]').should('be.visible').click();
     cy.get('mat-dialog-container input').click().type('delete_me');
     cy.route('GET', '**/searches').as('saveSearch');
