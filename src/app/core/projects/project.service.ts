@@ -109,11 +109,17 @@ export class ProjectService {
       catchError(this.logService.handleError<ResultsWrapper<Index>>('deleteElasticIndex')));
   }
 
-  toggleElasticIndexOpenState(index: Index): Observable<{message: string} | HttpErrorResponse> {
+  toggleElasticIndexOpenState(index: Index): Observable<{ message: string } | HttpErrorResponse> {
     const endpoint = index.is_open ? 'close_index' : 'open_index';
-    return this.http.patch<{message: string}>(`${this.apiUrl}/index/${index.id}/${endpoint}/`, {}).pipe(
+    return this.http.patch<{ message: string }>(`${this.apiUrl}/index/${index.id}/${endpoint}/`, {}).pipe(
       tap(e => this.logService.logStatus(e, 'editElasticIndex')),
-      catchError(this.logService.handleError<{message: string}>('editElasticIndex')));
+      catchError(this.logService.handleError<{ message: string }>('editElasticIndex')));
+  }
+
+  getCoreVariables(): Observable<{name: string}[] | HttpErrorResponse> {
+    return this.http.get<{name: string}[]>(`${this.apiUrl}/core_variables/`).pipe(
+      tap(e => this.logService.logStatus(e, 'getCoreVariables')),
+      catchError(this.logService.handleError<{name: string}[]>('getCoreVariables')));
   }
 
   deleteProject(id: number) {

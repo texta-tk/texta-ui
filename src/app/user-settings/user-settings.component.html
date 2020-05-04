@@ -8,7 +8,7 @@
       </form>
       <span *ngIf="detail">{{detail}}</span>
     </div>-->
-  <mat-card class="form-wrapper">
+  <mat-card class="form-wrapper mat-elevation-z6">
     <h2 class="mat-h2">Change Password</h2>
     <form class="flex-col" [formGroup]="passwordResetForm"
           (ngSubmit)="onPasswordResetFormSubmit(passwordResetForm.value)">
