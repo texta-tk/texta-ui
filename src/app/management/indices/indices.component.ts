@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {merge, Subject} from 'rxjs';
+import {Subject} from 'rxjs';
 import {Project} from '../../shared/types/Project';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
@@ -8,7 +8,7 @@ import {UserService} from '../../core/users/user.service';
 import {LogService} from '../../core/util/log.service';
 import {MatDialog} from '@angular/material/dialog';
 import {ProjectStore} from '../../core/projects/project.store';
-import {debounceTime, startWith, switchMap, takeUntil} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, takeUntil} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {Index} from '../../shared/types/Index';
@@ -25,16 +25,13 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
   projects: Project[];
   public tableData: MatTableDataSource<Index> = new MatTableDataSource<Index>([]);
 
-  public displayedColumns = ['id', 'is_open', 'name', 'delete'];
+  public displayedColumns = ['id', 'is_open', 'name', 'size', 'doc_count', 'delete'];
   public isLoadingResults = true;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  filteredSubject = new Subject();
-  inputFilterQuery = '';
-  filteringValues = {};
-
   resultsLength: number;
+  filterTerm$ = new Subject<string>();
 
   constructor(private userService: UserService,
               private logService: LogService,
@@ -44,22 +41,23 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.tableData.sort = this.sort;
-    this.tableData.paginator = this.paginator;
+    this.filterTerm$.pipe(debounceTime(500), distinctUntilChanged(), takeUntil(this.destroyed$)).subscribe(x => {
+      this.tableData.filter = x.trim().toLowerCase();
+      if (this.tableData.paginator) {
+        this.tableData.paginator.firstPage();
+      }
+    });
   }
 
   ngAfterViewInit(): void {
+    this.tableData.sort = this.sort;
+    this.tableData.paginator = this.paginator;
+    this.tableData.filterPredicate = this.customFilterPredicate();
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
-
-    merge(this.sort.sortChange, this.paginator.page, this.filteredSubject).pipe(startWith({}), debounceTime(250),
-      switchMap((x: any) => {
-        const sortDirection = this.sort.direction === 'desc' ? '-' : '';
-        return this.projectService.getElasticIndices(
-          `${this.inputFilterQuery}&ordering=${sortDirection}${this.sort.active}&page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`);
-      })).subscribe(resp => {
+    this.projectService.getElasticIndices().subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.resultsLength = resp.count;
-        this.tableData.data = resp.results;
+        this.resultsLength = resp.length;
+        this.tableData.data = resp;
         this.isLoadingResults = false;
       }
     });
@@ -96,19 +94,18 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
     return item.id;
   }
 
-  applyFilter(filterValue: any, field: string) {
-    filterValue = filterValue.value ? filterValue.value : '';
-    this.filteringValues[field] = filterValue;
-    this.paginator.pageIndex = 0;
-    this.filterQueriesToString();
-    this.filteredSubject.next();
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.filterTerm$.next(filterValue);
   }
 
-  filterQueriesToString() {
-    this.inputFilterQuery = '';
-    for (const field in this.filteringValues) {
-      this.inputFilterQuery += `&${field}=${this.filteringValues[field]}`;
-    }
+  customFilterPredicate() {
+    return (data: Index, filter: string) => {
+      if (data.name) {
+        return data.name.trim().toLowerCase().indexOf(filter.trim().toLowerCase()) !== -1;
+      }
+      return true;
+    };
   }
 
   ngOnDestroy(): void {

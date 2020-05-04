@@ -97,10 +97,10 @@ export class ProjectService {
       catchError(this.logService.handleError<string[]>('getIndices')));
   }
 
-  getElasticIndices(params = ''): Observable<ResultsWrapper<Index> | HttpErrorResponse> {
-    return this.http.get<ResultsWrapper<Index>>(`${this.apiUrl}/index/?${params}`).pipe(
+  getElasticIndices(params = ''): Observable<Index[] | HttpErrorResponse> {
+    return this.http.get<Index[]>(`${this.apiUrl}/index/?${params}`).pipe(
       tap(e => this.logService.logStatus(e, 'getElasticIndices')),
-      catchError(this.logService.handleError<ResultsWrapper<Index>>('getElasticIndices')));
+      catchError(this.logService.handleError<Index[]>('getElasticIndices')));
   }
 
   deleteElasticIndex(indexId: number): Observable<ResultsWrapper<Index> | HttpErrorResponse> {
