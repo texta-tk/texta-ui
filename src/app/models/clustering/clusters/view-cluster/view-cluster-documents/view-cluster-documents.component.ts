@@ -1,14 +1,4 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnDestroy,
-  OnInit,
-  QueryList,
-  ViewChild,
-  ViewChildren
-} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ClusterDetails, ClusterDocument} from '../../../../../shared/types/tasks/Cluster';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
@@ -28,7 +18,6 @@ import {SimilarClusterDialogComponent} from './similar-cluster-dialog/similar-cl
 import {TagClusterDialogComponent} from './tag-cluster-dialog/tag-cluster-dialog.component';
 import {LocalStorageService} from '../../../../../core/util/local-storage.service';
 import {SignificantWordsWorker} from './SignificantWordsWorker';
-import {HighlightComponent} from '../../../../../searcher/searcher-table/highlight/highlight.component';
 
 
 @Component({
@@ -128,14 +117,14 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
     const state = this.localStorageService.getProjectState(this.currentProject);
     if (state?.models?.clustering) {
       const clusteringState = `${this.clusteringId.toString()}_${this.clusterId.toString()}`;
-      if (state.models.clustering[clusteringState]?.[accessor]) {
-        state.models.clustering[clusteringState][accessor] = value;
-      } else {
+      if (!state.models.clustering[clusteringState]?.[accessor]) {
         state.models.clustering[clusteringState] = {
           selectedFields: this.displayedColumns,
           charLimit: this.charLimit,
           MLT: {charLimit: 300}
         };
+      } else {
+        state.models.clustering[clusteringState][accessor] = value;
       }
       this.localStorageService.updateProjectState(this.currentProject, state);
     }

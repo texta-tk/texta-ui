@@ -34,7 +34,8 @@ export class LocalStorageService {
             tagger: {itemsPerPage: 25},
             embedding: {itemsPerPage: 25},
             torchTagger: {itemsPerPage: 25},
-            taggerGroup: {itemsPerPage: 25}
+            taggerGroup: {itemsPerPage: 25},
+            clustering: {}
           },
           tasks: {},
           lexicons: {embeddingId: null},

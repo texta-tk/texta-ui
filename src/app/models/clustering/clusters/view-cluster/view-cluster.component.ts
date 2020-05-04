@@ -8,12 +8,14 @@ import {of, Subject} from 'rxjs';
 import {MatTableDataSource} from '@angular/material/table';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Project} from '../../../../shared/types/Project';
-import {MatSort} from '@angular/material/sort';
+import {MatSort, MatSortHeader} from '@angular/material/sort';
 import {MatPaginator} from '@angular/material/paginator';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatDialog} from '@angular/material/dialog';
 import {ConfirmDialogComponent} from '../../../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {LogService} from '../../../../core/util/log.service';
+import {LocalStorageService} from '../../../../core/util/local-storage.service';
+import {ArrowViewStateTransition} from '@angular/material/sort/sort-header';
 
 interface Cluster {
   id: number;
@@ -50,9 +52,9 @@ export class ViewClusterComponent implements OnInit, OnDestroy, AfterViewInit {
     private router: Router,
     private logService: LogService,
     public dialog: MatDialog,
+    private localStorageService: LocalStorageService,
     private projectStore: ProjectStore,
-    private clusterService: ClusterService
-  ) {
+    private clusterService: ClusterService) {
   }
 
   public propertyAccessor = (x) => x.key;
@@ -72,6 +74,15 @@ export class ViewClusterComponent implements OnInit, OnDestroy, AfterViewInit {
         if (x && !(x instanceof HttpErrorResponse)) {
           this.resultsLength = x.cluster_count;
           this.tableData.data = x.clusters;
+          const state = this.localStorageService.getProjectState(this.currentProject);
+          const clusteringState = `${this.clusteringId.toString()}`;
+          if (state?.models?.clustering?.[clusteringState]?.sortDirection && this.tableData.sort) {
+            this.tableData.sort.sort(state.models.clustering[clusteringState].sortDirection);
+            const arrowViewStateTransition = {toState: 'active'} as ArrowViewStateTransition;
+            //ugly hack
+            (this.tableData.sort.sortables.get(state.models.clustering[clusteringState].sortDirection.id) as MatSortHeader)._setAnimationTransitionState(arrowViewStateTransition);
+          }
+
         } else if (x instanceof HttpErrorResponse) {
           this.router.navigate(['../'], {relativeTo: this.route.parent});
         }
@@ -85,11 +96,28 @@ export class ViewClusterComponent implements OnInit, OnDestroy, AfterViewInit {
         this.tableData.paginator.firstPage();
       }
     });
+
   }
 
   ngAfterViewInit(): void {
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
+
+    this.sort.sortChange.pipe(takeUntil(this.destroyed$)).subscribe(val => {
+      const state = this.localStorageService.getProjectState(this.currentProject);
+      if (val && val.active && state) {
+        const clusteringState = `${this.clusteringId.toString()}`;
+        if (state?.models?.clustering?.[clusteringState]) {
+          state.models.clustering[clusteringState].sortDirection = {id: val.active, start: val.direction, disableClear: false};
+        } else {
+          if (state?.models?.clustering) {
+            state.models.clustering[clusteringState] = {sortDirection: {id: val.active, start: val.direction, disableClear: false}};
+          }
+        }
+        this.localStorageService.updateProjectState(this.currentProject, state);
+      }
+    });
+
     this.tableData.filterPredicate = this.customFilterPredicate();
   }
 

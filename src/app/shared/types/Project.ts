@@ -133,7 +133,7 @@ export interface ProjectState {
     embedding: { itemsPerPage: number; }
     torchTagger: { itemsPerPage: number; }
     taggerGroup: { itemsPerPage: number; }
-    clustering?: { [clusteringID: string]: { selectedFields: string[], charLimit: number, MLT: { charLimit: number } } }
+    clustering: { [clusteringID: string]: { selectedFields: string[], charLimit: number, MLT: { charLimit: number } } } | { sortDirection: any }
   };
   tasks: {};
   lexicons: { embeddingId: number | null; };

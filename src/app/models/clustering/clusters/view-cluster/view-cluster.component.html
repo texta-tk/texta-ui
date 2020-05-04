@@ -21,8 +21,7 @@
 
   <div class="table-container">
     <table mat-table [dataSource]="tableData"
-           matSort matSortDisableClear matSortDirection="asc" matSortActive="id"
-           multiTemplateDataRows [trackBy]="trackById">
+           matSort [trackBy]="trackById">
       <ng-container matColumnDef="select">
         <th mat-header-cell *matHeaderCellDef>
           <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selectedRows.hasValue() && isAllSelected()"

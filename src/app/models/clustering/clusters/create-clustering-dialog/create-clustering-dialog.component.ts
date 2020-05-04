@@ -114,7 +114,6 @@ export class CreateClusteringDialogComponent implements OnInit, OnDestroy {
   onSubmit(formData) {
     const body: any = {
       description: formData.descriptionFormControl,
-      significant_words_filter: formData.keywordFilterFormControl,
       indices: formData.indicesFormControl.map(x => [{name: x.index}]).flat(),
       num_cluster: formData.numClusterFormControl,
       vectorizer: formData.vectorizerFormControl.value,
@@ -130,7 +129,9 @@ export class CreateClusteringDialogComponent implements OnInit, OnDestroy {
     if (this.query) {
       body.query = this.query;
     }
-
+    if (formData.keywordFilterFormControl) {
+      body.significant_words_filter = formData.keywordFilterFormControl;
+    }
 
     this.clusterService.createCluster(body, this.currentProject.id).subscribe((resp: Cluster | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
