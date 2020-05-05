@@ -116,12 +116,17 @@ export class ProjectService {
       catchError(this.logService.handleError<{ message: string }>('editElasticIndex')));
   }
 
-  getCoreVariables(): Observable<{name: string}[] | HttpErrorResponse> {
-    return this.http.get<{name: string}[]>(`${this.apiUrl}/core_variables/`).pipe(
+  getCoreVariables(): Observable<any[] | HttpErrorResponse> {
+    return this.http.get<any[]>(`${this.apiUrl}/core_variables/`).pipe(
       tap(e => this.logService.logStatus(e, 'getCoreVariables')),
-      catchError(this.logService.handleError<{name: string}[]>('getCoreVariables')));
+      catchError(this.logService.handleError<any[]>('getCoreVariables')));
   }
 
+  patchCoreVariables(body, url): Observable<{ message: string } | HttpErrorResponse> {
+    return this.http.patch<{ message: string }>(url, body).pipe(
+      tap(e => this.logService.logStatus(e, 'patchCoreVariables')),
+      catchError(this.logService.handleError<{ message: string }>('patchCoreVariables')));
+  }
   deleteProject(id: number) {
     return this.http.delete<unknown>(`${this.apiUrl}/projects/${id}/`).pipe(
       tap(e => this.logService.logStatus(e, 'delete Project')),
