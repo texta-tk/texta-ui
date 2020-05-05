@@ -59,12 +59,16 @@ export class SimilarClusterDialogComponent implements OnInit, AfterViewInit, OnD
           this.displayedColumns = ['select', ...this.infiniteColumns];
           this.filterColumns = [...this.displayedColumns];
           const state = this.localStorageService.getProjectState(this.data.projectId);
-          const clusteringState = `${this.data.clusteringId.toString()}_${this.data.clusterId.toString()}`;
-          if (state?.models?.clustering?.[clusteringState]) {
-            this.charLimit = state?.models.clustering[clusteringState].MLT.charLimit;
-            const selected = state?.models.clustering[clusteringState].selectedFields.filter(x => this.displayedColumns.includes(x));
-            if (selected.length > 0) {
-              this.displayedColumns = selected;
+          const clusteringState = state?.models?.clustering[`${this.data.clusteringId.toString()}`];
+          if (clusteringState) {
+            if (clusteringState.charLimit) {
+              this.charLimit = clusteringState.charLimit;
+            }
+            if (clusteringState.selectedFields) {
+              const selected = clusteringState.selectedFields.filter(x => this.displayedColumns.includes(x));
+              if (selected.length > 0) {
+                this.displayedColumns = selected;
+              }
             }
           }
         }
@@ -83,15 +87,6 @@ export class SimilarClusterDialogComponent implements OnInit, AfterViewInit, OnD
         this.isLoadingResults = false;
       }
     });
-  }
-
-  charLimitChange(val) {
-    const state = this.localStorageService.getProjectState(this.data.projectId);
-    const clusteringState = `${this.data.clusteringId.toString()}_${this.data.clusterId.toString()}`;
-    if (state?.models?.clustering?.[clusteringState]?.MLT) {
-      state.models.clustering[clusteringState].MLT.charLimit = val;
-      this.localStorageService.updateProjectState(this.data.projectId, state);
-    }
   }
 
   ngAfterViewInit(): void {

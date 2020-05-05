@@ -27,7 +27,7 @@
       </mat-form-field>
       <mat-form-field class="paginator-margin-left">
         <mat-label>Column character limit</mat-label>
-        <input (ngModelChange)="charLimitChange($event)" [(ngModel)]="charLimit" [ngModelOptions]="{updateOn: 'blur'}"
+        <input [(ngModel)]="charLimit"
                matInput
                step="10" type="number">
       </mat-form-field>
