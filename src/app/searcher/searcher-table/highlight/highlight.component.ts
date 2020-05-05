@@ -52,13 +52,16 @@ export class HighlightComponent {
 
   @Input() set highlightConfig(highlightConfig: HighlightConfig) {
     this._highlightConfig = highlightConfig;
+    // slice original text for charlimit bounds
     const edited = JSON.parse(JSON.stringify(highlightConfig));
-    if (edited.charLimit && edited.charLimit !== 0) {
+    if (edited.data[edited.currentColumn] !== null && edited.data[edited.currentColumn] !== undefined
+      && edited.charLimit && edited.charLimit !== 0) {
       if (edited.data[edited.currentColumn].length > edited.charLimit) {
         this.isTextLimited = true;
       }
       edited.data[edited.currentColumn] = edited.data[edited.currentColumn].slice(0, edited.charLimit);
     }
+
     this.makeHighlightArray(edited);
   }
 

@@ -68,15 +68,24 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
         if (this.displayedColumns.length === 0) {
           this.infiniteColumns = this.infiniteColumns.filter(e => e !== 'texta_facts');
           this.filterColumns = ['select', ...this.infiniteColumns];
+
           const state = this.localStorageService.getProjectState(this.currentProject);
-          const clusteringState = `${this.clusteringId.toString()}_${this.clusterId.toString()}`;
-          if (state?.models?.clustering?.[clusteringState]) {
-            this.displayedColumns = [...state?.models.clustering[clusteringState].selectedFields];
-            this.charLimit = state?.models.clustering[clusteringState].charLimit;
+          const clusteringState = state?.models?.clustering[`${this.clusteringId.toString()}`];
+          if (clusteringState) {
+            if (clusteringState.selectedFields) {
+              const selected = clusteringState.selectedFields.filter(x => this.filterColumns.includes(x));
+              if (selected.length > 0) {
+                this.displayedColumns = selected;
+              }
+            }
+            if (clusteringState.charLimit) {
+              this.charLimit = clusteringState.charLimit;
+            }
           } else {
             this.displayedColumns = [...this.filterColumns];
             this.modifyClusteringSaveState('selectedFields', this.displayedColumns);
           }
+
         }
         if (typeof Worker !== 'undefined') {
           SignificantWordsWorker.worker.onmessage = ({data}) => {
@@ -115,17 +124,11 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
 
   modifyClusteringSaveState(accessor: 'charLimit' | 'selectedFields', value: any) {
     const state = this.localStorageService.getProjectState(this.currentProject);
-    if (state?.models?.clustering) {
-      const clusteringState = `${this.clusteringId.toString()}_${this.clusterId.toString()}`;
-      if (!state.models.clustering[clusteringState]?.[accessor]) {
-        state.models.clustering[clusteringState] = {
-          selectedFields: this.displayedColumns,
-          charLimit: this.charLimit,
-          MLT: {charLimit: 300}
-        };
-      } else {
-        state.models.clustering[clusteringState][accessor] = value;
+    if (state) {
+      if (!state?.models.clustering[`${this.clusteringId.toString()}`]) {
+        state.models.clustering[`${this.clusteringId.toString()}`] = {};
       }
+      state.models.clustering[`${this.clusteringId.toString()}`][accessor] = value;
       this.localStorageService.updateProjectState(this.currentProject, state);
     }
   }

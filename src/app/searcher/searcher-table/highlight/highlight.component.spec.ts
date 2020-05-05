@@ -55,6 +55,18 @@ describe('HighlightComponent', () => {
     expect(johnHighlight).toBeDefined();
     expect(johnHighlight.text).toEqual('John');
   });
+  it('should handle null undefined', () => {
+    component.highlightConfig = {
+      searcherHighlight: {},
+      data: {text: undefined},
+      highlightTextaFacts: true,
+      highlightHyperlinks: true,
+      currentColumn: 'text',
+    };
+    fixture.detectChanges();
+    expect(component.highlightArray).toBeDefined();
+    expect(component.highlightArray).toEqual([]);
+  });
   it('should highlight multiple non nested facts correctly', () => {
     const jsonData = {
       text: 'these are some words: John, nice Lenin, wow!', texta_facts: [
