@@ -12,6 +12,13 @@
       </mat-tab>
     </mat-tab-group>
 
+    <mat-tab-group mat-stretch-tabs
+                   *ngIf="aggregationData.textaFactsTableData !== undefined">
+      <mat-tab *ngFor="let item of aggregationData.textaFactsTableData" [label]="item.name">
+        <app-aggregation-result-facts [data]="item.data"></app-aggregation-result-facts>
+      </mat-tab>
+    </mat-tab-group>
+
     <app-aggregation-results-chart
       *ngIf="aggregationData.dateData !== undefined && aggregationData.dateData.length > 0"
       [aggregationData]="aggregationData"

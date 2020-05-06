@@ -295,7 +295,6 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     this.updateFieldsToHighlight(this.constraintList);
     this.checkMinimumMatch();
     this.changeDetectorRef.detectChanges();
-    this.searchQueue$.next();
   }
 
   ngOnDestroy() {

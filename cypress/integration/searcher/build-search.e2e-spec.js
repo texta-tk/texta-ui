@@ -74,6 +74,7 @@ describe('searching and search related activities should be working correctly', 
   });
   it('saved search should be working', function () {
     cy.get('[data-cy=appSearcherSidebarSavedSearches] .cdk-column-name:nth(1)').should('be.visible').click('left');
+    cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
     cy.wait('@searcherQuery');
     cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted div').should('be.visible');
     cy.get('[data-cy=appSearcherSideBarBuildSearchTextConstraint] textarea').should('be.visible')

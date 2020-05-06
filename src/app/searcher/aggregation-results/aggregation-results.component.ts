@@ -19,6 +19,11 @@ interface AggregationData {
     name?: string
   }[];
   dateData?: any[];
+  // only used when aggregating over texta_facts only
+  textaFactsTableData?: {
+    data?: any,
+    name?: string,
+  }[];
 
 }
 
@@ -94,6 +99,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
       treeData: [],
       tableData: [],
       dateData: [],
+      textaFactsTableData: [],
     };
 
     if (aggregation && aggregation.aggs) {
@@ -166,12 +172,20 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
             series: this.formatDateDataExtraBucket(this.bucketAccessor(formattedData))
           });
         } else {
-          // @ts-ignore
-          aggData.treeData.push({
-            name: aggName === aggregationType ? 'aggregation_results' : aggName,
-            histoBuckets: formattedData.histoBuckets ? formattedData.histoBuckets : [],
-            treeData: new ArrayDataSource(this.bucketAccessor(formattedData))
-          });
+          if (aggregationType === 'agg_fact' && this.determineDepthOfObject(formattedData, (x: any) => x.buckets) === 3) {
+            // @ts-ignore
+            aggData.textaFactsTableData.push({
+              name: aggName === aggregationType ? 'aggregation_results' : aggName,
+              data: this.bucketAccessor(formattedData)
+            });
+          } else {
+            // @ts-ignore
+            aggData.treeData.push({
+              name: aggName === aggregationType ? 'aggregation_results' : aggName,
+              histoBuckets: formattedData.histoBuckets ? formattedData.histoBuckets : [],
+              treeData: new ArrayDataSource(this.bucketAccessor(formattedData))
+            });
+          }
         }
       } else if (aggregationType === 'agg_term') {
         aggDataAccessor(aggData).push({

@@ -3,8 +3,9 @@
 
   .mat-header-cell {
     border-right: solid 1px rgba(0, 0, 0, 0.23);
-    padding-left: 12px;
+    padding-left: 7px;
     white-space: nowrap;
+    border-bottom-color: rgba(0, 0, 0, 0.23) !important;
     color: rgba(0, 0, 0, 0.87);
 
     .mat-sort-header-container {
@@ -19,10 +20,10 @@
     max-width: 500px;
     overflow-wrap: break-word;
     line-height: 1.5;
-    border-bottom-color: rgba(0, 0, 0, 0.23);
+    border-bottom-color: rgba(0, 0, 0, 0.23) !important;
     vertical-align: top;
     border-right: solid 1px rgba(0, 0, 0, 0.23);
-    padding: 5px;
+    padding: 7px;
   }
 
   .mat-header-row {

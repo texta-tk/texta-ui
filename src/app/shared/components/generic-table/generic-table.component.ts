@@ -52,7 +52,7 @@ export class GenericTableComponent implements OnInit {
     }
   }
 
-  getKeys(object: Object) {
+  getKeys(object: object) {
     return Object.keys(object);
   }
 
