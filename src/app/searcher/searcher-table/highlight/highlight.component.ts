@@ -55,6 +55,7 @@ export class HighlightComponent {
     // slice original text for charlimit bounds
     const edited = JSON.parse(JSON.stringify(highlightConfig));
     if (edited.data[edited.currentColumn] !== null && edited.data[edited.currentColumn] !== undefined
+      && (isNaN(Number(edited.data[edited.currentColumn])))
       && edited.charLimit && edited.charLimit !== 0) {
       if (edited.data[edited.currentColumn].length > edited.charLimit) {
         this.isTextLimited = true;

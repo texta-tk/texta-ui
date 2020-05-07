@@ -67,6 +67,19 @@ describe('HighlightComponent', () => {
     expect(component.highlightArray).toBeDefined();
     expect(component.highlightArray).toEqual([]);
   });
+  it('should handle number', () => {
+    component.highlightConfig = {
+      searcherHighlight: {},
+      data: {text: 1},
+      highlightTextaFacts: true,
+      highlightHyperlinks: true,
+      currentColumn: 'text',
+    };
+    fixture.detectChanges();
+    expect(component.highlightArray).toBeDefined();
+    const val = component.highlightArray[0].text;
+    expect(val).toEqual( '1');
+  });
   it('should highlight multiple non nested facts correctly', () => {
     const jsonData = {
       text: 'these are some words: John, nice Lenin, wow!', texta_facts: [
