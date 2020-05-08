@@ -127,7 +127,7 @@ export class SimilarClusterDialogComponent implements OnInit, AfterViewInit, OnD
         if (result) {
           const idsToAdd = this.selectedRows.selected.map((doc: any) => doc._id);
           const body = {ids: idsToAdd};
-          this.clusterService.addDocumentsToCluster(this.data.projectId, this.data.clusteringId, this.data.clusterId, body).subscribe(() => {
+          this.clusterService.expandCluster(this.data.projectId, this.data.clusteringId, this.data.clusterId, body).subscribe(() => {
             this.logService.snackBarMessage(`${this.selectedRows.selected.length} Documents added`, 2000);
             this.removeSelectedRows();
           });

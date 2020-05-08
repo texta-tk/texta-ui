@@ -61,7 +61,7 @@
                           charLimit: charLimit,
                           highlightHyperlinks: false,
                           data: row._source}"
-                           [ngClass]="{'pointer': row._source[column].length > charLimit}"
+                           [ngClass]="{'pointer': row._source[column] && row._source[column].length > charLimit}"
                            class="pointer">
             </app-highlight>
           </ng-container>

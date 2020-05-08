@@ -76,7 +76,12 @@ export class ClusterService {
       tap(e => this.logService.logStatus(e, 'addDocumentsToCluster')),
       catchError(this.logService.handleError<unknown>('addDocumentsToCluster')));
   }
-
+  expandCluster(projectId: number, clusteringId: number, clusterId: number, body) {
+    return this.http.post<unknown>
+    (`${this.apiUrl}/projects/${projectId}/clustering/${clusteringId}/clusters/${clusterId}/expand_cluster/`, body).pipe(
+      tap(e => this.logService.logStatus(e, 'expandCluster')),
+      catchError(this.logService.handleError<unknown>('expandCluster')));
+  }
   tagCluster(projectId: number, clusteringId: number, clusterId: number, body) {
     return this.http.post<unknown>
     (`${this.apiUrl}/projects/${projectId}/clustering/${clusteringId}/clusters/${clusterId}/tag_cluster/`, body).pipe(
