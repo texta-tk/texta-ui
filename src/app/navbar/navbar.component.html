@@ -79,8 +79,7 @@
       <mat-form-field class="project-select">
         <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
                     data-cy="appNavbarProjectFieldsSelect"
-                    [formControl]="projectFieldsControl"
-                    (selectionChange)="indexSelectionChanged($event.value)"
+                    [formControl]="projectFieldsControl" [compareWith]="compareIndices"
                     [placeholder]="projectFields.length < 1 ? 'No indices' : ''"
                     (openedChange)="indexSelectionOpenedChange($event)"
                     multiple>
@@ -91,7 +90,7 @@
       </mat-form-field>
       <mat-form-field class="project-select">
         <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
-                    data-cy="appNavbarProjectSelect"
+                    data-cy="appNavbarProjectSelect" [compareWith]="compareProjects"
                     [formControl]="projectControl" (selectionChange)="projectStore.setCurrentProject($event.value)"
                     [placeholder]="projects.length < 1 ? 'No projects' : ''">
           <mat-option *ngFor="let item of projects" [value]="item">

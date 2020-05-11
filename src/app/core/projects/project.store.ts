@@ -6,8 +6,9 @@ import {ProjectService} from './project.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../util/log.service';
 import {UserStore} from '../users/user.store';
-import {skip, switchMap} from 'rxjs/operators';
+import {distinctUntilChanged, skip, switchMap} from 'rxjs/operators';
 import {LocalStorageService} from '../util/local-storage.service';
+import {UtilityFunctions} from '../../shared/UtilityFunctions';
 
 
 @Injectable({
@@ -37,6 +38,7 @@ export class ProjectStore {
   refreshProjects() {
     this.projectService.getProjects().subscribe((resp: Project[] | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.getLocalStorageProjectSelection(resp);
         this.projects$.next(resp);
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
@@ -47,10 +49,12 @@ export class ProjectStore {
   getProjects(): Observable<Project[] | null> {
     return this.projects$.asObservable();
   }
+
   // all indices in proj
   getProjectIndices(): Observable<ProjectIndex[] | null> {
     return this.projectIndices$.asObservable();
   }
+
   // selected indices
   getCurrentProjectIndices(): Observable<ProjectIndex[] | null> {
     return this.selectedProjectIndices$.asObservable();
@@ -72,30 +76,62 @@ export class ProjectStore {
     this.selectedProject$.next(project);
   }
 
-  // when we change project get its indices and facts as well
-  // skip(1) cause they all start out with null, behavioursubject
+  private getLocalStorageProjectSelection(projects: Project[]) {
+    // dont select first when already have something selected
+    const selectedProj = this.localStorageService.getCurrentlySelectedProject();
+    const cachedProject = !!selectedProj ?
+      projects.find(x => x.id === selectedProj.id) : null;
+    if (cachedProject) {
+      this.setCurrentProject(cachedProject);
+    } else {
+      this.setCurrentProject(projects[0]);
+    }
+  }
+
+  private setIndicesSelectionLocalStorage(project: Project, indices: ProjectIndex[]) {
+    const state = this.localStorageService.getProjectState(project);
+    if (state) {
+      if (!state?.global?.selectedIndices) {
+        state.global = {selectedIndices: []};
+      }
+      state.global.selectedIndices = indices.map(x => x.index);
+      this.localStorageService.updateProjectState(project, state);
+    }
+  }
+
+  private getLocalStorageIndicesSelection(project: Project | number, indices: ProjectIndex[]) {
+    const state = this.localStorageService.getProjectState(project);
+    if (state?.global?.selectedIndices && state.global.selectedIndices.length > 0) {
+      this.setCurrentProjectIndices(indices.filter(b => state.global.selectedIndices.includes(b.index)));
+    } else {
+      this.setCurrentProjectIndices(indices);
+    }
+  }
+
+  // side effects
   private loadProjectFieldsAndFacts() {
     this.getCurrentProject().pipe(skip(1), switchMap((project: Project) => {
       this._selectedProject = project;
       this.localStorageService.setCurrentlySelectedProject(project);
       this.currentIndicesFacts$.next(null);
       this.projectIndices$.next(null); // null old project properties until we get new ones
-      this.selectedProjectIndices$.next(null); // this is set in nav bar, cause nav bar handles selections, cache logic etc
-
+      this.selectedProjectIndices$.next(null);
       if (project) {
         return this.projectService.getProjectIndices(project.id);
       }
       return of(null);
     })).subscribe((resp: any | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.projectIndices$.next(resp);
+        this.getLocalStorageIndicesSelection(this._selectedProject || 0, resp);
+        this.projectIndices$.next(UtilityFunctions.sortByStringProperty<ProjectIndex>(resp, y => y.index));
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 2000);
       }
     });
-
-    this.getCurrentProjectIndices().pipe(skip(1), switchMap(projectIndices => {
+      // todo distinct pipe ???
+    this.getCurrentProjectIndices().pipe(skip(1), distinctUntilChanged(), switchMap(projectIndices => {
       if (this._selectedProject && projectIndices) {
+        this.setIndicesSelectionLocalStorage(this._selectedProject, projectIndices);
         return this.projectService.getProjectFacts(this._selectedProject.id, projectIndices.map(x => [{name: x.index}]).flat());
       } else {
         return of(null);
