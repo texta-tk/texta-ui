@@ -5,7 +5,7 @@
     </div>
     <div class="paginator-row">
       <button (click)="addAllSelected()" [disabled]="selectedRows.selected.length < 1"
-              color="primary"
+              color="primary"  data-cy="appClusterSimilarTableAddToCluster"
               mat-icon-button matTooltip="Add selected documents to cluster">
         <mat-icon>add</mat-icon>
       </button>

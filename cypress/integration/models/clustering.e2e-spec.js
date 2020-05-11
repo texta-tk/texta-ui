@@ -49,13 +49,32 @@ describe('clustering should work', function () {
       assert.equal(created.response.body.task.status, 'created');
     });
     // wait til clustering is done
-/*    for (let x = 0; x <= 5; x++) {
-      cy.get('.mat-header-row > .cdk-column-id').should('be.visible').click();
-      cy.wait('@getClustering').then(x => {
-        console.log(x);
-      });
-      cy.wait(5000);
-    }*/
+    cy.get('.mat-header-row > .cdk-column-id').should('be.visible').then(bb => {
+      cy.wrap([0, 0, 0, 0]).each(y => { // hack to wait for task to complete
+        cy.wrap(bb).click();
+        return cy.wait('@getClustering').then((x) => {
+          if (x?.response?.body?.results[0]?.task?.status === 'completed') {
+            assert.equal(x?.response?.body?.results[0]?.task?.status, 'completed');
+            return false;
+          }
+          return cy.wait(5000);
+        });
+      })
+    });
+    cy.wait('@getClustering', {timeout: 60000});
+    cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
+    cy.get('[data-cy=appClusteringMenuViewClusters]').should('be.visible').click();
+    cy.get('.cdk-column-significant_words:nth(1)').should('be.visible').click();
+    cy.get('.cdk-column-comment_content').should('be.visible');
+    cy.get('[data-cy=appClusterDocumentsMLTBtn]').should('be.visible').click();
+    cy.get('app-similar-cluster-dialog .mat-header-cell.mat-column-select').should('be.visible').click();
+    cy.get('[data-cy=appClusterSimilarTableAddToCluster]').should('be.visible').click();
+    cy.get('[type="submit"]').click();
+    cy.wait('@postClustering');
+    cy.wait('@getClustering');
+    cy.wait(500);
+    cy.closeCurrentCdkOverlay();
+    // appClusterDocumentsTagBtn
     // test extra actions
 
   });

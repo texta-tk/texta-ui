@@ -41,8 +41,8 @@
     </mat-form-field>
     <mat-form-field data-cy="appClusterCreateDialogEmbedding">
       <mat-label>Select Embedding</mat-label>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
-                  formControlName="embeddingFormControl">
+      <mat-select [disableOptionCentering]="true" formControlName="embeddingFormControl"
+                  panelClass="select-panel-reveal-input">
         <mat-option>None</mat-option>
         <mat-option *ngFor="let item of embeddings" [value]="item">
           {{item.description}}
@@ -52,36 +52,40 @@
     <mat-form-field>
       <input autocomplete="off" formControlName="keywordFilterFormControl" matInput
              placeholder="Keywords filter">
+      <mat-hint>Default regex: [0-9]+</mat-hint>
     </mat-form-field>
     <mat-form-field>
       <textarea
-                formControlName="stopWordsFormControl"
-                matInput placeholder="Stopwords (newline separated)"></textarea>
+        formControlName="stopWordsFormControl"
+        matInput placeholder="Stopwords (newline separated)"></textarea>
     </mat-form-field>
 
-    <mat-form-field>
-      <mat-label>Clustering algorithm</mat-label>
-      <mat-select [disableOptionCentering]="true" formControlName="clusteringAlgorithmFormControl"
-                  panelClass="select-panel-reveal-input">
-        <ng-container *ngIf="clusterOptions">
-          <mat-option *ngFor="let item of clusterOptions.actions.POST.clustering_algorithm.choices" [value]="item">
-            {{item.display_name}}
-          </mat-option>
-        </ng-container>
-      </mat-select>
-    </mat-form-field>
 
-    <mat-form-field>
-      <mat-label>Vectorizer</mat-label>
-      <mat-select [disableOptionCentering]="true" formControlName="vectorizerFormControl"
-                  panelClass="select-panel-reveal-input">
-        <ng-container *ngIf="clusterOptions">
-          <mat-option *ngFor="let item of clusterOptions.actions.POST.vectorizer.choices" [value]="item">
-            {{item.display_name}}
-          </mat-option>
-        </ng-container>
-      </mat-select>
-    </mat-form-field>
+    <div fxLayout="row" fxLayoutGap="24px">
+      <mat-form-field fxFlex="calc(50%-24px)">
+        <mat-label>Clustering algorithm</mat-label>
+        <mat-select [disableOptionCentering]="true" formControlName="clusteringAlgorithmFormControl"
+                    panelClass="select-panel-reveal-input">
+          <ng-container *ngIf="clusterOptions">
+            <mat-option *ngFor="let item of clusterOptions.actions.POST.clustering_algorithm.choices" [value]="item">
+              {{item.display_name}}
+            </mat-option>
+          </ng-container>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field fxFlex="calc(50%-24px)">
+        <mat-label>Vectorizer</mat-label>
+        <mat-select [disableOptionCentering]="true" formControlName="vectorizerFormControl"
+                    panelClass="select-panel-reveal-input">
+          <ng-container *ngIf="clusterOptions">
+            <mat-option *ngFor="let item of clusterOptions.actions.POST.vectorizer.choices" [value]="item">
+              {{item.display_name}}
+            </mat-option>
+          </ng-container>
+        </mat-select>
+      </mat-form-field>
+    </div>
 
     <div fxLayout="row" fxLayoutGap="24px">
       <mat-form-field fxFlex="calc(25%-24px)">
