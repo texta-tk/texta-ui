@@ -3,7 +3,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {LiveErrorStateMatcher} from '../../../../shared/CustomerErrorStateMatchers';
 import {Field, Project, ProjectIndex} from '../../../../shared/types/Project';
-import {of, Subject} from 'rxjs';
+import {merge, of, Subject} from 'rxjs';
 import {MatDialogRef} from '@angular/material/dialog';
 import {LogService} from '../../../../core/util/log.service';
 import {ProjectService} from '../../../../core/projects/project.service';
@@ -14,6 +14,9 @@ import {UtilityFunctions} from '../../../../shared/UtilityFunctions';
 import {Cluster} from '../../../../shared/types/tasks/Cluster';
 import {ClusterService} from '../../../../core/models/clusters/cluster.service';
 import {ClusterOptions} from '../../../../shared/types/tasks/ClusterOptions';
+import {EmbeddingsService} from '../../../../core/models/embeddings/embeddings.service';
+import {ResultsWrapper} from '../../../../shared/types/Generic';
+import {Embedding} from '../../../../shared/types/tasks/Embedding';
 
 @Component({
   selector: 'app-create-cluster-dialog',
@@ -33,6 +36,7 @@ export class CreateClusteringDialogComponent implements OnInit, OnDestroy {
     numClusterFormControl: new FormControl(10),
     clusteringAlgorithmFormControl: new FormControl(),
     vectorizerFormControl: new FormControl(),
+    embeddingFormControl: new FormControl(),
     numDimsFormControl: new FormControl(1000),
     useLSIFormControl: new FormControl(false),
     numTopicsFormControl: new FormControl(50),
@@ -48,10 +52,12 @@ export class CreateClusteringDialogComponent implements OnInit, OnDestroy {
   destroyed$ = new Subject<boolean>();
   fieldsUnique: Field[] = [];
   projectIndices: ProjectIndex[] = [];
+  embeddings: Embedding[];
 
   constructor(private dialogRef: MatDialogRef<CreateClusteringDialogComponent>,
               private clusterService: ClusterService,
               private logService: LogService,
+              private embeddingsService: EmbeddingsService,
               private projectService: ProjectService,
               private projectStore: ProjectStore) {
   }
@@ -74,17 +80,20 @@ export class CreateClusteringDialogComponent implements OnInit, OnDestroy {
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), mergeMap(currentProject => {
       if (currentProject) {
         this.currentProject = currentProject;
-        return this.clusterService.getClusterOptions(currentProject.id);
+        return merge(this.clusterService.getClusterOptions(currentProject.id),
+          this.embeddingsService.getEmbeddings(currentProject.id));
       } else {
         return of(null);
       }
-    })).subscribe((resp: ClusterOptions | HttpErrorResponse | null) => {
+    })).subscribe((resp: ClusterOptions | ResultsWrapper<Embedding> | HttpErrorResponse | null) => {
       if (resp) {
         if (this.isClusterOptions(resp)) {
           this.clusterOptions = resp as ClusterOptions;
           this.setDefaultFormValues(this.clusterOptions);
         } else if (resp instanceof HttpErrorResponse) {
           this.logService.snackBarError(resp, 5000);
+        } else if (resp.results && Embedding.isEmbedding(resp.results)) {
+          this.embeddings = resp.results;
         }
       }
     });
@@ -123,6 +132,7 @@ export class CreateClusteringDialogComponent implements OnInit, OnDestroy {
       num_topics: formData.numTopicsFormControl,
       stop_words: formData.stopWordsFormControl.length > 0 ? formData.stopWordsFormControl.split('\n') : [],
       fields: formData.fieldsFormControl,
+      embedding: (formData.embeddingFormControl as Embedding) ? (formData.embeddingFormControl as Embedding).id : null,
       document_limit: formData.documentLimitFormControl,
     };
 

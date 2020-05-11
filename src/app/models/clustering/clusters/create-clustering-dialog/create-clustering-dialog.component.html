@@ -39,6 +39,16 @@
         Field is <strong>required</strong>
       </mat-error>
     </mat-form-field>
+    <mat-form-field data-cy="appClusterCreateDialogEmbedding">
+      <mat-label>Select Embedding</mat-label>
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
+                  formControlName="embeddingFormControl">
+        <mat-option>None</mat-option>
+        <mat-option *ngFor="let item of embeddings" [value]="item">
+          {{item.description}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
     <mat-form-field>
       <input autocomplete="off" formControlName="keywordFilterFormControl" matInput
              placeholder="Keywords filter">

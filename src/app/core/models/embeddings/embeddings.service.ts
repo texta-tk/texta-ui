@@ -6,6 +6,7 @@ import {LocalStorageService} from '../../util/local-storage.service';
 import {LogService} from '../../util/log.service';
 import {environment} from '../../../../environments/environment';
 import {Embedding, EmbeddingPrediction} from '../../../shared/types/tasks/Embedding';
+import {ResultsWrapper} from '../../../shared/types/Generic';
 
 
 @Injectable({
@@ -18,11 +19,11 @@ export class EmbeddingsService {
               private logService: LogService) {
   }
 
-  getEmbeddings(projectId: number, params = ''): Observable<{ count: number, results: Embedding[] } | HttpErrorResponse> {
-    return this.http.get<{ count: number, results: Embedding[] }>(
+  getEmbeddings(projectId: number, params = ''): Observable<ResultsWrapper<Embedding> | HttpErrorResponse> {
+    return this.http.get<ResultsWrapper<Embedding>>(
       `${this.apiUrl}/projects/${projectId}/embeddings/?${params}`).pipe(
       tap(e => this.logService.logStatus(e, 'getEmbeddings')),
-      catchError(this.logService.handleError<{ count: number, results: Embedding[] }>('getEmbeddings')));
+      catchError(this.logService.handleError<ResultsWrapper<Embedding>>('getEmbeddings')));
   }
 
   createEmbedding(body, projectId): Observable<Embedding | HttpErrorResponse> {

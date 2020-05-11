@@ -16,6 +16,7 @@ import {Embedding} from '../../../../shared/types/tasks/Embedding';
 import {EmbeddingsService} from '../../../../core/models/embeddings/embeddings.service';
 import {Tagger} from '../../../../shared/types/tasks/Tagger';
 import {UtilityFunctions} from '../../../../shared/UtilityFunctions';
+import {ResultsWrapper} from '../../../../shared/types/Generic';
 
 @Component({
   selector: 'app-create-tagger-dialog',
@@ -80,7 +81,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
       } else {
         return of(null);
       }
-    })).subscribe((resp: TaggerOptions | { count: number, results: Embedding[] } | HttpErrorResponse | null) => {
+    })).subscribe((resp: TaggerOptions | ResultsWrapper<Embedding> | HttpErrorResponse | null) => {
       if (resp) {
         if (this.isTaggerOptions(resp)) {
           this.taggerOptions = resp as TaggerOptions;
