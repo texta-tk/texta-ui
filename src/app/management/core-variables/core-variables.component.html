@@ -1,20 +1,14 @@
 <div class="container">
   <mat-card class="mat-elevation-z6">
-    <form #coreVariableForm="ngForm" class="flex-col" (ngSubmit)="submit()">
-      <mat-form-field>
-        <mat-label>Core variable</mat-label>
-        <mat-select [(ngModel)]="coreVariable" [disableOptionCentering]="true" (ngModelChange)="coreVariableSelected($event)" name="coreVariable"
-                    panelClass="select-panel-reveal-input">
-          <mat-option *ngFor="let item of coreVariables" [value]="item">
-            {{item.name}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field *ngIf="coreVariable">
-        <mat-label>Value</mat-label>
-        <input [(ngModel)]="coreVariable.value" autocomplete="off" matInput name="coreVariableValue">
-      </mat-form-field>
-      <div class="flex-col" *ngIf="coreVariable">
+    <form #coreVariableForm="ngForm" (ngSubmit)="submit()" fxLayout="column" fxLayoutGap="10px">
+      <div *ngFor="let item of coreVariables" fxLayout="row" fxLayoutGap="10px">
+          <mat-form-field fxFlex>
+            <input [(ngModel)]="item.value" autocomplete="off" matInput [name]="item.name" [placeholder]="item.name">
+            <mat-hint>{{item.env_value}}</mat-hint>
+          </mat-form-field>
+      </div>
+
+      <div *ngIf="coreVariables" class="flex-col">
         <div class="flex-row">
           <div class="flex-item-right">
             <button mat-button type="submit">
