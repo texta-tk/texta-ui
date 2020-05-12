@@ -1,9 +1,12 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { TaggerGroupService } from 'src/app/core/models/taggers/tagger-group.service';
-import { TaggerGroup } from 'src/app/shared/types/tasks/Tagger';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { LogService } from 'src/app/core/util/log.service';
-import { HttpErrorResponse } from '@angular/common/http';
+import {Component, Inject, OnInit} from '@angular/core';
+import {TaggerGroupService} from 'src/app/core/models/taggers/tagger-group.service';
+import {TaggerGroup} from 'src/app/shared/types/tasks/Tagger';
+import {MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {LogService} from 'src/app/core/util/log.service';
+import {HttpErrorResponse} from '@angular/common/http';
+import {take} from 'rxjs/operators';
+import {ProjectStore} from '../../../../core/projects/project.store';
+import {ProjectIndex} from '../../../../shared/types/Project';
 
 interface TaggerGroupRandomDocTag {
   ner_match: boolean;
@@ -13,7 +16,7 @@ interface TaggerGroupRandomDocTag {
 }
 
 
-interface TaggerGroupRandomDocResult   {
+interface TaggerGroupRandomDocResult {
   document: any;
   tags: TaggerGroupRandomDocTag[];
 }
@@ -26,25 +29,32 @@ interface TaggerGroupRandomDocResult   {
 export class TaggerGroupTagRandomDocDialogComponent implements OnInit {
   result: TaggerGroupRandomDocResult;
   isLoading = false;
+  indices: ProjectIndex[];
 
-  constructor(private taggerGroupService: TaggerGroupService, private logService: LogService,
+  constructor(private taggerGroupService: TaggerGroupService, private logService: LogService, private projectStore: ProjectStore,
               @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, tagger: TaggerGroup; }) {
   }
 
+
   ngOnInit() {
-    this.onSubmit();
+    this.projectStore.getCurrentProjectIndices().pipe(take(1)).subscribe(x => {
+      if (x) {
+        this.indices = x;
+        this.onSubmit();
+      }
+    });
   }
 
   onSubmit() {
     this.isLoading = true;
-    this.taggerGroupService.tagRandomDocument(this.data.currentProjectId, this.data.tagger.id)
-    .subscribe((resp: TaggerGroupRandomDocResult | HttpErrorResponse) => {
-      if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.result = resp;
-      } else if (resp instanceof HttpErrorResponse){
-        this.logService.snackBarError(resp, 4000);
-      }
-      this.isLoading = false;
-    });
+    this.taggerGroupService.tagRandomDocument(this.data.currentProjectId, this.data.tagger.id, {indices: this.indices.map(x => [{name: x.index}]).flat()})
+      .subscribe((resp: TaggerGroupRandomDocResult | HttpErrorResponse) => {
+        if (resp && !(resp instanceof HttpErrorResponse)) {
+          this.result = resp;
+        } else if (resp instanceof HttpErrorResponse) {
+          this.logService.snackBarError(resp, 4000);
+        }
+        this.isLoading = false;
+      });
   }
 }
