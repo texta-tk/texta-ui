@@ -15,7 +15,6 @@ class CoreVariable {
   styleUrls: ['./core-variables.component.scss']
 })
 export class CoreVariablesComponent implements OnInit {
-  coreVariable = new CoreVariable('', '', '', '');
   coreVariables: CoreVariable[];
   coreVariablesOriginal: CoreVariable[];
 
