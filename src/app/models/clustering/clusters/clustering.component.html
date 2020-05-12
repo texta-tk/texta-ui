@@ -9,7 +9,7 @@
         CREATE
       </button>
       <button (click)="onDeleteAllSelected()" [disabled]="selectedRows.selected.length < 1" class="new-resource-btn"
-              color="warn"
+              color="warn" data-cy="appClusteringDeleteBtn"
               mat-icon-button matTooltip="Delete selected">
         <mat-icon>delete</mat-icon>
       </button>
