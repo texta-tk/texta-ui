@@ -57,8 +57,6 @@ Cypress:
       - cypress/videos/**/*.mp4
       - cypress/screenshots/**/*.png
     expire_in: 1 day
-  except:
-    - tags
 
 Build:
   stage: build
