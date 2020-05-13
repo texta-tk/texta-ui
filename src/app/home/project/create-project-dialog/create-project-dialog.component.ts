@@ -12,6 +12,7 @@ import {LogService} from 'src/app/core/util/log.service';
 import {UserStore} from '../../../core/users/user.store';
 import {of, ReplaySubject, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
+import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 
 @Component({
   selector: 'app-create-embedding-dialog',
@@ -46,7 +47,7 @@ export class CreateProjectDialogComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.userService.getAllUsers().subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.users = resp;
+        this.users = UtilityFunctions.sortByStringProperty(resp, (x => x.username));
       }
     });
     this.projectService.getIndices().subscribe((resp: string[] | HttpErrorResponse) => {

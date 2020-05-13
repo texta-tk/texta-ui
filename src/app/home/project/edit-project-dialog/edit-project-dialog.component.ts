@@ -76,7 +76,7 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
     });
     this.userService.getAllUsers().subscribe((resp: UserProfile[] | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.users = resp;
+        this.users = UtilityFunctions.sortByStringProperty(resp, (x => x.username));;
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 4000);
       }
