@@ -81,7 +81,7 @@ describe('tagger groups should work', function () {
           .clear().invoke('val', json).trigger('change');
       });
       cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
-      cy.wait('@postTaggerGroups').then(x=>{
+      cy.wait('@postTaggerGroups', {timeout: 60000}).then(x=>{
         expect(x.status).to.eq(200);
       });
       cy.closeCurrentCdkOverlay();
@@ -89,9 +89,9 @@ describe('tagger groups should work', function () {
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
       cy.route('GET', '**/tag_random_doc/**').as('tagRandomDoc');
       cy.get('[data-cy=appTaggerGroupMenuTagRandomDoc]').should('be.visible').click();
-      cy.wait('@tagRandomDoc');
+      cy.wait('@tagRandomDoc', {timeout: 60000});
       cy.get('app-tagger-group-tag-random-doc-dialog button').should('be.visible').click();
-      cy.wait('@tagRandomDoc');
+      cy.wait('@tagRandomDoc', {timeout: 60000});
       cy.closeCurrentCdkOverlay();
       // edit
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
