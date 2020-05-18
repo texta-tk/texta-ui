@@ -87,7 +87,7 @@ describe('tagger groups should work', function () {
       cy.closeCurrentCdkOverlay();
       // Tag random doc
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
-      cy.route('GET', '**/tag_random_doc/**').as('tagRandomDoc');
+      cy.route('POST', '**/tag_random_doc/**').as('tagRandomDoc');
       cy.get('[data-cy=appTaggerGroupMenuTagRandomDoc]').should('be.visible').click();
       cy.wait('@tagRandomDoc', {timeout: 60000});
       cy.get('app-tagger-group-tag-random-doc-dialog button').should('be.visible').click();
