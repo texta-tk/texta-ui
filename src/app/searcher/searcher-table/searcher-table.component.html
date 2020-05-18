@@ -24,7 +24,7 @@
       </mat-paginator>
     </div>
   </div>
-  <div [hidden]="displayedColumns.length === 0" class="table-container">
+  <div [hidden]="displayedColumns.length === 0" class="table-container" [appScrollTop]="tableData">
 
     <table mat-table [dataSource]="tableData" matSort [trackBy]="trackByTableData" class="readable-table">
 

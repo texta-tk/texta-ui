@@ -13,7 +13,7 @@
       </mat-paginator>
     </div>
   </div>
-  <div class="table-container">
+  <div class="table-container" [appScrollTop]="tableData">
 
     <table [dataSource]="tableData" [trackBy]="trackById"
            mat-table matSort matSortActive="id" matSortDirection="asc" matSortDisableClear>

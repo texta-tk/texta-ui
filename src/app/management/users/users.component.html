@@ -6,7 +6,7 @@
     <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
     </mat-paginator>
   </div>
-  <div class="table-container">
+  <div class="table-container" [appScrollTop]="tableData">
 
     <table mat-table [dataSource]="tableData"
            matSort matSortActive="id" matSortDisableClear matSortDirection="asc" [trackBy]="trackById">

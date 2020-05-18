@@ -18,7 +18,7 @@
     </div>
   </div>
 
-  <div class="table-container">
+  <div class="table-container" [appScrollTop]="tableData">
     <table [dataSource]="tableData" mat-table
            matSort matSortDirection="asc" matSortDisableClear
            multiTemplateDataRows>

@@ -19,7 +19,7 @@
     </div>
   </div>
 
-  <div class="table-container">
+  <div class="table-container" [appScrollTop]="tableData">
     <table mat-table [dataSource]="tableData"
            matSort [trackBy]="trackById">
       <ng-container matColumnDef="select">
