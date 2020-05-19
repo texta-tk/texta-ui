@@ -1,10 +1,13 @@
 @import "../../../variables/variables";
 
 .container {
-  height: calc(100vh - #{$navbar-height});
+  height: 100%;
+  overflow: hidden;
+  mat-tab-group{
+    height: 100%;
+  }
   app-aggregation-results-chart{
     height: 50%;
-    margin: 5px;
   }
 }
 

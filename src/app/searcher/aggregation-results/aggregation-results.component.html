@@ -13,7 +13,7 @@
     </mat-tab-group>
 
     <mat-tab-group mat-stretch-tabs
-                   *ngIf="aggregationData.textaFactsTableData !== undefined">
+                   *ngIf="aggregationData.textaFactsTableData !== undefined && aggregationData.textaFactsTableData.length > 0">
       <mat-tab *ngFor="let item of aggregationData.textaFactsTableData" [label]="item.name">
         <app-aggregation-result-facts [data]="item.data"></app-aggregation-result-facts>
       </mat-tab>

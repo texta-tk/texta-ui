@@ -1,4 +1,5 @@
 <div class="wrapper">
+
   <div class="table-paginator-row">
     <div class="loading-bar">
       <mat-progress-bar mode="indeterminate" *ngIf="searchService.getIsLoading() | async"></mat-progress-bar>
@@ -24,7 +25,7 @@
       </mat-paginator>
     </div>
   </div>
-  <div [hidden]="displayedColumns.length === 0" class="table-container" [appScrollTop]="tableData">
+  <div [hidden]="displayedColumns.length === 0" class="table-container overflow-auto" [appScrollTop]="tableData">
 
     <table mat-table [dataSource]="tableData" matSort [trackBy]="trackByTableData" class="readable-table">
 

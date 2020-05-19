@@ -3,12 +3,6 @@
 table {
   width: 100%;
 }
-
-.table-container {
-  position: relative;
-  height: calc(90vh - #{$tasks-table-paginator-row});
-  overflow: auto;
-}
 .paginator-margin-left {
   margin-left: 5px;
 }

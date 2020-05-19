@@ -1,18 +1,11 @@
 @import "../../../variables/variables";
-
-.wrapper {
-  max-height: calc(100vh - #{$navbar-height});
-  min-height: calc(100vh - #{$navbar-height});
+table {
+  width: 100%;
 }
-
-.table-container {
-  max-height: calc(100vh - #{$navbar-height} - #{$tasks-table-paginator-row});
-  min-height: calc(100vh - #{$navbar-height} - #{$tasks-table-paginator-row});
-  overflow: auto;
-
-  table {
-    width: 100%;
-  }
+.wrapper{
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .table-paginator-row {

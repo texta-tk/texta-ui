@@ -1,9 +1,12 @@
 @import "../../variables/variables";
 
-.mat-drawer-container {
-  max-height: calc(100vh - #{$navbar-height});
-  min-height: calc(100vh - #{$navbar-height});
+:host {
+  overflow: hidden;
+  height: 100%;
+}
 
+.mat-drawer-container {
+  height: 100%;
   .mat-drawer {
     max-width: 385px;
     min-width: 385px;

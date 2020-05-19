@@ -4,10 +4,9 @@ table {
   width: 100%;
 }
 
-.table-container {
-  position: relative;
-  height: calc(100vh - #{$navbar-height} - #{$tasks-table-paginator-row});
-  overflow: auto;
+
+:host {
+  overflow: hidden;
 }
 .paginator-margin-left{
   margin-left: 10px;

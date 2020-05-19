@@ -1,5 +1,4 @@
 <div class="wrapper mat-elevation-z8">
-
   <div class="table-paginator-row">
     <div class="loading-bar">
       <mat-progress-bar mode="indeterminate" *ngIf="isLoadingResults"></mat-progress-bar>
@@ -28,7 +27,7 @@
     </div>
   </div>
 
-  <div class="table-container">
+  <div class="table-container overflow-auto">
     <table mat-table [dataSource]="tableData" multiTemplateDataRows
            matSort matSortActive="id" matSortDisableClear matSortDirection="asc">
       <ng-container matColumnDef="select">

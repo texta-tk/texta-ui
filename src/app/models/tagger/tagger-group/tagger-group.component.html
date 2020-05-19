@@ -24,8 +24,8 @@
     </div>
   </div>
 
-  <div class="table-container" [appScrollTop]="tableData">
-    <table [dataSource]="tableData" mat-table matSort matSort
+  <div class="table-container overflow-auto" [appScrollTop]="tableData">
+    <table [dataSource]="tableData" mat-table matSort
            matSortDirection="asc" matSortDisableClear multiTemplateDataRows>
       <ng-container matColumnDef="select">
         <th *matHeaderCellDef mat-header-cell>

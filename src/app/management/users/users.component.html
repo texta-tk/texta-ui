@@ -1,4 +1,4 @@
-<div class="wrapper">
+<div fxLayout="column" class="wrapper max-height">
   <div class="table-paginator-row">
     <div class="loading-bar">
       <mat-progress-bar mode="indeterminate" *ngIf="isLoadingResults"></mat-progress-bar>
@@ -6,7 +6,7 @@
     <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
     </mat-paginator>
   </div>
-  <div class="table-container" [appScrollTop]="tableData">
+  <div class="table-container overflow-auto" [appScrollTop]="tableData">
 
     <table mat-table [dataSource]="tableData"
            matSort matSortActive="id" matSortDisableClear matSortDirection="asc" [trackBy]="trackById">
