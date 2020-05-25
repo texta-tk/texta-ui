@@ -89,6 +89,14 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
         this.currentUser = user;
       }
     });
+    this.searcherComponentService.getSavedSearch().pipe(takeUntil(this.destroy$)).subscribe(savedSearch => {
+      if (savedSearch) {
+        const constraints = JSON.parse(savedSearch.query_constraints as string);
+        if (constraints.length === 0) {
+          this.buildSavedSearch(savedSearch);
+        }
+      }
+    });
   }
 
   makeQuery(value: string) {

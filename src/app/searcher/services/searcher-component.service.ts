@@ -15,7 +15,7 @@ export class SearcherComponentService {
   // we still want to be able to make aggs)
   private elasticQuerySubject = new BehaviorSubject<ElasticsearchQuery>(new ElasticsearchQuery());
   private isLoading = new BehaviorSubject<boolean>(false);
-  private buildAdvancedSearch$ = new Subject<SavedSearch>();
+  private savedSearch = new BehaviorSubject<SavedSearch | null>(null);
   private advancedSearchConstraints$ = new BehaviorSubject<Constraint[]>([]);
 
   constructor() {
@@ -46,11 +46,11 @@ export class SearcherComponentService {
   public getAggregation(): Observable<{ globalAgg: any, agg: any } | null> {
     return this.aggregationSubject.asObservable();
   }
-
+  // saved a new search
   public nextSavedSearchUpdate() {
     return this.savedSearchUpdate.next(true);
   }
-
+  // update saved search table when we saved new search, refactor to savedSearch object behaviourSubject instead?
   public getSavedSearchUpdate() {
     return this.savedSearchUpdate.asObservable();
   }
@@ -66,12 +66,12 @@ export class SearcherComponentService {
     return this.elasticQuerySubject.asObservable();
   }
 
-  public buildAdvancedSearch(search: SavedSearch) {
-    this.buildAdvancedSearch$.next(search);
+  public nextSavedSearch(search: SavedSearch) {
+    this.savedSearch.next(search);
   }
 
-  public getBuildAdvancedSearch() {
-    return this.buildAdvancedSearch$.asObservable();
+  public getSavedSearch() {
+    return this.savedSearch.asObservable();
   }
 
   public nextAdvancedSearchConstraints$(constraintList: Constraint[]) {

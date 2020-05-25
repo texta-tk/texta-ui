@@ -17,7 +17,6 @@ import {SearcherComponentService} from '../../services/searcher-component.servic
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SavedSearchesComponent implements OnInit, OnDestroy {
-  @Output() savedSearchClick = new EventEmitter<number>(); // search object future todo
   displayedColumns: string[] = ['select', 'name'];
   dataSource: MatTableDataSource<SavedSearch> = new MatTableDataSource();
   destroyed$: Subject<boolean> = new Subject<boolean>();
@@ -56,7 +55,7 @@ export class SavedSearchesComponent implements OnInit, OnDestroy {
   }
 
   displaySavedSearch(element) {
-    this.savedSearchClick.emit(element);
+    this.searchService.nextSavedSearch(element);
   }
 
   ngOnDestroy() {

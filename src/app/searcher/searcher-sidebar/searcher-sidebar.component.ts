@@ -26,9 +26,6 @@ export class SearcherSidebarComponent implements OnInit, OnDestroy {
   private buildSearchComponent: BuildSearchComponent;
   @ViewChild(SavedSearchesComponent)
   private savedSearchesComponent: SavedSearchesComponent;
-  @ViewChild('buildSearchPanel') buildSearchPanel: any;
-  @ViewChild('savedSearchesPanel') savedSearchesPanel: any;
-  @ViewChild('aggregationsPanel') aggregationsPanel: any;
 
   buildSearchExpanded = true;
   savedSearchesExpanded = true;
@@ -118,10 +115,6 @@ export class SearcherSidebarComponent implements OnInit, OnDestroy {
         }
       });
     }
-  }
-
-  notifyBuildSearch(savedSearch: any) { // todo object
-    this.buildSearchComponent.buildSavedSearch(savedSearch);
   }
 
 }

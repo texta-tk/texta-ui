@@ -47,20 +47,19 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
         }
       }
     });
-  }
 
-  // THIS IS TEMPORARY todo, think of a way to save simple searches and advanced searches with a clear cut difference
-  buildSavedSearch(savedSearch: SavedSearch) {
-    const constraints = JSON.parse(savedSearch.query_constraints as string);
-    if (constraints.length === 0) {
-      this.simpleSearchComponent.buildSavedSearch(savedSearch);
-      this.searcherType = 1;
-      this.saveTypeSelection(1);
-    } else {
-      this.searchService.buildAdvancedSearch(savedSearch);
-      this.searcherType = 2;
-      this.saveTypeSelection(2);
-    }
+    this.searchService.getSavedSearch().pipe(takeUntil(this.destroyed$)).subscribe(search => {
+      if (search) {
+        const constraints = JSON.parse(search.query_constraints as string);
+        if (constraints.length === 0) {
+          this.searcherType = 1;
+          this.saveTypeSelection(1);
+        } else {
+          this.searcherType = 2;
+          this.saveTypeSelection(2);
+        }
+      }
+    });
   }
 
   saveSearch(description: string) {

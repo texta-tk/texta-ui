@@ -38,7 +38,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
 
   mappingNumeric = ['long', 'integer', 'short', 'byte', 'double', 'float'];
   fieldsFormControl = new FormControl();
-  constraintList: (Constraint)[] = [];
+  constraintList: Constraint[] = [];
   currentUser: UserProfile;
   // building the whole search query onto this
   elasticQuery: ElasticsearchQuery = new ElasticsearchQuery();
@@ -137,9 +137,12 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
         }
       });
 
-    this.searchService.getBuildAdvancedSearch().pipe(takeUntil(this.destroy$)).subscribe(x => {
-      if (x) {
-        this.buildSavedSearch(x);
+    this.searchService.getSavedSearch().pipe(takeUntil(this.destroy$)).subscribe(savedSearch => {
+      if (savedSearch) {
+        const constraints = JSON.parse(savedSearch.query_constraints as string);
+        if (constraints.length !== 0) {
+          this.buildSavedSearch(savedSearch);
+        }
       }
     });
   }
@@ -250,25 +253,24 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     this.checkMinimumMatch();
   }
 
-  isFactNameConstraint(constraintType: Constraint) {
+  isFactNameConstraint(constraintType: Constraint): constraintType is FactConstraint {
     return constraintType instanceof FactConstraint;
   }
 
-  isTextConstraint(constraintType: Constraint) {
+  isTextConstraint(constraintType: Constraint): constraintType is TextConstraint {
     return constraintType instanceof TextConstraint;
   }
 
-  isDateConstraint(constraintType: Constraint) {
+  isDateConstraint(constraintType: Constraint): constraintType is DateConstraint {
     return constraintType instanceof DateConstraint;
   }
 
-  isNumberConstraint(constraintType: Constraint) {
+  isNumberConstraint(constraintType: Constraint): constraintType is NumberConstraint {
     return constraintType instanceof NumberConstraint;
   }
 
   buildSavedSearch(savedSearch: SavedSearch): void {
-    this.constraintList.splice(0, this.constraintList.length);
-    this.changeDetectorRef.detectChanges(); // so old ones trigger onDestroy
+    this.constraintList = [];
     const savedConstraints: any[] = JSON.parse(savedSearch.query_constraints as string);
     for (const constraint of savedConstraints) {
       const formFields = constraint.fields;
@@ -277,7 +279,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
           this.constraintList.push(new TextConstraint(formFields, this.lexicons, constraint.match, constraint.text, constraint.operator, constraint.slop));
         } else if (formFields[0].type === 'date') {
           this.constraintList.push(new DateConstraint(formFields, constraint.dateFrom, constraint.dateTo));
-        }  else if (this.mappingNumeric.includes(formFields[0].type)) {
+        } else if (this.mappingNumeric.includes(formFields[0].type)) {
           this.constraintList.push(new NumberConstraint(formFields, constraint.fromToInput, constraint.operator));
         } else {
           const inputGroupArray: FactTextInputGroup[] = [];
@@ -295,6 +297,8 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     this.updateFieldsToHighlight(this.constraintList);
     this.checkMinimumMatch();
     this.changeDetectorRef.detectChanges();
+    // since we changed the object reference of constraintList update the subject, for example this is used in fact-chips to create constraints
+    this.searchService.nextAdvancedSearchConstraints$(this.constraintList);
   }
 
   ngOnDestroy() {

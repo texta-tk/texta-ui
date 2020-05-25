@@ -16,10 +16,10 @@
     </mat-option>
   </mat-select>
 </mat-form-field>
-<div *ngFor="let constraint of constraintList; let i = index;trackBy:trackByIndex" class="filters bg-grey">
+<div *ngFor="let constraint of constraintList; let i = index;" class="filters bg-grey">
   <div fxLayout="row" class="header">
     <div fxLayout="row wrap" class="field-titles">
-      <h4 *ngFor="let field of constraint.fields;trackBy:trackByPath">{{field.path}};</h4>
+      <h4 *ngFor="let field of constraint.fields">{{field.path}};</h4>
     </div>
     <div fxFlex fxLayoutAlign="end">
       <button data-cy="appSearcherSideBarBuildSearchCloseConstraint" mat-icon-button aria-label="Close" (click)="removeConstraint(i)" class="mat-icon-button">

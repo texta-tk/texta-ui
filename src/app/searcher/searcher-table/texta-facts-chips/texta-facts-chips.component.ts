@@ -49,7 +49,7 @@ export class TextaFactsChipsComponent implements OnInit {
     constraint.query_constraints = [];
     this.searchService.getAdvancedSearchConstraints$().pipe(take(1)).subscribe(constraintList => {
       if (typeof constraint.query_constraints !== 'string') {
-        const factConstraint: Constraint | undefined = constraintList.find(y => y instanceof FactConstraint);
+        const factConstraint: Constraint | undefined = constraintList.find(y => y instanceof FactConstraint && y.inputGroupArray.length > 0);
         // inputGroup means its a fact_val constraint
         if (factConstraint instanceof FactConstraint && factConstraint.inputGroupArray.length > 0) {
           if (!factConstraint.inputGroupArray.some(group => group.factTextFactNameFormControl.value === fact &&
@@ -64,7 +64,7 @@ export class TextaFactsChipsComponent implements OnInit {
         }
         constraint.query_constraints.push(...UtilityFunctions.convertConstraintListToJson(constraintList));
         constraint.query_constraints = JSON.stringify(constraint.query_constraints);
-        this.searchService.buildAdvancedSearch(constraint);
+        this.searchService.nextSavedSearch(constraint);
       }
     });
   }

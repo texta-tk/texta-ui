@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {DateConstraint, ElasticsearchQuery} from '../../Constraints';
 import {FormControl} from '@angular/forms';
-import {debounceTime, distinctUntilChanged, startWith, takeUntil} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, pairwise, startWith, takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 
 @Component({
@@ -39,19 +39,21 @@ export class DateConstraintsComponent implements OnInit, OnDestroy {
       this.elasticSearchQuery!.elasticSearchQuery!.query!.bool!.must.push(this.constraintQuery);
       this.dateFromFormControl.valueChanges.pipe(
         takeUntil(this.destroyed$),
-        startWith(this.dateFromFormControl.value as object),
+        startWith(this.dateFromFormControl.value as object, this.dateFromFormControl.value as object),
+        pairwise(),
         distinctUntilChanged()).subscribe(value => {
         this.makeDateQuery(fieldPaths, this.dateFromFormControl.value, this.dateToFormControl.value);
-        if (this.dateToFormControl.value) {
+        if (value[0] !== value[1]) {
           this.change.emit(this.elasticSearchQuery);
         }
       });
       this.dateToFormControl.valueChanges.pipe(
         takeUntil(this.destroyed$),
-        startWith(this.dateToFormControl.value as object),
+        startWith(this.dateToFormControl.value as object, this.dateToFormControl.value as object),
+        pairwise(),
         distinctUntilChanged()).subscribe(value => {
         this.makeDateQuery(fieldPaths, this.dateFromFormControl.value, this.dateToFormControl.value);
-        if (this.dateFromFormControl.value) {
+        if (value[0] !== value[1]) {
           this.change.emit(this.elasticSearchQuery);
         }
       });
