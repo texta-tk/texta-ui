@@ -42,13 +42,13 @@ export class SearchServiceSpy {
     () => this.aggregationSubject.asObservable()
   );
   private isLoading = false;
-  private buildAdvancedSearch$ = new Subject<SavedSearch>();
-  buildAdvancedSearch = jasmine.createSpy('buildAdvancedSearch').and.callFake(
-    (val: SavedSearch) => this.buildAdvancedSearch$.next(val)
+  private savedSearch = new Subject<SavedSearch>();
+  nextSavedSearch = jasmine.createSpy('nextSavedSearch').and.callFake(
+    (val: SavedSearch) => this.savedSearch.next(val)
   );
 
-  getBuildAdvancedSearch = jasmine.createSpy('getSavedSearchUpdate').and.callFake(
-    () => this.buildAdvancedSearch$.asObservable()
+  getSavedSearch = jasmine.createSpy('getSavedSearch').and.callFake(
+    () => this.savedSearch.asObservable()
   );
   private advancedSearchConstraints$ = new Subject<Constraint[]>();
   nextAdvancedSearchConstraints$ = jasmine.createSpy('nextAdvancedSearchConstraints$').and.callFake(
