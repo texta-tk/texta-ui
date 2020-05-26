@@ -28,7 +28,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   projects: Project[];
   projectFields: ProjectIndex[] = [];
   projectControl = new FormControl();
-  projectFieldsControl = new FormControl();
+  projectFieldsControl = new FormControl([]);
   currentProject: Project;
   projectResourceCounts: ProjectResourceCounts = new ProjectResourceCounts();
   destroyed$: Subject<boolean> = new Subject<boolean>();

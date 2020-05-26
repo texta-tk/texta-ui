@@ -76,13 +76,14 @@
 
 
     <div class="flex-item-right flex-row user-name" *ngIf="user" fxLayoutAlign="center center">
-      <mat-form-field class="project-select">
+      <mat-form-field class="project-select" *ngIf="projectFields">
         <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
                     data-cy="appNavbarProjectFieldsSelect"
                     [formControl]="projectFieldsControl" [compareWith]="compareIndices"
                     [placeholder]="projectFields.length < 1 ? 'No indices' : ''"
                     (openedChange)="indexSelectionOpenedChange($event)"
                     multiple>
+          <app-mat-option-select-all></app-mat-option-select-all>
           <mat-option *ngFor="let item of projectFields" [value]="item">
             {{item.index}}
           </mat-option>
