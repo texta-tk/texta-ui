@@ -16,3 +16,6 @@ app-aggregation-results-chart {
   height: inherit;
   width: inherit;
 }
+::ng-deep .mat-tab-body-wrapper{
+  height: 100%;
+}

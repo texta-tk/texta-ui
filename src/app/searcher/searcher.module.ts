@@ -17,51 +17,51 @@ import {DateAggregationComponent} from './searcher-sidebar/aggregations/date-agg
 import {TextAggregationComponent} from './searcher-sidebar/aggregations/text-aggregation/text-aggregation.component';
 import {AggregationResultTableComponent} from './aggregation-results/aggregation-result-table/aggregation-result-table.component';
 import {AggregationResultsDialogComponent} from './aggregation-results/aggregation-results-dialog/aggregation-results-dialog.component';
-import { AggregationResultsTreeComponent } from './aggregation-results/aggregation-results-tree/aggregation-results-tree.component';
+import {AggregationResultsTreeComponent} from './aggregation-results/aggregation-results-tree/aggregation-results-tree.component';
 import {DatePipe} from '@angular/common';
-import { AggregationResultsChartComponent } from './aggregation-results/aggregation-results-chart/aggregation-results-chart.component';
-import { SimpleSearchComponent } from './searcher-sidebar/build-search/simple-search/simple-search.component';
-import { AdvancedSearchComponent } from './searcher-sidebar/build-search/advanced-search/advanced-search.component';
-import { ShortVersionComponent } from './searcher-table/short-version/short-version.component';
-import { TextaFactsChipsComponent } from './searcher-table/texta-facts-chips/texta-facts-chips.component';
-import { NumberConstraintsComponent } from './searcher-sidebar/build-search/advanced-search/number-constraints/number-constraints.component';
-import { AggregationResultFactsComponent } from './aggregation-results/aggregation-result-facts/aggregation-result-facts.component';
+import {AggregationResultsChartComponent} from './aggregation-results/aggregation-results-chart/aggregation-results-chart.component';
+import {SimpleSearchComponent} from './searcher-sidebar/build-search/simple-search/simple-search.component';
+import {AdvancedSearchComponent} from './searcher-sidebar/build-search/advanced-search/advanced-search.component';
+import {ShortVersionComponent} from './searcher-table/short-version/short-version.component';
+import {TextaFactsChipsComponent} from './searcher-table/texta-facts-chips/texta-facts-chips.component';
+import {NumberConstraintsComponent} from './searcher-sidebar/build-search/advanced-search/number-constraints/number-constraints.component';
+import {AggregationResultFactsComponent} from './aggregation-results/aggregation-result-facts/aggregation-result-facts.component';
 
 @NgModule({
-    declarations: [
-        SearcherComponent,
-        SearcherSidebarComponent,
-        SearcherTableComponent,
-        BuildSearchComponent,
-        TextConstraintsComponent,
-        DateConstraintsComponent,
-        FactConstraintsComponent,
-        SavedSearchesComponent,
-        SaveSearchDialogComponent,
-        HighlightComponent,
-        AggregationsComponent,
-        AggregationResultsComponent,
-        DateAggregationComponent,
-        TextAggregationComponent,
-        AggregationResultTableComponent,
-        AggregationResultsDialogComponent,
-        AggregationResultsTreeComponent,
-        AggregationResultsChartComponent,
-        SimpleSearchComponent,
-        AdvancedSearchComponent,
-        ShortVersionComponent,
-        TextaFactsChipsComponent,
-        NumberConstraintsComponent,
-        AggregationResultFactsComponent,
-    ],
-    imports: [
-        SharedModule,
-        SearcherRoutingModule
-    ],
-    exports: [
-        HighlightComponent
-    ],
-    providers: [DatePipe]
+  declarations: [
+    SearcherComponent,
+    SearcherSidebarComponent,
+    SearcherTableComponent,
+    BuildSearchComponent,
+    TextConstraintsComponent,
+    DateConstraintsComponent,
+    FactConstraintsComponent,
+    SavedSearchesComponent,
+    SaveSearchDialogComponent,
+    HighlightComponent,
+    AggregationsComponent,
+    AggregationResultsComponent,
+    DateAggregationComponent,
+    TextAggregationComponent,
+    AggregationResultTableComponent,
+    AggregationResultsDialogComponent,
+    AggregationResultsTreeComponent,
+    AggregationResultsChartComponent,
+    SimpleSearchComponent,
+    AdvancedSearchComponent,
+    ShortVersionComponent,
+    TextaFactsChipsComponent,
+    NumberConstraintsComponent,
+    AggregationResultFactsComponent,
+  ],
+  imports: [
+    SharedModule,
+    SearcherRoutingModule
+  ],
+  exports: [
+    HighlightComponent
+  ],
+  providers: [DatePipe]
 })
 export class SearcherModule {
   constructor() {

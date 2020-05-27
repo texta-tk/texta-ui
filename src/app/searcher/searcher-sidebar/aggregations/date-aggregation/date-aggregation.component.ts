@@ -36,8 +36,10 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.fieldsFormControl.valueChanges.pipe(takeUntil(this.destroy$), startWith({}), switchMap(val => {
-      if (val) {
+    this.fieldsFormControl.valueChanges.pipe(takeUntil(this.destroy$), startWith(this.fieldsFormControl.value), switchMap(val => {
+      // need to check type, because if we are currently on a date constraint and switch to a fact constraint, then this valuechanges
+      // still fires, so we would get val.type === 'fact' and after that the component will destroy itself
+      if (val && val.type === 'date') {
         return forkJoin({
           project: this.projectStore.getCurrentProject().pipe(take(1)),
           currentIndices: this.projectStore.getCurrentProjectIndices().pipe(take(1))

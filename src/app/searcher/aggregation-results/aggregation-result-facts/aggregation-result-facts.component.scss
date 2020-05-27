@@ -5,11 +5,14 @@ span {
 }
 
 .wrapper {
-  position: relative;
-  max-height: calc(100vh - #{$navbar-height} - 50px);
-  min-height: calc(100vh - #{$navbar-height} - 50px);
-  // min-height: 100%;
-  overflow: auto;
+  .fact-select {
+    width: 350px;
+    margin-left: auto;
+
+    ::ng-deep .mat-form-field-wrapper {
+      margin-top: 10px;
+    }
+  }
 
   .table-container {
     .readable-table {
@@ -26,9 +29,14 @@ span {
           justify-content: left;
         }
       }
+
       .mat-column-key:hover:not(.mat-header-cell) {
         background: #eeeeee;
       }
     }
   }
+}
+
+.chart-wrapper {
+  height: calc(100% - 66px);
 }

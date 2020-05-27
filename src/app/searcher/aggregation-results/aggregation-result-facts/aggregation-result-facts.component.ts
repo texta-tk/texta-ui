@@ -1,5 +1,4 @@
-import {Component, Input, ViewChild} from '@angular/core';
-import {MatSort} from '@angular/material/sort';
+import {Component, Input} from '@angular/core';
 import {SavedSearch} from '../../../shared/types/SavedSearch';
 import {take} from 'rxjs/operators';
 import {Constraint, FactConstraint, FactTextInputGroup} from '../../searcher-sidebar/build-search/Constraints';
@@ -12,6 +11,17 @@ import {SearcherComponentService} from '../../services/searcher-component.servic
   styleUrls: ['./aggregation-result-facts.component.scss']
 })
 export class AggregationResultFactsComponent {
+  static readonly COLORS = {
+    ORG: '#b71c1c',
+    PER: '#880e4f',
+    GPE: '#4a148c',
+    LOC: '#311b92',
+    ADDR: '#0d47a1',
+    COMPANY: '#006064',
+    PHO: '#1b5e20',
+    EMAIL: '#3e2723',
+    KEYWORD: '#263238'
+  };
   dataSource: any[];
   displayedColumns = ['key', 'doc_count'];
   constraintBluePrint = {
@@ -28,6 +38,16 @@ export class AggregationResultFactsComponent {
       factTextInput: 'texta-facts-chips-placeholder'
     }]
   };
+  ngxChartData: any[] = []; // for select
+  chartData: any[] = []; // for actual chart data
+  customColors: any[] = [];
+  showXAxis = true;
+  showYAxis = true;
+  showYAxisLabel = false;
+  showXAxisLabel = true;
+  xAxisLabel = 'Count';
+  selectedFacts: any[];
+  @Input() viewState: boolean;
 
   constructor(public searchService: SearcherComponentService) {
   }
@@ -36,6 +56,22 @@ export class AggregationResultFactsComponent {
   set data(value: any) {
     if (value && value.length > 0) {
       this.dataSource = value;
+      for (const item of value) {
+        this.ngxChartData.push({
+          key: item.key, value: item.buckets.flatMap(x => {
+            this.customColors.push({name: x.key, value: AggregationResultFactsComponent.COLORS[item.key]});
+            return [{name: x.key, value: x.doc_count, extra: {key: item.key}}];
+          })
+        });
+      }
+      this.selectedFacts = [this.ngxChartData[0]];
+      this.chartData = this.ngxChartData[0].value;
+    }
+  }
+
+  barChartSelected(val) {
+    if (val?.extra?.key && val?.name) {
+      this.makeSearch(val.extra.key, val.name);
     }
   }
 
@@ -48,7 +84,7 @@ export class AggregationResultFactsComponent {
         // inputGroup means its a fact_val constraint
         if (factConstraint instanceof FactConstraint && factConstraint.inputGroupArray.length > 0) {
           if (!factConstraint.inputGroupArray.some(group => group.factTextFactNameFormControl.value === factName &&
-            group.factTextInputFormControl.value === factValue)) {
+              group.factTextInputFormControl.value === factValue)) {
             factConstraint.inputGroupArray.push(new FactTextInputGroup('must', factName, factValue));
           }
         } else {
@@ -62,5 +98,24 @@ export class AggregationResultFactsComponent {
         this.searchService.nextSavedSearch(constraint);
       }
     });
+  }
+
+  formatYAxisTicks(val) {
+    const split = val.split(' ');
+    let stringValue = '';
+    for (const item of split) {
+      if (stringValue.length + item.length < 16) {
+        stringValue += item + (split.length !== 1 ? ' ' : '');
+      } else if (stringValue === '') {
+        return split[0].substr(0, 16) + (split.length > 1 ? '...' : '');
+      }
+    }
+    return val.length === stringValue.trim().length ? stringValue : stringValue + '...';
+  }
+
+  openedChange(val) {
+    if (this.selectedFacts.length >= 0) {
+      this.chartData = this.selectedFacts.flatMap(x => x.value).sort((a, b) => (a.value < b.value) ? 1 : -1);
+    }
   }
 }
