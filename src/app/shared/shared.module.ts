@@ -38,7 +38,7 @@ import {QueryDialogComponent} from './components/dialogs/query-dialog/query-dial
 import {GenericDialogComponent} from './components/dialogs/generic-dialog/generic-dialog.component';
 import {InfiniteScrollModule} from 'ngx-infinite-scroll';
 import {SavedSearchAutocompleteComponent} from './components/saved-search-autocomplete/saved-search-autocomplete.component';
-import {LineChartModule} from '@swimlane/ngx-charts';
+import {BarChartModule, LineChartModule} from '@swimlane/ngx-charts';
 import {MatTreeModule} from '@angular/material/tree';
 import {MaterialFileInputModule} from 'ngx-material-file-input';
 import {FormatTextaFactsPipe} from './pipes/format-texta-facts.pipe';
@@ -51,7 +51,7 @@ import {JoinPipe} from './pipes/join.pipe';
 import {BreadcrumbComponent} from './components/breadcrumb/breadcrumb.component';
 import {RouterModule} from '@angular/router';
 import {FromToInputComponent} from './components/from-to-input/from-to-input.component';
-import { ScrollTopDirective } from './directives/scroll-top.directive';
+import {ScrollTopDirective} from './directives/scroll-top.directive';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
@@ -105,60 +105,62 @@ import { ScrollTopDirective } from './directives/scroll-top.directive';
     MatTreeModule,
     MatRadioModule,
     LineChartModule,
+    BarChartModule,
     InfiniteScrollModule,
     MaterialFileInputModule,
     NgxMatSelectSearchModule
   ],
-    exports: [
-        CommonModule,
-        ReactiveFormsModule,
-        FormsModule,
-        FlexLayoutModule,
-        ScrollingModule,
-        MatFormFieldModule,
-        MatCheckboxModule,
-        MatInputModule,
-        MatToolbarModule,
-        MatSnackBarModule,
-        MatSelectModule,
-        MatAutocompleteModule,
-        MatIconModule,
-        MatDialogModule,
-        MatButtonModule,
-        MatCardModule,
-        MatSidenavModule,
-        MatListModule,
-        MatMenuModule,
-        MatTableModule,
-        MatChipsModule,
-        MatProgressSpinnerModule,
-        MatPaginatorModule,
-        MatSortModule,
-        MatTabsModule,
-        MatProgressBarModule,
-        MatExpansionModule,
-        MatDatepickerModule,
-        MatNativeDateModule,
-        MatTooltipModule,
-        MatSliderModule,
-        MatTreeModule,
-        MatRadioModule,
-        GenericTableComponent,
-        SavedSearchAutocompleteComponent,
-        MatOptionSelectAllComponent,
-        FormatTextaFactsPipe,
-        IsObjectPipe,
-        LineChartModule,
-        GroupSameValuesPipe,
-        InfiniteScrollModule,
-        MaterialFileInputModule,
-        NgxMatSelectSearchModule,
-        GetPropertyListPipe,
-        JoinPipe,
-        BreadcrumbComponent,
-        FromToInputComponent,
-        ScrollTopDirective
-    ]
+  exports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    FlexLayoutModule,
+    ScrollingModule,
+    MatFormFieldModule,
+    MatCheckboxModule,
+    MatInputModule,
+    MatToolbarModule,
+    MatSnackBarModule,
+    MatSelectModule,
+    MatAutocompleteModule,
+    MatIconModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatCardModule,
+    MatSidenavModule,
+    MatListModule,
+    MatMenuModule,
+    MatTableModule,
+    MatChipsModule,
+    MatProgressSpinnerModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatTabsModule,
+    MatProgressBarModule,
+    MatExpansionModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatTooltipModule,
+    MatSliderModule,
+    MatTreeModule,
+    MatRadioModule,
+    GenericTableComponent,
+    SavedSearchAutocompleteComponent,
+    MatOptionSelectAllComponent,
+    FormatTextaFactsPipe,
+    IsObjectPipe,
+    LineChartModule,
+    BarChartModule,
+    GroupSameValuesPipe,
+    InfiniteScrollModule,
+    MaterialFileInputModule,
+    NgxMatSelectSearchModule,
+    GetPropertyListPipe,
+    JoinPipe,
+    BreadcrumbComponent,
+    FromToInputComponent,
+    ScrollTopDirective
+  ]
 })
 export class SharedModule {
 }

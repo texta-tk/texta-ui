@@ -1,25 +1,49 @@
-<div class="wrapper" fxLayout="row" fxLayoutGap="10px">
-  <div *ngFor="let item of dataSource" class="table-container" fxLayout="col">
-    <table [dataSource]="item.buckets" class="readable-table" mat-table>
+<div class="wrapper max-height" fxLayout="column">
+  <div [ngStyle]="{display: viewState ? 'none' : 'flex'}" class="overflow-auto max-height" fxLayout="row"
+       fxLayoutGap="10px">
+    <div *ngFor="let item of dataSource" class="table-container"
+         fxLayout="col">
+      <table [dataSource]="item.buckets" class="readable-table" mat-table>
+        <ng-container matColumnDef="key">
+          <th *matHeaderCellDef mat-header-cell>Value</th>
+          <td (click)="makeSearch(item.key, element.key)" *matCellDef="let element" class="table-row pointer" mat-cell
+              title="Add to search constraint">
+            <span>{{element.key}}</span></td>
+        </ng-container>
+        <ng-container matColumnDef="doc_count">
+          <th *matHeaderCellDef mat-header-cell>Doc count</th>
+          <td *matCellDef="let element" class="table-row" mat-cell><span>{{element.doc_count}}</span></td>
+        </ng-container>
+        <!-- Header row first group -->
+        <ng-container matColumnDef="header-row-first-group">
+          <th *matHeaderCellDef [attr.colspan]="2" mat-header-cell style="text-align: center"> {{item.key}} </th>
+        </ng-container>
 
-      <ng-container matColumnDef="key">
-        <th *matHeaderCellDef mat-header-cell>Value</th>
-        <td (click)="makeSearch(item.key, element.key)" *matCellDef="let element" class="table-row pointer" mat-cell
-            title="Add to search constraint">
-          <span>{{element.key}}</span></td>
-      </ng-container>
-      <ng-container matColumnDef="doc_count">
-        <th *matHeaderCellDef mat-header-cell>Doc count</th>
-        <td *matCellDef="let element" class="table-row" mat-cell><span>{{element.doc_count}}</span></td>
-      </ng-container>
-      <!-- Header row first group -->
-      <ng-container matColumnDef="header-row-first-group">
-        <th *matHeaderCellDef [attr.colspan]="2" mat-header-cell style="text-align: center"> {{item.key}} </th>
-      </ng-container>
-
-      <tr *matHeaderRowDef="['header-row-first-group']; sticky: true" mat-header-row></tr>
-      <tr *matHeaderRowDef="displayedColumns;" mat-header-row></tr>
-      <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
-    </table>
+        <tr *matHeaderRowDef="['header-row-first-group']; sticky: true" mat-header-row></tr>
+        <tr *matHeaderRowDef="displayedColumns;" mat-header-row></tr>
+        <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+      </table>
+    </div>
   </div>
+  <mat-form-field [ngStyle]="{display: !viewState ? 'none' : 'block'}" class="fact-select bottom-padding-none" appearance="fill">
+    <mat-label>Select fact</mat-label>
+    <mat-select (openedChange)="openedChange($event)" [(ngModel)]="selectedFacts" [ngModelOptions]="{standalone: true}"
+                multiple>
+      <mat-option *ngFor="let item of ngxChartData" [value]="item">{{item.key}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div class="chart-wrapper" [ngStyle]="{display: !viewState ? 'none' : 'grid'}">
+  <ngx-charts-bar-horizontal [customColors]="customColors"
+                             [results]="chartData"
+                             [roundEdges]="false"
+                             [showXAxisLabel]="showXAxisLabel"
+                             [showYAxisLabel]="showYAxisLabel"
+                             [xAxisLabel]="xAxisLabel"
+                             [xAxis]="showXAxis"
+                             [yAxisTickFormatting]="formatYAxisTicks"
+                             [yAxis]="showYAxis"
+  (select)="barChartSelected($event)">
+  </ngx-charts-bar-horizontal>
+  </div>
+  <!--        [customColors]="customColors"-->
 </div>

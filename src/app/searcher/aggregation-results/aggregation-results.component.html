@@ -1,21 +1,32 @@
 <div class="container">
 
-  <div class="loading-shade" *ngIf="searchService.getIsLoading() | async">
+  <div *ngIf="searchService.getIsLoading() | async" class="loading-shade">
     <mat-spinner></mat-spinner>
   </div>
   <ng-container *ngIf="aggregationData">
-    <mat-tab-group mat-stretch-tabs
-                   *ngIf="aggregationData.tableData !== undefined && aggregationData.tableData.length > 0">
+    <mat-tab-group *ngIf="aggregationData.tableData !== undefined && aggregationData.tableData.length > 0"
+                   mat-stretch-tabs>
       <mat-tab *ngFor="let tableAggregation of aggregationData.tableData" [label]="tableAggregation.name">
         <app-aggregation-result-table *ngIf="tableAggregation.tableData !== undefined"
                                       [tableData]="tableAggregation.tableData"></app-aggregation-result-table>
       </mat-tab>
     </mat-tab-group>
 
-    <mat-tab-group mat-stretch-tabs
-                   *ngIf="aggregationData.textaFactsTableData !== undefined && aggregationData.textaFactsTableData.length > 0">
-      <mat-tab *ngFor="let item of aggregationData.textaFactsTableData" [label]="item.name">
-        <app-aggregation-result-facts [data]="item.data"></app-aggregation-result-facts>
+    <mat-tab-group
+      *ngIf="aggregationData.textaFactsTableData !== undefined && aggregationData.textaFactsTableData.length > 0"
+      dynamicHeight
+      mat-stretch-tabs>
+      <mat-tab *ngFor="let item of aggregationData.textaFactsTableData">
+        <ng-container *ngIf="{ viewState: false} as state">
+          <ng-template mat-tab-label>
+            {{item.name}}
+            <button (click)="state.viewState = !state.viewState" mat-icon-button>
+              <mat-icon>assessment</mat-icon>
+            </button>
+          </ng-template>
+          <app-aggregation-result-facts [data]="item.data"
+                                        [viewState]="state.viewState"></app-aggregation-result-facts>
+        </ng-container>
       </mat-tab>
     </mat-tab-group>
 
@@ -26,15 +37,16 @@
 
     </app-aggregation-results-chart>
 
-    <mat-tab-group mat-stretch-tabs
-                   *ngIf="aggregationData.treeData !== undefined && aggregationData.treeData.length > 0">
+    <mat-tab-group *ngIf="aggregationData.treeData !== undefined && aggregationData.treeData.length > 0"
+                   mat-stretch-tabs>
       <mat-tab *ngFor="let nestedAggregation of aggregationData.treeData">
 
         <ng-template mat-tab-label>
           {{nestedAggregation.name}}
           <button
+            (click)="openUnifiedTimeline(nestedAggregation.histoBuckets)"
             *ngIf="nestedAggregation !== undefined && nestedAggregation.histoBuckets!== undefined && nestedAggregation.histoBuckets.length > 0"
-            mat-icon-button (click)="openUnifiedTimeline(nestedAggregation.histoBuckets)">
+            mat-icon-button>
             <mat-icon>assessment</mat-icon>
           </button>
         </ng-template>
