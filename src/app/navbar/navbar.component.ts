@@ -55,7 +55,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       }
     });
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), switchMap(proj => {
-      if (proj && proj.users.includes(this.user.url)) {
+      if (proj) {
         this.currentProject = proj;
         this.projectControl.setValue(proj); // we set active project when we create a new project at proj component for example
         return this.projectService.getResourceCounts(proj.id);

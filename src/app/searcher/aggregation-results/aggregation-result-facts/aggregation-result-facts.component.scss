@@ -37,6 +37,17 @@ span {
   }
 }
 
+.tooltip {
+
+  & > * {
+    margin: 2px
+  }
+
+  .tooltip-value {
+    font-size: 140%;
+  }
+}
+
 .chart-wrapper {
   height: calc(100% - 66px);
 }

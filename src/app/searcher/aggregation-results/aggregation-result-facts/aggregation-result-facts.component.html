@@ -43,6 +43,13 @@
                              [yAxisTickFormatting]="formatYAxisTicks"
                              [yAxis]="showYAxis"
   (select)="barChartSelected($event)">
+    <ng-template #tooltipTemplate let-model="model">
+      <div fxLayout="column" class="tooltip">
+        <p>{{model.extra.key}}</p>
+        <span>{{model.name}}</span>
+        <span class="tooltip-value">{{model.value}}</span>
+      </div>
+    </ng-template>
   </ngx-charts-bar-horizontal>
   </div>
   <!--        [customColors]="customColors"-->

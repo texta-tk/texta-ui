@@ -40,7 +40,7 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
     this.fieldsFormControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(val => {
       // need to check type, because if we are currently on a fact constraint and switch to a date constraint, then this valuechanges
       // still fires, so we would get val.type === 'date' and after that the component will destroy itself
-      if (val && val.type === 'fact') {
+      if (val && val.type !== 'date') {
         this.updateAggregations();
       }
     });

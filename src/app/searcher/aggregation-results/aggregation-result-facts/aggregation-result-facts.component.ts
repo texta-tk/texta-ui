@@ -65,7 +65,7 @@ export class AggregationResultFactsComponent {
         });
       }
       this.selectedFacts = [this.ngxChartData[0]];
-      this.chartData = this.ngxChartData[0].value;
+      this.chartData = this.ngxChartData[0].value.slice(0, 30);
     }
   }
 
@@ -115,7 +115,7 @@ export class AggregationResultFactsComponent {
 
   openedChange(val) {
     if (this.selectedFacts.length >= 0) {
-      this.chartData = this.selectedFacts.flatMap(x => x.value).sort((a, b) => (a.value < b.value) ? 1 : -1);
+      this.chartData = this.selectedFacts.flatMap(x => x.value).sort((a, b) => (a.value < b.value) ? 1 : -1).slice(0, 30);
     }
   }
 }
