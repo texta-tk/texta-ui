@@ -1,23 +1,4 @@
-@import '~@angular/material/theming';
-// Plus imports for other components in your app.
-
-// Include the common styles for Angular Material. We include this here so that you only
-// have to load a single css file for Angular Material in your app.
-// **Be sure that you only ever include this mixin once!**
+@import "~@angular/material/theming";
+@import "variables/_variables";
 @include mat-core();
-
-// Define the default theme (same as the example above).
-$texta-primary: mat-palette($mat-indigo);
-$texta-accent:  mat-palette($mat-pink, A200, A100, A400);
-$texta-warn:    mat-palette($mat-red);
-
-$texta-theme:   mat-light-theme($texta-primary, $texta-accent);
-
-
-// Define an alternate dark theme.
-// $dark-primary: mat-palette($mat-blue-grey);
-// $dark-accent:  mat-palette($mat-amber, A200, A100, A400);
-// $dark-warn:    mat-palette($mat-deep-orange);
-// $texta-dark-theme:  mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
-
 @include angular-material-theme($texta-theme);

@@ -4,6 +4,7 @@ import {take} from 'rxjs/operators';
 import {Constraint, FactConstraint, FactTextInputGroup} from '../../searcher-sidebar/build-search/Constraints';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 import {SearcherComponentService} from '../../services/searcher-component.service';
+import {HighlightComponent} from '../../searcher-table/highlight/highlight.component';
 
 @Component({
   selector: 'app-aggregation-result-facts',
@@ -11,17 +12,6 @@ import {SearcherComponentService} from '../../services/searcher-component.servic
   styleUrls: ['./aggregation-result-facts.component.scss']
 })
 export class AggregationResultFactsComponent {
-  static readonly COLORS = {
-    ORG: '#b71c1c',
-    PER: '#880e4f',
-    GPE: '#4a148c',
-    LOC: '#311b92',
-    ADDR: '#0d47a1',
-    COMPANY: '#006064',
-    PHO: '#1b5e20',
-    EMAIL: '#3e2723',
-    KEYWORD: '#263238'
-  };
   dataSource: any[];
   displayedColumns = ['key', 'doc_count'];
   constraintBluePrint = {
@@ -56,11 +46,13 @@ export class AggregationResultFactsComponent {
   set data(value: any) {
     if (value && value.length > 0) {
       this.dataSource = value;
+      const COLORS = HighlightComponent.generateColorsForFacts(value.flatMap(x => [{fact: x.key}]));
       for (const item of value) {
         this.ngxChartData.push({
           key: item.key, value: item.buckets.flatMap(x => {
-            this.customColors.push({name: x.key, value: AggregationResultFactsComponent.COLORS[item.key]});
-            return [{name: x.key, value: x.doc_count, extra: {key: item.key}}];
+            const factName = `[${item.key}]|${x.key}`; // item.key hack so i can seperate identical names with colors, used in formatYAxisTicks
+            this.customColors.push({name: factName, value: COLORS.get(item.key)});
+            return [{name: factName, value: x.doc_count, extra: {key: item.key, name: x.key}}];
           })
         });
       }
@@ -84,7 +76,7 @@ export class AggregationResultFactsComponent {
         // inputGroup means its a fact_val constraint
         if (factConstraint instanceof FactConstraint && factConstraint.inputGroupArray.length > 0) {
           if (!factConstraint.inputGroupArray.some(group => group.factTextFactNameFormControl.value === factName &&
-              group.factTextInputFormControl.value === factValue)) {
+            group.factTextInputFormControl.value === factValue)) {
             factConstraint.inputGroupArray.push(new FactTextInputGroup('must', factName, factValue));
           }
         } else {
@@ -101,16 +93,23 @@ export class AggregationResultFactsComponent {
   }
 
   formatYAxisTicks(val) {
-    const split = val.split(' ');
-    let stringValue = '';
-    for (const item of split) {
-      if (stringValue.length + item.length < 16) {
-        stringValue += item + (split.length !== 1 ? ' ' : '');
-      } else if (stringValue === '') {
-        return split[0].substr(0, 16) + (split.length > 1 ? '...' : '');
+    let origName = val.split('|'); // take out the ID (KEY, PER, ORG etc)
+    origName.shift();
+    origName = origName.join('|');
+
+    if (typeof origName === 'string') {
+      const split = origName.split(' ');
+      let stringValue = '';
+      for (const item of split) {
+        if (stringValue.length + item.length < 16) {
+          stringValue += item + (split.length !== 1 ? ' ' : '');
+        } else if (stringValue === '') {
+          return split[0].substr(0, 16) + (split.length > 1 ? '...' : '');
+        }
       }
+      return origName.length === stringValue.trim().length ? stringValue : stringValue + '...';
     }
-    return val.length === stringValue.trim().length ? stringValue : stringValue + '...';
+    return '';
   }
 
   openedChange(val) {

@@ -1,4 +1,13 @@
-@import "../custom-theme.scss";
+@import '~@angular/material/theming';
+
+// Define the default theme (same as the example above).
+$texta-primary: mat-palette($mat-indigo);
+$texta-accent:  mat-palette($mat-pink, A200, A100, A400);
+$texta-warn:    mat-palette($mat-red);
+
+$texta-theme:   mat-light-theme($texta-primary, $texta-accent);
+
+
 
 $navbar-height: 56px;
 

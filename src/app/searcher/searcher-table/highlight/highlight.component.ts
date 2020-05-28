@@ -66,7 +66,7 @@ export class HighlightComponent {
     this.makeHighlightArray(edited);
   }
 
-  static generateColorsForFacts(facts: HighlightSpan[]): Map<string, string> {
+  static generateColorsForFacts(facts: {fact: string}[]): Map<string, string> {
     const colorPallette = this.generateRandomColors(facts.length);
     facts.forEach(fact => {
       if (!HighlightComponent.colors.has(fact.fact) && colorPallette) {
