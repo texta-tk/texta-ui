@@ -201,6 +201,25 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
     });
   }
 
+  deleteCluster() {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        confirmText: 'Delete',
+        mainText: `Delete cluster with id ${this.clusterId}?`
+      }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        const body = {ids: [this.clusterId]};
+        this.clusterService.bulkDeleteClusters(this.currentProject.id, this.clusteringId, body).subscribe(() => {
+          this.logService.snackBarMessage(`Deleted cluster ${this.clusterId}`, 2000);
+          this.removeSelectedRows();
+          this.router.navigate(['../'], { relativeTo: this.route });
+        });
+      }
+    });
+  }
+
   removeSelectedRows() {
     this.selectedRows.selected.forEach((selectedCluster: ClusterDocument) => {
       const index: number = this.tableData.data.findIndex(cluster => cluster.id === selectedCluster.id);

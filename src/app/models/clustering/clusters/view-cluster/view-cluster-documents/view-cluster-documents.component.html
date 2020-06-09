@@ -7,8 +7,14 @@
       <app-breadcrumb></app-breadcrumb>
       <button (click)="onDeleteAllSelected()" [disabled]="selectedRows.selected.length < 1" class="new-resource-btn"
               color="warn"
-              data-cy="appClusterDocumentsDeleteBtn" mat-icon-button matTooltip="Delete selected">
+              data-cy="appClusterDocumentsDeleteBtn" mat-icon-button matTooltip="Delete selected documents">
         <mat-icon>delete</mat-icon>
+      </button>
+      <button (click)="deleteCluster()" class="paginator-margin-left"
+              color="warn" mat-raised-button
+              data-cy="appClusterDocumentsDelete"
+              matTooltip="Delete cluster">
+        Delete
       </button>
       <button (click)="moreLikeThis()" class="paginator-margin-left"
               color="primary" data-cy="appClusterDocumentsMLTBtn" mat-raised-button>
@@ -30,7 +36,7 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field class="paginator-margin-left">
+      <mat-form-field class="char-limit paginator-margin-left">
         <mat-label>Column character limit</mat-label>
         <input (ngModelChange)="modifyClusteringSaveState('charLimit', $event)" [(ngModel)]="charLimit"
                [ngModelOptions]="{updateOn: 'blur'}"

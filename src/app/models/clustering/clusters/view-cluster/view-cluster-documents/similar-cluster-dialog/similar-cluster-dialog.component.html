@@ -25,7 +25,7 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field class="paginator-margin-left">
+      <mat-form-field class="char-limit paginator-margin-left">
         <mat-label>Column character limit</mat-label>
         <input [(ngModel)]="charLimit"
                matInput
@@ -44,7 +44,7 @@
                         [indeterminate]="selectedRows.hasValue() && !isAllSelected()">
           </mat-checkbox>
         </th>
-        <td *matCellDef="let row" mat-cell>
+        <td *matCellDef="let row" mat-cell (click)="$event ? selectedRows.toggle(row) : null;">
           <mat-checkbox (change)="$event ? selectedRows.toggle(row) : null" (click)="$event.stopPropagation()"
                         [checked]="selectedRows.isSelected(row)">
           </mat-checkbox>
