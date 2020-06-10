@@ -7,7 +7,7 @@ import {ArrayDataSource} from '@angular/cdk/collections';
 import {AggregationResultsDialogComponent} from './aggregation-results-dialog/aggregation-results-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 
-interface AggregationData {
+export interface AggregationData {
 
   treeData?: {
     treeData?: ArrayDataSource<any>,
@@ -47,7 +47,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
       return (x.buckets);
     }
     return null;
-  };
+  }
 
   formatDateData(buckets: { key_as_string: string, key: number, doc_count: number }[]): { value: number, name: Date }[] {
     const dateData: any[] = [];

@@ -38,7 +38,7 @@ import {QueryDialogComponent} from './components/dialogs/query-dialog/query-dial
 import {GenericDialogComponent} from './components/dialogs/generic-dialog/generic-dialog.component';
 import {InfiniteScrollModule} from 'ngx-infinite-scroll';
 import {SavedSearchAutocompleteComponent} from './components/saved-search-autocomplete/saved-search-autocomplete.component';
-import {BarChartModule, LineChartModule} from '@swimlane/ngx-charts';
+import {BarChartModule} from '@swimlane/ngx-charts';
 import {MatTreeModule} from '@angular/material/tree';
 import {MaterialFileInputModule} from 'ngx-material-file-input';
 import {FormatTextaFactsPipe} from './pipes/format-texta-facts.pipe';
@@ -52,6 +52,12 @@ import {BreadcrumbComponent} from './components/breadcrumb/breadcrumb.component'
 import {RouterModule} from '@angular/router';
 import {FromToInputComponent} from './components/from-to-input/from-to-input.component';
 import {ScrollTopDirective} from './directives/scroll-top.directive';
+
+import { PlotlyViaCDNModule } from 'angular-plotly.js';
+
+
+PlotlyViaCDNModule.plotlyVersion = '1.49.4'; // can be `latest` or any version number (i.e.: '1.40.0')
+PlotlyViaCDNModule.plotlyBundle = 'gl2d'; // optional: can be null (for full) or 'basic', 'cartesian', 'geo', 'gl3d', 'gl2d', 'mapbox' or 'finance'
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
@@ -73,6 +79,7 @@ import {ScrollTopDirective} from './directives/scroll-top.directive';
   imports: [
     RouterModule,
     CommonModule,
+    PlotlyViaCDNModule,
     ReactiveFormsModule,
     FormsModule,
     FlexLayoutModule,
@@ -104,7 +111,6 @@ import {ScrollTopDirective} from './directives/scroll-top.directive';
     MatSliderModule,
     MatTreeModule,
     MatRadioModule,
-    LineChartModule,
     BarChartModule,
     InfiniteScrollModule,
     MaterialFileInputModule,
@@ -112,6 +118,7 @@ import {ScrollTopDirective} from './directives/scroll-top.directive';
   ],
   exports: [
     CommonModule,
+    PlotlyViaCDNModule,
     ReactiveFormsModule,
     FormsModule,
     FlexLayoutModule,
@@ -149,7 +156,6 @@ import {ScrollTopDirective} from './directives/scroll-top.directive';
     MatOptionSelectAllComponent,
     FormatTextaFactsPipe,
     IsObjectPipe,
-    LineChartModule,
     BarChartModule,
     GroupSameValuesPipe,
     InfiniteScrollModule,
