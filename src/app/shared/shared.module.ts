@@ -52,7 +52,8 @@ import {BreadcrumbComponent} from './components/breadcrumb/breadcrumb.component'
 import {RouterModule} from '@angular/router';
 import {FromToInputComponent} from './components/from-to-input/from-to-input.component';
 import {ScrollTopDirective} from './directives/scroll-top.directive';
-
+import {PortalModule} from '@angular/cdk/portal';
+import {OverlayModule} from '@angular/cdk/overlay';
 import { PlotlyViaCDNModule } from 'angular-plotly.js';
 
 
@@ -114,6 +115,8 @@ PlotlyViaCDNModule.plotlyBundle = 'gl2d'; // optional: can be null (for full) or
     BarChartModule,
     InfiniteScrollModule,
     MaterialFileInputModule,
+    PortalModule,
+    OverlayModule,
     NgxMatSelectSearchModule
   ],
   exports: [
@@ -165,6 +168,8 @@ PlotlyViaCDNModule.plotlyBundle = 'gl2d'; // optional: can be null (for full) or
     JoinPipe,
     BreadcrumbComponent,
     FromToInputComponent,
+    PortalModule,
+    OverlayModule,
     ScrollTopDirective
   ]
 })

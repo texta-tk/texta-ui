@@ -28,10 +28,26 @@ describe('should be able to build aggregations', function () {
     cy.get('.cdk-column-key').should('be.visible');
   }
 
+  function getBuckets(el){
+    if(el.hasOwnProperty('agg_histo')){
+      return getBuckets(el['agg_histo']);
+    }else{
+      return el.buckets;
+    }
+  }
+
   function submitAndCheckGraphResult(amountOfLines) {
     cy.get('[data-cy=appSearcherSidebarAggregationsSubmit]').should('be.visible').click();
-    cy.wait('@searcherQuery');
-    cy.get('[ngx-charts-line-series]').should('have.length', amountOfLines);
+    cy.wait('@searcherQuery').then(x => {
+      let totalLines = 0;
+      for (const el in x.response.body.aggs) {
+        if (x.response.body.aggs.hasOwnProperty(el)) {
+          totalLines += getBuckets(x.response.body.aggs[el]).length
+        }
+      }
+      assert(totalLines === amountOfLines, 'aggs should return correct amount of data')
+    });
+    cy.get('.svg-container').should('be.visible');
   }
 
   it('should be able to build text, fact and date aggregation', function () {
@@ -57,18 +73,16 @@ describe('should be able to build aggregations', function () {
     // check date aggregations
     cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]').should('be.visible').click();
     cy.get('mat-option').contains('@timestamp').scrollIntoView().should('be.visible').click();
-    cy.closeCurrentCdkOverlay();
+    cy.wait('@searcherQuery');
     submitAndCheckGraphResult(1);
     cy.get('[data-cy=appSearcherSidebarSavedSearches] .cdk-column-select:nth(1)').should('be.visible').click('left');
     submitAndCheckGraphResult(2);
     cy.get('[data-cy=appSearcherSidebarSavedSearches] .cdk-column-select:nth(1)').should('be.visible').click('left');
     cy.get('[data-cy=appSearcherSidebarAggregationsDateAggregationType]').should('be.visible').click();
     cy.get('mat-option').contains('relative frequency').should('be.visible').click();
-    cy.closeCurrentCdkOverlay();
     submitAndCheckGraphResult(1);
     cy.get('[data-cy=appSearcherSidebarAggregationsDateInterval]').should('be.visible').click();
     cy.get('mat-option').contains('month').should('be.visible').click();
-    cy.closeCurrentCdkOverlay();
     submitAndCheckGraphResult(1);
 
     // check nested aggregations

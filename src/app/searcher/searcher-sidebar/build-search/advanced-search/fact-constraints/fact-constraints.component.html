@@ -1,5 +1,5 @@
 <div *ngIf="!(_factConstraint?.inputGroupArray && _factConstraint.inputGroupArray.length>0)" fxLayout="row">
-  <mat-form-field class="margin-right" fxFlex="40">
+  <mat-form-field class="margin-right" fxFlex="40" data-cy="appSearcherSideBarBuildSearchFactNameOperator">
     <mat-label>Operator</mat-label>
     <mat-select [disableOptionCentering]="true" [formControl]="factNameOperatorFormControl"
                 panelClass="select-panel-reveal-input">
@@ -8,7 +8,7 @@
       <mat-option value="must_not">not</mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-form-field fxFlex>
+  <mat-form-field fxFlex data-cy="appSearcherSideBarBuildSearchFactNameName">
     <mat-label>Fact name</mat-label>
     <mat-select [disableOptionCentering]="true" [formControl]="factNameFormControl"
                 multiple panelClass="select-panel-reveal-input">
@@ -21,7 +21,7 @@
 
 <div *ngIf="_factConstraint?.inputGroupArray && _factConstraint.inputGroupArray.length>0" fxLayout="column">
   <div fxLayout="row">
-    <mat-form-field fxFlex="25">
+    <mat-form-field fxFlex="25" data-cy="appSearcherSideBarBuildSearchFactValueOperator">
       <mat-label>Operator</mat-label>
       <mat-select [disableOptionCentering]="true" [formControl]="factTextOperatorFormControl"
                   panelClass="select-panel-reveal-input">
@@ -30,14 +30,14 @@
         <mat-option value="must_not">not</mat-option>
       </mat-select>
     </mat-form-field>
-    <div fxFlex fxLayoutAlign="end">
+    <div fxFlex fxLayoutAlign="end" data-cy="appSearcherSideBarBuildSearchFactValueInputGroupAdd">
       <button (click)="createGroupListeners()" aria-label="Add" class="addFact mat-icon-button" mat-icon-button>
         <mat-icon>add</mat-icon>
       </button>
     </div>
   </div>
   <div *ngFor="let inputGroup of _factConstraint.inputGroupArray; let i=index;" fxLayout="row">
-    <mat-form-field fxFlex="36">
+    <mat-form-field fxFlex="36" data-cy="appSearcherSideBarBuildSearchFactValueInputGroupName">
       <mat-label>Fact name</mat-label>
       <mat-select [disableOptionCentering]="true" [formControl]="inputGroup.factTextFactNameFormControl"
                   panelClass="select-panel-reveal-input">
@@ -47,14 +47,14 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field class="m-l-r-5" fxFlex="15">
+    <mat-form-field class="m-l-r-5" fxFlex="15" data-cy="appSearcherSideBarBuildSearchFactValueInputGroupOperator">
       <mat-select [disableOptionCentering]="true" [formControl]="inputGroup.factTextOperatorFormControl"
                   panelClass="select-panel-reveal-input">
         <mat-option value="must">is</mat-option>
         <mat-option value="must_not">not</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field fxFlex="36">
+    <mat-form-field fxFlex="36" data-cy="appSearcherSideBarBuildSearchFactValueInputGroupValue">
       <input [formControl]="inputGroup.factTextInputFormControl" [matAutocomplete]="auto"
              aria-label="Number"
              matInput
@@ -68,7 +68,7 @@
         </mat-option>
       </mat-autocomplete>
     </mat-form-field>
-    <div fxFlex fxFlexAlign="center" fxLayoutAlign="end">
+    <div fxFlex fxFlexAlign="center" fxLayoutAlign="end" data-cy="appSearcherSideBarBuildSearchFactValueInputGroupDelete">
       <button (click)="deleteInputGroup(inputGroup)" aria-label="Close" class="mat-icon-button" mat-icon-button>
         <mat-icon>close</mat-icon>
       </button>

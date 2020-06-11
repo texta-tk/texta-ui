@@ -26,6 +26,7 @@ import {ShortVersionComponent} from './searcher-table/short-version/short-versio
 import {TextaFactsChipsComponent} from './searcher-table/texta-facts-chips/texta-facts-chips.component';
 import {NumberConstraintsComponent} from './searcher-sidebar/build-search/advanced-search/number-constraints/number-constraints.component';
 import {AggregationResultFactsComponent} from './aggregation-results/aggregation-result-facts/aggregation-result-facts.component';
+import { GraphSelectedPortalComponent } from './aggregation-results/aggregation-results-chart/graph-selected-portal/graph-selected-portal.component';
 
 @NgModule({
   declarations: [
@@ -53,6 +54,7 @@ import {AggregationResultFactsComponent} from './aggregation-results/aggregation
     TextaFactsChipsComponent,
     NumberConstraintsComponent,
     AggregationResultFactsComponent,
+    GraphSelectedPortalComponent,
   ],
   imports: [
     SharedModule,
