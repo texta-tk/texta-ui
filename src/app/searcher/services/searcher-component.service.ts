@@ -4,6 +4,7 @@ import {Constraint, ElasticsearchQuery} from '../searcher-sidebar/build-search/C
 import {SelectionModel} from '@angular/cdk/collections';
 import {SavedSearch} from '../../shared/types/SavedSearch';
 import {Injectable} from '@angular/core';
+import {map} from 'rxjs/operators';
 
 @Injectable()
 export class SearcherComponentService {
@@ -46,10 +47,12 @@ export class SearcherComponentService {
   public getAggregation(): Observable<{ globalAgg: any, agg: any } | null> {
     return this.aggregationSubject.asObservable();
   }
+
   // saved a new search
   public nextSavedSearchUpdate() {
     return this.savedSearchUpdate.next(true);
   }
+
   // update saved search table when we saved new search, refactor to savedSearch object behaviourSubject instead?
   public getSavedSearchUpdate() {
     return this.savedSearchUpdate.asObservable();
@@ -57,13 +60,12 @@ export class SearcherComponentService {
 
   // we use these elasticQuery functions to pass on current searcher query to aggregations
   // because aggregations need to build some of their queries based off of the current search query
-  // also used by the searcher table to edit the query, to change sort order, or to navigate pages
   public nextElasticQuery(val: ElasticsearchQuery) {
-    this.elasticQuerySubject.next(val);
+    this.elasticQuerySubject.next(JSON.parse(JSON.stringify(val)));
   }
 
   public getElasticQuery(): Observable<ElasticsearchQuery> {
-    return this.elasticQuerySubject.asObservable();
+    return this.elasticQuerySubject.asObservable().pipe(map(x => JSON.parse(JSON.stringify(x))));
   }
 
   public nextSavedSearch(search: SavedSearch) {

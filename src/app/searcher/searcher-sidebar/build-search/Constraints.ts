@@ -108,9 +108,8 @@ export class FactTextInputGroup {
 }
 
 export class ElasticsearchQuery {
-
-  constructor() {
-    this._elasticSearchQuery.query = {
+  elasticSearchQuery: ElasticsearchQueryStructure = {
+    query: {
       bool: {
         must: [],
         filter: [],
@@ -118,58 +117,26 @@ export class ElasticsearchQuery {
         should: [],
         minimum_should_match: 0,
       }
-    };
-    this._elasticSearchQuery.highlight = {
+    },
+    highlight: {
       pre_tags: [SearcherOptions.PRE_TAG],
       post_tags: [SearcherOptions.POST_TAG],
       number_of_fragments: 0,
       fields: {}
-    };
-    this.from = 0;
-    this.size = 10;
-  }
+    },
+    from: 0,
+    size: 10
+  };
 
-  private _elasticSearchQuery: ElasticsearchQueryStructure = {};
 
-  get elasticSearchQuery(): ElasticsearchQueryStructure {
-    return this._elasticSearchQuery;
-  }
-
-  set elasticSearchQuery(elasticQuery: ElasticsearchQueryStructure) {
-    this._elasticSearchQuery = elasticQuery;
-  }
-
-  get size(): number {
-    return this._elasticSearchQuery.size || 0;
-  }
-
-  set size(val: number) {
-    this._elasticSearchQuery.size = val;
-  }
-
-  get from(): number {
-    return this._elasticSearchQuery.from || 0;
-  }
-
-  set from(val: number) {
-    this._elasticSearchQuery.from = val;
-  }
-
-  get sort() {
-    return this._elasticSearchQuery.sort;
-  }
-
-  set sort(val) {
-    this._elasticSearchQuery.sort = val;
-  }
 }
 
 export interface ElasticsearchQueryStructure {
-  highlight?: HighlightStructure;
-  query?: QueryStructure;
+  highlight: HighlightStructure;
+  query: QueryStructure;
   aggs?: AggregationStructure;
-  size?: number;
-  from?: number;
+  size: number;
+  from: number;
   sort?: any;
 }
 

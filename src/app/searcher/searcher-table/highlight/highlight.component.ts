@@ -53,7 +53,8 @@ export class HighlightComponent {
   @Input() set highlightConfig(highlightConfig: HighlightConfig) {
     this._highlightConfig = highlightConfig;
     // slice original text for charlimit bounds
-    const edited = JSON.parse(JSON.stringify(highlightConfig));
+    const edited = highlightConfig;
+    edited.data = JSON.parse(JSON.stringify(highlightConfig.data));
     if (edited.data[edited.currentColumn] !== null && edited.data[edited.currentColumn] !== undefined
       && (isNaN(Number(edited.data[edited.currentColumn])))
       && edited.charLimit && edited.charLimit !== 0) {

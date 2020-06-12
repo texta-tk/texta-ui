@@ -74,7 +74,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
         this.currentProject = currentProject;
         const currentProjectState = this.localStorage.getProjectState(currentProject);
         if (currentProjectState?.searcher?.itemsPerPage) {
-          this.elasticQuery.size = currentProjectState.searcher.itemsPerPage;
+          this.elasticQuery.elasticSearchQuery.size = currentProjectState.searcher.itemsPerPage;
         }
         return this.lexiconService.getLexicons(currentProject.id);
       }
@@ -133,7 +133,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
             this.searchOptions.onlyHighlightMatching = undefined;
           }
           this.searchOptions.showShortVersion = this.showShortVersion;
-          this.searchService.nextSearch(new Search(result, this.searchOptions));
+          this.searchService.nextSearch(new Search(result, this.elasticQuery, this.searchOptions));
         }
       });
 
@@ -228,7 +228,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     // dont want left focus events
     if (event === this.elasticQuery && this.searchOptions.liveSearch) {
       // reset page when we change query
-      this.elasticQuery.from = 0;
+      this.elasticQuery.elasticSearchQuery.from = 0;
       this.searchQueue$.next();
     }
   }
@@ -250,7 +250,9 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
 
   removeConstraint(index) {
     this.constraintList.splice(index, 1);
+    this.changeDetectorRef.detectChanges();
     this.checkMinimumMatch();
+    this.searchService.nextElasticQuery(this.elasticQuery);
   }
 
   isFactNameConstraint(constraintType: Constraint): constraintType is FactConstraint {
@@ -296,7 +298,8 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     }
     this.updateFieldsToHighlight(this.constraintList);
     this.checkMinimumMatch();
-    this.changeDetectorRef.detectChanges();
+    this.changeDetectorRef.detectChanges(); // dont use markforcheck because we need updates immediately, so we can update elasticquery
+    this.searchService.nextElasticQuery(this.elasticQuery);
     // since we changed the object reference of constraintList update the subject, for example this is used in fact-chips to create constraints
     this.searchService.nextAdvancedSearchConstraints$(this.constraintList);
   }

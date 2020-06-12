@@ -1,19 +1,9 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  EventEmitter,
-  OnDestroy,
-  OnInit,
-  Output, Renderer2,
-  ViewChild
-} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {SearcherComponentService} from '../services/searcher-component.service';
 import {Search, SearchOptions} from '../../shared/types/Search';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatSort, Sort} from '@angular/material/sort';
-import {MatTable, MatTableDataSource} from '@angular/material/table';
+import {MatTableDataSource} from '@angular/material/table';
 import {FormControl} from '@angular/forms';
 import {of, Subject} from 'rxjs';
 import {debounceTime, switchMap, takeUntil} from 'rxjs/operators';
@@ -43,11 +33,11 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @Output() drawerToggle = new EventEmitter<boolean>();
+  searchQueue$: Subject<void> = new Subject<void>();
   private destroy$: Subject<boolean> = new Subject();
   private currentElasticQuery: ElasticsearchQuery;
   private projectFields: ProjectIndex[];
   private currentProject: Project;
-  searchQueue$: Subject<void> = new Subject<void>();
 
   constructor(public searchService: SearcherComponentService, private projectStore: ProjectStore,
               private searcherService: SearcherService,
@@ -106,21 +96,19 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
         SearcherTableComponent.totalCountLength = resp.searchContent.count;
         this.paginatorLength = SearcherTableComponent.totalCountLength > 10000 ? 10000 : SearcherTableComponent.totalCountLength;
         this.tableData.data = resp.searchContent.results;
-        if (this.currentElasticQuery) {
-          this.paginator.pageIndex = this.currentElasticQuery.from / this.currentElasticQuery.size;
+        this.currentElasticQuery = resp.elasticsearchQuery;
+        if (this.currentElasticQuery.elasticSearchQuery) {
+          // sync up table paginator and backend paginator
+          this.paginator.pageIndex = this.currentElasticQuery.elasticSearchQuery.from / this.currentElasticQuery.elasticSearchQuery.size;
         }
 
       }
     });
 
-    this.searchService.getElasticQuery().pipe(takeUntil(this.destroy$)).subscribe(resp => {
-      if (resp) {
-        this.currentElasticQuery = resp;
-      }
-    });
     this.sort.sortChange.pipe(takeUntil(this.destroy$)).subscribe(x => {
       if (x && x.active && this.projectFields) {
-        this.currentElasticQuery.sort = this.buildSortQuery(x);
+        this.currentElasticQuery.elasticSearchQuery.sort = this.buildSortQuery(x);
+        this.currentElasticQuery.elasticSearchQuery.from = 0; // paginator reset is done in getSearch response
         this.searchQueue$.next();
       }
     });
@@ -138,28 +126,9 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
       (result: { count: number, results: { highlight: any, doc: any }[] } | HttpErrorResponse) => {
         this.searchService.setIsLoading(false);
         if (result && !(result instanceof HttpErrorResponse)) {
-          this.searchService.nextSearch(new Search(result, this.searchOptions));
+          this.searchService.nextSearch(new Search(result, this.currentElasticQuery, this.searchOptions));
         }
       });
-  }
-
-  private setColumnsToDisplay(): void {
-    const currentProjectState = this.localStorage.getProjectState(this.currentProject);
-    if (currentProjectState?.searcher?.selectedFields && currentProjectState.searcher.selectedFields.length >= 1) {
-      let fieldsExist = true;
-      for (const field of currentProjectState.searcher.selectedFields) {
-        if (!this.displayedColumns.includes(field)) {
-          fieldsExist = false;
-        }
-      }
-      if (fieldsExist) {
-        this.columnsToDisplay = currentProjectState.searcher.selectedFields;
-        this.columnFormControl.setValue(this.columnsToDisplay);
-        return;
-      }
-    }
-    this.columnsToDisplay = this.displayedColumns;
-    this.columnFormControl.setValue(this.columnsToDisplay);
   }
 
   buildSortQuery(sort: Sort): any {
@@ -183,8 +152,8 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
 
   pageChange(event: PageEvent) {
     if (this.currentElasticQuery) {
-      this.currentElasticQuery.size = event.pageSize;
-      this.currentElasticQuery.from = event.pageIndex * event.pageSize;
+      this.currentElasticQuery.elasticSearchQuery.size = event.pageSize;
+      this.currentElasticQuery.elasticSearchQuery.from = event.pageIndex * event.pageSize;
       this.searchQueue$.next();
     }
     const state = this.localStorage.getProjectState(this.currentProject);
@@ -232,6 +201,25 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
 
   trackByTableData(index, val) {
     return val.doc;
+  }
+
+  private setColumnsToDisplay(): void {
+    const currentProjectState = this.localStorage.getProjectState(this.currentProject);
+    if (currentProjectState?.searcher?.selectedFields && currentProjectState.searcher.selectedFields.length >= 1) {
+      let fieldsExist = true;
+      for (const field of currentProjectState.searcher.selectedFields) {
+        if (!this.displayedColumns.includes(field)) {
+          fieldsExist = false;
+        }
+      }
+      if (fieldsExist) {
+        this.columnsToDisplay = currentProjectState.searcher.selectedFields;
+        this.columnFormControl.setValue(this.columnsToDisplay);
+        return;
+      }
+    }
+    this.columnsToDisplay = this.displayedColumns;
+    this.columnFormControl.setValue(this.columnsToDisplay);
   }
 
 }

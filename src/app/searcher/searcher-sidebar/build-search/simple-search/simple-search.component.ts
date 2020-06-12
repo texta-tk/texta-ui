@@ -51,7 +51,7 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
         this.currentProject = project;
         const currentProjectState = this.localStorage.getProjectState(project);
         if (currentProjectState?.searcher?.itemsPerPage) {
-          this.elasticSearchQuery.size = currentProjectState.searcher.itemsPerPage;
+          this.elasticSearchQuery.elasticSearchQuery.size = currentProjectState.searcher.itemsPerPage;
         }
       }
     });
@@ -75,7 +75,7 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
       })).subscribe((result: { count: number, results: { highlight: any, doc: any }[] } | HttpErrorResponse) => {
       this.searcherComponentService.setIsLoading(false);
       if (result && !(result instanceof HttpErrorResponse)) {
-        this.searcherComponentService.nextSearch(new Search(result, {
+        this.searcherComponentService.nextSearch(new Search(result, this.elasticSearchQuery, {
           liveSearch: true,
           onlyShowMatchingColumns: true,
           showShortVersion: this.showShortVersion,
