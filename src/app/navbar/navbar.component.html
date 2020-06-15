@@ -1,19 +1,19 @@
 <mat-toolbar color="primary">
   <mat-toolbar-row>
-    <a routerLinkActive="is-active" [routerLink]="['']" [routerLinkActiveOptions]="{exact:true}">
-      <button mat-button class="nav-button">
+    <a [routerLinkActiveOptions]="{exact:true}" [routerLink]="['']" routerLinkActive="is-active">
+      <button class="nav-button" mat-button>
         <mat-icon class="margin-right">home</mat-icon>
         Projects
       </button>
     </a>
-    <a routerLinkActive="is-active" [routerLink]="['searcher']" data-cy="appNavbarSearcher">
-      <button mat-button class="nav-button">
+    <a [routerLink]="['searcher']" data-cy="appNavbarSearcher" routerLinkActive="is-active">
+      <button class="nav-button" mat-button>
         <mat-icon class="margin-right">search</mat-icon>
         Search
       </button>
     </a>
-    <a routerLinkActive="is-active" [routerLink]="['lexicon-miner']">
-      <button mat-button class="nav-button">
+    <a [routerLink]="['lexicon-miner']" routerLinkActive="is-active">
+      <button class="nav-button" mat-button>
         <mat-icon class="margin-right">library_books</mat-icon>
         Lexicons
         <ng-container *ngIf="projectResourceCounts?.num_lexicons">({{projectResourceCounts?.num_lexicons}})
@@ -21,9 +21,9 @@
       </button>
     </a>
     <a
-      [ngClass]="{'is-active': ['/tagger-groups', '/taggers', '/embeddings', '/neurotaggers', '/clustering'].includes(router.url)}"
-      class="pointer" [matMenuTriggerFor]="models">
-      <button mat-button class="nav-button" data-cy="appNavbarModels">
+      [matMenuTriggerFor]="models"
+      [ngClass]="{'is-active': ['/tagger-groups', '/taggers', '/embeddings', '/neurotaggers', '/clustering'].includes(router.url)}" class="pointer">
+      <button class="nav-button" data-cy="appNavbarModels" mat-button>
         <mat-icon class="margin-right">storage</mat-icon>
         Models
         <ng-container *ngIf="projectResourceCounts">
@@ -36,9 +36,9 @@
         <mat-icon>arrow_drop_down</mat-icon>
       </button>
     </a>
-    <a [ngClass]="{'is-active': ['/reindexer', '/dataset-importer'].includes(router.url)}"
-       class="pointer" [matMenuTriggerFor]="tools">
-      <button mat-button class="nav-button">
+    <a [matMenuTriggerFor]="tools"
+       [ngClass]="{'is-active': ['/reindexer', '/dataset-importer'].includes(router.url)}" class="pointer">
+      <button class="nav-button" mat-button>
         <mat-icon class="margin-right">build</mat-icon>
         Tools
         <mat-icon>arrow_drop_down</mat-icon>
@@ -46,74 +46,76 @@
     </a>
 
     <mat-menu #models="matMenu">
-      <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['taggers']"
-         data-cy="appNavbarModelMenuTaggers">Taggers <span
+      <a [routerLink]="['taggers']" data-cy="appNavbarModelMenuTaggers" mat-menu-item
+         routerLinkActive="is-active-menu">Taggers <span
         *ngIf="projectResourceCounts?.num_taggers">({{projectResourceCounts?.num_taggers}})</span></a>
-      <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['tagger-groups']"
-         data-cy="appNavbarModelMenuTaggerGroups">Tagger Groups <span
+      <a [routerLink]="['tagger-groups']" data-cy="appNavbarModelMenuTaggerGroups" mat-menu-item
+         routerLinkActive="is-active-menu">Tagger Groups <span
         *ngIf="projectResourceCounts?.num_tagger_groups">({{projectResourceCounts?.num_tagger_groups}})</span></a>
-      <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['torchtaggers']"
-         data-cy="appNavbarModelMenuTorchTaggers">TorchTaggers <span
+      <a [routerLink]="['torchtaggers']" data-cy="appNavbarModelMenuTorchTaggers" mat-menu-item
+         routerLinkActive="is-active-menu">TorchTaggers <span
         *ngIf="projectResourceCounts?.num_torchtaggers">({{projectResourceCounts?.num_torchtaggers}})</span></a>
-      <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['embeddings']"
-         data-cy="appNavbarModelMenuEmbeddings">Embeddings <span
+      <a [routerLink]="['embeddings']" data-cy="appNavbarModelMenuEmbeddings" mat-menu-item
+         routerLinkActive="is-active-menu">Embeddings <span
         *ngIf="projectResourceCounts?.num_embeddings">({{projectResourceCounts?.num_embeddings}})</span></a>
-      <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['clustering']"
-         data-cy="appNavbarModelMenuClusters">Clustering <span
+      <a [routerLink]="['clustering']" data-cy="appNavbarModelMenuClusters" mat-menu-item
+         routerLinkActive="is-active-menu">Clustering <span
         *ngIf="projectResourceCounts?.num_clusterings">({{projectResourceCounts?.num_clusterings}})</span></a>
     </mat-menu>
 
     <mat-menu #tools="matMenu">
-      <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['reindexer']">Reindexer</a>
-      <a mat-menu-item routerLinkActive="is-active-menu" [routerLink]="['dataset-importer']">Dataset Importer</a>
+      <a [routerLink]="['reindexer']" mat-menu-item routerLinkActive="is-active-menu">Reindexer</a>
+      <a [routerLink]="['dataset-importer']" mat-menu-item routerLinkActive="is-active-menu">Dataset Importer</a>
     </mat-menu>
 
-    <div class="flex-item-right login" *ngIf="!user">
-      <button mat-stroked-button class="nav-button" (click)="registerDialog()" data-cy="appNavbarRegister">REGISTER
+    <div *ngIf="!user" class="flex-item-right login">
+      <button (click)="registerDialog()" class="nav-button" data-cy="appNavbarRegister" mat-stroked-button>REGISTER
       </button>
-      <button mat-stroked-button class="nav-button" id="loginButton" (click)="loginDialog()">LOG IN</button>
+      <button (click)="loginDialog()" class="nav-button" id="loginButton" mat-stroked-button>LOG IN</button>
     </div>
 
 
-    <div class="flex-item-right flex-row user-name" *ngIf="user" fxLayoutAlign="center center">
-      <mat-form-field class="project-select" *ngIf="projectFields">
-        <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
+    <div *ngIf="user" class="flex-item-right flex-row user-name" fxLayoutAlign="center center">
+      <mat-form-field *ngIf="projectFields" class="project-select">
+        <mat-select (openedChange)="indexSelectionOpenedChange($event)" [compareWith]="compareIndices"
+                    [disableOptionCentering]="true"
+                    [formControl]="projectFieldsControl" [placeholder]="projectFields.length < 1 ? 'No indices' : ''"
                     data-cy="appNavbarProjectFieldsSelect"
-                    [formControl]="projectFieldsControl" [compareWith]="compareIndices"
-                    [placeholder]="projectFields.length < 1 ? 'No indices' : ''"
-                    (openedChange)="indexSelectionOpenedChange($event)"
-                    multiple>
+                    multiple
+                    panelClass="select-panel-reveal-input">
           <app-mat-option-select-all></app-mat-option-select-all>
           <mat-option *ngFor="let item of projectFields" [value]="item">
             {{item.index}}
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field class="project-select">
-        <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
-                    data-cy="appNavbarProjectSelect" [compareWith]="compareProjects"
-                    [formControl]="projectControl" (selectionChange)="projectStore.setCurrentProject($event.value)"
-                    [placeholder]="projects.length < 1 ? 'No projects' : ''">
+      <mat-form-field class="project-select" floatLabel="never">
+        <mat-select (selectionChange)="projectStore.setCurrentProject($event.value)" [compareWith]="compareProjects"
+                    [disableOptionCentering]="true" [formControl]="projectControl"
+                    [placeholder]="currentProject ? currentProject.id+': '+currentProject.title : 'No projects'"
+                    data-cy="appNavbarProjectSelect"
+                    panelClass="select-panel-reveal-input">
           <mat-option *ngFor="let item of projects" [value]="item">
             {{item.id}}: {{item.title}}
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <button mat-icon-button (click)="edit(projectControl.value)" matTooltip="Edit project">
+      <button (click)="edit(projectControl.value)" mat-icon-button matTooltip="Edit project">
         <mat-icon aria-label="Edit Project">edit</mat-icon>
       </button>
       <div class="flex-row logout">
-        <button mat-button [matMenuTriggerFor]="menu" data-cy="appNavbarLoggedInUserMenu"><span>{{user.username}}
+        <button [matMenuTriggerFor]="menu" data-cy="appNavbarLoggedInUserMenu" mat-button><span>{{user.username}}
           <mat-icon>arrow_drop_down</mat-icon></span>
         </button>
         <mat-menu #menu="matMenu">
-          <a mat-menu-item data-cy="appNavbarUserMenuManagement" [routerLink]="['management']" *ngIf="user.is_superuser">
+          <a *ngIf="user.is_superuser" [routerLink]="['management']" data-cy="appNavbarUserMenuManagement"
+             mat-menu-item>
             <mat-icon inline="true">account_box</mat-icon>
             <span>Management </span> </a>
-          <a mat-menu-item [routerLink]="['settings']">
+          <a [routerLink]="['settings']" mat-menu-item>
             <mat-icon inline="true">settings</mat-icon>
             <span>Settings </span> </a>
-          <a mat-menu-item (click)="logout()" data-cy="appNavbarlogOutMenuItem">
+          <a (click)="logout()" data-cy="appNavbarlogOutMenuItem" mat-menu-item>
             <mat-icon inline="true">power_settings_new</mat-icon>
             <span>Log out</span> </a>
         </mat-menu>
