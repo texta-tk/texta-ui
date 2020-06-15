@@ -52,22 +52,24 @@ export class HighlightComponent {
 
   @Input() set highlightConfig(highlightConfig: HighlightConfig) {
     this._highlightConfig = highlightConfig;
-    // slice original text for charlimit bounds
-    const edited = highlightConfig;
-    edited.data = JSON.parse(JSON.stringify(highlightConfig.data));
-    if (edited.data[edited.currentColumn] !== null && edited.data[edited.currentColumn] !== undefined
-      && (isNaN(Number(edited.data[edited.currentColumn])))
-      && edited.charLimit && edited.charLimit !== 0) {
+    if (highlightConfig.charLimit && highlightConfig.charLimit !== 0 &&
+      highlightConfig.data[highlightConfig.currentColumn] !== null && highlightConfig.data[highlightConfig.currentColumn] !== undefined
+      && (isNaN(Number(highlightConfig.data[highlightConfig.currentColumn])))) {
+
+      // slice original text for charlimit bounds, deep clone
+      const edited: any = (({ data, ...o }) => o)(highlightConfig);
+      edited.data = Object.assign({}, highlightConfig.data);
       if (edited.data[edited.currentColumn].length > edited.charLimit) {
         this.isTextLimited = true;
       }
       edited.data[edited.currentColumn] = edited.data[edited.currentColumn].slice(0, edited.charLimit);
+      this.makeHighlightArray(edited);
+    } else {
+      this.makeHighlightArray(highlightConfig);
     }
-
-    this.makeHighlightArray(edited);
   }
 
-  static generateColorsForFacts(facts: {fact: string}[]): Map<string, string> {
+  static generateColorsForFacts(facts: { fact: string }[]): Map<string, string> {
     const colorPallette = this.generateRandomColors(facts.length);
     facts.forEach(fact => {
       if (!HighlightComponent.colors.has(fact.fact) && colorPallette) {
@@ -118,7 +120,9 @@ export class HighlightComponent {
 
   public toggleTextLimit() {
     if (window.getSelection()?.type !== 'Range') {
-      const edited = JSON.parse(JSON.stringify(this._highlightConfig));
+
+      const edited: any = (({ data, ...o }) => o)(this._highlightConfig);
+      edited.data = Object.assign({}, this._highlightConfig.data);
       if (edited.charLimit !== 0 && edited && !this.isTextLimited) {
         edited.data[edited.currentColumn] = edited.data[edited.currentColumn].slice(0, edited.charLimit);
       }
