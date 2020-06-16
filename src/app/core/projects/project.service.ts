@@ -4,9 +4,7 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../util/log.service';
 import {Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
-import {Health, Project, ProjectFact, ProjectIndex, ProjectResourceCounts} from '../../shared/types/Project';
-import {Index} from '../../shared/types/Index';
-import {ResultsWrapper} from '../../shared/types/Generic';
+import {Project, ProjectFact, ProjectIndex, ProjectResourceCounts} from '../../shared/types/Project';
 
 @Injectable({
   providedIn: 'root'
@@ -26,7 +24,7 @@ export class ProjectService {
 
   createProject(body: {}): Observable<Project | HttpErrorResponse> {
     return this.http.post<Project>(
-      this.apiUrl + '/projects/',
+      `${this.apiUrl}/projects/`,
       body
     ).pipe(
       tap(e => this.logService.logStatus(e, 'createProject')),
@@ -35,7 +33,7 @@ export class ProjectService {
 
   editProject(body: {}, projectId): Observable<Project | HttpErrorResponse> {
     return this.http.put<Project>(
-      this.apiUrl + '/projects/' + projectId + '/',
+      `${this.apiUrl}/projects/${projectId}/`,
       body
     ).pipe(
       tap(e => this.logService.logStatus(e, 'createProject')),
@@ -44,7 +42,7 @@ export class ProjectService {
 
   getProjectById(id: number): Observable<Project | HttpErrorResponse> {
     return this.http.get<Project>(
-      this.apiUrl + '/projects/' + id,
+      `${this.apiUrl}/projects/${id}`,
     ).pipe(
       tap(e => this.logService.logStatus(e, 'getProject')),
       catchError(this.logService.handleError<Project>('getProject')));
@@ -52,7 +50,7 @@ export class ProjectService {
 
   getProjectIndices(id: number): Observable<ProjectIndex[] | HttpErrorResponse> {
     return this.http.get<ProjectIndex[]>(
-      this.apiUrl + '/projects/' + id + '/get_fields/',
+      `${this.apiUrl}/projects/${id}/get_fields/`,
     ).pipe(
       tap(e => this.logService.logStatus(e, 'get Project Fields')),
       catchError(this.logService.handleError<ProjectIndex[]>('getProjectIndices')));
@@ -65,7 +63,7 @@ export class ProjectService {
       fact_name: factName
     };
     return this.http.post<string[]>(
-      this.apiUrl + '/projects/' + id + '/autocomplete_fact_values/', body
+      `${this.apiUrl}/projects/${id}/autocomplete_fact_values/`, body
     ).pipe(
       tap(e => this.logService.logStatus(e, 'projectFactValueAutoComplete')),
       catchError(this.logService.handleError<string[]>('projectFactValueAutoComplete')));
@@ -73,7 +71,7 @@ export class ProjectService {
 
   getProjectFacts(id: number, indices: any): Observable<ProjectFact[] | HttpErrorResponse> {
     return this.http.post<ProjectFact[]>(
-      this.apiUrl + '/projects/' + id + '/get_facts/', {indices, output_type: false}
+      `${this.apiUrl}/projects/${id}/get_facts/`, {indices, output_type: false}
     ).pipe(
       tap(e => this.logService.logStatus(e, 'get Project Facts')),
       catchError(this.logService.handleError<ProjectFact[]>('getProjectFacts')));
@@ -85,48 +83,6 @@ export class ProjectService {
       catchError(this.logService.handleError<ProjectResourceCounts>('getResourceCounts')));
   }
 
-  getHealth(): Observable<Health | HttpErrorResponse> {
-    return this.http.get<Health>(`${this.apiUrl}/health/`).pipe(
-      tap(e => this.logService.logStatus(e, 'get Health')),
-      catchError(this.logService.handleError<Health>('getHealth')));
-  }
-
-  getIndices(): Observable<string[] | HttpErrorResponse> {
-    return this.http.get<string[]>(`${this.apiUrl}/get_indices/`).pipe(
-      tap(e => this.logService.logStatus(e, 'get Indices')),
-      catchError(this.logService.handleError<string[]>('getIndices')));
-  }
-
-  getElasticIndices(params = ''): Observable<Index[] | HttpErrorResponse> {
-    return this.http.get<Index[]>(`${this.apiUrl}/index/?${params}`).pipe(
-      tap(e => this.logService.logStatus(e, 'getElasticIndices')),
-      catchError(this.logService.handleError<Index[]>('getElasticIndices')));
-  }
-
-  deleteElasticIndex(indexId: number): Observable<ResultsWrapper<Index> | HttpErrorResponse> {
-    return this.http.delete<ResultsWrapper<Index>>(`${this.apiUrl}/index/${indexId}/`).pipe(
-      tap(e => this.logService.logStatus(e, 'deleteElasticIndex')),
-      catchError(this.logService.handleError<ResultsWrapper<Index>>('deleteElasticIndex')));
-  }
-
-  toggleElasticIndexOpenState(index: Index): Observable<{ message: string } | HttpErrorResponse> {
-    const endpoint = index.is_open ? 'close_index' : 'open_index';
-    return this.http.patch<{ message: string }>(`${this.apiUrl}/index/${index.id}/${endpoint}/`, {}).pipe(
-      tap(e => this.logService.logStatus(e, 'editElasticIndex')),
-      catchError(this.logService.handleError<{ message: string }>('editElasticIndex')));
-  }
-
-  getCoreVariables(): Observable<any[] | HttpErrorResponse> {
-    return this.http.get<any[]>(`${this.apiUrl}/core_variables/`).pipe(
-      tap(e => this.logService.logStatus(e, 'getCoreVariables')),
-      catchError(this.logService.handleError<any[]>('getCoreVariables')));
-  }
-
-  patchCoreVariables(body, url): Observable<{ message: string } | HttpErrorResponse> {
-    return this.http.patch<{ message: string }>(url, body).pipe(
-      tap(e => this.logService.logStatus(e, 'patchCoreVariables')),
-      catchError(this.logService.handleError<{ message: string }>('patchCoreVariables')));
-  }
   deleteProject(id: number) {
     return this.http.delete<unknown>(`${this.apiUrl}/projects/${id}/`).pipe(
       tap(e => this.logService.logStatus(e, 'delete Project')),

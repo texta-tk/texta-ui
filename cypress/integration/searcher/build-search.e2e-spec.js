@@ -19,6 +19,7 @@ describe('searching and search related activities should be working correctly', 
       cy.wait('@getProjectIndices');
       cy.get('[data-cy=appNavbarProjectSelect]').click();
       cy.get('mat-option').contains('integration_test_project').click();
+      cy.wait('@getProjectIndices');
     });
 
   });
@@ -54,13 +55,13 @@ describe('searching and search related activities should be working correctly', 
   });
   it('should work when building various queries with simple and advanced search', function () {
     // simple
-    cy.get('app-simple-search input').click().type('tere');
+    cy.get('app-simple-search input').click().type('reisija');
     cy.wait('@searcherQuery');
     cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted div').should('be.visible');
 
     // date
     cy.get('[data-cy=appSearcherSidebarBuildSearchRadio] mat-radio-button:not(:first())').should('be.visible').click();
-    cy.get('app-advanced-search > .mat-form-field ').click();
+    cy.get('[data-cy=appSearcherSideBarBuildSearchConstraintSelect]').click();
     cy.get('mat-option').contains('@timestamp').scrollIntoView().click();
     cy.closeCurrentCdkOverlay();
     cy.get('[data-cy=appSearcherSideBarBuildSearchDateConstraint] mat-form-field:first()')
@@ -74,12 +75,33 @@ describe('searching and search related activities should be working correctly', 
     cy.wait('@searcherQuery');
     cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted div').should('be.visible');
 
-    // fact values
+    // fact-name
+    cy.get('[data-cy=appSearcherSideBarBuildSearchConstraintSelect]').click();
+    cy.get('mat-option').contains('texta_facts[fact_name]').scrollIntoView().click();
+    cy.closeCurrentCdkOverlay();
+
+    cy.get('[data-cy=appSearcherSideBarBuildSearchFactNameOperator]').click();
+    cy.get('mat-option').contains('not').click();
+    cy.wait('@searcherQuery');
+    cy.get('[data-cy=appSearcherSideBarBuildSearchFactNameName]').click();
+    cy.get('mat-option').contains('TEEMA').click();
+    cy.closeCurrentCdkOverlay();
+    cy.wait('@searcherQuery');
+    cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted div').should('be.visible');
+
     cy.get('[data-cy=appSearcherTableColumnSelect]').should('be.visible').click();
     cy.get('[data-cy=matOptionSelectAll]').should('be.visible').click();
     cy.get('mat-option').contains('texta_facts').click();
     cy.closeCurrentCdkOverlay();
-    cy.wait(1000);
+
+    cy.get('.cdk-column-texta_facts > app-texta-facts-chips > span').should('not.exist');
+
+    cy.get('[data-cy=appSearcherSideBarBuildSearchFactNameOperator]').click();
+    cy.get('mat-option').contains('and').click();
+    cy.wait('@searcherQuery');
+    cy.get('.cdk-column-texta_facts > app-texta-facts-chips > span').should('exist');
+
+    // fact values
     cy.get(':nth-child(1) > .cdk-column-texta_facts > app-texta-facts-chips > span').scrollIntoView().click();
     cy.get('[data-cy=appSearcherSideBarBuildSearchFactValueInputGroupOperator]').should('be.visible').click();
     cy.get('mat-option').contains('not').click();
@@ -91,28 +113,15 @@ describe('searching and search related activities should be working correctly', 
     cy.get('mat-option').contains('is').click();
     cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
     cy.wait('@searcherQuery');
+    cy.wait(1000); // texta facts are async rendered
     cy.get('.cdk-column-texta_facts > app-texta-facts-chips > span').contains('foo').should('exist');
 
     cy.get('[data-cy=appSearcherSideBarBuildSearchCloseConstraint]').click({multiple: true});
 
-    // fact-name
-    cy.get('[data-cy=appSearcherSidebarBuildSearchRadio] mat-radio-button:not(:first())').should('be.visible').click();
-    cy.get('app-advanced-search > .mat-form-field ').click();
-    cy.get('mat-option').contains('texta_facts[fact_name]').scrollIntoView().click();
-    cy.closeCurrentCdkOverlay();
-    cy.get('[data-cy=appSearcherSideBarBuildSearchFactNameName]').click();
-    cy.get('mat-option').contains('TEEMA').click();
-    cy.closeCurrentCdkOverlay();
-    cy.wait('@searcherQuery');
-    cy.get('.cdk-column-texta_facts > app-texta-facts-chips > span').should('exist');
-
-    cy.get('[data-cy=appSearcherSideBarBuildSearchFactNameOperator]').click();
-    cy.get('mat-option').contains('not').click();
-    cy.wait('@searcherQuery');
-    cy.get('.cdk-column-texta_facts > app-texta-facts-chips > span').should('not.exist');
     // todo test appSearcherSideBarBuildSearchCloseConstraint
   });
   it('saved search should be working', function () {
+    cy.closeCurrentCdkOverlay();
     cy.get('[data-cy=appSearcherSidebarSavedSearches] .cdk-column-name:nth(1)').should('be.visible').click('left');
     cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
     cy.wait('@searcherQuery');

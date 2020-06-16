@@ -13,6 +13,7 @@ import {UserStore} from '../../../core/users/user.store';
 import {of, ReplaySubject, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
+import {CoreService} from '../../../core/core.service';
 
 @Component({
   selector: 'app-create-embedding-dialog',
@@ -41,6 +42,7 @@ export class CreateProjectDialogComponent implements OnInit, OnDestroy {
               private projectService: ProjectService,
               private userService: UserService,
               private userStore: UserStore,
+              private coreService: CoreService,
               private logService: LogService) {
   }
 
@@ -50,7 +52,7 @@ export class CreateProjectDialogComponent implements OnInit, OnDestroy {
         this.users = UtilityFunctions.sortByStringProperty(resp, (x => x.username));
       }
     });
-    this.projectService.getIndices().subscribe((resp: string[] | HttpErrorResponse) => {
+    this.coreService.getIndices().subscribe((resp: string[] | HttpErrorResponse) => {
       if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       } else {

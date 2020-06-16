@@ -51,7 +51,7 @@ describe('clustering should work', function () {
     });
     // wait til clustering is done
     cy.get('.mat-header-row > .cdk-column-id').should('be.visible').then(bb => {
-      cy.wrap([0, 0, 0]).each(y => { // hack to wait for task to complete
+      cy.wrap([0, 0, 0, 0, 0]).each(y => { // hack to wait for task to complete
         cy.wrap(bb).click();
         return cy.wait('@getClustering').then((x) => {
           if (x?.response?.body?.results[0]?.task?.status === 'completed') {

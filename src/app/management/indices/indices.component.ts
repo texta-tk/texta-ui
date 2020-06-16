@@ -7,12 +7,11 @@ import {MatPaginator} from '@angular/material/paginator';
 import {UserService} from '../../core/users/user.service';
 import {LogService} from '../../core/util/log.service';
 import {MatDialog} from '@angular/material/dialog';
-import {ProjectStore} from '../../core/projects/project.store';
 import {debounceTime, distinctUntilChanged, takeUntil} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {Index} from '../../shared/types/Index';
-import {ProjectService} from '../../core/projects/project.service';
+import {CoreService} from '../../core/core.service';
 
 
 @Component({
@@ -36,8 +35,7 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(private userService: UserService,
               private logService: LogService,
               public dialog: MatDialog,
-              private projectStore: ProjectStore,
-              private projectService: ProjectService) {
+              private coreService: CoreService) {
   }
 
   ngOnInit(): void {
@@ -54,7 +52,7 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.tableData.paginator = this.paginator;
     this.tableData.filterPredicate = this.customFilterPredicate();
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
-    this.projectService.getElasticIndices().subscribe(resp => {
+    this.coreService.getElasticIndices().subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.resultsLength = resp.length;
         this.tableData.data = resp;
@@ -64,7 +62,7 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   toggleIndexState(row: Index) {
-    this.projectService.toggleElasticIndexOpenState(row).subscribe((resp) => {
+    this.coreService.toggleElasticIndexOpenState(row).subscribe((resp) => {
       if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 2000);
       }
@@ -81,7 +79,7 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.projectService.deleteElasticIndex(index.id).subscribe(x => {
+        this.coreService.deleteElasticIndex(index.id).subscribe(x => {
           if (!(x instanceof HttpErrorResponse)) {
             this.tableData.data = this.tableData.data.filter(y => y.id !== index.id);
           }

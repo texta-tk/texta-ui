@@ -3,6 +3,7 @@ import {ProjectService} from '../../core/projects/project.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../../core/util/log.service';
 import {UtilityFunctions} from '../../shared/UtilityFunctions';
+import {CoreService} from '../../core/core.service';
 
 class CoreVariable {
   constructor(public value: string, public env_value: string, public url: string, public name: string) {
@@ -18,11 +19,11 @@ export class CoreVariablesComponent implements OnInit {
   coreVariables: CoreVariable[];
   coreVariablesOriginal: CoreVariable[];
 
-  constructor(private projectService: ProjectService, private logService: LogService) {
+  constructor(private coreService: CoreService, private logService: LogService) {
   }
 
   ngOnInit(): void {
-    this.projectService.getCoreVariables().subscribe(x => {
+    this.coreService.getCoreVariables().subscribe(x => {
       if (x && !(x instanceof HttpErrorResponse)) {
         this.coreVariables = UtilityFunctions.sortByStringProperty(x, (y => y.name));
         this.coreVariablesOriginal = JSON.parse(JSON.stringify(x));
@@ -42,7 +43,7 @@ export class CoreVariablesComponent implements OnInit {
       formData.append('name', x.name);
       formData.append('value', x.value);
 
-      this.projectService.patchCoreVariables(formData, x.url).subscribe(x => {
+      this.coreService.patchCoreVariables(formData, x.url).subscribe(x => {
         if (x && !(x instanceof HttpErrorResponse)) {
           this.logService.snackBarMessage(`Updated core variables`, 2000);
         } else if (x) {

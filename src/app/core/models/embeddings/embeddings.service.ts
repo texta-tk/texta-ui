@@ -28,7 +28,7 @@ export class EmbeddingsService {
 
   createEmbedding(body, projectId): Observable<Embedding | HttpErrorResponse> {
     return this.http.post<Embedding>(
-      this.apiUrl + '/projects/' + projectId + '/embeddings/', body
+      `${this.apiUrl}/projects/${projectId}/embeddings/`, body
     ).pipe(
       tap(e => this.logService.logStatus(e, 'getEmbeddings')),
       catchError(this.logService.handleError<Embedding>('getEmbeddings')));
@@ -44,7 +44,7 @@ export class EmbeddingsService {
 
   predict(body, projectId, embeddingId): Observable<EmbeddingPrediction[] | HttpErrorResponse> {
     return this.http.post<EmbeddingPrediction[]>(
-      this.apiUrl + '/projects/' + projectId + '/embeddings/' + embeddingId + '/predict_similar/', body
+      `${this.apiUrl}/projects/${projectId}/embeddings/${embeddingId}/predict_similar/`, body
     ).pipe(
       tap(e => this.logService.logStatus(e, 'predict')),
       catchError(this.logService.handleError<EmbeddingPrediction[]>('predict')));

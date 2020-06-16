@@ -6,6 +6,7 @@ import {UserStore} from '../core/users/user.store';
 import {UserProfile} from '../shared/types/UserProfile';
 import {Subscription} from 'rxjs';
 import * as projectPackage from '../../../package.json';
+import {CoreService} from '../core/core.service';
 
 
 @Component({
@@ -20,14 +21,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     user: UserProfile;
     frontVersion = projectPackage.version;
 
-    constructor(private projectService: ProjectService, private userStore: UserStore) {
+    constructor(private coreService: CoreService, private userStore: UserStore) {
 
     }
 
     ngOnInit() {
         this.userSub = this.userStore.getCurrentUser().subscribe((user: UserProfile) => {
             this.user = user;
-            this.projectService.getHealth().subscribe((resp: Health | HttpErrorResponse) => {
+            this.coreService.getHealth().subscribe((resp: Health | HttpErrorResponse) => {
                 if (resp && !(resp instanceof HttpErrorResponse)) {
                     this.health = resp;
                     this.unreachable = false;

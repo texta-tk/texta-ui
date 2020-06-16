@@ -12,6 +12,7 @@ import {mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
 import {from, of, ReplaySubject, Subject} from 'rxjs';
 import {MatSelect} from '@angular/material/select';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
+import {CoreService} from '../../../core/core.service';
 
 @Component({
   selector: 'app-edit-project-dialog',
@@ -39,6 +40,7 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
               @Inject(MAT_DIALOG_DATA) public data: Project,
               private userService: UserService,
               private projectStore: ProjectStore,
+              private coreService: CoreService,
               private projectService: ProjectService) {
     const indices = this.projectForm.get('indicesFormControl');
     if (indices) {
@@ -66,7 +68,7 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.projectService.getIndices().subscribe((resp: string[] | HttpErrorResponse) => {
+    this.coreService.getIndices().subscribe((resp: string[] | HttpErrorResponse) => {
       if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       } else {

@@ -35,7 +35,7 @@ export class ClusterService {
 
   createCluster(body, projectId): Observable<Cluster | HttpErrorResponse> {
     return this.http.post<Cluster>(
-      this.apiUrl + '/projects/' + projectId + '/clustering/', body
+      `${this.apiUrl}/projects/${projectId}/clustering/`, body
     ).pipe(
       tap(e => this.logService.logStatus(e, 'createCluster')),
       catchError(this.logService.handleError<Cluster>('createCluster')));
@@ -76,12 +76,14 @@ export class ClusterService {
       tap(e => this.logService.logStatus(e, 'addDocumentsToCluster')),
       catchError(this.logService.handleError<unknown>('addDocumentsToCluster')));
   }
+
   expandCluster(projectId: number, clusteringId: number, clusterId: number, body) {
     return this.http.post<unknown>
     (`${this.apiUrl}/projects/${projectId}/clustering/${clusteringId}/clusters/${clusterId}/expand_cluster/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'expandCluster')),
       catchError(this.logService.handleError<unknown>('expandCluster')));
   }
+
   tagCluster(projectId: number, clusteringId: number, clusterId: number, body) {
     return this.http.post<unknown>
     (`${this.apiUrl}/projects/${projectId}/clustering/${clusteringId}/clusters/${clusterId}/tag_cluster/`, body).pipe(
@@ -118,7 +120,7 @@ export class ClusterService {
 
   getClusterOptions(projectId: number): Observable<ClusterOptions | HttpErrorResponse> {
     return this.http.options<ClusterOptions>(
-      this.apiUrl + '/projects/' + projectId + '/clustering/'
+      `${this.apiUrl}/projects/${projectId}/clustering/`
     ).pipe(
       tap(e => this.logService.logStatus(e, 'getClusterOptions')),
       catchError(this.logService.handleError<ClusterOptions>('getClusterOptions')));
