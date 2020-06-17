@@ -1,6 +1,6 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {LiveErrorStateMatcher} from '../../../CustomerErrorStateMatchers';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LocalStorageService} from '../../../../core/util/local-storage.service';
@@ -11,6 +11,7 @@ import {mergeMap} from 'rxjs/operators';
 import {UserProfile} from '../../../types/UserProfile';
 import {Router} from '@angular/router';
 import {UserAuth} from '../../../types/UserAuth';
+import {RegistrationDialogComponent} from '../registration/registration-dialog.component';
 
 
 @Component({
@@ -39,6 +40,7 @@ export class LoginDialogComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private localStorageService: LocalStorageService,
     private userStore: UserStore,
+    public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: { returnUrl: string },
     private router: Router) {
   }
@@ -48,6 +50,14 @@ export class LoginDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+  }
+
+  registerDialog() {
+    this.dialogRef.close();
+    this.dialog.open(RegistrationDialogComponent, {
+      maxHeight: '450px',
+      width: '400px',
+    });
   }
 
   onSubmit(formData) {

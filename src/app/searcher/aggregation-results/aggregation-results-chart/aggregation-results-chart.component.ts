@@ -35,6 +35,7 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
         },
         hoverdistance: -1,
         yaxis: {title: {text: ''}},
+        legend: {orientation: 'h'}
       },
     };
     if (val.dateData) { // regular plots, saved searches and date->term structure plots
@@ -107,8 +108,8 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
           overlayX: 'start',
           overlayY: 'bottom',
         }]);
-        positionStrategy.withDefaultOffsetY(-40);
-        positionStrategy.withDefaultOffsetX(40);
+        positionStrategy.withDefaultOffsetY(-30);
+        positionStrategy.withDefaultOffsetX(80);
 
         this.overlayRef = this.overlay.create({
           positionStrategy

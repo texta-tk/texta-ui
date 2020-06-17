@@ -1,11 +1,14 @@
-<h1 mat-dialog-title>Login</h1>
+<div fxLayout="row" fxLayoutAlign="space-between baseline"><h1  mat-dialog-title>Login</h1>
+  <div class="register-text pointer">or
+    <a (click)="registerDialog()">register</a></div>
+</div>
 <div class="dialog-content-wrapper" mat-dialog-content>
-  <form class="flex-col" [formGroup]="profileForm" (ngSubmit)="onSubmit(profileForm.value)">
+  <form (ngSubmit)="onSubmit(profileForm.value)" [formGroup]="profileForm" class="flex-col">
     <mat-form-field>
-      <input matInput placeholder="Username" autocomplete="username"
-             data-cy="appSharedLoginDialogUsername"
+      <input [errorStateMatcher]="matcher" autocomplete="username" data-cy="appSharedLoginDialogUsername"
              formControlName="usernameFormControl"
-             [errorStateMatcher]="matcher">
+             matInput
+             placeholder="Username">
 
       <mat-error *ngIf="profileForm.get('usernameFormControl')?.hasError('required')">
         Username is <strong>required</strong>
@@ -13,11 +16,11 @@
     </mat-form-field>
 
     <mat-form-field>
-      <input matInput placeholder="Enter your password" autocomplete="current-password"
+      <input [errorStateMatcher]="matcher" [type]="hide ? 'password' : 'text'" autocomplete="current-password"
              data-cy="appSharedLoginDialogPassword"
              formControlName="passwordFormControl"
-             [type]="hide ? 'password' : 'text'" [errorStateMatcher]="matcher">
-      <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+             matInput placeholder="Enter your password">
+      <mat-icon (click)="hide = !hide" matSuffix>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
       <mat-error *ngIf="profileForm.get('passwordFormControl')?.hasError('required')">
         Password is <strong>required</strong>
       </mat-error>
@@ -25,11 +28,13 @@
     <div class="flex-col">
       <div class="flex-row">
         <div class="flex-item-left">
-          <button type="button" data-cy="appSharedLoginDialogClose" class="flex-item-left" mat-button (click)="closeDialog()">No Thanks
+          <button (click)="closeDialog()" class="flex-item-left" data-cy="appSharedLoginDialogClose" mat-button
+                  type="button">No Thanks
           </button>
         </div>
         <div class="flex-item-right">
-          <button type="submit" data-cy="appSharedLoginDialogSubmit" [disabled]="!profileForm.valid || makingRequest" mat-button>Login
+          <button [disabled]="!profileForm.valid || makingRequest" data-cy="appSharedLoginDialogSubmit" mat-button
+                  type="submit">Login
           </button>
         </div>
       </div>
@@ -39,6 +44,6 @@
 
 </div>
 
-<mat-error class="center-text" *ngIf="loginError">
+<mat-error *ngIf="loginError" class="center-text">
   <small data-cy="appSharedLoginDialogLoginError">{{loginError}}</small>
 </mat-error>

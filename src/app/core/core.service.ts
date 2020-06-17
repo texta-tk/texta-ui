@@ -5,7 +5,7 @@ import {LogService} from './util/log.service';
 import {Observable} from 'rxjs';
 import {Health} from '../shared/types/Project';
 import {catchError, tap} from 'rxjs/operators';
-import {Index} from '../shared/types';
+import {Index} from '../shared/types/Index';
 import {ResultsWrapper} from '../shared/types/Generic';
 
 @Injectable({

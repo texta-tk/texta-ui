@@ -30,12 +30,12 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
   public isLoadingResults = false;
   public paginatorLength;
   public searchOptions: SearchOptions = {liveSearch: true};
+  public currentElasticQuery: ElasticsearchQuery;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @Output() drawerToggle = new EventEmitter<boolean>();
   searchQueue$: Subject<void> = new Subject<void>();
   private destroy$: Subject<boolean> = new Subject();
-  private currentElasticQuery: ElasticsearchQuery;
   private projectFields: ProjectIndex[];
   private currentProject: Project;
 

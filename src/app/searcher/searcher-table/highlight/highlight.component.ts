@@ -82,9 +82,9 @@ export class HighlightComponent {
 
   static generateRandomColors(numberOfRandomColors: number) {
     const output: string[] = [];
-    const max = 0xfff;
+    const max = 0xeee;
     for (let i = 0; i < numberOfRandomColors; i++) {
-      output.push('#' + (Math.round(Math.random() * (max - 0xf77)) + 0xf77).toString(16));
+      output.push(`hsla(${~~(360 * Math.random())},70%,70%,0.8)`);
     }
     return output;
   }
