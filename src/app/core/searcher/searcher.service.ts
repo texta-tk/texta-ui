@@ -3,14 +3,7 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../util/log.service';
 import {environment} from '../../../environments/environment';
 import {LocalStorageService} from '../util/local-storage.service';
-import {
-  Constraint,
-  DateConstraint,
-  ElasticsearchQueryStructure,
-  FactConstraint,
-  NumberConstraint,
-  TextConstraint
-} from '../../searcher/searcher-sidebar/build-search/Constraints';
+import {Constraint, ElasticsearchQueryStructure} from '../../searcher/searcher-sidebar/build-search/Constraints';
 import {catchError, tap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {SavedSearch} from '../../shared/types/SavedSearch';
@@ -62,4 +55,10 @@ export class SearcherService {
       catchError(this.logService.handleError<unknown>('bulkDeleteSavedSearches')));
   }
 
+  editSavedSearch(projectId: number, searchId: number, body): Observable<SavedSearch | HttpErrorResponse> {
+    return this.http.patch<SavedSearch | HttpErrorResponse>
+    (`${this.apiUrl}/projects/${projectId}/searches/${searchId}/`, body).pipe(
+      tap(e => this.logService.logStatus(e, 'editSavedSearch')),
+      catchError(this.logService.handleError<SavedSearch | HttpErrorResponse>('editSavedSearch')));
+  }
 }

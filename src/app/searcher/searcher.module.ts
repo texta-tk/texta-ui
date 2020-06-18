@@ -27,6 +27,7 @@ import {TextaFactsChipsComponent} from './searcher-table/texta-facts-chips/texta
 import {NumberConstraintsComponent} from './searcher-sidebar/build-search/advanced-search/number-constraints/number-constraints.component';
 import {AggregationResultFactsComponent} from './aggregation-results/aggregation-result-facts/aggregation-result-facts.component';
 import { GraphSelectedPortalComponent } from './aggregation-results/aggregation-results-chart/graph-selected-portal/graph-selected-portal.component';
+import { EditSavedSearchDialogComponent } from './searcher-sidebar/saved-searches/edit-saved-search-dialog/edit-saved-search-dialog.component';
 
 @NgModule({
   declarations: [
@@ -55,6 +56,7 @@ import { GraphSelectedPortalComponent } from './aggregation-results/aggregation-
     NumberConstraintsComponent,
     AggregationResultFactsComponent,
     GraphSelectedPortalComponent,
+    EditSavedSearchDialogComponent,
   ],
   imports: [
     SharedModule,

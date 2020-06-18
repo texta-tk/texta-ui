@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatTableDataSource} from '@angular/material/table';
 import {SearcherService} from '../../../core/searcher/searcher.service';
@@ -9,6 +9,9 @@ import {Project} from '../../../shared/types/Project';
 import {SavedSearch} from '../../../shared/types/SavedSearch';
 import {HttpErrorResponse} from '@angular/common/http';
 import {SearcherComponentService} from '../../services/searcher-component.service';
+import {MatDialog} from '@angular/material/dialog';
+import {EditSavedSearchDialogComponent} from './edit-saved-search-dialog/edit-saved-search-dialog.component';
+import {LogService} from '../../../core/util/log.service';
 
 @Component({
   selector: 'app-saved-searches',
@@ -17,13 +20,16 @@ import {SearcherComponentService} from '../../services/searcher-component.servic
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SavedSearchesComponent implements OnInit, OnDestroy {
-  displayedColumns: string[] = ['select', 'name'];
+  displayedColumns: string[] = ['select', 'name', 'edit'];
   dataSource: MatTableDataSource<SavedSearch> = new MatTableDataSource();
   destroyed$: Subject<boolean> = new Subject<boolean>();
   currentProject: Project;
 
   constructor(private searcherService: SearcherService,
               private projectStore: ProjectStore,
+              public dialog: MatDialog,
+              private changeDetectorRef: ChangeDetectorRef,
+              private logService: LogService,
               public searchService: SearcherComponentService) {
   }
 
@@ -85,5 +91,17 @@ export class SavedSearchesComponent implements OnInit, OnDestroy {
       this.dataSource.data = [...this.dataSource.data];
     });
     this.searchService.savedSearchSelection.clear();
+  }
+
+  edit(search: SavedSearch) {
+    const dialogRef = this.dialog.open(EditSavedSearchDialogComponent, {data: search});
+    dialogRef.afterClosed().subscribe(x => {
+      if (x && !(x instanceof HttpErrorResponse)) {
+        search.description = x.description;
+        this.changeDetectorRef.markForCheck();
+      } else if (x) {
+        this.logService.snackBarError(x, 2000);
+      }
+    });
   }
 }
