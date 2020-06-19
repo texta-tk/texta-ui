@@ -28,7 +28,6 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
   destroyed$: Subject<boolean> = new Subject<boolean>();
   filteredUsers: Observable<UserProfile[]>;
-  private urlsToRequest: Subject<string[]> = new Subject();
   public projectUsers$: Observable<UserProfile[]>;
   public tableData: MatTableDataSource<Project> = new MatTableDataSource<Project>([]);
   public displayedColumns = ['id', 'title', 'author_username', 'indices_count', 'users_count'];
@@ -37,6 +36,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   public authorFilterControl = new FormControl();
+  private urlsToRequest: Subject<string[]> = new Subject();
 
   constructor(
     private projectStore: ProjectStore,
@@ -149,5 +149,20 @@ export class ProjectComponent implements OnInit, OnDestroy {
   applyFilter(filterValue: any) {
     filterValue = filterValue.value ? filterValue.value : '';
     this.tableData.filter = filterValue;
+  }
+
+  selectProject(val: Project) {
+    if (val.users.includes(this.currentUser.url)) {
+      this.projectStore.setCurrentProject(val);
+    } else {
+      this.projectService.editProject({users: [this.currentUser.url, ...val.users]}, val.id).subscribe((resp: Project | HttpErrorResponse) => {
+        if (resp instanceof HttpErrorResponse) {
+          this.logService.snackBarError(resp, 5000);
+        } else if (resp) {
+          this.projectStore.refreshProjects();
+          this.projectStore.setCurrentProject(val);
+        }
+      });
+    }
   }
 }

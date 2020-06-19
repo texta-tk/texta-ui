@@ -32,7 +32,7 @@ export class ProjectService {
   }
 
   editProject(body: {}, projectId): Observable<Project | HttpErrorResponse> {
-    return this.http.put<Project>(
+    return this.http.patch<Project>(
       `${this.apiUrl}/projects/${projectId}/`,
       body
     ).pipe(

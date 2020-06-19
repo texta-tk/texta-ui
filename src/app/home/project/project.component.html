@@ -113,6 +113,11 @@
 </mat-menu>
 <mat-menu #editMenu="matMenu">
   <ng-template matMenuContent let-element="element">
+    <button (click)="selectProject(element)" mat-menu-item>
+      <mat-icon aria-label="Activate Project">touch_app
+      </mat-icon>
+      Use
+    </button>
     <button (click)="edit(element)" mat-menu-item>
       <mat-icon aria-label="Edit Project">edit</mat-icon>
       Edit
