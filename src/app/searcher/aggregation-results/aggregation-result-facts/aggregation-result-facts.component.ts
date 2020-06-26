@@ -63,7 +63,7 @@ export class AggregationResultFactsComponent {
 
   barChartSelected(val) {
     if (val?.extra?.key && val?.name) {
-      this.makeSearch(val.extra.key, val.name);
+      this.makeSearch(val.extra.key, val.extra.name);
     }
   }
 
