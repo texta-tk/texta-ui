@@ -1,8 +1,10 @@
 <ng-container *ngFor="let fact of factList">
   <ng-container *ngFor="let factValue of fact.factValues; let y = index;">
     <ng-container *ngIf="y < NUMBER_OF_CHIPS_TO_DISPLAY">
-      <span (click)="buildSearch(fact.factName, factValue.key)" [style.background-color]="fact.color" title="{{fact.factName}}">
-        {{factValue.key}} <ng-container *ngIf="factValue.count > 1">({{factValue.count}})</ng-container>
+      <span (click)="buildSearch(fact.factName, factValue.key)" style.background-color="{{fact?.color?.backgroundColor}}"
+            style.color="{{fact?.color?.textColor}}" title="{{fact.factName}}">
+        {{factValue.key}}
+        <ng-container *ngIf="factValue.count > 1">({{factValue.count}})</ng-container>
       </span>
     </ng-container>
     <ng-container *ngIf="y >= NUMBER_OF_CHIPS_TO_DISPLAY">
@@ -10,8 +12,10 @@
             style="background-color: #ededed"
             title="Expand">...</span>
       <span (click)="buildSearch(fact.factName, factValue.key)" *ngIf="fact.showing"
-            [style.background-color]="fact.color" title="{{fact.factName}}">
-        {{factValue.key}} <ng-container *ngIf="factValue.count > 1">({{factValue.count}})</ng-container>
+            style.background-color="{{fact?.color?.backgroundColor}}" style.color="{{fact?.color?.textColor}}"
+            title="{{fact.factName}}">
+        {{factValue.key}}
+        <ng-container *ngIf="factValue.count > 1">({{factValue.count}})</ng-container>
       </span>
     </ng-container>
   </ng-container>

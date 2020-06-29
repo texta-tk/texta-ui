@@ -51,7 +51,7 @@ export class AggregationResultFactsComponent {
         this.ngxChartData.push({
           key: item.key, value: item.buckets.flatMap(x => {
             const factName = `[${item.key}]|${x.key}`; // item.key hack so i can seperate identical names with colors, used in formatYAxisTicks
-            this.customColors.push({name: factName, value: COLORS.get(item.key)});
+            this.customColors.push({name: factName, value: COLORS.get(item.key)?.backgroundColor});
             return [{name: factName, value: x.doc_count, extra: {key: item.key, name: x.key}}];
           })
         });

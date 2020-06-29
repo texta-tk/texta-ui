@@ -1,12 +1,12 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {HighlightComponent, HighlightSpan} from '../highlight/highlight.component';
+import {HighlightComponent, HighlightSpan, LegibleColor} from '../highlight/highlight.component';
 
 interface ContextSpan {
   text: string;
   highlighted: boolean;
   type: 'highlight' | 'context' | 'text';
   highlightSpan?: HighlightSpan;
-  color?: string;
+  color?: LegibleColor;
   hidden?: boolean;
   displayText?: string;
 }
@@ -39,7 +39,7 @@ export class ShortVersionComponent {
   constructor() {
   }
 
-  private makeShortVersionSpans(originalText: string, facts: HighlightSpan[], factColors: Map<string, string>,
+  private makeShortVersionSpans(originalText: string, facts: HighlightSpan[], factColors: Map<string, LegibleColor>,
                                 wordContextDistance: number): ContextSpan[] {
     if (facts.length === 0) {
       return [{text: originalText, highlighted: false, type: 'context'}];

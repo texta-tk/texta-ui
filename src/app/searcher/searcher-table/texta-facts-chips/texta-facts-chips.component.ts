@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, NgZone, OnInit} from '@angular/core';
-import {HighlightComponent, HighlightSpan} from '../highlight/highlight.component';
+import {HighlightComponent, HighlightSpan, LegibleColor} from '../highlight/highlight.component';
 import {SearcherComponentService} from '../../services/searcher-component.service';
 import {SavedSearch} from '../../../shared/types/SavedSearch';
 import {take} from 'rxjs/operators';
@@ -14,7 +14,7 @@ import {Constraint, FactConstraint, FactTextInputGroup} from '../../searcher-sid
 })
 export class TextaFactsChipsComponent implements OnInit {
   readonly NUMBER_OF_CHIPS_TO_DISPLAY = 25;
-  factList: { factName: string, showing: boolean, factValues: { key: string, count: number }[], color: string | undefined }[] = [];
+  factList: { factName: string, showing: boolean, factValues: { key: string, count: number }[], color: LegibleColor }[] = [];
   constraintBluePrint = {
     fields: [{
       path: 'texta_facts',
@@ -85,7 +85,7 @@ export class TextaFactsChipsComponent implements OnInit {
           this.factList.push({
             showing: false,
             factName: val.fact, factValues: [{key: val.str_val, count: 1}],
-            color: colors.get(val.fact)
+            color: colors.get(val.fact) || {backgroundColor: 'black', textColor: 'white'}
           });
         }
       });

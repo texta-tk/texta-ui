@@ -24,11 +24,16 @@ export interface HighlightConfig {
   data: any;
 }
 
+export interface LegibleColor {
+  backgroundColor: string;
+  textColor: string;
+}
+
 interface HighlightObject {
   text: string;
   highlighted: boolean;
   span?: HighlightSpan;
-  color?: string;
+  color?: LegibleColor;
   nested?: HighlightObject;
 }
 
@@ -36,11 +41,20 @@ interface HighlightObject {
 @Component({
   selector: 'app-highlight',
   templateUrl: './highlight.component.html',
-  styleUrls: ['./highlight.component.sass'],
+  styleUrls: ['./highlight.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HighlightComponent {
-  static colors: Map<string, string> = new Map<string, string>();
+  static colors: Map<string, LegibleColor> = new Map<string, LegibleColor>([
+    ['ORG', {backgroundColor: '#9FC2BA', textColor: 'black'}],
+    ['PER', {backgroundColor: '#DDB0A0', textColor: 'black'}],
+    ['GPE', {backgroundColor: '#ffb2ff', textColor: 'black'}],
+    ['LOC', {backgroundColor: '#CABD80', textColor: 'black'}],
+    ['ADDR', {backgroundColor: '#8f9bff', textColor: 'black'}],
+    ['COMPANY', {backgroundColor: '#75a7ff', textColor: 'black'}],
+    ['PHO', {backgroundColor: '#ff867f', textColor: 'black'}],
+    ['EMAIL', {backgroundColor: '#9fffe0', textColor: 'black'}],
+  ]);
   static linkify = new LinkifyIt();
   highlightArray: HighlightObject[] = [];
   isTextLimited;
@@ -57,7 +71,7 @@ export class HighlightComponent {
       && (isNaN(Number(highlightConfig.data[highlightConfig.currentColumn])))) {
 
       // slice original text for charlimit bounds, deep clone
-      const edited: any = (({ data, ...o }) => o)(highlightConfig);
+      const edited: any = (({data, ...o}) => o)(highlightConfig);
       edited.data = Object.assign({}, highlightConfig.data);
       if (edited.data[edited.currentColumn].length > edited.charLimit) {
         this.isTextLimited = true;
@@ -69,24 +83,13 @@ export class HighlightComponent {
     }
   }
 
-  static generateColorsForFacts(facts: { fact: string }[]): Map<string, string> {
-    const colorPallette = this.generateRandomColors(facts.length);
+  static generateColorsForFacts(facts: { fact: string }[]): Map<string, LegibleColor> {
     facts.forEach(fact => {
-      if (!HighlightComponent.colors.has(fact.fact) && colorPallette) {
-        HighlightComponent.colors.set(fact.fact, colorPallette[0]);
-        colorPallette.shift();
+      if (!HighlightComponent.colors.has(fact.fact)) {
+        HighlightComponent.colors.set(fact.fact, {backgroundColor: `hsla(${~~(360 * Math.random())},70%,70%,0.8)`, textColor: 'black'});
       }
     });
     return HighlightComponent.colors;
-  }
-
-  static generateRandomColors(numberOfRandomColors: number) {
-    const output: string[] = [];
-    const max = 0xeee;
-    for (let i = 0; i < numberOfRandomColors; i++) {
-      output.push(`hsla(${~~(360 * Math.random())},70%,70%,0.8)`);
-    }
-    return output;
   }
 
   // convert searcher highlight into mlp fact format
@@ -121,7 +124,7 @@ export class HighlightComponent {
   public toggleTextLimit() {
     if (window.getSelection()?.type !== 'Range') {
 
-      const edited: any = (({ data, ...o }) => o)(this._highlightConfig);
+      const edited: any = (({data, ...o}) => o)(this._highlightConfig);
       edited.data = Object.assign({}, this._highlightConfig.data);
       if (edited.charLimit !== 0 && edited && !this.isTextLimited) {
         edited.data[edited.currentColumn] = edited.data[edited.currentColumn].slice(0, edited.charLimit);
@@ -224,7 +227,7 @@ export class HighlightComponent {
     return [];
   }
 
-  private makeHighLights(originalText: string | number, facts: HighlightSpan[], factColors: Map<string, string>): HighlightObject[] {
+  private makeHighLights(originalText: string | number, facts: HighlightSpan[], factColors: Map<string, LegibleColor>): HighlightObject[] {
     // spans are strings, convert them to 2d array and flatten
     facts.forEach(fact => {
       (fact.spans) = JSON.parse(fact.spans as string).flat();
@@ -329,7 +332,7 @@ export class HighlightComponent {
     overLappingFacts: Map<HighlightSpan, HighlightSpan[]>,
     loopIndex: number,
     originalText: string,
-    colors: Map<string, string>): number {
+    colors: Map<string, LegibleColor>): number {
     // deep copy
     const nestedFacts: HighlightSpan[] = JSON.parse(JSON.stringify(overLappingFacts.get(rootFact)));
     // highest span value in nestedfacts
@@ -479,8 +482,8 @@ export class HighlightComponent {
     return undefined;
   }
 
-  private makeFact(highlight: HighlightObject[], fact: HighlightSpan, loopIndex: number, originalText: string, colors: Map<string, string>)
-    : number {
+  private makeFact(highlight: HighlightObject[], fact: HighlightSpan, loopIndex: number, originalText: string,
+                   colors: Map<string, LegibleColor>): number {
     let newText = '';
     const factFinalSpanIndex = fact.spans[1] as number;
     newText += originalText.slice(loopIndex, factFinalSpanIndex);
@@ -502,8 +505,8 @@ export class HighlightComponent {
     return overLappingFacts;
   }
 
-  private detectOverLappingFactsDrill(factRoot: HighlightSpan, facts: HighlightSpan[], endSpan: number,
-                                      index: number, nestedArray: Map<HighlightSpan, HighlightSpan[]>): Map<HighlightSpan, HighlightSpan[]> {
+  private detectOverLappingFactsDrill(factRoot: HighlightSpan, facts: HighlightSpan[], endSpan: number, index: number,
+                                      nestedArray: Map<HighlightSpan, HighlightSpan[]>): Map<HighlightSpan, HighlightSpan[]> {
     // endSpan = previous facts span ending so we can make long chains of nested facts
     if (index < facts.length) {
       if (facts[index].spans[0] < endSpan) {

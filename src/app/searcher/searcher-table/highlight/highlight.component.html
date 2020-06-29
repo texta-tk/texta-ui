@@ -1,11 +1,13 @@
 <div [title]="isTextLimited !== undefined ? isTextLimited ? 'Expand' : 'Collapse': ''">
   <ng-container *ngFor="let highlight of highlightArray">
     <ng-template [ngIf]="highlight.highlighted && !highlight.span?.searcherHighlight && !highlight.span?.urlSpan">
-      <span style="cursor: pointer;" style.background-color="{{highlight.color}}"
+      <span style="cursor: pointer;" style.background-color="{{highlight?.color?.backgroundColor}}"
+            style.color="{{highlight?.color?.textColor}}"
             title="{{highlight.span?.fact}}: {{highlight.span?.str_val}}">{{highlight.text}}</span>
     </ng-template>
     <ng-template [ngIf]="highlight.highlighted && highlight.span?.searcherHighlight">
-      <span style="cursor: pointer;" style.background-color="{{highlight.color}}">{{highlight.text}}</span>
+      <span style="cursor: pointer;" style.background-color="{{highlight?.color?.backgroundColor}}"
+            style.color="{{highlight?.color?.textColor}}">{{highlight.text}}</span>
     </ng-template>
     <ng-template [ngIf]="highlight.highlighted && highlight.span?.urlSpan">
       <a href="{{highlight.span?.str_val}}" target="_blank">{{highlight.text}}</a>
@@ -22,7 +24,8 @@
     <a href="{{highlight.span?.str_val}}" target="_blank">{{highlight.text}}</a>
   </ng-template>
   <ng-template [ngIf]="!highlight.span?.urlSpan">
-  <span style="cursor: pointer;" style.background-color="{{highlight.color}}"
+  <span style="cursor: pointer;" style.background-color="{{highlight?.color?.backgroundColor}}"
+        style.color="{{highlight?.color?.textColor}}"
         title="{{highlight.span?.fact}} {{highlight.span?.str_val}}">{{highlight.text}}</span>
   </ng-template>
   <ng-template [ngIf]="highlight.nested">
