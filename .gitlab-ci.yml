@@ -27,34 +27,36 @@ variables:
     FF_NETWORK_PER_BUILD: 1
 
 stages:
+  - unit-test
+  - e2e-test
   - build
 
-# Karma:
-#   image: circleci/node:10-browsers
-#   script:
-#     - npm ci
-#     - npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
-#   stage: unit-test
-#   tags:
-#   - ci-test
+Karma:
+  image: circleci/node:10-browsers
+  script:
+    - npm ci
+    - npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
+  stage: unit-test
+  tags:
+  - ci-test
 
-# Cypress:
-#   image: cypress/browsers:node12.16.2-chrome81-ff75
-#   stage: e2e-test
-#   tags:
-#     - ci-test
-#   before_script:
-#     - npm ci
-#   script:
-#     - npm run cy:verify
-#     - npm run cy:info
-#     - npm run cypress:ci
-#   artifacts:
-#     when: always
-#     paths:
-#       - cypress/videos/**/*.mp4
-#       - cypress/screenshots/**/*.png
-#     expire_in: 1 day
+Cypress:
+  image: cypress/browsers:node12.16.2-chrome81-ff75
+  stage: e2e-test
+  tags:
+    - ci-test
+  before_script:
+    - npm ci
+  script:
+    - npm run cy:verify
+    - npm run cy:info
+    - npm run cypress:ci
+  artifacts:
+    when: always
+    paths:
+      - cypress/videos/**/*.mp4
+      - cypress/screenshots/**/*.png
+    expire_in: 1 day
 
 build:
   image: node:latest
