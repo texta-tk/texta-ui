@@ -27,8 +27,9 @@ variables:
     FF_NETWORK_PER_BUILD: 1
 
 stages:
-  - unit-test
-  - e2e-test
+  #- unit-test
+  #- e2e-test
+  #- build
   - build
 
 Karma:
@@ -58,13 +59,24 @@ Cypress:
       - cypress/screenshots/**/*.png
     expire_in: 1 day
 
-Build:
+# BuildDocker:
+#   stage: build
+#   tags:
+#   - docker
+#   script:
+#   - docker login -u $CI_DEPLOY_USER -p $CI_DEPLOY_PASSWORD docker.texta.ee
+#   - python ./docker/build_and_push.py
+#   - docker system prune --volumes -f
+#   only:
+#   - tags
+
+build:
+  image: node:latest
   stage: build
   tags:
-  - docker
+    - ci-test
+  before_script:
+    - npm install -g @angular/cli
+    - npm install
   script:
-  - docker login -u $CI_DEPLOY_USER -p $CI_DEPLOY_PASSWORD docker.texta.ee
-  - python ./docker/build_and_push.py
-  - docker system prune --volumes -f
-  only:
-  - tags
+    - ng build --prod
