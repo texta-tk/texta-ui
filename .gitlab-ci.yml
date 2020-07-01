@@ -69,7 +69,7 @@ build:
     - eval $(ssh-agent -s)
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'  
     - npm install -g @angular/cli
-    - npm install
+    - npm ci
   script:
     - ng build --prod
     - mkdir release
