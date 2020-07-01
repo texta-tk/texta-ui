@@ -81,6 +81,7 @@ build:
     - npm install
   script:
     - ng build --prod
+    - mkdir release
     - tar -czvf release/texta-rest-front-latest.tar.gz dist/TEXTA
     - cp release/texta-rest-front.tar.gz release/texta-rest-front-${CI_COMMIT_TAG}.tar.gz
     - ssh-add <(echo "$STAGING_PRIVATE_KEY")
