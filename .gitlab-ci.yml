@@ -73,7 +73,18 @@ build:
   tags:
     - ci-test
   before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - mkdir -p ~/.ssh
+    - eval $(ssh-agent -s)
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'  
     - npm install -g @angular/cli
     - npm install
   script:
     - ng build --prod
+    - tar -czvf release/texta-rest-front-latest.tar.gz dist/TEXTA
+    - cp release/texta-rest-front.tar.gz release/texta-rest-front-${CI_COMMIT_TAG}.tar.gz
+    - ssh-add <(echo "$STAGING_PRIVATE_KEY")
+    - ssh texta-docs@web.texta.ee "mkdir -p /opt/packages/texta-rest-front"
+    - scp -r release/* texta-docs@web.texta.ee:/opt/packages/texta-rest-front
+  only:
+    - tags
