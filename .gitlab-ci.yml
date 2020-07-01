@@ -56,17 +56,6 @@ stages:
 #       - cypress/screenshots/**/*.png
 #     expire_in: 1 day
 
-# BuildDocker:
-#   stage: build
-#   tags:
-#   - docker
-#   script:
-#   - docker login -u $CI_DEPLOY_USER -p $CI_DEPLOY_PASSWORD docker.texta.ee
-#   - python ./docker/build_and_push.py
-#   - docker system prune --volumes -f
-#   only:
-#   - tags
-
 build:
   image: node:latest
   stage: build
@@ -83,7 +72,7 @@ build:
     - ng build --prod
     - mkdir release
     - tar -czvf release/texta-rest-front-latest.tar.gz dist/TEXTA
-    - cp release/texta-rest-front.tar.gz release/texta-rest-front-${CI_COMMIT_TAG}.tar.gz
+    - cp release/texta-rest-front-latest.tar.gz release/texta-rest-front-${CI_COMMIT_TAG}.tar.gz
     - ssh-add <(echo "$STAGING_PRIVATE_KEY")
     - ssh texta-docs@web.texta.ee "mkdir -p /opt/packages/texta-rest-front"
     - scp -r release/* texta-docs@web.texta.ee:/opt/packages/texta-rest-front
