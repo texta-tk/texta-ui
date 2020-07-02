@@ -6,6 +6,9 @@ import {PlotComponent} from 'angular-plotly.js';
 import {GraphSelectedPortalComponent} from './graph-selected-portal/graph-selected-portal.component';
 import {PORTAL_DATA} from './PortalToken';
 import {Platform} from '@angular/cdk/platform';
+import {SearcherComponentService} from '../../services/searcher-component.service';
+import {takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'app-aggregation-results-chart',
@@ -18,7 +21,11 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
   @ViewChild(PlotComponent) plotly;
   overlayRef: OverlayRef;
 
-  constructor(private overlay: Overlay, private injector: Injector, private ngZone: NgZone, private platform: Platform, private overLayContainer: OverlayContainer) {
+  destroyed$: Subject<boolean> = new Subject();
+
+  constructor(private overlay: Overlay, private injector: Injector, private ngZone: NgZone,
+              private platform: Platform, private overLayContainer: OverlayContainer,
+              private searcherComponentService: SearcherComponentService) {
   }
 
   @Input() set yLabel(val: string) {
@@ -82,6 +89,11 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.searcherComponentService.getSearch().pipe(takeUntil(this.destroyed$)).subscribe(x => {
+      if (x && this.overlayRef) {
+        this.overlayRef.dispose();
+      }
+    });
   }
 
   areaSelected(val) {
@@ -124,6 +136,8 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
     if (this.overlayRef) {
       this.overlayRef.dispose();
     }
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
   }
 
   private createInjector(data): PortalInjector {
