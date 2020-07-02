@@ -14,20 +14,19 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
   @Input() aggregationObj: { aggregation: any };
   @Input() fieldsFormControl: FormControl;
   isMainAgg: boolean;
-
-  @Input() set isLastAgg(val: boolean) {
-    this.isMainAgg = val;
-    if (!this.isMainAgg) {
-      this.aggregationType = 'terms';
-    }
-  }
-
   aggregationType: 'terms' | 'significant_text' | 'significant_terms' = 'terms';
   aggregationSize = 30;
   destroy$: Subject<boolean> = new Subject();
 
   constructor(
     private searchService: SearcherComponentService) {
+  }
+
+  @Input() set isLastAgg(val: boolean) {
+    this.isMainAgg = val;
+    if (!this.isMainAgg) {
+      this.aggregationType = 'terms';
+    }
   }
 
   ngOnInit() {
@@ -72,12 +71,17 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
               size: this.aggregationSize,
             },
             aggs: {
+              top_reverse_nested: {
+                reverse_nested: {}
+              },
               agg_fact_val: {
                 [this.aggregationType]: {
                   field:
                     `${this.fieldsFormControl.value.path}.str_val`,
                   size: this.aggregationSize,
+                  order: {'top_reverse_nested.doc_count': 'desc'}
                 },
+                aggs: {top_reverse_nested: {reverse_nested: {}}}
               }
             }
           }

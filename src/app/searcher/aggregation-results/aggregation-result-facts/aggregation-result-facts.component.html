@@ -1,5 +1,5 @@
 <div class="wrapper max-height" fxLayout="column">
-  <div [ngStyle]="{display: viewState ? 'none' : 'flex'}" class="overflow-auto max-height" fxLayout="row"
+  <div [ngStyle]="{display: viewState !== 'table' ? 'none' : 'flex'}" class="overflow-auto max-height" fxLayout="row"
        fxLayoutGap="10px">
     <div *ngFor="let item of dataSource" class="table-container"
          fxLayout="col">
@@ -8,15 +8,24 @@
           <th *matHeaderCellDef mat-header-cell>Value</th>
           <td (click)="makeSearch(item.key, element.key)" *matCellDef="let element" class="table-row pointer" mat-cell
               title="Add to search constraint">
-            <span>{{element.key}}</span></td>
+            <span>{{element.key}}</span><br><span>({{element.doc_count}})</span></td>
         </ng-container>
         <ng-container matColumnDef="doc_count">
           <th *matHeaderCellDef mat-header-cell>Doc count</th>
-          <td *matCellDef="let element" class="table-row" mat-cell><span>{{element.doc_count}}</span></td>
+          <td *matCellDef="let element" class="table-row" mat-cell><span>{{element.top_reverse_nested.doc_count}}</span>
+          </td>
         </ng-container>
         <!-- Header row first group -->
         <ng-container matColumnDef="header-row-first-group">
-          <th *matHeaderCellDef [attr.colspan]="2" mat-header-cell style="text-align: center"> {{item.key}} </th>
+          <th *matHeaderCellDef [attr.colspan]="2" mat-header-cell style="text-align: center"> {{item.key}}
+            <br>
+            <ng-container *ngIf="!item.top_reverse_nested">
+              ({{item.doc_count}})
+            </ng-container>
+            <ng-container *ngIf="item.top_reverse_nested">
+              ({{item.top_reverse_nested.doc_count}})
+            </ng-container>
+          </th>
         </ng-container>
 
         <tr *matHeaderRowDef="['header-row-first-group']; sticky: true" mat-header-row></tr>
@@ -25,32 +34,35 @@
       </table>
     </div>
   </div>
-  <mat-form-field [ngStyle]="{display: !viewState ? 'none' : 'block'}" class="fact-select bottom-padding-none" appearance="fill">
+  <mat-form-field [ngStyle]="{display: viewState !== 'chart' ? 'none' : 'block'}"
+                  appearance="fill" class="fact-select bottom-padding-none">
     <mat-label>Select fact</mat-label>
     <mat-select (openedChange)="openedChange($event)" [(ngModel)]="selectedFacts" [ngModelOptions]="{standalone: true}"
                 multiple>
       <mat-option *ngFor="let item of ngxChartData" [value]="item">{{item.key}}</mat-option>
     </mat-select>
   </mat-form-field>
-  <div class="chart-wrapper" [ngStyle]="{display: !viewState ? 'none' : 'grid'}">
-  <ngx-charts-bar-horizontal [customColors]="customColors"
-                             [results]="chartData"
-                             [roundEdges]="false"
-                             [showXAxisLabel]="showXAxisLabel"
-                             [showYAxisLabel]="showYAxisLabel"
-                             [xAxisLabel]="xAxisLabel"
-                             [xAxis]="showXAxis"
-                             [yAxisTickFormatting]="formatYAxisTicks"
-                             [yAxis]="showYAxis"
-  (select)="barChartSelected($event)">
-    <ng-template #tooltipTemplate let-model="model">
-      <div fxLayout="column" class="tooltip">
-        <p>{{model.extra.key}}</p>
-        <span>{{model.extra.name}}</span>
-        <span class="tooltip-value">{{model.value}}</span>
-      </div>
-    </ng-template>
-  </ngx-charts-bar-horizontal>
+  <div [ngStyle]="{display: viewState !== 'chart' ? 'none' : 'grid'}" class="chart-wrapper">
+    <ngx-charts-bar-horizontal (select)="barChartSelected($event)"
+                               [customColors]="customColors"
+                               [results]="chartData"
+                               [roundEdges]="false"
+                               [showXAxisLabel]="showXAxisLabel"
+                               [showYAxisLabel]="showYAxisLabel"
+                               [xAxisLabel]="xAxisLabel"
+                               [xAxis]="showXAxis"
+                               [yAxisTickFormatting]="formatYAxisTicks"
+                               [yAxis]="showYAxis">
+      <ng-template #tooltipTemplate let-model="model">
+        <div class="tooltip" fxLayout="column">
+          <p>{{model.extra.key}}</p>
+          <span>{{model.extra.name}}</span>
+          <span class="tooltip-value">{{model.value}}</span>
+        </div>
+      </ng-template>
+    </ngx-charts-bar-horizontal>
   </div>
   <!--        [customColors]="customColors"-->
+  <app-aggregation-results-tree class="overflow-auto" [dataSource]="dataSource"
+                                [ngStyle]="{display: viewState !== 'tree' ? 'none' : 'flex'}"></app-aggregation-results-tree>
 </div>

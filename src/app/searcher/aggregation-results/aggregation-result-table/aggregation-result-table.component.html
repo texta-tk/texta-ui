@@ -1,28 +1,33 @@
-<div fxLayout="column" class="wrapper max-height">
-  <div class="table-container overflow-auto" [appScrollTop]="tableDataSource">
+<div class="wrapper max-height" fxLayout="column">
+  <div [appScrollTop]="tableDataSource" class="table-container overflow-auto">
 
-    <table mat-table [dataSource]="tableDataSource" matSort multiTemplateDataRows>
+    <table [dataSource]="tableDataSource" mat-table matSort multiTemplateDataRows>
 
       <ng-container matColumnDef="key">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Key</th>
-        <td mat-cell *matCellDef="let element"> {{element.key}}</td>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Key</th>
+        <td *matCellDef="let element" mat-cell> {{element.key}}
+          <ng-container *ngIf="element.top_reverse_nested"><br>({{element.doc_count}})</ng-container>
+        </td>
       </ng-container>
 
       <!-- Name Column -->
       <ng-container matColumnDef="doc_count">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Doc Count</th>
-        <td mat-cell *matCellDef="let element"> {{element.doc_count}}</td>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Doc Count</th>
+        <td *matCellDef="let element" mat-cell>
+          <ng-container *ngIf="element.top_reverse_nested">{{element.top_reverse_nested.doc_count}}</ng-container>
+          <ng-container *ngIf="!element.top_reverse_nested">{{element.doc_count}}</ng-container>
+        </td>
       </ng-container>
 
       <!-- Weight Column -->
       <ng-container matColumnDef="score">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Score</th>
-        <td mat-cell *matCellDef="let element"> {{element.score}}</td>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Score</th>
+        <td *matCellDef="let element" mat-cell> {{element.score}}</td>
       </ng-container>
 
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-      <tr mat-row *matRowDef="let element; columns: displayedColumns;"></tr>
+      <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
+      <tr *matRowDef="let element; columns: displayedColumns;" mat-row></tr>
 
     </table>
 

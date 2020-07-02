@@ -1,18 +1,34 @@
 import {Search} from '../../shared/types/Search';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
-import {Constraint, ElasticsearchQuery} from '../searcher-sidebar/build-search/Constraints';
+import {Constraint, ElasticsearchQuery, FactConstraint, FactTextInputGroup} from '../searcher-sidebar/build-search/Constraints';
 import {SelectionModel} from '@angular/cdk/collections';
 import {SavedSearch} from '../../shared/types/SavedSearch';
 import {Injectable} from '@angular/core';
-import {map} from 'rxjs/operators';
+import {map, take} from 'rxjs/operators';
+import {UtilityFunctions} from '../../shared/UtilityFunctions';
 
 @Injectable()
 export class SearcherComponentService {
   public savedSearchSelection = new SelectionModel<SavedSearch>(true, []);
+  // building fact constraints
+  private constraintBluePrint = {
+    fields: [{
+      path: 'texta_facts',
+      type: 'fact'
+    }],
+    factName: [],
+    factNameOperator: 'must',
+    factTextOperator: 'must',
+    inputGroup: [{
+      factTextOperator: 'must',
+      factTextName: 'texta-facts-chips-placeholder',
+      factTextInput: 'texta-facts-chips-placeholder'
+    }]
+  };
   private searchSubject = new BehaviorSubject<Search | null>(null);
   private aggregationSubject = new BehaviorSubject<{ globalAgg: any, agg: any } | null>(null);
-  private savedSearchUpdate = new Subject<boolean>();
   // so query wouldnt be null (we use current query in aggs so we dont want null even if user hasnt searched everything,
+  private savedSearchUpdate = new Subject<boolean>();
   // we still want to be able to make aggs)
   private elasticQuerySubject = new BehaviorSubject<ElasticsearchQuery>(new ElasticsearchQuery());
   private isLoading = new BehaviorSubject<boolean>(false);
@@ -84,5 +100,28 @@ export class SearcherComponentService {
     return this.advancedSearchConstraints$.asObservable();
   }
 
-
+  public createConstraintFromFact(factName, factValue) {
+    const constraint = new SavedSearch();
+    constraint.query_constraints = [];
+    this.getAdvancedSearchConstraints$().pipe(take(1)).subscribe(constraintList => {
+      if (typeof constraint.query_constraints !== 'string') {
+        const factConstraint: Constraint | undefined = constraintList.find(y => y instanceof FactConstraint && y.inputGroupArray.length > 0);
+        // inputGroup means its a fact_val constraint
+        if (factConstraint instanceof FactConstraint && factConstraint.inputGroupArray.length > 0) {
+          if (!factConstraint.inputGroupArray.some(group => group.factTextFactNameFormControl.value === factName &&
+            group.factTextInputFormControl.value === factValue)) {
+            factConstraint.inputGroupArray.push(new FactTextInputGroup('must', factName, factValue));
+          }
+        } else {
+          const constraintBluePrint = {...this.constraintBluePrint};
+          constraintBluePrint.inputGroup[0].factTextInput = factValue;
+          constraintBluePrint.inputGroup[0].factTextName = factName;
+          constraint.query_constraints.push(constraintBluePrint);
+        }
+        constraint.query_constraints.push(...UtilityFunctions.convertConstraintListToJson(constraintList));
+        constraint.query_constraints = JSON.stringify(constraint.query_constraints);
+        this.nextSavedSearch(constraint);
+      }
+    });
+  }
 }

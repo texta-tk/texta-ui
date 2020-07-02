@@ -1,8 +1,4 @@
 import {Component, Input} from '@angular/core';
-import {SavedSearch} from '../../../shared/types/SavedSearch';
-import {take} from 'rxjs/operators';
-import {Constraint, FactConstraint, FactTextInputGroup} from '../../searcher-sidebar/build-search/Constraints';
-import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 import {SearcherComponentService} from '../../services/searcher-component.service';
 import {HighlightComponent} from '../../searcher-table/highlight/highlight.component';
 
@@ -14,20 +10,7 @@ import {HighlightComponent} from '../../searcher-table/highlight/highlight.compo
 export class AggregationResultFactsComponent {
   dataSource: any[];
   displayedColumns = ['key', 'doc_count'];
-  constraintBluePrint = {
-    fields: [{
-      path: 'texta_facts',
-      type: 'fact'
-    }],
-    factName: [],
-    factNameOperator: 'must',
-    factTextOperator: 'must',
-    inputGroup: [{
-      factTextOperator: 'must',
-      factTextName: 'texta-facts-chips-placeholder',
-      factTextInput: 'texta-facts-chips-placeholder'
-    }]
-  };
+
   ngxChartData: any[] = []; // for select
   chartData: any[] = []; // for actual chart data
   customColors: any[] = [];
@@ -37,7 +20,7 @@ export class AggregationResultFactsComponent {
   showXAxisLabel = true;
   xAxisLabel = 'Count';
   selectedFacts: any[];
-  @Input() viewState: boolean;
+  @Input() viewState: string | 'tree' | 'table' | 'chart';
 
   constructor(public searchService: SearcherComponentService) {
   }
@@ -52,7 +35,7 @@ export class AggregationResultFactsComponent {
           key: item.key, value: item.buckets.flatMap(x => {
             const factName = `[${item.key}]|${x.key}`; // item.key hack so i can seperate identical names with colors, used in formatYAxisTicks
             this.customColors.push({name: factName, value: COLORS.get(item.key)?.backgroundColor});
-            return [{name: factName, value: x.doc_count, extra: {key: item.key, name: x.key}}];
+            return [{name: factName, value: x.top_reverse_nested.doc_count, extra: {key: item.key, name: x.key, term_count: x.doc_count}}];
           })
         });
       }
@@ -68,28 +51,7 @@ export class AggregationResultFactsComponent {
   }
 
   makeSearch(factName, factValue) {
-    const constraint = new SavedSearch();
-    constraint.query_constraints = [];
-    this.searchService.getAdvancedSearchConstraints$().pipe(take(1)).subscribe(constraintList => {
-      if (typeof constraint.query_constraints !== 'string') {
-        const factConstraint: Constraint | undefined = constraintList.find(y => y instanceof FactConstraint && y.inputGroupArray.length > 0);
-        // inputGroup means its a fact_val constraint
-        if (factConstraint instanceof FactConstraint && factConstraint.inputGroupArray.length > 0) {
-          if (!factConstraint.inputGroupArray.some(group => group.factTextFactNameFormControl.value === factName &&
-            group.factTextInputFormControl.value === factValue)) {
-            factConstraint.inputGroupArray.push(new FactTextInputGroup('must', factName, factValue));
-          }
-        } else {
-          const constraintBluePrint = {...this.constraintBluePrint};
-          constraintBluePrint.inputGroup[0].factTextInput = factValue;
-          constraintBluePrint.inputGroup[0].factTextName = factName;
-          constraint.query_constraints.push(constraintBluePrint);
-        }
-        constraint.query_constraints.push(...UtilityFunctions.convertConstraintListToJson(constraintList));
-        constraint.query_constraints = JSON.stringify(constraint.query_constraints);
-        this.searchService.nextSavedSearch(constraint);
-      }
-    });
+    this.searchService.createConstraintFromFact(factName, factValue);
   }
 
   formatYAxisTicks(val) {
