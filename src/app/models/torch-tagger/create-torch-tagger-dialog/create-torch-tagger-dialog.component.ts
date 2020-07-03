@@ -87,7 +87,7 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy, Afte
             }
         });
 
-        this.projectStore.getCurrentProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(x => {
+        this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(x => {
             if (x) {
                 const indicesForm = this.torchTaggerForm.get('indicesFormControl');
                 indicesForm?.setValue(x);

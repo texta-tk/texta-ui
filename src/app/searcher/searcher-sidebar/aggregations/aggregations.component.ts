@@ -63,7 +63,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
         this.currentProject = currentProject;
       }
     });
-    this.projectStore.getCurrentProjectIndices().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectIndex[]) => {
+    this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectIndex[]) => {
       if (projectFields) {
         this.projectFields = ProjectIndex.cleanProjectIndicesFields(projectFields, ['fact', 'text', 'date'], []);
         this.projectFields = ProjectIndex.sortTextaFactsAsFirstItem(this.projectFields);

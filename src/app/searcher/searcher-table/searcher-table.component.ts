@@ -55,7 +55,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
         if (currentProjectState?.searcher?.itemsPerPage) {
           this.paginator.pageSize = currentProjectState.searcher.itemsPerPage;
         }
-        return this.projectStore.getCurrentProjectIndices();
+        return this.projectStore.getSelectedProjectIndices();
       } else {
         return of(null);
       }

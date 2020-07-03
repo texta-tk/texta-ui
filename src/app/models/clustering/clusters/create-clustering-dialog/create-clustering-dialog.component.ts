@@ -63,7 +63,7 @@ export class CreateClusteringDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.projectStore.getCurrentProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(currentProjIndices => {
+    this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(currentProjIndices => {
       if (currentProjIndices) {
         const indicesForm = this.clusterForm.get('indicesFormControl');
         indicesForm?.setValue(currentProjIndices);

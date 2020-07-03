@@ -1,0 +1,69 @@
+<h1 mat-dialog-title>New MLP worker</h1>
+<div mat-dialog-content>
+  <form (ngSubmit)="onSubmit(MLPForm.value)" [formGroup]="MLPForm" class="flex-col">
+    <mat-form-field data-cy="appMLPCreateDialogDesc">
+      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
+             placeholder="Description" required>
+
+      <mat-error *ngIf="MLPForm.get('descriptionFormControl')?.hasError('required')">
+        Description is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+
+    <mat-form-field data-cy="appMLPCreateDialogIndices">
+      <mat-label>Indices</mat-label>
+      <mat-select (openedChange)="indicesOpenedChange($event)" [disableOptionCentering]="true"
+                  formControlName="indicesFormControl" multiple panelClass="select-panel-reveal-input" required>
+        <mat-option *ngFor="let projectIndex of projectIndices" [value]="projectIndex">
+          {{projectIndex.index}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="MLPForm.get('indicesFormControl')?.hasError('required')">
+        Select at least <strong>1 index</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"
+                                   data-cy="appMLPCreateDialogQuery">
+    </app-saved-search-autocomplete>
+
+    <mat-form-field>
+      <mat-label>Select Fields</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="fieldsFormControl"
+                  multiple panelClass="select-panel-reveal-input">
+        <mat-option *ngFor="let fields of fieldsUnique" [value]="fields.path">
+          {{fields.path}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field data-cy="appMLPCreateDialogAnalyzers">
+      <mat-label>Analyzers</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="analyzersFormControl"
+                  panelClass="select-panel-reveal-input" multiple required>
+        <ng-container *ngIf="analyzers">
+          <mat-option *ngFor="let item of analyzers" [value]="item.value">
+            {{item.display_name}}
+          </mat-option>
+        </ng-container>
+      </mat-select>
+
+      <mat-error *ngIf="MLPForm.get('analyzersFormControl')?.hasError('required')">
+        Select at least <strong>1 analyzer</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <div class="flex-col">
+      <div class="flex-row">
+        <div class="flex-item-left">
+          <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
+        </div>
+        <div class="flex-item-right">
+          <button [disabled]="!MLPForm.valid" data-cy="appMLPCreateDialogSubmit" mat-button type="submit">
+            Create
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

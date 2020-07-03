@@ -33,7 +33,7 @@ export class SearcherComponent implements OnInit, OnDestroy {
   ngOnInit() {
     const routeIntialized = new Subject<boolean>();
     routeIntialized.pipe(take(1), switchMap(x => {
-      return combineLatest([this.projectStore.getCurrentProject(), this.projectStore.getCurrentProjectIndices()]).pipe(
+      return combineLatest([this.projectStore.getCurrentProject(), this.projectStore.getSelectedProjectIndices()]).pipe(
         takeUntil(this.destroy$), distinctUntilChanged(),
         map(([a$, b$]) => ({
           project: a$,
@@ -71,7 +71,7 @@ export class SearcherComponent implements OnInit, OnDestroy {
         if (project) {
           this.projectStore.setCurrentProject(project);
           if (this.routeParamIndices.length > 0) {
-            return this.projectStore.getCurrentProjectIndices().pipe(skipWhile(x => x === null), take(1));
+            return this.projectStore.getSelectedProjectIndices().pipe(skipWhile(x => x === null), take(1));
           } else {
             routeIntialized.next(true); // no indices specified
           }
@@ -82,7 +82,7 @@ export class SearcherComponent implements OnInit, OnDestroy {
     })).subscribe(projectIndices => {
       if (projectIndices && !(projectIndices instanceof HttpErrorResponse)) {
         const indices = projectIndices.filter(x => this.routeParamIndices.includes(x.index));
-        this.projectStore.setCurrentProjectIndices(indices);
+        this.projectStore.setSelectedProjectIndices(indices);
         routeIntialized.next(true);
       }
     });

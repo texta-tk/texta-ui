@@ -68,7 +68,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.projectResourceCounts = new ProjectResourceCounts();
       }
     });
-    this.projectStore.getCurrentProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe((indices: ProjectIndex[] | null) => {
+    this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe((indices: ProjectIndex[] | null) => {
       if (indices && indices.filter(x => this.currentProject.indices.includes(x.index))) {
         this.projectFieldsControl.setValue(indices);
       }
@@ -112,7 +112,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     if (!value) {
       // get the current facts based on the selected indices
       // searcher uses this
-      this.projectStore.setCurrentProjectIndices(this.projectFieldsControl.value);
+      this.projectStore.setSelectedProjectIndices(this.projectFieldsControl.value);
     }
   }
 
