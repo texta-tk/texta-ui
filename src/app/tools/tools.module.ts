@@ -5,13 +5,17 @@ import {ReindexerComponent} from './reindexer/reindexer.component';
 import {CreateReindexerDialogComponent} from './reindexer/create-reindexer-dialog/create-reindexer-dialog.component';
 import {DatasetImporterComponent} from './dataset-importer/dataset-importer.component';
 import {CreateDatasetDialogComponent} from './dataset-importer/create-dataset-dialog/create-dataset-dialog.component';
+import {MLPComponent} from './mlp/mlp.component';
+import {MLPCreateIndexDialogComponent} from './mlp/mlp-create-index-dialog/mlp-create-index-dialog.component';
 
 @NgModule({
   declarations: [
     ReindexerComponent,
     CreateReindexerDialogComponent,
     DatasetImporterComponent,
-    CreateDatasetDialogComponent
+    CreateDatasetDialogComponent,
+    MLPComponent,
+    MLPCreateIndexDialogComponent
   ],
   imports: [
     SharedModule,

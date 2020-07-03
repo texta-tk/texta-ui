@@ -42,7 +42,7 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
       if (val && val.type === 'date') {
         return forkJoin({
           project: this.projectStore.getCurrentProject().pipe(take(1)),
-          currentIndices: this.projectStore.getCurrentProjectIndices().pipe(take(1))
+          currentIndices: this.projectStore.getSelectedProjectIndices().pipe(take(1))
         }).pipe(take(1), switchMap(fork => {
           if (fork.project && fork.currentIndices) {
             return this.searcherService.search({

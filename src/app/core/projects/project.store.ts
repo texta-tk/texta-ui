@@ -56,11 +56,11 @@ export class ProjectStore {
   }
 
   // selected indices
-  getCurrentProjectIndices(): Observable<ProjectIndex[] | null> {
+  getSelectedProjectIndices(): Observable<ProjectIndex[] | null> {
     return this.selectedProjectIndices$.asObservable();
   }
 
-  setCurrentProjectIndices(projectIndices: ProjectIndex[]) {
+  setSelectedProjectIndices(projectIndices: ProjectIndex[]) {
     this.selectedProjectIndices$.next(projectIndices);
   }
 
@@ -102,9 +102,9 @@ export class ProjectStore {
   private getLocalStorageIndicesSelection(project: Project | number, indices: ProjectIndex[]) {
     const state = this.localStorageService.getProjectState(project);
     if (state?.global?.selectedIndices && state.global.selectedIndices.length > 0) {
-      this.setCurrentProjectIndices(indices.filter(b => state.global.selectedIndices.includes(b.index)));
+      this.setSelectedProjectIndices(indices.filter(b => state.global.selectedIndices.includes(b.index)));
     } else {
-      this.setCurrentProjectIndices(indices);
+      this.setSelectedProjectIndices(indices);
     }
   }
 
@@ -129,7 +129,7 @@ export class ProjectStore {
       }
     });
       // todo distinct pipe ???
-    this.getCurrentProjectIndices().pipe(skip(1), distinctUntilChanged(), switchMap(projectIndices => {
+    this.getSelectedProjectIndices().pipe(skip(1), distinctUntilChanged(), switchMap(projectIndices => {
       if (this._selectedProject && projectIndices) {
         this.setIndicesSelectionLocalStorage(this._selectedProject, projectIndices);
         return this.projectService.getProjectFacts(this._selectedProject.id, projectIndices.map(x => [{name: x.index}]).flat());

@@ -37,7 +37,7 @@ export class TaggerGroupTagRandomDocDialogComponent implements OnInit {
 
 
   ngOnInit() {
-    this.projectStore.getCurrentProjectIndices().pipe(take(1)).subscribe(x => {
+    this.projectStore.getSelectedProjectIndices().pipe(take(1)).subscribe(x => {
       if (x) {
         this.indices = x;
         this.onSubmit();

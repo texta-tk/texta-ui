@@ -45,7 +45,7 @@ export class CreateEmbeddingDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.projectStore.getCurrentProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(currentProjIndices => {
+    this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(currentProjIndices => {
       if (currentProjIndices) {
         const indicesForm = this.embeddingForm.get('indicesFormControl');
         indicesForm?.setValue(currentProjIndices);

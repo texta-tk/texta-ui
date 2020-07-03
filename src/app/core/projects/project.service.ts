@@ -52,8 +52,8 @@ export class ProjectService {
     return this.http.get<ProjectIndex[]>(
       `${this.apiUrl}/projects/${id}/get_fields/`,
     ).pipe(
-      tap(e => this.logService.logStatus(e, 'get Project Fields')),
-      catchError(this.logService.handleError<ProjectIndex[]>('getProjectIndices')));
+      tap(e => this.logService.logStatus(e, 'getProjectFields')),
+      catchError(this.logService.handleError<ProjectIndex[]>('getProjectFields')));
   }
 
   projectFactValueAutoComplete(id: number, factName: string, limitN: number, startsWith: string): Observable<string[] | HttpErrorResponse> {

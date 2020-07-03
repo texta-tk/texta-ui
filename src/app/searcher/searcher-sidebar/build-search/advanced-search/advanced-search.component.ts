@@ -89,7 +89,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
         this.projectFacts = projectFacts;
       }
     });
-    this.projectStore.getCurrentProjectIndices().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectIndex[]) => {
+    this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectIndex[]) => {
       if (projectFields) {
         this.projectFields = ProjectIndex.sortTextaFactsAsFirstItem(projectFields);
         const distinct = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(x => x.fields).flat(), (x => x.path));

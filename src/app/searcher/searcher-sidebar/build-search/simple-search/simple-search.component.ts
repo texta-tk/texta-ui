@@ -40,7 +40,7 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.projectStore.getCurrentProjectIndices().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectIndex[]) => {
+    this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectIndex[]) => {
       if (projectFields) {
         this.projectFields = ProjectIndex.sortTextaFactsAsFirstItem(projectFields);
         this.makeQuery(this.searchFormControl.value);
