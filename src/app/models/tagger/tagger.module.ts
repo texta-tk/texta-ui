@@ -16,6 +16,7 @@ import { TaggerGroupTagRandomDocDialogComponent } from './tagger-group/tagger-gr
 import { ListFeaturesDialogComponent } from './list-features-dialog/list-features-dialog.component';
 import { EditTaggerDialogComponent } from './tagger/edit-tagger-dialog/edit-tagger-dialog.component';
 import { EditTaggerGroupDialogComponent } from './tagger-group/edit-tagger-group-dialog/edit-tagger-group-dialog.component';
+import { RegexTaggerComponent } from './regex-tagger/regex-tagger.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { EditTaggerGroupDialogComponent } from './tagger-group/edit-tagger-group
     ListFeaturesDialogComponent,
     EditTaggerDialogComponent,
     EditTaggerGroupDialogComponent,
+    RegexTaggerComponent,
   ],
   imports: [
     SharedModule,

@@ -61,6 +61,8 @@
       <a [routerLink]="['clustering']" data-cy="appNavbarModelMenuClusters" mat-menu-item
          routerLinkActive="is-active-menu">Clustering <span
         *ngIf="projectResourceCounts?.num_clusterings">({{projectResourceCounts?.num_clusterings}})</span></a>
+      <a [routerLink]="['regex-tagger']" data-cy="appNavbarModelMenuRegexTagger" mat-menu-item
+         routerLinkActive="is-active-menu">Regex Tagger </a>
     </mat-menu>
 
     <mat-menu #tools="matMenu">
