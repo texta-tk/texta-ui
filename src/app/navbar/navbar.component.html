@@ -101,7 +101,7 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <button (click)="edit(projectControl.value)" mat-icon-button matTooltip="Edit project">
+      <button *ngIf="currentProject" (click)="edit(projectControl.value)" mat-icon-button matTooltip="Edit project">
         <mat-icon aria-label="Edit Project">edit</mat-icon>
       </button>
       <div class="flex-row logout">

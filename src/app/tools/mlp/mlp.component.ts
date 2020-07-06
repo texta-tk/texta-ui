@@ -17,6 +17,7 @@ import {MLP} from '../../shared/types/tasks/MLP';
 import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {QueryDialogComponent} from '../../shared/components/dialogs/query-dialog/query-dialog.component';
 import {expandRowAnimation} from '../../shared/animations';
+import {MLPApplyTextDialogComponent} from './mlp-apply-text-dialog/mlp-apply-text-dialog.component';
 
 @Component({
   selector: 'app-mlp',
@@ -109,7 +110,12 @@ export class MLPComponent implements OnInit, OnDestroy, AfterViewInit {
       width: '700px',
     });
   }
-
+  openApplyTextDialog() {
+    this.dialog.open(MLPApplyTextDialogComponent, {
+      maxHeight: '80vh',
+      width: '700px',
+    });
+  }
   openCreateDialog() {
     const dialogRef = this.dialog.open(MLPCreateIndexDialogComponent, {
       maxHeight: '650px',

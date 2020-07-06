@@ -1,0 +1,49 @@
+<h1 mat-dialog-title>Apply to text</h1>
+<div mat-dialog-content>
+  <form (ngSubmit)="onSubmit(MLPForm.value)" [formGroup]="MLPForm" class="flex-col">
+    <mat-form-field class="max-width" data-cy="appMLPApplyDialogText">
+      <input [errorStateMatcher]="matcher" matInput placeholder="Text" formControlName="textFormControl" required>
+      <mat-error *ngIf="MLPForm.get('textFormControl')?.hasError('required')">
+        Description is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field data-cy="appMLPApplyDialogAnalyzers">
+      <mat-label>Analyzers</mat-label>
+      <mat-select [errorStateMatcher]="matcher" [disableOptionCentering]="true" formControlName="analyzersFormControl"
+                  panelClass="select-panel-reveal-input" multiple required>
+        <ng-container *ngIf="analyzers">
+          <mat-option *ngFor="let item of analyzers" [value]="item.value">
+            {{item.display_name}}
+          </mat-option>
+        </ng-container>
+      </mat-select>
+
+      <mat-error *ngIf="MLPForm.get('analyzersFormControl')?.hasError('required')">
+        Select at least <strong>1 analyzer</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+
+    <div class="flex-col">
+      <div class="flex-row">
+        <div class="flex-item-left">
+          <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
+        </div>
+        <div class="flex-item-right">
+          <button [disabled]="!MLPForm.valid" data-cy="appMLPApplyDialogSubmit" mat-button type="submit">
+            Apply
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+  <div *ngIf="result" class="m-top-10">
+    <div class="code-wrapper">
+      <code>
+          <pre *ngIf="result">
+                    {{result | json}}
+                </pre>
+      </code>
+    </div>
+  </div>
+</div>

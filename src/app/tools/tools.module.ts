@@ -7,6 +7,7 @@ import {DatasetImporterComponent} from './dataset-importer/dataset-importer.comp
 import {CreateDatasetDialogComponent} from './dataset-importer/create-dataset-dialog/create-dataset-dialog.component';
 import {MLPComponent} from './mlp/mlp.component';
 import {MLPCreateIndexDialogComponent} from './mlp/mlp-create-index-dialog/mlp-create-index-dialog.component';
+import { MLPApplyTextDialogComponent } from './mlp/mlp-apply-text-dialog/mlp-apply-text-dialog.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import {MLPCreateIndexDialogComponent} from './mlp/mlp-create-index-dialog/mlp-c
     DatasetImporterComponent,
     CreateDatasetDialogComponent,
     MLPComponent,
-    MLPCreateIndexDialogComponent
+    MLPCreateIndexDialogComponent,
+    MLPApplyTextDialogComponent
   ],
   imports: [
     SharedModule,

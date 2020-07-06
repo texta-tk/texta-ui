@@ -5,13 +5,15 @@
     </div>
     <div class="paginator-row">
       <button (click)="openCreateDialog()" class="paginator-margin-left"
-              color="primary" data-cy="appMLPCreateBtn" mat-raised-button>
+              color="primary" data-cy="appToolsMLPCreateBtn" mat-raised-button>
         CREATE
       </button>
       <button (click)="onDeleteAllSelected()" [disabled]="selectedRows.selected.length < 1" class="new-resource-btn"
               color="warn" data-cy="appMLPDeleteBtn"
               mat-icon-button matTooltip="Delete selected">
         <mat-icon>delete</mat-icon>
+      </button>
+      <button (click)="openApplyTextDialog()" data-cy="appToolsMLPApplyTextBtn" mat-stroked-button>Apply to text
       </button>
       <mat-paginator [length]="resultsLength" [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
       </mat-paginator>
