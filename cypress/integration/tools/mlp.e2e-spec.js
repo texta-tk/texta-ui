@@ -10,6 +10,7 @@ describe('mlp should work', function () {
         cy.route('GET', '**user**').as('getUser');
         cy.route('GET', '**get_fields**').as('getProjectIndices');
         cy.route('GET', '**/mlp_index/**').as('getMLPTasks');
+        cy.route('OPTIONS', '**/mlp_index/**').as('optionsMLPTasks');
         cy.route('DELETE', '**/mlp_index/**').as('bulkDeleteMLPTasks');
         cy.route('POST', '**/mlp_index/**').as('createMLPTask');
         cy.route('POST', '**/mlp/texts/**').as('MLPTexts');
@@ -27,6 +28,7 @@ describe('mlp should work', function () {
   it('should be able to create a new MLP task', function () {
     initMLPPage();
     cy.get('[data-cy=appToolsMLPCreateBtn]').should('be.visible').click();
+    cy.wait('@optionsMLPTasks');
     cy.get('[data-cy=appMLPCreateDialogDesc]').then((desc => {
       cy.wrap(desc).should('have.class', 'mat-focused').type('b').find('input').clear();
       cy.matFormFieldShouldHaveError(desc, 'required');
@@ -49,6 +51,7 @@ describe('mlp should work', function () {
 
 
     cy.get('[data-cy=appToolsMLPApplyTextBtn]').click();
+    cy.wait('@optionsMLPTasks');
     cy.get('[data-cy=appMLPApplyDialogText]').then((desc => {
       cy.wrap(desc).should('have.class', 'mat-focused').type('b').find('input').clear();
       cy.matFormFieldShouldHaveError(desc, 'required');
