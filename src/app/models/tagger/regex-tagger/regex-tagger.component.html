@@ -1,0 +1,136 @@
+<div class="wrapper flex-col max-height">
+
+  <div class="table-paginator-row">
+    <div class="loading-bar">
+      <mat-progress-bar *ngIf="isLoadingResults" mode="indeterminate"></mat-progress-bar>
+    </div>
+    <div class="paginator-row">
+      <button (click)="openCreateDialog()" class="paginator-margin-left"
+              color="primary" data-cy="appRegexTaggerCreateBtn" mat-raised-button>
+        CREATE
+      </button>
+      <button (click)="onDeleteAllSelected()" [disabled]="selectedRows.selected.length < 1" class="new-resource-btn"
+              color="warn"
+              mat-icon-button matTooltip="Delete selected">
+        <mat-icon>delete</mat-icon>
+      </button>
+      <button (click)="openMultiTagDialog()" data-cy="appRegexTaggerMultiTagBtn" mat-stroked-button>
+        Multi tag text
+      </button>
+      <mat-paginator [length]="resultsLength" [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
+      </mat-paginator>
+    </div>
+  </div>
+
+  <div [appScrollTop]="tableData" class="table-container overflow-auto">
+    <table [dataSource]="tableData" mat-table
+           matSort matSortDirection="desc" matSortDisableClear matSortActive="id"
+           multiTemplateDataRows>
+      <ng-container matColumnDef="select">
+        <th *matHeaderCellDef mat-header-cell>
+          <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selectedRows.hasValue() && isAllSelected()"
+                        [indeterminate]="selectedRows.hasValue() && !isAllSelected()">
+          </mat-checkbox>
+        </th>
+        <td *matCellDef="let row" mat-cell>
+          <mat-checkbox (change)="$event ? selectedRows.toggle(row) : null" (click)="$event.stopPropagation()"
+                        [checked]="selectedRows.isSelected(row)">
+          </mat-checkbox>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="id">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Id</th>
+        <td *matCellDef="let element" mat-cell> {{element.id}}</td>
+      </ng-container>
+      <ng-container matColumnDef="description">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Description</th>
+        <td *matCellDef="let element" mat-cell> {{element.description}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="operator">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Operator</th>
+        <td *matCellDef="let element" mat-cell> {{element.operator}}</td>
+      </ng-container>
+      <ng-container matColumnDef="matchType">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Match type</th>
+        <td *matCellDef="let element" mat-cell> {{element.match_type}}</td>
+      </ng-container>
+      <ng-container matColumnDef="requiredWords">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Required words</th>
+        <td *matCellDef="let element" mat-cell> {{element.required_words}}</td>
+      </ng-container>
+      <ng-container matColumnDef="phraseSlop">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Phrase slop</th>
+        <td *matCellDef="let element" mat-cell> {{element.phrase_slop}}</td>
+      </ng-container>
+      <ng-container matColumnDef="counterSlop">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Counter slop</th>
+        <td *matCellDef="let element" mat-cell> {{element.counter_slop}}</td>
+      </ng-container>
+      <ng-container matColumnDef="nAllowedEdits">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Allowed edits</th>
+        <td *matCellDef="let element" mat-cell> {{element.n_allowed_edits}}</td>
+      </ng-container>
+      <ng-container matColumnDef="ignoreCase">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Ignore case</th>
+        <td *matCellDef="let element" mat-cell>
+          <mat-checkbox [(ngModel)]="element.ignore_case"
+                        disabled></mat-checkbox>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="ignorePunctuation">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Ignore punctuation</th>
+        <td *matCellDef="let element" mat-cell>
+          <mat-checkbox [(ngModel)]="element.ignore_punctuation"
+                        disabled></mat-checkbox>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="fuzzy">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Fuzzy match</th>
+        <td *matCellDef="let element" mat-cell>
+          <mat-checkbox [(ngModel)]="element.return_fuzzy_match"
+                        disabled></mat-checkbox>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="expandedDetail">
+        <td *matCellDef="let element" [attr.colspan]="displayedColumns.length" mat-cell>
+          <div *ngIf="element == expandedElement" [@detailExpand] class="element-detail">
+            <div class="flex-col m-l-r-5" fxFlex="50">
+              <table class="simple-table">
+                <tr>
+                  <th class="mat-body-strong">Lexicon words</th>
+                </tr>
+                <tr *ngFor="let val of element.lexicon">
+                  <td>{{val}}</td>
+                </tr>
+              </table>
+            </div>
+            <div class="flex-col m-l-r-5" fxFlex="50">
+              <table class="simple-table">
+                <tr>
+                  <th class="mat-body-strong">Counter Lexicon words</th>
+                </tr>
+                <tr *ngFor="let tt of element.counter_lexicon">
+                  <td>{{tt}}</td>
+                </tr>
+              </table>
+            </div>
+
+          </div>
+        </td>
+      </ng-container>
+      <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
+      <tr (click)="expandedElement = expandedElement === element ? null : element"
+          *matRowDef="let element; columns: displayedColumns;" [class.expanded-row]="expandedElement === element"
+          class="element-row"
+          mat-row></tr>
+      <tr *matRowDef="let row; columns: ['expandedDetail']" class="detail-row" mat-row></tr>
+
+    </table>
+
+  </div>
+
+
+</div>

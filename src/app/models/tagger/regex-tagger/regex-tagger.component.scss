@@ -1,0 +1,36 @@
+@import "../../../../variables/variables";
+
+table {
+  width: 100%;
+}
+
+:host {
+  overflow: hidden;
+}
+
+.mat-cell {
+  word-break: break-word;
+}
+
+tr.detail-row {
+  height: 0;
+}
+
+tr.element-row:not(.expanded-row):hover {
+  background: #eeeeee;
+}
+
+tr.element-row:not(.expanded-row):active {
+  background: #efefef;
+}
+
+.element-row td {
+  border-bottom-width: 0;
+}
+
+.element-detail {
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+
+}

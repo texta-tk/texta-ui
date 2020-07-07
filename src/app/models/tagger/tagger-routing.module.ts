@@ -3,6 +3,7 @@ import {TaggerComponent} from './tagger/tagger.component';
 import {RouterModule, Routes} from '@angular/router';
 import {AuthGuard} from '../../core/auth/auth.guard';
 import {TaggerGroupComponent} from './tagger-group/tagger-group.component';
+import {RegexTaggerComponent} from './regex-tagger/regex-tagger.component';
 
 const routes: Routes = [
   {
@@ -15,6 +16,11 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     component: TaggerGroupComponent,
   },
+  {
+    path: 'regex-tagger',
+    canActivate: [AuthGuard],
+    component: RegexTaggerComponent,
+  }
 
 ];
 
