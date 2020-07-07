@@ -17,6 +17,8 @@ import { ListFeaturesDialogComponent } from './list-features-dialog/list-feature
 import { EditTaggerDialogComponent } from './tagger/edit-tagger-dialog/edit-tagger-dialog.component';
 import { EditTaggerGroupDialogComponent } from './tagger-group/edit-tagger-group-dialog/edit-tagger-group-dialog.component';
 import { RegexTaggerComponent } from './regex-tagger/regex-tagger.component';
+import { CreateRegexTaggerDialogComponent } from './regex-tagger/create-regex-tagger-dialog/create-regex-tagger-dialog.component';
+import { MultiTagTextDialogComponent } from './regex-tagger/multi-tag-text-dialog/multi-tag-text-dialog.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +38,8 @@ import { RegexTaggerComponent } from './regex-tagger/regex-tagger.component';
     EditTaggerDialogComponent,
     EditTaggerGroupDialogComponent,
     RegexTaggerComponent,
+    CreateRegexTaggerDialogComponent,
+    MultiTagTextDialogComponent,
   ],
   imports: [
     SharedModule,
