@@ -9,9 +9,10 @@
         Description is <strong>required</strong>
       </mat-error>
     </mat-form-field>
-    <mat-form-field>
+    <mat-form-field data-cy="appRegexTaggerCreateDialogLexicon">
       <textarea
         [rows]="5"
+        [errorStateMatcher]="matcher"
         formControlName="lexiconFormControl"
         matInput placeholder="Lexicon (newline separated)" required></textarea>
       <a (click)="$event.stopPropagation();" *ngIf="lexicons.length > 0"
@@ -38,14 +39,14 @@
     </mat-form-field>
 
     <div fxLayout="row" fxLayoutGap="24px">
-      <mat-form-field fxFlex="calc(33%-24px)">
+      <mat-form-field fxFlex="calc(33%-24px)" data-cy="appRegexTaggerCreateDialogOperator">
         <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="operatorFormControl" matInput
                placeholder="Operator" required>
         <mat-error *ngIf="regexTaggerForm.get('operatorFormControl')?.hasError('required')">
           Operator is <strong>required</strong>
         </mat-error>
       </mat-form-field>
-      <mat-form-field fxFlex="calc(33%-24px)">
+      <mat-form-field fxFlex="calc(33%-24px)" data-cy="appRegexTaggerCreateDialogMatchType">
         <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="matchTypeFormControl" matInput
                placeholder="Match type" required>
         <mat-error *ngIf="regexTaggerForm.get('matchTypeFormControl')?.hasError('required')">

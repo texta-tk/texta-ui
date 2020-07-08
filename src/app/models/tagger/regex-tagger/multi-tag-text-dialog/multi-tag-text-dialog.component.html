@@ -1,11 +1,11 @@
 <h1 mat-dialog-title>Multi tag text</h1>
 <mat-dialog-content fxLayout="column">
 
-  <mat-form-field class="max-width">
+  <mat-form-field class="max-width" data-cy="appRegexTaggerMultiTagDialogText">
     <textarea [(ngModel)]="text" [ngModelOptions]="{standalone: true}" [rows]="5" matInput
               placeholder="Tag text"></textarea>
   </mat-form-field>
-  <mat-form-field class="max-width">
+  <mat-form-field class="max-width" data-cy="appRegexTaggerMultiTagDialogTaggers">
     <mat-label>Tagger</mat-label>
     <mat-select [(ngModel)]="selectedTaggers"
                 [disableOptionCentering]="true" [ngModelOptions]="{standalone: true}" multiple
@@ -31,7 +31,7 @@
       <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
     </div>
     <div class="flex-item-right">
-      <button (click)="onSubmit(text, selectedTaggers)" [disabled]="!text" data-cy="appRegexTaggerCreateDialogSubmit"
+      <button (click)="onSubmit(text, selectedTaggers)" [disabled]="!text" data-cy="appRegexTaggerMultiTagDialogSubmit"
               mat-button>
         Tag
       </button>

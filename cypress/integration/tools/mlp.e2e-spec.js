@@ -55,7 +55,7 @@ describe('mlp should work', function () {
     cy.get('[data-cy=appMLPApplyDialogText]').then((desc => {
       cy.wrap(desc).should('have.class', 'mat-focused').type('b').find('input').clear();
       cy.matFormFieldShouldHaveError(desc, 'required');
-      cy.wrap(desc).type('Eesti autopargi läbisoit on 5455 miljonilt autokilomeetrilt 1995. aastal kasvanud 6535 miljonile autokilomeetrile 2001. aastal, ehk 19,8%. 2001. aastal oli soiduautode aasta keskmine läbisoit registris oleva soiduauto kohta 12861 km, bussidel oli 30800 km ja veoautodel 14000 km. Töös on leitud liiklusohutuse suhtenäitajad kogu vabariigi, üksikute maakondade, suuremate linnade ja pohimaanteede loikes aastatel 1997-2002');
+      cy.wrap(desc).type('Eesti autopargi läbisoit on 5455 miljonilt autokilomeetrilt 1995. aastal kasvanud 6535 miljonile autokilomeetrile 2001. aastal, ehk 19,8%. 2001. aastal oli soiduautode aasta keskmine läbisoit registris oleva soiduauto kohta 12861 km, bussidel oli 30800 km ja veoautodel 14000 km.');
     }));
     cy.get('[data-cy=appMLPApplyDialogAnalyzers]').click().then((analyzers => {
       cy.wrap(analyzers).should('have.class', 'mat-focused');
