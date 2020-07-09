@@ -57,10 +57,8 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
     });
     this.searchFormControl.valueChanges.pipe(debounceTime(SearcherOptions.SEARCH_DEBOUNCE_TIME),
       takeUntil(this.destroy$)).subscribe(value => {
-      if (value && this.projectFields && this.currentProject) {
-        this.makeQuery(value);
-        this.searchQueue$.next();
-      }
+      this.makeQuery(value);
+      this.searchQueue$.next();
     });
     this.searchQueue$.pipe(debounceTime(SearcherOptions.SEARCH_DEBOUNCE_TIME), takeUntil(this.destroy$),
       switchMap((_) => {
@@ -115,6 +113,9 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
         // @ts-ignore
         this.elasticSearchQuery.elasticSearchQuery.highlight.fields[field] = {};
       }
+      this.searcherComponentService.nextElasticQuery(this.elasticSearchQuery);
+    } else if (this.projectFields) {
+      this.elasticSearchQuery = new ElasticsearchQuery(); // emptied the searchbox, so reset query
       this.searcherComponentService.nextElasticQuery(this.elasticSearchQuery);
     }
   }
