@@ -19,9 +19,9 @@ describe('tagger groups should work', function () {
   function initTaggerGroupPage() {
     cy.visit('/tagger-groups');
     cy.wait('@getProjectIndices');
+    cy.wait('@getTaggerGroups');
     cy.get('[data-cy=appNavbarProjectSelect]').click();
     cy.get('mat-option').contains('integration_test_project').click();
-    cy.wait('@getTaggerGroups');
   }
 
   it('should be able to create a new tagger group', function () {
@@ -54,6 +54,8 @@ describe('tagger groups should work', function () {
   it('extra_actions should work', function () {
     cy.importTestTaggerGroup(this.projectId).then(x => {
       initTaggerGroupPage();
+      cy.wait('@getTaggerGroups');
+      cy.wait(100);
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
       cy.get('[data-cy=appTaggerGroupMenuModelList]').should('be.visible').click();
       cy.wait('@getTaggerGroups').then(x=>{

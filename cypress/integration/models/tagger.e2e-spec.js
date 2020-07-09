@@ -18,9 +18,9 @@ describe('taggers should work', function () {
   function initTaggersPage(){
     cy.visit('/taggers');
     cy.wait('@getProjectIndices');
+    cy.wait('@getTaggers');
     cy.get('[data-cy=appNavbarProjectSelect]').click();
     cy.get('mat-option').contains('integration_test_project').click();
-    cy.wait('@getTaggers');
   }
   it('should be able to create a new tagger', function () {
     initTaggersPage();
@@ -58,6 +58,8 @@ describe('taggers should work', function () {
     // list features
     cy.importTestTagger(this.projectId).then(x => {
       initTaggersPage();
+      cy.wait('@getTaggers');
+      cy.wait(100);
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
       cy.get('[data-cy=appTaggerMenuListFeatures]').should('be.visible').click();
       cy.wait('@getTaggers');

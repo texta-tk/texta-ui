@@ -18,9 +18,9 @@ describe('torchTaggers should work', function () {
   function initTorchTagger() {
     cy.visit('/torchtaggers');
     cy.wait('@getProjectIndices');
+    cy.wait('@getTorchTaggers');
     cy.get('[data-cy=appNavbarProjectSelect]').click();
     cy.get('mat-option').contains('integration_test_project').click();
-    cy.wait('@getTorchTaggers');
   }
   it('should be able to create a new tagger', function () {
     cy.importTestEmbedding(this.projectId).then(x => {
@@ -73,6 +73,8 @@ describe('torchTaggers should work', function () {
   it('extra_actions should work', function () {
     cy.importTestTorchTagger(this.projectId).then(x => {
       initTorchTagger();
+      cy.wait('@getTorchTaggers');
+      cy.wait(100);
       // tag text
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
       cy.get('[data-cy=appTorchTaggerMenuTagText]').should('be.visible').click();
