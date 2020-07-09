@@ -24,6 +24,7 @@ describe('clustering should work', function () {
     cy.wait('@getProjectIndices');
     cy.get('[data-cy=appNavbarProjectSelect]').click();
     cy.get('mat-option').contains('integration_test_project').click();
+    cy.wait('@getClustering');
   }
 
   it('clustering should work', function () {
