@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {pairwise, takeUntil} from 'rxjs/operators';
-import {Field, Project, ProjectFact, ProjectIndex} from '../../../shared/types/Project';
+import {Field, Project, ProjectIndex} from '../../../shared/types/Project';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {BehaviorSubject, forkJoin, of, Subject} from 'rxjs';
 import {FormControl} from '@angular/forms';
@@ -88,7 +88,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
     const aggregationType = Object.keys(joinedAggregation)[0];
     const body: any = {
       query: {
-        aggs: {...joinedAggregation},
+        aggs: {...!this.searchQueryExcluded ? joinedAggregation : {}},
         size: 0 // ignore results, performance improvement
       },
       indices: this.projectFields.map(y => y.index)
