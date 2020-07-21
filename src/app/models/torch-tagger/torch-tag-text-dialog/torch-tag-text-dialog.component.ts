@@ -1,7 +1,7 @@
 import {Component, Inject} from '@angular/core';
 import {TorchTaggerService} from '../../../core/models/taggers/torch-tagger.service';
 import {LogService} from 'src/app/core/util/log.service';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
@@ -17,15 +17,15 @@ export class TorchTagTextDialogComponent {
               @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, torchTorchTaggerId: number; }) {
   }
 
-  onSubmit(value) {
+  onSubmit(value: string) {
     this.torchTorchTaggerService.tagText({
       text: value,
       lemmatize: this.lemmatize
     }, this.data.currentProjectId, this.data.torchTorchTaggerId)
-      .subscribe((resp: { result: boolean, probability: number } | HttpErrorResponse) => {
+      .subscribe(resp => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
           this.result = resp;
-        } else if (resp instanceof HttpErrorResponse) {
+        } else {
           this.logService.snackBarError(resp, 4000);
         }
       });

@@ -17,6 +17,7 @@ export class GenericTableComponent implements OnInit {
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
   @Input() pageSizeOptions: number[] = [15, 50, 100];
+  // tslint:disable-next-line:no-any
   @Input() set dataSource(data: any[]) {
     if (data.length >= 0) {
       this.displayedColumns = this.makeColumns(data);
@@ -45,7 +46,7 @@ export class GenericTableComponent implements OnInit {
     return columns;
   }
 
-  checkIfObject(value) {
+  checkIfObject(value: object) {
     if (value) {
       // hacky way to check if object with properties
       return value.toString() === '[object Object]';

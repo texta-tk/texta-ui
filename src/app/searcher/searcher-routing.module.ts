@@ -4,27 +4,25 @@ import {AuthGuard} from '../core/auth/auth.guard';
 import {SearcherComponent} from './searcher.component';
 
 export function searchPageMatcher(segments: UrlSegment[]): UrlMatchResult {
-  if (segments.length > 0 && segments[0].path === 'searcher') {
-    if (segments.length === 1) {
-      return {
-        consumed: segments,
-        posParams: {},
-      };
-    }
-    if (segments.length === 2) {
-      return {
-        consumed: segments,
-        posParams: {projectId: segments[1]},
-      };
-    }
-    if (segments.length === 3) {
-      return {
-        consumed: segments,
-        posParams: {projectId: segments[1], index: segments[2]},
-      };
-    }
-    return null as any;
+  if (segments.length === 0) {
+    return {
+      consumed: segments,
+      posParams: {},
+    };
   }
+  if (segments.length === 1) {
+    return {
+      consumed: segments,
+      posParams: {projectId: segments[0]},
+    };
+  }
+  if (segments.length === 2) {
+    return {
+      consumed: segments,
+      posParams: {projectId: segments[0], index: segments[1]},
+    };
+  }
+  // tslint:disable-next-line:no-any
   return null as any;
 }
 

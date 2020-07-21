@@ -1,9 +1,9 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Reindexer} from 'src/app/shared/types/tools/Elastic';
-import { MatDialog } from '@angular/material/dialog';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import {MatDialog} from '@angular/material/dialog';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
+import {MatTableDataSource} from '@angular/material/table';
 import {SelectionModel} from '@angular/cdk/collections';
 import {merge, Subject, timer} from 'rxjs';
 import {Project} from 'src/app/shared/types/Project';
@@ -43,7 +43,7 @@ export class ReindexerComponent implements OnInit, OnDestroy {
   filteredSubject = new Subject();
   // For custom filtering, such as text search in description
   inputFilterQuery = '';
-  filteringValues = {};
+  filteringValues: { [key: string]: string } = {};
 
   currentProject: Project;
   resultsLength: number;
@@ -63,7 +63,7 @@ export class ReindexerComponent implements OnInit, OnDestroy {
         this.currentProject.id,
         `page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`
       )))
-      .subscribe((resp: { count: number, results: Reindexer[] } | HttpErrorResponse) => {
+      .subscribe(resp => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
           if (resp.results.length > 0) {
             resp.results.map(reindexer => {
@@ -74,15 +74,14 @@ export class ReindexerComponent implements OnInit, OnDestroy {
         }
       });
 
-    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(
-      (resp: Project | null) => {
-        if (resp) {
-          this.currentProject = resp;
-          this.setUpPaginator();
-        } else {
-          this.isLoadingResults = false;
-        }
-      });
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(resp => {
+      if (resp) {
+        this.currentProject = resp;
+        this.setUpPaginator();
+      } else {
+        this.isLoadingResults = false;
+      }
+    });
   }
 
   setUpPaginator() {
@@ -99,11 +98,15 @@ export class ReindexerComponent implements OnInit, OnDestroy {
           // Add 1 to to index because Material paginator starts from 0 and DRF paginator from 1
           `${this.inputFilterQuery}&ordering=${sortDirection}${this.sort.active}&page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`
         );
-      })).subscribe((data: { count: number, results: Reindexer[] }) => {
+      })).subscribe(data => {
       // Flip flag to show that loading has finished.
       this.isLoadingResults = false;
-      this.resultsLength = data.count;
-      this.tableData.data = data.results;
+      if (data && !(data instanceof HttpErrorResponse)) {
+        this.resultsLength = data.count;
+        this.tableData.data = data.results;
+      } else if (data) {
+        this.logService.snackBarError(data, 2000);
+      }
     });
   }
 
@@ -117,7 +120,7 @@ export class ReindexerComponent implements OnInit, OnDestroy {
       maxHeight: '650px',
       width: '700px',
     });
-    dialogRef.afterClosed().subscribe((resp: Reindexer | HttpErrorResponse) => {
+    dialogRef.afterClosed().subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.tableData.data = [...this.tableData.data, resp];
         this.logService.snackBarMessage(`Created re-indexer: ${resp.description}`, 2000);
@@ -202,9 +205,8 @@ export class ReindexerComponent implements OnInit, OnDestroy {
   }
 
 
-  applyFilter(filterValue: any, field: string) {
-    filterValue = filterValue.value ? filterValue.value : '';
-    this.filteringValues[field] = filterValue;
+  applyFilter(filterValue: EventTarget | null, field: string) {
+    this.filteringValues[field] = (filterValue as HTMLInputElement).value ? (filterValue as HTMLInputElement).value : '';
     this.filterQueriesToString();
     this.filteredSubject.next();
   }
@@ -218,10 +220,4 @@ export class ReindexerComponent implements OnInit, OnDestroy {
     }
   }
 
-  getFields(element) {
-    if (element) {
-      return element.fields.join('\n');
-    }
-    return '';
-  }
 }

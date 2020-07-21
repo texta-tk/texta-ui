@@ -14,7 +14,7 @@ export class LogService {
   }
 
   public handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
+    return (error: T): Observable<T> => {
       // TODO: send the error to remote logging infrastructure
       console.warn(error); // log to console instead
 
@@ -23,7 +23,7 @@ export class LogService {
   }
 
 
-  public logStatus(val, msg) {
+  public logStatus(val: unknown, msg: string) {
     if (!this.isProduction) {
       console.warn(msg, val);
     }

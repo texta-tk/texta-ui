@@ -22,13 +22,18 @@ export class ShortVersionComponent {
   textHidden = true;
   hiddenPlaceHolder = ' ... ';
 
-  @Input() set params(params: { data: any, currentColumn: string, searcherHighlight: any, contextWindow: number }) {
-    if (params?.data && params?.searcherHighlight && params.currentColumn && params.data[params.currentColumn] !== '' &&
-      params.data[params.currentColumn] && params?.contextWindow > 0) {
+  constructor() {
+  }
+
+  @Input() set params(params: { data: unknown, currentColumn: string, searcherHighlight: any, contextWindow: number }) {
+    // @ts-ignore
+    if (params.currentColumn && params.data[params.currentColumn] && params.data[params.currentColumn] !== '' &&
+      params?.searcherHighlight && params?.contextWindow > 0) {
       const highlightTerms = [
         ...HighlightComponent.makeSearcherHighlights(params.searcherHighlight, params.currentColumn),
       ];
       const colors = HighlightComponent.generateColorsForFacts(highlightTerms);
+      // @ts-ignore
       this.highlightArray = this.makeShortVersionSpans(params.data[params.currentColumn].toString(),
         highlightTerms, colors, params.contextWindow);
     } else {
@@ -36,7 +41,34 @@ export class ShortVersionComponent {
     }
   }
 
-  constructor() {
+  public toggleSpanText(span: ContextSpan) {
+    if (span.hidden) {
+      span.displayText = span.text;
+    } else {
+      span.displayText = this.hiddenPlaceHolder;
+    }
+    span.hidden = !span.hidden;
+  }
+
+  // (from) parameter marks where to split the context from: for example with "start"
+  // sample text: "bla bla bla bla bla" output: "{highlight} bla bla bla ..."
+  // for example with "end"
+  // sample text: "bla bla bla bla bla" output: "... bla bla bla {highlight}"
+
+  public toggleAll() {
+    this.highlightArray.forEach(x => {
+      if (x.type === 'text') {
+        if (this.textHidden) {
+          x.hidden = false;
+          x.displayText = x.text;
+        } else {
+          x.hidden = true;
+          x.displayText = this.hiddenPlaceHolder;
+        }
+      }
+    });
+
+    this.textHidden = !this.textHidden;
   }
 
   private makeShortVersionSpans(originalText: string, facts: HighlightSpan[], factColors: Map<string, LegibleColor>,
@@ -101,10 +133,6 @@ export class ShortVersionComponent {
     return highlightArray;
   }
 
-  // (from) parameter marks where to split the context from: for example with "start"
-  // sample text: "bla bla bla bla bla" output: "{highlight} bla bla bla ..."
-  // for example with "end"
-  // sample text: "bla bla bla bla bla" output: "... bla bla bla {highlight}"
   // @ts-ignore
   private getHighlightContext(context: string, contextWordLimit: number, from: 'start' | 'end'): ContextSpan {
     const split = context.trim().split(' ');
@@ -133,37 +161,12 @@ export class ShortVersionComponent {
     }
   }
 
-  private sortByStartLowestSpan(a, b) {
+  private sortByStartLowestSpan(a: HighlightSpan, b: HighlightSpan) {
     if (a.spans[0] === b.spans[0]) {
       return (a.spans[1] < b.spans[1]) ? -1 : 1; // sort by last span instead (need this for nested facts order)
     } else {
       return (a.spans[0] < b.spans[0]) ? -1 : 1;
     }
-  }
-
-  public toggleSpanText(span: ContextSpan) {
-    if (span.hidden) {
-      span.displayText = span.text;
-    } else {
-      span.displayText = this.hiddenPlaceHolder;
-    }
-    span.hidden = !span.hidden;
-  }
-
-  public toggleAll() {
-    this.highlightArray.forEach(x => {
-      if (x.type === 'text') {
-        if (this.textHidden) {
-          x.hidden = false;
-          x.displayText = x.text;
-        } else {
-          x.hidden = true;
-          x.displayText = this.hiddenPlaceHolder;
-        }
-      }
-    });
-
-    this.textHidden = !this.textHidden;
   }
 
 }

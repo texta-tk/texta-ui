@@ -9,6 +9,8 @@ import {Platform} from '@angular/cdk/platform';
 import {SearcherComponentService} from '../../services/searcher-component.service';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
+import {Plotly} from 'angular-plotly.js/src/app/shared/plotly.interface';
+import Layout = Plotly.Layout;
 
 @Component({
   selector: 'app-aggregation-results-chart',
@@ -16,8 +18,9 @@ import {Subject} from 'rxjs';
   styleUrls: ['./aggregation-results-chart.component.scss']
 })
 export class AggregationResultsChartComponent implements OnInit, OnDestroy {
-  public graph: { data: any[], layout: any };
+  public graph: { data: unknown[], layout: Layout };
   revision = 0;
+  // @ts-ignore
   @ViewChild(PlotComponent) plotly;
   overlayRef: OverlayRef;
 
@@ -32,7 +35,8 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
     this.graph.layout.yaxis.title.text = val;
   }
 
-  @Input() set aggregationData(val: any | AggregationData) {
+  // tslint:disable-next-line:no-any
+  @Input() set aggregationData(val: { series: { name: string; value: number }[]; name: string }[] | AggregationData) {
     this.graph = {
       data: [],
       layout: {
@@ -42,32 +46,39 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
         },
         hoverdistance: -1,
         yaxis: {title: {text: ''}},
-        legend: {orientation: 'h'}
+        legend: {
+          orientation: 'h',
+          xanchor: 'center',
+          y: 1.2,
+          x: 0.5
+        },
       },
     };
-    if (val.dateData) { // regular plots, saved searches and date->term structure plots
-      for (const el of val.dateData) {
-        const series = el.series;
-        const mode = el.series.length > 100 ? 'lines+points' : 'lines+points+markers';
-        if (series[0].extra) { // date->term structure plots, saved searches
-          this.graph.data.push({
-            x: series.map(x => x.name),
-            y: series.map(x => x.value),
-            hovertext: series.map(x => x.extra.buckets.map(y => `${y.key.slice(0, 30)}:<b>${y.doc_count}</b><br>`).join('')),
-            type: 'scattergl',
-            mode,
-            /*          line: {shape: 'spline'},*/
-            name: el.name,
-          });
-        } else {
-          this.graph.data.push({ // regular plots, no nesting, saved searches
-            x: series.map(x => x.name),
-            y: series.map(x => x.value),
-            type: 'scattergl',
-            mode,
-            /*          line: {shape: 'spline'},*/
-            name: el.name,
-          });
+    if (this.isAggregationData(val)) { // regular plots, saved searches and date->term structure
+      if (val.dateData) {
+        for (const el of val.dateData) {
+          const series = el.series;
+          const mode = el.series.length > 100 ? 'lines+points' : 'lines+points+markers';
+          if (series[0].extra) { // date->term structure plots, saved searches
+            this.graph.data.push({
+              x: series.map(x => x.name),
+              y: series.map(x => x.value),
+              hovertext: series.map(x => x?.extra?.buckets.map(y => `${y.key.slice(0, 30)}:<b>${y.doc_count}</b><br>`).join('')),
+              type: 'scattergl',
+              mode,
+              /*          line: {shape: 'spline'},*/
+              name: el.name,
+            });
+          } else {
+            this.graph.data.push({ // regular plots, no nesting, saved searches
+              x: series.map(x => x.name),
+              y: series.map(x => x.value),
+              type: 'scattergl',
+              mode,
+              /*          line: {shape: 'spline'},*/
+              name: el.name,
+            });
+          }
         }
       }
     } else if (val.length > 0) { // nested aggs plots, ex: author->datecreated
@@ -96,7 +107,12 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
     });
   }
 
-  areaSelected(val) {
+  isAggregationData(val: { series: { name: string; value: number }[]; name: string }[] | AggregationData): val is AggregationData {
+    return (val as AggregationData).dateData !== undefined;
+  }
+
+  // tslint:disable-next-line:no-any
+  areaSelected(val: { points: string | any[]; }) {
     let totalDocCount = 0;
     if (this.overlayRef) {
       this.overlayRef.detach();
@@ -140,8 +156,9 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
     this.destroyed$.complete();
   }
 
-  private createInjector(data): PortalInjector {
+  private createInjector(data: { total: number; }): PortalInjector {
 
+    // tslint:disable-next-line:no-any
     const injectorTokens = new WeakMap<any, any>([
       [PORTAL_DATA, data],
     ]);

@@ -7,7 +7,6 @@ import {Constraint, ElasticsearchQueryStructure} from '../../searcher/searcher-s
 import {catchError, tap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {SavedSearch} from '../../shared/types/SavedSearch';
-import {ResultsWrapper} from '../../shared/types/Generic';
 import {UtilityFunctions} from '../../shared/UtilityFunctions';
 
 @Injectable({
@@ -42,20 +41,20 @@ export class SearcherService {
       catchError(this.logService.handleError<unknown>('saveSearch')));
   }
 
-  search(body, projectId: number): Observable<ResultsWrapper<{ highlight: any, doc: any }> | HttpErrorResponse> {
-    return this.http.post<ResultsWrapper<{ highlight: any, doc: any }> | HttpErrorResponse>(`${this.apiUrl}/projects/${projectId}/search_by_query/`, body).pipe(
+  search(body: unknown, projectId: number): Observable<{ results: { highlight: unknown, doc: unknown }[], count: number, aggs?: unknown } | HttpErrorResponse> {
+    return this.http.post<{ results: { highlight: unknown, doc: unknown }[], count: number, aggs?: unknown }>(`${this.apiUrl}/projects/${projectId}/search_by_query/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'search')),
-      catchError(this.logService.handleError<ResultsWrapper<{ highlight: any, doc: any }> | HttpErrorResponse>('search')));
+      catchError(this.logService.handleError<{ results: { highlight: unknown, doc: unknown }[], count: number, aggs?: unknown }>('search')));
   }
 
-  bulkDeleteSavedSearches(projectId: number, body) {
+  bulkDeleteSavedSearches(projectId: number, body: unknown) {
     return this.http.post<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>
     (`${this.apiUrl}/projects/${projectId}/searches/bulk_delete/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'bulkDeleteSavedSearches')),
       catchError(this.logService.handleError<unknown>('bulkDeleteSavedSearches')));
   }
 
-  editSavedSearch(projectId: number, searchId: number, body): Observable<SavedSearch | HttpErrorResponse> {
+  editSavedSearch(projectId: number, searchId: number, body: unknown): Observable<SavedSearch | HttpErrorResponse> {
     return this.http.patch<SavedSearch | HttpErrorResponse>
     (`${this.apiUrl}/projects/${projectId}/searches/${searchId}/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'editSavedSearch')),

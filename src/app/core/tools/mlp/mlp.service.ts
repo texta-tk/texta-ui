@@ -34,19 +34,19 @@ export class MLPService {
       catchError(this.logService.handleError<ResultsWrapper<MLP>>('getMLPTasks')));
   }
 
-  createMLPTask(projectId, body): Observable<MLP | HttpErrorResponse> {
+  createMLPTask(projectId: number, body: unknown): Observable<MLP | HttpErrorResponse> {
     return this.http.post<MLP>(`${this.apiUrl}/projects/${projectId}/mlp_index/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'createMLPTask')),
       catchError(this.logService.handleError<MLP>('createMLPTask')));
   }
 
-  applyMLPText( body): Observable<unknown | HttpErrorResponse> {
+  applyMLPText(body: unknown): Observable<unknown | HttpErrorResponse> {
     return this.http.post<unknown>(`${this.apiUrl}/mlp/texts/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'applyMLPText')),
       catchError(this.logService.handleError<unknown>('applyMLPText')));
   }
 
-  bulkDeleteMLPTasks(projectId: number, body) {
+  bulkDeleteMLPTasks(projectId: number, body: unknown) {
     return this.http.post<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>
     (`${this.apiUrl}/projects/${projectId}/mlp_index/bulk_delete/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'bulkDeleteMLPTasks')),

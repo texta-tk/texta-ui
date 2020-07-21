@@ -60,7 +60,7 @@ export class LoginDialogComponent implements OnInit, OnDestroy {
     });
   }
 
-  onSubmit(formData) {
+  onSubmit(formData: { usernameFormControl: string; passwordFormControl: string; }) {
     this.loginError = '';
     this.makingRequest = true;
     this.userService.authenticate(formData.usernameFormControl, formData.passwordFormControl).pipe(
@@ -75,7 +75,7 @@ export class LoginDialogComponent implements OnInit, OnDestroy {
           this.localStorageService.setUser(response);
           return this.userService.getUserProfile();
         }
-      })).subscribe((resp: UserProfile | HttpErrorResponse) => {
+      })).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.userStore.setCurrentUser(resp);
         if (this.data) {

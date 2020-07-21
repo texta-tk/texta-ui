@@ -31,7 +31,7 @@ export class LexiconMinerComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // you need both lexicons and embeddings to use lexicon miner, so just forkjoin if one of them errors cant do anything
-    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$), switchMap((currentProject: Project) => {
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$), switchMap(currentProject => {
       if (currentProject) {
         this.currentProject = currentProject;
         return this.lexiconService.getLexicons(
@@ -40,7 +40,7 @@ export class LexiconMinerComponent implements OnInit, OnDestroy {
         );
       }
       return of(null);
-    })).subscribe((resp: { count: number, results: Lexicon[] } | HttpErrorResponse) => {
+    })).subscribe(resp => {
         if (resp) {
           if (resp instanceof HttpErrorResponse) {
             this.logService.snackBarError(resp, 5000);
@@ -111,14 +111,18 @@ export class LexiconMinerComponent implements OnInit, OnDestroy {
     this.selectedLexicon = lexicon;
   }
 
-  onScrollLexicons($event) {
+  onScrollLexicons() {
     if (this.currentProject && this.lexicons.length < this.totalLexicons) {
       this.lexiconService.getLexicons(
         this.currentProject.id,
         `page=${Math.round(this.lexicons.length / this.pageSize) + 1}&page_size=${this.pageSize}`)
-        .subscribe((resp: { count: number, results: Lexicon[] }) => {
-          this.totalLexicons = resp.count;
-          this.lexicons = [...this.lexicons, ...resp.results];
+        .subscribe(resp => {
+          if (resp instanceof HttpErrorResponse) {
+            this.logService.snackBarError(resp, 2000);
+          } else if (resp) {
+            this.totalLexicons = resp.count;
+            this.lexicons = [...this.lexicons, ...resp.results];
+          }
         });
     }
   }

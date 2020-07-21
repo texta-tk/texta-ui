@@ -26,7 +26,7 @@ export class EmbeddingsService {
       catchError(this.logService.handleError<ResultsWrapper<Embedding>>('getEmbeddings')));
   }
 
-  createEmbedding(body, projectId): Observable<Embedding | HttpErrorResponse> {
+  createEmbedding(body: unknown, projectId: number): Observable<Embedding | HttpErrorResponse> {
     return this.http.post<Embedding>(
       `${this.apiUrl}/projects/${projectId}/embeddings/`, body
     ).pipe(
@@ -34,7 +34,7 @@ export class EmbeddingsService {
       catchError(this.logService.handleError<Embedding>('getEmbeddings')));
   }
 
-  editEmbedding(body: {}, projectId, embeddingId): Observable<Embedding | HttpErrorResponse> {
+  editEmbedding(body: unknown, projectId: number, embeddingId: number): Observable<Embedding | HttpErrorResponse> {
     return this.http.patch<Embedding>(
       `${this.apiUrl}/projects/${projectId}/embeddings/${embeddingId}/`, body
     ).pipe(
@@ -42,7 +42,7 @@ export class EmbeddingsService {
       catchError(this.logService.handleError<Embedding>('editEmbedding')));
   }
 
-  predict(body, projectId, embeddingId): Observable<EmbeddingPrediction[] | HttpErrorResponse> {
+  predict(body: unknown, projectId: number, embeddingId: number): Observable<EmbeddingPrediction[] | HttpErrorResponse> {
     return this.http.post<EmbeddingPrediction[]>(
       `${this.apiUrl}/projects/${projectId}/embeddings/${embeddingId}/predict_similar/`, body
     ).pipe(
@@ -56,7 +56,7 @@ export class EmbeddingsService {
       catchError(this.logService.handleError<string>('phrase')));
   }
 
-  bulkDeleteEmbeddings(projectId: number, body) {
+  bulkDeleteEmbeddings(projectId: number, body: unknown) {
     return this.http.post<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>
     (`${this.apiUrl}/projects/${projectId}/embeddings/bulk_delete/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'bulkDeleteEmbeddings')),

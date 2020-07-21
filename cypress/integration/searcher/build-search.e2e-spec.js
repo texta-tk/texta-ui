@@ -64,11 +64,11 @@ describe('searching and search related activities should be working correctly', 
     cy.get('[data-cy=appSearcherSideBarBuildSearchConstraintSelect]').click();
     cy.get('mat-option').contains('@timestamp').scrollIntoView().click();
     cy.closeCurrentCdkOverlay();
-    cy.get('[data-cy=appSearcherSideBarBuildSearchDateConstraint] mat-form-field:first()')
+    cy.get('[data-cy=appSearcherSideBarBuildSearchDateConstraintStart]')
       .should('be.visible')
       .click()
       .type('1/3/2016');
-    cy.get('[data-cy=appSearcherSideBarBuildSearchDateConstraint] mat-form-field:not(:first())')
+    cy.get('[data-cy=appSearcherSideBarBuildSearchDateConstraintEnd]')
       .should('be.visible')
       .click()
       .type('3/24/2020');

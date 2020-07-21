@@ -1,13 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-  ViewChild
-} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {ElasticsearchQuery, TextConstraint} from '../../Constraints';
 import {FormControl} from '@angular/forms';
 import {pairwise, startWith, takeUntil} from 'rxjs/operators';
@@ -22,7 +13,25 @@ import {MatMenuTrigger} from '@angular/material/menu';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TextConstraintsComponent implements OnInit, OnDestroy {
+  @Input() elasticSearchQuery: ElasticsearchQuery;
+  @Output() change = new EventEmitter<ElasticsearchQuery>(); // search as you type, emit changes
+  @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
+  destroyed$: Subject<boolean> = new Subject<boolean>();
+  // tslint:disable-next-line:no-any
+  constraintQuery: any;
+  // so i dont have to rename everything if i decide to refactor something
+  textAreaFormControl: FormControl = new FormControl();
+  slopFormControl: FormControl = new FormControl();
+  matchFormControl: FormControl = new FormControl();
+  operatorFormControl: FormControl = new FormControl();
+  lexicons: Lexicon[] = [];
+
+  constructor() {
+
+  }
+
   public _textConstraint: TextConstraint;
+
   @Input() set textConstraint(value: TextConstraint) {
     if (value) {
       this._textConstraint = value;
@@ -36,28 +45,12 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
     }
   }
 
-  @Input() elasticSearchQuery: ElasticsearchQuery;
-  @Output() change = new EventEmitter<ElasticsearchQuery>(); // search as you type, emit changes
-
-  @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
-  destroyed$: Subject<boolean> = new Subject<boolean>();
-  constraintQuery: any;
-  // so i dont have to rename everything if i decide to refactor something
-  textAreaFormControl: FormControl = new FormControl();
-  slopFormControl: FormControl = new FormControl();
-  matchFormControl: FormControl = new FormControl();
-  operatorFormControl: FormControl = new FormControl();
-  lexicons: Lexicon[] = [];
-
-  constructor() {
-
-  }
-
   ngOnInit() {
     if (this._textConstraint) {
       // multi line textarea, 1 formequery entry for each line
+      // tslint:disable-next-line:no-any
       const formQueries: any[] = [];
-      const multiMatchBlueprint: any = {
+      const multiMatchBlueprint = {
         multi_match: {
           query: '',
           type: this.matchFormControl.value,
@@ -75,7 +68,7 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
       // tslint:disable-next-line:no-non-null-assertion
       this.elasticSearchQuery!.elasticSearchQuery!.query!.bool!.should.push(this.constraintQuery);
       this.textAreaFormControl.valueChanges.pipe(
-        takeUntil(this.destroyed$), // pairwise so i can avoid emitting when new constraint, need startwith for building query when savedsearch
+        takeUntil(this.destroyed$), // pairwise so i can avoid emitting when new constraint, startwith for building query when savedsearch
         startWith(this.textAreaFormControl.value as object, this.textAreaFormControl.value as object), pairwise()).subscribe(value => {
         if (this.matchFormControl.value === 'regexp') {
           this.buildRegexQuery(formQueries, value[1], this._textConstraint.fields.map(x => x.path));
@@ -124,19 +117,21 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
     }
   }
 
-  buildRegexQuery(formQueries, formValue, fields) {
+  buildRegexQuery(formQueries: unknown[], formValue: string, fields: string[]) {
 // gonna rebuild formqueries so delete previous
     formQueries.splice(0, formQueries.length);
     const textareaValues = this.stringToArray(formValue, '\n');
 
     if (textareaValues.length > 0) {
       for (const line of textareaValues) {
+        // tslint:disable-next-line:no-any
         const newFormQuery: any = {
           bool: {
             should: [],
             minimum_should_match: 1
           }
         };
+        // tslint:disable-next-line:no-any
         const regexQuery: any = {
           regexp: {}
         };
@@ -150,12 +145,14 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
   }
 
   // every newline in textarea is a new multi_match clause
-  buildTextareaMultiMatchQuery(formQueries, formValue, multiMatchBlueprint) {
+  buildTextareaMultiMatchQuery(formQueries: unknown[], formValue: string,
+                               multiMatchBlueprint: { multi_match: { query: string; type: string; slop: number; fields: string[]; }; }) {
     // gonna rebuild formqueries so delete previous
     formQueries.splice(0, formQueries.length);
     const textareaValues = this.stringToArray(formValue, '\n');
     if (textareaValues.length > 0) {
       for (const line of textareaValues) {
+        // tslint:disable-next-line:no-any
         const newFormQuery: any = {
           bool: {
             should: [],
@@ -169,12 +166,6 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
         formQueries.push(newFormQuery);
       }
     }
-  }
-
-  private stringToArray(stringToSplit: string, splitBy: string): string[] {
-    const stringList = stringToSplit.split(splitBy);
-    // filter out empty values
-    return stringList.filter(x => x !== '');
   }
 
   public addLexicon(val: Lexicon) {
@@ -205,6 +196,12 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
     }
     this.destroyed$.next(true);
     this.destroyed$.complete();
+  }
+
+  private stringToArray(stringToSplit: string, splitBy: string): string[] {
+    const stringList = stringToSplit.split(splitBy);
+    // filter out empty values
+    return stringList.filter(x => x !== '');
   }
 
 }

@@ -25,7 +25,7 @@ export class TaggerGroupService {
       catchError(this.logService.handleError<{count: number, results: TaggerGroup[]}>('getTaggerGroups')));
   }
 
-  createTaggerGroup(body: {}, projectId: number): Observable<TaggerGroup | HttpErrorResponse> {
+  createTaggerGroup(body: unknown, projectId: number): Observable<TaggerGroup | HttpErrorResponse> {
     return this.http.post<TaggerGroup>(
       `${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/`,
       body
@@ -34,7 +34,7 @@ export class TaggerGroupService {
       catchError(this.logService.handleError<TaggerGroup>('createTaggerGroup')));
   }
 
-  editTaggerGroup(body: {}, projectId, taggerId): Observable<TaggerGroup | HttpErrorResponse> {
+  editTaggerGroup(body: unknown, projectId: number, taggerId: number): Observable<TaggerGroup | HttpErrorResponse> {
     return this.http.patch<TaggerGroup>(
       `${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/${taggerId}/`, body
     ).pipe(
@@ -58,7 +58,7 @@ export class TaggerGroupService {
       catchError(this.logService.handleError<HttpErrorResponse>('getModelsList')));
   }
 
-  tagText(body: {}, projectId: number, taggerId):
+  tagText(body: unknown, projectId: number, taggerId: number):
    Observable<{ probability: number, tag: string, tagger_id: number }[] | HttpErrorResponse> {
     return this.http.post<{ probability: number, tag: string, tagger_id: number }[]>(
       `${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/${taggerId}/tag_text/`,
@@ -68,7 +68,7 @@ export class TaggerGroupService {
       catchError(this.logService.handleError<{ probability: number, tag: string, tagger_id: number }[]>('tagText')));
   }
 
-  tagDoc(body: {}, projectId: number, taggerId):
+  tagDoc(body: unknown, projectId: number, taggerId: number):
    Observable<{ probability: number, tag: string, tagger_id: number }[] | HttpErrorResponse> {
     return this.http.post<{ probability: number, tag: string, tagger_id: number }[]>(
       `${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/${taggerId}/tag_doc/`,
@@ -78,14 +78,14 @@ export class TaggerGroupService {
       catchError(this.logService.handleError<{ probability: number, tag: string, tagger_id: number }[]>('tagDoc')));
   }
 
-  tagRandomDocument(projectId: number, taggerId: number, body): Observable<unknown | HttpErrorResponse> {
+  tagRandomDocument(projectId: number, taggerId: number, body: unknown): Observable<unknown | HttpErrorResponse> {
     return this.http.post(`${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/${taggerId}/tag_random_doc/`, body
     ).pipe(
       tap(e => this.logService.logStatus(e, 'tagRandomDocument')),
       catchError(this.logService.handleError('tagRandomDocument')));
   }
 
-  bulkDeleteTaggerGroups(projectId: number, body: { ids: any[]; }) {
+  bulkDeleteTaggerGroups(projectId: number, body: unknown) {
     return this.http.post<{'num_deleted': number, 'deleted_types': {string: number}[] }>
     (`${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/bulk_delete/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'bulkDeleteTaggerGroups')),

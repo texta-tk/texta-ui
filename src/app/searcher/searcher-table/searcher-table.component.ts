@@ -22,13 +22,14 @@ import {SearcherService} from '../../core/searcher/searcher.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearcherTableComponent implements OnInit, OnDestroy {
-  static totalCountLength; // hack for paginator max length with label, no easy way to do this
+  static totalCountLength: number; // hack for paginator max length with label, no easy way to do this
+  // tslint:disable-next-line:no-any
   public tableData: MatTableDataSource<any> = new MatTableDataSource();
   public displayedColumns: string[] = [];
   public columnsToDisplay: string[] = [];
   public columnFormControl = new FormControl([]);
   public isLoadingResults = false;
-  public paginatorLength;
+  public paginatorLength: number;
   public searchOptions: SearchOptions = {liveSearch: true};
   public currentElasticQuery: ElasticsearchQuery;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
@@ -63,27 +64,31 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
       if (projField) {
         this.projectFields = projField;
         // combine all fields of all indexes into one unique array to make columns
-        this.displayedColumns = [...new Set([].concat.apply([], (projField.map(x => x.fields.map(y => y.path)))))] as string[];
+        // @ts-ignore
+        this.displayedColumns = [...new Set([].concat.apply([], (projField.map(x => x.fields.map(y => y.path)))))];
         this.setColumnsToDisplay();
         // project changed reset table
         this.tableData.data = [];
       }
     });
 
-    this.searchService.getSearch().pipe(takeUntil(this.destroy$)).subscribe((resp: Search) => {
+    this.searchService.getSearch().pipe(takeUntil(this.destroy$)).subscribe(resp => {
       if (resp && resp.searchOptions) {
         this.searchOptions = resp.searchOptions;
         if (this.searchOptions.onlyShowMatchingColumns) {
           const highlights = resp.searchContent.results.map(x => x.highlight).flat();
           const columnsToHighlight: string[] = [];
           highlights.forEach(x => {
-            for (const col in x) {
-              if (x.hasOwnProperty(col)) {
+            // tslint:disable-next-line:no-any
+            for (const col in x as any) {
+              // tslint:disable-next-line:no-any
+              if ((x as any).hasOwnProperty(col)) {
                 columnsToHighlight.push(col);
               }
             }
           });
           if (columnsToHighlight.length > 0) {
+            // @ts-ignore
             this.columnsToDisplay = [...new Set([].concat.apply([], columnsToHighlight))] as string[];
             this.columnFormControl.setValue(this.columnsToDisplay);
           } else {
@@ -122,15 +127,15 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
       } else {
         return of(null);
       }
-    })).subscribe(
-      (result: { count: number, results: { highlight: any, doc: any }[] } | HttpErrorResponse) => {
-        this.searchService.setIsLoading(false);
-        if (result && !(result instanceof HttpErrorResponse)) {
-          this.searchService.nextSearch(new Search(result, this.currentElasticQuery, this.searchOptions));
-        }
-      });
+    })).subscribe(result => {
+      this.searchService.setIsLoading(false);
+      if (result && !(result instanceof HttpErrorResponse)) {
+        this.searchService.nextSearch(new Search(result, this.currentElasticQuery, this.searchOptions));
+      }
+    });
   }
 
+  // tslint:disable-next-line:no-any
   buildSortQuery(sort: Sort): any {
     if (sort.direction === '') {
       return [];
@@ -163,7 +168,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     }
   }
 
-  public onfieldSelectionChange(opened) {
+  public onfieldSelectionChange(opened: boolean) {
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && (this.columnFormControl.value)) {
       this.columnsToDisplay = this.columnFormControl.value;
@@ -199,7 +204,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     }
   }
 
-  trackByTableData(index, val) {
+  trackByTableData(index: number, val: { doc: unknown; }) {
     return val.doc;
   }
 

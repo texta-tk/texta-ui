@@ -24,7 +24,7 @@ export class TaggerService {
       catchError(this.logService.handleError<{ count: number, results: Tagger[] }>('getTaggers')));
   }
 
-  createTagger(body: {}, projectId: number): Observable<Tagger | HttpErrorResponse> {
+  createTagger(body: unknown, projectId: number): Observable<Tagger | HttpErrorResponse> {
     return this.http.post<Tagger>(
       `${this.apiUrl}/projects/${projectId}/taggers/`,
       body
@@ -33,7 +33,7 @@ export class TaggerService {
       catchError(this.logService.handleError<Tagger>('makeTagger')));
   }
 
-  editTagger(body: {}, projectId, taggerId): Observable<Tagger | HttpErrorResponse> {
+  editTagger(body: unknown, projectId: number, taggerId: number): Observable<Tagger | HttpErrorResponse> {
     return this.http.patch<Tagger>(
       `${this.apiUrl}/projects/${projectId}/taggers/${taggerId}/`, body
     ).pipe(
@@ -68,7 +68,7 @@ export class TaggerService {
       catchError(this.logService.handleError<ListFeaturesResponse>('listFeatures')));
   }
 
-  postStopWords(projectId: number, taggerId: number, payload): Observable<{ 'stop_words': string } | HttpErrorResponse> {
+  postStopWords(projectId: number, taggerId: number, payload: unknown): Observable<{ 'stop_words': string } | HttpErrorResponse> {
     return this.http.post<{ 'stop_words': string }>(`${this.apiUrl}/projects/${projectId}/taggers/${taggerId}/stop_words/`, payload).pipe(
       tap(e => this.logService.logStatus(e, 'postStopWords')),
       catchError(this.logService.handleError<{ 'stop_words': string }>('postStopWords')));
@@ -83,14 +83,14 @@ export class TaggerService {
       catchError(this.logService.handleError<TaggerOptions>('getTaggerOptions')));
   }
 
-  tagRandomDocument(projectId: number, taggerId: number, body: any): Observable<unknown | HttpErrorResponse> {
+  tagRandomDocument(projectId: number, taggerId: number, body: unknown): Observable<unknown | HttpErrorResponse> {
     return this.http.post(`${this.apiUrl}/projects/${projectId}/taggers/${taggerId}/tag_random_doc/`, body
     ).pipe(
       tap(e => this.logService.logStatus(e, 'tagRandomDocument')),
       catchError(this.logService.handleError('tagRandomDocument')));
   }
 
-  tagDocument(body: {}, projectId: number, taggerId): Observable<unknown | HttpErrorResponse> {
+  tagDocument(body: unknown, projectId: number, taggerId: number): Observable<unknown | HttpErrorResponse> {
     return this.http.post<unknown>(
       `${this.apiUrl}/projects/${projectId}/taggers/${taggerId}/tag_doc/`,
       body
@@ -99,7 +99,7 @@ export class TaggerService {
       catchError(this.logService.handleError<unknown>('tagDocument')));
   }
 
-  tagText(body: {}, projectId: number, taggerId): Observable<unknown | HttpErrorResponse> {
+  tagText(body: unknown, projectId: number, taggerId: number): Observable<unknown | HttpErrorResponse> {
     return this.http.post<unknown>(
       `${this.apiUrl}/projects/${projectId}/taggers/${taggerId}/tag_text/`,
       body
@@ -108,7 +108,7 @@ export class TaggerService {
       catchError(this.logService.handleError<unknown>('tagText')));
   }
 
-  taggerListFeatures(body: {}, projectId: number, taggerId: number): Observable<unknown | HttpErrorResponse> {
+  taggerListFeatures(body: unknown, projectId: number, taggerId: number): Observable<unknown | HttpErrorResponse> {
     return this.http.post<unknown>(
       `${this.apiUrl}/projects/${projectId}/taggers/${taggerId}/list_features/`,
       body
@@ -123,7 +123,7 @@ export class TaggerService {
       catchError(this.logService.handleError<unknown>('deleteTagger')));
   }
 
-  bulkDeleteTaggers(projectId: number, body) {
+  bulkDeleteTaggers(projectId: number, body: unknown) {
     return this.http.post<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>
     (`${this.apiUrl}/projects/${projectId}/taggers/bulk_delete/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'bulkDeleteTaggers')),

@@ -15,7 +15,7 @@ import {LogService} from '../core/util/log.service';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Router} from '@angular/router';
-import {EditProjectDialogComponent} from '../home/project/edit-project-dialog/edit-project-dialog.component';
+import {EditProjectDialogComponent} from '../project/edit-project-dialog/edit-project-dialog.component';
 
 @Component({
   selector: 'app-navbar',
@@ -61,7 +61,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
         return this.projectService.getResourceCounts(proj.id);
       }
       return of(null);
-    })).subscribe((response: ProjectResourceCounts | HttpErrorResponse) => {
+    })).subscribe(response => {
       if (response && !(response instanceof HttpErrorResponse)) {
         this.projectResourceCounts = response;
       } else {
@@ -101,14 +101,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
     return object1 && object2 && object1.id === object2.id;
   }
 
-  edit(project) {
+  edit(project: Project) {
     this.dialog.open(EditProjectDialogComponent, {
       width: '750px',
       data: project
     });
   }
 
-  indexSelectionOpenedChange(value) {
+  indexSelectionOpenedChange(value: unknown) {
     if (!value) {
       // get the current facts based on the selected indices
       // searcher uses this

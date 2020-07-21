@@ -31,7 +31,7 @@ describe('dataset-importer should work', function () {
     cy.get('[data-cy=appDatasetImporterCreateDialogName]').click().then((name => {
       cy.wrap(name).should('have.class', 'mat-focused').type('asd').find('input').clear();
       cy.matFormFieldShouldHaveError(name, 'required');
-      cy.wrap(name).type('newIndex');
+      cy.wrap(name).type('new_index');
     }));
     cy.get('input[type=file]').attachFile({
       filePath: "testSample.csv",

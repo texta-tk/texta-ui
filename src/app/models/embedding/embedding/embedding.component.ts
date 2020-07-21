@@ -12,7 +12,7 @@ import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {CreateEmbeddingDialogComponent} from './create-embedding-dialog/create-embedding-dialog.component';
 import {LogService} from '../../../core/util/log.service';
-import {PhraseDialogComponent} from '../phrase-dialog/phrase-dialog.component';
+import {PhraseDialogComponent} from './phrase-dialog/phrase-dialog.component';
 import {SelectionModel} from '@angular/cdk/collections';
 import {QueryDialogComponent} from 'src/app/shared/components/dialogs/query-dialog/query-dialog.component';
 import {ConfirmDialogComponent} from 'src/app/shared/components/dialogs/confirm-dialog/confirm-dialog.component';
@@ -29,7 +29,7 @@ import {EditEmbeddingDialogComponent} from './edit-embedding-dialog/edit-embeddi
 })
 export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: Embedding | null;
-  public tableData: MatTableDataSource<Embedding> = new MatTableDataSource([]);
+  public tableData: MatTableDataSource<Embedding> = new MatTableDataSource();
   public displayedColumns = ['select', 'author__username', 'description',
     'fields', 'task__time_started', 'task__time_completed', 'num_dims', 'min_freq', 'vocab_size', 'task__status', 'Modify'];
   selectedRows = new SelectionModel<Embedding>(true, []);
@@ -42,7 +42,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
   filteredSubject = new Subject();
   // For custom filtering, such as text search in description
   inputFilterQuery = '';
-  filteringValues = {};
+  filteringValues: { [key: string]: string } = {};
 
 
   currentProject: Project;
@@ -116,9 +116,11 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
             return of(null);
           }
         })
-      ).subscribe((data: { count: number, results: Embedding[] }) => {
+      ).subscribe(data => {
       // Flip flag to show that loading has finished.
-      if (data) {
+      if (data instanceof HttpErrorResponse) {
+        this.logService.snackBarError(data, 2000);
+      } else if (data) {
         this.resultsLength = data.count;
         this.tableData.data = data.results;
       }
@@ -242,9 +244,8 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  applyFilter(filterValue: any, field: string) {
-    filterValue = filterValue.value ? filterValue.value : '';
-    this.filteringValues[field] = filterValue;
+  applyFilter(filterValue: EventTarget | null, field: string) {
+    this.filteringValues[field] = (filterValue as HTMLInputElement).value ? (filterValue as HTMLInputElement).value : '';
     this.paginator.pageIndex = 0;
     this.filterQueriesToString();
     this.filteredSubject.next();

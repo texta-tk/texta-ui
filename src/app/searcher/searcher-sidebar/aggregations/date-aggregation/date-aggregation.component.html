@@ -1,36 +1,37 @@
 <div class="field-type-wrapper" fxLayout="column">
-  <div fxLayout="row" class="datepicker-row">
-    <mat-form-field appearance="outline">
-      <input matInput [matDatepicker]="picker" placeholder="Daterange from" [(ngModel)]="startDate"
-             (dateChange)="makeDateAggregation()">
-      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-      <input matInput [min]="startDate" [matDatepicker]="picker2" placeholder="Daterange to" [(ngModel)]="toDate"
-             (dateChange)="makeDateAggregation()">
-      <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
-      <mat-datepicker #picker2></mat-datepicker>
-    </mat-form-field>
-  </div>
+
+  <mat-form-field class="max-width" appearance="outline">
+    <mat-label>Enter a date range</mat-label>
+    <mat-date-range-input [formGroup]="range" [rangePicker]="picker">
+      <input formControlName="dateFromFormControl" matStartDate placeholder="Start date">
+      <input formControlName="dateToFormControl" matEndDate placeholder="End date">
+    </mat-date-range-input>
+    <mat-datepicker-toggle [for]="picker" matSuffix></mat-datepicker-toggle>
+    <mat-date-range-picker #picker startView="multi-year"></mat-date-range-picker>
+
+    <mat-error *ngIf="range.controls.dateFromFormControl.hasError('matStartDateInvalid')">Invalid start date</mat-error>
+    <mat-error *ngIf="range.controls.dateToFormControl.hasError('matEndDateInvalid')">Invalid end date</mat-error>
+  </mat-form-field>
+
   <mat-form-field appearance="outline" class="max-width">
     <mat-label>Frequency</mat-label>
-    <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" [(ngModel)]="aggregationType"
-                name="aggregationDateType" data-cy="appSearcherSidebarAggregationsDateAggregationType">
-      <mat-option value="raw_frequency" [disabled]="!notSubAgg" (click)="relativeFrequency.emit(false)">raw frequency
+    <mat-select [(ngModel)]="aggregationType" [disableOptionCentering]="true" data-cy="appSearcherSidebarAggregationsDateAggregationType"
+                name="aggregationDateType" panelClass="select-panel-reveal-input">
+      <mat-option (click)="relativeFrequency.emit(false)" [disabled]="!notSubAgg" value="raw_frequency">raw frequency
       </mat-option>
-      <mat-option value="relative_frequency" [disabled]="!notSubAgg" (click)="relativeFrequency.emit(true)">relative
+      <mat-option (click)="relativeFrequency.emit(true)" [disabled]="!notSubAgg" value="relative_frequency">relative
         frequency
       </mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field appearance="outline" class="max-width bottom-padding-none">
     <mat-label>Interval</mat-label>
-    <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" [(ngModel)]="dateInterval"
+    <mat-select (selectionChange)="makeDateAggregation(range.controls.dateFromFormControl.value, range.controls.dateToFormControl.value)" [(ngModel)]="dateInterval" [disableOptionCentering]="true"
                 data-cy="appSearcherSidebarAggregationsDateInterval"
-                name="aggregationDateInterval" (selectionChange)="makeDateAggregation()">
-      <mat-option value="day" [disabled]="!dateRangeDays">day</mat-option>
-      <mat-option value="week" [disabled]="!dateRangeWeek">week</mat-option>
+                name="aggregationDateInterval"
+                panelClass="select-panel-reveal-input">
+      <mat-option [disabled]="!dateRangeDays" value="day">day</mat-option>
+      <mat-option [disabled]="!dateRangeWeek" value="week">week</mat-option>
       <mat-option value="month">month</mat-option>
       <mat-option value="year">year</mat-option>
     </mat-select>

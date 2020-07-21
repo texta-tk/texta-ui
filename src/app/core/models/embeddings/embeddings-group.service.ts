@@ -53,7 +53,7 @@ export class EmbeddingsGroupService {
       catchError(this.logService.handleError<unknown>('getBrowseClustersOptions')));
   }
 
-  browseClusters(projectId: number, clusterId: number, payload) {
+  browseClusters(projectId: number, clusterId: number, payload: unknown) {
     return this.http.post(`${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/${clusterId}/browse_clusters/`, payload).pipe(
       tap(e => this.logService.logStatus(e, 'browseClusters')),
       catchError(this.logService.handleError<unknown>('browseClusters')));

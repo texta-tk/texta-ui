@@ -9,11 +9,14 @@ import {MatTableDataSource} from '@angular/material/table';
 })
 export class AggregationResultsDialogComponent implements OnInit {
   type: 'table' | 'histo' | undefined = undefined;
+  // tslint:disable-next-line:no-any
   aggData: MatTableDataSource<any> | any;
 
   constructor(private dialogRef: MatDialogRef<AggregationResultsDialogComponent>,
+              // tslint:disable-next-line:no-any
               @Inject(MAT_DIALOG_DATA) public data: { type: 'table' | 'histo', aggData: MatTableDataSource<any> | any }) {
     if (data.type === 'table') {
+      // tslint:disable-next-line:no-any
       this.aggData = data.aggData as MatTableDataSource<any>;
     }
   }
@@ -24,7 +27,7 @@ export class AggregationResultsDialogComponent implements OnInit {
       if (this.type === 'histo') {
         this.data.aggData = this.data.aggData.slice(0, 50);
         for (const element of this.data.aggData) {
-          element.series = element.series.filter(x => x.value > 0);
+          element.series = element.series.filter((x: { value: number; }) => x.value > 0);
         }
       }
       this.aggData = this.data.aggData;

@@ -2,15 +2,14 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {UserProfile} from '../shared/types/UserProfile';
 import {UserStore} from '../core/users/user.store';
 import {Subject, Subscription} from 'rxjs';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {UserService} from '../core/users/user.service';
 import {CrossFieldErrorMatcher, LiveErrorStateMatcher} from '../shared/CustomerErrorStateMatchers';
 import {takeUntil} from 'rxjs/operators';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../core/util/log.service';
-import {environment} from '../../environments/environment';
 
-function passwordMatchValidator(g: FormGroup) {
+function passwordMatchValidator(g: AbstractControl) {
   const password1 = g.get('passwordFormControl');
   const password2 = g.get('passwordConfirmFormControl');
   return (password1 && password2 && password1.value === password2.value)
@@ -38,9 +37,8 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
       passwordFormControl: new FormControl('', [
         Validators.minLength(8), Validators.required
       ]),
-      passwordConfirmFormControl: new FormControl('',)
+      passwordConfirmFormControl: new FormControl('')
     }, passwordMatchValidator),
-    /*  oldPasswordFormControl: new FormControl('', Validators.required)*/
 
   });
 
@@ -56,7 +54,7 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 
   }
 
-  public onPasswordResetFormSubmit(formData: any) {
+  public onPasswordResetFormSubmit(formData: { passwordForm: { passwordFormControl: string; passwordConfirmFormControl: string; }; }) {
     const body = {
       new_password1: formData.passwordForm.passwordFormControl,
       new_password2: formData.passwordForm.passwordConfirmFormControl
@@ -75,18 +73,14 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
     });
   }
 
-  public onForgotPasswordFormSubmit(formData: any) {
-    this.userService.resetPassword(formData.emailFormControl).subscribe((resp: any | HttpErrorResponse) => {
+  public onForgotPasswordFormSubmit(formData: { emailFormControl: string; }) {
+    this.userService.resetPassword(formData.emailFormControl).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.detail = resp.detail;
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 4000);
       }
     });
-  }
-
-  changeUserProfile(formData: any) {
-
   }
 
   ngOnInit() {

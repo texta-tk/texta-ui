@@ -77,17 +77,17 @@ export class MLPCreateIndexDialogComponent implements OnInit, OnDestroy {
     });
   }
 
-  onSubmit(formData) {
-    const body: any = {
+  onSubmit(formData: {
+    descriptionFormControl: string;
+    indicesFormControl: ProjectIndex[]; fieldsFormControl: string[]; analyzersFormControl: string[];
+  }) {
+    const body = {
       description: formData.descriptionFormControl,
       indices: formData.indicesFormControl.map(x => [{name: x.index}]).flat(),
       fields: formData.fieldsFormControl,
-      analyzers: formData.analyzersFormControl
+      analyzers: formData.analyzersFormControl,
+      ...this.query ? {query: this.query} : {},
     };
-
-    if (this.query) {
-      body.query = this.query;
-    }
 
     this.mlpService.createMLPTask(this.currentProject.id, body).subscribe((resp: MLP | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
@@ -104,7 +104,7 @@ export class MLPCreateIndexDialogComponent implements OnInit, OnDestroy {
     this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
   }
 
-  public indicesOpenedChange(opened) {
+  public indicesOpenedChange(opened: unknown) {
     const indicesForm = this.MLPForm.get('indicesFormControl');
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && (indicesForm?.value && indicesForm.value.length > 0)) {

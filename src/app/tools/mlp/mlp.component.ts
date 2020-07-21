@@ -7,7 +7,7 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {MLPCreateIndexDialogComponent} from './mlp-create-index-dialog/mlp-create-index-dialog.component';
 import {merge, of, Subject} from 'rxjs';
 import {debounceTime, startWith, switchMap, takeUntil} from 'rxjs/operators';
-import {Project} from '../../shared/types/Project';
+import {Project, ProjectIndex} from '../../shared/types/Project';
 import {ResultsWrapper} from '../../shared/types/Generic';
 import {MatTableDataSource} from '@angular/material/table';
 import {SelectionModel} from '@angular/cdk/collections';
@@ -18,6 +18,7 @@ import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-di
 import {QueryDialogComponent} from '../../shared/components/dialogs/query-dialog/query-dialog.component';
 import {expandRowAnimation} from '../../shared/animations';
 import {MLPApplyTextDialogComponent} from './mlp-apply-text-dialog/mlp-apply-text-dialog.component';
+import {Index} from '../../shared/types/Index';
 
 @Component({
   selector: 'app-mlp',
@@ -37,10 +38,6 @@ export class MLPComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  filteredSubject = new Subject();
-  // For custom filtering, such as text search in description
-  inputFilterQuery = '';
-  filteringValues = {};
   resultsLength: number;
   destroyed$: Subject<boolean> = new Subject<boolean>();
   currentProject: Project;
@@ -51,7 +48,7 @@ export class MLPComponent implements OnInit, OnDestroy, AfterViewInit {
               private logService: LogService) {
   }
 
-  public propertyAccessor = (x) => x.name;
+  public indicesAccessor = (x: Index) => x.name;
 
   ngOnInit(): void {
 
@@ -74,7 +71,7 @@ export class MLPComponent implements OnInit, OnDestroy, AfterViewInit {
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
-    merge(this.sort.sortChange, this.paginator.page, this.filteredSubject)
+    merge(this.sort.sortChange, this.paginator.page)
       .pipe(debounceTime(250), startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
@@ -87,14 +84,14 @@ export class MLPComponent implements OnInit, OnDestroy, AfterViewInit {
             return this.mlpService.getMLPTasks(
               this.currentProject.id,
               // Add 1 to to index because Material paginator starts from 0 and DRF paginator from 1
-              `${this.inputFilterQuery}&ordering=${sortDirection}${this.sort.active}&page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`);
+              `ordering=${sortDirection}${this.sort.active}&page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`);
           } else {
             return of(null);
           }
-        })).subscribe((data: ResultsWrapper<MLP>) => {
+        })).subscribe(data => {
       // Flip flag to show that loading has finished.
       this.isLoadingResults = false;
-      if (data) {
+      if (data && !(data instanceof HttpErrorResponse)) {
         this.resultsLength = data.count;
         this.tableData.data = data.results;
       }
@@ -175,22 +172,6 @@ export class MLPComponent implements OnInit, OnDestroy, AfterViewInit {
       this.tableData.data = [...this.tableData.data];
     });
     this.selectedRows.clear();
-  }
-
-
-  applyFilter(filterValue: any, field: string) {
-    filterValue = filterValue.value ? filterValue.value : '';
-    this.filteringValues[field] = filterValue;
-    this.paginator.pageIndex = 0;
-    this.filterQueriesToString();
-    this.filteredSubject.next();
-  }
-
-  filterQueriesToString() {
-    this.inputFilterQuery = '';
-    for (const field in this.filteringValues) {
-      this.inputFilterQuery += `&${field}=${this.filteringValues[field]}`;
-    }
   }
 
   ngOnDestroy(): void {

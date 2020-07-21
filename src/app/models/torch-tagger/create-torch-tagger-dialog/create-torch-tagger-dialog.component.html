@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>New TorchTagger</h1>
 <div mat-dialog-content>
-  <form (ngSubmit)="onSubmit(torchTaggerForm.value)" [formGroup]="torchTaggerForm" fxLayout="column"
+  <form (ngSubmit)="onSubmit({formData : torchTaggerForm.value})" [formGroup]="torchTaggerForm" fxLayout="column"
         id="torchTaggerForm">
     <mat-form-field data-cy="appTorchTaggerCreateDialogDesc">
       <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl"

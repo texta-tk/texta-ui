@@ -31,12 +31,12 @@ export class EditTorchTaggerDialogComponent implements OnInit {
   }
 
   onSubmit() {
-    this.projectStore.getCurrentProject().pipe(take(1), mergeMap((project: Project) => {
+    this.projectStore.getCurrentProject().pipe(take(1), mergeMap(project => {
       if (project) {
         return this.torchTaggerService.editTorchTagger({description: this.data.description}, project.id, this.data.id);
       }
       return of(null);
-    })).subscribe((resp: TorchTagger | HttpErrorResponse) => {
+    })).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.dialogRef.close(resp);
       } else if (resp instanceof HttpErrorResponse) {

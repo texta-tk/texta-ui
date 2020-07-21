@@ -88,7 +88,7 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  trackById(index, item: Index) {
+  trackById(index: number, item: Index) {
     return item.id;
   }
 

@@ -10,17 +10,21 @@ import {MatDialog} from '@angular/material/dialog';
 export interface AggregationData {
 
   treeData?: {
-    treeData?: ArrayDataSource<any>,
+    // tslint:disable-next-line:no-any
+    treeData?: any[],
     name?: string,
+    // tslint:disable-next-line:no-any
     histoBuckets?: any[]
   }[];
   tableData?: {
+    // tslint:disable-next-line:no-any
     tableData?: MatTableDataSource<any>,
     name?: string
   }[];
-  dateData?: any[];
+  dateData?: { series: { value: number; name: string; extra?: { buckets: { key: string; doc_count: number }[] } }[], name: string }[];
   // only used when aggregating over texta_facts only
   textaFactsTableData?: {
+    // tslint:disable-next-line:no-any
     data?: any,
     name?: string,
   }[];
@@ -35,26 +39,27 @@ export interface AggregationData {
 export class AggregationResultsComponent implements OnInit, OnDestroy {
 
   destroy$: Subject<boolean> = new Subject();
-  aggregation: any;
+  aggregation: unknown;
   aggregationData: AggregationData;
   timeLineYLabel = 'document count';
 
   constructor(public searchService: SearcherComponentService, public dialog: MatDialog) {
   }
 
+  // tslint:disable-next-line:no-any
   bucketAccessor = (x: any) => {
     if (x && x.buckets) {
       return (x.buckets);
     }
     return null;
-  }
+  };
 
   formatDateData(buckets: { key_as_string: string, key: number, doc_count: number }[]): { value: number, name: Date }[] {
-    const dateData: any[] = [];
+    const dateData: { value: number, name: Date }[] = [];
     for (const element of buckets) {
       dateData.push({
         value: element.doc_count,
-        name: element.key_as_string
+        name: new Date(element.key_as_string)
       });
     }
     return dateData;
@@ -62,8 +67,9 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
 
   formatDateDataExtraBucket(buckets: {
     key_as_string: string, key: number, doc_count: number,
-    buckets: any
+    buckets: unknown
   }[]): { value: number, name: Date }[] {
+    // tslint:disable-next-line:no-any
     const dateData: any[] = [];
     for (const element of buckets) {
       dateData.push({
@@ -94,6 +100,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     });
   }
 
+  // tslint:disable-next-line:no-any
   parseAggregationResults(aggregation: any) {
     const aggData: AggregationData = {
       treeData: [],
@@ -119,11 +126,13 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
         }
       }
       this.aggregationData = aggData;
+      console.log(this.aggregationData);
     }
   }
 
   // gives us nested buckets->buckets->buckets, so i can build tree view
-  formatAggDataStructure(rootAgg, aggregation, aggKeys: string[]) {
+  // tslint:disable-next-line:no-any
+  formatAggDataStructure(rootAgg: { histoBuckets: { name: any; series: { value: number; name: Date; }[]; }[]; nested: boolean; }, aggregation: any, aggKeys: string[]) {
     for (const bucket of this.bucketAccessor(aggregation)) {
       for (const key of aggKeys) {
         const innerBuckets = this.navNestedAggByKey(bucket, key);
@@ -151,7 +160,9 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
 
   }
 
-  navNestedAggByKey(aggregation, aggregationKey) {
+  // tslint:disable-next-line:no-any
+  // @ts-ignore
+  navNestedAggByKey(aggregation: any, aggregationKey: string) {
     if (aggregation.hasOwnProperty(aggregationKey)) {
       const aggInner = aggregation[aggregationKey];
       return this.navNestedAggByKey(aggInner, aggregationKey); // EX: agg_term: {agg_term: {buckets}}
@@ -160,19 +171,22 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   }
 
   // aggData because we can have multiple aggs so we need to push instead of returning new object
+  // @ts-ignore
+  // tslint:disable-next-line:no-any
   populateAggData(rootAggObj, aggName, aggDataAccessor: (x: any) => any, aggregationType: 'agg_histo' | 'agg_fact' | 'agg_term', aggData: AggregationData): void {
     const formattedData = this.formatAggDataStructure(rootAggObj, rootAggObj,
       ['agg_histo', 'agg_fact', 'agg_fact_val', 'agg_term']);
     if (this.bucketAccessor(formattedData).length > 0) {
       if (formattedData.nested) {
         // depth of 3 means this structure: agg -> sub-agg
+        // tslint:disable-next-line:no-any
         if (aggregationType === 'agg_histo' && this.determineDepthOfObject(formattedData, (x: any) => x.buckets) === 3) {
           aggDataAccessor(aggData).push({
             name: aggName === 'agg_histo' ? 'aggregation_results' : aggName,
             series: this.formatDateDataExtraBucket(this.bucketAccessor(formattedData))
           });
         } else {
-          if (aggregationType === 'agg_fact' && this.determineDepthOfObject(formattedData, (x: any) => x.buckets) === 3) {
+          if (aggregationType === 'agg_fact' && this.determineDepthOfObject(formattedData, (x: { buckets: unknown; }) => x.buckets) === 3) {
             // @ts-ignore
             aggData.textaFactsTableData.push({
               name: aggName === aggregationType ? 'aggregation_results' : aggName,
@@ -183,7 +197,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
             aggData.treeData.push({
               name: aggName === aggregationType ? 'aggregation_results' : aggName,
               histoBuckets: formattedData.histoBuckets ? formattedData.histoBuckets : [],
-              treeData: new ArrayDataSource(this.bucketAccessor(formattedData))
+              treeData: this.bucketAccessor(formattedData)
             });
           }
         }
@@ -211,10 +225,11 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     });
   }
 
+  // @ts-ignore
   determineDepthOfObject(object, accessor) {
     let depth = 0;
     if (accessor(object)) {
-      accessor(object).forEach(x => {
+      accessor(object).forEach((x: unknown) => {
         const temp = this.determineDepthOfObject(x, accessor);
         if (temp > depth) {
           depth = temp;

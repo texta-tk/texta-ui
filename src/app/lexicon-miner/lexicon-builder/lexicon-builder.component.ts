@@ -18,15 +18,23 @@ import {LocalStorageService} from 'src/app/core/util/local-storage.service';
 })
 export class LexiconBuilderComponent implements OnInit, OnDestroy {
   outputSize = 20;
-  _lexicon: Lexicon | null;
   positives: string;
   predictions: EmbeddingPrediction[] = [];
-  negatives: any[] = [];
+  negatives: string[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
   embeddings: Embedding[];
   selectedEmbedding: Embedding | null;
   isLoadingPredictions = false;
   currentProject: Project;
+
+  constructor(private logService: LogService,
+              private lexiconService: LexiconService,
+              private embeddingService: EmbeddingsService,
+              private projectStore: ProjectStore,
+              private localStorageService: LocalStorageService) {
+  }
+
+  _lexicon: Lexicon | null;
 
   @Input() set lexicon(value: Lexicon | null) {
     if (value) {
@@ -43,21 +51,14 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
     }
   }
 
-  constructor(private logService: LogService,
-              private lexiconService: LexiconService,
-              private embeddingService: EmbeddingsService,
-              private projectStore: ProjectStore,
-              private localStorageService: LocalStorageService) {
-  }
-
   ngOnInit() {
-    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$), switchMap((currentProject: Project | null) => {
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$), switchMap(currentProject => {
       if (currentProject) {
         this.currentProject = currentProject;
         return this.embeddingService.getEmbeddings(currentProject.id);
       }
       return of(null);
-    })).subscribe((resp: { count: number, results: Embedding[] } | HttpErrorResponse) => {
+    })).subscribe(resp => {
       if (resp) {
         if (resp instanceof HttpErrorResponse) {
           this.logService.snackBarError(resp, 5000);
@@ -101,7 +102,7 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
         positives: this._lexicon.phrases,
         negatives: this._lexicon.discarded_phrases,
         output_size: this.outputSize,
-      }, this.currentProject.id, this.selectedEmbedding.id).subscribe((resp: EmbeddingPrediction[] | HttpErrorResponse) => {
+      }, this.currentProject.id, this.selectedEmbedding.id).subscribe(resp => {
         if (resp) {
           if (resp instanceof HttpErrorResponse) {
             this.logService.snackBarError(resp, 5000);
@@ -128,7 +129,7 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
       };
 
       this.lexiconService.updateLexicon(requestBody, this.currentProject.id, this._lexicon.id)
-        .subscribe((resp: Lexicon | HttpErrorResponse) => {
+        .subscribe(resp => {
           if (resp && !(resp instanceof HttpErrorResponse)) {
             this.logService.snackBarMessage('Lexicon saved', 3000);
           } else if (resp instanceof HttpErrorResponse) {
@@ -141,7 +142,7 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
   addPositive(value: { phrase: string, score: number, model: string }) {
     // remove selected item from predictions list
     if (this._lexicon) {
-      this.predictions = this.predictions.filter((x: any) => {
+      this.predictions = this.predictions.filter(x => {
         return x.phrase !== value.phrase;
       });
       this.positives += this.positives.endsWith('\n') ? value.phrase + '\n' : '\n' + value.phrase;
@@ -152,7 +153,7 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
   removeNegative(value: string) {
     // remove selected item from predictions list
     if (this._lexicon) {
-      this.negatives = this.negatives.filter((x: any) => {
+      this.negatives = this.negatives.filter(x => {
         return x !== value;
       });
       this._lexicon.discarded_phrases = this.negatives;

@@ -21,6 +21,7 @@ export interface HighlightConfig {
   highlightTextaFacts: boolean;
   highlightHyperlinks: boolean;
   charLimit?: number;
+  // tslint:disable-next-line:no-any
   data: any;
 }
 
@@ -57,7 +58,7 @@ export class HighlightComponent {
   ]);
   static linkify = new LinkifyIt();
   highlightArray: HighlightObject[] = [];
-  isTextLimited;
+  isTextLimited: boolean;
 
   constructor() {
   }
@@ -71,6 +72,7 @@ export class HighlightComponent {
       && (isNaN(Number(highlightConfig.data[highlightConfig.currentColumn])))) {
 
       // slice original text for charlimit bounds, deep clone
+      // tslint:disable-next-line:no-any
       const edited: any = (({data, ...o}) => o)(highlightConfig);
       edited.data = Object.assign({}, highlightConfig.data);
       if (edited.data[edited.currentColumn].length > edited.charLimit) {
@@ -86,6 +88,7 @@ export class HighlightComponent {
   static generateColorsForFacts(facts: { fact: string }[]): Map<string, LegibleColor> {
     facts.forEach(fact => {
       if (!HighlightComponent.colors.has(fact.fact)) {
+        // tslint:disable-next-line:no-bitwise
         HighlightComponent.colors.set(fact.fact, {backgroundColor: `hsla(${~~(360 * Math.random())},70%,70%,0.8)`, textColor: 'black'});
       }
     });
@@ -93,6 +96,7 @@ export class HighlightComponent {
   }
 
   // convert searcher highlight into mlp fact format
+  // tslint:disable-next-line:no-any
   static makeSearcherHighlights(searcherHighlight: any, currentColumn: string): HighlightSpan[] {
     const highlight = searcherHighlight ? searcherHighlight[currentColumn] : null;
     if (highlight && highlight.length === 1) { // elasticsearch returns as array
@@ -124,6 +128,7 @@ export class HighlightComponent {
   public toggleTextLimit() {
     if (window.getSelection()?.type !== 'Range') {
 
+      // tslint:disable-next-line:no-any
       const edited: any = (({data, ...o}) => o)(this._highlightConfig);
       edited.data = Object.assign({}, this._highlightConfig.data);
       if (edited.charLimit !== 0 && edited && !this.isTextLimited) {
@@ -134,7 +139,7 @@ export class HighlightComponent {
     }
   }
 
-  makeHighlightArray(highlightConfig) {
+  makeHighlightArray(highlightConfig: HighlightConfig) {
     if (highlightConfig.data[highlightConfig.currentColumn] !== null && highlightConfig.data[highlightConfig.currentColumn] !== undefined) {
       let fieldFacts: HighlightSpan[] = [];
       let hyperLinks: HighlightSpan[] = [];
@@ -199,10 +204,12 @@ export class HighlightComponent {
       // if these exist match all facts of the type, PER, LOC, ORG etc. gets all unique global fact names
       const globalFacts = [...new Set([].concat.apply([], highlightConfig.onlyHighlightMatching.map(x => x.factNameFormControl.value)))];
       // get all unique fact names and their values as an object
+      // @ts-ignore
       const factValues = [...new Set([].concat.apply([], (highlightConfig.onlyHighlightMatching.map(x => x.inputGroupArray.map(y => {
         return {value: y.factTextInputFormControl.value, name: y.factTextFactNameFormControl.value};
       })))))] as { value: string, name: string }[];
       return JSON.parse(JSON.stringify(fieldFacts.filter((fact: HighlightSpan) => {
+        // @ts-ignore
         if (globalFacts.includes(fact.fact)) {
           return fact;
         } else if (factValues.find(x => x.name === fact.fact)) {
@@ -215,7 +222,8 @@ export class HighlightComponent {
     return fieldFacts;
   }
 
-  getFactsByField(factArray, columnName): HighlightSpan[] {
+  // tslint:disable-next-line:no-any
+  getFactsByField(factArray: any, columnName: string): HighlightSpan[] {
     factArray = factArray.texta_facts;
     if (factArray) {
       return JSON.parse(JSON.stringify(factArray.filter((fact: HighlightSpan) => {
@@ -310,7 +318,8 @@ export class HighlightComponent {
     return false;
   }
 
-  private makeFactNestedHighlightRecursive(highlightObject: HighlightObject, factToInsert, color, textToInsert): HighlightObject {
+  private makeFactNestedHighlightRecursive(highlightObject: HighlightObject, factToInsert: HighlightSpan | undefined,
+                                           color: LegibleColor | undefined, textToInsert: string): HighlightObject {
     if (typeof highlightObject.nested === 'undefined') {
       highlightObject.nested = {
         text: textToInsert,
@@ -338,6 +347,7 @@ export class HighlightComponent {
     // highest span value in nestedfacts
     const highestSpanValue = new Map<HighlightSpan, number>();
     for (const factNested of nestedFacts) {
+      // @ts-ignore
       highestSpanValue.set(factNested, Math.max.apply(Math, factNested.spans));
     }
     let highlightObject: HighlightObject | undefined;
@@ -420,6 +430,7 @@ export class HighlightComponent {
         // cant loop over rootfact
         if (rootFact.spans[1] <= i) {
           // are there any nested facts that can still go on?
+          // @ts-ignore
           if (Math.max.apply(null, nestedFacts.map(x => Math.max.apply(Math, x.spans))) > i) {
             for (const factLeft of nestedFacts) {
               if (factLeft.spans[1] > i) {
@@ -545,6 +556,7 @@ export class HighlightComponent {
     return null;
   }
 
+  // @ts-ignore
   private sortByStartLowestSpan(a, b) {
     if (a.spans[0] === b.spans[0]) {
       return (a.spans[1] < b.spans[1]) ? -1 : 1; // sort by last span instead (need this for nested facts order)

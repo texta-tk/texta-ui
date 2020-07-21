@@ -1,101 +1,101 @@
 <div class="wrapper mat-elevation-z8">
   <div class="table-paginator-row">
     <div class="loading-bar">
-      <mat-progress-bar mode="indeterminate" *ngIf="isLoadingResults"></mat-progress-bar>
+      <mat-progress-bar *ngIf="isLoadingResults" mode="indeterminate"></mat-progress-bar>
     </div>
     <div class="paginator-row">
-      <button class="paginator-margin-left"
-              mat-raised-button color="primary" (click)="openCreateDialog()"
-              data-cy="appToolsReindexerCreateBtn">
+      <button (click)="openCreateDialog()"
+              class="paginator-margin-left" color="primary" data-cy="appToolsReindexerCreateBtn"
+              mat-raised-button>
         CREATE
       </button>
-      <button class="new-resource-btn" mat-icon-button color="warn" (click)="onDeleteAllSelected()"
-              matTooltip="Delete selected" [disabled]="selectedRows.selected.length < 1">
+      <button (click)="onDeleteAllSelected()" [disabled]="selectedRows.selected.length < 1" class="new-resource-btn" color="warn"
+              mat-icon-button matTooltip="Delete selected">
         <mat-icon>delete</mat-icon>
       </button>
       <mat-form-field class="m-l-15">
         <mat-icon matSuffix>search</mat-icon>
-        <input matInput (keyup)="applyFilter($event.target, 'description')" placeholder="Filter description">
+        <input (keyup)="applyFilter($event.target, 'description')" matInput placeholder="Filter description">
       </mat-form-field>
       <mat-form-field class="m-l-15">
         <mat-icon matSuffix>search</mat-icon>
-        <input matInput (keyup)="applyFilter($event.target, 'task_status')" placeholder="Filter task status">
+        <input (keyup)="applyFilter($event.target, 'task_status')" matInput placeholder="Filter task status">
       </mat-form-field>
 
-      <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons [length]="resultsLength">
+      <mat-paginator [length]="resultsLength" [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
       </mat-paginator>
     </div>
   </div>
 
   <div class="table-container overflow-auto">
-    <table mat-table [dataSource]="tableData" multiTemplateDataRows
-           matSort matSortActive="id" matSortDisableClear matSortDirection="asc">
+    <table [dataSource]="tableData" mat-table matSort
+           matSortActive="id" matSortDirection="asc" matSortDisableClear multiTemplateDataRows>
       <ng-container matColumnDef="select">
-        <th mat-header-cell *matHeaderCellDef>
+        <th *matHeaderCellDef mat-header-cell>
           <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selectedRows.hasValue() && isAllSelected()"
                         [indeterminate]="selectedRows.hasValue() && !isAllSelected()">
           </mat-checkbox>
         </th>
-        <td mat-cell *matCellDef="let row">
-          <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selectedRows.toggle(row) : null"
+        <td *matCellDef="let row" mat-cell>
+          <mat-checkbox (change)="$event ? selectedRows.toggle(row) : null" (click)="$event.stopPropagation()"
                         [checked]="selectedRows.isSelected(row)">
           </mat-checkbox>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Id</th>
-        <td mat-cell *matCellDef="let element"> {{element.id}}</td>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Id</th>
+        <td *matCellDef="let element" mat-cell> {{element.id}}</td>
       </ng-container>
 
       <ng-container matColumnDef="author__username">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Author</th>
-        <td mat-cell *matCellDef="let element"> {{element.author_username}}</td>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Author</th>
+        <td *matCellDef="let element" mat-cell> {{element.author_username}}</td>
       </ng-container>
 
       <ng-container matColumnDef="description">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Description</th>
-        <td mat-cell *matCellDef="let element"> {{element.description}}</td>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Description</th>
+        <td *matCellDef="let element" mat-cell> {{element.description}}</td>
       </ng-container>
 
       <ng-container matColumnDef="task__time_started">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Time started</th>
-        <td mat-cell *matCellDef="let element"> {{element.task.time_started | date:'y-M-d H:mm:ss'}}</td>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Time started</th>
+        <td *matCellDef="let element" mat-cell> {{element.task.time_started | date:'y-M-d H:mm:ss'}}</td>
       </ng-container>
       <ng-container matColumnDef="task__time_completed">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Time completed</th>
-        <td mat-cell *matCellDef="let element">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Time completed</th>
+        <td *matCellDef="let element" mat-cell>
           <span *ngIf="element.task.time_completed">{{element.task.time_completed | date:'y-M-d H:mm:ss'}}</span>
           <span *ngIf="!element.task.time_completed">Null</span>
         </td>
       </ng-container>
       <ng-container matColumnDef="fields">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Fields</th>
-        <td mat-cell *matCellDef="let element"><span [title]="getFields(element)"
-                                                     (click)="$event.stopPropagation();">{{element.fields| join: ', '}}</span>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Fields</th>
+        <td *matCellDef="let element" mat-cell><span (click)="$event.stopPropagation();"
+                                                     [title]="element.fields| join: '\n '">{{element.fields| join: ', '}}</span>
         </td>
       </ng-container>
       <ng-container matColumnDef="random_size">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Random size</th>
-        <td mat-cell *matCellDef="let element"> {{element.random_size}}</td>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Random size</th>
+        <td *matCellDef="let element" mat-cell> {{element.random_size}}</td>
       </ng-container>
       <ng-container matColumnDef="show_query">
-        <th mat-header-cell *matHeaderCellDef> Query</th>
-        <td mat-cell *matCellDef="let element">
-          <span class="action-text mat-body-strong pointer"
-                (click)="openQueryDialog(element.query);$event.stopPropagation()">Show Query</span>
+        <th *matHeaderCellDef mat-header-cell> Query</th>
+        <td *matCellDef="let element" mat-cell>
+          <span (click)="openQueryDialog(element.query);$event.stopPropagation()"
+                class="action-text mat-body-strong pointer">Show Query</span>
         </td>
       </ng-container>
       <ng-container matColumnDef="new_index">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> New index</th>
-        <td mat-cell *matCellDef="let element"> {{element.new_index}}</td>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> New index</th>
+        <td *matCellDef="let element" mat-cell> {{element.new_index}}</td>
       </ng-container>
       <ng-container matColumnDef="task__status">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Task</th>
-        <td mat-cell *matCellDef="let element">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Task</th>
+        <td *matCellDef="let element" mat-cell>
           <mat-progress-bar
-            mode="determinate"
-            [value]="element.task.progress">
+            [value]="element.task.progress"
+            mode="determinate">
           </mat-progress-bar>
           <mat-hint>{{element.task.status}} {{element.task.step}}</mat-hint>
         </td>
@@ -103,11 +103,11 @@
 
 
       <ng-container matColumnDef="expandedDetail">
-        <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
-          <div class="element-detail"
-               [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+        <td *matCellDef="let element" [attr.colspan]="displayedColumns.length" mat-cell>
+          <div [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'"
+               class="element-detail">
             <div class="flex-row element-detail-plot-fields">
-              <div *ngIf="element.plot"><img class="element-plot" [src]="element.plot"></div>
+              <div *ngIf="element.plot"><img [src]="element.plot" class="element-plot"></div>
               <div class="flex-col m-l-r-5">
                 <table class="simple-table">
                   <tr>
@@ -162,23 +162,24 @@
       </ng-container>
 
       <ng-container matColumnDef="Modify">
-        <th mat-header-cell class="center-header-cell" *matHeaderCellDef>Actions</th>
-        <td mat-cell *matCellDef="let element; let i = dataIndex" (click)="$event.stopPropagation();">
+        <th *matHeaderCellDef class="center-header-cell" mat-header-cell>Actions</th>
+        <td (click)="$event.stopPropagation();" *matCellDef="let element; let i = dataIndex" mat-cell>
 
 
-          <button mat-icon-button color="primary" [matMenuTriggerFor]="editMenu" [matMenuTriggerData]="{element: element, i:i}">
+          <button [matMenuTriggerData]="{element: element, i:i}" [matMenuTriggerFor]="editMenu" color="primary"
+                  mat-icon-button>
             <mat-icon aria-label="Actions">more_vert</mat-icon>
           </button>
 
         </td>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-      <tr mat-row *matRowDef="let element; columns: displayedColumns;"
-          class="element-row"
+      <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
+      <tr (click)="expandedElement = expandedElement === element ? null : element" *matRowDef="let element; columns: displayedColumns;"
           [class.expanded-row]="expandedElement === element"
-          (click)="expandedElement = expandedElement === element ? null : element"></tr>
-      <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
+          class="element-row"
+          mat-row></tr>
+      <tr *matRowDef="let row; columns: ['expandedDetail']" class="detail-row" mat-row></tr>
 
     </table>
 
@@ -186,8 +187,8 @@
 
 </div>
 <mat-menu #editMenu="matMenu">
-  <ng-template matMenuContent let-element="element" let-i="i">
-    <button mat-menu-item (click)="onDelete(element, i)" data-cy="appReindexerMenuDelete">
+  <ng-template let-element="element" let-i="i" matMenuContent>
+    <button (click)="onDelete(element, i)" data-cy="appReindexerMenuDelete" mat-menu-item>
       Delete
     </button>
   </ng-template>

@@ -33,7 +33,8 @@ export class ClusterService {
       catchError(this.logService.handleError<unknown>('retrainCluster')));
   }
 
-  createCluster(body, projectId): Observable<Cluster | HttpErrorResponse> {
+  // tslint:disable-next-line:no-any
+  createCluster(body: any, projectId: number): Observable<Cluster | HttpErrorResponse> {
     return this.http.post<Cluster>(
       `${this.apiUrl}/projects/${projectId}/clustering/`, body
     ).pipe(
@@ -41,7 +42,8 @@ export class ClusterService {
       catchError(this.logService.handleError<Cluster>('createCluster')));
   }
 
-  editCluster(projectId, clusterId, body: any): Observable<Cluster | HttpErrorResponse> {
+  // tslint:disable-next-line:no-any
+  editCluster(projectId: number, clusterId: number, body: any): Observable<Cluster | HttpErrorResponse> {
     return this.http.patch<Cluster>(
       `${this.apiUrl}/projects/${projectId}/clustering/${clusterId}/`, body
     ).pipe(
@@ -49,49 +51,51 @@ export class ClusterService {
       catchError(this.logService.handleError<Cluster>('editCluster')));
   }
 
-  bulkDeleteClusterings(projectId: number, body) {
+  bulkDeleteClusterings(projectId: number, body: { ids: number[]; }) {
     return this.http.post<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>
     (`${this.apiUrl}/projects/${projectId}/clustering/bulk_delete/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'bulkDeleteClusterings')),
       catchError(this.logService.handleError<unknown>('bulkDeleteClusterings')));
   }
 
-  bulkDeleteClusters(projectId: number, clusteringId: number, body) {
+  bulkDeleteClusters(projectId: number, clusteringId: number, body: { ids: number[]; }) {
     return this.http.post<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>
     (`${this.apiUrl}/projects/${projectId}/clustering/${clusteringId}/bulk_delete_clusters/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'bulkDeleteClusters')),
       catchError(this.logService.handleError<unknown>('bulkDeleteClusters')));
   }
 
-  bulkDeleteClusterDocuments(projectId: number, clusteringId: number, clusterId: number, body) {
+  bulkDeleteClusterDocuments(projectId: number, clusteringId: number, clusterId: number, body: { ids: number[]; }) {
     return this.http.post<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>
     (`${this.apiUrl}/projects/${projectId}/clustering/${clusteringId}/clusters/${clusterId}/remove_documents/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'bulkDeleteClusterDocuments')),
       catchError(this.logService.handleError<unknown>('bulkDeleteClusterDocuments')));
   }
 
-  addDocumentsToCluster(projectId: number, clusteringId: number, clusterId: number, body) {
+  // tslint:disable-next-line:no-any
+  addDocumentsToCluster(projectId: number, clusteringId: number, clusterId: number, body: any) {
     return this.http.post<unknown>
     (`${this.apiUrl}/projects/${projectId}/clustering/${clusteringId}/clusters/${clusterId}/add_documents/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'addDocumentsToCluster')),
       catchError(this.logService.handleError<unknown>('addDocumentsToCluster')));
   }
 
-  expandCluster(projectId: number, clusteringId: number, clusterId: number, body) {
+  expandCluster(projectId: number, clusteringId: number, clusterId: number, body: { ids: string[]; }) {
     return this.http.post<unknown>
     (`${this.apiUrl}/projects/${projectId}/clustering/${clusteringId}/clusters/${clusterId}/expand_cluster/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'expandCluster')),
       catchError(this.logService.handleError<unknown>('expandCluster')));
   }
 
-  tagCluster(projectId: number, clusteringId: number, clusterId: number, body) {
+  tagCluster(projectId: number, clusteringId: number, clusterId: number, body: { fact: string; str_val: string; doc_path: string; }) {
     return this.http.post<unknown>
     (`${this.apiUrl}/projects/${projectId}/clustering/${clusteringId}/clusters/${clusterId}/tag_cluster/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'tagCluster')),
       catchError(this.logService.handleError<unknown>('tagCluster')));
   }
 
-  moreLikeCluster(projectId: number, clusteringId: number, clusterId: number, body): Observable<ClusterMoreLikeThis[] | HttpErrorResponse> {
+  moreLikeCluster(projectId: number, clusteringId: number, clusterId: number,
+                  body: { size: number; include_meta: boolean; }): Observable<ClusterMoreLikeThis[] | HttpErrorResponse> {
     return this.http.post<ClusterMoreLikeThis[]>
     (`${this.apiUrl}/projects/${projectId}/clustering/${clusteringId}/clusters/${clusterId}/more_like_cluster/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'moreLikeCluster')),

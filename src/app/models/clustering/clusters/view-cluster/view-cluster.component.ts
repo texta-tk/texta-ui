@@ -57,7 +57,7 @@ export class ViewClusterComponent implements OnInit, OnDestroy, AfterViewInit {
     private clusterService: ClusterService) {
   }
 
-  public propertyAccessor = (x) => x.key;
+  public sigWordAccessor = (x: { key: string, count: number }) => x.key;
 
   ngOnInit(): void {
     const clusterId = this.route.snapshot.paramMap.get('clusteringId');
@@ -79,7 +79,7 @@ export class ViewClusterComponent implements OnInit, OnDestroy, AfterViewInit {
           if (state?.models?.clustering?.[clusteringState]?.sortDirection && this.tableData.sort) {
             this.tableData.sort.sort(state.models.clustering[clusteringState].sortDirection);
             const arrowViewStateTransition = {toState: 'active'} as ArrowViewStateTransition;
-            //ugly hack
+            // ugly hack
             (this.tableData.sort.sortables.get(state.models.clustering[clusteringState].sortDirection.id) as MatSortHeader)._setAnimationTransitionState(arrowViewStateTransition);
           }
 
@@ -108,10 +108,20 @@ export class ViewClusterComponent implements OnInit, OnDestroy, AfterViewInit {
       if (val && val.active && state) {
         const clusteringState = `${this.clusteringId.toString()}`;
         if (state?.models?.clustering?.[clusteringState]) {
-          state.models.clustering[clusteringState].sortDirection = {id: val.active, start: val.direction, disableClear: false};
+          state.models.clustering[clusteringState].sortDirection = {
+            id: val.active,
+            start: val.direction,
+            disableClear: false
+          };
         } else {
           if (state?.models?.clustering) {
-            state.models.clustering[clusteringState] = {sortDirection: {id: val.active, start: val.direction, disableClear: false}};
+            state.models.clustering[clusteringState] = {
+              sortDirection: {
+                id: val.active,
+                start: val.direction,
+                disableClear: false
+              }
+            };
           }
         }
         this.localStorageService.updateProjectState(this.currentProject, state);
@@ -169,7 +179,7 @@ export class ViewClusterComponent implements OnInit, OnDestroy, AfterViewInit {
     this.selectedRows.clear();
   }
 
-  trackById(index, val) {
+  trackById(index: number, val: Cluster) {
     return val.id;
   }
 

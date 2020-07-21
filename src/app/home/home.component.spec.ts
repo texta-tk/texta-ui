@@ -5,7 +5,7 @@ import {SharedModule} from '../shared/shared.module';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {ProjectModule} from './project/project.module';
+import {ProjectModule} from '../project/project.module';
 
 describe('HomeComponent', () => {
   let component: HomeComponent;

@@ -23,14 +23,14 @@ export class RegexTaggerService {
       catchError(this.logService.handleError<ResultsWrapper<RegexTagger>>('getRegexTaggers')));
   }
 
-  bulkDeleteRegexTaggers(projectId: number, body) {
+  bulkDeleteRegexTaggers(projectId: number, body: unknown) {
     return this.http.post<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>
     (`${this.apiUrl}/projects/${projectId}/regex_taggers/bulk_delete/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'bulkDeleteRegexTaggers')),
       catchError(this.logService.handleError<unknown>('bulkDeleteRegexTaggers')));
   }
 
-  createRegexTagger(projectId: number, body: {}): Observable<RegexTagger | HttpErrorResponse> {
+  createRegexTagger(projectId: number, body: unknown): Observable<RegexTagger | HttpErrorResponse> {
     return this.http.post<RegexTagger>(
       `${this.apiUrl}/projects/${projectId}/regex_taggers/`,
       body
@@ -39,7 +39,7 @@ export class RegexTaggerService {
       catchError(this.logService.handleError<RegexTagger>('createRegexTagger')));
   }
 
-  multiTagText(projectId: number, body: {}): Observable<unknown | HttpErrorResponse> {
+  multiTagText(projectId: number, body: unknown): Observable<unknown | HttpErrorResponse> {
     return this.http.post<unknown>(
       `${this.apiUrl}/projects/${projectId}/regex_taggers/multitag_text/`,
       body

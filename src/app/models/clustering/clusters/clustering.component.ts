@@ -17,7 +17,7 @@ import {expandRowAnimation} from '../../../shared/animations';
 import {CreateClusteringDialogComponent} from './create-clustering-dialog/create-clustering-dialog.component';
 import {HttpErrorResponse} from '@angular/common/http';
 import {EditStopwordsDialogComponent} from './edit-stopwords-dialog/edit-stopwords-dialog.component';
-import {ResultsWrapper} from '../../../shared/types/Generic';
+import {Index} from '../../../shared/types/Index';
 
 @Component({
   selector: 'app-clustering',
@@ -38,10 +38,6 @@ export class ClusteringComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  filteredSubject = new Subject();
-  // For custom filtering, such as text search in description
-  inputFilterQuery = '';
-  filteringValues = {};
 
   currentProject: Project;
   resultsLength: number;
@@ -53,7 +49,7 @@ export class ClusteringComponent implements OnInit, OnDestroy, AfterViewInit {
               public logService: LogService) {
   }
 
-  public propertyAccessor = (x) => x.name;
+  public getIndexName = (x: Index) => x.name;
 
   ngOnInit() {
     this.tableData.sort = this.sort;
@@ -74,7 +70,7 @@ export class ClusteringComponent implements OnInit, OnDestroy, AfterViewInit {
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
-    merge(this.sort.sortChange, this.paginator.page, this.filteredSubject)
+    merge(this.sort.sortChange, this.paginator.page)
       .pipe(debounceTime(250), startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
@@ -87,14 +83,14 @@ export class ClusteringComponent implements OnInit, OnDestroy, AfterViewInit {
             return this.clusterService.getClusters(
               this.currentProject.id,
               // Add 1 to to index because Material paginator starts from 0 and DRF paginator from 1
-              `${this.inputFilterQuery}&ordering=${sortDirection}${this.sort.active}&page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`);
+              `ordering=${sortDirection}${this.sort.active}&page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`);
           } else {
             return of(null);
           }
-        })).subscribe((data: ResultsWrapper<Cluster>) => {
+        })).subscribe((data) => {
       // Flip flag to show that loading has finished.
       this.isLoadingResults = false;
-      if (data) {
+      if (data && !(data instanceof HttpErrorResponse)) {
         this.resultsLength = data.count;
         this.tableData.data = data.results;
       }
@@ -102,7 +98,7 @@ export class ClusteringComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
 
-  editStopwordsDialog(element) {
+  editStopwordsDialog(element: Cluster) {
     const dialogRef = this.dialog.open(EditStopwordsDialogComponent, {
       data: {cluster: element, currentProjectId: this.currentProject.id},
       maxHeight: '665px',
@@ -126,10 +122,10 @@ export class ClusteringComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  retrainCluster(element) {
+  retrainCluster(element: Cluster) {
     if (this.currentProject) {
       return this.clusterService.retrainCluster(this.currentProject.id, element.id)
-        .subscribe((resp: any | HttpErrorResponse) => {
+        .subscribe((resp: unknown | HttpErrorResponse) => {
           if (resp && !(resp instanceof HttpErrorResponse)) {
             this.logService.snackBarMessage('Successfully started retraining clustering', 4000);
           } else if (resp instanceof HttpErrorResponse) {
@@ -142,7 +138,7 @@ export class ClusteringComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   openQueryDialog(query: string) {
-    const dialogRef = this.dialog.open(QueryDialogComponent, {
+    this.dialog.open(QueryDialogComponent, {
       data: {query},
       maxHeight: '965px',
       width: '700px',
@@ -211,22 +207,6 @@ export class ClusteringComponent implements OnInit, OnDestroy, AfterViewInit {
       this.tableData.data = [...this.tableData.data];
     });
     this.selectedRows.clear();
-  }
-
-
-  applyFilter(filterValue: any, field: string) {
-    filterValue = filterValue.value ? filterValue.value : '';
-    this.filteringValues[field] = filterValue;
-    this.paginator.pageIndex = 0;
-    this.filterQueriesToString();
-    this.filteredSubject.next();
-  }
-
-  filterQueriesToString() {
-    this.inputFilterQuery = '';
-    for (const field in this.filteringValues) {
-      this.inputFilterQuery += `&${field}=${this.filteringValues[field]}`;
-    }
   }
 
   ngOnDestroy() {

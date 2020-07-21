@@ -15,11 +15,17 @@ import {UtilityFunctions} from '../../shared/UtilityFunctions';
   providedIn: 'root'
 })
 export class ProjectStore {
+  // @ts-ignore
   private projects$: BehaviorSubject<Project[] | null> = new BehaviorSubject(null);
+  // @ts-ignore
   private selectedProject$: BehaviorSubject<Project | null> = new BehaviorSubject(null);
+  // @ts-ignore
   private projectIndices$: BehaviorSubject<ProjectIndex[] | null> = new BehaviorSubject(null);
+  // @ts-ignore
   private selectedProjectIndices$: BehaviorSubject<ProjectIndex[] | null> = new BehaviorSubject(null);
+  // @ts-ignore
   private currentIndicesFacts$: BehaviorSubject<ProjectFact[] | null> = new BehaviorSubject(null);
+  // tslint:disable-next-line:variable-name
   private _selectedProject: Project | null;
 
   constructor(private projectService: ProjectService,
@@ -36,11 +42,11 @@ export class ProjectStore {
   }
 
   refreshProjects() {
-    this.projectService.getProjects().subscribe((resp: Project[] | HttpErrorResponse) => {
+    this.projectService.getProjects().subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.getLocalStorageProjectSelection(resp);
         this.projects$.next(resp);
-      } else if (resp instanceof HttpErrorResponse) {
+      } else {
         this.logService.snackBarError(resp, 5000);
       }
     });
@@ -110,7 +116,7 @@ export class ProjectStore {
 
   // side effects
   private loadProjectFieldsAndFacts() {
-    this.getCurrentProject().pipe(skip(1), switchMap((project: Project) => {
+    this.getCurrentProject().pipe(skip(1), switchMap(project => {
       this._selectedProject = project;
       this.localStorageService.setCurrentlySelectedProject(project);
       this.currentIndicesFacts$.next(null);
@@ -120,7 +126,7 @@ export class ProjectStore {
         return this.projectService.getProjectIndices(project.id);
       }
       return of(null);
-    })).subscribe((resp: any | HttpErrorResponse) => {
+    })).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.getLocalStorageIndicesSelection(this._selectedProject || 0, resp);
         this.projectIndices$.next(UtilityFunctions.sortByStringProperty<ProjectIndex>(resp, y => y.index));
@@ -128,7 +134,7 @@ export class ProjectStore {
         this.logService.snackBarError(resp, 2000);
       }
     });
-      // todo distinct pipe ???
+    // todo distinct pipe ???
     this.getSelectedProjectIndices().pipe(skip(1), distinctUntilChanged(), switchMap(projectIndices => {
       if (this._selectedProject && projectIndices) {
         this.setIndicesSelectionLocalStorage(this._selectedProject, projectIndices);
@@ -136,7 +142,7 @@ export class ProjectStore {
       } else {
         return of(null);
       }
-    })).subscribe((resp: any | HttpErrorResponse) => {
+    })).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.currentIndicesFacts$.next(resp);
       } else if (resp instanceof HttpErrorResponse) {

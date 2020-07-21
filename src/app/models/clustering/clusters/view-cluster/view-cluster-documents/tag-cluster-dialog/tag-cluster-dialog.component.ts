@@ -30,8 +30,8 @@ export class TagClusterDialogComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  onSubmit(formData) {
-    const body: any = {
+  onSubmit(formData: { nameFormControl: string; strValFormControl: string; docPathFormControl: string; }) {
+    const body = {
       fact: formData.nameFormControl,
       str_val: formData.strValFormControl,
       doc_path: formData.docPathFormControl
