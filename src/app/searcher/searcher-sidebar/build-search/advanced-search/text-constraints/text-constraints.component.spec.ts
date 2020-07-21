@@ -19,7 +19,7 @@ import {By} from '@angular/platform-browser';
 describe('TextConstraintsComponent', () => {
   let component: TextConstraintsComponent;
   let fixture: ComponentFixture<TextConstraintsComponent>;
-  const constraintQueryAccessor = ((x, i, operator: 'must' | 'must_not' | 'should', type: 'multi_match' | 'regexp') => x.bool[operator][i].bool.should[0][type]);
+  const constraintQueryAccessor = ((x: { bool: { [x: string]: { [x: string]: { bool: { should: { [x: string]: any; }[]; }; }; }; }; }, i: string | number, operator: 'must' | 'must_not' | 'should', type: 'multi_match' | 'regexp') => x.bool[operator][i].bool.should[0][type]);
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({

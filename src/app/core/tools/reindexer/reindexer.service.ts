@@ -2,9 +2,10 @@ import {Injectable} from '@angular/core';
 import {environment} from 'src/environments/environment';
 import {LogService} from 'src/app/core/util/log.service';
 import {Observable} from 'rxjs';
-import {HttpErrorResponse, HttpClient} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {Reindexer} from 'src/app/shared/types/tools/Elastic';
-import {tap, catchError} from 'rxjs/operators';
+import {catchError, tap} from 'rxjs/operators';
+import {ResultsWrapper} from '../../../shared/types/Generic';
 
 @Injectable({
   providedIn: 'root'
@@ -16,20 +17,20 @@ export class ReindexerService {
               private logService: LogService) {
   }
 
-  getReindexers(projectId: number, params = ''): Observable<{ count: number, results: Reindexer[] } | HttpErrorResponse> {
-    return this.http.get<{ count: number, results: Reindexer[] }>(`${this.apiUrl}/projects/${projectId}/reindexer/?${params}`).pipe(
+  getReindexers(projectId: number, params = ''): Observable<ResultsWrapper<Reindexer> | HttpErrorResponse> {
+    return this.http.get<ResultsWrapper<Reindexer>>(`${this.apiUrl}/projects/${projectId}/reindexer/?${params}`).pipe(
       tap(e => this.logService.logStatus(e, 'getReindexers')),
-      catchError(this.logService.handleError<{ count: number, results: Reindexer[] }>('getReindexers')));
+      catchError(this.logService.handleError<ResultsWrapper<Reindexer>>('getReindexers')));
   }
 
-  createReindexer(body, projectId): Observable<Reindexer | HttpErrorResponse> {
+  createReindexer(body: unknown, projectId: number): Observable<Reindexer | HttpErrorResponse> {
     return this.http.post<Reindexer>(`${this.apiUrl}/projects/${projectId}/reindexer/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'createReindexer')),
       catchError(this.logService.handleError<Reindexer>('createReindexer')));
   }
 
-  bulkDeleteReindexers(projectId: number, body) {
-    return this.http.post<{ "num_deleted": number, "deleted_types": { string: number }[] }>
+  bulkDeleteReindexers(projectId: number, body: unknown) {
+    return this.http.post<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>
     (`${this.apiUrl}/projects/${projectId}/reindexer/bulk_delete/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'bulkDeleteReindexers')),
       catchError(this.logService.handleError<unknown>('bulkDeleteReindexers')));
@@ -42,8 +43,8 @@ export class ReindexerService {
   }
 
   getReindexerOptions(projectId: number) {
-    return this.http.options<any>(`${this.apiUrl}/projects/${projectId}/reindexer/`).pipe(
+    return this.http.options<unknown>(`${this.apiUrl}/projects/${projectId}/reindexer/`).pipe(
       tap(e => this.logService.logStatus(e, 'getReindexerOptions')),
-      catchError(this.logService.handleError<any>('getReindexerOptions')));
+      catchError(this.logService.handleError<unknown>('getReindexerOptions')));
   }
 }

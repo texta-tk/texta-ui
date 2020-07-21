@@ -14,7 +14,7 @@ export class Embedding {
   location = null;
   task: TaskStatus;
 
-  static isEmbedding(object): object is Embedding | Embedding[] {
+  static isEmbedding(object: string | unknown[] | Embedding): object is Embedding | Embedding[] {
     if (Array.isArray(object) && object.length > 0) {
       return ((object[0] as Embedding).vocab_size !== undefined && (object[0] as Embedding).vocab_size !== undefined);
     } else {

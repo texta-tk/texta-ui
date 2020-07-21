@@ -2,13 +2,9 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {LiveErrorStateMatcher} from '../../../../shared/CustomerErrorStateMatchers';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {Tagger} from '../../../../shared/types/tasks/Tagger';
-import {TaggerService} from '../../../../core/models/taggers/tagger.service';
 import {ProjectStore} from '../../../../core/projects/project.store';
 import {mergeMap, take} from 'rxjs/operators';
-import {Project} from '../../../../shared/types/Project';
 import {of} from 'rxjs';
-import {HttpErrorResponse} from '@angular/common/http';
 import {SavedSearch} from '../../../../shared/types/SavedSearch';
 import {SearcherService} from '../../../../core/searcher/searcher.service';
 
@@ -30,13 +26,13 @@ export class EditSavedSearchDialogComponent implements OnInit {
   }
 
   onSubmit() {
-    this.projectStore.getCurrentProject().pipe(take(1), mergeMap((project: Project) => {
+    this.projectStore.getCurrentProject().pipe(take(1), mergeMap(project => {
       if (project) {
         return this.searcherService.editSavedSearch(project.id, this.data.id, {description: this.data.description});
       }
       return of(null);
-    })).subscribe((resp: SavedSearch | HttpErrorResponse) => {
-        this.dialogRef.close(resp);
+    })).subscribe(resp => {
+      this.dialogRef.close(resp);
     });
   }
 

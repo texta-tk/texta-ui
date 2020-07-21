@@ -21,7 +21,7 @@ export class TextConstraint extends Constraint {
   operatorFormControl = new FormControl();
   lexicons: Lexicon[];
 
-  constructor(fields: Field[], lexicons?: Lexicon[], match?, text?, operator?, slop?) {
+  constructor(fields: Field[], lexicons?: Lexicon[], match?: undefined, text?: undefined, operator?: undefined, slop?: undefined) {
     super(fields);
     this.operatorFormControl.setValue(operator ? operator : 'must');
     this.matchFormControl.setValue(match ? match : 'phrase_prefix');
@@ -38,7 +38,7 @@ export class NumberConstraint extends Constraint {
   fromToInput: FromToInput;
   operatorFormControl = new FormControl();
 
-  constructor(fields: Field[], fromTo?: FromToInput, operator?) {
+  constructor(fields: Field[], fromTo?: FromToInput, operator?: undefined) {
     super(fields);
     this.operatorFormControl.setValue(operator ? operator : 'must');
     if (fromTo) {
@@ -52,7 +52,7 @@ export class DateConstraint extends Constraint {
   dateFromFormControl = new FormControl();
   dateToFormControl = new FormControl();
 
-  constructor(fields: Field[], dateFrom?, dateTo?) {
+  constructor(fields: Field[], dateFrom?: undefined, dateTo?: undefined) {
     super(fields);
     this.dateFromFormControl.setValue(dateFrom ? dateFrom : '');
     this.dateToFormControl.setValue(dateTo ? dateTo : '');
@@ -66,7 +66,8 @@ export class FactConstraint extends Constraint {
   inputGroupArray: FactTextInputGroup[] = [];
   isFactValue: boolean;
 
-  constructor(fields: Field[], factNameOperator?, factName?, factTextOperator?, inputGroupArray?: FactTextInputGroup[]) {
+  constructor(fields: Field[], factNameOperator?: string, factName?: string, factTextOperator?: string,
+              inputGroupArray?: FactTextInputGroup[]) {
     super(fields);
     this.factTextOperatorFormControl.setValue(factTextOperator ? factTextOperator : 'must');
     this.factNameOperatorFormControl.setValue(factNameOperator ? factNameOperator : 'must');
@@ -99,7 +100,7 @@ export class FactTextInputGroup {
     }
   };
 
-  constructor(factTextOperator?, factTextFactName?, factTextInput?) {
+  constructor(factTextOperator?: string | undefined, factTextFactName?: string | undefined, factTextInput?: string | undefined) {
     this.factTextOperatorFormControl.setValue(factTextOperator ? factTextOperator : 'must');
     this.factTextFactNameFormControl.setValue(factTextFactName ? factTextFactName : '');
     this.factTextInputFormControl.setValue(factTextInput ? factTextInput : '');
@@ -137,6 +138,7 @@ export interface ElasticsearchQueryStructure {
   aggs?: AggregationStructure;
   size: number;
   from: number;
+  // tslint:disable-next-line:no-any
   sort?: any;
 }
 
@@ -144,7 +146,9 @@ interface HighlightStructure {
   order?: string;
   number_of_fragments?: number;
   fragment_size?: number;
+  // tslint:disable-next-line:no-any
   pre_tags?: any[];
+  // tslint:disable-next-line:no-any
   post_tags?: any[];
   type?: string;
   fields: {};
@@ -152,12 +156,17 @@ interface HighlightStructure {
 
 interface QueryStructure {
   bool?: {
+    // tslint:disable-next-line:no-any
     must: any[],
+    // tslint:disable-next-line:no-any
     filter: any[],
+    // tslint:disable-next-line:no-any
     must_not: any[],
+    // tslint:disable-next-line:no-any
     should: any[],
     minimum_should_match: number,
   };
+  // tslint:disable-next-line:no-any
   multi_match?: any;
 }
 

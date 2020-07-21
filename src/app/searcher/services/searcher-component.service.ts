@@ -26,6 +26,7 @@ export class SearcherComponentService {
     }]
   };
   private searchSubject = new BehaviorSubject<Search | null>(null);
+  // tslint:disable-next-line:no-any
   private aggregationSubject = new BehaviorSubject<{ globalAgg: any, agg: any } | null>(null);
   // so query wouldnt be null (we use current query in aggs so we dont want null even if user hasnt searched everything,
   private savedSearchUpdate = new Subject<boolean>();
@@ -56,10 +57,12 @@ export class SearcherComponentService {
     return this.searchSubject.asObservable();
   }
 
+  // tslint:disable-next-line:no-any
   public nextAggregation(aggregation: { globalAgg: any, agg: any } | null) {
     this.aggregationSubject.next(aggregation);
   }
 
+  // tslint:disable-next-line:no-any
   public getAggregation(): Observable<{ globalAgg: any, agg: any } | null> {
     return this.aggregationSubject.asObservable();
   }
@@ -100,7 +103,7 @@ export class SearcherComponentService {
     return this.advancedSearchConstraints$.asObservable();
   }
 
-  public createConstraintFromFact(factName, factValue) {
+  public createConstraintFromFact(factName: string, factValue: string) {
     const constraint = new SavedSearch();
     constraint.query_constraints = [];
     this.getAdvancedSearchConstraints$().pipe(take(1)).subscribe(constraintList => {

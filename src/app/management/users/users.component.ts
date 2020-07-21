@@ -93,7 +93,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     });
   }
 
-  trackById(index, item: UserProfile) {
+  trackById(index: number, item: UserProfile) {
     return item.id;
   }
 

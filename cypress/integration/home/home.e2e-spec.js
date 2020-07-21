@@ -45,14 +45,19 @@ describe('/health and project table tests', function () {
       cy.get('.mat-option-text:first').contains('texta_test_index').should('be.visible').click(); // todo texta test index
       cy.closeCurrentCdkOverlay();
     }));
-    cy.get('[data-cy=appProjectCreateDialogSubmit]').should('be.visible').click();
     cy.route('GET', 'projects').as('getProjects');
+    cy.route('DELETE', '**/projects/**').as('deleteProjects');
+    cy.route('POST', 'projects').as('postProjects');
+    cy.get('[data-cy=appProjectCreateDialogSubmit]').should('be.visible').click();
+    cy.wait('@postProjects');
     cy.wait('@getProjects');
-    cy.wait(1000); // projectStore, update table
+    cy.wait(100); // projectStore, update table
     cy.get('tbody > :nth-child(1) > .cdk-column-title').contains('testProject');
     cy.get(':nth-child(1) > .cdk-column-Modify > .mat-focus-indicator > .mat-button-wrapper > .mat-icon').click();
     cy.get(':nth-child(1) > .mat-focus-indicator.ng-star-inserted').should('be.visible').contains('Delete').click();
     cy.get('[data-cy=appConfirmDialogSubmit]').should('be.visible').click();
-    cy.wait('@getProjects');
+    cy.wait('@deleteProjects').then(x=>{
+      cy.wait('@getProjects');
+    });
   });
 });

@@ -7,4 +7,6 @@ export class TaskStatus {
   time_started = '';
   last_update = null;
   time_completed = null;
+  num_processed = 0;
+  total = 0;
 }

@@ -1,4 +1,4 @@
-import {Component, OnInit, Host, AfterViewInit, OnDestroy} from '@angular/core';
+import {AfterViewInit, Component, Host, OnDestroy} from '@angular/core';
 import {MatPseudoCheckboxState} from '@angular/material/core';
 import {MatSelect} from '@angular/material/select';
 import {Subject} from 'rxjs';
@@ -22,8 +22,8 @@ import {takeUntil} from 'rxjs/operators';
 export class MatOptionSelectAllComponent implements AfterViewInit, OnDestroy {
 
   state: MatPseudoCheckboxState = 'checked';
-  private options: any[] = [];
-  private value: any[] | null = [];
+  private options: unknown[] = [];
+  private value: unknown[] | null = [];
 
   private destroyed = new Subject();
 
@@ -87,8 +87,8 @@ export class MatOptionSelectAllComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  private areArraysEqual(a, b) {
-    return [...a].sort().join(',') === [...b].sort().join(',');
+  private areArraysEqual(a: unknown[] | null, b: unknown[]) {
+    return [...a || []].sort().join(',') === [...b].sort().join(',');
   }
 
 }

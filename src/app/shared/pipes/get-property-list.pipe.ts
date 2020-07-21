@@ -5,8 +5,8 @@ import {Pipe, PipeTransform} from '@angular/core';
 })
 export class GetPropertyListPipe implements PipeTransform {
 
-  transform<T>(value: T[], propertyAccessor: (x: T) => any): any[] {
-    const returnValue: any = [];
+  transform<T>(value: T[], propertyAccessor: (x: T) => unknown): unknown[] {
+    const returnValue: unknown[] = [];
     value.forEach(x => {
       returnValue.push(propertyAccessor(x));
     });

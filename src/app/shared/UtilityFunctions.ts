@@ -7,7 +7,7 @@ import {
 } from '../searcher/searcher-sidebar/build-search/Constraints';
 
 export class UtilityFunctions {
-  static typeGuard<T>(o, className: { new(...args: any[]): T }): o is T {
+  static typeGuard<T>(o: unknown, className: new(...args: unknown[]) => T): o is T {
     return o instanceof className;
   }
 
@@ -40,6 +40,7 @@ export class UtilityFunctions {
     });
   }
 
+  // tslint:disable-next-line:no-any
   static getDistinctByProperty<T>(objectArray: T[], propertyAccessor: (x: T) => any): T[] {
     const distinct: T[] = [];
     const unique: boolean[] = [];
@@ -52,7 +53,9 @@ export class UtilityFunctions {
     return distinct;
   }
 
+  // tslint:disable-next-line:no-any
   static convertConstraintListToJson(constraintList: Constraint[]): any[] {
+    // tslint:disable-next-line:no-any
     const outPutJson: any[] = [];
     for (const constraint of constraintList) {
       if (constraint instanceof TextConstraint) {
@@ -80,6 +83,7 @@ export class UtilityFunctions {
         });
       }
       if (constraint instanceof FactConstraint) {
+        // tslint:disable-next-line:no-any
         const inputGroupArrayJson: any[] = [];
         for (const inputGroup of constraint.inputGroupArray) {
           inputGroupArrayJson.push({

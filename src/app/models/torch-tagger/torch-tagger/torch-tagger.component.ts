@@ -38,7 +38,7 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   filteredSubject = new Subject();
   // For custom filtering, such as text search in description
   inputFilterQuery = '';
-  filteringValues = {};
+  filteringValues: { [key: string]: string } = {};
 
   currentProject: Project;
   resultsLength: number;
@@ -59,7 +59,7 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     timer(30000, 30000).pipe(takeUntil(this.destroyed$), switchMap(_ =>
       this.torchtaggerService.getTorchTaggers(this.currentProject.id,
         `page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`)))
-      .subscribe((resp: { count: number, results: TorchTagger[] } | HttpErrorResponse) => {
+      .subscribe(resp => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
           this.refreshTorchTaggers(resp.results);
         } else if (resp instanceof HttpErrorResponse) {
@@ -104,10 +104,10 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
           } else {
             return of(null);
           }
-        })).subscribe((data: { count: number, results: TorchTagger[] }) => {
+        })).subscribe(data => {
       // Flip flag to show that loading has finished.
       this.isLoadingResults = false;
-      if (data) {
+      if (data && !(data instanceof HttpErrorResponse)) {
         this.resultsLength = data.count;
         this.tableData.data = data.results;
       }
@@ -238,9 +238,8 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
 
-  applyFilter(filterValue: any, field: string) {
-    filterValue = filterValue.value ? filterValue.value : '';
-    this.filteringValues[field] = filterValue;
+  applyFilter(filterValue: EventTarget | null, field: string) {
+    this.filteringValues[field] = (filterValue as HTMLInputElement).value ? (filterValue as HTMLInputElement).value : '';
     this.filterQueriesToString();
     this.filteredSubject.next();
   }
@@ -248,7 +247,9 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   filterQueriesToString() {
     this.inputFilterQuery = '';
     for (const field in this.filteringValues) {
-      this.inputFilterQuery += `&${field}=${this.filteringValues[field]}`;
+      if (this.filteringValues.hasOwnProperty(field)) {
+        this.inputFilterQuery += `&${field}=${this.filteringValues[field]}`;
+      }
     }
   }
 

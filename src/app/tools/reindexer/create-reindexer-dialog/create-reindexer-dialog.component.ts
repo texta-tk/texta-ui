@@ -1,15 +1,14 @@
 import {Component, OnInit} from '@angular/core';
-import {Reindexer} from 'src/app/shared/types/tools/Elastic';
 import {ReindexerService} from '../../../core/tools/reindexer/reindexer.service';
-import {FormGroup, FormControl, Validators} from '@angular/forms';
-import { ErrorStateMatcher } from '@angular/material/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {ErrorStateMatcher} from '@angular/material/core';
+import {MatDialogRef} from '@angular/material/dialog';
 import {LiveErrorStateMatcher} from 'src/app/shared/CustomerErrorStateMatchers';
-import {ProjectIndex, Project, Field} from 'src/app/shared/types/Project';
+import {Field, ProjectIndex} from 'src/app/shared/types/Project';
 import {ProjectService} from 'src/app/core/projects/project.service';
 import {ProjectStore} from 'src/app/core/projects/project.store';
-import {take, mergeMap} from 'rxjs/operators';
-import {of, forkJoin} from 'rxjs';
+import {mergeMap, take} from 'rxjs/operators';
+import {forkJoin, of} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../../../core/util/log.service';
 import {MatSelectChange} from '@angular/material/select';
@@ -57,10 +56,7 @@ export class CreateReindexerDialogComponent implements OnInit {
       } else {
         return of(null);
       }
-    })).subscribe((resp: {
-      reindexerOptions: any | HttpErrorResponse,
-      projectFields: ProjectIndex[] | HttpErrorResponse,
-    }) => {
+    })).subscribe(resp => {
       if (resp) {
         if (!(resp.projectFields instanceof HttpErrorResponse)) {
           this.projectFields = ProjectIndex.sortTextaFactsAsFirstItem(resp.projectFields);
@@ -83,10 +79,8 @@ export class CreateReindexerDialogComponent implements OnInit {
   onIndexSelected(val: MatSelectChange) {
     this.filteredProjectFields = this.projectFields.filter(x => val.value.includes(x.index));
     if (this.filteredProjectFields.length > 0) {
-      // todo fix in TS 3.7
-      // tslint:disable-next-line:no-non-null-assertion
-      this.reindexerForm.get('fieldsFormControl')!.reset({
-        value: [].concat.apply([], this.filteredProjectFields.map(x => x.fields)),
+      this.reindexerForm.get('fieldsFormControl')?.reset({
+        value: [].concat.apply([], this.filteredProjectFields.map(x => x.fields) as never),
         disabled: false
       });
     } else {
@@ -96,7 +90,10 @@ export class CreateReindexerDialogComponent implements OnInit {
     }
   }
 
-  onSubmit(formData) {
+  onSubmit(formData: {
+    fieldsFormControl: Field[]; descriptionFormControl: string;
+    newNameFormControl: string; fieldTypesFormControl: string; indicesFormControl: string[]; randomSizeFormControl: number;
+  }) {
     // temp
     const fieldsToSend = formData.fieldsFormControl.map(x => x.path);
     const body = {
@@ -105,21 +102,16 @@ export class CreateReindexerDialogComponent implements OnInit {
       fields: fieldsToSend,
       field_type: formData.fieldTypesFormControl ? JSON.parse(formData.fieldTypesFormControl) : [],
       indices: formData.indicesFormControl,
+      ...this.query ? {query: this.query} : {},
+      ...formData.randomSizeFormControl ? {random_size: formData.randomSizeFormControl} : {},
     };
-    if (formData.randomSizeFormControl) {
-      body['random_size'] = formData.randomSizeFormControl;
-    }
 
-    if (this.query) {
-      body['query'] = this.query;
-    }
-
-    this.projectStore.getCurrentProject().pipe(take(1), mergeMap((project: Project) => {
+    this.projectStore.getCurrentProject().pipe(take(1), mergeMap(project => {
       if (project) {
         return this.reindexerService.createReindexer(body, project.id);
       }
       return of(null);
-    })).subscribe((resp: Reindexer | HttpErrorResponse) => {
+    })).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.dialogRef.close(resp);
       } else if (resp instanceof HttpErrorResponse) {

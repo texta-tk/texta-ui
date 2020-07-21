@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {ElasticsearchQuery, FactConstraint, FactTextInputGroup} from '../../Constraints';
 import {FormControl} from '@angular/forms';
 import {debounceTime, pairwise, startWith, switchMap, takeUntil} from 'rxjs/operators';
@@ -6,7 +6,7 @@ import {Project, ProjectFact} from '../../../../../shared/types/Project';
 import {of, Subject} from 'rxjs';
 import {ProjectService} from '../../../../../core/projects/project.service';
 import {HttpErrorResponse} from '@angular/common/http';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import {UtilityFunctions} from '../../../../../shared/UtilityFunctions';
 
 
@@ -18,23 +18,6 @@ import {UtilityFunctions} from '../../../../../shared/UtilityFunctions';
 export class FactConstraintsComponent implements OnInit, OnDestroy {
   // inner hits name counter
   static componentCount = 0;
-  _factConstraint: FactConstraint;
-  @Input() set factConstraint(value: FactConstraint) {
-    if (value) {
-      this._factConstraint = value;
-      this.factNameOperatorFormControl = this._factConstraint.factNameOperatorFormControl;
-      this.factNameFormControl = this._factConstraint.factNameFormControl;
-      this.factTextOperatorFormControl = this._factConstraint.factTextOperatorFormControl;
-      if (this._factConstraint.isFactValue) { // saved searches work because im checking inputGroupArray length in html
-        this.createGroupListeners();
-      } else {
-        for (const inputGroup of this._factConstraint.inputGroupArray) { // saved search, already has array
-          this.createGroupListeners(inputGroup);
-        }
-      }
-    }
-  }
-
   @Input() elasticSearchQuery: ElasticsearchQuery;
   @Input() projectFacts: ProjectFact[] = [];
   @Input() currentProject: Project;
@@ -43,7 +26,7 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
   factNameOperatorFormControl = new FormControl();
   factNameFormControl = new FormControl();
   factTextOperatorFormControl = new FormControl();
-  inputGroupQueryArray: any[] = [];
+  inputGroupQueryArray: unknown[] = [];
   formQueryBluePrint = {
     nested: {
       query: {
@@ -58,15 +41,35 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
       }
     }
   };
+  // tslint:disable-next-line:no-any
   factNameQuery: any = {
     bool: {}
   };
+  // tslint:disable-next-line:no-any
   inputGroupQuery: any = {
     bool: {}
   };
 
   constructor(private projectService: ProjectService, private changeDetectorRef: ChangeDetectorRef) {
     FactConstraintsComponent.componentCount += 1;
+  }
+
+  _factConstraint: FactConstraint;
+
+  @Input() set factConstraint(value: FactConstraint) {
+    if (value) {
+      this._factConstraint = value;
+      this.factNameOperatorFormControl = this._factConstraint.factNameOperatorFormControl;
+      this.factNameFormControl = this._factConstraint.factNameFormControl;
+      this.factTextOperatorFormControl = this._factConstraint.factTextOperatorFormControl;
+      if (this._factConstraint.isFactValue) { // saved searches work because im checking inputGroupArray length in html
+        this.createGroupListeners();
+      } else {
+        for (const inputGroup of this._factConstraint.inputGroupArray) { // saved search, already has array
+          this.createGroupListeners(inputGroup);
+        }
+      }
+    }
   }
 
   // attach valuechanges listeners to formcontrols, and populate with savedsearch data if there is any
@@ -114,7 +117,7 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
       switchMap(value => {
         // todo fix in TS 3.7
         // tslint:disable-next-line:no-non-null-assertion
-        if ((value || value === '' && inputGroup!.factTextFactNameFormControl.value) && this.currentProject && inputGroup ) {
+        if ((value || value === '' && inputGroup!.factTextFactNameFormControl.value) && this.currentProject && inputGroup) {
           inputGroup.filteredOptions = ['Loading...'];
           inputGroup.isLoadingOptions = true;
           return this.projectService.projectFactValueAutoComplete(this.currentProject.id,
@@ -123,8 +126,8 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
             inputGroup!.factTextFactNameFormControl.value, 10, value);
         }
         return of(null);
-      })).subscribe((val: string[] | HttpErrorResponse) => {
-        if (val && !(val instanceof HttpErrorResponse) && inputGroup) {
+      })).subscribe(val => {
+      if (val && !(val instanceof HttpErrorResponse) && inputGroup) {
         inputGroup.isLoadingOptions = false;
         inputGroup.filteredOptions = val;
         this.changeDetectorRef.detectChanges();
@@ -133,13 +136,12 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
     });
   }
 
-  factValueSelected(val: MatAutocompleteSelectedEvent | string, inputGroup) {
+  factValueSelected(val: MatAutocompleteSelectedEvent | string, inputGroup: FactTextInputGroup) {
     const factValue = (val instanceof MatAutocompleteSelectedEvent) ? val.option.value : val;
     if (factValue.length > 0) {
       inputGroup.formQuery.nested.inner_hits.name = `${FactConstraintsComponent.componentCount}_${inputGroup.factTextFactNameFormControl.value}_${factValue}`;
-      inputGroup.formQuery.nested.query.bool.must = [
-        {match: {'texta_facts.fact': inputGroup.factTextFactNameFormControl.value}},
-        {match: {'texta_facts.str_val': factValue}}];
+      // @ts-ignore
+      inputGroup.formQuery.nested.query.bool.must = [{match: {'texta_facts.fact': inputGroup.factTextFactNameFormControl.value}}, {match: {'texta_facts.str_val': factValue}}];
 
       this.change.emit(this.elasticSearchQuery);
     }
@@ -160,7 +162,7 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (this._factConstraint) {
-      const formQueries: any[] = [];
+      const formQueries: unknown[] = [];
       this.factNameQuery.bool = {[this.factNameOperatorFormControl.value]: formQueries};
       // todo fix in TS 3.7
       // tslint:disable-next-line:no-non-null-assertion

@@ -12,7 +12,9 @@ import {Subject} from 'rxjs';
   styleUrls: ['./aggregation-results-tree.component.scss'],
 })
 export class AggregationResultsTreeComponent implements OnInit, OnDestroy {
-  @Input() dataSource;
+  // tslint:disable-next-line:no-any
+  @Input() dataSource: any[] | undefined;
+  // tslint:disable-next-line:no-any
   treeControl: NestedTreeControl<any> = new NestedTreeControl<any>(node => node.buckets);
 
   destroy$: Subject<boolean> = new Subject();
@@ -20,14 +22,16 @@ export class AggregationResultsTreeComponent implements OnInit, OnDestroy {
   constructor(public dialog: MatDialog, private searchComponentService: SearcherComponentService) {
   }
 
+  // tslint:disable-next-line:no-any
   hasChild = (_: number, node: any) => !!node.buckets && node.buckets.length > 0;
 
+  // tslint:disable-next-line:no-any
   bucketAccessor = (x: any) => (x.buckets);
 
   ngOnInit() {
   }
 
-  openDialog(val) {
+  openDialog(val: { key: string; }) {
     if (this.bucketAccessor(val)[0].key_as_string) {
       this.dialog.open(AggregationResultsDialogComponent, {
         data: {
@@ -51,6 +55,7 @@ export class AggregationResultsTreeComponent implements OnInit, OnDestroy {
   }
 
   formatDateData(buckets: { key_as_string: string, key: number, doc_count: number }[]) {
+    // tslint:disable-next-line:no-any
     const dateData: any[] = [];
     for (const element of buckets) {
       dateData.push({
@@ -61,7 +66,8 @@ export class AggregationResultsTreeComponent implements OnInit, OnDestroy {
     return dateData;
   }
 
-  makeSearch(childNode) {
+  makeSearch(childNode: { key: string; }) {
+    // @ts-ignore
     this.dataSource.forEach(x => {
       if (this.treeControl.isExpanded(x)) {
         if (x.buckets.includes(childNode)) {

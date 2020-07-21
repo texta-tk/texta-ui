@@ -44,7 +44,7 @@ export class TextaFactsChipsComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  buildSearch(fact, factValue) {
+  buildSearch(fact: string, factValue: string) {
     const constraint = new SavedSearch();
     constraint.query_constraints = [];
     this.searchService.getAdvancedSearchConstraints$().pipe(take(1)).subscribe(constraintList => {
@@ -69,7 +69,7 @@ export class TextaFactsChipsComponent implements OnInit {
     });
   }
 
-  buildChipList(facts, doneCallback: () => void) {
+  buildChipList(facts: { fact: string, str_val: string }[], doneCallback: () => void) {
     setTimeout(() => {
       const colors = HighlightComponent.generateColorsForFacts(facts);
       facts.forEach(val => {

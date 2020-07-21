@@ -55,15 +55,13 @@ export class MLPApplyTextDialogComponent implements OnInit, OnDestroy {
     });
   }
 
-  onSubmit(formGroup) {
-    console.log(formGroup);
+  onSubmit(formGroup: { analyzersFormControl: string[]; textFormControl: string; }) {
     this.isLoading = true;
     this.mlpService.applyMLPText({
       analyzers: formGroup.analyzersFormControl,
       texts: [formGroup.textFormControl]
     }).subscribe(x => {
       if (x && !(x instanceof HttpErrorResponse)) {
-        console.log(x);
         this.result = x;
       } else if (x instanceof HttpErrorResponse) {
         this.logService.snackBarError(x, 2000);

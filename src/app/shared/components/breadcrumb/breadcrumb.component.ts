@@ -55,8 +55,8 @@ export class BreadcrumbComponent implements OnInit, OnDestroy {
     const nextUrl = path ? `${url}/${path}` : url;
 
     const breadcrumb: IBreadCrumb = {
-      label: label,
-      tooltip: tooltip,
+      label,
+      tooltip,
       url: nextUrl,
     };
     // Only adding route with non-empty label

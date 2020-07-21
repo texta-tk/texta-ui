@@ -14,6 +14,7 @@ import {switchMap, takeUntil} from 'rxjs/operators';
 import {ConfirmDialogComponent} from '../../../../../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {LocalStorageService} from '../../../../../../core/util/local-storage.service';
 import {SignificantWordsWorker} from '../SignificantWordsWorker';
+import {ElasticSearchSourceResponse} from '../../../../../../shared/types/Generic';
 
 @Component({
   selector: 'app-similar-cluster-dialog',
@@ -22,14 +23,14 @@ import {SignificantWordsWorker} from '../SignificantWordsWorker';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SimilarClusterDialogComponent implements OnInit, AfterViewInit, OnDestroy {
-  public tableData: MatTableDataSource<any> = new MatTableDataSource();
+  public tableData: MatTableDataSource<ElasticSearchSourceResponse> = new MatTableDataSource();
   public displayedColumns: string[] = [];
   public filterColumns: string[] = [];
   public infiniteColumns: string[] = [];
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   isLoadingResults = true;
-  selectedRows = new SelectionModel<ClusterDocument>(true, []);
+  selectedRows = new SelectionModel<ElasticSearchSourceResponse>(true, []);
   moreLikeQuery$: Subject<Observable<ClusterMoreLikeThis[] | HttpErrorResponse>> = new Subject<Observable<ClusterMoreLikeThis[] | HttpErrorResponse>>();
   destroyed$: Subject<boolean> = new Subject<boolean>();
   queryOptions: any;
@@ -125,7 +126,7 @@ export class SimilarClusterDialogComponent implements OnInit, AfterViewInit, OnD
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          const idsToAdd = this.selectedRows.selected.map((doc: any) => doc._id);
+          const idsToAdd = this.selectedRows.selected.map((doc) => doc._id);
           const body = {ids: idsToAdd};
           this.clusterService.expandCluster(this.data.projectId, this.data.clusteringId, this.data.clusterId, body).subscribe(() => {
             this.logService.snackBarMessage(`${this.selectedRows.selected.length} Documents added`, 2000);
@@ -137,7 +138,7 @@ export class SimilarClusterDialogComponent implements OnInit, AfterViewInit, OnD
   }
 
   removeSelectedRows() {
-    this.selectedRows.selected.forEach((selectedDoc: any) => {
+    this.selectedRows.selected.forEach((selectedDoc) => {
       const index: number = this.tableData.data.findIndex(row => row._id === selectedDoc._id);
       this.tableData.data.splice(index, 1);
       this.tableData.data = [...this.tableData.data];
@@ -157,10 +158,6 @@ export class SimilarClusterDialogComponent implements OnInit, AfterViewInit, OnD
           this.clusterService.moreLikeCluster(this.data.projectId, this.data.clusteringId, this.data.clusterId, x));
       }
     });
-  }
-
-  trackById(index, val) {
-    return val.id;
   }
 
   ngOnDestroy(): void {

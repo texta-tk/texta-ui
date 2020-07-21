@@ -17,6 +17,7 @@ import {ClusterOptions} from '../../../../shared/types/tasks/ClusterOptions';
 import {EmbeddingsService} from '../../../../core/models/embeddings/embeddings.service';
 import {ResultsWrapper} from '../../../../shared/types/Generic';
 import {Embedding} from '../../../../shared/types/tasks/Embedding';
+import {MatSelectChange} from "@angular/material/select";
 
 @Component({
   selector: 'app-create-cluster-dialog',
@@ -104,7 +105,7 @@ export class CreateClusteringDialogComponent implements OnInit, OnDestroy {
     this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
   }
 
-  public indicesOpenedChange(opened) {
+  public indicesOpenedChange(opened: unknown) {
     const indicesForm = this.clusterForm.get('indicesFormControl');
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && (indicesForm?.value && indicesForm.value.length > 0)) {
@@ -112,7 +113,7 @@ export class CreateClusteringDialogComponent implements OnInit, OnDestroy {
     }
   }
 
-  isClusterOptions(options): options is ClusterOptions {
+  isClusterOptions(options: unknown): options is ClusterOptions {
     return (options as ClusterOptions).actions !== undefined;
   }
 
@@ -120,10 +121,11 @@ export class CreateClusteringDialogComponent implements OnInit, OnDestroy {
     this.query = query ? query : this.defaultQuery;
   }
 
-  onSubmit(formData) {
-    const body: any = {
+  // tslint:disable-next-line:no-any
+  onSubmit(formData: any) {
+    const body = {
       description: formData.descriptionFormControl,
-      indices: formData.indicesFormControl.map(x => [{name: x.index}]).flat(),
+      indices: formData.indicesFormControl.map((x: ProjectIndex) => [{name: x.index}]).flat(),
       num_cluster: formData.numClusterFormControl,
       vectorizer: formData.vectorizerFormControl.value,
       clustering_algorithm: formData.clusteringAlgorithmFormControl.value,
@@ -134,14 +136,9 @@ export class CreateClusteringDialogComponent implements OnInit, OnDestroy {
       fields: formData.fieldsFormControl,
       embedding: (formData.embeddingFormControl as Embedding) ? (formData.embeddingFormControl as Embedding).id : null,
       document_limit: formData.documentLimitFormControl,
+      ...this.query ? {query: this.query} : {},
+      ...formData.keywordFilterFormControl ? {significant_words_filter: formData.keywordFilterFormControl} : {},
     };
-
-    if (this.query) {
-      body.query = this.query;
-    }
-    if (formData.keywordFilterFormControl) {
-      body.significant_words_filter = formData.keywordFilterFormControl;
-    }
 
     this.clusterService.createCluster(body, this.currentProject.id).subscribe((resp: Cluster | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {

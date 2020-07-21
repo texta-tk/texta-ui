@@ -58,7 +58,7 @@ import { PlotlyViaCDNModule } from 'angular-plotly.js';
 
 
 PlotlyViaCDNModule.plotlyVersion = '1.49.4'; // can be `latest` or any version number (i.e.: '1.40.0')
-PlotlyViaCDNModule.plotlyBundle = 'gl2d'; // optional: can be null (for full) or 'basic', 'cartesian', 'geo', 'gl3d', 'gl2d', 'mapbox' or 'finance'
+PlotlyViaCDNModule.plotlyBundle = 'gl2d'; // 'basic', 'cartesian', 'geo', 'gl3d', 'gl2d', 'mapbox' or 'finance'
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,

@@ -8,9 +8,8 @@ import {mergeMap, take, takeUntil} from 'rxjs/operators';
 import {of, Subject} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ProjectStore} from '../../../../core/projects/project.store';
-import {Field, Project, ProjectIndex} from '../../../../shared/types/Project';
+import {Field, ProjectIndex} from '../../../../shared/types/Project';
 import {ProjectService} from '../../../../core/projects/project.service';
-import {Embedding} from '../../../../shared/types/tasks/Embedding';
 import {UtilityFunctions} from '../../../../shared/UtilityFunctions';
 
 @Component({
@@ -65,7 +64,7 @@ export class CreateEmbeddingDialogComponent implements OnInit {
     this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
   }
 
-  public indicesOpenedChange(opened) {
+  public indicesOpenedChange(opened: boolean) {
     const indicesForm = this.embeddingForm.get('indicesFormControl');
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && (indicesForm?.value && indicesForm.value.length > 0)) {
@@ -77,27 +76,27 @@ export class CreateEmbeddingDialogComponent implements OnInit {
     this.query = query ? query : this.defaultQuery;
   }
 
-  onSubmit(formData) {
+  onSubmit(formData: {
+    fieldsFormControl: Field[]; descriptionFormControl: string;
+    indicesFormControl: ProjectIndex[]; dimensionsFormControl: number; frequencyFormControl: number;
+  }) {
     // temp
     const fieldsToSend = this.generateFieldsFormat(formData.fieldsFormControl);
-    const body: any = {
+    const body = {
       description: formData.descriptionFormControl,
       fields: fieldsToSend,
       indices: formData.indicesFormControl.map(x => [{name: x.index}]).flat(),
       num_dimensions: formData.dimensionsFormControl,
-      min_freq: formData.frequencyFormControl
+      min_freq: formData.frequencyFormControl,
+      ...this.query ? {query: this.query} : {},
     };
 
-    if (this.query) {
-      body.query = this.query;
-    }
-
-    this.projectStore.getCurrentProject().pipe(take(1), mergeMap((project: Project) => {
+    this.projectStore.getCurrentProject().pipe(take(1), mergeMap(project => {
       if (project) {
         return this.embeddingService.createEmbedding(body, project.id);
       }
       return of(null);
-    })).subscribe((resp: Embedding | HttpErrorResponse) => {
+    })).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.dialogRef.close(resp);
       } else if (resp instanceof HttpErrorResponse) {
@@ -107,7 +106,7 @@ export class CreateEmbeddingDialogComponent implements OnInit {
   }
 
   generateFieldsFormat(fields: Field[]) {
-    const output: any[] = [];
+    const output: string[] = [];
     for (const field of fields) {
       output.push(field.path);
     }

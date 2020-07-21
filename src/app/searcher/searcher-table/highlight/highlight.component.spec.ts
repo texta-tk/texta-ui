@@ -53,7 +53,7 @@ describe('HighlightComponent', () => {
     }
     fixture.detectChanges();
     expect(johnHighlight).toBeDefined();
-    expect(johnHighlight.text).toEqual('John');
+    expect(johnHighlight?.text).toEqual('John');
   });
   it('should handle null undefined', () => {
     component.highlightConfig = {
@@ -106,7 +106,7 @@ describe('HighlightComponent', () => {
       currentColumn: 'text',
     };
     console.log(component.highlightArray);
-    const highlightedText: any[] = [];
+    const highlightedText: string[] = [];
     for (const element of component.highlightArray) {
       if (element.highlighted) {
         highlightedText.push(element.text);
@@ -119,7 +119,7 @@ describe('HighlightComponent', () => {
     expect(highlightedText).toContain('Lenin');
   });
   describe('tests with nested facts', () => {
-    let jsonData;
+    let jsonData: { text: string; texta_facts: { str_val: string; spans: string; fact: string; doc_path: string; }[]; };
     beforeEach(() => {
       jsonData = {
         text: 'these are some words: OÜ Hansa Medicalist, Eesti Energia Joonas xxxxxx', texta_facts: [
@@ -490,6 +490,7 @@ describe('HighlightComponent', () => {
 
 });
 
+// tslint:disable-next-line:no-any
 function loopThroughNestedHighlightObject(object: any, array: string[]) {
   if (object.nested) {
     array.push(object.nested.text);

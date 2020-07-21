@@ -1,6 +1,5 @@
 import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
 import {SearcherComponentService} from './services/searcher-component.service';
-import {Search} from '../shared/types/Search';
 import {concatMap, distinctUntilChanged, map, skipWhile, switchMap, take, takeUntil} from 'rxjs/operators';
 import {combineLatest, of, Subject} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -87,13 +86,13 @@ export class SearcherComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.searchService.getSearch().pipe(takeUntil(this.destroy$)).subscribe((value: Search) => {
+    this.searchService.getSearch().pipe(takeUntil(this.destroy$)).subscribe(value => {
       if (value) {
         this.isAggregation = false;
         this.isSearch = true;
       }
     });
-    this.searchService.getAggregation().pipe(takeUntil(this.destroy$)).subscribe((aggregation: any) => {
+    this.searchService.getAggregation().pipe(takeUntil(this.destroy$)).subscribe(aggregation => {
       if (aggregation) {
         this.isSearch = false;
         this.isAggregation = true;

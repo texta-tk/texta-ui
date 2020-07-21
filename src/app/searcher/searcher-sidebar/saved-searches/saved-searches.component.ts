@@ -34,14 +34,14 @@ export class SavedSearchesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), switchMap((currentProject: Project) => {
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), switchMap(currentProject => {
       if (currentProject) {
         this.currentProject = currentProject;
         return this.searcherService.getSavedSearches(currentProject.id);
       } else {
         return of(null);
       }
-    })).subscribe((response: SavedSearch[] | HttpErrorResponse) => {
+    })).subscribe(response => {
       if (response && !(response instanceof HttpErrorResponse)) {
         this.dataSource.data = response;
         this.searchService.savedSearchSelection = new SelectionModel<SavedSearch>(true, []);
@@ -53,14 +53,14 @@ export class SavedSearchesComponent implements OnInit, OnDestroy {
         return this.searcherService.getSavedSearches(this.currentProject.id);
       }
       return of(null);
-    })).subscribe((response: SavedSearch[] | HttpErrorResponse) => {
+    })).subscribe(response => {
       if (response && !(response instanceof HttpErrorResponse)) {
         this.dataSource.data = response;
       }
     });
   }
 
-  displaySavedSearch(element) {
+  displaySavedSearch(element: SavedSearch) {
     this.searchService.nextSavedSearch(element);
   }
 

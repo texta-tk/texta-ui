@@ -3,7 +3,7 @@ import {SharedModule} from '../../shared/shared.module';
 import {EmbeddingComponent} from './embedding/embedding.component';
 import {CreateEmbeddingDialogComponent} from './embedding/create-embedding-dialog/create-embedding-dialog.component';
 import {EmbeddingRoutingModule} from './embedding-routing.module';
-import { PhraseDialogComponent } from './phrase-dialog/phrase-dialog.component';
+import { PhraseDialogComponent } from './embedding/phrase-dialog/phrase-dialog.component';
 import { EditEmbeddingDialogComponent } from './embedding/edit-embedding-dialog/edit-embedding-dialog.component';
 
 

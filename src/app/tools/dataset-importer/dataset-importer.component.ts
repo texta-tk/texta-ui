@@ -2,10 +2,10 @@ import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {debounceTime, startWith, switchMap, takeUntil} from 'rxjs/operators';
 import {ProjectStore} from '../../core/projects/project.store';
 import {Project} from '../../shared/types/Project';
-import { MatDialog } from '@angular/material/dialog';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import {MatDialog} from '@angular/material/dialog';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
+import {MatTableDataSource} from '@angular/material/table';
 import {merge, Subject, timer} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../../core/util/log.service';
@@ -14,18 +14,15 @@ import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-di
 import {SelectionModel} from '@angular/cdk/collections';
 import {CreateDatasetDialogComponent} from './create-dataset-dialog/create-dataset-dialog.component';
 import {DatasetImporterService} from '../../core/tools/dataset-importer/dataset-importer.service';
-import {animate, state, style, transition, trigger} from '@angular/animations';
+import {expandRowAnimation} from '../../shared/animations';
 
 @Component({
   selector: 'app-dataset-importer',
   templateUrl: './dataset-importer.component.html',
   styleUrls: ['./dataset-importer.component.scss'],
   animations: [
-    trigger('detailExpand', [
-      state('collapsed', style({height: '0px', minHeight: '0'})),
-      state('expanded', style({height: '*'})),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ])]
+    expandRowAnimation
+  ]
 })
 export class DatasetImporterComponent implements OnInit, OnDestroy {
   expandedElement: DatasetImporter | null;
@@ -42,7 +39,7 @@ export class DatasetImporterComponent implements OnInit, OnDestroy {
   filteredSubject = new Subject();
   // For custom filtering, such as text search in description
   inputFilterQuery = '';
-  filteringValues = {};
+  filteringValues: { [key: string]: string } = {};
 
   currentProject: Project;
   resultsLength: number;
@@ -58,11 +55,11 @@ export class DatasetImporterComponent implements OnInit, OnDestroy {
     this.tableData.paginator = this.paginator;
     // check for updates after 30s every 30s
     timer(30000, 30000).pipe(takeUntil(this.destroyed$),
-      switchMap(_ => this.importerService.getIndices(
+      switchMap(_ => this.importerService.getDatasetImports(
         this.currentProject.id,
         `page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`
       )))
-      .subscribe((resp: { count: number, results: DatasetImporter[] } | HttpErrorResponse) => {
+      .subscribe(resp => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
           if (resp.results.length > 0) {
             resp.results.map(dataset => {
@@ -93,16 +90,18 @@ export class DatasetImporterComponent implements OnInit, OnDestroy {
         this.isLoadingResults = true;
         const sortDirection = this.sort.direction === 'desc' ? '-' : '';
 
-        return this.importerService.getIndices(
+        return this.importerService.getDatasetImports(
           this.currentProject.id,
           // Add 1 to to index because Material paginator starts from 0 and DRF paginator from 1
           `${this.inputFilterQuery}&ordering=${sortDirection}${this.sort.active}&page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`
         );
-      })).subscribe((data: { count: number, results: DatasetImporter[] }) => {
+      })).subscribe(data => {
       // Flip flag to show that loading has finished.
       this.isLoadingResults = false;
-      this.resultsLength = data.count;
-      this.tableData.data = data.results;
+      if (data && !(data instanceof HttpErrorResponse)) {
+        this.resultsLength = data.count;
+        this.tableData.data = data.results;
+      }
     });
   }
 
@@ -192,9 +191,8 @@ export class DatasetImporterComponent implements OnInit, OnDestroy {
   }
 
 
-  applyFilter(filterValue: any, field: string) {
-    filterValue = filterValue.value ? filterValue.value : '';
-    this.filteringValues[field] = filterValue;
+  applyFilter(filterValue: EventTarget | null, field: string) {
+    this.filteringValues[field] = (filterValue as HTMLInputElement).value ? (filterValue as HTMLInputElement).value : '';
     this.filterQueriesToString();
     this.filteredSubject.next();
   }

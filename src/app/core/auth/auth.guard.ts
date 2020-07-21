@@ -83,7 +83,7 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
   }
 
 
-  checkPermissions(user, route, state?): boolean {
+  checkPermissions(user: UserProfile, route: ActivatedRouteSnapshot, state?: RouterStateSnapshot): boolean {
     if (route.data.role === USERROLES.SUPERUSER) {
       return user.is_superuser;
     }

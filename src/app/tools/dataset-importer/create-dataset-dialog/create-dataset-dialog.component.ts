@@ -3,15 +3,15 @@ import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers'
 import {ProjectStore} from '../../../core/projects/project.store';
 import {Project} from '../../../shared/types/Project';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import { ErrorStateMatcher } from '@angular/material/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import {ErrorStateMatcher} from '@angular/material/core';
+import {MatDialogRef} from '@angular/material/dialog';
 import {ProjectService} from '../../../core/projects/project.service';
 import {LogService} from '../../../core/util/log.service';
 import {auditTime, takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {DatasetImporterService} from '../../../core/tools/dataset-importer/dataset-importer.service';
 import {FileValidator} from 'ngx-material-file-input';
-import {HttpErrorResponse, HttpEvent, HttpEventType, HttpResponse} from '@angular/common/http';
+import {HttpErrorResponse, HttpEventType, HttpResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-create-dataset-dialog',
@@ -52,7 +52,10 @@ export class CreateDatasetDialogComponent implements OnInit, OnDestroy {
     this.uploadProgressQueue.pipe(takeUntil(this.destroyed$), auditTime(240)).subscribe(x => this.uploadProgress = x);
   }
 
-  onSubmit(formData) {
+  onSubmit(formData: {
+    descriptionFormControl: string; newNameFormControl: string; separatorFormControl: string;
+    fileFormControl: { files: (string | Blob)[]; };
+  }) {
     const postData = new FormData();
     postData.set('description', formData.descriptionFormControl);
     postData.set('index', formData.newNameFormControl);
@@ -60,7 +63,7 @@ export class CreateDatasetDialogComponent implements OnInit, OnDestroy {
     postData.set('file', formData.fileFormControl.files[0]);
 
     this.importerService.createIndex(postData, this.currentProject.id).pipe(
-      takeUntil(this.destroyed$)).subscribe((response: HttpEvent<any>) => {
+      takeUntil(this.destroyed$)).subscribe(response => {
       if (response instanceof HttpErrorResponse) {
         this.logService.snackBarError(response, 2000);
       } else if (response.type === HttpEventType.UploadProgress) {

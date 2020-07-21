@@ -14,8 +14,10 @@ describe('FactConstraintsComponent', () => {
   let component: FactConstraintsComponent;
   let fixture: ComponentFixture<FactConstraintsComponent>;
 
-  const innerFactAccessor = (x, i, operator: 'must' | 'must_not' | 'should', multi?: boolean) => (multi ? x.bool[operator] : x.bool[operator][i]).nested.query.bool.must;
-  const innerNestedAccessor = (x) => x.nested.query.bool.must;
+  // tslint:disable-next-line:no-any
+  const innerFactAccessor = (x: { bool: any; }, i: number, operator: 'must' | 'must_not' | 'should', multi?: boolean) => (multi ? x.bool[operator] : x.bool[operator][i]).nested.query.bool.must;
+  // tslint:disable-next-line:no-any
+  const innerNestedAccessor = (x: { nested: any; }) => x.nested.query.bool.must;
   let factValueAutoComplete;
   beforeEach(async(() => {
     const projectService = jasmine.createSpyObj('ProjectService', ['projectFactValueAutoComplete']);

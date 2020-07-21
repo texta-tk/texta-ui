@@ -58,12 +58,12 @@ export class AggregationsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$)).subscribe((currentProject: Project) => {
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$)).subscribe(currentProject => {
       if (currentProject) {
         this.currentProject = currentProject;
       }
     });
-    this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectIndex[]) => {
+    this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroy$)).subscribe(projectFields => {
       if (projectFields) {
         this.projectFields = ProjectIndex.cleanProjectIndicesFields(projectFields, ['fact', 'text', 'date'], []);
         this.projectFields = ProjectIndex.sortTextaFactsAsFirstItem(this.projectFields);
@@ -86,7 +86,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
   aggregate() {
     const joinedAggregation = this.makeAggregations(this.aggregationList);
     const aggregationType = Object.keys(joinedAggregation)[0];
-    const body: any = {
+    const body = {
       query: {
         aggs: {...!this.searchQueryExcluded ? joinedAggregation : {}},
         size: 0 // ignore results, performance improvement
@@ -127,7 +127,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
         indices: this.projectFields.map(y => y.index)
       }, this.currentProject.id) : of(null),
       agg: this.searcherService.search(body, this.currentProject.id)
-    }).subscribe((resp: { globalAgg: any, agg: any }) => {
+    }).subscribe(resp => {
       const aggResp = {globalAgg: {}, agg: {}};
       if (resp.agg && !(resp.agg instanceof HttpErrorResponse)) {
         aggResp.agg = resp.agg;
@@ -160,6 +160,8 @@ export class AggregationsComponent implements OnInit, OnDestroy {
     return finalAgg;
   }
 
+  // @ts-ignore
+  // tslint:disable-next-line:no-any
   getInnerMostAggs(aggregation: any) {
     let aggInner;
     let inCaseNoAggsFound;
@@ -194,7 +196,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
     return (val && (val.type === 'date'));
   }
 
-  removeAggregation(index) {
+  removeAggregation(index: number) {
     this.dateAlreadySelected = this.aggregationList[index].formControl.value.type === 'date' ? false : this.dateAlreadySelected;
     this.aggregationList[index].formDestroy.next(true);
     this.aggregationList[index].formDestroy.complete();

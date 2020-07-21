@@ -45,7 +45,7 @@ export class NumberConstraintsComponent implements OnInit, OnDestroy, AfterViewI
       if (this._numberConstraint && this.elasticSearchQuery?.elasticSearchQuery?.query?.bool?.must) {
         const fieldPaths = this._numberConstraint.fields.map(x => x.path);
 
-        const formQueries: any[] = [];
+        const formQueries: unknown[] = [];
         this.constraintQuery = {
           bool: {
             [this.operatorFormControl.value]: formQueries
@@ -70,7 +70,7 @@ export class NumberConstraintsComponent implements OnInit, OnDestroy, AfterViewI
 
   }
 
-  makeRangeQuery(fieldPaths, fromTo: FromToInput, formQueries) {
+  makeRangeQuery(fieldPaths: string[], fromTo: FromToInput, formQueries: unknown[]) {
     formQueries.splice(0, formQueries.length);
     for (const field of fieldPaths) {
       formQueries.push({

@@ -1,7 +1,7 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {CrossFieldErrorMatcher, LiveErrorStateMatcher} from '../../../CustomerErrorStateMatchers';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {UserService} from '../../../../core/users/user.service';
 import {LocalStorageService} from '../../../../core/util/local-storage.service';
 import {UserStore} from '../../../../core/users/user.store';
@@ -10,11 +10,9 @@ import {mergeMap} from 'rxjs/operators';
 import {UserAuth} from '../../../types/UserAuth';
 import {HttpErrorResponse} from '@angular/common/http';
 import {of} from 'rxjs';
-import {UserProfile} from '../../../types/UserProfile';
 
 
-
-function passwordMatchValidator(g: FormGroup) {
+function passwordMatchValidator(g: AbstractControl) {
   const password1 = g.get('passwordFormControl');
   const password2 = g.get('passwordConfirmFormControl');
   return (password1 && password2 && password1.value === password2.value)
@@ -64,7 +62,7 @@ export class RegistrationDialogComponent implements OnInit, OnDestroy {
 
   }
 
-  onSubmit(formData) {
+  onSubmit(formData: { usernameFormControl: string; passwordForm: { passwordFormControl: string; passwordConfirmFormControl: string; }; }) {
     const body = {
       username: formData.usernameFormControl,
       // email: formData.emailFormControl,
@@ -91,7 +89,7 @@ export class RegistrationDialogComponent implements OnInit, OnDestroy {
           this.localStorageService.setUser(response);
           return this.userService.getUserProfile();
         }
-      })).subscribe((resp: UserProfile | HttpErrorResponse) => {
+      })).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.userStore.setCurrentUser(resp);
         if (this.data) {

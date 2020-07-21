@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {FormControl} from '@angular/forms';
-import {startWith, switchMap, take, takeUntil} from 'rxjs/operators';
+import {FormControl, FormGroup} from '@angular/forms';
+import {debounceTime, distinctUntilChanged, startWith, switchMap, take, takeUntil} from 'rxjs/operators';
 import {SearcherComponentService} from '../../../services/searcher-component.service';
 import {forkJoin, of, Subject} from 'rxjs';
 import {DatePipe} from '@angular/common';
@@ -20,14 +20,20 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
   dateInterval = 'year';
   @Output() relativeFrequency = new EventEmitter<boolean>();
   aggregationType = 'raw_frequency';
-  startDate;
-  toDate;
+  // tslint:disable-next-line:no-any
   dateRangeFrom: { range?: any } = {range: {}};
+  // tslint:disable-next-line:no-any
   dateRangeTo: { range?: any } = {range: {}};
   destroy$: Subject<boolean> = new Subject();
   pipe = new DatePipe('en_US');
   dateRangeDays = false;
   dateRangeWeek = false;
+  maxDate: Date;
+  minDate: Date;
+  range = new FormGroup({
+    dateFromFormControl: new FormControl(),
+    dateToFormControl: new FormControl()
+  });
 
   constructor(
     private searchService: SearcherComponentService,
@@ -60,22 +66,32 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
       } else {
         return of(null);
       }
-    })).subscribe((resp: any) => {
+    })).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.startDate = new Date(resp.aggs.min_date.value);
-        this.toDate = new Date(resp.aggs.max_date.value);
-        this.makeDateAggregation();
+        // tslint:disable-next-line:no-any
+        this.minDate = new Date((resp as any).aggs.min_date.value);
+        // tslint:disable-next-line:no-any
+        this.maxDate = new Date((resp as any).aggs.max_date.value);
+        this.range.setValue({
+          dateFromFormControl: this.minDate,
+          dateToFormControl: this.maxDate,
+        });
+        this.makeDateAggregation(this.minDate, this.maxDate);
       }
+    });
+    this.range.valueChanges.pipe(takeUntil(this.destroy$), debounceTime(100), distinctUntilChanged()).subscribe(x => {
+      this.makeDateAggregation(x.dateFromFormControl, x.dateToFormControl);
     });
     // reset selection
     this.relativeFrequency.emit(false);
   }
 
-  makeDateAggregation() {
-    this.checkDateInterval();
+  makeDateAggregation(startDate: Date, toDate: Date) {
+    this.checkDateInterval(startDate, toDate);
 
-    this.dateRangeFrom.range = {[this.fieldsFormControl.value.path]: {gte: this.startDate}};
-    this.dateRangeTo.range = {[this.fieldsFormControl.value.path]: {lte: this.toDate}};
+    this.dateRangeFrom.range = {[this.fieldsFormControl.value.path]: {gte: startDate}};
+    this.dateRangeTo.range = {[this.fieldsFormControl.value.path]: {lte: toDate}};
+    // tslint:disable-next-line:no-any
     let returnquery: { [key: string]: any };
     let format: 'y' | 'MMM-y' | 'd-M-y';
     if (this.dateInterval === 'year') {
@@ -91,13 +107,13 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
         aggs: {
           agg_histo: {
             date_histogram: {
-              format: format,
+              format,
               field: this.fieldsFormControl.value.path,
               interval: this.dateInterval,
               min_doc_count: 0,
               extended_bounds: {
-                min: this.pipe.transform(this.startDate, format),
-                max: this.pipe.transform(this.toDate, format),
+                min: this.pipe.transform(startDate, format),
+                max: this.pipe.transform(toDate, format),
               }
             }
           }
@@ -105,12 +121,13 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
       }
     };
 
-
     this.aggregationObj.aggregation = returnquery;
   }
 
-  dateRangeDaysSmallerThan(goal: number) {
-    const differenceTime = this.toDate.getTime() - this.startDate.getTime();
+  dateRangeDaysSmallerThan(goal: number, startDate: Date, toDate: Date) {
+    toDate = toDate ? toDate : this.maxDate;
+    startDate = startDate ? startDate : this.minDate;
+    const differenceTime = toDate.getTime() - startDate.getTime();
     const differenceInDays = differenceTime / (1000 * 3600 * 24);
     return differenceInDays < goal;
   }
@@ -120,10 +137,10 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  private checkDateInterval() {
+  private checkDateInterval(startDate: Date, toDate: Date) {
     // limit interval based on daterange
-    this.dateRangeDays = this.dateRangeDaysSmallerThan(365);
-    this.dateRangeWeek = this.dateRangeDaysSmallerThan(1095);
+    this.dateRangeDays = this.dateRangeDaysSmallerThan(365, startDate, toDate);
+    this.dateRangeWeek = this.dateRangeDaysSmallerThan(1095, startDate, toDate);
     if (this.dateInterval === 'day' && !this.dateRangeDays) {
       this.dateInterval = 'week';
     }

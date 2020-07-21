@@ -11,6 +11,7 @@ import {LocalStorageService} from '../util/local-storage.service';
   providedIn: 'root'
 })
 export class UserStore {
+  // @ts-ignore
   private selectedUser$: BehaviorSubject<UserProfile | null> = new BehaviorSubject(null);
   private userAuthObservable = this.userService.getUserProfile().pipe(shareReplay(1));
 

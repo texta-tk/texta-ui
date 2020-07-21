@@ -27,25 +27,25 @@ export class UserService {
       catchError(this.logService.handleError<UserAuth>('authenticate')));
   }
 
-  register(body: {}): Observable<UserAuth | HttpErrorResponse> {
+  register(body: unknown): Observable<UserAuth | HttpErrorResponse> {
     return this.http.post<UserAuth>(
       `${this.apiUrl}/rest-auth/registration/`,
       body).pipe(tap(e => this.logService.logStatus(e, 'register')),
       catchError(this.logService.handleError<UserAuth>('register')));
   }
 
-  resetPassword(mail: string): Observable<any> {
-    return this.http.post<any>(
+  resetPassword(mail: string): Observable<{detail: string} | HttpErrorResponse> {
+    return this.http.post<{detail: string}>(
       `${this.apiUrl}/rest-auth/password/reset/`,
       {email: mail}).pipe(tap(e => this.logService.logStatus(e, 'reset password')),
-      catchError(this.logService.handleError<any>('reset password')));
+      catchError(this.logService.handleError<{detail: string}>('reset password')));
   }
 
-  changePassword(body: {}): Observable<{ detail: string } | HttpErrorResponse> {
-    return this.http.post<any>(
+  changePassword(body: unknown): Observable<{ detail: string } | HttpErrorResponse> {
+    return this.http.post<{ detail: string }>(
       `${this.apiUrl}/rest-auth/password/change/`,
       body).pipe(tap(e => this.logService.logStatus(e, 'change password')),
-      catchError(this.logService.handleError<any>('change password')));
+      catchError(this.logService.handleError<{ detail: string }>('change password')));
   }
 
   getUserProfile(): Observable<UserProfile | HttpErrorResponse> {
@@ -80,7 +80,7 @@ export class UserService {
       catchError(this.logService.handleError<UserProfile>('getbyurl')));
   }
 
-  toggleSuperUser(id: number, body): Observable<UserProfile | HttpErrorResponse> {
+  toggleSuperUser(id: number, body: unknown): Observable<UserProfile | HttpErrorResponse> {
     return this.http.put<UserProfile>(
       `${this.apiUrl}/users/${id}/`, body
     ).pipe(

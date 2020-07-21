@@ -59,7 +59,7 @@ export class SearchServiceSpy {
     () => this.advancedSearchConstraints$.asObservable()
   );
 
-  setIsLoading(val) {
+  setIsLoading(val: boolean) {
     this.isLoading = val;
   }
 

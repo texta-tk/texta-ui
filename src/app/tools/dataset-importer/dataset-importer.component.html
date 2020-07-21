@@ -99,7 +99,7 @@
       <ng-container matColumnDef="expandedDetail">
         <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
           <div class="element-detail"
-               [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+               *ngIf="element == expandedElement" [@detailExpand]>
             <div class="flex-row element-detail-plot-fields">
               <div *ngIf="element.plot"><img class="element-plot" [src]="element.plot"></div>
               <div class="flex-col m-l-r-5">

@@ -70,7 +70,6 @@ describe('mlp should work', function () {
     cy.get('[data-cy=appMLPApplyDialogSubmit]').should('be.visible').click();
     cy.wait('@MLPTexts').then(created => {
       expect(created.status).to.eq(200);
-      assert.equal(created.response.body.task.status, 'ok');
     });
   });
 });

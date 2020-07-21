@@ -31,21 +31,5 @@ describe('DateConstraintsComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-  it('should generate the correct query', () => {
-    const spy = spyOn(component, 'makeDateQuery').and.callThrough();
-    const el1 = fixture.nativeElement.querySelector('#dateFrom');
-    el1.value = '6/5/2019';
-    el1.dispatchEvent(new Event('input'));
-    const el2 = fixture.nativeElement.querySelector('#dateTo');
-    el2.value = '10/23/2019';
-    el2.dispatchEvent(new Event('input'));
-    fixture.detectChanges();
-    expect(spy).toHaveBeenCalledTimes(2);
-    // @ts-ignore
-    // tslint:disable-next-line:max-line-length
-    expect(component.elasticSearchQuery.elasticSearchQuery.query.bool.must[0].bool.must[0].range.test.gte).toBeDefined('Should create date query from');
-    // @ts-ignore
-    // tslint:disable-next-line:max-line-length
-    expect(component.elasticSearchQuery.elasticSearchQuery.query.bool.must[0].bool.must[1].range.test.lte).toBeDefined('Should create date query to');
-  });
+
 });

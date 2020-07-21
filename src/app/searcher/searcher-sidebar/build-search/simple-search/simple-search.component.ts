@@ -40,13 +40,13 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectIndex[]) => {
+    this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroy$)).subscribe(projectFields => {
       if (projectFields) {
         this.projectFields = ProjectIndex.sortTextaFactsAsFirstItem(projectFields);
         this.makeQuery(this.searchFormControl.value);
       }
     });
-    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$)).subscribe((project: Project) => {
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$)).subscribe(project => {
       if (project) {
         this.currentProject = project;
         const currentProjectState = this.localStorage.getProjectState(project);
@@ -70,7 +70,7 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
           }, this.currentProject.id);
         }
         return of(null);
-      })).subscribe((result: { count: number, results: { highlight: any, doc: any }[] } | HttpErrorResponse) => {
+      })).subscribe(result => {
       this.searcherComponentService.setIsLoading(false);
       if (result && !(result instanceof HttpErrorResponse)) {
         this.searcherComponentService.nextSearch(new Search(result, this.elasticSearchQuery, {

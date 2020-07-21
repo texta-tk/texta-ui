@@ -67,7 +67,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$), switchMap((currentProject: Project) => {
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$), switchMap(currentProject => {
       if (currentProject) {
         this.constraintList = [];
         this.searchService.nextAdvancedSearchConstraints$(this.constraintList);
@@ -84,12 +84,12 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
         this.lexicons = resp.results;
       }
     });
-    this.projectStore.getCurrentIndicesFacts().pipe(takeUntil(this.destroy$)).subscribe((projectFacts: ProjectFact[]) => {
+    this.projectStore.getCurrentIndicesFacts().pipe(takeUntil(this.destroy$)).subscribe(projectFacts => {
       if (projectFacts) {
         this.projectFacts = projectFacts;
       }
     });
-    this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroy$)).subscribe((projectFields: ProjectIndex[]) => {
+    this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroy$)).subscribe(projectFields => {
       if (projectFields) {
         this.projectFields = ProjectIndex.sortTextaFactsAsFirstItem(projectFields);
         const distinct = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(x => x.fields).flat(), (x => x.path));
@@ -123,19 +123,18 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
       } else {
         return of(null);
       }
-    })).subscribe(
-      (result: { count: number, results: { highlight: any, doc: any }[] } | HttpErrorResponse) => {
-        this.searchService.setIsLoading(false);
-        if (result && !(result instanceof HttpErrorResponse)) {
-          if (this.highlightMatching) {
-            this.searchOptions.onlyHighlightMatching = this.constraintList.filter(x => x instanceof FactConstraint) as FactConstraint[];
-          } else {
-            this.searchOptions.onlyHighlightMatching = undefined;
-          }
-          this.searchOptions.showShortVersion = this.showShortVersion;
-          this.searchService.nextSearch(new Search(result, this.elasticQuery, this.searchOptions));
+    })).subscribe(result => {
+      this.searchService.setIsLoading(false);
+      if (result && !(result instanceof HttpErrorResponse)) {
+        if (this.highlightMatching) {
+          this.searchOptions.onlyHighlightMatching = this.constraintList.filter(x => x instanceof FactConstraint) as FactConstraint[];
+        } else {
+          this.searchOptions.onlyHighlightMatching = undefined;
         }
-      });
+        this.searchOptions.showShortVersion = this.showShortVersion;
+        this.searchService.nextSearch(new Search(result, this.elasticQuery, this.searchOptions));
+      }
+    });
 
     this.searchService.getSavedSearch().pipe(takeUntil(this.destroy$)).subscribe(savedSearch => {
       if (savedSearch) {
@@ -156,7 +155,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     }
   }
 
-  public onOpenedChange(opened) {
+  public onOpenedChange(opened: boolean) {
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && (this.fieldsFormControl.value && this.fieldsFormControl.value.length > 0)) {
       const formFields: Field[] = this.fieldsFormControl.value;
@@ -209,6 +208,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
         fieldsToHighlight.push(...fields);
       }
       for (const field of fieldsToHighlight) {
+        // @ts-ignore
         this.elasticQuery.elasticSearchQuery.highlight.fields[field] = {};
       }
     } else {
@@ -216,15 +216,15 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     }
   }
 
-  trackByPath(index, item: Field) {
+  trackByPath(index: number, item: Field) {
     return item.path;
   }
 
-  trackByIndex(index, item: any) {
+  trackByIndex(index: number, item: unknown) {
     return index;
   }
 
-  searchOnChange(event) {
+  searchOnChange(event: ElasticsearchQuery) {
     // dont want left focus events
     if (event === this.elasticQuery && this.searchOptions.liveSearch) {
       // reset page when we change query
@@ -248,7 +248,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     }
   }
 
-  removeConstraint(index) {
+  removeConstraint(index: number) {
     this.constraintList.splice(index, 1);
     this.changeDetectorRef.detectChanges();
     this.checkMinimumMatch();
@@ -273,6 +273,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
 
   buildSavedSearch(savedSearch: SavedSearch): void {
     this.constraintList = [];
+    // tslint:disable-next-line:no-any
     const savedConstraints: any[] = JSON.parse(savedSearch.query_constraints as string);
     for (const constraint of savedConstraints) {
       const formFields = constraint.fields;

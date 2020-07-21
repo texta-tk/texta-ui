@@ -26,14 +26,14 @@ export class SavedSearchAutocompleteComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), switchMap((currentProject: Project) => {
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), switchMap(currentProject => {
       if (currentProject) {
         this.currentProject = currentProject;
         return this.searcherService.getSavedSearches(currentProject.id);
       } else {
         return of(null);
       }
-    })).subscribe((response: SavedSearch[] | HttpErrorResponse) => {
+    })).subscribe(response => {
       if (response && !(response instanceof HttpErrorResponse)) {
         response.forEach(x => {
           x.query = JSON.stringify({query: JSON.parse(x.query).query}); // only want query not highlight and from, size params

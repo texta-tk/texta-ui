@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {environment} from '../../environments/environment';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {LogService} from './util/log.service';
@@ -7,6 +7,7 @@ import {Health} from '../shared/types/Project';
 import {catchError, tap} from 'rxjs/operators';
 import {Index} from '../shared/types/Index';
 import {ResultsWrapper} from '../shared/types/Generic';
+import {CoreVariables} from '../shared/types/CoreVariables';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,7 @@ import {ResultsWrapper} from '../shared/types/Generic';
 export class CoreService {
 
   apiUrl = environment.apiHost + environment.apiBasePath;
+
   constructor(private http: HttpClient,
               private logService: LogService) {
   }
@@ -49,13 +51,13 @@ export class CoreService {
       catchError(this.logService.handleError<{ message: string }>('editElasticIndex')));
   }
 
-  getCoreVariables(): Observable<any[] | HttpErrorResponse> {
-    return this.http.get<any[]>(`${this.apiUrl}/core_variables/`).pipe(
+  getCoreVariables(): Observable<CoreVariables[] | HttpErrorResponse> {
+    return this.http.get<CoreVariables[]>(`${this.apiUrl}/core_variables/`).pipe(
       tap(e => this.logService.logStatus(e, 'getCoreVariables')),
-      catchError(this.logService.handleError<any[]>('getCoreVariables')));
+      catchError(this.logService.handleError<CoreVariables[]>('getCoreVariables')));
   }
 
-  patchCoreVariables(body, url): Observable<{ message: string } | HttpErrorResponse> {
+  patchCoreVariables(body: unknown, url: string): Observable<{ message: string } | HttpErrorResponse> {
     return this.http.patch<{ message: string }>(url, body).pipe(
       tap(e => this.logService.logStatus(e, 'patchCoreVariables')),
       catchError(this.logService.handleError<{ message: string }>('patchCoreVariables')));

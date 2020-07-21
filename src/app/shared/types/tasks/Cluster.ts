@@ -47,6 +47,7 @@ export class ClusterDetails {
 export class ClusterDocument {
   id: number;
   index: string;
+  highlight?: { [key: string]: string[] };
   content: { [key: string]: string };
 }
 

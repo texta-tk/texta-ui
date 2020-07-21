@@ -62,10 +62,10 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
       }
       return of(null);
     })).subscribe(resp => {
-      if (resp && !(resp instanceof HttpErrorResponse)) {
+      if (resp && !(resp instanceof HttpErrorResponse) && resp.documents.length > 0) {
         this.significantWords = resp.significant_words;
         this.infiniteColumns = Object.getOwnPropertyNames(resp.documents[0].content);
-        if (this.displayedColumns.length === 0) {
+        if (this.displayedColumns.length === 0 && this.currentProject && this.clusteringId) {
           this.infiniteColumns = this.infiniteColumns.filter(e => e !== 'texta_facts');
           this.filterColumns = ['select', ...this.infiniteColumns];
 
@@ -83,7 +83,7 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
             }
           } else {
             this.displayedColumns = [...this.filterColumns];
-            this.modifyClusteringSaveState('selectedFields', this.displayedColumns);
+            this.modifyClusteringSaveState<string[]>('selectedFields', this.displayedColumns);
           }
 
         }
@@ -92,14 +92,21 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
             this.isLoadingResults = false;
             this.tableData.data = data.docs;
           };
-          SignificantWordsWorker.worker.postMessage({words: resp.significant_words, docs: resp.documents, accessor: 'content'});
+          SignificantWordsWorker.worker.postMessage({
+            words: resp.significant_words,
+            docs: resp.documents,
+            accessor: 'content'
+          });
         } else {
           this.isLoadingResults = false;
           this.tableData.data = resp.documents;
         }
-      } else if (resp instanceof HttpErrorResponse) {
-        this.logService.snackBarError(resp, 2000);
+      } else {
         this.isLoadingResults = false;
+        if (resp instanceof HttpErrorResponse) {
+          this.logService.snackBarError(resp, 2000);
+        }
+        this.changeDetectorRef.markForCheck();
       }
     });
   }
@@ -113,7 +120,7 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
       this.clusterId = +clusterId;
       this.clusteringId = +clusteringId;
       this.projectStore.getCurrentProject().pipe(filter(b => !!b), takeUntil(this.destroyed$)).subscribe(proj => {
-        if (proj) {
+        if (proj && this.clusteringId && this.clusterId) {
           this.currentProject = proj;
           this.clusterDocumentsQueue$.next(this.clusterService.clusterDetails(proj.id, this.clusteringId, this.clusterId));
         }
@@ -122,14 +129,17 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
   }
 
 
-  modifyClusteringSaveState(accessor: 'charLimit' | 'selectedFields', value: any) {
-    const state = this.localStorageService.getProjectState(this.currentProject);
-    if (state) {
-      if (!state?.models.clustering[`${this.clusteringId.toString()}`]) {
-        state.models.clustering[`${this.clusteringId.toString()}`] = {};
+  modifyClusteringSaveState<T>(accessor: 'charLimit' | 'selectedFields', value: T) {
+    if (this.clusteringId && this.currentProject) {
+      const state = this.localStorageService.getProjectState(this.currentProject);
+      if (state) {
+        if (!state?.models.clustering[`${this.clusteringId.toString()}`]) {
+          state.models.clustering[`${this.clusteringId.toString()}`] = {};
+        }
+        // @ts-ignore
+        state.models.clustering[`${this.clusteringId.toString()}`][accessor] = value;
+        this.localStorageService.updateProjectState(this.currentProject, state);
       }
-      state.models.clustering[`${this.clusteringId.toString()}`][accessor] = value;
-      this.localStorageService.updateProjectState(this.currentProject, state);
     }
   }
 
@@ -158,7 +168,7 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
       });
 
       dialogRef.afterClosed().subscribe(result => {
-        if (result) {
+        if (result && this.currentProject && this.clusteringId && this.clusterId) {
           // Delete selected taggers
           const idsToDelete = this.selectedRows.selected.map((cluster: ClusterDocument) => cluster.id);
           const body = {ids: idsToDelete};
@@ -173,32 +183,38 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
   }
 
   moreLikeThis() {
-    const dialogRef = this.dialog.open(SimilarClusterDialogComponent, {
-      data: {
-        clusterId: this.clusterId,
-        clusteringId: this.clusteringId,
-        projectId: this.currentProject.id,
-        significantWords: this.significantWords
-      },
-      height: '90vh',
-      width: '80vw',
-      autoFocus: false,
-      panelClass: 'custom-no-padding-dialog'
-    });
-    dialogRef.afterClosed().subscribe(x => {
-      this.clusterDocumentsQueue$.next(this.clusterService.clusterDetails(this.currentProject.id, this.clusteringId, this.clusterId));
-    });
+    if (this.currentProject) {
+      const dialogRef = this.dialog.open(SimilarClusterDialogComponent, {
+        data: {
+          clusterId: this.clusterId,
+          clusteringId: this.clusteringId,
+          projectId: this.currentProject.id,
+          significantWords: this.significantWords
+        },
+        height: '90vh',
+        width: '80vw',
+        autoFocus: false,
+        panelClass: 'custom-no-padding-dialog'
+      });
+      dialogRef.afterClosed().subscribe(x => {
+        if (this.currentProject && this.clusteringId && this.clusterId) {
+          this.clusterDocumentsQueue$.next(this.clusterService.clusterDetails(this.currentProject.id, this.clusteringId, this.clusterId));
+        }
+      });
+    }
   }
 
   tag() {
-    const dialogRef = this.dialog.open(TagClusterDialogComponent, {
-      data: {
-        clusterId: this.clusterId,
-        clusteringId: this.clusteringId,
-        projectId: this.currentProject.id,
-      },
-      width: '600px'
-    });
+    if (this.currentProject) {
+      this.dialog.open(TagClusterDialogComponent, {
+        data: {
+          clusterId: this.clusterId,
+          clusteringId: this.clusteringId,
+          projectId: this.currentProject.id,
+        },
+        width: '600px'
+      });
+    }
   }
 
   deleteCluster() {
@@ -209,12 +225,12 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
       }
     });
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
+      if (result && this.currentProject && this.clusteringId) {
         const body = {ids: [this.clusterId]};
         this.clusterService.bulkDeleteClusters(this.currentProject.id, this.clusteringId, body).subscribe(() => {
           this.logService.snackBarMessage(`Deleted cluster ${this.clusterId}`, 2000);
           this.removeSelectedRows();
-          this.router.navigate(['../'], { relativeTo: this.route });
+          this.router.navigate(['../'], {relativeTo: this.route});
         });
       }
     });
@@ -229,7 +245,7 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
     this.selectedRows.clear();
   }
 
-  trackById(index, val) {
+  trackById(index: number, val: ClusterDocument) {
     return val.id;
   }
 

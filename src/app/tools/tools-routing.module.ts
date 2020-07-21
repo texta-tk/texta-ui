@@ -1,9 +1,9 @@
 import {NgModule} from '@angular/core';
 import {ReindexerComponent} from './reindexer/reindexer.component';
 import {RouterModule, Routes} from '@angular/router';
-import {AuthGuard} from 'src/app/core/auth/auth.guard';
 import {DatasetImporterComponent} from './dataset-importer/dataset-importer.component';
 import {MLPComponent} from './mlp/mlp.component';
+import {AuthGuard} from '../core/auth/auth.guard';
 
 const routes: Routes = [
   {

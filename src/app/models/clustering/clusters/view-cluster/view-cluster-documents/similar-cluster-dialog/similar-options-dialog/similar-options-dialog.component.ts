@@ -45,8 +45,12 @@ export class SimilarOptionsDialogComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  onSubmit(formData) {
-    const body: any = {
+  onSubmit(formData: {
+    minTermFreqFormControl: number; maxQueryTermsFormControl: number; minDocFreqFormControl: number;
+    minWordLengthFormControl: number; maxWordLengthFormControl: number; sizeFormControl: number;
+    stopWordsFormControl: string;
+  }) {
+    const body = {
       min_term_freq: formData.minTermFreqFormControl ? formData.minTermFreqFormControl : 1,
       max_query_terms: formData.maxQueryTermsFormControl ? formData.maxQueryTermsFormControl : 12,
       min_doc_freq: formData.minDocFreqFormControl ? formData.minDocFreqFormControl : 5,
@@ -54,10 +58,8 @@ export class SimilarOptionsDialogComponent implements OnInit {
       max_word_length: formData.maxWordLengthFormControl ? formData.maxWordLengthFormControl : 0,
       size: formData.sizeFormControl ? formData.sizeFormControl : 25,
       include_meta: true,
+      stop_words: formData.stopWordsFormControl ? formData.stopWordsFormControl.split('\n') : [],
     };
-    if (formData.stopWordsFormControl) {
-      body.stop_words = formData.stopWordsFormControl.split('\n');
-    }
     this.dialogRef.close(body);
   }
 

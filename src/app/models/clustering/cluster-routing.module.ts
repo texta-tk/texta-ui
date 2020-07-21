@@ -7,9 +7,8 @@ import {ViewClusterDocumentsComponent} from './clusters/view-cluster/view-cluste
 
 const routes: Routes = [
   {
-    path: 'clustering',
+    path: '',
     canActivate: [AuthGuard],
-    data: {breadcrumb: 'clustering', tooltip: 'Clustering list'},
     children: [
       {
         path: '',

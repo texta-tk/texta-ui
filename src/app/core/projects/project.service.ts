@@ -22,7 +22,7 @@ export class ProjectService {
       catchError(this.logService.handleError<Project[]>('getProjects')));
   }
 
-  createProject(body: {}): Observable<Project | HttpErrorResponse> {
+  createProject(body: unknown): Observable<Project | HttpErrorResponse> {
     return this.http.post<Project>(
       `${this.apiUrl}/projects/`,
       body
@@ -31,7 +31,7 @@ export class ProjectService {
       catchError(this.logService.handleError<Project>('createProject')));
   }
 
-  editProject(body: {}, projectId): Observable<Project | HttpErrorResponse> {
+  editProject(body: unknown, projectId: number): Observable<Project | HttpErrorResponse> {
     return this.http.patch<Project>(
       `${this.apiUrl}/projects/${projectId}/`,
       body
@@ -69,7 +69,7 @@ export class ProjectService {
       catchError(this.logService.handleError<string[]>('projectFactValueAutoComplete')));
   }
 
-  getProjectFacts(id: number, indices: any): Observable<ProjectFact[] | HttpErrorResponse> {
+  getProjectFacts(id: number, indices: unknown): Observable<ProjectFact[] | HttpErrorResponse> {
     return this.http.post<ProjectFact[]>(
       `${this.apiUrl}/projects/${id}/get_facts/`, {indices, output_type: false}
     ).pipe(

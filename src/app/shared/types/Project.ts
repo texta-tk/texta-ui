@@ -46,16 +46,16 @@ export class ProjectIndex {
     });
   }
 
-  static isProjectFields(object): object is ProjectIndex | ProjectIndex[] {
-    if (Array.isArray(object) && object.length > 0) {
+  static isProjectFields(val: unknown): val is ProjectIndex | ProjectIndex[] {
+    if (Array.isArray(val) && val.length > 0) {
       return (
-        (object[0] as ProjectIndex).index !== undefined &&
-        (object[0] as ProjectIndex).fields !== undefined
+        (val[0] as ProjectIndex).index !== undefined &&
+        (val[0] as ProjectIndex).fields !== undefined
       );
     } else {
       return (
-        (object as ProjectIndex).index !== undefined &&
-        (object as ProjectIndex).fields !== undefined
+        (val as ProjectIndex).index !== undefined &&
+        (val as ProjectIndex).fields !== undefined
       );
     }
   }

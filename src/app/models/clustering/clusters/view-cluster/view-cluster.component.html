@@ -51,7 +51,7 @@
       </ng-container>
       <ng-container matColumnDef="significant_words">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Significant words</th>
-        <td mat-cell *matCellDef="let element"><span>{{(element.significant_words | getPropertyList: propertyAccessor) | join: ', '}}</span>
+        <td mat-cell *matCellDef="let element"><span>{{(element.significant_words | getPropertyList: sigWordAccessor) | join: ', '}}</span>
         </td>
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>

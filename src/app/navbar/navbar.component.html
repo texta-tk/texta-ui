@@ -22,7 +22,8 @@
     </a>
     <a
       [matMenuTriggerFor]="models"
-      [ngClass]="{'is-active': ['/tagger-groups', '/taggers', '/embeddings', '/neurotaggers', '/clustering'].includes(router.url)}" class="pointer">
+      [ngClass]="{'is-active': ['/tagger-groups', '/taggers', '/embeddings', '/neurotaggers', '/clustering'].includes(router.url)}"
+      class="pointer">
       <button class="nav-button" data-cy="appNavbarModels" mat-button>
         <mat-icon class="margin-right">storage</mat-icon>
         Models
@@ -55,14 +56,14 @@
       <a [routerLink]="['torchtaggers']" data-cy="appNavbarModelMenuTorchTaggers" mat-menu-item
          routerLinkActive="is-active-menu">TorchTaggers <span
         *ngIf="projectResourceCounts?.num_torchtaggers">({{projectResourceCounts?.num_torchtaggers}})</span></a>
+      <a [routerLink]="['regex-tagger']" data-cy="appNavbarModelMenuRegexTagger" mat-menu-item
+         routerLinkActive="is-active-menu">Regex Taggers </a>
       <a [routerLink]="['embeddings']" data-cy="appNavbarModelMenuEmbeddings" mat-menu-item
          routerLinkActive="is-active-menu">Embeddings <span
         *ngIf="projectResourceCounts?.num_embeddings">({{projectResourceCounts?.num_embeddings}})</span></a>
       <a [routerLink]="['clustering']" data-cy="appNavbarModelMenuClusters" mat-menu-item
-         routerLinkActive="is-active-menu">Clustering <span
+         routerLinkActive="is-active-menu">Clusterings <span
         *ngIf="projectResourceCounts?.num_clusterings">({{projectResourceCounts?.num_clusterings}})</span></a>
-      <a [routerLink]="['regex-tagger']" data-cy="appNavbarModelMenuRegexTagger" mat-menu-item
-         routerLinkActive="is-active-menu">Regex Tagger </a>
     </mat-menu>
 
     <mat-menu #tools="matMenu">
@@ -103,7 +104,7 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <button *ngIf="currentProject" (click)="edit(projectControl.value)" mat-icon-button matTooltip="Edit project">
+      <button (click)="edit(projectControl.value)" *ngIf="currentProject" mat-icon-button matTooltip="Edit project">
         <mat-icon aria-label="Edit Project">edit</mat-icon>
       </button>
       <div class="flex-row logout">

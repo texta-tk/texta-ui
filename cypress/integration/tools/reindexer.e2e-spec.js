@@ -102,6 +102,8 @@ describe('reindexer should work', function () {
       headers: {'Authorization': 'Token ' + JSON.parse(localStorage.getItem('user')).key}
     }).then(x => {
       initReindexerPage();
+
+      cy.wait('@getIndices');
       // delete reindex task
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
       cy.get('[data-cy=appReindexerMenuDelete]').should('be.visible').click();

@@ -5,11 +5,10 @@ import {TorchTaggerComponent} from './torch-tagger/torch-tagger.component';
 
 const routes: Routes = [
   {
-    path: 'torchtaggers',
+    path: '',
     canActivate: [AuthGuard],
     component: TorchTaggerComponent,
   },
-
 ];
 
 @NgModule({

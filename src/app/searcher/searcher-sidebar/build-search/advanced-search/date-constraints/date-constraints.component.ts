@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {DateConstraint, ElasticsearchQuery} from '../../Constraints';
-import {FormControl} from '@angular/forms';
-import {debounceTime, distinctUntilChanged, pairwise, startWith, takeUntil} from 'rxjs/operators';
+import {FormControl, FormGroup} from '@angular/forms';
+import {debounceTime, distinctUntilChanged, startWith, takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 
 @Component({
@@ -11,23 +11,27 @@ import {Subject} from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DateConstraintsComponent implements OnInit, OnDestroy {
-  _dateConstraint: DateConstraint;
-  @Input() set dateConstraint(value: DateConstraint) {
-    if (value) {
-      this._dateConstraint = value;
-      this.dateFromFormControl = this._dateConstraint.dateFromFormControl;
-      this.dateToFormControl = this._dateConstraint.dateToFormControl;
-    }
-  }
-
   @Input() elasticSearchQuery: ElasticsearchQuery;
   @Output() change = new EventEmitter<ElasticsearchQuery>(); // search as you type, emit changes
-  dateFromFormControl: FormControl = new FormControl();
-  dateToFormControl: FormControl = new FormControl();
+  range = new FormGroup({
+    dateFromFormControl: new FormControl(),
+    dateToFormControl: new FormControl()
+  });
   destroyed$: Subject<boolean> = new Subject<boolean>();
+  // tslint:disable-next-line:no-any
   constraintQuery: any = {bool: {must: []}};
 
   constructor() {
+  }
+
+  _dateConstraint: DateConstraint;
+
+  @Input() set dateConstraint(value: DateConstraint) {
+    if (value) {
+      this._dateConstraint = value;
+      this.range.setControl('dateFromFormControl', this._dateConstraint.dateFromFormControl);
+      this.range.setControl('dateToFormControl', this._dateConstraint.dateToFormControl);
+    }
   }
 
   ngOnInit() {
@@ -37,30 +41,22 @@ export class DateConstraintsComponent implements OnInit, OnDestroy {
       // todo fix in TS 3.7
       // tslint:disable-next-line:no-non-null-assertion
       this.elasticSearchQuery!.elasticSearchQuery!.query!.bool!.must.push(this.constraintQuery);
-      this.dateFromFormControl.valueChanges.pipe(
+      this.range.valueChanges.pipe(
         takeUntil(this.destroyed$),
-        startWith(this.dateFromFormControl.value as object, this.dateFromFormControl.value as object),
-        pairwise(),
+        startWith(this.range.value as object),
+        debounceTime(100), // skip duplicate emissions
         distinctUntilChanged()).subscribe(value => {
-        this.makeDateQuery(fieldPaths, this.dateFromFormControl.value, this.dateToFormControl.value);
-        if (value[0] !== value[1]) {
-          this.change.emit(this.elasticSearchQuery);
-        }
-      });
-      this.dateToFormControl.valueChanges.pipe(
-        takeUntil(this.destroyed$),
-        startWith(this.dateToFormControl.value as object, this.dateToFormControl.value as object),
-        pairwise(),
-        distinctUntilChanged()).subscribe(value => {
-        this.makeDateQuery(fieldPaths, this.dateFromFormControl.value, this.dateToFormControl.value);
-        if (value[0] !== value[1]) {
-          this.change.emit(this.elasticSearchQuery);
+        if (this.range.valid) {
+          this.makeDateQuery(fieldPaths, value.dateFromFormControl, value.dateToFormControl);
+          if (value.dateFromFormControl !== value.dateToFormControl) {
+            this.change.emit(this.elasticSearchQuery);
+          }
         }
       });
     }
   }
 
-  makeDateQuery(fieldPaths: string[], fromValue, toValue) {
+  makeDateQuery(fieldPaths: string[], fromValue: string, toValue: string) {
     this.constraintQuery.bool.must.splice(0, this.constraintQuery.bool.must.length);
     const fromDate = {gte: fromValue};
     const toDate = {lte: toValue};
