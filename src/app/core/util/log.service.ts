@@ -13,7 +13,7 @@ export class LogService {
   constructor(private snackBar: MatSnackBar) {
   }
 
-  public handleError<T>(operation = 'operation', result?: T) {
+  public handleError<T>(operation = 'operation', result?: T): (error: T) => Observable<T> {
     return (error: T): Observable<T> => {
       // TODO: send the error to remote logging infrastructure
       console.warn(error); // log to console instead
@@ -23,19 +23,25 @@ export class LogService {
   }
 
 
-  public logStatus(val: unknown, msg: string) {
+  public logStatus(val: unknown, msg: string): void {
     if (!this.isProduction) {
       console.warn(msg, val);
     }
   }
 
-  public snackBarError(error: HttpErrorResponse, time: number) {
-    this.snackBar.open(error.name + ': ' + error.status + ' ' + error.statusText, 'Close', {
-      duration: time,
-    });
+  public snackBarError(error: HttpErrorResponse, time = 5000): void {
+    if (error.error.hasOwnProperty('detail')) {
+      this.snackBar.open(`${error.statusText}: ${error.error.detail}`, 'Close', {
+        duration: time,
+      });
+    } else {
+      this.snackBar.open(error.name + ': ' + error.status + ' ' + error.statusText, 'Close', {
+        duration: time,
+      });
+    }
   }
 
-  public snackBarMessage(msg: string, time: number) {
+  public snackBarMessage(msg: string, time: number): void {
     this.snackBar.open(msg, 'Close', {
       duration: time,
     });

@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {Project} from '../../../shared/types/Project';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormControl, FormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {MatDialogRef} from '@angular/material/dialog';
 import {ProjectService} from '../../../core/projects/project.service';
@@ -13,6 +13,22 @@ import {DatasetImporterService} from '../../../core/tools/dataset-importer/datas
 import {FileValidator} from 'ngx-material-file-input';
 import {HttpErrorResponse, HttpEventType, HttpResponse} from '@angular/common/http';
 
+function indexNameValidator(control: AbstractControl): null | ValidationErrors {
+  if (typeof control.value === 'string') {
+    const controlValue = control.value;
+    if (controlValue.toLowerCase() !== controlValue) {
+      return {notLowerCase: true};
+    }
+    if (controlValue.includes('*')){
+      return {wildCard: true};
+    }
+    if (controlValue.includes(':')){
+      return {colon: true};
+    }
+  }
+  return null;
+}
+
 @Component({
   selector: 'app-create-dataset-dialog',
   templateUrl: './create-dataset-dialog.component.html',
@@ -22,7 +38,7 @@ export class CreateDatasetDialogComponent implements OnInit, OnDestroy {
   readonly maxSize = 1048576000000; // 976 gigabytes
   importerForm = new FormGroup({
     descriptionFormControl: new FormControl('', [Validators.required]),
-    newNameFormControl: new FormControl('', [Validators.required]),
+    newNameFormControl: new FormControl('', [Validators.required, indexNameValidator]),
     separatorFormControl: new FormControl(''),
     fileFormControl: new FormControl(undefined,
       [Validators.required, FileValidator.maxContentSize(this.maxSize)]),
@@ -43,7 +59,7 @@ export class CreateDatasetDialogComponent implements OnInit, OnDestroy {
               private projectStore: ProjectStore) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(project => {
       if (project) {
         this.currentProject = project;
@@ -55,7 +71,7 @@ export class CreateDatasetDialogComponent implements OnInit, OnDestroy {
   onSubmit(formData: {
     descriptionFormControl: string; newNameFormControl: string; separatorFormControl: string;
     fileFormControl: { files: (string | Blob)[]; };
-  }) {
+  }): void {
     const postData = new FormData();
     postData.set('description', formData.descriptionFormControl);
     postData.set('index', formData.newNameFormControl);
@@ -65,7 +81,7 @@ export class CreateDatasetDialogComponent implements OnInit, OnDestroy {
     this.importerService.createIndex(postData, this.currentProject.id).pipe(
       takeUntil(this.destroyed$)).subscribe(response => {
       if (response instanceof HttpErrorResponse) {
-        this.logService.snackBarError(response, 2000);
+        this.logService.snackBarError(response);
       } else if (response.type === HttpEventType.UploadProgress) {
         this.uploadedBytes = response.loaded || 0;
         this.totalBytes = response.total || 0;
@@ -80,7 +96,7 @@ export class CreateDatasetDialogComponent implements OnInit, OnDestroy {
     this.dialogRef.close();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroyed$.next(true);
     this.destroyed$.complete();
   }

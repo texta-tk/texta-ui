@@ -50,7 +50,7 @@ export class DatasetImporterComponent implements OnInit, OnDestroy {
               private logService: LogService) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
     // check for updates after 30s every 30s
@@ -81,7 +81,7 @@ export class DatasetImporterComponent implements OnInit, OnDestroy {
       });
   }
 
-  setUpPaginator() {
+  setUpPaginator(): void {
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
@@ -105,12 +105,12 @@ export class DatasetImporterComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroyed$.next(true);
     this.destroyed$.complete();
   }
 
-  openCreateDialog() {
+  openCreateDialog(): void {
     const dialogRef = this.dialog.open(CreateDatasetDialogComponent, {
       maxHeight: '650px',
       width: '700px',
@@ -127,21 +127,21 @@ export class DatasetImporterComponent implements OnInit, OnDestroy {
 
 
   /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected() {
+  isAllSelected(): boolean {
     const numSelected = this.selectedRows.selected.length;
     const numRows = this.tableData.data.length;
     return numSelected === numRows;
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
+  masterToggle(): void {
     this.isAllSelected() ?
       this.selectedRows.clear() :
       this.tableData.data.forEach(row => this.selectedRows.select(row));
   }
 
 
-  onDelete(dataset: DatasetImporter, index: number) {
+  onDelete(dataset: DatasetImporter, index: number): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {confirmText: 'Delete', mainText: 'Are you sure you want to delete this Dataset?'}
     });
@@ -157,7 +157,7 @@ export class DatasetImporterComponent implements OnInit, OnDestroy {
     });
   }
 
-  onDeleteAllSelected() {
+  onDeleteAllSelected(): void {
     if (this.selectedRows.selected.length > 0) {
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         data: {
@@ -181,7 +181,7 @@ export class DatasetImporterComponent implements OnInit, OnDestroy {
     }
   }
 
-  removeSelectedRows() {
+  removeSelectedRows(): void {
     this.selectedRows.selected.forEach((selectedDataset: DatasetImporter) => {
       const index: number = this.tableData.data.findIndex(x => x.id === selectedDataset.id);
       this.tableData.data.splice(index, 1);
@@ -191,13 +191,13 @@ export class DatasetImporterComponent implements OnInit, OnDestroy {
   }
 
 
-  applyFilter(filterValue: EventTarget | null, field: string) {
+  applyFilter(filterValue: EventTarget | null, field: string): void {
     this.filteringValues[field] = (filterValue as HTMLInputElement).value ? (filterValue as HTMLInputElement).value : '';
     this.filterQueriesToString();
     this.filteredSubject.next();
   }
 
-  filterQueriesToString() {
+  filterQueriesToString(): void {
     this.inputFilterQuery = '';
     for (const field in this.filteringValues) {
       this.inputFilterQuery += `&${field}=${this.filteringValues[field]}`;

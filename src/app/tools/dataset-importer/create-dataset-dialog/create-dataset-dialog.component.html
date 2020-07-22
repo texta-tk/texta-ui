@@ -16,8 +16,16 @@
       <mat-error *ngIf="importerForm?.get('newNameFormControl')?.hasError('required')">
         Dataset name is <strong>required</strong>
       </mat-error>
+      <mat-error *ngIf="importerForm?.get('newNameFormControl')?.hasError('notLowerCase')">
+        Uppercase characters are not allowed
+      </mat-error>
+      <mat-error *ngIf="importerForm?.get('newNameFormControl')?.hasError('wildCard')">
+        Wildcards are not allowed in Index operations
+      </mat-error>
+      <mat-error *ngIf="importerForm?.get('newNameFormControl')?.hasError('colon')">
+        ':' symbols are not allowed in Index names
+      </mat-error>
     </mat-form-field>
-
 
     <mat-form-field>
       <input matInput placeholder="Separator" autocomplete="off" formControlName="separatorFormControl">
