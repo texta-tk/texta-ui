@@ -1,0 +1,51 @@
+<h1 mat-dialog-title>New <%= classify(name) %> task</h1>
+<div mat-dialog-content>
+  <form (ngSubmit)="onSubmit(<%= camelize(name) %>Form.value)" [formGroup]="<%= camelize(name) %>Form" class="flex-col">
+    <mat-form-field data-cy="app<%= classify(name) %>CreateDialogDesc">
+      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
+             placeholder="Description" required>
+
+      <mat-error *ngIf="<%= camelize(name) %>Form.get('descriptionFormControl')?.hasError('required')">
+        Description is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+
+    <mat-form-field data-cy="app<%= classify(name) %>CreateDialogIndices">
+      <mat-label>Indices</mat-label>
+      <mat-select (openedChange)="indicesOpenedChange($event)" [disableOptionCentering]="true"
+                  formControlName="indicesFormControl" multiple panelClass="select-panel-reveal-input" required>
+        <mat-option *ngFor="let projectIndex of projectIndices" [value]="projectIndex">
+          {{projectIndex.index}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="<%= camelize(name) %>Form.get('indicesFormControl')?.hasError('required')">
+        Select at least <strong>1 index</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Select Fields</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="fieldsFormControl"
+                  multiple panelClass="select-panel-reveal-input">
+        <mat-option *ngFor="let fields of fieldsUnique" [value]="fields.path">
+          {{fields.path}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+
+    <div class="flex-col">
+      <div class="flex-row">
+        <div class="flex-item-left">
+          <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
+        </div>
+        <div class="flex-item-right">
+          <button [disabled]="!<%= camelize(name) %>Form.valid" data-cy="app<%= classify(name) %>CreateDialogSubmit" mat-button type="submit">
+            Create
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

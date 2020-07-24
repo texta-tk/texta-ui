@@ -1,7 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
-@import "./variables/variables";
-@import "library-overrides";
-@import "components";
+@use "sass:map";
+@use "./variables/variables";
+@use "library-overrides";
+@use "components";
 // might be problematic todo
 div {
   box-sizing: border-box;
@@ -116,19 +117,19 @@ pre {
 }
 
 .accent-text {
-  color: $accent;
+  color: variables.$accent;
 }
 
 .primary-text {
-  color: $primary;
+  color: variables.$primary;
 }
 
 .warn-text {
-  color: $warn;
+  color: variables.$warn;
 }
 
 .action-text {
-  color: $primary;
+  color: variables.$primary;
 }
 
 
@@ -149,7 +150,7 @@ pre {
 }
 
 .table-actions-wrapper {
-  background-color: map-get($background, card);
+  background-color: map.get(variables.$background, card);
 
   border-top-left-radius: 8.5px;
   border-top-right-radius: 8.5px;
