@@ -1,0 +1,18 @@
+import { ModuleWithProviders, NgModule } from '@angular/core';
+import {<%= classify(name) %>Component} from './<%= dasherize(name) %>.component';
+import { Create<%= classify(name) %>DialogComponent } from './create-<%= dasherize(name) %>-dialog/create-<%= dasherize(name) %>-dialog.component';
+import {<%= classify(name) %>RoutingModule} from './<%= dasherize(name) %>-routing.module';
+
+@NgModule({
+    imports: [
+        SharedModule,
+        <%= classify(name) %>RoutingModule,
+    ],
+    declarations: [
+    <%= classify(name) %>Component,
+    Create<%= classify(name) %>DialogComponent
+    ],
+    providers: [],
+ })
+export class <%= classify(name) %>Module {
+}

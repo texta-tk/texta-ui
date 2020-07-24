@@ -1,0 +1,34 @@
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import {Observable} from 'rxjs';
+import {catchError, tap} from 'rxjs/operators';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class <%= classify(name) %>Service {
+  apiUrl = environment.apiHost + environment.apiBasePath;
+
+  constructor(private http: HttpClient,
+              private logService: LogService) {
+  }
+
+  get<%= classify(name) %>Tasks(projectId: number, params = ''): Observable<ResultsWrapper<<%= classify(name) %>> | HttpErrorResponse> {
+    return this.http.get<ResultsWrapper<<%= classify(name) %>>>(`${this.apiUrl}/projects/${projectId}/<%= dasherize(name) %>/?${params}`).pipe(
+      tap(e => this.logService.logStatus(e, 'get<%= classify(name) %>Tasks')),
+      catchError(this.logService.handleError<ResultsWrapper<<%= classify(name) %>>>('get<%= classify(name) %>Tasks')));
+  }
+
+  create<%= classify(name) %>Task(projectId: number, body: unknown): Observable<<%= classify(name) %> | HttpErrorResponse> {
+    return this.http.post<<%= classify(name) %>>(`${this.apiUrl}/projects/${projectId}/<%= dasherize(name) %>/`, body).pipe(
+      tap(e => this.logService.logStatus(e, 'create<%= classify(name) %>Task')),
+      catchError(this.logService.handleError<<%= classify(name) %>>('create<%= classify(name) %>Task')));
+  }
+
+  bulkDelete<%= classify(name) %>Tasks(projectId: number, body: unknown): Observable<{ 'num_deleted': number, 'deleted_types': { string: number }[] } | HttpErrorResponse> {
+    return this.http.post<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>
+    (`${this.apiUrl}/projects/${projectId}/<%= dasherize(name) %>/bulk_delete/`, body).pipe(
+      tap(e => this.logService.logStatus(e, 'bulkDelete<%= classify(name) %>Tasks')),
+      catchError(this.logService.handleError<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>('bulkDelete<%= classify(name) %>Tasks')));
+  }
+}
