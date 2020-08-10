@@ -3,7 +3,7 @@ import {MatDialogRef} from '@angular/material/dialog';
 import {LogService} from '../../../core/util/log.service';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {RegexTaggerService} from '../../../core/models/taggers/regex-tagger.service';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {Lexicon} from '../../../shared/types/Lexicon';
@@ -28,14 +28,14 @@ export class CreateRegexTaggerDialogComponent implements OnInit, OnDestroy {
       Validators.required,
     ]),
     counterLexiconFormControl: new FormControl(''),
-    operatorFormControl: new FormControl('', [
+    operatorFormControl: new FormControl('or', [
       Validators.required,
     ]),
-    matchTypeFormControl: new FormControl('', [
+    matchTypeFormControl: new FormControl('prefix', [
       Validators.required,
     ]),
-    requiredWordsFormControl: new FormControl(0, [
-      Validators.required,
+    requiredWordsFormControl: new FormControl(1, [
+      Validators.required, Validators.min(0), Validators.max(1)
     ]),
     phraseSlopFormControl: new FormControl(0, [
       Validators.required,
@@ -80,7 +80,7 @@ export class CreateRegexTaggerDialogComponent implements OnInit, OnDestroy {
     });
   }
 
-  public addLexicon(val: Lexicon, control: any) {
+  public addLexicon(val: Lexicon, control: AbstractControl): void {
     if (control) {
       const formControlValue = control.value as string;
       let phrases = '';
@@ -99,7 +99,7 @@ export class CreateRegexTaggerDialogComponent implements OnInit, OnDestroy {
   }
 
   // @ts-ignore
-  onSubmit(formData) {
+  onSubmit(formData): void {
     const body = {
       description: formData.descriptionFormControl,
       lexicon: formData.lexiconFormControl.length > 0 ? formData.lexiconFormControl.split('\n').filter((x: unknown) => x) : [],

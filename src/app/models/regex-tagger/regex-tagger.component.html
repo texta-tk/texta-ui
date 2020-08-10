@@ -75,22 +75,22 @@
       <ng-container matColumnDef="ignoreCase">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Ignore case</th>
         <td *matCellDef="let element" mat-cell>
-          <mat-checkbox [(ngModel)]="element.ignore_case"
-                        disabled></mat-checkbox>
+          <mat-checkbox [(ngModel)]="element.ignore_case" (click)="$event.stopPropagation();"
+                        (ngModelChange)="updateRegexTaggerRow(element)"></mat-checkbox>
         </td>
       </ng-container>
       <ng-container matColumnDef="ignorePunctuation">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Ignore punctuation</th>
         <td *matCellDef="let element" mat-cell>
-          <mat-checkbox [(ngModel)]="element.ignore_punctuation"
-                        disabled></mat-checkbox>
+          <mat-checkbox [(ngModel)]="element.ignore_punctuation" (click)="$event.stopPropagation();"
+                        (ngModelChange)="updateRegexTaggerRow(element)"></mat-checkbox>
         </td>
       </ng-container>
       <ng-container matColumnDef="fuzzy">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Fuzzy match</th>
         <td *matCellDef="let element" mat-cell>
-          <mat-checkbox [(ngModel)]="element.return_fuzzy_match"
-                        disabled></mat-checkbox>
+          <mat-checkbox [(ngModel)]="element.return_fuzzy_match" (click)="$event.stopPropagation();"
+                        (ngModelChange)="updateRegexTaggerRow(element)"></mat-checkbox>
         </td>
       </ng-container>
 

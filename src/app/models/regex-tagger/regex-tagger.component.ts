@@ -2,7 +2,7 @@ import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/c
 import {merge, of, Subject} from 'rxjs';
 import {MatSort} from '@angular/material/sort';
 import {MatPaginator} from '@angular/material/paginator';
-import {debounceTime, switchMap, takeUntil} from 'rxjs/operators';
+import {debounceTime, publish, switchMap, takeUntil} from 'rxjs/operators';
 import {RegexTagger} from '../../shared/types/tasks/RegexTagger';
 import {ProjectStore} from '../../core/projects/project.store';
 import {MatDialog} from '@angular/material/dialog';
@@ -37,6 +37,7 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   resultsLength: number;
   expandedElement: RegexTagger | null;
   currentProject: Project;
+  patchRowQueue: Subject<RegexTagger> = new Subject();
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -50,10 +51,16 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit(): void {
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
+
+    this.patchRowQueue.pipe(takeUntil(this.destroyed$), debounceTime(50)).subscribe(row => {
+      if (this.currentProject) {
+        this.regexTaggerService.patchRegexTagger(this.currentProject.id, row.id, row).subscribe();
+      }
+    });
   }
 
 
-  ngAfterViewInit() {   // If the user changes the sort order, reset back to the first page.
+  ngAfterViewInit(): void {   // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
     merge(this.sort.sortChange, this.paginator.page, this.filteredSubject)
@@ -90,7 +97,7 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  openCreateDialog() {
+  openCreateDialog(): void {
     const dialogRef = this.dialog.open(CreateRegexTaggerDialogComponent, {
       maxHeight: '90vh',
       width: '800px',
@@ -104,7 +111,7 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  openMultiTagDialog() {
+  openMultiTagDialog(): void {
     this.dialog.open(MultiTagTextDialogComponent, {
       maxHeight: '90vh',
       width: '700px',
@@ -114,21 +121,21 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected() {
+  isAllSelected(): boolean {
     const numSelected = this.selectedRows.selected.length;
     const numRows = this.tableData.data.length;
     return numSelected === numRows;
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
+  masterToggle(): void {
     this.isAllSelected() ?
       this.selectedRows.clear() :
       this.tableData.data.forEach(row => this.selectedRows.select(row));
   }
 
 
-  onDeleteAllSelected() {
+  onDeleteAllSelected(): void {
     if (this.selectedRows.selected.length > 0) {
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         data: {
@@ -152,7 +159,7 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  removeSelectedRows() {
+  removeSelectedRows(): void {
     this.selectedRows.selected.forEach((selectedTagger: RegexTagger) => {
       const index: number = this.tableData.data.findIndex(tagger => tagger.id === selectedTagger.id);
       this.tableData.data.splice(index, 1);
@@ -161,7 +168,11 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.selectedRows.clear();
   }
 
-  ngOnDestroy() {
+  updateRegexTaggerRow(row: RegexTagger): void {
+    this.patchRowQueue.next(row);
+  }
+
+  ngOnDestroy(): void {
     this.destroyed$.next(true);
     this.destroyed$.complete();
   }
