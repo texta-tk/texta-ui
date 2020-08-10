@@ -21,7 +21,7 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
   @Input() elasticSearchQuery: ElasticsearchQuery;
   @Input() projectFacts: ProjectFact[] = [];
   @Input() currentProject: Project;
-  @Output() change = new EventEmitter<ElasticsearchQuery>(); // search as you type, emit changes
+  @Output() constraintChanged = new EventEmitter<ElasticsearchQuery>(); // search as you type, emit changes
   destroyed$: Subject<boolean> = new Subject<boolean>();
   factNameOperatorFormControl = new FormControl();
   factNameFormControl = new FormControl();
@@ -54,6 +54,7 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
     FactConstraintsComponent.componentCount += 1;
   }
 
+  // tslint:disable-next-line:variable-name
   _factConstraint: FactConstraint;
 
   @Input() set factConstraint(value: FactConstraint) {
@@ -73,7 +74,7 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
   }
 
   // attach valuechanges listeners to formcontrols, and populate with savedsearch data if there is any
-  public createGroupListeners(inputGroup?: FactTextInputGroup) {
+  public createGroupListeners(inputGroup?: FactTextInputGroup): void {
     if (!inputGroup) {
       inputGroup = new FactTextInputGroup();
       inputGroup.formQuery.nested.inner_hits.name = `${FactConstraintsComponent.componentCount}_??`;
@@ -136,18 +137,18 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
     });
   }
 
-  factValueSelected(val: MatAutocompleteSelectedEvent | string, inputGroup: FactTextInputGroup) {
+  factValueSelected(val: MatAutocompleteSelectedEvent | string, inputGroup: FactTextInputGroup): void {
     const factValue = (val instanceof MatAutocompleteSelectedEvent) ? val.option.value : val;
     if (factValue.length > 0) {
       inputGroup.formQuery.nested.inner_hits.name = `${FactConstraintsComponent.componentCount}_${inputGroup.factTextFactNameFormControl.value}_${factValue}`;
       // @ts-ignore
       inputGroup.formQuery.nested.query.bool.must = [{match: {'texta_facts.fact': inputGroup.factTextFactNameFormControl.value}}, {match: {'texta_facts.str_val': factValue}}];
 
-      this.change.emit(this.elasticSearchQuery);
+      this.constraintChanged.emit(this.elasticSearchQuery);
     }
   }
 
-  public deleteInputGroup(inputGroup: FactTextInputGroup) {
+  public deleteInputGroup(inputGroup: FactTextInputGroup): void {
     const queryIndex = this.inputGroupQueryArray.indexOf(inputGroup.query, 0);
     if (queryIndex > -1) {
       this.inputGroupQueryArray.splice(queryIndex, 1);
@@ -156,11 +157,11 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
     if (index > -1) {
       this._factConstraint.inputGroupArray.splice(index, 1);
     }
-    this.change.emit(this.elasticSearchQuery);
+    this.constraintChanged.emit(this.elasticSearchQuery);
   }
 
 
-  ngOnInit() {
+  ngOnInit(): void {
     if (this._factConstraint) {
       const formQueries: unknown[] = [];
       this.factNameQuery.bool = {[this.factNameOperatorFormControl.value]: formQueries};
@@ -173,7 +174,7 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
         takeUntil(this.destroyed$)).subscribe((value: string[]) => {
         this.factNameQuery.bool = {[value[1]]: formQueries};
         if (value[0] !== value[1]) {
-          this.change.emit(this.elasticSearchQuery);
+          this.constraintChanged.emit(this.elasticSearchQuery);
         }
       });
       this.factNameFormControl.valueChanges.pipe(
@@ -194,7 +195,7 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
             }
           }
           if (!UtilityFunctions.arrayValuesEqual(value[0], value[1])) {
-            this.change.emit(this.elasticSearchQuery);
+            this.constraintChanged.emit(this.elasticSearchQuery);
           }
         }
       });
@@ -208,7 +209,7 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
         takeUntil(this.destroyed$)).subscribe((value: string[]) => {
         this.inputGroupQuery.bool = {[value[1]]: this.inputGroupQueryArray};
         if (value[0] !== value[1]) {
-          this.change.emit(this.elasticSearchQuery);
+          this.constraintChanged.emit(this.elasticSearchQuery);
         }
       });
 
@@ -216,7 +217,7 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
 
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     console.log('destroy fact-constraint');
     // todo fix in TS 3.7
     // tslint:disable-next-line:no-non-null-assertion

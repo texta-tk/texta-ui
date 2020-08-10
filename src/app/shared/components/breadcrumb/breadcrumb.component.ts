@@ -25,7 +25,7 @@ export class BreadcrumbComponent implements OnInit, OnDestroy {
     this.breadcrumbs = this.buildBreadCrumb(this.activatedRoute.root);
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.router.events.pipe(
       takeUntil(this.destroyed$),
       filter(event => event instanceof NavigationEnd),

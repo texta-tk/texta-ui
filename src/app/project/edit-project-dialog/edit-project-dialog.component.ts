@@ -67,7 +67,7 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
     }
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.coreService.getIndices().subscribe((resp: string[] | HttpErrorResponse) => {
       if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
@@ -90,11 +90,11 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
       });
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.setInitialValue();
   }
 
-  protected setInitialValue() {
+  protected setInitialValue(): void {
     this.filteredIndices
       .pipe(take(1), takeUntil(this.destroyed$))
       .subscribe(() => {
@@ -107,7 +107,7 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
       });
   }
 
-  protected filterIndices() {
+  protected filterIndices(): void {
     if (!this.indices) {
       return;
     }
@@ -125,7 +125,7 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
     );
   }
 
-  onSubmit(formData: { indicesFormControl: string[]; usersFormControl: string[]; titleFormControl: string; }) {
+  onSubmit(formData: { indicesFormControl: string[]; usersFormControl: string[]; titleFormControl: string; }): void {
     this.data.indices = formData.indicesFormControl;
     this.data.users = formData.usersFormControl;
     this.data.title = formData.titleFormControl;

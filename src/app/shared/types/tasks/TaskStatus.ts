@@ -1,3 +1,5 @@
+
+// tslint:disable:variable-name
 export class TaskStatus {
   id: 0;
   status: string;

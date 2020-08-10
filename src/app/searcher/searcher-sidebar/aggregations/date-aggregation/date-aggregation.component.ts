@@ -14,6 +14,7 @@ import {HttpErrorResponse} from '@angular/common/http';
   styleUrls: ['./date-aggregation.component.scss']
 })
 export class DateAggregationComponent implements OnInit, OnDestroy {
+  // tslint:disable-next-line:no-any
   @Input() aggregationObj: { aggregation: any };
   @Input() fieldsFormControl: FormControl;
   @Input() notSubAgg: boolean;
@@ -41,7 +42,7 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
     private projectStore: ProjectStore) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.fieldsFormControl.valueChanges.pipe(takeUntil(this.destroy$), startWith(this.fieldsFormControl.value), switchMap(val => {
       // need to check type, because if we are currently on a date constraint and switch to a fact constraint, then this valuechanges
       // still fires, so we would get val.type === 'fact' and after that the component will destroy itself
@@ -86,7 +87,7 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
     this.relativeFrequency.emit(false);
   }
 
-  makeDateAggregation(startDate: Date, toDate: Date) {
+  makeDateAggregation(startDate: Date, toDate: Date): void {
     this.checkDateInterval(startDate, toDate);
 
     this.dateRangeFrom.range = {[this.fieldsFormControl.value.path]: {gte: startDate}};
@@ -124,7 +125,7 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
     this.aggregationObj.aggregation = returnquery;
   }
 
-  dateRangeDaysSmallerThan(goal: number, startDate: Date, toDate: Date) {
+  dateRangeDaysSmallerThan(goal: number, startDate: Date, toDate: Date): boolean {
     toDate = toDate ? toDate : this.maxDate;
     startDate = startDate ? startDate : this.minDate;
     const differenceTime = toDate.getTime() - startDate.getTime();
@@ -132,12 +133,12 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
     return differenceInDays < goal;
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.complete();
   }
 
-  private checkDateInterval(startDate: Date, toDate: Date) {
+  private checkDateInterval(startDate: Date, toDate: Date): void {
     // limit interval based on daterange
     this.dateRangeDays = this.dateRangeDaysSmallerThan(365, startDate, toDate);
     this.dateRangeWeek = this.dateRangeDaysSmallerThan(1095, startDate, toDate);

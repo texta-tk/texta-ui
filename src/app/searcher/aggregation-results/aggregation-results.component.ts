@@ -52,7 +52,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
       return (x.buckets);
     }
     return null;
-  };
+  }
 
   formatDateData(buckets: { key_as_string: string, key: number, doc_count: number }[]): { value: number, name: Date }[] {
     const dateData: { value: number, name: Date }[] = [];
@@ -81,7 +81,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     return dateData;
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.searchService.getAggregation().pipe(takeUntil(this.destroy$)).subscribe((aggregation) => {
       if (aggregation && aggregation.agg && aggregation.agg.aggs) {
         this.aggregationData = {
@@ -101,7 +101,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   }
 
   // tslint:disable-next-line:no-any
-  parseAggregationResults(aggregation: any) {
+  parseAggregationResults(aggregation: any): void {
     const aggData: AggregationData = {
       treeData: [],
       tableData: [],
@@ -131,8 +131,8 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   }
 
   // gives us nested buckets->buckets->buckets, so i can build tree view
-  // tslint:disable-next-line:no-any
-  formatAggDataStructure(rootAgg: { histoBuckets: { name: any; series: { value: number; name: Date; }[]; }[]; nested: boolean; }, aggregation: any, aggKeys: string[]) {
+  // tslint:disable-next-line:no-any max-line-length
+  formatAggDataStructure(rootAgg: { histoBuckets: { name: any; series: { value: number; name: Date; }[]; }[]; nested: boolean; }, aggregation: any, aggKeys: string[]): any {
     for (const bucket of this.bucketAccessor(aggregation)) {
       for (const key of aggKeys) {
         const innerBuckets = this.navNestedAggByKey(bucket, key);
@@ -161,8 +161,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   }
 
   // tslint:disable-next-line:no-any
-  // @ts-ignore
-  navNestedAggByKey(aggregation: any, aggregationKey: string) {
+  navNestedAggByKey(aggregation: any, aggregationKey: string): any {
     if (aggregation.hasOwnProperty(aggregationKey)) {
       const aggInner = aggregation[aggregationKey];
       return this.navNestedAggByKey(aggInner, aggregationKey); // EX: agg_term: {agg_term: {buckets}}
@@ -172,7 +171,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
 
   // aggData because we can have multiple aggs so we need to push instead of returning new object
   // @ts-ignore
-  // tslint:disable-next-line:no-any
+  // tslint:disable-next-line:no-any max-line-length
   populateAggData(rootAggObj, aggName, aggDataAccessor: (x: any) => any, aggregationType: 'agg_histo' | 'agg_fact' | 'agg_term', aggData: AggregationData): void {
     const formattedData = this.formatAggDataStructure(rootAggObj, rootAggObj,
       ['agg_histo', 'agg_fact', 'agg_fact_val', 'agg_term']);
@@ -215,7 +214,8 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     }
   }
 
-  openUnifiedTimeline(buckets: any[]) {
+  // tslint:disable-next-line:no-any
+  openUnifiedTimeline(buckets: any[]): void {
     this.dialog.open(AggregationResultsDialogComponent, {
       data: {
         aggData: buckets, type: 'histo'
@@ -226,7 +226,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   }
 
   // @ts-ignore
-  determineDepthOfObject(object, accessor) {
+  determineDepthOfObject(object, accessor): number {
     let depth = 0;
     if (accessor(object)) {
       accessor(object).forEach((x: unknown) => {
@@ -239,12 +239,13 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     return depth + 1;
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.complete();
   }
 
-  private convertHistoToRelativeFrequency(aggs: { agg: any, globalAgg: any }) {
+  // tslint:disable-next-line:no-any
+  private convertHistoToRelativeFrequency(aggs: { agg: any, globalAgg: any }): void {
     for (const aggKey of Object.keys(aggs.agg.aggs)) {
       if (aggs.agg.aggs[aggKey].hasOwnProperty('agg_histo')) {
         // when the first key is agg_histo then the results are aligned with eachother, when the date is nested just skip relative

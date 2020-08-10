@@ -2,6 +2,7 @@ import {Field} from '../Project';
 import {TaskStatus} from './TaskStatus';
 import {Index} from '../Index';
 
+// tslint:disable:variable-name
 export class Cluster {
   id: number;
   url: string;
@@ -55,5 +56,6 @@ export class ClusterMoreLikeThis {
   _id: string;
   _index: string;
   _type: string;
+  // tslint:disable-next-line:no-any
   _source: any;
 }

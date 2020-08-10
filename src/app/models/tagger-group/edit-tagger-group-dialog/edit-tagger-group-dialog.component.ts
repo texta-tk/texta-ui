@@ -13,7 +13,7 @@ import {TaggerGroupService} from '../../../core/models/taggers/tagger-group.serv
   templateUrl: './edit-tagger-group-dialog.component.html',
   styleUrls: ['./edit-tagger-group-dialog.component.scss']
 })
-export class EditTaggerGroupDialogComponent implements OnInit {
+export class EditTaggerGroupDialogComponent {
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
 
   constructor(private dialogRef: MatDialogRef<EditTaggerGroupDialogComponent>,
@@ -23,10 +23,7 @@ export class EditTaggerGroupDialogComponent implements OnInit {
     this.data = {...this.data};
   }
 
-  ngOnInit() {
-  }
-
-  onSubmit() {
+  onSubmit(): void {
     this.projectStore.getCurrentProject().pipe(take(1), mergeMap(project => {
       if (project) {
         return this.taggerGroupService.editTaggerGroup({description: this.data.description}, project.id, this.data.id);

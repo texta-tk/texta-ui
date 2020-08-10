@@ -28,20 +28,20 @@
     </div>
   </div>
   <div class="content" *ngIf="isTextConstraint(constraint)" data-cy="appSearcherSideBarBuildSearchTextConstraint">
-    <app-text-constraints [textConstraint]="constraint" [elasticSearchQuery]="elasticQuery"
-                          (change)="searchOnChange($event)"></app-text-constraints>
+    <app-text-constraints [textConstraint]="$any(constraint)" [elasticSearchQuery]="elasticQuery"
+                          (constraintChanged)="searchOnChange($event)"></app-text-constraints>
   </div>
   <div class="content" *ngIf="isDateConstraint(constraint)" data-cy="appSearcherSideBarBuildSearchDateConstraint">
-    <app-date-constraints [dateConstraint]="constraint" [elasticSearchQuery]="elasticQuery"
-                          (change)="searchOnChange($event)"></app-date-constraints>
+    <app-date-constraints [dateConstraint]="$any(constraint)" [elasticSearchQuery]="elasticQuery"
+                          (constraintChanged)="searchOnChange($event)"></app-date-constraints>
   </div>
   <div class="content" *ngIf="isFactNameConstraint(constraint)" data-cy="appSearcherSideBarBuildSearchFactConstraint">
-    <app-fact-constraints [factConstraint]="constraint" [elasticSearchQuery]="elasticQuery"
+    <app-fact-constraints [factConstraint]="$any(constraint)" [elasticSearchQuery]="elasticQuery"
                           [projectFacts]="projectFacts" [currentProject]="currentProject"
-                          (change)="searchOnChange($event)"></app-fact-constraints>
+                          (constraintChanged)="searchOnChange($event)"></app-fact-constraints>
   </div>
   <div class="content" *ngIf="isNumberConstraint(constraint)" data-cy="appSearcherSideBarBuildSearchNumberConstraint">
-    <app-number-constraints [numberConstraint]="constraint" [elasticSearchQuery]="elasticQuery"
-                          (change)="searchOnChange($event)"></app-number-constraints>
+    <app-number-constraints [numberConstraint]="$any(constraint)" [elasticSearchQuery]="elasticQuery"
+                          (constraintChanged)="searchOnChange($event)"></app-number-constraints>
   </div>
 </div>

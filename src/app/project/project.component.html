@@ -32,7 +32,7 @@
 
   <div class="table-container overflow-auto" [appScrollTop]="tableData">
     <table mat-table [dataSource]="tableData" matSort
-           matSort matSortActive="id" matSortDisableClear matSortDirection="desc" [trackBy]="trackById">
+           matSortActive="id" matSortDisableClear matSortDirection="desc" [trackBy]="trackById">
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
         <td mat-cell *matCellDef="let element">{{ element.id }}</td>

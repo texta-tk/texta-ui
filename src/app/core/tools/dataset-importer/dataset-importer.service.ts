@@ -29,14 +29,14 @@ export class DatasetImporterService {
       catchError(this.logService.handleError<HttpEvent<unknown>>('createIndex')));
   }
 
-  bulkDeleteIndices(projectId: number, body: { ids: number[]; }) {
+  bulkDeleteIndices(projectId: number, body: { ids: number[]; }): Observable<unknown> {
     return this.http.post<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>
     (`${this.apiUrl}/projects/${projectId}/dataset_imports/bulk_delete/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'bulkDeleteIndices')),
       catchError(this.logService.handleError<unknown>('bulkDeleteReindexers')));
   }
 
-  deleteIndex(datasetId: number, projectId: number) {
+  deleteIndex(datasetId: number, projectId: number): Observable<unknown> {
     return this.http.delete(`${this.apiUrl}/projects/${projectId}/dataset_imports/${datasetId}/`).pipe(
       tap(e => this.logService.logStatus(e, 'deleteIndex')),
       catchError(this.logService.handleError<unknown>('deleteIndex')));

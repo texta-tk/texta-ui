@@ -100,8 +100,7 @@
         <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
           <div class="element-detail"
                *ngIf="element == expandedElement" [@detailExpand]>
-            <div class="flex-row element-detail-plot-fields">
-              <div *ngIf="element.plot"><img class="element-plot" [src]="element.plot"></div>
+            <div class="flex-row">
               <div class="flex-col m-l-r-5">
                 <table class="simple-table">
                   <tr>

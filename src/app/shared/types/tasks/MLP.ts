@@ -5,6 +5,7 @@ interface Index {
   name: string;
 }
 
+// tslint:disable:variable-name
 interface Task {
   id: number;
   status: string;

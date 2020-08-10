@@ -34,7 +34,7 @@ export class CreateReindexerDialogComponent implements OnInit {
   projectFields: ProjectIndex[];
   filteredProjectFields: ProjectIndex[] = [];
   indices: string[];
-  reindexerOptions: any;
+  reindexerOptions: unknown;
 
   constructor(private dialogRef: MatDialogRef<CreateReindexerDialogComponent>,
               private projectService: ProjectService,
@@ -43,7 +43,7 @@ export class CreateReindexerDialogComponent implements OnInit {
               private projectStore: ProjectStore) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
 
     this.projectStore.getCurrentProject().pipe(take(1), mergeMap(currentProject => {
       if (currentProject) {
@@ -72,11 +72,11 @@ export class CreateReindexerDialogComponent implements OnInit {
     });
   }
 
-  onQueryChanged(query: string) {
+  onQueryChanged(query: string): void {
     this.query = query ? query : this.defaultQuery;
   }
 
-  onIndexSelected(val: MatSelectChange) {
+  onIndexSelected(val: MatSelectChange): void {
     this.filteredProjectFields = this.projectFields.filter(x => val.value.includes(x.index));
     if (this.filteredProjectFields.length > 0) {
       this.reindexerForm.get('fieldsFormControl')?.reset({
@@ -93,7 +93,7 @@ export class CreateReindexerDialogComponent implements OnInit {
   onSubmit(formData: {
     fieldsFormControl: Field[]; descriptionFormControl: string;
     newNameFormControl: string; fieldTypesFormControl: string; indicesFormControl: string[]; randomSizeFormControl: number;
-  }) {
+  }): void {
     // temp
     const fieldsToSend = formData.fieldsFormControl.map(x => x.path);
     const body = {

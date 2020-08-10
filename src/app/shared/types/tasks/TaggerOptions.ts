@@ -1,3 +1,5 @@
+
+// tslint:disable:variable-name
 class Id {
   type: string;
   required: boolean;

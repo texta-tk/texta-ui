@@ -43,7 +43,7 @@ export class CreateEmbeddingDialogComponent implements OnInit {
               private projectStore: ProjectStore) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(currentProjIndices => {
       if (currentProjIndices) {
         const indicesForm = this.embeddingForm.get('indicesFormControl');
@@ -59,12 +59,12 @@ export class CreateEmbeddingDialogComponent implements OnInit {
     });
   }
 
-  getFieldsForIndices(indices: ProjectIndex[]) {
+  getFieldsForIndices(indices: ProjectIndex[]): void {
     this.projectFields = ProjectIndex.cleanProjectIndicesFields(indices, ['text'], []);
     this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
   }
 
-  public indicesOpenedChange(opened: boolean) {
+  public indicesOpenedChange(opened: boolean): void {
     const indicesForm = this.embeddingForm.get('indicesFormControl');
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && (indicesForm?.value && indicesForm.value.length > 0)) {
@@ -72,14 +72,14 @@ export class CreateEmbeddingDialogComponent implements OnInit {
     }
   }
 
-  onQueryChanged(query: string) {
+  onQueryChanged(query: string): void {
     this.query = query ? query : this.defaultQuery;
   }
 
   onSubmit(formData: {
     fieldsFormControl: Field[]; descriptionFormControl: string;
     indicesFormControl: ProjectIndex[]; dimensionsFormControl: number; frequencyFormControl: number;
-  }) {
+  }): void {
     // temp
     const fieldsToSend = this.generateFieldsFormat(formData.fieldsFormControl);
     const body = {
@@ -105,7 +105,7 @@ export class CreateEmbeddingDialogComponent implements OnInit {
     });
   }
 
-  generateFieldsFormat(fields: Field[]) {
+  generateFieldsFormat(fields: Field[]): string[] {
     const output: string[] = [];
     for (const field of fields) {
       output.push(field.path);

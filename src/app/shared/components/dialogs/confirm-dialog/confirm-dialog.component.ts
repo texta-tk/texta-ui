@@ -16,7 +16,8 @@ export class ConfirmDialogComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<ConfirmDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { confirmText: string, cancelText: string, mainText: string, title: string, confirmBtnColor: ThemePalette }) {
+    @Inject(MAT_DIALOG_DATA) public data: { confirmText: string, cancelText: string,
+      mainText: string, title: string, confirmBtnColor: ThemePalette }) {
     this.confirmText = data.confirmText ? data.confirmText : this.confirmText;
     this.cancelText = data.cancelText ? data.cancelText : this.cancelText;
     this.mainText = data.mainText ? data.mainText : this.mainText;
@@ -24,14 +25,14 @@ export class ConfirmDialogComponent implements OnInit {
     this.confirmBtnColor = data.confirmBtnColor ? data.confirmBtnColor : this.confirmBtnColor;
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
   }
 
-  closeDialog() {
+  closeDialog(): void {
     this.dialogRef.close(false);
   }
 
-  closeDialogConfirm() {
+  closeDialogConfirm(): void {
     this.dialogRef.close(true);
   }
 }

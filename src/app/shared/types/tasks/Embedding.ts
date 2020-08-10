@@ -1,5 +1,6 @@
 import {TaskStatus} from './TaskStatus';
 
+// tslint:disable:variable-name
 export class Embedding {
   // todo
   url = '';

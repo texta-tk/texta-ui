@@ -46,7 +46,7 @@ export class CreateProjectDialogComponent implements OnInit, OnDestroy {
               private logService: LogService) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.userService.getAllUsers().subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.users = UtilityFunctions.sortByStringProperty(resp, (x => x.username));
@@ -68,7 +68,7 @@ export class CreateProjectDialogComponent implements OnInit, OnDestroy {
       });
   }
 
-  onSubmit(formData: { indicesFormControl: unknown; usersFormControl: unknown; titleFormControl: unknown; }) {
+  onSubmit(formData: { indicesFormControl: unknown; usersFormControl: unknown; titleFormControl: unknown; }): void {
     const body = {
       indices: formData.indicesFormControl,
       users: formData.usersFormControl,
@@ -87,7 +87,7 @@ export class CreateProjectDialogComponent implements OnInit, OnDestroy {
     this.dialogRef.close();
   }
 
-  protected filterIndices() {
+  filterIndices(): void {
     if (!this.indices) {
       return;
     }

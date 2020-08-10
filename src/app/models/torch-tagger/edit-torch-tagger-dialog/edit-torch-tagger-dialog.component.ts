@@ -17,7 +17,7 @@ import {TorchTagger} from '../../../shared/types/tasks/TorchTagger';
   templateUrl: './edit-torch-tagger-dialog.component.html',
   styleUrls: ['./edit-torch-tagger-dialog.component.scss']
 })
-export class EditTorchTaggerDialogComponent implements OnInit {
+export class EditTorchTaggerDialogComponent {
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
 
   constructor(private dialogRef: MatDialogRef<EditTorchTaggerDialogComponent>,
@@ -27,10 +27,7 @@ export class EditTorchTaggerDialogComponent implements OnInit {
     this.data = {...this.data};
   }
 
-  ngOnInit() {
-  }
-
-  onSubmit() {
+  onSubmit(): void {
     this.projectStore.getCurrentProject().pipe(take(1), mergeMap(project => {
       if (project) {
         return this.torchTaggerService.editTorchTagger({description: this.data.description}, project.id, this.data.id);

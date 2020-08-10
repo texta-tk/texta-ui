@@ -66,7 +66,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
               public searchService: SearcherComponentService) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$), switchMap(currentProject => {
       if (currentProject) {
         this.constraintList = [];
@@ -147,7 +147,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
   }
 
 
-  onSelectionChange(event: MatSelectChange) {
+  onSelectionChange(event: MatSelectChange): void {
     if (event.value.length > 0 && event.value[0].type) {
       this.fieldsFiltered.next(this.fieldsUnique.filter((field) => field.type === event.value[0].type));
     } else {
@@ -155,7 +155,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     }
   }
 
-  public onOpenedChange(opened: boolean) {
+  public onOpenedChange(opened: boolean): void {
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && (this.fieldsFormControl.value && this.fieldsFormControl.value.length > 0)) {
       const formFields: Field[] = this.fieldsFormControl.value;
@@ -180,12 +180,12 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     }
   }
 
-  checkMinimumMatch() {
+  checkMinimumMatch(): void {
     // cant match ranges, facts etc
     let shouldMatch = 0;
-    for (let i = 0; i < this.constraintList.length; i++) {
-      if (!(this.constraintList[i] instanceof FactConstraint) && !(this.constraintList[i] instanceof DateConstraint)
-        && !(this.constraintList[i] instanceof NumberConstraint)) {
+    for (const item of this.constraintList) {
+      if (!(item instanceof FactConstraint) && !(item instanceof DateConstraint)
+        && !(item instanceof NumberConstraint)) {
         shouldMatch += 1;
       }
     }
@@ -197,7 +197,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateFieldsToHighlight(constraints: Constraint[]) {
+  updateFieldsToHighlight(constraints: Constraint[]): void {
     if (this.elasticQuery && this.elasticQuery.elasticSearchQuery && this.elasticQuery.elasticSearchQuery.highlight
       && this.elasticQuery.elasticSearchQuery.highlight.fields) {
       this.elasticQuery.elasticSearchQuery.highlight.fields = {};
@@ -216,15 +216,15 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     }
   }
 
-  trackByPath(index: number, item: Field) {
+  trackByPath(index: number, item: Field): string {
     return item.path;
   }
 
-  trackByIndex(index: number, item: unknown) {
+  trackByIndex(index: number, item: unknown): number {
     return index;
   }
 
-  searchOnChange(event: ElasticsearchQuery) {
+  searchOnChange(event: ElasticsearchQuery): void {
     // dont want left focus events
     if (event === this.elasticQuery && this.searchOptions.liveSearch) {
       // reset page when we change query
@@ -234,7 +234,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
   }
 
 
-  public saveSearch(description: string) {
+  public saveSearch(description: string): void {
     if (this.currentUser) {
       this.searcherService.saveSearch(
         this.currentProject.id,
@@ -248,7 +248,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     }
   }
 
-  removeConstraint(index: number) {
+  removeConstraint(index: number): void {
     this.constraintList.splice(index, 1);
     this.changeDetectorRef.detectChanges();
     this.checkMinimumMatch();
@@ -279,7 +279,8 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
       const formFields = constraint.fields;
       if (formFields.length >= 1) {
         if (formFields[0].type === 'text') {
-          this.constraintList.push(new TextConstraint(formFields, this.lexicons, constraint.match, constraint.text, constraint.operator, constraint.slop));
+          this.constraintList.push(new TextConstraint(formFields,
+            this.lexicons, constraint.match, constraint.text, constraint.operator, constraint.slop));
         } else if (formFields[0].type === 'date') {
           this.constraintList.push(new DateConstraint(formFields, constraint.dateFrom, constraint.dateTo));
         } else if (this.mappingNumeric.includes(formFields[0].type)) {
@@ -301,11 +302,12 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     this.checkMinimumMatch();
     this.changeDetectorRef.detectChanges(); // dont use markforcheck because we need updates immediately, so we can update elasticquery
     this.searchService.nextElasticQuery(this.elasticQuery);
-    // since we changed the object reference of constraintList update the subject, for example this is used in fact-chips to create constraints
+    // since we changed the object reference of constraintList update the subject,
+    // for example this is used in fact-chips to create constraints
     this.searchService.nextAdvancedSearchConstraints$(this.constraintList);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.complete();
   }

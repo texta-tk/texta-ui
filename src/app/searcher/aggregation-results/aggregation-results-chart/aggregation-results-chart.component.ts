@@ -99,7 +99,7 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
     this.revision += 1;
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.searcherComponentService.getSearch().pipe(takeUntil(this.destroyed$)).subscribe(x => {
       if (x && this.overlayRef) {
         this.overlayRef.dispose();
@@ -112,7 +112,7 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
   }
 
   // tslint:disable-next-line:no-any
-  areaSelected(val: { points: string | any[]; }) {
+  areaSelected(val: { points: string | any[]; }): void {
     let totalDocCount = 0;
     if (this.overlayRef) {
       this.overlayRef.detach();

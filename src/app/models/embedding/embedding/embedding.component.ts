@@ -54,7 +54,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
               private logService: LogService) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
 
@@ -89,11 +89,11 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
 
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.setUpPaginator();
   }
 
-  setUpPaginator() {
+  setUpPaginator(): void {
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
@@ -128,7 +128,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  phrase(embedding: Embedding) {
+  phrase(embedding: Embedding): void {
     const dialogRef = this.dialog.open(PhraseDialogComponent, {
       data: {embeddingId: embedding.id, currentProjectId: this.currentProject.id},
       maxHeight: '665px',
@@ -137,12 +137,12 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroyed$.next(true);
     this.destroyed$.complete();
   }
 
-  openCreateDialog() {
+  openCreateDialog(): void {
     const dialogRef = this.dialog.open(CreateEmbeddingDialogComponent, {
       maxHeight: '600px',
       width: '700px',
@@ -158,7 +158,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  edit(embedding: Embedding) {
+  edit(embedding: Embedding): void {
     this.dialog.open(EditEmbeddingDialogComponent, {
       width: '750px',
       data: embedding
@@ -172,21 +172,21 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected() {
+  isAllSelected(): boolean {
     const numSelected = this.selectedRows.selected.length;
     const numRows = this.tableData.data.length;
     return numSelected === numRows;
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
+  masterToggle(): void {
     this.isAllSelected() ?
       this.selectedRows.clear() :
       this.tableData.data.forEach(row => this.selectedRows.select(row));
   }
 
 
-  onDelete(embedding: Embedding, index: number) {
+  onDelete(embedding: Embedding, index: number): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {confirmText: 'Delete', mainText: 'Are you sure you want to delete this Embedding?'}
     });
@@ -202,7 +202,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  onDeleteAllSelected() {
+  onDeleteAllSelected(): void {
     if (this.selectedRows.selected.length > 0) {
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         data: {
@@ -226,7 +226,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  removeSelectedRows() {
+  removeSelectedRows(): void {
     this.selectedRows.selected.forEach((selectedTagger: Embedding) => {
       const index: number = this.tableData.data.findIndex(tagger => tagger.id === selectedTagger.id);
       this.tableData.data.splice(index, 1);
@@ -236,7 +236,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
 
-  openQueryDialog(query: string) {
+  openQueryDialog(query: string): void {
     const dialogRef = this.dialog.open(QueryDialogComponent, {
       data: {query},
       maxHeight: '665px',
@@ -244,14 +244,14 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  applyFilter(filterValue: EventTarget | null, field: string) {
+  applyFilter(filterValue: EventTarget | null, field: string): void {
     this.filteringValues[field] = (filterValue as HTMLInputElement).value ? (filterValue as HTMLInputElement).value : '';
     this.paginator.pageIndex = 0;
     this.filterQueriesToString();
     this.filteredSubject.next();
   }
 
-  filterQueriesToString() {
+  filterQueriesToString(): void {
     this.inputFilterQuery = '';
     for (const field in this.filteringValues) {
       this.inputFilterQuery += `&${field}=${this.filteringValues[field]}`;

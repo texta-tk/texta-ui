@@ -22,10 +22,10 @@ export class EditSavedSearchDialogComponent implements OnInit {
               private projectStore: ProjectStore) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
   }
 
-  onSubmit() {
+  onSubmit(): void {
     this.projectStore.getCurrentProject().pipe(take(1), mergeMap(project => {
       if (project) {
         return this.searcherService.editSavedSearch(project.id, this.data.id, {description: this.data.description});

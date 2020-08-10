@@ -12,7 +12,7 @@ import {Subject} from 'rxjs';
 })
 export class DateConstraintsComponent implements OnInit, OnDestroy {
   @Input() elasticSearchQuery: ElasticsearchQuery;
-  @Output() change = new EventEmitter<ElasticsearchQuery>(); // search as you type, emit changes
+  @Output() constraintChanged = new EventEmitter<ElasticsearchQuery>(); // search as you type, emit changes
   range = new FormGroup({
     dateFromFormControl: new FormControl(),
     dateToFormControl: new FormControl()
@@ -24,6 +24,7 @@ export class DateConstraintsComponent implements OnInit, OnDestroy {
   constructor() {
   }
 
+  // tslint:disable-next-line:variable-name
   _dateConstraint: DateConstraint;
 
   @Input() set dateConstraint(value: DateConstraint) {
@@ -34,7 +35,7 @@ export class DateConstraintsComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
 
     if (this._dateConstraint) {
       const fieldPaths = this._dateConstraint.fields.map(x => x.path);
@@ -49,14 +50,14 @@ export class DateConstraintsComponent implements OnInit, OnDestroy {
         if (this.range.valid) {
           this.makeDateQuery(fieldPaths, value.dateFromFormControl, value.dateToFormControl);
           if (value.dateFromFormControl !== value.dateToFormControl) {
-            this.change.emit(this.elasticSearchQuery);
+            this.constraintChanged.emit(this.elasticSearchQuery);
           }
         }
       });
     }
   }
 
-  makeDateQuery(fieldPaths: string[], fromValue: string, toValue: string) {
+  makeDateQuery(fieldPaths: string[], fromValue: string, toValue: string): void {
     this.constraintQuery.bool.must.splice(0, this.constraintQuery.bool.must.length);
     const fromDate = {gte: fromValue};
     const toDate = {lte: toValue};
@@ -66,15 +67,12 @@ export class DateConstraintsComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     console.log('destroy date-constraint');
-    // todo fix in TS 3.7
-    // tslint:disable-next-line:no-non-null-assertion
-    const index = this.elasticSearchQuery!.elasticSearchQuery!.query!.bool!.must.indexOf(this.constraintQuery, 0);
-    if (index > -1) {
-      // todo fix in TS 3.7
-      // tslint:disable-next-line:no-non-null-assertion
-      this.elasticSearchQuery!.elasticSearchQuery!.query!.bool!.must.splice(index, 1);
+    const query = this.elasticSearchQuery?.elasticSearchQuery?.query?.bool?.must;
+    const index = query?.indexOf(this.constraintQuery, 0);
+    if (index && index > -1) {
+      query?.splice(index, 1);
     }
     this.destroyed$.next(true);
     this.destroyed$.complete();

@@ -3,7 +3,7 @@ import {MatTableDataSource} from '@angular/material/table';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatSort} from '@angular/material/sort';
 import {MatPaginator} from '@angular/material/paginator';
-import {merge, of, Subject} from 'rxjs';
+import {merge, of, Subject, Subscription} from 'rxjs';
 import {Project} from '../../../shared/types/Project';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {MatDialog} from '@angular/material/dialog';
@@ -51,7 +51,7 @@ export class ClusteringComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public getIndexName = (x: Index) => x.name;
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(resp => {
@@ -66,7 +66,7 @@ export class ClusteringComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
@@ -98,7 +98,7 @@ export class ClusteringComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
 
-  editStopwordsDialog(element: Cluster) {
+  editStopwordsDialog(element: Cluster): void {
     const dialogRef = this.dialog.open(EditStopwordsDialogComponent, {
       data: {cluster: element, currentProjectId: this.currentProject.id},
       maxHeight: '665px',
@@ -106,7 +106,7 @@ export class ClusteringComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  openCreateDialog() {
+  openCreateDialog(): void {
     const dialogRef = this.dialog.open(CreateClusteringDialogComponent, {
       maxHeight: '90vh',
       width: '800px',
@@ -122,7 +122,7 @@ export class ClusteringComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  retrainCluster(element: Cluster) {
+  retrainCluster(element: Cluster): null | Subscription {
     if (this.currentProject) {
       return this.clusterService.retrainCluster(this.currentProject.id, element.id)
         .subscribe((resp: unknown | HttpErrorResponse) => {
@@ -137,7 +137,7 @@ export class ClusteringComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  openQueryDialog(query: string) {
+  openQueryDialog(query: string): void {
     this.dialog.open(QueryDialogComponent, {
       data: {query},
       maxHeight: '965px',
@@ -145,7 +145,7 @@ export class ClusteringComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  onDelete(cluster: Cluster, index: number) {
+  onDelete(cluster: Cluster, index: number): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {confirmText: 'Delete', mainText: 'Are you sure you want to delete this clustering?'}
     });
@@ -162,21 +162,21 @@ export class ClusteringComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected() {
+  isAllSelected(): boolean {
     const numSelected = this.selectedRows.selected.length;
     const numRows = this.tableData.data.length;
     return numSelected === numRows;
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
+  masterToggle(): void {
     this.isAllSelected() ?
       this.selectedRows.clear() :
       this.tableData.data.forEach(row => this.selectedRows.select(row));
   }
 
 
-  onDeleteAllSelected() {
+  onDeleteAllSelected(): void {
     if (this.selectedRows.selected.length > 0) {
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         data: {
@@ -200,7 +200,7 @@ export class ClusteringComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  removeSelectedRows() {
+  removeSelectedRows(): void {
     this.selectedRows.selected.forEach((selectedCluster: Cluster) => {
       const index: number = this.tableData.data.findIndex(cluster => cluster.id === selectedCluster.id);
       this.tableData.data.splice(index, 1);
@@ -209,7 +209,7 @@ export class ClusteringComponent implements OnInit, OnDestroy, AfterViewInit {
     this.selectedRows.clear();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroyed$.next(true);
     this.destroyed$.complete();
   }

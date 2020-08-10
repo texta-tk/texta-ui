@@ -11,7 +11,7 @@ import {Subject} from 'rxjs';
   templateUrl: './aggregation-results-tree.component.html',
   styleUrls: ['./aggregation-results-tree.component.scss'],
 })
-export class AggregationResultsTreeComponent implements OnInit, OnDestroy {
+export class AggregationResultsTreeComponent implements OnDestroy {
   // tslint:disable-next-line:no-any
   @Input() dataSource: any[] | undefined;
   // tslint:disable-next-line:no-any
@@ -28,10 +28,7 @@ export class AggregationResultsTreeComponent implements OnInit, OnDestroy {
   // tslint:disable-next-line:no-any
   bucketAccessor = (x: any) => (x.buckets);
 
-  ngOnInit() {
-  }
-
-  openDialog(val: { key: string; }) {
+  openDialog(val: { key: string; }): void {
     if (this.bucketAccessor(val)[0].key_as_string) {
       this.dialog.open(AggregationResultsDialogComponent, {
         data: {
@@ -54,9 +51,9 @@ export class AggregationResultsTreeComponent implements OnInit, OnDestroy {
     }
   }
 
-  formatDateData(buckets: { key_as_string: string, key: number, doc_count: number }[]) {
+  formatDateData(buckets: { key_as_string: string, key: number, doc_count: number }[]): {value: number, name: string}[] {
     // tslint:disable-next-line:no-any
-    const dateData: any[] = [];
+    const dateData: {value: number, name: string}[] = [];
     for (const element of buckets) {
       dateData.push({
         value: element.doc_count,
@@ -66,7 +63,7 @@ export class AggregationResultsTreeComponent implements OnInit, OnDestroy {
     return dateData;
   }
 
-  makeSearch(childNode: { key: string; }) {
+  makeSearch(childNode: { key: string; }): void {
     // @ts-ignore
     this.dataSource.forEach(x => {
       if (this.treeControl.isExpanded(x)) {

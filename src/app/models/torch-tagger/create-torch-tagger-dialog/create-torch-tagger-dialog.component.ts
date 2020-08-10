@@ -52,6 +52,7 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy, Afte
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
+  // tslint:disable-next-line:no-any
   torchTaggerOptions: any;
   embeddings: Embedding[] = [];
   projectFields: ProjectIndex[];
@@ -69,7 +70,7 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy, Afte
               private projectStore: ProjectStore) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.projectStore.getCurrentProject().pipe(take(1), mergeMap(currentProject => {
       if (currentProject) {
         this.currentProject = currentProject;
@@ -112,7 +113,8 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy, Afte
   ngAfterViewInit(): void {
     this.indicesSelect.openedChange.pipe(takeUntil(this.destroyed$), switchMap(opened => {
       if (!opened && this.indicesSelect.value) {
-        return this.projectService.getProjectFacts(this.currentProject.id, this.indicesSelect.value.map((x: ProjectIndex) => [{name: x.index}]).flat());
+        return this.projectService.getProjectFacts(this.currentProject.id,
+          this.indicesSelect.value.map((x: ProjectIndex) => [{name: x.index}]).flat());
       }
       return of(null);
     })).subscribe(resp => {
@@ -122,16 +124,16 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy, Afte
     });
   }
 
-  onQueryChanged(query: string) {
+  onQueryChanged(query: string): void {
     this.query = query ? query : this.defaultQuery;
   }
 
-  getFieldsForIndices(indices: ProjectIndex[]) {
+  getFieldsForIndices(indices: ProjectIndex[]): void {
     this.projectFields = ProjectIndex.cleanProjectIndicesFields(indices, ['text'], []);
     this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
   }
 
-  public indicesOpenedChange(opened: unknown) {
+  public indicesOpenedChange(opened: unknown): void {
     const indicesForm = this.torchTaggerForm.get('indicesFormControl');
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && (indicesForm?.value && indicesForm.value.length > 0)) {
@@ -139,7 +141,7 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy, Afte
     }
   }
 
-  onSubmit({formData}: OnSubmitParams) {
+  onSubmit({formData}: OnSubmitParams): void {
     if (this.currentProject.id) {
       const body = {
         description: formData.descriptionFormControl,

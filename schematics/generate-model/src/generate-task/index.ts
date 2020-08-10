@@ -32,6 +32,7 @@ export function setupOptions(host: Tree, options: any): Tree {
 }
 // You don't have to export the function as default. You can also have more than one rule factory
 // per file.
+
 export function generateTask(options: any): Rule {
   return (tree: Tree, _context: SchematicContext) => {
     const workspaceConfig = tree.read('/angular.json');

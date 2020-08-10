@@ -1,3 +1,5 @@
+
+// tslint:disable:variable-name
 export class Lexicon {
   id: number;
   author: string;

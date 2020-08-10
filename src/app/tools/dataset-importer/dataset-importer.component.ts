@@ -200,7 +200,9 @@ export class DatasetImporterComponent implements OnInit, OnDestroy {
   filterQueriesToString(): void {
     this.inputFilterQuery = '';
     for (const field in this.filteringValues) {
-      this.inputFilterQuery += `&${field}=${this.filteringValues[field]}`;
+      if (this.filteringValues.hasOwnProperty(field)) {
+        this.inputFilterQuery += `&${field}=${this.filteringValues[field]}`;
+      }
     }
   }
 }

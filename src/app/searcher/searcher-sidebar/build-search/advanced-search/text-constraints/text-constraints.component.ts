@@ -1,4 +1,13 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild
+} from '@angular/core';
 import {ElasticsearchQuery, TextConstraint} from '../../Constraints';
 import {FormControl} from '@angular/forms';
 import {pairwise, startWith, takeUntil} from 'rxjs/operators';
@@ -14,7 +23,7 @@ import {MatMenuTrigger} from '@angular/material/menu';
 })
 export class TextConstraintsComponent implements OnInit, OnDestroy {
   @Input() elasticSearchQuery: ElasticsearchQuery;
-  @Output() change = new EventEmitter<ElasticsearchQuery>(); // search as you type, emit changes
+  @Output() constraintChanged = new EventEmitter<ElasticsearchQuery>(); // search as you type, emit changes
   @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
   destroyed$: Subject<boolean> = new Subject<boolean>();
   // tslint:disable-next-line:no-any
@@ -45,7 +54,7 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     if (this._textConstraint) {
       // multi line textarea, 1 formequery entry for each line
       // tslint:disable-next-line:no-any
@@ -76,7 +85,7 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
           this.buildTextareaMultiMatchQuery(formQueries, value[1], multiMatchBlueprint);
         }
         if (value[0] !== value[1]) {
-          this.change.emit(this.elasticSearchQuery);
+          this.constraintChanged.emit(this.elasticSearchQuery);
         }
       });
 
@@ -95,12 +104,12 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
         } else {
           this.slopFormControl.enable();
         }
-        this.change.emit(this.elasticSearchQuery);
+        this.constraintChanged.emit(this.elasticSearchQuery);
       });
 
       this.operatorFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((value: string) => {
         this.constraintQuery.bool = {[value]: formQueries};
-        this.change.emit(this.elasticSearchQuery);
+        this.constraintChanged.emit(this.elasticSearchQuery);
       });
 
       this.slopFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(value => {
@@ -109,7 +118,7 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
         if (this.textAreaFormControl.value && this.textAreaFormControl.value.length > 0) {
           this.buildTextareaMultiMatchQuery(formQueries, this.textAreaFormControl.value, multiMatchBlueprint);
         }
-        this.change.emit(this.elasticSearchQuery);
+        this.constraintChanged.emit(this.elasticSearchQuery);
       });
 
       // todo
@@ -117,7 +126,7 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
     }
   }
 
-  buildRegexQuery(formQueries: unknown[], formValue: string, fields: string[]) {
+  buildRegexQuery(formQueries: unknown[], formValue: string, fields: string[]): void {
 // gonna rebuild formqueries so delete previous
     formQueries.splice(0, formQueries.length);
     const textareaValues = this.stringToArray(formValue, '\n');
@@ -145,8 +154,13 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
   }
 
   // every newline in textarea is a new multi_match clause
-  buildTextareaMultiMatchQuery(formQueries: unknown[], formValue: string,
-                               multiMatchBlueprint: { multi_match: { query: string; type: string; slop: number; fields: string[]; }; }) {
+  buildTextareaMultiMatchQuery(formQueries: unknown[],
+                               formValue: string,
+                               multiMatchBlueprint: {
+                                 multi_match: {
+                                   query: string; type: string; slop: number; fields: string[];
+                                 };
+                               }): void {
     // gonna rebuild formqueries so delete previous
     formQueries.splice(0, formQueries.length);
     const textareaValues = this.stringToArray(formValue, '\n');
@@ -168,7 +182,7 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
     }
   }
 
-  public addLexicon(val: Lexicon) {
+  public addLexicon(val: Lexicon): void {
     const formControlValue = this.textAreaFormControl.value as string;
     let phrases = '';
     if (val.phrases) {
@@ -184,7 +198,7 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
     this.trigger.closeMenu();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     console.log('destroy text-constraint');
     // todo fix in TS 3.7
     // tslint:disable-next-line:no-non-null-assertion

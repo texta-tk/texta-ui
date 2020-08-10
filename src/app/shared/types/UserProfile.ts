@@ -1,3 +1,5 @@
+
+// tslint:disable:variable-name
 export class UserProfile {
   url = '';
   email = '';

@@ -15,7 +15,7 @@ import {Tagger} from '../../../shared/types/tasks/Tagger';
   templateUrl: './edit-tagger-dialog.component.html',
   styleUrls: ['./edit-tagger-dialog.component.scss']
 })
-export class EditTaggerDialogComponent implements OnInit {
+export class EditTaggerDialogComponent {
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
 
   constructor(private dialogRef: MatDialogRef<EditTaggerDialogComponent>,
@@ -25,10 +25,7 @@ export class EditTaggerDialogComponent implements OnInit {
     this.data = {...this.data};
   }
 
-  ngOnInit() {
-  }
-
-  onSubmit() {
+  onSubmit(): void {
     this.projectStore.getCurrentProject().pipe(take(1), mergeMap(project => {
       if (project) {
         return this.taggerService.editTagger({description: this.data.description}, project.id, this.data.id);

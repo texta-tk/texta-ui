@@ -1,5 +1,6 @@
 import {TaskStatus} from './TaskStatus';
 
+// tslint:disable:variable-name
 export class TorchTagger {
   url: string;
   author_username: string;

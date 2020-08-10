@@ -13,7 +13,7 @@ import {debounceTime, startWith, takeUntil} from 'rxjs/operators';
 export class NumberConstraintsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Input() elasticSearchQuery: ElasticsearchQuery;
-  @Output() change = new EventEmitter<ElasticsearchQuery>(); // search as you type, emit changes
+  @Output() constraintChanged = new EventEmitter<ElasticsearchQuery>(); // search as you type, emit changes
   @ViewChild(FromToInputComponent) fromToInput: FromToInputComponent;
   operatorFormControl = new FormControl();
 
@@ -55,14 +55,14 @@ export class NumberConstraintsComponent implements OnInit, OnDestroy, AfterViewI
 
         this.operatorFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((value: string) => {
           this.constraintQuery.bool = {[value]: formQueries};
-          this.change.emit(this.elasticSearchQuery);
+          this.constraintChanged.emit(this.elasticSearchQuery);
         });
         this.fromToInput.parts.valueChanges.pipe(takeUntil(this.destroyed$),
           startWith(this._numberConstraint.fromToInput as FromToInput)).subscribe(value => {
           if (this.fromToInput?.value) {
             this.makeRangeQuery(fieldPaths, this.fromToInput.value, formQueries);
             this._numberConstraint.fromToInput = this.fromToInput.value;
-            this.change.emit(this.elasticSearchQuery);
+            this.constraintChanged.emit(this.elasticSearchQuery);
           }
         });
       }
@@ -70,7 +70,7 @@ export class NumberConstraintsComponent implements OnInit, OnDestroy, AfterViewI
 
   }
 
-  makeRangeQuery(fieldPaths: string[], fromTo: FromToInput, formQueries: unknown[]) {
+  makeRangeQuery(fieldPaths: string[], fromTo: FromToInput, formQueries: unknown[]): void {
     formQueries.splice(0, formQueries.length);
     for (const field of fieldPaths) {
       formQueries.push({
@@ -84,7 +84,7 @@ export class NumberConstraintsComponent implements OnInit, OnDestroy, AfterViewI
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     console.log('destroy number-constraint');
     const index = this.elasticSearchQuery?.elasticSearchQuery?.query?.bool?.must?.indexOf(this.constraintQuery, 0);
     if (index != null && index > -1) {

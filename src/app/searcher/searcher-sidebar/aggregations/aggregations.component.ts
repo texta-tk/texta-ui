@@ -11,6 +11,7 @@ import {ElasticsearchQuery, ElasticsearchQueryStructure} from '../build-search/C
 import {LogService} from '../../../core/util/log.service';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 
+// tslint:disable:no-any
 export interface AggregationForm {
   aggregation: any;
   formControl: FormControl;
@@ -41,7 +42,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
 
   }
 
-  addNewAggregation() {
+  addNewAggregation(): void {
     const form = new FormControl();
     const formDestroy = new Subject<boolean>();
     form.valueChanges.pipe(takeUntil(formDestroy), pairwise()).subscribe(([old, val]) => {
@@ -57,7 +58,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
     this.aggregationList.push({aggregation: {}, formControl: form, formDestroy});
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$)).subscribe(currentProject => {
       if (currentProject) {
         this.currentProject = currentProject;
@@ -83,7 +84,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
 
   }
 
-  aggregate() {
+  aggregate(): void {
     const joinedAggregation = this.makeAggregations(this.aggregationList);
     const aggregationType = Object.keys(joinedAggregation)[0];
     const body = {
@@ -143,7 +144,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
     }, x => console.log(x), () => this.searchService.setIsLoading(false));
   }
 
-  makeAggregations(aggregationList: { aggregation: any }[]) {
+  makeAggregations(aggregationList: { aggregation: any }[]): any {
     let innermostAgg;
     let finalAgg: any;
     for (const aggregation of aggregationList) {
@@ -160,9 +161,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
     return finalAgg;
   }
 
-  // @ts-ignore
-  // tslint:disable-next-line:no-any
-  getInnerMostAggs(aggregation: any) {
+  getInnerMostAggs(aggregation: any): any {
     let aggInner;
     let inCaseNoAggsFound;
     for (const firstLevelAgg in aggregation) {
@@ -184,26 +183,26 @@ export class AggregationsComponent implements OnInit, OnDestroy {
     }
   }
 
-  onRelativeFrequency(val: boolean) {
+  onRelativeFrequency(val: boolean): void {
     this.dateRelativeFrequency = val;
   }
 
-  fieldTypeTextOrFact(val: Field) {
+  fieldTypeTextOrFact(val: Field): boolean {
     return (val && (val.type === 'text' || val.type === 'fact'));
   }
 
-  fieldTypeDate(val: Field) {
+  fieldTypeDate(val: Field): boolean {
     return (val && (val.type === 'date'));
   }
 
-  removeAggregation(index: number) {
+  removeAggregation(index: number): void {
     this.dateAlreadySelected = this.aggregationList[index].formControl.value.type === 'date' ? false : this.dateAlreadySelected;
     this.aggregationList[index].formDestroy.next(true);
     this.aggregationList[index].formDestroy.complete();
     this.aggregationList.splice(index, 1);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.complete();
     for (const aggregation of this.aggregationList) {

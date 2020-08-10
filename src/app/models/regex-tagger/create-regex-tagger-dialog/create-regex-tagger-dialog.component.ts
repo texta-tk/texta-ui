@@ -103,7 +103,8 @@ export class CreateRegexTaggerDialogComponent implements OnInit, OnDestroy {
     const body = {
       description: formData.descriptionFormControl,
       lexicon: formData.lexiconFormControl.length > 0 ? formData.lexiconFormControl.split('\n').filter((x: unknown) => x) : [],
-      counter_lexicon: formData.counterLexiconFormControl.length > 0 ? formData.counterLexiconFormControl.split('\n').filter((x: unknown) => x) : [],
+      counter_lexicon: formData.counterLexiconFormControl.length > 0 ?
+        formData.counterLexiconFormControl.split('\n').filter((x: unknown) => x) : [],
       operator: formData.operatorFormControl,
       match_type: formData.matchTypeFormControl,
       required_words: formData.requiredWordsFormControl,

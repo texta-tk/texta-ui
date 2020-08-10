@@ -26,7 +26,7 @@ export class EditStopwordsDialogComponent implements OnInit {
   }
 
 
-  onSubmit() {
+  onSubmit(): void {
     const body = {
       stop_words: this.stopwords ? this.stopwords.split('\n') : []
     };

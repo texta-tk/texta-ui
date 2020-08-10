@@ -17,7 +17,6 @@ import {ClusterOptions} from '../../../../shared/types/tasks/ClusterOptions';
 import {EmbeddingsService} from '../../../../core/models/embeddings/embeddings.service';
 import {ResultsWrapper} from '../../../../shared/types/Generic';
 import {Embedding} from '../../../../shared/types/tasks/Embedding';
-import {MatSelectChange} from "@angular/material/select";
 
 @Component({
   selector: 'app-create-cluster-dialog',
@@ -63,7 +62,7 @@ export class CreateClusteringDialogComponent implements OnInit, OnDestroy {
               private projectStore: ProjectStore) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(currentProjIndices => {
       if (currentProjIndices) {
         const indicesForm = this.clusterForm.get('indicesFormControl');
@@ -100,12 +99,12 @@ export class CreateClusteringDialogComponent implements OnInit, OnDestroy {
     });
   }
 
-  getFieldsForIndices(indices: ProjectIndex[]) {
+  getFieldsForIndices(indices: ProjectIndex[]): void {
     this.projectFields = ProjectIndex.cleanProjectIndicesFields(indices, ['text'], []);
     this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
   }
 
-  public indicesOpenedChange(opened: unknown) {
+  public indicesOpenedChange(opened: unknown): void {
     const indicesForm = this.clusterForm.get('indicesFormControl');
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && (indicesForm?.value && indicesForm.value.length > 0)) {
@@ -117,12 +116,12 @@ export class CreateClusteringDialogComponent implements OnInit, OnDestroy {
     return (options as ClusterOptions).actions !== undefined;
   }
 
-  onQueryChanged(query: string) {
+  onQueryChanged(query: string): void {
     this.query = query ? query : this.defaultQuery;
   }
 
   // tslint:disable-next-line:no-any
-  onSubmit(formData: any) {
+  onSubmit(formData: any): void {
     const body = {
       description: formData.descriptionFormControl,
       indices: formData.indicesFormControl.map((x: ProjectIndex) => [{name: x.index}]).flat(),
@@ -149,7 +148,7 @@ export class CreateClusteringDialogComponent implements OnInit, OnDestroy {
     });
   }
 
-  setDefaultFormValues(options: ClusterOptions) {
+  setDefaultFormValues(options: ClusterOptions): void {
     const vectorizer = this.clusterForm.get('clusteringAlgorithmFormControl');
     if (vectorizer) {
       vectorizer.setValue(options.actions.POST.clustering_algorithm.choices[0]);

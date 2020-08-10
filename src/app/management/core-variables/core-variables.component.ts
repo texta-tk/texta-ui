@@ -6,6 +6,7 @@ import {UtilityFunctions} from '../../shared/UtilityFunctions';
 import {CoreService} from '../../core/core.service';
 
 class CoreVariable {
+  // tslint:disable-next-line:variable-name
   constructor(public value: string, public env_value: string, public url: string, public name: string) {
   }
 }
@@ -31,7 +32,7 @@ export class CoreVariablesComponent implements OnInit {
     });
   }
 
-  submit() {
+  submit(): void {
     const changed: CoreVariable[] = [];
     this.coreVariables.forEach(x => {
       if (this.coreVariablesOriginal.find(y => (y.name === x.name && y.value !== x.value))) {
@@ -43,11 +44,11 @@ export class CoreVariablesComponent implements OnInit {
       formData.append('name', x.name);
       formData.append('value', x.value);
 
-      this.coreService.patchCoreVariables(formData, x.url).subscribe(x => {
-        if (x && !(x instanceof HttpErrorResponse)) {
+      this.coreService.patchCoreVariables(formData, x.url).subscribe(resp => {
+        if (resp && !(resp instanceof HttpErrorResponse)) {
           this.logService.snackBarMessage(`Updated core variables`, 2000);
         } else if (x) {
-          this.logService.snackBarError(x, 2000);
+          this.logService.snackBarError(resp, 2000);
         }
       });
     });

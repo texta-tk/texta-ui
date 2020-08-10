@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild,} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {Search} from '../../../shared/types/Search';
 import {SearcherComponentService} from '../../services/searcher-component.service';
 import {SavedSearch} from '../../../shared/types/SavedSearch';
@@ -62,7 +62,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     });
   }
 
-  saveSearch(description: string) {
+  saveSearch(description: string): void {
     if (this.searcherType === 2) {
       this.advancedSearchComponent.saveSearch(description);
     } else {
@@ -70,7 +70,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     }
   }
 
-  queryNewSearch() {
+  queryNewSearch(): void {
     if (this.searcherType === 2) {
       this.advancedSearchComponent.searchQueue$.next();
     } else {
@@ -78,7 +78,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     }
   }
 
-  saveTypeSelection(saveType: 1 | 2) {
+  saveTypeSelection(saveType: 1 | 2): void {
     const state = this.localStorageService.getProjectState(this.currentProject);
     if (state?.searcher?.searcherType) {
       state.searcher.searcherType = saveType;

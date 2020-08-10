@@ -57,7 +57,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
               private projectStore: ProjectStore) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(currentProjIndices => {
       if (currentProjIndices) {
         const indicesForm = this.taggerForm.get('indicesFormControl');
@@ -95,12 +95,12 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
     });
   }
 
-  getFieldsForIndices(indices: ProjectIndex[]) {
+  getFieldsForIndices(indices: ProjectIndex[]): void {
     this.projectFields = ProjectIndex.cleanProjectIndicesFields(indices, ['text'], []);
     this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
   }
 
-  public indicesOpenedChange(opened: boolean) {
+  public indicesOpenedChange(opened: boolean): void {
     const indicesForm = this.taggerForm.get('indicesFormControl');
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && (indicesForm?.value && indicesForm.value.length > 0)) {
@@ -112,12 +112,12 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
     return (options as TaggerOptions).actions !== undefined;
   }
 
-  onQueryChanged(query: string) {
+  onQueryChanged(query: string): void {
     this.query = query ? query : this.defaultQuery;
   }
 
   // tslint:disable-next-line:no-any
-  onSubmit(formData: any) {
+  onSubmit(formData: any): void {
     const body = {
       description: formData.descriptionFormControl,
       indices: formData.indicesFormControl.map((x: ProjectIndex) => [{name: x.index}]).flat(),
@@ -145,7 +145,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
     });
   }
 
-  setDefaultFormValues(options: TaggerOptions) {
+  setDefaultFormValues(options: TaggerOptions): void {
     const vectorizer = this.taggerForm.get('vectorizerFormControl');
     if (vectorizer) {
       vectorizer.setValue(options.actions.POST.vectorizer.choices[0]);

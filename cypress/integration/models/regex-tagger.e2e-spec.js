@@ -37,16 +37,6 @@ describe('regex-tagger should work', function () {
       cy.matFormFieldShouldHaveError(desc, 'required');
       cy.wrap(desc).type('test');
     }));
-    cy.get('[data-cy=appRegexTaggerCreateDialogOperator]').click().then((desc => {
-      cy.wrap(desc).should('have.class', 'mat-focused').type('b').find('input').clear();
-      cy.matFormFieldShouldHaveError(desc, 'required');
-      cy.wrap(desc).type('?');
-    }));
-    cy.get('[data-cy=appRegexTaggerCreateDialogMatchType]').click().then((desc => {
-      cy.wrap(desc).should('have.class', 'mat-focused').type('b').find('input').clear();
-      cy.matFormFieldShouldHaveError(desc, 'required');
-      cy.wrap(desc).type('?');
-    }));
 
     cy.get('[data-cy=appRegexTaggerCreateDialogSubmit]').click();
     cy.wait('@postRegexTaggers').then(created => {

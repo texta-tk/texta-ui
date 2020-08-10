@@ -62,17 +62,17 @@ export class AggregationResultFactsComponent {
     }
   }
 
-  barChartSelected(val: BarChartData) {
+  barChartSelected(val: BarChartData): void {
     if (val?.extra?.key && val?.name) {
       this.makeSearch(val.extra.key, val.extra.name);
     }
   }
 
-  makeSearch(factName: string, factValue: string) {
+  makeSearch(factName: string, factValue: string): void {
     this.searchService.createConstraintFromFact(factName, factValue);
   }
 
-  formatYAxisTicks(val: string) {
+  formatYAxisTicks(val: string): string {
     let origName: string | string[] = val.split('|'); // take out the ID (KEY, PER, ORG etc)
     origName.shift();
     origName = origName.join('|');
@@ -89,7 +89,7 @@ export class AggregationResultFactsComponent {
     return origName.length === stringValue.trim().length ? stringValue : stringValue + '...';
   }
 
-  openedChange(val: boolean) {
+  openedChange(val: boolean): void {
     if (this.selectedFacts.length >= 0) {
       this.chartData = this.selectedFacts.flatMap(x => x.value).sort((a, b) => (a.value < b.value) ? 1 : -1).slice(0, 30);
     }

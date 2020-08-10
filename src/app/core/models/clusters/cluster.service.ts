@@ -26,7 +26,7 @@ export class ClusterService {
       catchError(this.logService.handleError<ResultsWrapper<Cluster>>('getClusters')));
   }
 
-  retrainCluster(projectId: number, clusterId: number) {
+  retrainCluster(projectId: number, clusterId: number): Observable<unknown> {
     return this.http.post<unknown>(`${this.apiUrl}/projects/${projectId}/clustering/${clusterId}/retrain/`, {}
     ).pipe(
       tap(e => this.logService.logStatus(e, 'retrainCluster')),
@@ -51,43 +51,42 @@ export class ClusterService {
       catchError(this.logService.handleError<Cluster>('editCluster')));
   }
 
-  bulkDeleteClusterings(projectId: number, body: { ids: number[]; }) {
+  bulkDeleteClusterings(projectId: number, body: { ids: number[]; }): Observable<unknown> {
     return this.http.post<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>
     (`${this.apiUrl}/projects/${projectId}/clustering/bulk_delete/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'bulkDeleteClusterings')),
       catchError(this.logService.handleError<unknown>('bulkDeleteClusterings')));
   }
 
-  bulkDeleteClusters(projectId: number, clusteringId: number, body: { ids: number[]; }) {
+  bulkDeleteClusters(projectId: number, clusteringId: number, body: { ids: number[]; }): Observable<unknown> {
     return this.http.post<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>
     (`${this.apiUrl}/projects/${projectId}/clustering/${clusteringId}/bulk_delete_clusters/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'bulkDeleteClusters')),
       catchError(this.logService.handleError<unknown>('bulkDeleteClusters')));
   }
 
-  bulkDeleteClusterDocuments(projectId: number, clusteringId: number, clusterId: number, body: { ids: number[]; }) {
+  bulkDeleteClusterDocuments(projectId: number, clusteringId: number, clusterId: number, body: { ids: number[]; }): Observable<unknown> {
     return this.http.post<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>
     (`${this.apiUrl}/projects/${projectId}/clustering/${clusteringId}/clusters/${clusterId}/remove_documents/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'bulkDeleteClusterDocuments')),
       catchError(this.logService.handleError<unknown>('bulkDeleteClusterDocuments')));
   }
 
-  // tslint:disable-next-line:no-any
-  addDocumentsToCluster(projectId: number, clusteringId: number, clusterId: number, body: any) {
+  addDocumentsToCluster(projectId: number, clusteringId: number, clusterId: number, body: unknown): Observable<unknown> {
     return this.http.post<unknown>
     (`${this.apiUrl}/projects/${projectId}/clustering/${clusteringId}/clusters/${clusterId}/add_documents/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'addDocumentsToCluster')),
       catchError(this.logService.handleError<unknown>('addDocumentsToCluster')));
   }
 
-  expandCluster(projectId: number, clusteringId: number, clusterId: number, body: { ids: string[]; }) {
+  expandCluster(projectId: number, clusteringId: number, clusterId: number, body: { ids: string[]; }): Observable<unknown> {
     return this.http.post<unknown>
     (`${this.apiUrl}/projects/${projectId}/clustering/${clusteringId}/clusters/${clusterId}/expand_cluster/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'expandCluster')),
       catchError(this.logService.handleError<unknown>('expandCluster')));
   }
 
-  tagCluster(projectId: number, clusteringId: number, clusterId: number, body: { fact: string; str_val: string; doc_path: string; }) {
+  tagCluster(projectId: number, clusteringId: number, clusterId: number, body: unknown): Observable<unknown> {
     return this.http.post<unknown>
     (`${this.apiUrl}/projects/${projectId}/clustering/${clusteringId}/clusters/${clusterId}/tag_cluster/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'tagCluster')),
@@ -102,7 +101,7 @@ export class ClusterService {
       catchError(this.logService.handleError<ClusterMoreLikeThis[]>('moreLikeCluster')));
   }
 
-  deleteCluster(projectId: number, clusterId: number) {
+  deleteCluster(projectId: number, clusterId: number): Observable<unknown> {
     return this.http.delete(`${this.apiUrl}/projects/${projectId}/clustering/${clusterId}/`).pipe(
       tap(e => this.logService.logStatus(e, 'deleteCluster')),
       catchError(this.logService.handleError<unknown>('deleteCluster')));

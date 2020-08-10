@@ -21,7 +21,7 @@ export class AggregationResultsDialogComponent implements OnInit {
     }
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     setTimeout(() => {
       this.type = this.data.type;
       if (this.type === 'histo') {

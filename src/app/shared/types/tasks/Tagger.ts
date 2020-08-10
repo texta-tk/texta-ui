@@ -1,5 +1,7 @@
 import {TaskStatus} from './TaskStatus';
 
+
+// tslint:disable:variable-name
 export class Tagger {
   url: string;
   id: number;

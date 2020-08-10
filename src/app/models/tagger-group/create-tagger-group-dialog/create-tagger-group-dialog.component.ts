@@ -63,7 +63,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
               private projectStore: ProjectStore) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(currentProjIndices => {
       if (currentProjIndices) {
         const indicesForm = this.taggerGroupForm.get('taggerForm')?.get('indicesFormControl');
@@ -118,12 +118,12 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
     });
   }
 
-  getFieldsForIndices(indices: ProjectIndex[]) {
+  getFieldsForIndices(indices: ProjectIndex[]): void {
     this.projectFields = ProjectIndex.cleanProjectIndicesFields(indices, ['text'], []);
     this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
   }
 
-  public indicesOpenedChange(opened: boolean) {
+  public indicesOpenedChange(opened: boolean): void {
     const indicesForm = this.taggerGroupForm.get('taggerForm')?.get('indicesFormControl');
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && (indicesForm?.value && indicesForm.value.length > 0)) {
@@ -131,7 +131,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
     }
   }
 
-  onSubmit() {
+  onSubmit(): void {
     const formData = this.taggerGroupForm.value;
     const taggerBody = {
       fields: formData.taggerForm.fieldsFormControl,
@@ -161,7 +161,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
     }
   }
 
-  setDefaultFormValues(options: TaggerOptions) {
+  setDefaultFormValues(options: TaggerOptions): void {
     const taggerForm = this.taggerGroupForm.get('taggerForm');
     if (taggerForm) {
       const vectorizer = taggerForm.get('vectorizerFormControl');

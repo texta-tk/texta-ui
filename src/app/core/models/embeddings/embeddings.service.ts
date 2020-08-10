@@ -56,14 +56,14 @@ export class EmbeddingsService {
       catchError(this.logService.handleError<string>('phrase')));
   }
 
-  bulkDeleteEmbeddings(projectId: number, body: unknown) {
+  bulkDeleteEmbeddings(projectId: number, body: unknown): Observable<unknown> {
     return this.http.post<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>
     (`${this.apiUrl}/projects/${projectId}/embeddings/bulk_delete/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'bulkDeleteEmbeddings')),
       catchError(this.logService.handleError<unknown>('bulkDeleteEmbeddings')));
   }
 
-  deleteEmbedding(projectId: number, embeddingId: number) {
+  deleteEmbedding(projectId: number, embeddingId: number): Observable<unknown> {
     return this.http.delete(`${this.apiUrl}/projects/${projectId}/embeddings/${embeddingId}/`).pipe(
       tap(e => this.logService.logStatus(e, 'deleteEmbedding')),
       catchError(this.logService.handleError<unknown>('deleteEmbedding')));
