@@ -38,7 +38,7 @@ export class FromToInputComponent implements ControlValueAccessor, MatFormFieldC
   previousTo = 0;
   readonly autofilled: boolean;
 
-  @HostBinding('class.host-floating-label') hostLabel = this.shouldLabelFloat;
+  @HostBinding('class.host-floating-label') hostLabel: boolean;
   @HostBinding('id') hostId = this.id;
   @HostBinding('attr.aria-describedby') hostAria = this.describedBy;
 
@@ -256,6 +256,6 @@ export class FromToInputComponent implements ControlValueAccessor, MatFormFieldC
         }
       }
     });
-
+    this.hostLabel = this.shouldLabelFloat;
   }
 }
