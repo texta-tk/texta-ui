@@ -4,13 +4,14 @@ import {LexiconService} from '../../core/lexicon/lexicon.service';
 import {ProjectStore} from '../../core/projects/project.store';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {Project} from '../../shared/types/Project';
-import {of, Subject} from 'rxjs';
+import {of, Subject, Subscription} from 'rxjs';
 import {EmbeddingsService} from '../../core/models/embeddings/embeddings.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Embedding, EmbeddingPrediction} from '../../shared/types/tasks/Embedding';
 import {LogService} from '../../core/util/log.service';
 import {LocalStorageService} from 'src/app/core/util/local-storage.service';
 
+// tslint:disable:variable-name
 @Component({
   selector: 'app-lexicon-builder',
   templateUrl: './lexicon-builder.component.html',
@@ -51,7 +52,7 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$), switchMap(currentProject => {
       if (currentProject) {
         this.currentProject = currentProject;
@@ -73,7 +74,7 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
     });
   }
 
-  getSavedDefaultEmbedding() {
+  getSavedDefaultEmbedding(): void {
     const state = this.localStorageService.getProjectState(this.currentProject);
     if (state?.lexicons.embeddingId) {
       this.embeddings.forEach((embedding: Embedding) => {
@@ -84,12 +85,12 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
   }
 
-  getNewSuggestions() {
+  getNewSuggestions(): void {
     // predictions filtered out to only contain negatives
     this.negatives = [...this.negatives, ...this.predictions.map(y => y.phrase)];
     // update lexicon object so when changing lexicons it saves state
@@ -98,7 +99,7 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
       this._lexicon.phrases = this.newLineStringToList(this.positives);
       this.predictions = [];
       this.isLoadingPredictions = true;
-      return this.embeddingService.predict({
+      this.embeddingService.predict({
         positives: this._lexicon.phrases,
         negatives: this._lexicon.discarded_phrases,
         output_size: this.outputSize,
@@ -117,7 +118,7 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
     }
   }
 
-  saveLexicon() {
+  saveLexicon(): void {
     // so i can save lexicon words without embedding
     if (this._lexicon && this.currentProject) {
       this._lexicon.phrases = this.newLineStringToList(this.positives);
@@ -139,7 +140,7 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
     }
   }
 
-  addPositive(value: { phrase: string, score: number, model: string }) {
+  addPositive(value: { phrase: string, score: number, model: string }): void {
     // remove selected item from predictions list
     if (this._lexicon) {
       this.predictions = this.predictions.filter(x => {
@@ -150,7 +151,7 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
     }
   }
 
-  removeNegative(value: string) {
+  removeNegative(value: string): void {
     // remove selected item from predictions list
     if (this._lexicon) {
       this.negatives = this.negatives.filter(x => {
@@ -177,7 +178,7 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
     return stringList.filter(x => x !== '');
   }
 
-  saveEmbeddingChoice(embedding: Embedding) {
+  saveEmbeddingChoice(embedding: Embedding): void {
     const state = this.localStorageService.getProjectState(this.currentProject);
     if (state) {
       state.lexicons.embeddingId = embedding.id;

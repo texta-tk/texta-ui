@@ -1,7 +1,5 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
-import {ProjectStore} from '../../../../core/projects/project.store';
-import {LogService} from '../../../../core/util/log.service';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 
 @Component({
@@ -9,26 +7,21 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
   templateUrl: './save-search-dialog.component.html',
   styleUrls: ['./save-search-dialog.component.scss']
 })
-export class SaveSearchDialogComponent implements OnInit {
+export class SaveSearchDialogComponent {
   saveSearchForm = new FormGroup({
     descriptionFormControl: new FormControl('', [
       Validators.required,
     ]),
   });
 
-  constructor(private dialogRef: MatDialogRef<SaveSearchDialogComponent>,
-              private logService: LogService,
-              private projectStore: ProjectStore) {
+  constructor(private dialogRef: MatDialogRef<SaveSearchDialogComponent>) {
   }
 
-  ngOnInit() {
-  }
-
-  onSubmit(value: { descriptionFormControl: string; }) {
+  onSubmit(value: { descriptionFormControl: string; }): void {
     this.dialogRef.close(value.descriptionFormControl);
   }
 
-  closeDialog() {
+  closeDialog(): void {
     this.dialogRef.close();
   }
 }

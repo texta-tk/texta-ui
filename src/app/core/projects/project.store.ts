@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable, of} from 'rxjs';
 
-import {Project, ProjectFact, ProjectIndex} from '../../shared/types/Project';
+import {Project, ProjectFact, ProjectIndex, ProjectResourceCounts} from '../../shared/types/Project';
 import {ProjectService} from './project.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../util/log.service';
@@ -16,15 +16,12 @@ import {UtilityFunctions} from '../../shared/UtilityFunctions';
 })
 export class ProjectStore {
   // @ts-ignore
-  private projects$: BehaviorSubject<Project[] | null> = new BehaviorSubject(null);
-  // @ts-ignore
-  private selectedProject$: BehaviorSubject<Project | null> = new BehaviorSubject(null);
-  // @ts-ignore
-  private projectIndices$: BehaviorSubject<ProjectIndex[] | null> = new BehaviorSubject(null);
-  // @ts-ignore
-  private selectedProjectIndices$: BehaviorSubject<ProjectIndex[] | null> = new BehaviorSubject(null);
-  // @ts-ignore
-  private currentIndicesFacts$: BehaviorSubject<ProjectFact[] | null> = new BehaviorSubject(null);
+  private projects$: BehaviorSubject<Project[] | null> = new BehaviorSubject<Project[] | null>(null);
+  private selectedProject$: BehaviorSubject<Project | null> = new BehaviorSubject<Project | null>(null);
+  private projectIndices$: BehaviorSubject<ProjectIndex[] | null> = new BehaviorSubject<ProjectIndex[] | null>(null);
+  private selectedProjectIndices$: BehaviorSubject<ProjectIndex[] | null> = new BehaviorSubject<ProjectIndex[] | null>(null);
+  private currentIndicesFacts$: BehaviorSubject<ProjectFact[] | null> = new BehaviorSubject<ProjectFact[] | null>(null);
+  private selectedProjectResourceCounts$: BehaviorSubject<ProjectResourceCounts> = new BehaviorSubject(new ProjectResourceCounts());
   // tslint:disable-next-line:variable-name
   private _selectedProject: Project | null;
 
@@ -41,7 +38,7 @@ export class ProjectStore {
     this.loadProjectFieldsAndFacts();
   }
 
-  refreshProjects() {
+  refreshProjects(): void {
     this.projectService.getProjects().subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.getLocalStorageProjectSelection(resp);
@@ -50,6 +47,22 @@ export class ProjectStore {
         this.logService.snackBarError(resp, 5000);
       }
     });
+  }
+
+  refreshSelectedProjectResourceCounts(): void {
+    if (this._selectedProject) {
+      this.projectService.getResourceCounts(this._selectedProject.id).subscribe(x => {
+        if (!(x instanceof HttpErrorResponse)) {
+          this.selectedProjectResourceCounts$.next(x);
+        } else {
+          this.logService.snackBarError(x, 5000);
+        }
+      });
+    }
+  }
+
+  getSelectedProjectResourceCounts(): Observable<ProjectResourceCounts> {
+    return this.selectedProjectResourceCounts$.asObservable();
   }
 
   getProjects(): Observable<Project[] | null> {
@@ -66,7 +79,7 @@ export class ProjectStore {
     return this.selectedProjectIndices$.asObservable();
   }
 
-  setSelectedProjectIndices(projectIndices: ProjectIndex[]) {
+  setSelectedProjectIndices(projectIndices: ProjectIndex[]): void {
     this.selectedProjectIndices$.next(projectIndices);
   }
 
@@ -78,11 +91,11 @@ export class ProjectStore {
     return this.selectedProject$.asObservable();
   }
 
-  setCurrentProject(project: Project | null) {
+  setCurrentProject(project: Project | null): void {
     this.selectedProject$.next(project);
   }
 
-  private getLocalStorageProjectSelection(projects: Project[]) {
+  private getLocalStorageProjectSelection(projects: Project[]): void {
     // dont select first when already have something selected
     const selectedProj = this.localStorageService.getCurrentlySelectedProject();
     const cachedProject = !!selectedProj ?
@@ -94,7 +107,7 @@ export class ProjectStore {
     }
   }
 
-  private setIndicesSelectionLocalStorage(project: Project, indices: ProjectIndex[]) {
+  private setIndicesSelectionLocalStorage(project: Project, indices: ProjectIndex[]): void {
     const state = this.localStorageService.getProjectState(project);
     if (state) {
       if (!state?.global?.selectedIndices) {
@@ -105,7 +118,7 @@ export class ProjectStore {
     }
   }
 
-  private getLocalStorageIndicesSelection(project: Project | number, indices: ProjectIndex[]) {
+  private getLocalStorageIndicesSelection(project: Project | number, indices: ProjectIndex[]): void {
     const state = this.localStorageService.getProjectState(project);
     if (state?.global?.selectedIndices && state.global.selectedIndices.length > 0) {
       this.setSelectedProjectIndices(indices.filter(b => state.global.selectedIndices.includes(b.index)));
@@ -115,13 +128,14 @@ export class ProjectStore {
   }
 
   // side effects
-  private loadProjectFieldsAndFacts() {
+  private loadProjectFieldsAndFacts(): void {
     this.getCurrentProject().pipe(skip(1), switchMap(project => {
       this._selectedProject = project;
       this.localStorageService.setCurrentlySelectedProject(project);
       this.currentIndicesFacts$.next(null);
       this.projectIndices$.next(null); // null old project properties until we get new ones
       this.selectedProjectIndices$.next(null);
+      this.refreshSelectedProjectResourceCounts();
       if (project) {
         return this.projectService.getProjectIndices(project.id);
       }

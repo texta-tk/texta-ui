@@ -24,7 +24,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.userSub = this.userStore.getCurrentUser().subscribe(user => {
       this.user = user;
       this.coreService.getHealth().subscribe((resp: Health | HttpErrorResponse) => {

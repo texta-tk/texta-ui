@@ -27,6 +27,7 @@ export class SimilarOptionsDialogComponent implements OnInit {
   constructor(private clusterService: ClusterService, private logService: LogService,
               private dialogRef: MatDialogRef<SimilarOptionsDialogComponent>,
               public dialog: MatDialog,
+              // tslint:disable-next-line:no-any
               @Inject(MAT_DIALOG_DATA) public data: { options: any }) {
     if (this.data.options != null) {
       this.optionsForm.get('minTermFreqFormControl')?.setValue(this.data.options.min_term_freq);
@@ -49,7 +50,7 @@ export class SimilarOptionsDialogComponent implements OnInit {
     minTermFreqFormControl: number; maxQueryTermsFormControl: number; minDocFreqFormControl: number;
     minWordLengthFormControl: number; maxWordLengthFormControl: number; sizeFormControl: number;
     stopWordsFormControl: string;
-  }) {
+  }): void {
     const body = {
       min_term_freq: formData.minTermFreqFormControl ? formData.minTermFreqFormControl : 1,
       max_query_terms: formData.maxQueryTermsFormControl ? formData.maxQueryTermsFormControl : 12,

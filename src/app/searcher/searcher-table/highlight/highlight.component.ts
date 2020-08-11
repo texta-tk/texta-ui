@@ -4,6 +4,7 @@ import * as LinkifyIt from 'linkify-it';
 import {SearcherOptions} from '../../SearcherOptions';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 
+// tslint:disable:no-any
 export interface HighlightSpan {
   doc_path: string;
   fact: string;
@@ -21,7 +22,6 @@ export interface HighlightConfig {
   highlightTextaFacts: boolean;
   highlightHyperlinks: boolean;
   charLimit?: number;
-  // tslint:disable-next-line:no-any
   data: any;
 }
 
@@ -63,6 +63,8 @@ export class HighlightComponent {
   constructor() {
   }
 
+  // tslint:disable:no-any
+  // tslint:disable:variable-name
   _highlightConfig: HighlightConfig;
 
   @Input() set highlightConfig(highlightConfig: HighlightConfig) {
@@ -72,7 +74,6 @@ export class HighlightComponent {
       && (isNaN(Number(highlightConfig.data[highlightConfig.currentColumn])))) {
 
       // slice original text for charlimit bounds, deep clone
-      // tslint:disable-next-line:no-any
       const edited: any = (({data, ...o}) => o)(highlightConfig);
       edited.data = Object.assign({}, highlightConfig.data);
       if (edited.data[edited.currentColumn].length > edited.charLimit) {
@@ -96,7 +97,6 @@ export class HighlightComponent {
   }
 
   // convert searcher highlight into mlp fact format
-  // tslint:disable-next-line:no-any
   static makeSearcherHighlights(searcherHighlight: any, currentColumn: string): HighlightSpan[] {
     const highlight = searcherHighlight ? searcherHighlight[currentColumn] : null;
     if (highlight && highlight.length === 1) { // elasticsearch returns as array
@@ -125,10 +125,8 @@ export class HighlightComponent {
     return [];
   }
 
-  public toggleTextLimit() {
+  public toggleTextLimit(): void {
     if (window.getSelection()?.type !== 'Range') {
-
-      // tslint:disable-next-line:no-any
       const edited: any = (({data, ...o}) => o)(this._highlightConfig);
       edited.data = Object.assign({}, this._highlightConfig.data);
       if (edited.charLimit !== 0 && edited && !this.isTextLimited) {
@@ -139,7 +137,7 @@ export class HighlightComponent {
     }
   }
 
-  makeHighlightArray(highlightConfig: HighlightConfig) {
+  makeHighlightArray(highlightConfig: HighlightConfig): void {
     if (highlightConfig.data[highlightConfig.currentColumn] !== null && highlightConfig.data[highlightConfig.currentColumn] !== undefined) {
       let fieldFacts: HighlightSpan[] = [];
       let hyperLinks: HighlightSpan[] = [];
@@ -556,8 +554,7 @@ export class HighlightComponent {
     return null;
   }
 
-  // @ts-ignore
-  private sortByStartLowestSpan(a, b) {
+  private sortByStartLowestSpan(a: HighlightSpan, b: HighlightSpan): -1 | 1 {
     if (a.spans[0] === b.spans[0]) {
       return (a.spans[1] < b.spans[1]) ? -1 : 1; // sort by last span instead (need this for nested facts order)
     } else {

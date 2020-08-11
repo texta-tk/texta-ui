@@ -61,7 +61,7 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  toggleIndexState(row: Index) {
+  toggleIndexState(row: Index): void {
     this.coreService.toggleElasticIndexOpenState(row).subscribe((resp) => {
       if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 2000);
@@ -69,7 +69,7 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  deleteIndex(index: Index) {
+  deleteIndex(index: Index): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
         confirmText: 'Delete',
@@ -88,16 +88,16 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  trackById(index: number, item: Index) {
+  trackById(index: number, item: Index): number {
     return item.id;
   }
 
-  applyFilter(event: Event) {
+  applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
     this.filterTerm$.next(filterValue);
   }
 
-  customFilterPredicate() {
+  customFilterPredicate(): (data: Index, filter: string) => boolean {
     return (data: Index, filter: string) => {
       if (data.name) {
         return data.name.trim().toLowerCase().indexOf(filter.trim().toLowerCase()) !== -1;

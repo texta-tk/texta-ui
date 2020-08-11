@@ -20,5 +20,6 @@ export class TorchTagger {
   location: string;
   plot: string;
   task: TaskStatus;
+  // tslint:disable-next-line:no-any
   fact_name?: any;
 }

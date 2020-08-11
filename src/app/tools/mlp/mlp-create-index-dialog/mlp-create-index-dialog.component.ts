@@ -13,7 +13,6 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Choice, MLPOptions} from '../../../shared/types/tasks/MLPOptions';
-import {ResultsWrapper} from '../../../shared/types/Generic';
 import {MLP} from '../../../shared/types/tasks/MLP';
 
 @Component({
@@ -23,7 +22,7 @@ import {MLP} from '../../../shared/types/tasks/MLP';
 })
 export class MLPCreateIndexDialogComponent implements OnInit, OnDestroy {
   defaultQuery = {query: {match_all: {}}};
-  query = this.defaultQuery;
+  query: unknown = this.defaultQuery;
 
   MLPForm = new FormGroup({
     descriptionFormControl: new FormControl('', [Validators.required]),
@@ -80,7 +79,7 @@ export class MLPCreateIndexDialogComponent implements OnInit, OnDestroy {
   onSubmit(formData: {
     descriptionFormControl: string;
     indicesFormControl: ProjectIndex[]; fieldsFormControl: string[]; analyzersFormControl: string[];
-  }) {
+  }): void {
     const body = {
       description: formData.descriptionFormControl,
       indices: formData.indicesFormControl.map(x => [{name: x.index}]).flat(),
@@ -99,12 +98,12 @@ export class MLPCreateIndexDialogComponent implements OnInit, OnDestroy {
     });
   }
 
-  getFieldsForIndices(indices: ProjectIndex[]) {
+  getFieldsForIndices(indices: ProjectIndex[]): void {
     this.projectFields = ProjectIndex.cleanProjectIndicesFields(indices, ['text'], []);
     this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
   }
 
-  public indicesOpenedChange(opened: unknown) {
+  public indicesOpenedChange(opened: unknown): void {
     const indicesForm = this.MLPForm.get('indicesFormControl');
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && (indicesForm?.value && indicesForm.value.length > 0)) {
@@ -112,11 +111,11 @@ export class MLPCreateIndexDialogComponent implements OnInit, OnDestroy {
     }
   }
 
-  onQueryChanged(query: any) {
+  onQueryChanged(query: unknown): void {
     this.query = query ? query : this.defaultQuery;
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroyed$.next(true);
     this.destroyed$.complete();
   }

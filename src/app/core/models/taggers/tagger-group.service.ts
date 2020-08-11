@@ -42,7 +42,7 @@ export class TaggerGroupService {
       catchError(this.logService.handleError<TaggerGroup>('editTaggerGroup')));
   }
 
-  modelsRetrain(taggerGroupId: number, projectId: number) {
+  modelsRetrain(taggerGroupId: number, projectId: number): Observable<HttpErrorResponse | { success: 'retraining tasks created' }> {
     return this.http.post<{'success': 'retraining tasks created'}>(
       `${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/${taggerGroupId}/models_retrain/`, {}
     ).pipe(
@@ -50,7 +50,7 @@ export class TaggerGroupService {
       catchError(this.logService.handleError<HttpErrorResponse>('modelsRetrain')));
   }
 
-  getModelsList(taggerGroupId: number, projectId: number) {
+  getModelsList(taggerGroupId: number, projectId: number): Observable<HttpErrorResponse | LightTagger[]> {
     return this.http.get<LightTagger[]>(
       `${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/${taggerGroupId}/models_list/`
     ).pipe(
@@ -85,7 +85,7 @@ export class TaggerGroupService {
       catchError(this.logService.handleError('tagRandomDocument')));
   }
 
-  bulkDeleteTaggerGroups(projectId: number, body: unknown) {
+  bulkDeleteTaggerGroups(projectId: number, body: unknown): Observable<unknown> {
     return this.http.post<{'num_deleted': number, 'deleted_types': {string: number}[] }>
     (`${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/bulk_delete/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'bulkDeleteTaggerGroups')),

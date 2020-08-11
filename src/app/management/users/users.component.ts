@@ -40,7 +40,7 @@ export class UsersComponent implements OnInit, OnDestroy {
               private userStore: UserStore) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
     this.sort.sortChange.pipe(takeUntil(this.destroyed$)).subscribe(() => this.paginator.pageIndex = 0);
@@ -57,7 +57,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     });
   }
 
-  togglePermissions(row: UserProfile) {
+  togglePermissions(row: UserProfile): void {
     if (row.id !== 1) { // admin always id 1???? todo
       this.userService.toggleSuperUser(row.id, {is_superuser: !row.is_superuser}).subscribe((resp: UserProfile | HttpErrorResponse) => {
         if (resp instanceof HttpErrorResponse) {
@@ -74,7 +74,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     }
   }
 
-  deleteUser(user: UserProfile) {
+  deleteUser(user: UserProfile): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
         confirmText: 'Delete',
@@ -93,7 +93,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     });
   }
 
-  trackById(index: number, item: UserProfile) {
+  trackById(index: number, item: UserProfile): number {
     return item.id;
   }
 

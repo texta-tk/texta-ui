@@ -14,6 +14,7 @@ interface Task {
   errors: string;
   time_started: Date;
   last_update: Date;
+  // tslint:disable-next-line:no-any
   time_completed?: any;
   total: number;
   num_processed: number;

@@ -16,7 +16,7 @@ export class PhraseDialogComponent {
               @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, embeddingId: number; }) {
   }
 
-  onSubmit(value: string) {
+  onSubmit(value: string): void {
     this.embeddingService.phrase({ text: value }, this.data.currentProjectId, this.data.embeddingId)
     .subscribe((resp: string | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {

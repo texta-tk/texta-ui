@@ -20,7 +20,7 @@ export class HttpAuthInterceptor implements HttpInterceptor {
               private tokenExtractor: HttpXsrfTokenExtractor) {
   }
 
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const token = this.localStorageService.getUser();
     const csrfToken = this.tokenExtractor.getToken() as string;
 
@@ -35,7 +35,7 @@ export class HttpAuthInterceptor implements HttpInterceptor {
     }
 
     return next.handle(request).pipe(
-      map((event: HttpEvent<any>) => {
+      map((event: HttpEvent<unknown>) => {
         return event;
       }),
       catchError((error: HttpErrorResponse) => {

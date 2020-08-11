@@ -83,7 +83,7 @@ export class ProjectService {
       catchError(this.logService.handleError<ProjectResourceCounts>('getResourceCounts')));
   }
 
-  deleteProject(id: number) {
+  deleteProject(id: number): Observable<unknown> {
     return this.http.delete<unknown>(`${this.apiUrl}/projects/${id}/`).pipe(
       tap(e => this.logService.logStatus(e, 'delete Project')),
       catchError(this.logService.handleError<string[]>('deleteProject')));

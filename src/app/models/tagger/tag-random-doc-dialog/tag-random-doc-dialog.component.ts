@@ -14,7 +14,7 @@ import {ProjectIndex} from '../../../shared/types/Project';
   styleUrls: ['./tag-random-doc-dialog.component.scss']
 })
 export class TagRandomDocDialogComponent implements OnInit {
-  result: { document: any, prediction: { result: boolean, probability: number } };
+  result: { document: unknown, prediction: { result: boolean, probability: number } };
   isLoading = false;
   indices: ProjectIndex[];
 
@@ -22,7 +22,7 @@ export class TagRandomDocDialogComponent implements OnInit {
               @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, tagger: Tagger; }) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.projectStore.getSelectedProjectIndices().pipe(take(1)).subscribe(x => {
       if (x) {
         this.indices = x;
@@ -31,9 +31,11 @@ export class TagRandomDocDialogComponent implements OnInit {
     });
   }
 
-  onSubmit() {
+  onSubmit(): void {
     this.isLoading = true;
-    this.taggerService.tagRandomDocument(this.data.currentProjectId, this.data.tagger.id, {indices: this.indices.map(x => [{name: x.index}]).flat()})
+    this.taggerService.tagRandomDocument(this.data.currentProjectId, this.data.tagger.id,
+      {indices: this.indices.map(x => [{name: x.index}]).flat()})
+      // tslint:disable-next-line:no-any
       .subscribe((resp: any | HttpErrorResponse) => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
           this.result = resp;

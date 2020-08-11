@@ -1,4 +1,4 @@
-import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
+import {Component, Inject} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {LiveErrorStateMatcher} from '../../../CustomerErrorStateMatchers';
@@ -8,7 +8,6 @@ import {UserStore} from '../../../../core/users/user.store';
 import {UserService} from '../../../../core/users/user.service';
 import {of} from 'rxjs';
 import {mergeMap} from 'rxjs/operators';
-import {UserProfile} from '../../../types/UserProfile';
 import {Router} from '@angular/router';
 import {UserAuth} from '../../../types/UserAuth';
 import {RegistrationDialogComponent} from '../registration/registration-dialog.component';
@@ -19,7 +18,7 @@ import {RegistrationDialogComponent} from '../registration/registration-dialog.c
   templateUrl: './login-dialog.component.html',
   styleUrls: ['./login-dialog.component.scss']
 })
-export class LoginDialogComponent implements OnInit, OnDestroy {
+export class LoginDialogComponent {
 
   profileForm = new FormGroup({
     usernameFormControl: new FormControl('', [
@@ -49,10 +48,7 @@ export class LoginDialogComponent implements OnInit, OnDestroy {
     this.dialogRef.close();
   }
 
-  ngOnInit() {
-  }
-
-  registerDialog() {
+  registerDialog(): void {
     this.dialogRef.close();
     this.dialog.open(RegistrationDialogComponent, {
       maxHeight: '450px',
@@ -60,7 +56,7 @@ export class LoginDialogComponent implements OnInit, OnDestroy {
     });
   }
 
-  onSubmit(formData: { usernameFormControl: string; passwordFormControl: string; }) {
+  onSubmit(formData: { usernameFormControl: string; passwordFormControl: string; }): void {
     this.loginError = '';
     this.makingRequest = true;
     this.userService.authenticate(formData.usernameFormControl, formData.passwordFormControl).pipe(
@@ -84,16 +80,8 @@ export class LoginDialogComponent implements OnInit, OnDestroy {
         } else {
           // navigate to home page
           this.router.navigate(['']).finally((() => this.closeDialog()));
-
         }
-
       }
-
-
     });
-  }
-
-  ngOnDestroy() {
-
   }
 }

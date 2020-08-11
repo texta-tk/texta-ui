@@ -1,5 +1,6 @@
 
 // tslint:disable:variable-name
+// tslint:disable:no-any
 export class SavedSearch {
   id: number;
   description = '';

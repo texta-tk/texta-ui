@@ -29,7 +29,7 @@ export class LexiconMinerComponent implements OnInit, OnDestroy {
               private lexiconService: LexiconService, private projectStore: ProjectStore) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     // you need both lexicons and embeddings to use lexicon miner, so just forkjoin if one of them errors cant do anything
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$), switchMap(currentProject => {
       if (currentProject) {
@@ -54,33 +54,31 @@ export class LexiconMinerComponent implements OnInit, OnDestroy {
     );
   }
 
-  ngOnDestroy() {
-    // will complete all observables aswell when using takeUntil, takeWhile etc
+  ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
   }
 
-  createNewLexicon() {
+  createNewLexicon(): void {
     if (this.currentProject) {
       this.lexiconService.createLexicon({
           description: this.newLexiconDescription,
           phrases: []
         }, this.currentProject.id
-      ).subscribe((resp: Lexicon | HttpErrorResponse) => {
-        if (resp) {
-          if (resp instanceof HttpErrorResponse) {
-            this.logService.snackBarError(resp, 5000);
-          } else {
-            this.lexicons.push(resp);
-            this.logService.snackBarMessage(`Created lexicon ${resp.description}`, 2000);
-          }
-          this.newLexiconDescription = '';
+      ).subscribe(resp => {
+        if (resp instanceof HttpErrorResponse) {
+          this.logService.snackBarError(resp, 5000);
+        } else {
+          this.lexicons.push(resp);
+          this.logService.snackBarMessage(`Created lexicon ${resp.description}`, 2000);
         }
+        this.projectStore.refreshSelectedProjectResourceCounts();
+        this.newLexiconDescription = '';
       });
     }
   }
 
-  deleteLexicon(lexicon: Lexicon) {
+  deleteLexicon(lexicon: Lexicon): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {confirmText: 'Delete', mainText: `Are you sure you want to delete this Lexion?`}
     });
@@ -95,23 +93,21 @@ export class LexiconMinerComponent implements OnInit, OnDestroy {
               this.logService.snackBarMessage(`Deleted lexicon ${lexicon.description}`, 3000);
               const position = this.lexicons.findIndex(x => x.id === lexicon.id);
               this.lexicons.splice(position, 1);
-              // update lexicon count in navbar by setting current project as next proj
-              this.projectStore.setCurrentProject(this.currentProject);
+              // update lexicon count in navbar
+              this.projectStore.refreshSelectedProjectResourceCounts();
             }
           });
       }
     });
   }
 
-  selectLexicon(lexicon: Lexicon) {
-    if (this.selectedLexicon && this.selectedLexicon === lexicon) {
-      // if selecting same lexicon do nothing
-      return true;
+  selectLexicon(lexicon: Lexicon): void {
+    if (this.selectedLexicon !== lexicon) {
+      this.selectedLexicon = lexicon;
     }
-    this.selectedLexicon = lexicon;
   }
 
-  onScrollLexicons() {
+  onScrollLexicons(): void {
     if (this.currentProject && this.lexicons.length < this.totalLexicons) {
       this.lexiconService.getLexicons(
         this.currentProject.id,

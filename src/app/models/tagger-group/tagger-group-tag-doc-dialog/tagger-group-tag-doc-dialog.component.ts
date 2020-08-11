@@ -23,7 +23,7 @@ export class TaggerGroupTagDocDialogComponent {
     public data: { currentProjectId: number; taggerId: number }
   ) {}
 
-  onSubmit(value: string) {
+  onSubmit(value: string): void {
     this.errors = '';
     this.results = [];
 

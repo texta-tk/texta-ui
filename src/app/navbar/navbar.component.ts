@@ -9,11 +9,10 @@ import {ProjectService} from '../core/projects/project.service';
 import {Project, ProjectIndex, ProjectResourceCounts} from '../shared/types/Project';
 import {FormControl} from '@angular/forms';
 import {ProjectStore} from '../core/projects/project.store';
-import {of, Subject} from 'rxjs';
+import {Subject} from 'rxjs';
 import {RegistrationDialogComponent} from '../shared/components/dialogs/registration/registration-dialog.component';
 import {LogService} from '../core/util/log.service';
-import {switchMap, takeUntil} from 'rxjs/operators';
-import {HttpErrorResponse} from '@angular/common/http';
+import {takeUntil} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {EditProjectDialogComponent} from '../project/edit-project-dialog/edit-project-dialog.component';
 
@@ -45,7 +44,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.userStore.getCurrentUser().pipe(takeUntil(this.destroyed$)).subscribe(resp => {
       if (resp) {
         this.user = resp;
@@ -54,19 +53,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.projectResourceCounts = new ProjectResourceCounts();
       }
     });
-    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), switchMap(proj => {
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(proj => {
       if (proj) {
         this.currentProject = proj;
         this.projectControl.setValue(proj); // we set active project when we create a new project at proj component for example
-        return this.projectService.getResourceCounts(proj.id);
       }
-      return of(null);
-    })).subscribe(response => {
-      if (response && !(response instanceof HttpErrorResponse)) {
-        this.projectResourceCounts = response;
-      } else {
-        this.projectResourceCounts = new ProjectResourceCounts();
-      }
+    });
+    this.projectStore.getSelectedProjectResourceCounts().pipe(takeUntil(this.destroyed$)).subscribe(counts => {
+      this.projectResourceCounts = counts;
+      this.changeDetectorRef.markForCheck();
     });
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe((indices: ProjectIndex[] | null) => {
       if (indices && indices.filter(x => this.currentProject.indices.includes(x.index))) {
@@ -93,22 +88,22 @@ export class NavbarComponent implements OnInit, OnDestroy {
     });
   }
 
-  compareIndices(object1: ProjectIndex, object2: ProjectIndex) {
+  compareIndices(object1: ProjectIndex, object2: ProjectIndex): boolean {
     return object1 && object2 && object1.index === object2.index;
   }
 
-  compareProjects(object1: Project, object2: Project) {
+  compareProjects(object1: Project, object2: Project): boolean {
     return object1 && object2 && object1.id === object2.id;
   }
 
-  edit(project: Project) {
+  edit(project: Project): void {
     this.dialog.open(EditProjectDialogComponent, {
       width: '750px',
       data: project
     });
   }
 
-  indexSelectionOpenedChange(value: unknown) {
+  indexSelectionOpenedChange(value: unknown): void {
     if (!value) {
       // get the current facts based on the selected indices
       // searcher uses this
@@ -116,21 +111,21 @@ export class NavbarComponent implements OnInit, OnDestroy {
     }
   }
 
-  registerDialog() {
+  registerDialog(): void {
     this.dialog.open(RegistrationDialogComponent, {
       maxHeight: '450px',
       width: '400px',
     });
   }
 
-  loginDialog() {
+  loginDialog(): void {
     this.dialog.open(LoginDialogComponent, {
       maxHeight: '295px',
       width: '400px',
     });
   }
 
-  logout() {
+  logout(): void {
     this.userService.logout().subscribe(
       () => {
         this.localStorageService.deleteUser();
@@ -142,7 +137,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroyed$.next(true);
     this.destroyed$.complete();
   }

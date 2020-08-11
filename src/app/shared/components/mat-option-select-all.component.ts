@@ -30,7 +30,7 @@ export class MatOptionSelectAllComponent implements AfterViewInit, OnDestroy {
   constructor(@Host() private matSelect: MatSelect) {
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     if (this.matSelect && this.matSelect.ngControl && this.matSelect.ngControl.control) {
       this.options = this.matSelect.options.map(x => x.value);
       this.matSelect.options.changes
@@ -56,12 +56,12 @@ export class MatOptionSelectAllComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroyed.next();
     this.destroyed.complete();
   }
 
-  onSelectAllClick(evt: MouseEvent) {
+  onSelectAllClick(evt: MouseEvent): void {
     if (this.state === 'checked') {
       if (this.matSelect?.ngControl?.control) {
         this.matSelect.ngControl.control.setValue([]);
@@ -74,7 +74,7 @@ export class MatOptionSelectAllComponent implements AfterViewInit, OnDestroy {
 
   }
 
-  private updateState() {
+  private updateState(): void {
     const areAllSelected = this.areArraysEqual(this.value, this.options);
     if (areAllSelected) {
       this.state = 'checked';
@@ -87,7 +87,7 @@ export class MatOptionSelectAllComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  private areArraysEqual(a: unknown[] | null, b: unknown[]) {
+  private areArraysEqual(a: unknown[] | null, b: unknown[]): boolean {
     return [...a || []].sort().join(',') === [...b].sort().join(',');
   }
 

@@ -48,7 +48,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
     private projectService: ProjectService) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
     this.tableData.filterPredicate = (data, element) => {
@@ -92,23 +92,23 @@ export class ProjectComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroyed$.next(true);
     this.destroyed$.complete();
   }
 
-  selectUserElement(urls: string[]) {
+  selectUserElement(urls: string[]): void {
     this.urlsToRequest.next(urls);
   }
 
-  edit(project: Project) {
+  edit(project: Project): void {
     this.dialog.open(EditProjectDialogComponent, {
       width: '750px',
       data: project
     });
   }
 
-  openCreateDialog() {
+  openCreateDialog(): void {
     const dialogRef = this.dialog.open(CreateProjectDialogComponent, {
       maxHeight: '440px',
       width: '700px',
@@ -124,11 +124,11 @@ export class ProjectComponent implements OnInit, OnDestroy {
     });
   }
 
-  trackById(index: number, item: Project) {
+  trackById(index: number, item: Project): number {
     return item.id;
   }
 
-  onDelete(project: Project) {
+  onDelete(project: Project): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {confirmText: 'Delete', mainText: `Delete the project \"${project.id}: ${project.title}\"?`}
     });
@@ -147,15 +147,16 @@ export class ProjectComponent implements OnInit, OnDestroy {
     });
   }
 
-  applyFilter(filterValue: MatOption | { value: string }) {
+  applyFilter(filterValue: MatOption | { value: string }): void {
     this.tableData.filter = filterValue?.value ? filterValue.value : '';
   }
 
-  selectProject(val: Project) {
+  selectProject(val: Project): void {
     if (val.users.includes(this.currentUser.url)) {
       this.projectStore.setCurrentProject(val);
     } else {
-      this.projectService.editProject({users: [this.currentUser.url, ...val.users]}, val.id).subscribe((resp: Project | HttpErrorResponse) => {
+      this.projectService.editProject({users: [this.currentUser.url, ...val.users]},
+        val.id).subscribe((resp: Project | HttpErrorResponse) => {
         if (resp instanceof HttpErrorResponse) {
           this.logService.snackBarError(resp, 5000);
         } else if (resp) {

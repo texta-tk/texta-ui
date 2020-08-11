@@ -1,4 +1,12 @@
-import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import {ClusterDetails, ClusterDocument} from '../../../../../shared/types/tasks/Cluster';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
@@ -129,7 +137,7 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
   }
 
 
-  modifyClusteringSaveState<T>(accessor: 'charLimit' | 'selectedFields', value: T) {
+  modifyClusteringSaveState<T>(accessor: 'charLimit' | 'selectedFields', value: T): void {
     if (this.clusteringId && this.currentProject) {
       const state = this.localStorageService.getProjectState(this.currentProject);
       if (state) {
@@ -144,21 +152,21 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected() {
+  isAllSelected(): boolean {
     const numSelected = this.selectedRows.selected.length;
     const numRows = this.tableData.data.length;
     return numSelected === numRows;
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
+  masterToggle(): void {
     this.isAllSelected() ?
       this.selectedRows.clear() :
       this.tableData.data.forEach(row => this.selectedRows.select(row));
   }
 
 
-  onDeleteAllSelected() {
+  onDeleteAllSelected(): void {
     if (this.selectedRows.selected.length > 0) {
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         data: {
@@ -182,7 +190,7 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
     }
   }
 
-  moreLikeThis() {
+  moreLikeThis(): void {
     if (this.currentProject) {
       const dialogRef = this.dialog.open(SimilarClusterDialogComponent, {
         data: {
@@ -204,7 +212,7 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
     }
   }
 
-  tag() {
+  tag(): void {
     if (this.currentProject) {
       this.dialog.open(TagClusterDialogComponent, {
         data: {
@@ -217,7 +225,7 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
     }
   }
 
-  deleteCluster() {
+  deleteCluster(): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
         confirmText: 'Delete',
@@ -236,7 +244,7 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
     });
   }
 
-  removeSelectedRows() {
+  removeSelectedRows(): void {
     this.selectedRows.selected.forEach((selectedCluster: ClusterDocument) => {
       const index: number = this.tableData.data.findIndex(cluster => cluster.id === selectedCluster.id);
       this.tableData.data.splice(index, 1);
@@ -245,7 +253,7 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
     this.selectedRows.clear();
   }
 
-  trackById(index: number, val: ClusterDocument) {
+  trackById(index: number, val: ClusterDocument): number {
     return val.id;
   }
 
@@ -253,6 +261,4 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
     this.destroyed$.next(true);
     this.destroyed$.complete();
   }
-
-
 }

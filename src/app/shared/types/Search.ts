@@ -10,6 +10,12 @@ export class Search {
   }
 }
 
+export interface SearchByQueryResponse {
+  results: { highlight: unknown, doc: unknown }[];
+  count: number;
+  aggs?: unknown;
+}
+
 export class SearchOptions {
   liveSearch: boolean;
   onlyHighlightMatching?: FactConstraint[];

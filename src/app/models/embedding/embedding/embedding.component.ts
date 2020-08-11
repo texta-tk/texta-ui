@@ -152,6 +152,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.tableData.data = [...this.tableData.data, resp];
         this.logService.snackBarMessage(`Created embedding ${resp.description}`, 2000);
+        this.projectStore.refreshSelectedProjectResourceCounts();
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       }
@@ -197,6 +198,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
           this.logService.snackBarMessage(`Deleted embedding ${embedding.description}`, 2000);
           this.tableData.data.splice(index, 1);
           this.tableData.data = [...this.tableData.data];
+          this.projectStore.refreshSelectedProjectResourceCounts();
         });
       }
     });
@@ -233,6 +235,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
       this.tableData.data = [...this.tableData.data];
     });
     this.selectedRows.clear();
+    this.projectStore.refreshSelectedProjectResourceCounts();
   }
 
 
@@ -254,7 +257,9 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
   filterQueriesToString(): void {
     this.inputFilterQuery = '';
     for (const field in this.filteringValues) {
-      this.inputFilterQuery += `&${field}=${this.filteringValues[field]}`;
+      if (this.filteringValues.hasOwnProperty(field)) {
+        this.inputFilterQuery += `&${field}=${this.filteringValues[field]}`;
+      }
     }
   }
 }

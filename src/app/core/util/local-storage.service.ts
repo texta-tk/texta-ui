@@ -10,7 +10,7 @@ export class LocalStorageService {
   constructor() {
   }
 
-  public updateProjectState(project: Project | number, state: ProjectState) {
+  public updateProjectState(project: Project | number, state: ProjectState): void {
     const projectId = typeof project === 'number' ? project : project.id;
     if (projectId) {
       localStorage.setItem('projectState' + projectId, JSON.stringify(state));
@@ -58,7 +58,7 @@ export class LocalStorageService {
     localStorage.removeItem('user');
   }
 
-  public setUser(value: UserAuth) {
+  public setUser(value: UserAuth): void {
     localStorage.setItem('user', JSON.stringify(value));
   }
 
@@ -70,7 +70,7 @@ export class LocalStorageService {
     return null;
   }
 
-  public setCurrentlySelectedProject(value: Project | null) {
+  public setCurrentlySelectedProject(value: Project | null): void {
     localStorage.setItem('selectedProject', JSON.stringify(value));
   }
 

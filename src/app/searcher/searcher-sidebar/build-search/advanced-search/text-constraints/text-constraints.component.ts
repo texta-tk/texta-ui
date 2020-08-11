@@ -15,6 +15,7 @@ import {Subject} from 'rxjs';
 import {Lexicon} from '../../../../../shared/types/Lexicon';
 import {MatMenuTrigger} from '@angular/material/menu';
 
+// tslint:disable:variable-name
 @Component({
   selector: 'app-text-constraints',
   templateUrl: './text-constraints.component.html',

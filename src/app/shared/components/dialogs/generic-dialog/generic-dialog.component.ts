@@ -9,6 +9,6 @@ import {Observable} from 'rxjs';
 })
 export class GenericDialogComponent {
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: { data: string; observableData?: Observable<any> }) { }
+  constructor(@Inject(MAT_DIALOG_DATA) public data: { data: string; observableData?: Observable<unknown> }) { }
 
 }

@@ -58,7 +58,7 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
       })).subscribe(resp => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
           this.selectedUsers.push(resp.url);
-          const users = this.projectForm.get('usersFormControl')
+          const users = this.projectForm.get('usersFormControl');
           if (users) {
             users.setValue(this.selectedUsers);
           }

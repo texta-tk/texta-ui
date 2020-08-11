@@ -35,7 +35,7 @@ export class SearchServiceSpy {
   getSavedSearchUpdate = jasmine.createSpy('getSavedSearchUpdate').and.callFake(
     () => this.savedSearchUpdate.asObservable()
   );
-  private aggregationSubject = new BehaviorSubject<any>(null);
+  private aggregationSubject = new BehaviorSubject<unknown>(null);
   nextAggregation = jasmine.createSpy('nextAggregation').and.callFake(
     (search: Search) => this.aggregationSubject.next(search));
   getAggregation = jasmine.createSpy('getAggregation').and.callFake(
@@ -59,11 +59,11 @@ export class SearchServiceSpy {
     () => this.advancedSearchConstraints$.asObservable()
   );
 
-  setIsLoading(val: boolean) {
+  setIsLoading(val: boolean): void {
     this.isLoading = val;
   }
 
-  getIsLoading() {
+  getIsLoading(): boolean {
     return this.isLoading;
   }
 }

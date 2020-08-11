@@ -27,7 +27,7 @@ export class TagDocDialogComponent implements OnInit {
     }
   }
 
-  onSubmit(doc: string) {
+  onSubmit(doc: string): void {
     this.isLoading = true;
     this.taggerService.tagDocument({
       doc: JSON.parse(doc),

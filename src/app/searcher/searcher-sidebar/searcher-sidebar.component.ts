@@ -22,15 +22,14 @@ import {GenericDialogComponent} from '../../shared/components/dialogs/generic-di
 })
 export class SearcherSidebarComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject();
-  @ViewChild(BuildSearchComponent)
-  private buildSearchComponent: BuildSearchComponent;
-  @ViewChild(SavedSearchesComponent)
-  private savedSearchesComponent: SavedSearchesComponent;
-
   buildSearchExpanded = true;
   savedSearchesExpanded = true;
   aggregationsExpanded = false;
   currentProject: Project;
+  @ViewChild(BuildSearchComponent)
+  private buildSearchComponent: BuildSearchComponent;
+  @ViewChild(SavedSearchesComponent)
+  private savedSearchesComponent: SavedSearchesComponent;
 
   constructor(public dialog: MatDialog,
               private searcherService: SearcherService,
@@ -39,7 +38,7 @@ export class SearcherSidebarComponent implements OnInit, OnDestroy {
               private logService: LogService) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$)).subscribe(proj => {
       if (proj) {
         this.currentProject = proj;
@@ -47,24 +46,24 @@ export class SearcherSidebarComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.complete();
   }
 
-  expandBuildSearchPanel() {
+  expandBuildSearchPanel(): void {
     this.buildSearchExpanded = !this.buildSearchExpanded;
   }
 
-  expandSavedSearchesPanel() {
+  expandSavedSearchesPanel(): void {
     this.savedSearchesExpanded = !this.savedSearchesExpanded;
   }
 
-  expandAggregationsPanel() {
+  expandAggregationsPanel(): void {
     this.aggregationsExpanded = !this.aggregationsExpanded;
   }
 
-  openViewQueryDialog() {
+  openViewQueryDialog(): void {
     this.searchService.getElasticQuery().pipe(take(1)).subscribe(x => {
       if (x) {
         this.dialog.open(GenericDialogComponent, {
@@ -79,7 +78,7 @@ export class SearcherSidebarComponent implements OnInit, OnDestroy {
 
   }
 
-  openSaveSearchDialog() {
+  openSaveSearchDialog(): void {
     const dialogRef = this.dialog.open(SaveSearchDialogComponent, {
       maxHeight: '300px',
       width: '300px'
@@ -92,8 +91,7 @@ export class SearcherSidebarComponent implements OnInit, OnDestroy {
     });
   }
 
-  onDeleteAllSelected() {
-
+  onDeleteAllSelected(): void {
     const selectedRows = this.searchService.savedSearchSelection;
     if (selectedRows.selected.length > 0) {
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {

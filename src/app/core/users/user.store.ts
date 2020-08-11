@@ -33,7 +33,7 @@ export class UserStore {
     return this.selectedUser$.asObservable();
   }
 
-  setCurrentUser(user: UserProfile | null) {
+  setCurrentUser(user: UserProfile | null): void {
     this.selectedUser$.next(user);
   }
 

@@ -46,7 +46,7 @@ export class MLPService {
       catchError(this.logService.handleError<unknown>('applyMLPText')));
   }
 
-  bulkDeleteMLPTasks(projectId: number, body: unknown) {
+  bulkDeleteMLPTasks(projectId: number, body: unknown): Observable<unknown> {
     return this.http.post<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>
     (`${this.apiUrl}/projects/${projectId}/mlp_index/bulk_delete/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'bulkDeleteMLPTasks')),

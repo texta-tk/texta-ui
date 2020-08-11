@@ -25,7 +25,7 @@ export class SavedSearchAutocompleteComponent implements OnInit, OnDestroy {
   constructor(private searcherService: SearcherService, private projectStore: ProjectStore) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), switchMap(currentProject => {
       if (currentProject) {
         this.currentProject = currentProject;
@@ -43,7 +43,7 @@ export class SavedSearchAutocompleteComponent implements OnInit, OnDestroy {
     });
   }
 
-  onQueryChanged(elasticObject: string) {
+  onQueryChanged(elasticObject: string): void {
     this.queryChanged.emit(elasticObject);
   }
 

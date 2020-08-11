@@ -11,6 +11,7 @@ import {takeUntil} from 'rxjs/operators';
   styleUrls: ['./text-aggregation.component.scss']
 })
 export class TextAggregationComponent implements OnInit, OnDestroy {
+  // tslint:disable:no-any
   @Input() aggregationObj: { aggregation: any };
   @Input() fieldsFormControl: FormControl;
   isMainAgg: boolean;
@@ -29,7 +30,7 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnInit() {
+  ngOnInit(): void{
     // every time we get new search result refresh the query
     this.searchService.getElasticQuery().pipe(takeUntil(this.destroy$)).subscribe((query: ElasticsearchQuery | null) => {
       if (query) {
@@ -46,7 +47,7 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
 
   }
 
-  updateAggregations() {
+  updateAggregations(): void {
     if (this.isFormControlTypeOfFact()) {
       this.makeFactAggregation();
     } else {
@@ -55,7 +56,7 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
   }
 
 
-  makeFactAggregation() {
+  makeFactAggregation(): void {
     let returnquery: { [key: string]: any };
 
     returnquery = {
@@ -92,7 +93,7 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
     this.aggregationObj.aggregation = returnquery;
   }
 
-  makeTextAggregation() {
+  makeTextAggregation(): void {
     let returnquery: { [key: string]: any };
 
     returnquery = {
@@ -110,12 +111,12 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
   }
 
 
-  isFormControlTypeOfFact() {
+  isFormControlTypeOfFact(): boolean {
     return this.fieldsFormControl &&
       this.fieldsFormControl.value && this.fieldsFormControl.value.type && this.fieldsFormControl.value.type === 'fact';
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.complete();
   }

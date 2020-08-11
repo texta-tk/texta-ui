@@ -2,14 +2,14 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {UserProfile} from '../shared/types/UserProfile';
 import {UserStore} from '../core/users/user.store';
 import {Subject, Subscription} from 'rxjs';
-import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormControl, FormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {UserService} from '../core/users/user.service';
 import {CrossFieldErrorMatcher, LiveErrorStateMatcher} from '../shared/CustomerErrorStateMatchers';
 import {takeUntil} from 'rxjs/operators';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../core/util/log.service';
 
-function passwordMatchValidator(g: AbstractControl) {
+function passwordMatchValidator(g: AbstractControl): null | ValidationErrors {
   const password1 = g.get('passwordFormControl');
   const password2 = g.get('passwordConfirmFormControl');
   return (password1 && password2 && password1.value === password2.value)
@@ -54,7 +54,12 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 
   }
 
-  public onPasswordResetFormSubmit(formData: { passwordForm: { passwordFormControl: string; passwordConfirmFormControl: string; }; }) {
+  public onPasswordResetFormSubmit(formData: {
+    passwordForm: {
+      passwordFormControl: string;
+      passwordConfirmFormControl: string;
+    };
+  }): void {
     const body = {
       new_password1: formData.passwordForm.passwordFormControl,
       new_password2: formData.passwordForm.passwordConfirmFormControl
@@ -73,7 +78,7 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
     });
   }
 
-  public onForgotPasswordFormSubmit(formData: { emailFormControl: string; }) {
+  public onForgotPasswordFormSubmit(formData: { emailFormControl: string; }): void {
     this.userService.resetPassword(formData.emailFormControl).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.detail = resp.detail;
@@ -83,7 +88,7 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.userStore.getCurrentUser().pipe(takeUntil(this.destroy$)).subscribe(resp => {
       if (resp) {
         this.user = resp;
@@ -91,7 +96,7 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.complete();
   }

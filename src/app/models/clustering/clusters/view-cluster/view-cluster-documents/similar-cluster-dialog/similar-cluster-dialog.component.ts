@@ -4,7 +4,7 @@ import {MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
 import {ClusterService} from '../../../../../../core/models/clusters/cluster.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {MatTableDataSource} from '@angular/material/table';
-import {ClusterDocument, ClusterMoreLikeThis} from '../../../../../../shared/types/tasks/Cluster';
+import {ClusterMoreLikeThis} from '../../../../../../shared/types/tasks/Cluster';
 import {MatSort} from '@angular/material/sort';
 import {MatPaginator} from '@angular/material/paginator';
 import {SelectionModel} from '@angular/cdk/collections';
@@ -31,9 +31,9 @@ export class SimilarClusterDialogComponent implements OnInit, AfterViewInit, OnD
   @ViewChild(MatPaginator) paginator: MatPaginator;
   isLoadingResults = true;
   selectedRows = new SelectionModel<ElasticSearchSourceResponse>(true, []);
-  moreLikeQuery$: Subject<Observable<ClusterMoreLikeThis[] | HttpErrorResponse>> = new Subject<Observable<ClusterMoreLikeThis[] | HttpErrorResponse>>();
+  moreLikeQuery$: Subject<Observable<ClusterMoreLikeThis[] | HttpErrorResponse>> = new Subject();
   destroyed$: Subject<boolean> = new Subject<boolean>();
-  queryOptions: any;
+  queryOptions: unknown;
   charLimit = 300;
 
   constructor(private clusterService: ClusterService, private logService: LogService, private localStorageService: LocalStorageService,
@@ -78,7 +78,11 @@ export class SimilarClusterDialogComponent implements OnInit, AfterViewInit, OnD
             this.isLoadingResults = false;
             this.tableData.data = data.docs;
           };
-          SignificantWordsWorker.worker.postMessage({words: this.data.significantWords, docs: resp, accessor: '_source'});
+          SignificantWordsWorker.worker.postMessage({
+            words: this.data.significantWords,
+            docs: resp,
+            accessor: '_source'
+          });
         } else {
           this.isLoadingResults = false;
           this.tableData.data = resp;
@@ -101,21 +105,21 @@ export class SimilarClusterDialogComponent implements OnInit, AfterViewInit, OnD
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected() {
+  isAllSelected(): boolean {
     const numSelected = this.selectedRows.selected.length;
     const numRows = this.tableData.data.length;
     return numSelected === numRows;
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
+  masterToggle(): void {
     this.isAllSelected() ?
       this.selectedRows.clear() :
       this.tableData.data.forEach(row => this.selectedRows.select(row));
   }
 
 
-  addAllSelected() {
+  addAllSelected(): void {
     if (this.selectedRows.selected.length > 0) {
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         data: {
@@ -137,7 +141,7 @@ export class SimilarClusterDialogComponent implements OnInit, AfterViewInit, OnD
     }
   }
 
-  removeSelectedRows() {
+  removeSelectedRows(): void {
     this.selectedRows.selected.forEach((selectedDoc) => {
       const index: number = this.tableData.data.findIndex(row => row._id === selectedDoc._id);
       this.tableData.data.splice(index, 1);
@@ -146,7 +150,7 @@ export class SimilarClusterDialogComponent implements OnInit, AfterViewInit, OnD
     this.selectedRows.clear();
   }
 
-  similarOptions() {
+  similarOptions(): void {
     const dialogRef = this.dialog.open(SimilarOptionsDialogComponent, {
       data: {options: this.queryOptions},
       width: '600px'

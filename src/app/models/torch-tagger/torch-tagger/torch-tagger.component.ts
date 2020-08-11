@@ -51,7 +51,7 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
               public logService: LogService) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
 
@@ -79,11 +79,11 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.setUpPaginator();
   }
 
-  setUpPaginator() {
+  setUpPaginator(): void {
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
@@ -115,7 +115,7 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
 
-  refreshTorchTaggers(resp: TorchTagger[] | HttpErrorResponse) {
+  refreshTorchTaggers(resp: TorchTagger[] | HttpErrorResponse): void {
     if (resp && !(resp instanceof HttpErrorResponse)) {
       if (resp.length > 0) {
         resp.map(torchtagger => {
@@ -129,12 +129,12 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroyed$.next(true);
     this.destroyed$.complete();
   }
 
-  openCreateDialog() {
+  openCreateDialog(): void {
     const dialogRef = this.dialog.open(CreateTorchTaggerDialogComponent, {
       maxHeight: '850px',
       width: '700px',
@@ -144,13 +144,14 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.tableData.data = [...this.tableData.data, resp];
         this.logService.snackBarMessage(`Created TorchTagger ${resp.description}`, 2000);
+        this.projectStore.refreshSelectedProjectResourceCounts();
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       }
     });
   }
 
-  edit(torchTagger: TorchTagger) {
+  edit(torchTagger: TorchTagger): void {
     this.dialog.open(EditTorchTaggerDialogComponent, {
       width: '700px',
       data: torchTagger
@@ -163,7 +164,7 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  onDelete(torchtagger: TorchTagger, index: number) {
+  onDelete(torchtagger: TorchTagger, index: number): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {confirmText: 'Delete', mainText: 'Are you sure you want to delete this TorchTagger?'}
     });
@@ -174,6 +175,7 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
           this.logService.snackBarMessage(`Deleted TorchTagger ${torchtagger.description}`, 2000);
           this.tableData.data.splice(index, 1);
           this.tableData.data = [...this.tableData.data];
+          this.projectStore.refreshSelectedProjectResourceCounts();
         });
       }
     });
@@ -181,21 +183,21 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
   /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected() {
+  isAllSelected(): boolean {
     const numSelected = this.selectedRows.selected.length;
     const numRows = this.tableData.data.length;
     return numSelected === numRows;
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
+  masterToggle(): void {
     this.isAllSelected() ?
       this.selectedRows.clear() :
       this.tableData.data.forEach(row => this.selectedRows.select(row));
   }
 
 
-  onDeleteAllSelected() {
+  onDeleteAllSelected(): void {
     if (this.selectedRows.selected.length > 0) {
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         data: {
@@ -219,17 +221,18 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  removeSelectedRows() {
+  removeSelectedRows(): void {
     this.selectedRows.selected.forEach((selectedTorchTagger: TorchTagger) => {
       const index: number = this.tableData.data.findIndex(torchtagger => torchtagger.id === selectedTorchTagger.id);
       this.tableData.data.splice(index, 1);
       this.tableData.data = [...this.tableData.data];
     });
     this.selectedRows.clear();
+    this.projectStore.refreshSelectedProjectResourceCounts();
   }
 
 
-  openQueryDialog(query: string) {
+  openQueryDialog(query: string): void {
     this.dialog.open(QueryDialogComponent, {
       data: {query},
       maxHeight: '665px',
@@ -238,13 +241,13 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
 
-  applyFilter(filterValue: EventTarget | null, field: string) {
+  applyFilter(filterValue: EventTarget | null, field: string): void {
     this.filteringValues[field] = (filterValue as HTMLInputElement).value ? (filterValue as HTMLInputElement).value : '';
     this.filterQueriesToString();
     this.filteredSubject.next();
   }
 
-  filterQueriesToString() {
+  filterQueriesToString(): void {
     this.inputFilterQuery = '';
     for (const field in this.filteringValues) {
       if (this.filteringValues.hasOwnProperty(field)) {
@@ -254,7 +257,7 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
 
-  tagTextDialog(tagger: TorchTagger) {
+  tagTextDialog(tagger: TorchTagger): void {
     this.dialog.open(TorchTagTextDialogComponent, {
       data: {torchTorchTaggerId: tagger.id, currentProjectId: this.currentProject.id},
       maxHeight: '665px',

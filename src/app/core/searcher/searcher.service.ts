@@ -8,6 +8,7 @@ import {catchError, tap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {SavedSearch} from '../../shared/types/SavedSearch';
 import {UtilityFunctions} from '../../shared/UtilityFunctions';
+import {SearchByQueryResponse} from '../../shared/types/Search';
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +30,8 @@ export class SearcherService {
       catchError(this.logService.handleError<SavedSearch[]>('getSavedSearches')));
   }
 
-  saveSearch(projectId: number, constraintList: Constraint[], elasticQuery: ElasticsearchQueryStructure, desc: string) {
+  saveSearch(projectId: number, constraintList: Constraint[],
+             elasticQuery: ElasticsearchQueryStructure, desc: string): Observable<unknown> {
     const body = {
       query_constraints: JSON.stringify(UtilityFunctions.convertConstraintListToJson(constraintList)),
       description: desc,
@@ -41,13 +43,13 @@ export class SearcherService {
       catchError(this.logService.handleError<unknown>('saveSearch')));
   }
 
-  search(body: unknown, projectId: number): Observable<{ results: { highlight: unknown, doc: unknown }[], count: number, aggs?: unknown } | HttpErrorResponse> {
-    return this.http.post<{ results: { highlight: unknown, doc: unknown }[], count: number, aggs?: unknown }>(`${this.apiUrl}/projects/${projectId}/search_by_query/`, body).pipe(
+  search(body: unknown, projectId: number): Observable<SearchByQueryResponse | HttpErrorResponse> {
+    return this.http.post<SearchByQueryResponse>(`${this.apiUrl}/projects/${projectId}/search_by_query/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'search')),
-      catchError(this.logService.handleError<{ results: { highlight: unknown, doc: unknown }[], count: number, aggs?: unknown }>('search')));
+      catchError(this.logService.handleError<SearchByQueryResponse>('search')));
   }
 
-  bulkDeleteSavedSearches(projectId: number, body: unknown) {
+  bulkDeleteSavedSearches(projectId: number, body: unknown): Observable<unknown> {
     return this.http.post<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>
     (`${this.apiUrl}/projects/${projectId}/searches/bulk_delete/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'bulkDeleteSavedSearches')),

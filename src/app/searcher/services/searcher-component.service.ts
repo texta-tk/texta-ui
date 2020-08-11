@@ -1,6 +1,11 @@
 import {Search} from '../../shared/types/Search';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
-import {Constraint, ElasticsearchQuery, FactConstraint, FactTextInputGroup} from '../searcher-sidebar/build-search/Constraints';
+import {
+  Constraint,
+  ElasticsearchQuery,
+  FactConstraint,
+  FactTextInputGroup
+} from '../searcher-sidebar/build-search/Constraints';
 import {SelectionModel} from '@angular/cdk/collections';
 import {SavedSearch} from '../../shared/types/SavedSearch';
 import {Injectable} from '@angular/core';
@@ -39,7 +44,7 @@ export class SearcherComponentService {
   constructor() {
   }
 
-  public setIsLoading(val: boolean) {
+  public setIsLoading(val: boolean): void {
     this.isLoading.next(val);
   }
 
@@ -49,7 +54,7 @@ export class SearcherComponentService {
 
   // when we search_by_query, the response is passed as a Search Object to the table component through this function
   // also used in aggregations, to know, when to request a new query via getElasticQuery() (we got results so the query is viable to use)
-  public nextSearch(search: Search | null) {
+  public nextSearch(search: Search | null): void {
     this.searchSubject.next(search);
   }
 
@@ -58,7 +63,7 @@ export class SearcherComponentService {
   }
 
   // tslint:disable-next-line:no-any
-  public nextAggregation(aggregation: { globalAgg: any, agg: any } | null) {
+  public nextAggregation(aggregation: { globalAgg: any, agg: any } | null): void {
     this.aggregationSubject.next(aggregation);
   }
 
@@ -68,18 +73,18 @@ export class SearcherComponentService {
   }
 
   // saved a new search
-  public nextSavedSearchUpdate() {
+  public nextSavedSearchUpdate(): void {
     return this.savedSearchUpdate.next(true);
   }
 
   // update saved search table when we saved new search, refactor to savedSearch object behaviourSubject instead?
-  public getSavedSearchUpdate() {
+  public getSavedSearchUpdate(): Observable<boolean> {
     return this.savedSearchUpdate.asObservable();
   }
 
   // we use these elasticQuery functions to pass on current searcher query to aggregations
   // because aggregations need to build some of their queries based off of the current search query
-  public nextElasticQuery(val: ElasticsearchQuery) {
+  public nextElasticQuery(val: ElasticsearchQuery): void {
     this.elasticQuerySubject.next(JSON.parse(JSON.stringify(val)));
   }
 
@@ -87,28 +92,28 @@ export class SearcherComponentService {
     return this.elasticQuerySubject.asObservable().pipe(map(x => JSON.parse(JSON.stringify(x))));
   }
 
-  public nextSavedSearch(search: SavedSearch) {
+  public nextSavedSearch(search: SavedSearch): void {
     this.savedSearch.next(search);
   }
 
-  public getSavedSearch() {
+  public getSavedSearch(): Observable<SavedSearch | null> {
     return this.savedSearch.asObservable();
   }
 
-  public nextAdvancedSearchConstraints$(constraintList: Constraint[]) {
+  public nextAdvancedSearchConstraints$(constraintList: Constraint[]): void {
     this.advancedSearchConstraints$.next(constraintList);
   }
 
-  public getAdvancedSearchConstraints$() {
+  public getAdvancedSearchConstraints$(): Observable<Constraint[]> {
     return this.advancedSearchConstraints$.asObservable();
   }
 
-  public createConstraintFromFact(factName: string, factValue: string) {
+  public createConstraintFromFact(factName: string, factValue: string): void {
     const constraint = new SavedSearch();
     constraint.query_constraints = [];
     this.getAdvancedSearchConstraints$().pipe(take(1)).subscribe(constraintList => {
       if (typeof constraint.query_constraints !== 'string') {
-        const factConstraint: Constraint | undefined = constraintList.find(y => y instanceof FactConstraint && y.inputGroupArray.length > 0);
+        const factConstraint = constraintList.find(y => y instanceof FactConstraint && y.inputGroupArray.length > 0);
         // inputGroup means its a fact_val constraint
         if (factConstraint instanceof FactConstraint && factConstraint.inputGroupArray.length > 0) {
           if (!factConstraint.inputGroupArray.some(group => group.factTextFactNameFormControl.value === factName &&

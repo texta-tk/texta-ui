@@ -31,21 +31,21 @@ export class TorchTaggerService {
       catchError(this.logService.handleError<TorchTagger>('editTorchTagger')));
   }
 
-  bulkDeleteTorchTaggers(projectId: number, body: unknown) {
+  bulkDeleteTorchTaggers(projectId: number, body: unknown): Observable<unknown> {
     return this.http.post<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>
     (`${this.apiUrl}/projects/${projectId}/torchtaggers/bulk_delete/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'bulkDeleteTorchTaggers')),
       catchError(this.logService.handleError<unknown>('bulkDeleteTorchTaggers')));
   }
 
-  deleteTorchTagger(projectId: number, taggerId: number) {
+  deleteTorchTagger(projectId: number, taggerId: number): Observable<unknown> {
     return this.http.delete(`${this.apiUrl}/projects/${projectId}/torchtaggers/${taggerId}`).pipe(
       tap(e => this.logService.logStatus(e, 'deleteTorchTagger')),
       catchError(this.logService.handleError<unknown>('deleteTorchTagger')));
   }
 
 
-  getTorchTaggerOptions(projectId: number) {
+  getTorchTaggerOptions(projectId: number): Observable<unknown> {
     return this.http.options<unknown>(`${this.apiUrl}/projects/${projectId}/torchtaggers/`).pipe(
       tap(e => this.logService.logStatus(e, 'getTorchTaggerOptions')),
       catchError(this.logService.handleError<unknown>('getTorchTaggerOptions')));

@@ -33,7 +33,7 @@ export class SavedSearchesComponent implements OnInit, OnDestroy {
               public searchService: SearcherComponentService) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), switchMap(currentProject => {
       if (currentProject) {
         this.currentProject = currentProject;
@@ -60,31 +60,31 @@ export class SavedSearchesComponent implements OnInit, OnDestroy {
     });
   }
 
-  displaySavedSearch(element: SavedSearch) {
+  displaySavedSearch(element: SavedSearch): void {
     this.searchService.nextSavedSearch(element);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroyed$.next(true);
     this.destroyed$.complete();
   }
 
 
   /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected() {
+  isAllSelected(): boolean {
     const numSelected = this.searchService.savedSearchSelection.selected.length;
     const numRows = this.dataSource.data.length;
     return numSelected === numRows;
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
+  masterToggle(): void {
     this.isAllSelected() ?
       this.searchService.savedSearchSelection.clear() :
       this.dataSource.data.forEach(row => this.searchService.savedSearchSelection.select(row));
   }
 
-  removeSelectedRows() {
+  removeSelectedRows(): void {
     this.searchService.savedSearchSelection.selected.forEach((selectedSearch: SavedSearch) => {
       const index: number = this.dataSource.data.findIndex((search: SavedSearch) => search.id === selectedSearch.id);
       this.dataSource.data.splice(index, 1);
@@ -93,7 +93,7 @@ export class SavedSearchesComponent implements OnInit, OnDestroy {
     this.searchService.savedSearchSelection.clear();
   }
 
-  edit(search: SavedSearch) {
+  edit(search: SavedSearch): void {
     const dialogRef = this.dialog.open(EditSavedSearchDialogComponent, {data: search});
     dialogRef.afterClosed().subscribe(x => {
       if (x && !(x instanceof HttpErrorResponse)) {

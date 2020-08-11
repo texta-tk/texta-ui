@@ -56,7 +56,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
               private logService: LogService) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(resp => {
@@ -71,11 +71,11 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.setUpPaginator();
   }
 
-  setUpPaginator() {
+  setUpPaginator(): void {
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
@@ -108,13 +108,13 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroyed$.next(true);
     this.destroyed$.complete();
   }
 
 
-  openCreateDialog() {
+  openCreateDialog(): void {
     const dialogRef = this.dialog.open(CreateTaggerGroupDialogComponent, {
       maxHeight: '860px',
       width: '700px',
@@ -123,11 +123,12 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
     dialogRef.afterClosed().subscribe((resp: TaggerGroup) => {
       if (resp) {
         this.tableData.data = [...this.tableData.data, resp];
+        this.projectStore.refreshSelectedProjectResourceCounts();
       }
     });
   }
 
-  edit(taggerGroup: TaggerGroup) {
+  edit(taggerGroup: TaggerGroup): void {
     this.dialog.open(EditTaggerGroupDialogComponent, {
       width: '700px',
       data: taggerGroup
@@ -140,7 +141,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  openModelsListDialog(taggerGroup: TaggerGroup) {
+  openModelsListDialog(taggerGroup: TaggerGroup): void {
     const dialogRef = this.dialog.open(ModelsListDialogComponent, {
       data: {taggerGroupId: taggerGroup.id, currentProjectId: this.currentProject.id},
       maxHeight: '835px',
@@ -149,7 +150,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  onModelsRetrain(taggerGroup: TaggerGroup) {
+  onModelsRetrain(taggerGroup: TaggerGroup): void {
     this.taggerGroupService.modelsRetrain(taggerGroup.id, this.currentProject.id).subscribe(
       (resp: { 'success': 'retraining tasks created' } | HttpErrorResponse) => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
@@ -161,7 +162,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
     );
   }
 
-  tagTextDialog(tagger: TaggerGroup) {
+  tagTextDialog(tagger: TaggerGroup): void {
     const dialogRef = this.dialog.open(TaggerGroupTagTextDialogComponent, {
       data: {taggerId: tagger.id, currentProjectId: this.currentProject.id},
       maxHeight: '665px',
@@ -169,7 +170,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  tagDocDialog(tagger: TaggerGroup) {
+  tagDocDialog(tagger: TaggerGroup): void {
     const dialogRef = this.dialog.open(TaggerGroupTagDocDialogComponent, {
       data: {taggerId: tagger.id, currentProjectId: this.currentProject.id},
       maxHeight: '665px',
@@ -177,7 +178,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  tagRandomDocDialog(tagger: TaggerGroup) {
+  tagRandomDocDialog(tagger: TaggerGroup): void {
     const dialogRef = this.dialog.open(TaggerGroupTagRandomDocDialogComponent, {
       data: {tagger, currentProjectId: this.currentProject.id},
       minHeight: '300px',
@@ -188,20 +189,20 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
   /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected() {
+  isAllSelected(): boolean {
     const numSelected = this.selectedRows.selected.length;
     const numRows = this.tableData.data.length;
     return numSelected === numRows;
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
+  masterToggle(): void {
     this.isAllSelected() ?
       this.selectedRows.clear() :
       this.tableData.data.forEach(row => this.selectedRows.select(row));
   }
 
-  onDelete(tagger: TaggerGroup, index: number) {
+  onDelete(tagger: TaggerGroup, index: number): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {confirmText: 'Delete', mainText: 'Are you sure you want to delete this Tagger Group?'}
     });
@@ -212,13 +213,14 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
           this.logService.snackBarMessage(`Tagger Group ${tagger.id}: ${tagger.description} deleted`, 2000);
           this.tableData.data.splice(index, 1);
           this.tableData.data = [...this.tableData.data];
+          this.projectStore.refreshSelectedProjectResourceCounts();
         });
       }
     });
   }
 
 
-  onDeleteAllSelected() {
+  onDeleteAllSelected(): void {
     if (this.selectedRows.selected.length > 0) {
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         data: {
@@ -242,23 +244,24 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  removeSelectedRows() {
+  removeSelectedRows(): void {
     this.selectedRows.selected.forEach((selectedTagger: TaggerGroup) => {
       const index: number = this.tableData.data.findIndex(tagger => tagger.id === selectedTagger.id);
       this.tableData.data.splice(index, 1);
       this.tableData.data = [...this.tableData.data];
     });
     this.selectedRows.clear();
+    this.projectStore.refreshSelectedProjectResourceCounts();
   }
 
-  applyFilter(filterValue: EventTarget | null, field: string) {
+  applyFilter(filterValue: EventTarget | null, field: string): void {
     this.filteringValues[field] = (filterValue as HTMLInputElement).value ? (filterValue as HTMLInputElement).value : '';
     this.paginator.pageIndex = 0;
     this.filterQueriesToString();
     this.filteredSubject.next();
   }
 
-  filterQueriesToString() {
+  filterQueriesToString(): void {
     this.inputFilterQuery = '';
     for (const field in this.filteringValues) {
       if (this.filteringValues.hasOwnProperty(field)) {

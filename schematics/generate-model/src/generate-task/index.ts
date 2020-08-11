@@ -14,6 +14,8 @@ import {getWorkspace} from '@schematics/angular/utility/config';
 import {parseName} from '@schematics/angular/utility/parse-name';
 import {experimental, normalize, strings} from '@angular-devkit/core';
 
+// tslint:disable:no-any
+// tslint:disable:variable-name
 export function setupOptions(host: Tree, options: any): Tree {
   const workspace = getWorkspace(host);
   const projectName = options.project as string;

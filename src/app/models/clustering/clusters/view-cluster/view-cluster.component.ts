@@ -80,7 +80,8 @@ export class ViewClusterComponent implements OnInit, OnDestroy, AfterViewInit {
             this.tableData.sort.sort(state.models.clustering[clusteringState].sortDirection);
             const arrowViewStateTransition = {toState: 'active'} as ArrowViewStateTransition;
             // ugly hack
-            (this.tableData.sort.sortables.get(state.models.clustering[clusteringState].sortDirection.id) as MatSortHeader)._setAnimationTransitionState(arrowViewStateTransition);
+            const sortable = this.tableData.sort.sortables.get(state.models.clustering[clusteringState].sortDirection.id);
+            (sortable as MatSortHeader)._setAnimationTransitionState(arrowViewStateTransition);
           }
 
         } else if (x instanceof HttpErrorResponse) {
@@ -132,21 +133,21 @@ export class ViewClusterComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected() {
+  isAllSelected(): boolean {
     const numSelected = this.selectedRows.selected.length;
     const numRows = this.tableData.data.length;
     return numSelected === numRows;
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
+  masterToggle(): void {
     this.isAllSelected() ?
       this.selectedRows.clear() :
       this.tableData.data.forEach(row => this.selectedRows.select(row));
   }
 
 
-  onDeleteAllSelected() {
+  onDeleteAllSelected(): void {
     if (this.selectedRows.selected.length > 0) {
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         data: {
@@ -170,7 +171,7 @@ export class ViewClusterComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  removeSelectedRows() {
+  removeSelectedRows(): void {
     this.selectedRows.selected.forEach((selected: Cluster) => {
       const index: number = this.tableData.data.findIndex(cluster => cluster.id === selected.id);
       this.tableData.data.splice(index, 1);
@@ -179,16 +180,16 @@ export class ViewClusterComponent implements OnInit, OnDestroy, AfterViewInit {
     this.selectedRows.clear();
   }
 
-  trackById(index: number, val: Cluster) {
+  trackById(index: number, val: Cluster): number {
     return val.id;
   }
 
-  applyFilter(event: Event) {
+  applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
     this.filterTerm$.next(filterValue);
   }
 
-  customFilterPredicate() {
+  customFilterPredicate(): (data: Cluster, filter: string) => boolean {
     return (data: Cluster, filter: string) => {
       return data.significant_words.some(x => {
         if (x.key) {
@@ -201,7 +202,7 @@ export class ViewClusterComponent implements OnInit, OnDestroy, AfterViewInit {
     };
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroyed$.next(true);
     this.destroyed$.complete();
   }

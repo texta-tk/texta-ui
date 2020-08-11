@@ -44,12 +44,12 @@ export class TextaFactsChipsComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  buildSearch(fact: string, factValue: string) {
+  buildSearch(fact: string, factValue: string): void {
     const constraint = new SavedSearch();
     constraint.query_constraints = [];
     this.searchService.getAdvancedSearchConstraints$().pipe(take(1)).subscribe(constraintList => {
       if (typeof constraint.query_constraints !== 'string') {
-        const factConstraint: Constraint | undefined = constraintList.find(y => y instanceof FactConstraint && y.inputGroupArray.length > 0);
+        const factConstraint = constraintList.find(y => y instanceof FactConstraint && y.inputGroupArray.length > 0);
         // inputGroup means its a fact_val constraint
         if (factConstraint instanceof FactConstraint && factConstraint.inputGroupArray.length > 0) {
           if (!factConstraint.inputGroupArray.some(group => group.factTextFactNameFormControl.value === fact &&
@@ -69,7 +69,7 @@ export class TextaFactsChipsComponent implements OnInit {
     });
   }
 
-  buildChipList(facts: { fact: string, str_val: string }[], doneCallback: () => void) {
+  buildChipList(facts: { fact: string, str_val: string }[], doneCallback: () => void): void {
     setTimeout(() => {
       const colors = HighlightComponent.generateColorsForFacts(facts);
       facts.forEach(val => {

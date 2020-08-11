@@ -17,7 +17,7 @@ export class TorchTagTextDialogComponent {
               @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, torchTorchTaggerId: number; }) {
   }
 
-  onSubmit(value: string) {
+  onSubmit(value: string): void {
     this.torchTorchTaggerService.tagText({
       text: value,
       lemmatize: this.lemmatize

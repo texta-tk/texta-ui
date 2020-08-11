@@ -29,7 +29,7 @@ export class SearcherComponent implements OnInit, OnDestroy {
               private projectStore: ProjectStore, private projectService: ProjectService) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     const routeIntialized = new Subject<boolean>();
     routeIntialized.pipe(take(1), switchMap(x => {
       return combineLatest([this.projectStore.getCurrentProject(), this.projectStore.getSelectedProjectIndices()]).pipe(
@@ -100,7 +100,7 @@ export class SearcherComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.complete();
   }

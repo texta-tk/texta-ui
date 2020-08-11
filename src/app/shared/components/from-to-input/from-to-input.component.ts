@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnDestroy, OnInit, Optional, Self} from '@angular/core';
+import {Component, ElementRef, HostBinding, Input, OnDestroy, OnInit, Optional, Self} from '@angular/core';
 import {ControlValueAccessor, FormBuilder, FormGroup, NgControl, ValidatorFn} from '@angular/forms';
 import {Subject} from 'rxjs';
 import {coerceBooleanProperty} from '@angular/cdk/coercion';
@@ -11,16 +11,13 @@ export class FromToInput {
   }
 }
 
+// tslint:disable:variable-name
+// tslint:disable:no-any
 @Component({
   selector: 'app-from-to-input',
   templateUrl: './from-to-input.component.html',
   styleUrls: ['./from-to-input.component.scss'],
-  providers: [{provide: MatFormFieldControl, useExisting: FromToInputComponent}],
-  host: {
-    '[class.host-floating-label]': 'shouldLabelFloat',
-    '[id]': 'id',
-    '[attr.aria-describedby]': 'describedBy',
-  }
+  providers: [{provide: MatFormFieldControl, useExisting: FromToInputComponent}]
 })
 export class FromToInputComponent implements ControlValueAccessor, MatFormFieldControl<FromToInput>, OnDestroy, OnInit {
   static nextId = 0;
@@ -40,6 +37,10 @@ export class FromToInputComponent implements ControlValueAccessor, MatFormFieldC
   previousFrom = 0;
   previousTo = 0;
   readonly autofilled: boolean;
+
+  @HostBinding('class.host-floating-label') hostLabel = this.shouldLabelFloat;
+  @HostBinding('id') hostId = this.id;
+  @HostBinding('attr.aria-describedby') hostAria = this.describedBy;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -65,13 +66,13 @@ export class FromToInputComponent implements ControlValueAccessor, MatFormFieldC
     }
   }
 
-  get empty() {
+  get empty(): boolean {
     const {value: {from, to}} = this.parts;
 
     return !from && !to;
   }
 
-  get shouldLabelFloat() {
+  get shouldLabelFloat(): boolean {
     return this.focused || !this.empty;
   }
 
@@ -145,7 +146,7 @@ export class FromToInputComponent implements ControlValueAccessor, MatFormFieldC
     }
     this.previousFrom = +from;
     this.previousTo = +to;
-  };
+  }
 
   onTouched = () => {
     const from = Number(this.parts.value.from);
@@ -161,20 +162,20 @@ export class FromToInputComponent implements ControlValueAccessor, MatFormFieldC
     }
     this.parts.markAsTouched();
     this.checkValidators.next();
-  };
+  }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.stateChanges.complete();
     this._focusMonitor.stopMonitoring(this._elementRef);
     this.destroy.next(true);
     this.destroy.complete();
   }
 
-  setDescribedByIds(ids: string[]) {
+  setDescribedByIds(ids: string[]): void {
     this.describedBy = ids.join(' ');
   }
 
-  setPartsValidators(validators: ValidatorFn[]) {
+  setPartsValidators(validators: ValidatorFn[]): void {
     if (this.parts && this.ngControl?.control) {
       if (validators === null) {
         this.errorState = false;
@@ -189,7 +190,7 @@ export class FromToInputComponent implements ControlValueAccessor, MatFormFieldC
     }
   }
 
-  onContainerClick(event: MouseEvent) {
+  onContainerClick(event: MouseEvent): void {
     if ((event.target as Element).tagName.toLowerCase() !== 'input') {
       this._elementRef.nativeElement.querySelector('input')?.focus();
     }

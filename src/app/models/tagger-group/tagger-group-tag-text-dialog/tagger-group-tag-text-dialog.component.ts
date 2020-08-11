@@ -20,7 +20,7 @@ export class TaggerGroupTagTextDialogComponent {
               @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, taggerId: number; }) {
   }
 
-  onSubmit(value: string) {
+  onSubmit(value: string): void {
     this.isLoading = true;
     this.taggerGroupService.tagText(
       {

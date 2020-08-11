@@ -19,7 +19,7 @@ export class TagTextDialogComponent {
               @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, taggerId: number; }) {
   }
 
-  onSubmit(value: string) {
+  onSubmit(value: string): void {
     this.isLoading = true;
     this.taggerService.tagText({
       text: value, lemmatize: this.lemmatize,

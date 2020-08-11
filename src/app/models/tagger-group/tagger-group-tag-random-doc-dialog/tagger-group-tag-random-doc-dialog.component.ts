@@ -17,6 +17,7 @@ interface TaggerGroupRandomDocTag {
 
 
 interface TaggerGroupRandomDocResult {
+  // tslint:disable-next-line:no-any
   document: any;
   tags: TaggerGroupRandomDocTag[];
 }
@@ -36,7 +37,7 @@ export class TaggerGroupTagRandomDocDialogComponent implements OnInit {
   }
 
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.projectStore.getSelectedProjectIndices().pipe(take(1)).subscribe(x => {
       if (x) {
         this.indices = x;
@@ -45,9 +46,10 @@ export class TaggerGroupTagRandomDocDialogComponent implements OnInit {
     });
   }
 
-  onSubmit() {
+  onSubmit(): void {
     this.isLoading = true;
-    this.taggerGroupService.tagRandomDocument(this.data.currentProjectId, this.data.tagger.id, {indices: this.indices.map(x => [{name: x.index}]).flat()})
+    this.taggerGroupService.tagRandomDocument(this.data.currentProjectId, this.data.tagger.id,
+      {indices: this.indices.map(x => [{name: x.index}]).flat()})
       .subscribe(resp => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
           this.result = resp as TaggerGroupRandomDocResult;

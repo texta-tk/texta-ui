@@ -9,7 +9,7 @@ import { MatTableDataSource } from '@angular/material/table';
   styleUrls: ['./generic-table.component.scss']
 })
 export class GenericTableComponent implements OnInit {
-  public tableData: MatTableDataSource<any>;
+  public tableData: MatTableDataSource<unknown>;
   public displayedColumns: string[];
   public isLoadingResults = true;
 
@@ -33,7 +33,7 @@ export class GenericTableComponent implements OnInit {
   constructor() {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
   }
 
   makeColumns<T>(data: T[]): string[] {
@@ -46,14 +46,15 @@ export class GenericTableComponent implements OnInit {
     return columns;
   }
 
-  checkIfObject(value: object) {
+  checkIfObject(value: object): boolean {
     if (value) {
       // hacky way to check if object with properties
       return value.toString() === '[object Object]';
     }
+    return false;
   }
 
-  getKeys(object: object) {
+  getKeys(object: object): string[] {
     return Object.keys(object);
   }
 

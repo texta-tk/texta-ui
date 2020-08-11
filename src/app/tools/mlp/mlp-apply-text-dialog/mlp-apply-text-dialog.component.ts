@@ -27,7 +27,7 @@ export class MLPApplyTextDialogComponent implements OnInit, OnDestroy {
     analyzersFormControl: new FormControl([], [Validators.required]),
   });
   currentProject: Project;
-  result: any;
+  result: unknown;
   isLoading: boolean;
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
 
@@ -55,7 +55,7 @@ export class MLPApplyTextDialogComponent implements OnInit, OnDestroy {
     });
   }
 
-  onSubmit(formGroup: { analyzersFormControl: string[]; textFormControl: string; }) {
+  onSubmit(formGroup: { analyzersFormControl: string[]; textFormControl: string; }): void {
     this.isLoading = true;
     this.mlpService.applyMLPText({
       analyzers: formGroup.analyzersFormControl,
@@ -71,7 +71,7 @@ export class MLPApplyTextDialogComponent implements OnInit, OnDestroy {
   }
 
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroyed$.next(true);
     this.destroyed$.complete();
   }

@@ -45,7 +45,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
               private localStorage: LocalStorageService) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     // paginator label hack
     this.paginator._intl.getRangeLabel = this.countRangeLabel;
 
@@ -155,7 +155,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     return [];
   }
 
-  pageChange(event: PageEvent) {
+  pageChange(event: PageEvent): void {
     if (this.currentElasticQuery) {
       this.currentElasticQuery.elasticSearchQuery.size = event.pageSize;
       this.currentElasticQuery.elasticSearchQuery.from = event.pageIndex * event.pageSize;
@@ -168,7 +168,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     }
   }
 
-  public onfieldSelectionChange(opened: boolean) {
+  public onfieldSelectionChange(opened: boolean): void {
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && (this.columnFormControl.value)) {
       this.columnsToDisplay = this.columnFormControl.value;
@@ -180,12 +180,12 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.complete();
   }
 
-  countRangeLabel(page: number, pageSize: number, length: number) {
+  countRangeLabel(page: number, pageSize: number, length: number): string {
     if (length === 0 || pageSize === 0) {
       return `0 of ${length}`;
     }
@@ -204,7 +204,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     }
   }
 
-  trackByTableData(index: number, val: { doc: unknown; }) {
+  trackByTableData(index: number, val: { doc: unknown; }): unknown {
     return val.doc;
   }
 

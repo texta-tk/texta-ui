@@ -39,7 +39,7 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
 
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroy$)).subscribe(projectFields => {
       if (projectFields) {
         this.projectFields = ProjectIndex.sortTextaFactsAsFirstItem(projectFields);
@@ -97,7 +97,7 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
     });
   }
 
-  makeQuery(value: string) {
+  makeQuery(value: string): void {
     if (value && this.projectFields) {
       const fields = ProjectIndex.cleanProjectIndicesFields(this.projectFields, ['text'], []).map(x => x.fields).flat();
       const fieldPathArray = fields.map(y => y.path);
@@ -121,7 +121,7 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
   }
 
   // THIS IS TEMPORARY todo, think of a way to save simple searches and advanced searches with a clear cut difference
-  saveSearch(description: string) {
+  saveSearch(description: string): void {
     if (this.currentUser) {
       this.searcherService.saveSearch(
         this.currentProject.id,
@@ -135,7 +135,7 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
     }
   }
 
-  buildSavedSearch(search: SavedSearch) {
+  buildSavedSearch(search: SavedSearch): void {
     if (search.query) {
       const query = JSON.parse(search.query);
       if (query?.query?.multi_match?.query) {

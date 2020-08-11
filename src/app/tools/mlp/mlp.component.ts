@@ -7,8 +7,7 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {MLPCreateIndexDialogComponent} from './mlp-create-index-dialog/mlp-create-index-dialog.component';
 import {merge, of, Subject} from 'rxjs';
 import {debounceTime, startWith, switchMap, takeUntil} from 'rxjs/operators';
-import {Project, ProjectIndex} from '../../shared/types/Project';
-import {ResultsWrapper} from '../../shared/types/Generic';
+import {Project} from '../../shared/types/Project';
 import {MatTableDataSource} from '@angular/material/table';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatSort} from '@angular/material/sort';
@@ -67,7 +66,7 @@ export class MLPComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
@@ -99,7 +98,7 @@ export class MLPComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
 
-  openQueryDialog(query: any) {
+  openQueryDialog(query: unknown): void {
     query = JSON.stringify(query);
     const dialogRef = this.dialog.open(QueryDialogComponent, {
       data: {query},
@@ -107,18 +106,20 @@ export class MLPComponent implements OnInit, OnDestroy, AfterViewInit {
       width: '700px',
     });
   }
-  openApplyTextDialog() {
+
+  openApplyTextDialog(): void {
     this.dialog.open(MLPApplyTextDialogComponent, {
       maxHeight: '80vh',
       width: '700px',
     });
   }
-  openCreateDialog() {
+
+  openCreateDialog(): void {
     const dialogRef = this.dialog.open(MLPCreateIndexDialogComponent, {
       maxHeight: '650px',
       width: '700px',
     });
-    dialogRef.afterClosed().subscribe((resp: any | HttpErrorResponse) => {
+    dialogRef.afterClosed().subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.tableData.data = [...this.tableData.data, resp];
       }
@@ -127,21 +128,21 @@ export class MLPComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
   /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected() {
+  isAllSelected(): boolean {
     const numSelected = this.selectedRows.selected.length;
     const numRows = this.tableData.data.length;
     return numSelected === numRows;
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
+  masterToggle(): void {
     this.isAllSelected() ?
       this.selectedRows.clear() :
       this.tableData.data.forEach(row => this.selectedRows.select(row));
   }
 
 
-  onDeleteAllSelected() {
+  onDeleteAllSelected(): void {
     if (this.selectedRows.selected.length > 0) {
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         data: {
@@ -165,7 +166,7 @@ export class MLPComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  removeSelectedRows() {
+  removeSelectedRows(): void {
     this.selectedRows.selected.forEach((selectedMLP: MLP) => {
       const index: number = this.tableData.data.findIndex(mlp => mlp.id === selectedMLP.id);
       this.tableData.data.splice(index, 1);

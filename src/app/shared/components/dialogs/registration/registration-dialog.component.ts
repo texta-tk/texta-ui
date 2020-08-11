@@ -1,5 +1,5 @@
-import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
-import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
+import {Component, Inject} from '@angular/core';
+import {AbstractControl, FormControl, FormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {CrossFieldErrorMatcher, LiveErrorStateMatcher} from '../../../CustomerErrorStateMatchers';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {UserService} from '../../../../core/users/user.service';
@@ -12,7 +12,7 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {of} from 'rxjs';
 
 
-function passwordMatchValidator(g: AbstractControl) {
+function passwordMatchValidator(g: AbstractControl): null | ValidationErrors {
   const password1 = g.get('passwordFormControl');
   const password2 = g.get('passwordConfirmFormControl');
   return (password1 && password2 && password1.value === password2.value)
@@ -24,7 +24,7 @@ function passwordMatchValidator(g: AbstractControl) {
   templateUrl: './registration-dialog.component.html',
   styleUrls: ['./registration-dialog.component.scss']
 })
-export class RegistrationDialogComponent implements OnInit, OnDestroy {
+export class RegistrationDialogComponent {
 
   profileForm = new FormGroup({
     usernameFormControl: new FormControl('', [
@@ -55,14 +55,10 @@ export class RegistrationDialogComponent implements OnInit, OnDestroy {
   }
 
 
-  ngOnInit() {
-  }
-
-  ngOnDestroy() {
-
-  }
-
-  onSubmit(formData: { usernameFormControl: string; passwordForm: { passwordFormControl: string; passwordConfirmFormControl: string; }; }) {
+  onSubmit(formData: {
+    usernameFormControl: string;
+    passwordForm: { passwordFormControl: string; passwordConfirmFormControl: string; };
+  }): void {
     const body = {
       username: formData.usernameFormControl,
       // email: formData.emailFormControl,
@@ -98,9 +94,7 @@ export class RegistrationDialogComponent implements OnInit, OnDestroy {
         } else {
           // navigate to home page
           this.router.navigate(['']).finally((() => this.closeDialog()));
-
         }
-
       }
     });
   }

@@ -13,7 +13,7 @@ describe('PhraseDialogComponent', () => {
   const mockDialogRef = {
     close: jasmine.createSpy('close')
   };
-  const data = {currentProjectId: 0, embeddingId: 0}
+  const data = {currentProjectId: 0, embeddingId: 0};
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [

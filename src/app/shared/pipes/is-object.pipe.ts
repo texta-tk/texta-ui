@@ -6,7 +6,7 @@ import {Pipe, PipeTransform} from '@angular/core';
 })
 export class IsObjectPipe implements PipeTransform {
 
-    transform(value: any, ...args: any[]): any {
+    transform(value: unknown, ...args: unknown[]): object | null {
         if (!value || (!(value instanceof Map) && typeof value !== 'object')) {
             return null;
         }

@@ -57,7 +57,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
               public logService: LogService) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
 
@@ -85,11 +85,11 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.setUpPaginator();
   }
 
-  setUpPaginator() {
+  setUpPaginator(): void {
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
@@ -123,7 +123,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
 
-  refreshTaggersTask(resp: Tagger[] | HttpErrorResponse) {
+  refreshTaggersTask(resp: Tagger[] | HttpErrorResponse): void {
     if (resp && !(resp instanceof HttpErrorResponse)) {
       if (resp.length > 0) {
         resp.map(tagger => {
@@ -136,27 +136,25 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  retrainTagger(value: { id: number; }) {
+  retrainTagger(value: { id: number; }): void {
     if (this.currentProject) {
-      return this.taggerService.retrainTagger(this.currentProject.id, value.id)
-        .subscribe((resp: any | HttpErrorResponse) => {
+      this.taggerService.retrainTagger(this.currentProject.id, value.id)
+        .subscribe(resp => {
           if (resp && !(resp instanceof HttpErrorResponse)) {
             this.logService.snackBarMessage('Successfully started retraining tagger', 4000);
           } else if (resp instanceof HttpErrorResponse) {
             this.logService.snackBarError(resp, 5000);
           }
         });
-    } else {
-      return null;
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroyed$.next(true);
     this.destroyed$.complete();
   }
 
-  openCreateDialog() {
+  openCreateDialog(): void {
     const dialogRef = this.dialog.open(CreateTaggerDialogComponent, {
       maxHeight: '800px',
       width: '700px',
@@ -166,13 +164,14 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.tableData.data = [...this.tableData.data, resp];
         this.logService.snackBarMessage(`Created tagger ${resp.description}`, 2000);
+        this.projectStore.refreshSelectedProjectResourceCounts();
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       }
     });
   }
 
-  edit(tagger: Tagger) {
+  edit(tagger: Tagger): void {
     this.dialog.open(EditTaggerDialogComponent, {
       width: '700px',
       data: tagger
@@ -185,7 +184,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  editStopwordsDialog(tagger: Tagger) {
+  editStopwordsDialog(tagger: Tagger): void {
     const dialogRef = this.dialog.open(EditStopwordsDialogComponent, {
       data: {taggerId: tagger.id, currentProjectId: this.currentProject.id},
       maxHeight: '665px',
@@ -193,7 +192,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  tagTextDialog(tagger: Tagger) {
+  tagTextDialog(tagger: Tagger): void {
     const dialogRef = this.dialog.open(TagTextDialogComponent, {
       data: {taggerId: tagger.id, currentProjectId: this.currentProject.id},
       maxHeight: '665px',
@@ -201,7 +200,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  tagDocDialog(tagger: Tagger) {
+  tagDocDialog(tagger: Tagger): void {
     const dialogRef = this.dialog.open(TagDocDialogComponent, {
       data: {tagger, currentProjectId: this.currentProject.id},
       maxHeight: '665px',
@@ -210,7 +209,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
 
-  tagRandomDocDialog(tagger: Tagger) {
+  tagRandomDocDialog(tagger: Tagger): void {
     const dialogRef = this.dialog.open(TagRandomDocDialogComponent, {
       data: {tagger, currentProjectId: this.currentProject.id},
       maxHeight: '665px',
@@ -218,7 +217,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  onDelete(tagger: Tagger, index: number) {
+  onDelete(tagger: Tagger, index: number): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {confirmText: 'Delete', mainText: 'Are you sure you want to delete this Tagger?'}
     });
@@ -229,6 +228,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
           this.logService.snackBarMessage(`Deleted tagger ${tagger.description}`, 2000);
           this.tableData.data.splice(index, 1);
           this.tableData.data = [...this.tableData.data];
+          this.projectStore.refreshSelectedProjectResourceCounts();
         });
       }
     });
@@ -236,21 +236,21 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
   /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected() {
+  isAllSelected(): boolean {
     const numSelected = this.selectedRows.selected.length;
     const numRows = this.tableData.data.length;
     return numSelected === numRows;
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
+  masterToggle(): void {
     this.isAllSelected() ?
       this.selectedRows.clear() :
       this.tableData.data.forEach(row => this.selectedRows.select(row));
   }
 
 
-  onDeleteAllSelected() {
+  onDeleteAllSelected(): void {
     if (this.selectedRows.selected.length > 0) {
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         data: {
@@ -274,17 +274,18 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  removeSelectedRows() {
+  removeSelectedRows(): void {
     this.selectedRows.selected.forEach((selectedTagger: Tagger) => {
       const index: number = this.tableData.data.findIndex(tagger => tagger.id === selectedTagger.id);
       this.tableData.data.splice(index, 1);
       this.tableData.data = [...this.tableData.data];
     });
     this.selectedRows.clear();
+    this.projectStore.refreshSelectedProjectResourceCounts();
   }
 
 
-  openQueryDialog(query: string) {
+  openQueryDialog(query: string): void {
     const dialogRef = this.dialog.open(QueryDialogComponent, {
       data: {query},
       maxHeight: '665px',
@@ -292,7 +293,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  listFeatures(tagger: Tagger) {
+  listFeatures(tagger: Tagger): void {
     if (tagger.vectorizer === TaggerVectorizerChoices.HASHING) {
       this.logService.snackBarMessage('Hashing Vectorizer is not supported for listing features', 4500);
     } else {
@@ -304,17 +305,19 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  applyFilter(filterValue: EventTarget | null, field: string) {
+  applyFilter(filterValue: EventTarget | null, field: string): void {
     this.filteringValues[field] = (filterValue as HTMLInputElement).value ? (filterValue as HTMLInputElement).value : '';
     this.paginator.pageIndex = 0;
     this.filterQueriesToString();
     this.filteredSubject.next();
   }
 
-  filterQueriesToString() {
+  filterQueriesToString(): void {
     this.inputFilterQuery = '';
     for (const field in this.filteringValues) {
-      this.inputFilterQuery += `&${field}=${this.filteringValues[field]}`;
+      if (this.filteringValues.hasOwnProperty(field)) {
+        this.inputFilterQuery += `&${field}=${this.filteringValues[field]}`;
+      }
     }
   }
 }

@@ -491,7 +491,7 @@ describe('HighlightComponent', () => {
 });
 
 // tslint:disable-next-line:no-any
-function loopThroughNestedHighlightObject(object: any, array: string[]) {
+function loopThroughNestedHighlightObject(object: any, array: string[]): void {
   if (object.nested) {
     array.push(object.nested.text);
     loopThroughNestedHighlightObject(object.nested, array);

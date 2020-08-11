@@ -18,11 +18,13 @@ export class NumberConstraintsComponent implements OnInit, OnDestroy, AfterViewI
   operatorFormControl = new FormControl();
 
   destroyed$: Subject<boolean> = new Subject<boolean>();
+  // tslint:disable-next-line:no-any
   constraintQuery: any = {bool: {must: []}};
 
   constructor() {
   }
 
+  // tslint:disable-next-line:variable-name
   public _numberConstraint: NumberConstraint;
 
   @Input() set numberConstraint(value: NumberConstraint) {

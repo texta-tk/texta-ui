@@ -25,6 +25,7 @@ export class ShortVersionComponent {
   constructor() {
   }
 
+  // tslint:disable-next-line:no-any
   @Input() set params(params: { data: unknown, currentColumn: string, searcherHighlight: any, contextWindow: number }) {
     // @ts-ignore
     if (params.currentColumn && params.data[params.currentColumn] && params.data[params.currentColumn] !== '' &&
@@ -41,7 +42,7 @@ export class ShortVersionComponent {
     }
   }
 
-  public toggleSpanText(span: ContextSpan) {
+  public toggleSpanText(span: ContextSpan): void {
     if (span.hidden) {
       span.displayText = span.text;
     } else {
@@ -55,7 +56,7 @@ export class ShortVersionComponent {
   // for example with "end"
   // sample text: "bla bla bla bla bla" output: "... bla bla bla {highlight}"
 
-  public toggleAll() {
+  public toggleAll(): void {
     this.highlightArray.forEach(x => {
       if (x.type === 'text') {
         if (this.textHidden) {
@@ -161,7 +162,7 @@ export class ShortVersionComponent {
     }
   }
 
-  private sortByStartLowestSpan(a: HighlightSpan, b: HighlightSpan) {
+  private sortByStartLowestSpan(a: HighlightSpan, b: HighlightSpan): -1 | 1 {
     if (a.spans[0] === b.spans[0]) {
       return (a.spans[1] < b.spans[1]) ? -1 : 1; // sort by last span instead (need this for nested facts order)
     } else {

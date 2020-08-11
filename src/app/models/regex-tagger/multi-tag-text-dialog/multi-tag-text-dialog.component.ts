@@ -44,7 +44,7 @@ export class MultiTagTextDialogComponent implements OnInit, OnDestroy {
     });
   }
 
-  onSubmit(text: string, selectedTaggers: RegexTagger[]) {
+  onSubmit(text: string, selectedTaggers: RegexTagger[]): void {
     const body = {
       text,
       taggers: selectedTaggers?.map(x => x.id) || [],

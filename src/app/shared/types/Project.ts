@@ -135,6 +135,7 @@ export interface ProjectState {
     embedding: { itemsPerPage: number; }
     torchTagger: { itemsPerPage: number; }
     taggerGroup: { itemsPerPage: number; }
+    // tslint:disable-next-line:no-any
     clustering: { [clusteringID: string]: { selectedFields?: string[], charLimit?: number, sortDirection?: any } };
   };
   tasks: {};
