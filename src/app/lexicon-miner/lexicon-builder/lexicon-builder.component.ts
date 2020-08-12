@@ -4,7 +4,7 @@ import {LexiconService} from '../../core/lexicon/lexicon.service';
 import {ProjectStore} from '../../core/projects/project.store';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {Project} from '../../shared/types/Project';
-import {of, Subject, Subscription} from 'rxjs';
+import {of, Subject} from 'rxjs';
 import {EmbeddingsService} from '../../core/models/embeddings/embeddings.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Embedding, EmbeddingPrediction} from '../../shared/types/tasks/Embedding';

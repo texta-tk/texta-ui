@@ -1,10 +1,9 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject} from '@angular/core';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {mergeMap, take} from 'rxjs/operators';
-import {Project} from '../../../shared/types/Project';
 import {of} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {TaggerService} from '../../../core/models/taggers/tagger.service';

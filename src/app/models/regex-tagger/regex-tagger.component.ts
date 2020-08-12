@@ -2,7 +2,7 @@ import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/c
 import {merge, of, Subject} from 'rxjs';
 import {MatSort} from '@angular/material/sort';
 import {MatPaginator} from '@angular/material/paginator';
-import {debounceTime, publish, switchMap, takeUntil} from 'rxjs/operators';
+import {debounceTime, switchMap, takeUntil} from 'rxjs/operators';
 import {RegexTagger} from '../../shared/types/tasks/RegexTagger';
 import {ProjectStore} from '../../core/projects/project.store';
 import {MatDialog} from '@angular/material/dialog';

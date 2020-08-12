@@ -5,7 +5,6 @@ import {SharedModule} from '../../../shared/shared.module';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {AggregationResultsComponent} from '../../aggregation-results/aggregation-results.component';
 import {SearcherComponentService} from '../../services/searcher-component.service';
 import {SearchServiceSpy} from '../../services/searcher-component.service.spec';
 import {TextAggregationComponent} from './text-aggregation/text-aggregation.component';

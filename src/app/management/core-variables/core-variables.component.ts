@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {ProjectService} from '../../core/projects/project.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../../core/util/log.service';
 import {UtilityFunctions} from '../../shared/UtilityFunctions';

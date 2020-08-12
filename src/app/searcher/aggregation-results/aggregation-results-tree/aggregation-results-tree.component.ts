@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy} from '@angular/core';
 import {NestedTreeControl} from '@angular/cdk/tree';
 import {MatTableDataSource} from '@angular/material/table';
 import {AggregationResultsDialogComponent} from '../aggregation-results-dialog/aggregation-results-dialog.component';

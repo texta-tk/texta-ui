@@ -14,7 +14,6 @@ import {TaggerOptions} from '../../../shared/types/tasks/TaggerOptions';
 import {LogService} from '../../../core/util/log.service';
 import {Embedding} from '../../../shared/types/tasks/Embedding';
 import {EmbeddingsService} from '../../../core/models/embeddings/embeddings.service';
-import {Tagger} from '../../../shared/types/tasks/Tagger';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 import {ResultsWrapper} from '../../../shared/types/Generic';
 

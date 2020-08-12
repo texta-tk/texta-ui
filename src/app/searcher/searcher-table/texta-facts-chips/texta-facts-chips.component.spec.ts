@@ -1,7 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TextaFactsChipsComponent } from './texta-facts-chips.component';
-import {SearcherTableComponent} from '../searcher-table.component';
 import {SearcherComponentService} from '../../services/searcher-component.service';
 import {SearchServiceSpy} from '../../services/searcher-component.service.spec';
 

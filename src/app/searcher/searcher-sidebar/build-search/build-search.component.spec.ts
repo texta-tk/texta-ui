@@ -8,9 +8,6 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {TextConstraintsComponent} from './advanced-search/text-constraints/text-constraints.component';
 import {DateConstraintsComponent} from './advanced-search/date-constraints/date-constraints.component';
 import {FactConstraintsComponent} from './advanced-search/fact-constraints/fact-constraints.component';
-import {SearcherService} from '../../../core/searcher/searcher.service';
-import {Search} from '../../../shared/types/Search';
-import {BehaviorSubject} from 'rxjs';
 import {SearcherComponentService} from '../../services/searcher-component.service';
 import {SearchServiceSpy} from '../../services/searcher-component.service.spec';
 

@@ -4,7 +4,7 @@ import {SearcherComponentService} from '../../services/searcher-component.servic
 import {SavedSearch} from '../../../shared/types/SavedSearch';
 import {take} from 'rxjs/operators';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
-import {Constraint, FactConstraint, FactTextInputGroup} from '../../searcher-sidebar/build-search/Constraints';
+import {FactConstraint, FactTextInputGroup} from '../../searcher-sidebar/build-search/Constraints';
 
 @Component({
   selector: 'app-texta-facts-chips',

@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Field, Project, ProjectFact, ProjectIndex} from '../../../shared/types/Project';
-import {filter, mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
+import {mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
 import {LogService} from '../../../core/util/log.service';
 import {TaggerOptions} from '../../../shared/types/tasks/TaggerOptions';
 import {ErrorStateMatcher} from '@angular/material/core';

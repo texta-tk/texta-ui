@@ -10,8 +10,6 @@ import {SavedSearchesComponent} from './saved-searches/saved-searches.component'
 import {TextConstraintsComponent} from './build-search/advanced-search/text-constraints/text-constraints.component';
 import {DateConstraintsComponent} from './build-search/advanced-search/date-constraints/date-constraints.component';
 import {FactConstraintsComponent} from './build-search/advanced-search/fact-constraints/fact-constraints.component';
-import {Search} from '../../shared/types/Search';
-import {BehaviorSubject} from 'rxjs';
 import {SearcherComponentService} from '../services/searcher-component.service';
 import {SearchServiceSpy} from '../services/searcher-component.service.spec';
 import {AggregationsComponent} from './aggregations/aggregations.component';

@@ -1,11 +1,7 @@
 import {
   async,
   ComponentFixture,
-  discardPeriodicTasks,
-  fakeAsync,
-  flushMicrotasks,
-  TestBed,
-  tick
+  TestBed
 } from '@angular/core/testing';
 
 import {TextConstraintsComponent} from './text-constraints.component';
@@ -14,7 +10,6 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {ElasticsearchQuery, TextConstraint} from '../../Constraints';
-import {By} from '@angular/platform-browser';
 
 describe('TextConstraintsComponent', () => {
   let component: TextConstraintsComponent;

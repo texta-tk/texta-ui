@@ -6,8 +6,6 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import { MatDialogRef } from '@angular/material/dialog';
-import {Search} from '../../../../shared/types/Search';
-import {BehaviorSubject} from 'rxjs';
 import {SearcherComponentService} from '../../../services/searcher-component.service';
 import {BuildSearchComponent} from '../../build-search/build-search.component';
 import {SearchServiceSpy} from '../../../services/searcher-component.service.spec';

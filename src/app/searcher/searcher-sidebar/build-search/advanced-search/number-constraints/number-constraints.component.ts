@@ -3,7 +3,7 @@ import {ElasticsearchQuery, NumberConstraint} from '../../Constraints';
 import {FormControl} from '@angular/forms';
 import {FromToInput, FromToInputComponent} from '../../../../../shared/components/from-to-input/from-to-input.component';
 import {Subject} from 'rxjs';
-import {debounceTime, startWith, takeUntil} from 'rxjs/operators';
+import {startWith, takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-number-constraints',

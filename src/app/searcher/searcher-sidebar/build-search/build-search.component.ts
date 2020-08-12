@@ -1,7 +1,6 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {Search} from '../../../shared/types/Search';
 import {SearcherComponentService} from '../../services/searcher-component.service';
-import {SavedSearch} from '../../../shared/types/SavedSearch';
 import {AdvancedSearchComponent} from './advanced-search/advanced-search.component';
 import {SimpleSearchComponent} from './simple-search/simple-search.component';
 import {ProjectStore} from '../../../core/projects/project.store';

@@ -3,7 +3,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {HighlightComponent} from './highlight.component';
 import {SharedModule} from '../../../shared/shared.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {ElasticsearchQuery, FactConstraint, FactTextInputGroup} from '../../searcher-sidebar/build-search/Constraints';
+import {FactConstraint, FactTextInputGroup} from '../../searcher-sidebar/build-search/Constraints';
 import {SearcherOptions} from '../../SearcherOptions';
 
 describe('HighlightComponent', () => {

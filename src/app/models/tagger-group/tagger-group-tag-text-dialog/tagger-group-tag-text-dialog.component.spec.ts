@@ -1,8 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TaggerGroupTagTextDialogComponent } from './tagger-group-tag-text-dialog.component';
-import {Tagger} from '../../../shared/types/tasks/Tagger';
-import {TagDocDialogComponent} from '../../tagger/tag-doc-dialog/tag-doc-dialog.component';
 import {SharedModule} from '../../../shared/shared.module';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';

@@ -6,7 +6,6 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {SearcherComponentService} from '../../services/searcher-component.service';
-import {BuildSearchComponent} from '../build-search/build-search.component';
 import {SearchServiceSpy} from '../../services/searcher-component.service.spec';
 
 describe('SavedSearchesComponent', () => {

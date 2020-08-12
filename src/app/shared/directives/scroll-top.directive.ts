@@ -1,5 +1,4 @@
 import {AfterViewInit, Directive, ElementRef, Input, OnDestroy} from '@angular/core';
-import {MatPaginator} from '@angular/material/paginator';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {MatTableDataSource} from '@angular/material/table';

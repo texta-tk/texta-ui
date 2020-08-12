@@ -1,5 +1,4 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import {HighlightSpan} from '../../searcher/searcher-table/highlight/highlight.component';
 
 @Pipe({
   name: 'groupSameValues',
