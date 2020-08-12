@@ -102,6 +102,7 @@ describe('clustering should work', function () {
       .should('have.property', 'message');
     cy.get('.breadcrumb > :nth-child(1) .action-text').click();
     cy.wait('@getClustering');
+    cy.wait(500);
     cy.get('.mat-header-cell.mat-column-select > mat-checkbox').click();
     cy.get('[data-cy=appClusteringDeleteBtn]').click();
     cy.get('[type="submit"]').click();
