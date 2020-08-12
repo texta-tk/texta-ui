@@ -122,8 +122,6 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
         this.constraintChanged.emit(this.elasticSearchQuery);
       });
 
-      // todo
-
     }
   }
 

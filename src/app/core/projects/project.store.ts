@@ -148,7 +148,6 @@ export class ProjectStore {
         this.logService.snackBarError(resp, 2000);
       }
     });
-    // todo distinct pipe ???
     this.getSelectedProjectIndices().pipe(skip(1), distinctUntilChanged(), switchMap(projectIndices => {
       if (this._selectedProject && projectIndices) {
         this.setIndicesSelectionLocalStorage(this._selectedProject, projectIndices);

@@ -170,7 +170,7 @@ export class HighlightComponent {
     let fieldFacts: HighlightSpan[];
     fieldFacts = this.getFactsByField(highlightConfig.data, highlightConfig.currentColumn);
     if (highlightConfig.onlyHighlightMatching && fieldFacts.length > 0) {
-      fieldFacts = this.getOnlyMatchingFacts(fieldFacts, highlightConfig); // todo
+      fieldFacts = this.getOnlyMatchingFacts(fieldFacts, highlightConfig);
     }
     fieldFacts = UtilityFunctions.getDistinctByProperty<HighlightSpan>(fieldFacts, (x => x.spans));
     return fieldFacts;
@@ -402,7 +402,7 @@ export class HighlightComponent {
           previousFact = factCurrentIndex;
         }
       }
-      // previousfact is actually current fact? todo
+      // todo fix confusing variable naming
       if ((previousFact && highestSpanValue.get(previousFact) === i) ||
         (rootFact.spans[1] === i && !(previousFact && nestedFacts.includes(previousFact)))) {
         if (factText !== '') {

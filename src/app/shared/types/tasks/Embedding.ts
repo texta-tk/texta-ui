@@ -2,7 +2,6 @@ import {TaskStatus} from './TaskStatus';
 
 // tslint:disable:variable-name
 export class Embedding {
-  // todo
   url = '';
   id: number;
   description = '';
@@ -31,7 +30,6 @@ export class EmbeddingPrediction {
 }
 
 export class EmbeddingCluster {
-  // todo
   url = '';
   id: number;
   description = '';

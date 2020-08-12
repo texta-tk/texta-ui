@@ -35,7 +35,6 @@ export enum TaggerVectorizerChoices {
 }
 
 export class TaggerGroup {
-  // todo
   url = '';
   id: number;
   indices: string[];

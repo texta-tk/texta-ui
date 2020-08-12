@@ -74,7 +74,6 @@ export class TaggerService {
       catchError(this.logService.handleError<{ 'stop_words': string }>('postStopWords')));
   }
 
-  // todo backend seperate endpoint
   getTaggerOptions(projectId: number): Observable<TaggerOptions | HttpErrorResponse> {
     return this.http.options<TaggerOptions>(
       `${this.apiUrl}/projects/${projectId}/taggers/`

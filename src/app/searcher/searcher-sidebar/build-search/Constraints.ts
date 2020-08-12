@@ -95,7 +95,7 @@ export class FactTextInputGroup {
       path: 'texta_facts', // constant
       inner_hits: {
         size: 100,
-        name: 'inne_hits_name' // todo, redundant property?
+        name: 'inne_hits_name' // needs to be unique
       }
     }
   };

@@ -37,7 +37,7 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
       path: 'texta_facts', // constant
       inner_hits: {
         size: 100,
-        name: '??' // todo, redundant property?
+        name: '??' // needs to be unique
       }
     }
   };
