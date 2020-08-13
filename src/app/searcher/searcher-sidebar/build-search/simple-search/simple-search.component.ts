@@ -49,10 +49,6 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$)).subscribe(project => {
       if (project) {
         this.currentProject = project;
-        const currentProjectState = this.localStorage.getProjectState(project);
-        if (currentProjectState?.searcher?.itemsPerPage) {
-          this.elasticSearchQuery.elasticSearchQuery.size = currentProjectState.searcher.itemsPerPage;
-        }
       }
     });
     this.searchFormControl.valueChanges.pipe(debounceTime(SearcherOptions.SEARCH_DEBOUNCE_TIME),
@@ -64,6 +60,7 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
       switchMap((_) => {
         this.searcherComponentService.setIsLoading(true);
         if (this.elasticSearchQuery) { // check that they arent same
+          this.searcherComponentService.setQuerySizeFromLocalStorage(this.currentProject, this.elasticSearchQuery);
           return this.searcherService.search({
             query: this.elasticSearchQuery.elasticSearchQuery,
             indices: this.projectFields.map(x => x.index)

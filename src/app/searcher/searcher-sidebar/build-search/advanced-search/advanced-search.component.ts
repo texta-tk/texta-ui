@@ -62,7 +62,6 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
               private changeDetectorRef: ChangeDetectorRef,
               private userStore: UserStore,
               private lexiconService: LexiconService,
-              private localStorage: LocalStorageService,
               public searchService: SearcherComponentService) {
   }
 
@@ -72,10 +71,6 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
         this.constraintList = [];
         this.searchService.nextAdvancedSearchConstraints$(this.constraintList);
         this.currentProject = currentProject;
-        const currentProjectState = this.localStorage.getProjectState(currentProject);
-        if (currentProjectState?.searcher?.itemsPerPage) {
-          this.elasticQuery.elasticSearchQuery.size = currentProjectState.searcher.itemsPerPage;
-        }
         return this.lexiconService.getLexicons(currentProject.id);
       }
       return of(null);
@@ -113,6 +108,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     });
 
     this.searchQueue$.pipe(debounceTime(SearcherOptions.SEARCH_DEBOUNCE_TIME), takeUntil(this.destroy$), switchMap(x => {
+      this.searchService.setQuerySizeFromLocalStorage(this.currentProject, this.elasticQuery);
       this.searchService.nextElasticQuery(this.elasticQuery);
       if (this.currentProject) {
         this.searchService.setIsLoading(true);
@@ -232,7 +228,6 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
       this.searchQueue$.next();
     }
   }
-
 
   public saveSearch(description: string): void {
     if (this.currentUser) {

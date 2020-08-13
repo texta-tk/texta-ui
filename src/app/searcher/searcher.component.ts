@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, DoCheck, OnChanges, OnDestroy, OnInit} from '@angular/core';
 import {SearcherComponentService} from './services/searcher-component.service';
 import {concatMap, distinctUntilChanged, map, skipWhile, switchMap, take, takeUntil} from 'rxjs/operators';
 import {combineLatest, of, Subject} from 'rxjs';
@@ -6,7 +6,6 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {ProjectStore} from '../core/projects/project.store';
 import {Project} from '../shared/types/Project';
 import {ProjectService} from '../core/projects/project.service';
-import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-searcher',
@@ -79,7 +78,7 @@ export class SearcherComponent implements OnInit, OnDestroy {
       routeIntialized.next(true); // project doesnt exist
       return of(null);
     })).subscribe(projectIndices => {
-      if (projectIndices && !(projectIndices instanceof HttpErrorResponse)) {
+      if (projectIndices) {
         const indices = projectIndices.filter(x => this.routeParamIndices.includes(x.index));
         this.projectStore.setSelectedProjectIndices(indices);
         routeIntialized.next(true);
