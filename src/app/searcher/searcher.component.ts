@@ -11,7 +11,6 @@ import {ProjectService} from '../core/projects/project.service';
   selector: 'app-searcher',
   templateUrl: './searcher.component.html',
   styleUrls: ['./searcher.component.scss'],
-  providers: [SearcherComponentService],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearcherComponent implements OnInit, OnDestroy {

@@ -28,6 +28,7 @@ import {NumberConstraintsComponent} from './searcher-sidebar/build-search/advanc
 import {AggregationResultFactsComponent} from './aggregation-results/aggregation-result-facts/aggregation-result-facts.component';
 import { GraphSelectedPortalComponent } from './aggregation-results/aggregation-results-chart/graph-selected-portal/graph-selected-portal.component';
 import { EditSavedSearchDialogComponent } from './searcher-sidebar/saved-searches/edit-saved-search-dialog/edit-saved-search-dialog.component';
+import {SearcherComponentService} from "./services/searcher-component.service";
 
 @NgModule({
   declarations: [
@@ -65,7 +66,7 @@ import { EditSavedSearchDialogComponent } from './searcher-sidebar/saved-searche
   exports: [
     HighlightComponent
   ],
-  providers: [DatePipe]
+  providers: [SearcherComponentService, DatePipe]
 })
 export class SearcherModule {
   constructor() {

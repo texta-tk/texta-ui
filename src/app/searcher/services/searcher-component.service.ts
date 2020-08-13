@@ -11,8 +11,8 @@ import {SavedSearch} from '../../shared/types/SavedSearch';
 import {Injectable} from '@angular/core';
 import {map, take} from 'rxjs/operators';
 import {UtilityFunctions} from '../../shared/UtilityFunctions';
-import {Project} from "../../shared/types/Project";
-import {LocalStorageService} from "../../core/util/local-storage.service";
+import {Project} from '../../shared/types/Project';
+import {LocalStorageService} from '../../core/util/local-storage.service';
 
 @Injectable()
 export class SearcherComponentService {
@@ -134,7 +134,7 @@ export class SearcherComponentService {
       }
     });
   }
-  
+
   // changing table pagination size also caches the selection in localstorage so use this to sync size
   public setQuerySizeFromLocalStorage(project: Project, elasticQuery: ElasticsearchQuery): void {
     const currentProjectState = this.localStorage.getProjectState(project);

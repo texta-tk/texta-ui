@@ -53,12 +53,12 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     return null;
   }
 
-  formatDateData(buckets: { key_as_string: string, key: number, doc_count: number }[]): { value: number, name: Date }[] {
-    const dateData: { value: number, name: Date }[] = [];
+  formatDateData(buckets: { key_as_string: string, key: number, doc_count: number }[]): { value: number, name: string }[] {
+    const dateData: { value: number, name: string }[] = [];
     for (const element of buckets) {
       dateData.push({
         value: element.doc_count,
-        name: new Date(element.key_as_string)
+        name: element.key_as_string
       });
     }
     return dateData;
@@ -131,7 +131,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
 
   // gives us nested buckets->buckets->buckets, so i can build tree view
   // tslint:disable-next-line:no-any max-line-length
-  formatAggDataStructure(rootAgg: { histoBuckets: { name: any; series: { value: number; name: Date; }[]; }[]; nested: boolean; }, aggregation: any, aggKeys: string[]): any {
+  formatAggDataStructure(rootAgg: { histoBuckets: { name: any; series: { value: number; name: string; }[]; }[]; nested: boolean; }, aggregation: any, aggKeys: string[]): any {
     for (const bucket of this.bucketAccessor(aggregation)) {
       for (const key of aggKeys) {
         const innerBuckets = this.navNestedAggByKey(bucket, key);
