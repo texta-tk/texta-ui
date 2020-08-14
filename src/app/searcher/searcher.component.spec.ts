@@ -22,6 +22,7 @@ import {AggregationResultsTreeComponent} from './aggregation-results/aggregation
 import {AggregationResultsDialogComponent} from './aggregation-results/aggregation-results-dialog/aggregation-results-dialog.component';
 import {DatePipe} from '@angular/common';
 import {AggregationResultsChartComponent} from './aggregation-results/aggregation-results-chart/aggregation-results-chart.component';
+import {SearcherModule} from "./searcher.module";
 
 describe('SearcherComponent', () => {
   let component: SearcherComponent;
@@ -30,13 +31,8 @@ describe('SearcherComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule,
-      ],
-      declarations: [SearcherComponent, SearcherTableComponent, SearcherSidebarComponent,
-        BuildSearchComponent, SavedSearchesComponent, TextConstraintsComponent,
-        DateConstraintsComponent, FactConstraintsComponent, HighlightComponent, AggregationResultsComponent, AggregationsComponent,
-        DateAggregationComponent, TextAggregationComponent, AggregationResultTableComponent,
-        AggregationResultsTreeComponent, AggregationResultsDialogComponent, AggregationResultsChartComponent], providers: [DatePipe]
+        SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule, SearcherModule
+      ]
     })
       .compileComponents();
   }));
