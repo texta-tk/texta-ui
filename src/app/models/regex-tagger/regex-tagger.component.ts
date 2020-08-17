@@ -16,6 +16,7 @@ import {RegexTaggerService} from '../../core/models/taggers/regex-tagger.service
 import {CreateRegexTaggerDialogComponent} from './create-regex-tagger-dialog/create-regex-tagger-dialog.component';
 import {MultiTagTextDialogComponent} from './multi-tag-text-dialog/multi-tag-text-dialog.component';
 import {HttpErrorResponse} from '@angular/common/http';
+import {EditRegexTaggerDialogComponent} from './edit-regex-tagger-dialog/edit-regex-tagger-dialog.component';
 
 @Component({
   selector: 'app-regex-tagger',
@@ -27,7 +28,7 @@ import {HttpErrorResponse} from '@angular/common/http';
 })
 export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   public displayedColumns = ['select', 'id', 'description', 'operator', 'matchType', 'requiredWords', 'phraseSlop',
-    'counterSlop', 'nAllowedEdits', 'ignoreCase', 'ignorePunctuation', 'fuzzy'];
+    'counterSlop', 'nAllowedEdits', 'fuzzy', 'ignoreCase', 'ignorePunctuation', 'edit'];
   public isLoadingResults = true;
   public tableData: MatTableDataSource<RegexTagger> = new MatTableDataSource();
 
@@ -93,6 +94,24 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
           this.paginator.pageIndex = 0;
           this.filteredSubject.next(''); // refresh table
         }
+      }
+    });
+  }
+
+  edit(element: RegexTagger): void {
+    const dialogRef = this.dialog.open(EditRegexTaggerDialogComponent, {
+      maxHeight: '90vh',
+      width: '800px',
+      disableClose: true,
+      data: element,
+    });
+    dialogRef.afterClosed().subscribe((resp: RegexTagger) => {
+      if (resp) {
+        const index = this.tableData.data.findIndex(x => x.id === resp.id);
+        if (index > -1) {
+          this.tableData.data.splice(index, 1);
+        }
+        this.tableData.data = [resp, ...this.tableData.data];
       }
     });
   }

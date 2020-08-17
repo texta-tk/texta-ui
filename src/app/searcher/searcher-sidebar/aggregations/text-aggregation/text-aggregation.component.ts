@@ -82,7 +82,7 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
                   size: this.aggregationSize,
                   order: {'top_reverse_nested.doc_count': 'desc'}
                 },
-                aggs: {top_reverse_nested: {reverse_nested: {}}}
+                aggregations: {top_reverse_nested: {reverse_nested: {}}}
               }
             }
           }

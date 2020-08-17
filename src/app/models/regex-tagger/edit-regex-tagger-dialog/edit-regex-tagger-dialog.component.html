@@ -1,0 +1,141 @@
+<h1 mat-dialog-title>Edit Regex Tagger</h1>
+<mat-dialog-content>
+  <form (ngSubmit)="onSubmit(regexTaggerForm.value)" [formGroup]="regexTaggerForm" class="flex-col" id="regexForm">
+    <mat-form-field data-cy="appRegexTaggerEditDialogDesc">
+      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
+             placeholder="Description" required>
+
+      <mat-error *ngIf="regexTaggerForm.get('descriptionFormControl')?.hasError('required')">
+        Description is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field data-cy="appRegexTaggerEditDialogLexicon">
+      <textarea
+        [errorStateMatcher]="matcher"
+        [rows]="5"
+        formControlName="lexiconFormControl"
+        matInput placeholder="Lexicon (newline separated)" required></textarea>
+      <a (click)="$event.stopPropagation();" *ngIf="lexicons.length > 0"
+         [matMenuTriggerData]="{data: regexTaggerForm.get('lexiconFormControl')}" [matMenuTriggerFor]="menu"
+         class="lexicon-fab pointer"
+         type="button">
+        Add lexicon
+      </a>
+      <mat-error *ngIf="regexTaggerForm.get('lexiconFormControl')?.hasError('required')">
+        Lexicon is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <textarea
+        [rows]="5"
+        formControlName="counterLexiconFormControl"
+        matInput placeholder="Counter lexicon (newline separated)"></textarea>
+      <a (click)="$event.stopPropagation();" *ngIf="lexicons.length > 0"
+         [matMenuTriggerData]="{data: regexTaggerForm.get('counterLexiconFormControl')}" [matMenuTriggerFor]="menu"
+         class="lexicon-fab pointer"
+         type="button">
+        Add lexicon
+      </a>
+    </mat-form-field>
+
+    <div fxLayout="row" fxLayoutGap="24px">
+      <mat-form-field data-cy="appRegexTaggerEditDialogOperator" fxFlex="calc(33%-24px)">
+        <mat-label>Operator</mat-label>
+        <mat-select [disableOptionCentering]="true" [errorStateMatcher]="matcher"
+                    formControlName="operatorFormControl" panelClass="select-panel-reveal-input" required>
+          <mat-option value="and">and</mat-option>
+          <mat-option value="or">or</mat-option>
+        </mat-select>
+        <mat-error *ngIf="regexTaggerForm.get('operatorFormControl')?.hasError('required')">
+          Operator is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field data-cy="appRegexTaggerEditDialogMatchType" fxFlex="calc(33%-24px)">
+        <mat-label>Match type</mat-label>
+        <mat-select [disableOptionCentering]="true" [errorStateMatcher]="matcher"
+                    formControlName="matchTypeFormControl" panelClass="select-panel-reveal-input" required>
+          <mat-option value="prefix">prefix</mat-option>
+          <mat-option value="exact">exact</mat-option>
+          <mat-option value="subword">subword</mat-option>
+        </mat-select>
+        <mat-error *ngIf="regexTaggerForm.get('matchTypeFormControl')?.hasError('required')">
+          Match type is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field fxFlex="calc(33%-24px)" [ngStyle]="{'display': (regexTaggerForm.get('operatorFormControl')?.value === 'and' ? 'inline-block' : 'none'), 'margin-left': '24px'}">
+        <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="requiredWordsFormControl" matInput
+               placeholder="Required words"
+               required type="number" min="0" max="1" step="0.1">
+        <mat-error *ngIf="regexTaggerForm.get('requiredWordsFormControl')?.hasError('required')">
+          Required words is <strong>required</strong>
+        </mat-error>
+        <mat-error *ngIf="regexTaggerForm.get('requiredWordsFormControl')?.hasError('min')">
+          Number must be between <strong>0 and 1</strong>
+        </mat-error>
+        <mat-error *ngIf="regexTaggerForm.get('requiredWordsFormControl')?.hasError('max')">
+          Number must be between <strong>0 and 1</strong>
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div fxLayout="row" fxLayoutGap="24px">
+      <mat-form-field fxFlex="calc(33%-24px)">
+        <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="phraseSlopFormControl" matInput
+               placeholder="Phrase slop" required type="number">
+        <mat-error *ngIf="regexTaggerForm.get('phraseSlopFormControl')?.hasError('required')">
+          Phrase slop is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field fxFlex="calc(33%-24px)">
+        <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="counterSlopFormControl" matInput
+               placeholder="Counter slop" required type="number">
+        <mat-error *ngIf="regexTaggerForm.get('counterSlopFormControl')?.hasError('required')">
+          Counter slop is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field fxFlex="calc(33%-24px)">
+        <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="allowedEditsFormControl" matInput
+               placeholder="Number of allowed edits"
+               required type="number">
+        <mat-error *ngIf="regexTaggerForm.get('allowedEditsFormControl')?.hasError('required')">
+          Allowed edits words is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div fxLayout="row" fxLayoutGap="24px">
+      <mat-checkbox formControlName="fuzzyMatchFormControl" fxFlex="calc(33%-24px)">Return fuzzy match</mat-checkbox>
+      <mat-checkbox formControlName="ignoreCaseFormControl" fxFlex="calc(33%-24px)">Ignore case</mat-checkbox>
+      <mat-checkbox formControlName="ignorePunctuationFormControl" fxFlex="calc(33%-24px)">Ignore punctuation
+      </mat-checkbox>
+    </div>
+
+
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <div class="flex-row max-width">
+    <div class="flex-item-left">
+      <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
+    </div>
+    <div class="flex-item-right">
+      <button [disabled]="!regexTaggerForm.valid" data-cy="appRegexTaggerEditDialogSubmit" form="regexForm" mat-button
+              type="submit">
+        Submit
+      </button>
+    </div>
+  </div>
+</mat-dialog-actions>
+<mat-menu #menu="matMenu">
+  <ng-template let-data="data" matMenuContent>
+    <ng-container *ngFor="let lexicon of lexicons">
+      <button (click)="addLexicon(lexicon, data)" [matMenuTriggerFor]="lexiconDetailed" mat-menu-item>
+        {{ lexicon.description }}
+      </button>
+      <mat-menu #lexiconDetailed="matMenu">
+        <div *ngFor="let phrase of lexicon.phrases" disabled mat-menu-item>{{ phrase }}</div>
+      </mat-menu>
+    </ng-container>
+
+  </ng-template>
+</mat-menu>
