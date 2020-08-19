@@ -1,0 +1,50 @@
+<h1 mat-dialog-title>New Anonymizer</h1>
+<div mat-dialog-content>
+  <form (ngSubmit)="onSubmit(anonymizerForm.value)" [formGroup]="anonymizerForm" fxLayout="column" fxLayoutGap="10px">
+    <mat-form-field data-cy="appAnonymizerCreateDialogDesc">
+      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
+             placeholder="Description" required>
+
+      <mat-error *ngIf="anonymizerForm.get('descriptionFormControl')?.hasError('required')">
+        Description is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+      <mat-form-field>
+        <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="misspellingThresholdFormControl"
+               matInput
+               max="1"
+               min="0" placeholder="Misspelling threshold" required step="0.1" type="number">
+        <mat-error *ngIf="anonymizerForm.get('misspellingThresholdFormControl')?.hasError('required')">
+          Misspelling threshold is <strong>required</strong>
+        </mat-error>
+        <mat-error *ngIf="anonymizerForm.get('misspellingThresholdFormControl')?.hasError('min')">
+          Threshold must be between <strong>0 and 1</strong>
+        </mat-error>
+        <mat-error *ngIf="anonymizerForm.get('misspellingThresholdFormControl')?.hasError('max')">
+          Threshold must be between <strong>0 and 1</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-checkbox formControlName="replaceMisspelledNamesFormControl">Replace misspelled
+        names
+      </mat-checkbox>
+      <mat-checkbox formControlName="replaceSingleLastNamesFormControl">Replace single last
+        names
+      </mat-checkbox>
+      <mat-checkbox formControlName="replaceSingleFirstNamesFormControl">Replace single first
+        names
+      </mat-checkbox>
+      <mat-checkbox formControlName="mimicCasingFormControl">Mimic casing</mat-checkbox>
+    <div class="flex-col m-top-10">
+      <div class="flex-row">
+        <div class="flex-item-left">
+          <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
+        </div>
+        <div class="flex-item-right">
+          <button [disabled]="!anonymizerForm.valid" data-cy="appAnonymizerCreateDialogSubmit" mat-button type="submit">
+            Create
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

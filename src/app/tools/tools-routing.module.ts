@@ -4,6 +4,7 @@ import {RouterModule, Routes} from '@angular/router';
 import {DatasetImporterComponent} from './dataset-importer/dataset-importer.component';
 import {MLPComponent} from './mlp/mlp.component';
 import {AuthGuard} from '../core/auth/auth.guard';
+import {AnonymizerComponent} from './anonymizer/anonymizer.component';
 
 const routes: Routes = [
   {
@@ -20,6 +21,11 @@ const routes: Routes = [
     path: 'mlp',
     canActivate: [AuthGuard],
     component: MLPComponent
+  },
+  {
+    path: 'anonymizers',
+    canActivate: [AuthGuard],
+    component: AnonymizerComponent
   },
 
 ];

@@ -1,0 +1,39 @@
+<h1 mat-dialog-title>Anonymize text</h1>
+<div mat-dialog-content>
+  <form (ngSubmit)="onSubmit(anonymizerForm.value)" [formGroup]="anonymizerForm" fxLayout="column">
+    <mat-form-field data-cy="appAnonymizerAnonymizeText">
+      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="textFormControl" matInput
+             placeholder="Text" required>
+
+      <mat-error *ngIf="anonymizerForm.get('textFormControl')?.hasError('required')">
+        Text is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field data-cy="appAnonymizerAnonymizeNames" floatLabel="never">
+      <textarea #textarea [errorStateMatcher]="matcher"
+                cdkAutosizeMaxRows="10"
+                cdkAutosizeMinRows="3"
+                cdkTextareaAutosize
+                formControlName="namesFormControl"
+                placeholder="Last name, First name"
+                matInput>
+      </textarea>
+      <mat-error *ngIf="anonymizerForm.get('namesFormControl')?.hasError('required')">
+        Names are <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <pre>{{anonymizedText}}</pre>
+    <div class="flex-col m-top-10">
+      <div class="flex-row">
+        <div class="flex-item-left">
+          <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
+        </div>
+        <div class="flex-item-right">
+          <button [disabled]="!anonymizerForm.valid" data-cy="appAnonymizerCreateDialogSubmit" mat-button type="submit">
+            Submit
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

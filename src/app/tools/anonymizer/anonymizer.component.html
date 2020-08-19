@@ -1,0 +1,104 @@
+<div class="wrapper max-height" fxLayout="column">
+  <div class="table-paginator-row">
+    <div class="loading-bar">
+      <mat-progress-bar *ngIf="isLoadingResults" mode="indeterminate"></mat-progress-bar>
+    </div>
+    <div class="paginator-row">
+      <button (click)="openCreateDialog()" class="paginator-margin-left"
+              color="primary" data-cy="appToolsAnonymizerCreateBtn" mat-raised-button>
+        CREATE
+      </button>
+      <button (click)="onDeleteAllSelected()" [disabled]="selectedRows.selected.length < 1" class="new-resource-btn"
+              color="warn" data-cy="appAnonymizerDeleteBtn"
+              mat-icon-button matTooltip="Delete selected">
+        <mat-icon>delete</mat-icon>
+      </button>
+      <mat-paginator [length]="resultsLength" [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
+      </mat-paginator>
+    </div>
+  </div>
+
+  <div [appScrollTop]="tableData" class="table-container overflow-auto">
+    <table [dataSource]="tableData" mat-table
+           matSort matSortDirection="desc" matSortActive="id">
+      <ng-container matColumnDef="select">
+        <th *matHeaderCellDef mat-header-cell>
+          <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selectedRows.hasValue() && isAllSelected()"
+                        [indeterminate]="selectedRows.hasValue() && !isAllSelected()">
+          </mat-checkbox>
+        </th>
+        <td *matCellDef="let row" mat-cell>
+          <mat-checkbox (change)="$event ? selectedRows.toggle(row) : null" (click)="$event.stopPropagation()"
+                        [checked]="selectedRows.isSelected(row)">
+          </mat-checkbox>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="id">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Id</th>
+        <td *matCellDef="let element" mat-cell> {{element.id}}</td>
+      </ng-container>
+      <ng-container matColumnDef="description">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Description</th>
+        <td *matCellDef="let element" mat-cell> {{element.description}}</td>
+      </ng-container>
+      <ng-container matColumnDef="misspelling_threshold">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Misspelling threshold</th>
+        <td *matCellDef="let element" mat-cell> {{element.misspelling_threshold}}</td>
+      </ng-container>
+      <ng-container matColumnDef="replace_misspelled_names">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Replace misspelled names</th>
+        <td *matCellDef="let element" mat-cell>
+          <mat-checkbox (click)="$event.stopPropagation();" disabled
+                        [(ngModel)]="element.replace_misspelled_names"></mat-checkbox>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="replace_single_last_names">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Replace single last names</th>
+        <td *matCellDef="let element" mat-cell>
+          <mat-checkbox (click)="$event.stopPropagation();" disabled
+                        [(ngModel)]="element.replace_single_last_names"></mat-checkbox>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="replace_single_first_names">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Replace single first names</th>
+        <td *matCellDef="let element" mat-cell>
+          <mat-checkbox (click)="$event.stopPropagation();" disabled
+                        [(ngModel)]="element.replace_single_first_names"></mat-checkbox>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="mimic_casing">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Mimic casing</th>
+        <td *matCellDef="let element" mat-cell>
+          <mat-checkbox (click)="$event.stopPropagation();" disabled
+                        [(ngModel)]="element.mimic_casing"></mat-checkbox>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="actions">
+        <th *matHeaderCellDef class="center-header-cell" mat-header-cell>Actions</th>
+        <td (click)="$event.stopPropagation();" *matCellDef="let element; let i = dataIndex" mat-cell>
+
+          <button [matMenuTriggerData]="{element: element, i:i}" [matMenuTriggerFor]="actionsMenu" color="primary"
+                  mat-icon-button>
+            <mat-icon aria-label="Actions">more_vert</mat-icon>
+          </button>
+
+        </td>
+      </ng-container>
+
+      <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
+      <tr *matRowDef="let element; columns: displayedColumns;" mat-row></tr>
+
+    </table>
+
+  </div>
+
+
+</div>
+<mat-menu #actionsMenu="matMenu">
+  <ng-template let-element="element" let-i="i" matMenuContent>
+    <button (click)="openAnonymizeTextDialog(element)" data-cy="appAnonymizerTextAction" mat-menu-item>
+      Anonymize text
+    </button>
+  </ng-template>
+</mat-menu>
+
