@@ -10,13 +10,13 @@ import {MatDialog} from '@angular/material/dialog';
 import {LogService} from '../../core/util/log.service';
 import {debounceTime, startWith, switchMap, takeUntil} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
-import {QueryDialogComponent} from '../../shared/components/dialogs/query-dialog/query-dialog.component';
 import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {AnonymizerService} from './anonymizer.service';
 import {Index} from '../../shared/types/Index';
 import {Anonymizer} from './types/Anonymizer';
 import {CreateAnonymizerDialogComponent} from './create-anonymizer-dialog/create-anonymizer-dialog.component';
-import {AnonymizeTextDialogComponent} from "./anonymize-text-dialog/anonymize-text-dialog.component";
+import {AnonymizeTextDialogComponent} from './anonymize-text-dialog/anonymize-text-dialog.component';
+import {EditAnonymizerDialogComponent} from './edit-anonymizer-dialog/edit-anonymizer-dialog.component';
 
 @Component({
   selector: 'app-anonymizer',
@@ -36,6 +36,7 @@ export class AnonymizerComponent implements OnInit, OnDestroy, AfterViewInit {
   resultsLength: number;
   destroyed$: Subject<boolean> = new Subject<boolean>();
   currentProject: Project;
+  patchRowQueue: Subject<Anonymizer> = new Subject();
 
   constructor(private projectStore: ProjectStore,
               private anonymizerService: AnonymizerService,
@@ -43,7 +44,7 @@ export class AnonymizerComponent implements OnInit, OnDestroy, AfterViewInit {
               private logService: LogService) {
   }
 
-  public indicesAccessor = (x: Index) => x.name;
+  setRowValueByProperty = <U extends keyof T, T extends object>(key: U, obj: T, row: T) => row[key] = obj[key];
 
   ngOnInit(): void {
 
@@ -58,6 +59,12 @@ export class AnonymizerComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       } else {
         this.isLoadingResults = false;
+      }
+    });
+
+    this.patchRowQueue.pipe(takeUntil(this.destroyed$), debounceTime(50)).subscribe(row => {
+      if (this.currentProject) {
+        this.anonymizerService.patchAnonymizer(this.currentProject.id, row.id, row).subscribe();
       }
     });
   }
@@ -93,10 +100,6 @@ export class AnonymizerComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  updateRow(element: Anonymizer): void {
-
-  }
-
   openAnonymizeTextDialog(element: Anonymizer): void {
     this.dialog.open(AnonymizeTextDialogComponent, {
       maxHeight: '650px',
@@ -114,6 +117,24 @@ export class AnonymizerComponent implements OnInit, OnDestroy, AfterViewInit {
     dialogRef.afterClosed().subscribe(resp => {
       if (resp) {
         this.tableData.data = [resp, ...this.tableData.data];
+      }
+    });
+  }
+
+  openEditDialog(element: Anonymizer): void {
+    const dialogRef = this.dialog.open(EditAnonymizerDialogComponent, {
+      maxHeight: '90vh',
+      width: '800px',
+      disableClose: true,
+      data: element,
+    });
+    dialogRef.afterClosed().subscribe((resp: Anonymizer) => {
+      if (resp) {
+        for (const property in resp) {
+          if (resp.hasOwnProperty(property)) {
+            this.setRowValueByProperty<keyof Anonymizer, Anonymizer>((property as keyof Anonymizer), resp, element);
+          }
+        }
       }
     });
   }
@@ -165,6 +186,10 @@ export class AnonymizerComponent implements OnInit, OnDestroy, AfterViewInit {
       this.tableData.data = [...this.tableData.data];
     });
     this.selectedRows.clear();
+  }
+
+  updateAnonymizerRow(row: Anonymizer): void {
+    this.patchRowQueue.next(row);
   }
 
   ngOnDestroy(): void {

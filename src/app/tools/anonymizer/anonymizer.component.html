@@ -48,28 +48,28 @@
       <ng-container matColumnDef="replace_misspelled_names">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Replace misspelled names</th>
         <td *matCellDef="let element" mat-cell>
-          <mat-checkbox (click)="$event.stopPropagation();" disabled
+          <mat-checkbox (click)="$event.stopPropagation();" (ngModelChange)="updateAnonymizerRow(element)"
                         [(ngModel)]="element.replace_misspelled_names"></mat-checkbox>
         </td>
       </ng-container>
       <ng-container matColumnDef="replace_single_last_names">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Replace single last names</th>
         <td *matCellDef="let element" mat-cell>
-          <mat-checkbox (click)="$event.stopPropagation();" disabled
+          <mat-checkbox (click)="$event.stopPropagation();" (ngModelChange)="updateAnonymizerRow(element)"
                         [(ngModel)]="element.replace_single_last_names"></mat-checkbox>
         </td>
       </ng-container>
       <ng-container matColumnDef="replace_single_first_names">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Replace single first names</th>
         <td *matCellDef="let element" mat-cell>
-          <mat-checkbox (click)="$event.stopPropagation();" disabled
+          <mat-checkbox (click)="$event.stopPropagation();" (ngModelChange)="updateAnonymizerRow(element)"
                         [(ngModel)]="element.replace_single_first_names"></mat-checkbox>
         </td>
       </ng-container>
       <ng-container matColumnDef="mimic_casing">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Mimic casing</th>
         <td *matCellDef="let element" mat-cell>
-          <mat-checkbox (click)="$event.stopPropagation();" disabled
+          <mat-checkbox (click)="$event.stopPropagation();" (ngModelChange)="updateAnonymizerRow(element)"
                         [(ngModel)]="element.mimic_casing"></mat-checkbox>
         </td>
       </ng-container>
@@ -98,6 +98,9 @@
   <ng-template let-element="element" let-i="i" matMenuContent>
     <button (click)="openAnonymizeTextDialog(element)" data-cy="appAnonymizerTextAction" mat-menu-item>
       Anonymize text
+    </button>
+    <button (click)="openEditDialog(element)" data-cy="appAnonymizerTextAction" mat-menu-item>
+      Edit
     </button>
   </ng-template>
 </mat-menu>

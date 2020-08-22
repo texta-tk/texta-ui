@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../../core/util/log.service';
@@ -29,6 +29,15 @@ export class AnonymizerService {
     return this.http.post<Anonymizer>(`${this.apiUrl}/projects/${projectId}/anonymizers/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'createAnonymizer')),
       catchError(this.logService.handleError<Anonymizer>('createAnonymizer')));
+  }
+
+  patchAnonymizer(projectId: number, anonymizerId: number, body: unknown): Observable<Anonymizer | HttpErrorResponse> {
+    return this.http.patch<Anonymizer>(
+      `${this.apiUrl}/projects/${projectId}/anonymizers/${anonymizerId}/`,
+      body
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'patchAnonymizer')),
+      catchError(this.logService.handleError<Anonymizer>('patchAnonymizer')));
   }
 
   anonymizeText(projectId: number, anonymizerId: number, body: unknown): Observable<string | HttpErrorResponse> {

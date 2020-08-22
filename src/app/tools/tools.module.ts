@@ -11,6 +11,7 @@ import { MLPApplyTextDialogComponent } from './mlp/mlp-apply-text-dialog/mlp-app
 import { AnonymizerComponent } from './anonymizer/anonymizer.component';
 import { CreateAnonymizerDialogComponent } from './anonymizer/create-anonymizer-dialog/create-anonymizer-dialog.component';
 import { AnonymizeTextDialogComponent } from './anonymizer/anonymize-text-dialog/anonymize-text-dialog.component';
+import { EditAnonymizerDialogComponent } from './anonymizer/edit-anonymizer-dialog/edit-anonymizer-dialog.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { AnonymizeTextDialogComponent } from './anonymizer/anonymize-text-dialog
     MLPApplyTextDialogComponent,
     AnonymizerComponent,
     CreateAnonymizerDialogComponent,
-    AnonymizeTextDialogComponent
+    AnonymizeTextDialogComponent,
+    EditAnonymizerDialogComponent
   ],
   imports: [
     SharedModule,
