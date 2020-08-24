@@ -63,6 +63,10 @@ const routes: Routes = [
     loadChildren: () => import('./searcher/searcher.module').then(m => m.SearcherModule)
   },
   {
+    path: 'oauth',
+    loadChildren: () => import('./oauth/oauth.module').then(m => m.OauthModule)
+  },
+  {
     path: '**',
     redirectTo: ''
   },

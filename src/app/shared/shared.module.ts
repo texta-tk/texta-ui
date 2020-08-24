@@ -75,7 +75,7 @@ PlotlyViaCDNModule.plotlyBundle = 'gl2d'; // 'basic', 'cartesian', 'geo', 'gl3d'
     JoinPipe,
     BreadcrumbComponent,
     FromToInputComponent,
-    ScrollTopDirective
+    ScrollTopDirective,
   ],
   imports: [
     RouterModule,

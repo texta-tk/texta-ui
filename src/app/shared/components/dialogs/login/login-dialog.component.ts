@@ -48,6 +48,10 @@ export class LoginDialogComponent {
     this.dialogRef.close();
   }
 
+  onLoginWithCF(): void {
+    window.location.href = 'http://localhost:8080/uaa/oauth/authorize?response_type=code&client_id=login&scope=openid&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Fapi%2Fv1%2Fhealth';
+  }
+
   registerDialog(): void {
     this.dialogRef.close();
     this.dialog.open(RegistrationDialogComponent, {
