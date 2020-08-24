@@ -1,8 +1,6 @@
 services:
     - name: docker.texta.ee/texta/texta-rest:latest
       alias: texta-rest
-    - name: docker.texta.ee/texta/mlp:latest
-      alias: texta-mlp
     - name: redis:latest
     - name: postgres:11
       alias: texta-postgres
@@ -17,8 +15,8 @@ variables:
     POSTGRES_DATABASE: docker
     POSTGRES_USER: docker
     POSTGRES_PASSWORD: docker
-    TEXTA_ES_URL: http://172.17.0.1:9200
-    TEXTA_MLP_URL: http://texta-mlp:5000
+    TEXTA_ES_URL: http://elastic-dev.texta.ee:9200
+    TEXTA_MLP_URL: http://mlp-dev.texta.ee:5000
     TEXTA_REDIS_URL: redis://redis:6379/0
     TEXTA_API_URL: http://texta-rest
     TEXTA_USE_CSRF: "False"

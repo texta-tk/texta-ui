@@ -152,9 +152,10 @@ export class AggregationsComponent implements OnInit, OnDestroy {
       const aggregationToAdd = JSON.parse(JSON.stringify(aggregation.aggregation));
       if (!finalAgg) {
         finalAgg = aggregationToAdd;
+        innermostAgg = finalAgg;
         continue;
       }
-      innermostAgg = this.getInnerMostAggs(finalAgg);
+      innermostAgg = this.getInnerMostAggs(innermostAgg);
       innermostAgg.aggs = aggregationToAdd;
     }
 
@@ -175,8 +176,12 @@ export class AggregationsComponent implements OnInit, OnDestroy {
       }
     }
     if (inCaseNoAggsFound) {
-      if (aggregation[inCaseNoAggsFound].hasOwnProperty('field')) {
+      const aggProperty = aggregation[inCaseNoAggsFound];
+      if (aggProperty.hasOwnProperty('field')) {
         return aggregation;
+      }
+      if (aggProperty.hasOwnProperty('reverse_nested')) {
+        return aggProperty;
       } else {
         return this.getInnerMostAggs(aggregation[inCaseNoAggsFound]);
       }
