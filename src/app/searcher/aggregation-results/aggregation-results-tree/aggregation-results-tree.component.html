@@ -7,11 +7,11 @@
           ({{node.doc_count}}) {{node.key_as_string}}
         </ng-container>
         <ng-container *ngIf="!node.key_as_string">
-          <ng-container *ngIf="!node.top_reverse_nested">
+          <ng-container *ngIf="!node.fact_val_reverse">
           ({{node.doc_count}}) {{node.key}}
           </ng-container>
-          <ng-container *ngIf="node.top_reverse_nested">
-            <button mat-button (click)="makeSearch(node)" title="Add to search constraint">({{node.top_reverse_nested.doc_count}}) {{node.key}}</button>
+          <ng-container *ngIf="node.fact_val_reverse">
+            <button mat-button (click)="makeSearch(node)" title="Add to search constraint">({{node.fact_val_reverse.doc_count}}) {{node.key}}</button>
           </ng-container>
         </ng-container>
       </li>
@@ -31,7 +31,12 @@
           </ng-container>
           <ng-container *ngIf="!node.key_as_string">
             <ng-container *ngIf="!node.top_reverse_nested">
-              ({{node.doc_count}}) {{node.key}}
+              <ng-container *ngIf="!node.fact_val_reverse">
+                ({{node.doc_count}}) {{node.key}}
+              </ng-container>
+              <ng-container *ngIf="node.fact_val_reverse">
+                <button mat-button (click)="makeSearch(node)" title="Add to search constraint">({{node.fact_val_reverse.doc_count}}) {{node.key}}</button>
+              </ng-container>
             </ng-container>
             <ng-container *ngIf="node.top_reverse_nested">
               ({{node.top_reverse_nested.doc_count}}) {{node.key}}

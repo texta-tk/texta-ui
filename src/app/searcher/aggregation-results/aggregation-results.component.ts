@@ -107,7 +107,6 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
       dateData: [],
       textaFactsTableData: [],
     };
-
     if (aggregation && aggregation.aggs) {
       for (const aggKey of Object.keys(aggregation.aggs)) {
         // first object is aggregation name either savedSearch description or the agg type
@@ -148,6 +147,23 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
           // dont delete original data to avoid major GC, (takes a while)
           rootAgg.nested = true;
           bucket.buckets = this.formatAggDataStructure(rootAgg, innerBuckets, aggKeys).buckets;
+        } else if (innerBuckets !== bucket && key === 'fact_val_reverse') {
+          for (const innerBucketKey of aggKeys) {
+            const nestedContent = this.navNestedAggByKey(innerBuckets, innerBucketKey);
+            if (this.bucketAccessor(nestedContent)) {
+              if (innerBuckets.hasOwnProperty('agg_histo') && innerBucketKey === 'agg_histo') {
+                if (!rootAgg.histoBuckets) {
+                  rootAgg.histoBuckets = [];
+                }
+                rootAgg.histoBuckets.push({
+                  name: innerBuckets.key,
+                  series: this.formatDateData(this.bucketAccessor(nestedContent))
+                });
+              }
+              rootAgg.nested = true;
+              bucket.buckets = this.formatAggDataStructure(rootAgg, nestedContent, aggKeys).buckets;
+            }
+          }
         }
       }
     }
@@ -173,7 +189,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   // tslint:disable-next-line:no-any max-line-length
   populateAggData(rootAggObj, aggName, aggDataAccessor: (x: any) => any, aggregationType: 'agg_histo' | 'agg_fact' | 'agg_term', aggData: AggregationData): void {
     const formattedData = this.formatAggDataStructure(rootAggObj, rootAggObj,
-      ['agg_histo', 'agg_fact', 'agg_fact_val', 'agg_term']);
+      ['agg_histo', 'agg_fact', 'agg_fact_val', 'agg_term', 'fact_val_reverse']);
     if (this.bucketAccessor(formattedData).length > 0) {
       if (formattedData.nested) {
         // depth of 3 means this structure: agg -> sub-agg

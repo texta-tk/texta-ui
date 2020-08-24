@@ -12,18 +12,18 @@
         </ng-container>
         <ng-container matColumnDef="doc_count">
           <th *matHeaderCellDef mat-header-cell>Doc count</th>
-          <td *matCellDef="let element" class="table-row" mat-cell><span>{{element.top_reverse_nested.doc_count}}</span>
+          <td *matCellDef="let element" class="table-row" mat-cell><span>{{element.fact_val_reverse.doc_count}}</span>
           </td>
         </ng-container>
         <!-- Header row first group -->
         <ng-container matColumnDef="header-row-first-group">
           <th *matHeaderCellDef [attr.colspan]="2" mat-header-cell style="text-align: center"> {{item.key}}
             <br>
-            <ng-container *ngIf="!item.top_reverse_nested">
+            <ng-container *ngIf="!item.fact_val_reverse">
               ({{item.doc_count}})
             </ng-container>
-            <ng-container *ngIf="item.top_reverse_nested">
-              ({{item.top_reverse_nested.doc_count}})
+            <ng-container *ngIf="item.fact_val_reverse">
+              ({{item.fact_val_reverse.doc_count}})
             </ng-container>
           </th>
         </ng-container>
