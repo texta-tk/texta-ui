@@ -13,10 +13,9 @@ describe('searching and search related activities should be working correctly', 
       cy.route('POST', 'search_by_query').as('searcherQuery');
       cy.visit('/');
       cy.wait('@getUser');
+      cy.wait('@getProjectIndices');
       cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible');
       cy.get('[data-cy=appNavbarSearcher]').click();
-
-      cy.wait('@getProjectIndices');
       cy.get('[data-cy=appNavbarProjectSelect]').click();
       cy.get('mat-option').contains('integration_test_project').click();
       cy.wait('@getProjectIndices');
@@ -68,6 +67,7 @@ describe('searching and search related activities should be working correctly', 
       .should('be.visible')
       .click()
       .type('1/3/2016');
+    cy.wait('@searcherQuery');
     cy.get('[data-cy=appSearcherSideBarBuildSearchDateConstraintEnd]')
       .should('be.visible')
       .click()
@@ -93,7 +93,7 @@ describe('searching and search related activities should be working correctly', 
     cy.get('[data-cy=matOptionSelectAll]').should('be.visible').click();
     cy.get('mat-option').contains('texta_facts').click();
     cy.closeCurrentCdkOverlay();
-
+    
     cy.get('.cdk-column-texta_facts > app-texta-facts-chips > span').should('not.exist');
 
     cy.get('[data-cy=appSearcherSideBarBuildSearchFactNameOperator]').click();
@@ -105,7 +105,7 @@ describe('searching and search related activities should be working correctly', 
     cy.get(':nth-child(1) > .cdk-column-texta_facts > app-texta-facts-chips > span').scrollIntoView().click()
       .then(span => {
         const text = span.text();
-        cy.get('[data-cy=appSearcherSideBarBuildSearchFactValueInputGroupOperator]').should('be.visible').click();
+        cy.get('[data-cy=appSearcherSideBarBuildSearchFactValueInputGroupOperator]').click();
         cy.get('mat-option').contains('not').click();
         cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
         cy.wait('@searcherQuery');
