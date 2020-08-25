@@ -20,6 +20,7 @@ import {ConfirmDialogComponent} from 'src/app/shared/components/dialogs/confirm-
 import {TaggerGroupTagRandomDocDialogComponent} from './tagger-group-tag-random-doc-dialog/tagger-group-tag-random-doc-dialog.component';
 import {expandRowAnimation} from '../../shared/animations';
 import {EditTaggerGroupDialogComponent} from './edit-tagger-group-dialog/edit-tagger-group-dialog.component';
+import {Index} from "../../shared/types/Index";
 
 @Component({
   selector: 'app-tagger-group',
@@ -50,6 +51,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
   destroyed$ = new Subject<boolean>();
 
 
+  getIndicesName = (x: Index) => x.name;
   constructor(public dialog: MatDialog,
               private projectStore: ProjectStore,
               private taggerGroupService: TaggerGroupService,

@@ -22,6 +22,7 @@ import {ConfirmDialogComponent} from 'src/app/shared/components/dialogs/confirm-
 import {ListFeaturesDialogComponent} from './list-features-dialog/list-features-dialog.component';
 import {expandRowAnimation} from '../../shared/animations';
 import {EditTaggerDialogComponent} from './edit-tagger-dialog/edit-tagger-dialog.component';
+import {Index} from "../../shared/types/Index";
 
 @Component({
   selector: 'app-tagger',
@@ -56,6 +57,8 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
               public dialog: MatDialog,
               public logService: LogService) {
   }
+
+  getIndicesName = (x: Index) => x.name;
 
   ngOnInit(): void {
     this.tableData.sort = this.sort;

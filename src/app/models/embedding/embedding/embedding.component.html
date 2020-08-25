@@ -150,7 +150,7 @@
                   </tr>
                   <tr>
                     <th class="mat-body-strong">Indices</th>
-                    <td>{{element.indices| join: ', '}}</td>
+                    <td>{{element.indices | getPropertyList: getIndicesName | join: ', '}}</td>
                   </tr>
                 </table>
               </div>
