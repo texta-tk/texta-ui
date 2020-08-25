@@ -102,7 +102,7 @@ describe('should be able to build aggregations', function () {
   });
 
   it('check nested aggs', function () {
- /*    cy.get('[data-cy=appSearcherSidebarAggregationsPanel]').should('be.visible').click();
+    cy.get('[data-cy=appSearcherSidebarAggregationsPanel]').should('be.visible').click();
     cy.get('[data-cy=appSearcherSidebarAggregationsAddNew]').scrollIntoView().click();
     cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]:last()').scrollIntoView().click();
     cy.get('mat-option').contains('comment_content').scrollIntoView().click();
@@ -128,17 +128,16 @@ describe('should be able to build aggregations', function () {
     cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]:last()').scrollIntoView().click();
     cy.get('mat-option').contains('comment_content').scrollIntoView().click();
     submitAndCheckTreeResult(2);
-    // cy.get('mat-option.mat-option-disabled .mat-option-text').contains('@timestamp');// only one date allowed
     cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]:first()').click();
     cy.get('mat-option').contains('texta_facts').scrollIntoView().click();
     submitAndCheckTreeResult(3);
     cy.get('[data-cy=appSearcherSidebarSavedSearches] .cdk-column-select:nth(1)').scrollIntoView().click('left');
-    cy.wait(50); // subscriber can be funky?
+    cy.wait(50);
     cy.get('[data-cy=appSearcherSidebarAggregationsSubmit]').scrollIntoView().click();
     cy.wait('@searcherQuery');
     cy.get('.mat-tree-node').should('be.visible');
     cy.get('app-aggregation-results .mat-tab-label').should('have.length', 2);
     cy.get('.mat-tab-label-container mat-icon:first()').click();
-    cy.get('.svg-container').should('be.visible'); */
+    /* cy.get('.svg-container').should('be.visible'); */
   });
 });
