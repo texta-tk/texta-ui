@@ -4,12 +4,13 @@
 
 export const environment = {
   // apiUrl: 'https://rest-dev.texta.ee/api/v1',
-  apiHost: 'https://rest-dev.texta.ee',
+  // apiHost: 'https://rest-dev.texta.ee',
+  apiHost: 'http://localhost:8000',
   apiBasePath: '/api/v1',
   production: false,
 
   // For CF UAA authentication
-  useCloudFoundryUAA: false
+  useCloudFoundryUAA: true
 };
 
 /*

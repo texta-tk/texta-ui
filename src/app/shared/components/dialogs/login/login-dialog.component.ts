@@ -11,6 +11,7 @@ import {mergeMap} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {UserAuth} from '../../../types/UserAuth';
 import {RegistrationDialogComponent} from '../registration/registration-dialog.component';
+import { environment } from 'src/environments/environment';
 
 
 @Component({
@@ -32,7 +33,7 @@ export class LoginDialogComponent {
   matcher = new LiveErrorStateMatcher();
   loginError = '';
   makingRequest = false;
-
+  allowUAA = environment.useCloudFoundryUAA;
 
   constructor(
     public dialogRef: MatDialogRef<LoginDialogComponent>,
@@ -49,7 +50,8 @@ export class LoginDialogComponent {
   }
 
   onLoginWithCF(): void {
-    window.location.href = 'http://localhost:8080/uaa/oauth/authorize?response_type=code&client_id=login&scope=openid&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Fapi%2Fv1%2Fhealth';
+    // TODO replace with some env var
+    window.location.href = 'http://localhost:8080/uaa/oauth/authorize?response_type=code&client_id=login&scope=openid&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Fapi%2Fv1%2Fuaa%2Fcallback';
   }
 
   registerDialog(): void {

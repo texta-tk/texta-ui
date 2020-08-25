@@ -12,18 +12,87 @@ import {Observable, throwError} from 'rxjs';
 import {catchError, map} from 'rxjs/operators';
 import {LocalStorageService} from '../util/local-storage.service';
 import {LogService} from '../util/log.service';
+import { environment } from 'src/environments/environment';
+import { UserService } from '../users/user.service';
+import { RefreshTokenResp } from 'src/app/shared/types/UserAuth';
 
 
 @Injectable()
 export class HttpAuthInterceptor implements HttpInterceptor {
-  constructor(private localStorageService: LocalStorageService, private logService: LogService,
-              private tokenExtractor: HttpXsrfTokenExtractor) {
+  constructor(private localStorageService: LocalStorageService,
+              private logService: LogService,
+              private tokenExtractor: HttpXsrfTokenExtractor,
+              private userService: UserService) {
   }
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+    // If using CloudFoundry UAA OAuth 2.0 authentication, auth the req with the accessToken
+    request = this.addBearerHeader(request);
+
+    // If the Auth header wasn't already added, from the access_token, use CSRF Token authentication
+    if (!request.headers.get('Authorization')) {
+      console.log('in csrf');
+      request = this.addCSRFToken(request)
+    }
+
+    console.log('hereee', request);
+    console.log('hereee headers', request.headers.get('Authorization'));
+    return next.handle(request).pipe(
+      map((event: HttpEvent<unknown>) => {
+        return event;
+      }),
+      catchError((error: HttpErrorResponse) => {
+        if (error && error.status === 403) {
+
+        }
+        if (error && error.status === 401) {
+          console.log('here refreshing token :)', this.localStorageService.getOAuthRefreshToken());
+          
+          // If using UAA and the request got 401'd, make an attempt to refresh the token
+          const refreshToken = this.localStorageService.getOAuthRefreshToken()
+          if (environment.useCloudFoundryUAA && refreshToken) {
+            this.userService.refreshUAAOAuthToken(refreshToken).subscribe(
+              (data: RefreshTokenResp) => { 
+                this.localStorageService.setOAuthAccessToken(data.access_token);
+                this.localStorageService.setOAuthRefreshToken(data.refresh_token);
+                console.log('here', data.access_token, data.refresh_token);
+                // TODO retry request?
+              },
+            )
+          }
+        }
+        if (error && error.status === 502 || error.status === 503 || error.status === 504 || error.status === 0) {
+          this.logService.snackBarMessage(`WARNING: Failed connecting to server. (Status: ${error.status})`, 15000);
+        }
+        return throwError(error);
+      }));
+  }
+
+  addBearerHeader(request: HttpRequest<unknown>): HttpRequest<unknown> {
+    if (environment.useCloudFoundryUAA) {
+      const accessToken = this.localStorageService.getOAuthAccessToken();
+      console.log('acc', accessToken);
+      
+      // If the access token exists, use UAA 
+      if (accessToken) {
+        console.log('and here');
+        request = request.clone({
+          headers: request.headers.set('Authorization', 'Bearer ' + accessToken),
+          withCredentials: true
+        });
+
+        console.log('accesstoken reqffFF', request.headers.get('Authorization'));
+      }
+    }
+
+    return request;
+  }
+
+
+  addCSRFToken(request: HttpRequest<unknown>): HttpRequest<unknown> {
     const token = this.localStorageService.getUser();
     const csrfToken = this.tokenExtractor.getToken() as string;
-
+    
     if (token) {
       request = request.clone({
         headers: request.headers.set('Authorization', 'Token ' + token.key),
@@ -34,18 +103,6 @@ export class HttpAuthInterceptor implements HttpInterceptor {
       request = request.clone({setHeaders: {'X-XSRF-TOKEN': csrfToken}});
     }
 
-    return next.handle(request).pipe(
-      map((event: HttpEvent<unknown>) => {
-        return event;
-      }),
-      catchError((error: HttpErrorResponse) => {
-        if (error && error.status === 403) {
-
-        }
-        if (error && error.status === 502 || error.status === 503 || error.status === 504 || error.status === 0) {
-          this.logService.snackBarMessage(`WARNING: Failed connecting to server. (Status: ${error.status})`, 15000);
-        }
-        return throwError(error);
-      }));
+    return request;
   }
 }

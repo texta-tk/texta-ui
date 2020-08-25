@@ -1,7 +1,8 @@
 <div fxLayout="row" fxLayoutAlign="space-between baseline"><h1  mat-dialog-title>Login</h1>
   <div class="register-text">
-    Alternatively, log in with <a (click)="onLoginWithCF()" class="pointer">CloudForge</a>, or
-    <a (click)="registerDialog()" class="pointer">register</a></div>
+    <ng-container *ngIf="allowUAA">
+      Alternatively, log in with <a (click)="onLoginWithCF()" class="pointer">CloudFoundry</a>, </ng-container>
+      or <a (click)="registerDialog()" class="pointer">register</a></div>
 </div>
 <div class="dialog-content-wrapper" mat-dialog-content>
   <form (ngSubmit)="onSubmit(profileForm.value)" [formGroup]="profileForm" class="flex-col">
