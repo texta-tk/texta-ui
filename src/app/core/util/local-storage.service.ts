@@ -60,13 +60,6 @@ export class LocalStorageService {
     localStorage.removeItem('refresh_token');
   }
 
-  // public logoutUser(): void {
-    //TODO
-  //   this.deleteUser();
-  //   // Manually logging out should also remove the refresh_token, but it shouldn't be removed 
-  //   localStorage.removeItem('refresh_token');
-  // }
-
   public setUser(value: UserAuth): void {
     localStorage.setItem('user', JSON.stringify(value));
   }

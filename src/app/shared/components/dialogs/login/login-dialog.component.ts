@@ -51,7 +51,13 @@ export class LoginDialogComponent {
 
   onLoginWithCF(): void {
     // TODO replace with some env var
-    window.location.href = 'http://localhost:8080/uaa/oauth/authorize?response_type=code&client_id=login&scope=openid&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Fapi%2Fv1%2Fuaa%2Fcallback';
+    if (environment.useCloudFoundryUAA) {
+      const conf = environment.uaaConf;
+      // Encode the URI first
+      const redirectURI = encodeURI(conf.redirect_uri);
+      const uaaLoginURL = `${conf.uaaURL}?response_type=${conf.response_type}&client_id=${conf.client_id}&scope=${conf.scope}&redirect_uri=${redirectURI}`
+      window.location.href = uaaLoginURL;
+    }
   }
 
   registerDialog(): void {

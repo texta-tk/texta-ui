@@ -9,7 +9,7 @@ import {
 } from '@angular/common/http';
 
 import {Observable, throwError} from 'rxjs';
-import {catchError, map} from 'rxjs/operators';
+import {catchError, map, flatMap} from 'rxjs/operators';
 import {LocalStorageService} from '../util/local-storage.service';
 import {LogService} from '../util/log.service';
 import { environment } from 'src/environments/environment';
@@ -42,31 +42,50 @@ export class HttpAuthInterceptor implements HttpInterceptor {
         return event;
       }),
       catchError((error: HttpErrorResponse) => {
-        if (error && error.status === 403) {
-
-        }
-        if (error && error.status === 401) {
-          console.log('here refreshing token :)', this.localStorageService.getOAuthRefreshToken());
-          
-          // If using UAA and the request got 401'd, make an attempt to refresh the token
-          const refreshToken = this.localStorageService.getOAuthRefreshToken()
-          if (environment.useCloudFoundryUAA && refreshToken) {
-            this.userService.refreshUAAOAuthToken(refreshToken).subscribe(
-              (data: RefreshTokenResp) => { 
-                this.localStorageService.setOAuthAccessToken(data.access_token);
-                this.localStorageService.setOAuthRefreshToken(data.refresh_token);
-                console.log('here', data.access_token, data.refresh_token);
-                // TODO retry request?
-              },
-            )
-          }
-        }
-        if (error && error.status === 502 || error.status === 503 || error.status === 504 || error.status === 0) {
-          this.logService.snackBarMessage(`WARNING: Failed connecting to server. (Status: ${error.status})`, 15000);
-        }
-        return throwError(error);
+        return this.handleHttpError(error, request, next);
       }));
   }
+
+
+  handleHttpError(error: HttpErrorResponse, request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+    if (error && error.status === 403) {
+
+    }
+    if (error && error.status === 401) {
+      console.log('here refreshing token :)', this.localStorageService.getOAuthRefreshToken());
+      
+      // If using UAA and the request got 401'd, make an attempt to refresh the token
+      // and retry the request
+      const refreshToken = this.localStorageService.getOAuthRefreshToken()
+      if (environment.useCloudFoundryUAA && refreshToken) {
+        console.log('???????????');
+        return this.userService.refreshUAAOAuthToken(refreshToken).pipe(flatMap(
+          (data: RefreshTokenResp) => { 
+            this.localStorageService.setOAuthAccessToken(data.access_token);
+            this.localStorageService.setOAuthRefreshToken(data.refresh_token);
+            console.log('##############', data.access_token, data.refresh_token);
+            request = this.addBearerHeader(request);
+
+            return next.handle(request).pipe(
+              map((event: HttpEvent<unknown>) => {
+                return event;
+              }),
+              catchError((error: HttpErrorResponse) => {
+                return this.handleHttpError(error, request, next);
+              }));
+          }), catchError((e: HttpErrorResponse) => {
+            // If token refresh fails, delete the user/refresh token
+            this.localStorageService.deleteUser();
+            return throwError(error)
+          }))
+        }
+      }
+    if (error && error.status === 502 || error.status === 503 || error.status === 504 || error.status === 0) {
+      this.logService.snackBarMessage(`WARNING: Failed connecting to server. (Status: ${error.status})`, 15000);
+    }
+    return throwError(error);
+  }
+
 
   addBearerHeader(request: HttpRequest<unknown>): HttpRequest<unknown> {
     if (environment.useCloudFoundryUAA) {
