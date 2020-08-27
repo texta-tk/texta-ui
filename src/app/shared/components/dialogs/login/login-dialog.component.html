@@ -1,7 +1,7 @@
 <div fxLayout="row" fxLayoutAlign="space-between baseline"><h1  mat-dialog-title>Login</h1>
   <div class="register-text">
     <ng-container *ngIf="allowUAA">
-      Alternatively, log in with <a (click)="onLoginWithCF()" class="pointer">CloudFoundry</a>, </ng-container>
+      Alternatively, log in with <a (click)="onLoginWithCF()" data-cy="appSharedLoginDialogUaaLogin" class="pointer">CloudFoundry</a>, </ng-container>
       or <a (click)="registerDialog()" class="pointer">register</a></div>
 </div>
 <div class="dialog-content-wrapper" mat-dialog-content>

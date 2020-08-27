@@ -5,7 +5,7 @@ export const environment = {
   production: true,
   
   // For CF UAA authentication
-  useCloudFoundryUAA: false,
+  useCloudFoundryUAA: true,
   uaaConf: {
     uaaURL: 'http://localhost:8080/uaa/oauth/authorize',
 
