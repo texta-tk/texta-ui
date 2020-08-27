@@ -31,12 +31,9 @@ export class HttpAuthInterceptor implements HttpInterceptor {
 
     // If the Auth header wasn't already added, from the access_token, use CSRF Token authentication
     if (!request.headers.get('Authorization')) {
-      console.log('in csrf');
       request = this.addCSRFToken(request)
     }
 
-    console.log('hereee', request);
-    console.log('hereee headers', request.headers.get('Authorization'));
     return next.handle(request).pipe(
       map((event: HttpEvent<unknown>) => {
         return event;
@@ -52,18 +49,15 @@ export class HttpAuthInterceptor implements HttpInterceptor {
 
     }
     if (error && error.status === 401) {
-      console.log('here refreshing token :)', this.localStorageService.getOAuthRefreshToken());
       
       // If using UAA and the request got 401'd, make an attempt to refresh the token
       // and retry the request
       const refreshToken = this.localStorageService.getOAuthRefreshToken()
       if (environment.useCloudFoundryUAA && refreshToken) {
-        console.log('???????????');
         return this.userService.refreshUAAOAuthToken(refreshToken).pipe(flatMap(
           (data: RefreshTokenResp) => { 
             this.localStorageService.setOAuthAccessToken(data.access_token);
             this.localStorageService.setOAuthRefreshToken(data.refresh_token);
-            console.log('##############', data.access_token, data.refresh_token);
             request = this.addBearerHeader(request);
 
             return next.handle(request).pipe(
@@ -90,17 +84,13 @@ export class HttpAuthInterceptor implements HttpInterceptor {
   addBearerHeader(request: HttpRequest<unknown>): HttpRequest<unknown> {
     if (environment.useCloudFoundryUAA) {
       const accessToken = this.localStorageService.getOAuthAccessToken();
-      console.log('acc', accessToken);
       
       // If the access token exists, use UAA 
       if (accessToken) {
-        console.log('and here');
         request = request.clone({
           headers: request.headers.set('Authorization', 'Bearer ' + accessToken),
           withCredentials: true
         });
-
-        console.log('accesstoken reqffFF', request.headers.get('Authorization'));
       }
     }
 
