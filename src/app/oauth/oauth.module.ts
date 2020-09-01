@@ -24,6 +24,7 @@ export class OauthRoutingModule {
     UaaOauthComponent
   ],
   imports: [
+    SharedModule,
     OauthRoutingModule
   ]
 })

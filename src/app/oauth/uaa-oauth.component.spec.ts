@@ -4,6 +4,7 @@ import { UaaOauthComponent } from './uaa-oauth.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SharedModule } from '../shared/shared.module';
 
 describe('UaaOauthComponent', () => {
   let component: UaaOauthComponent;
@@ -11,7 +12,7 @@ describe('UaaOauthComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule],
+      imports: [SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule],
       declarations: [ UaaOauthComponent ]
     })
     .compileComponents();

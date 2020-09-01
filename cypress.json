@@ -6,7 +6,7 @@
   "env": {
     "api_host": "http://texta-rest",
     "api_basePath": "/api/v1",
-    "test_uaa": true
+    "test_uaa": false
   },
   "projectId": "8nu659",
   "responseTimeout": 70000,
