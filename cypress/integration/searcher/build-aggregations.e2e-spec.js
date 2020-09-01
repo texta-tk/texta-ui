@@ -28,10 +28,10 @@ describe('should be able to build aggregations', function () {
     cy.get('.cdk-column-key').should('be.visible');
   }
 
-  function getBuckets(el){
-    if(el.hasOwnProperty('agg_histo')){
+  function getBuckets(el) {
+    if (el.hasOwnProperty('agg_histo')) {
       return getBuckets(el['agg_histo']);
-    }else{
+    } else {
       return el.buckets;
     }
   }
@@ -48,6 +48,21 @@ describe('should be able to build aggregations', function () {
       assert(totalLines === amountOfLines, 'aggs should return correct amount of data')
     });
     cy.get('.svg-container').should('be.visible');
+  }
+
+  function submitAndCheckTreeResult(depth) {
+    cy.get('[data-cy=appSearcherSidebarAggregationsSubmit]').scrollIntoView().click();
+    cy.wait('@searcherQuery');
+    cy.get('.mat-tree-node').should('be.visible');
+    cy.wait(1000);
+    for (let i = 0; i < depth; i++) {
+      if (i === 0) {
+        cy.get('.mat-tree-node > [mattreenodetoggle=""]:first()').click();
+      } else {
+        cy.get('ul > .mat-nested-tree-node > li > .mat-tree-node > [mattreenodetoggle=""]:last()').click();
+      }
+    }
+    cy.get('mat-nested-tree-node ul').its('length').should('eq', depth);
   }
 
   it('should be able to build text, fact and date aggregation', function () {
@@ -84,25 +99,45 @@ describe('should be able to build aggregations', function () {
     cy.get('[data-cy=appSearcherSidebarAggregationsDateInterval]').should('be.visible').click();
     cy.get('mat-option').contains('month').should('be.visible').click();
     submitAndCheckGraphResult(1);
+  });
 
-    // check nested aggregations
-    cy.get('[data-cy=appSearcherSidebarAggregationsAddNew]').scrollIntoView().should('be.visible').click();
-    cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]:last()').scrollIntoView().should('be.visible').click();
-    cy.get('mat-option.mat-option-disabled .mat-option-text').contains('@timestamp');
-    cy.get('mat-option').contains('comment_content').should('be.visible').click();
-    submitAndCheckGraphResult(1);
-    cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]:first()').scrollIntoView().should('be.visible').click();
-    cy.get('mat-option').contains('comment_subject').scrollIntoView().should('be.visible').click();
-    cy.get('[data-cy=appSearcherSidebarAggregationsSubmit]').should('be.visible').click();
+  it('check nested aggs', function () {
+    cy.get('[data-cy=appSearcherSidebarAggregationsPanel]').should('be.visible').click();
+    cy.get('[data-cy=appSearcherSidebarAggregationsAddNew]').scrollIntoView().click();
+    cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]:last()').scrollIntoView().click();
+    cy.get('mat-option').contains('comment_content').scrollIntoView().click();
+    submitAndCheckTreeResult(2);
+    cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]:last()').scrollIntoView().click();
+    cy.get('mat-option').contains('@timestamp').scrollIntoView().click();
     cy.wait('@searcherQuery');
-    cy.get('.mat-tree-node').should('be.visible');
-    cy.get('[data-cy=appSearcherSidebarSavedSearches] .cdk-column-select:nth(1)').should('be.visible').click('left');
-    cy.wait(50); // subscriber can be funky?
-    cy.get('[data-cy=appSearcherSidebarAggregationsSubmit]').should('be.visible').click();
+    submitAndCheckTreeResult(2);
+    cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]:last()').scrollIntoView().click();
+    cy.get('mat-option').contains('comment_subject').scrollIntoView().click();
+    cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]:first()').scrollIntoView().click();
+    cy.get('mat-option').contains('@timestamp').scrollIntoView().click({force: true});
+    cy.wait('@searcherQuery');
+    submitAndCheckGraphResult(1);
+    cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]:first()').scrollIntoView().click();
+    cy.get('mat-option').contains('comment_subject').scrollIntoView().click({force: true});
+    cy.wait(100);
+    cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]:last()').scrollIntoView().click();
+    cy.get('mat-option').contains('@timestamp').scrollIntoView().click();
+    cy.wait('@searcherQuery');
+    submitAndCheckTreeResult(1);
+    cy.get('[data-cy=appSearcherSidebarAggregationsAddNew]').scrollIntoView().click();
+    cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]:last()').scrollIntoView().click();
+    cy.get('mat-option').contains('comment_content').scrollIntoView().click();
+    submitAndCheckTreeResult(2);
+    cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]:first()').click();
+    cy.get('mat-option').contains('texta_facts').scrollIntoView().click();
+    submitAndCheckTreeResult(3);
+    cy.get('[data-cy=appSearcherSidebarSavedSearches] .cdk-column-select:nth(1)').scrollIntoView().click('left');
+    cy.wait(50);
+    cy.get('[data-cy=appSearcherSidebarAggregationsSubmit]').scrollIntoView().click();
     cy.wait('@searcherQuery');
     cy.get('.mat-tree-node').should('be.visible');
     cy.get('app-aggregation-results .mat-tab-label').should('have.length', 2);
+    cy.get('.mat-tab-label-container mat-icon:first()').click();
+    /* cy.get('.svg-container').should('be.visible'); */
   });
-
-
 });

@@ -42,7 +42,7 @@ export class AggregationResultFactsComponent {
   }
 
   @Input()
-  set data(value: { key: string, buckets: { key: string; top_reverse_nested: { doc_count: number; }; doc_count: number; }[] }[]) {
+  set data(value: { key: string, buckets: { key: string; fact_val_reverse: { doc_count: number; }; doc_count: number; }[] }[]) {
     if (value && value.length > 0) {
       this.dataSource = value;
       const COLORS = HighlightComponent.generateColorsForFacts(value.flatMap(x => [{fact: x.key}]));
@@ -53,7 +53,7 @@ export class AggregationResultFactsComponent {
             // item.key hack so i can seperate identical names with colors, used in formatYAxisTicks
             const factName = `[${item.key}]|${x.key}`;
             this.customColors.push({name: factName, value: COLORS.get(item.key)?.backgroundColor});
-            return [{name: factName, value: x.top_reverse_nested.doc_count, extra: {key: item.key, name: x.key, term_count: x.doc_count}}];
+            return [{name: factName, value: x.fact_val_reverse.doc_count, extra: {key: item.key, name: x.key, term_count: x.doc_count}}];
           })
         });
       }

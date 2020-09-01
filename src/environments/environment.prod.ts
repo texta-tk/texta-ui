@@ -6,12 +6,12 @@ export const environment = {
   // For CF UAA authentication
   useCloudFoundryUAA: false,
   uaaConf: {
-    uaaURL: 'http://localhost:8080/uaa/oauth/authorize',
+    uaaURL: 'REST_API_UAA_URL_REPLACE',
 
     // Callback URL defined on the UAA server, to which the user will be redirected after logging in on UAA
-    redirect_uri: 'http://localhost:8000/api/v1/uaa/callback',
+    redirect_uri: 'REST_API_UAA_REDIRECT_URI_REPLACE',
     // OAuth 2.0 client application (eg texta_toolkit) id and secret.
-    client_id: 'login',
+    client_id: 'REST_API_UAA_CLIENT_ID_REPLACE',
     // OAuth 2.0 scope and response_type
     scope: 'openid',
     response_type: 'code',

@@ -18,6 +18,7 @@ import {QueryDialogComponent} from 'src/app/shared/components/dialogs/query-dial
 import {ConfirmDialogComponent} from 'src/app/shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {expandRowAnimation} from '../../../shared/animations';
 import {EditEmbeddingDialogComponent} from './edit-embedding-dialog/edit-embedding-dialog.component';
+import {Index} from "../../../shared/types/Index";
 
 @Component({
   selector: 'app-embedding',
@@ -53,6 +54,8 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
               public dialog: MatDialog,
               private logService: LogService) {
   }
+
+  getIndicesName = (x: Index) => x.name;
 
   ngOnInit(): void {
     this.tableData.sort = this.sort;

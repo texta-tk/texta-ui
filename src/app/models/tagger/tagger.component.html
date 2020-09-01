@@ -2,95 +2,95 @@
 
   <div class="table-paginator-row">
     <div class="loading-bar">
-      <mat-progress-bar mode="indeterminate" *ngIf="isLoadingResults"></mat-progress-bar>
+      <mat-progress-bar *ngIf="isLoadingResults" mode="indeterminate"></mat-progress-bar>
     </div>
     <div class="paginator-row">
-      <button class="paginator-margin-left" data-cy="appModelsTaggerCreateBtn"
-              mat-raised-button color="primary" (click)="openCreateDialog()">
+      <button (click)="openCreateDialog()" class="paginator-margin-left"
+              color="primary" data-cy="appModelsTaggerCreateBtn" mat-raised-button>
         CREATE
       </button>
-      <button class="new-resource-btn" mat-icon-button color="warn" (click)="onDeleteAllSelected()"
-              matTooltip="Delete selected" [disabled]="selectedRows.selected.length < 1">
+      <button (click)="onDeleteAllSelected()" [disabled]="selectedRows.selected.length < 1" class="new-resource-btn" color="warn"
+              mat-icon-button matTooltip="Delete selected">
         <mat-icon>delete</mat-icon>
       </button>
       <mat-form-field class="m-l-15">
         <mat-icon matSuffix>search</mat-icon>
-        <input matInput (keyup)="applyFilter($event.target, 'description')" placeholder="Filter description">
+        <input (keyup)="applyFilter($event.target, 'description')" matInput placeholder="Filter description">
       </mat-form-field>
       <mat-form-field class="m-l-15">
         <mat-icon matSuffix>search</mat-icon>
-        <input matInput (keyup)="applyFilter($event.target, 'task_status')" placeholder="Filter task status">
+        <input (keyup)="applyFilter($event.target, 'task_status')" matInput placeholder="Filter task status">
       </mat-form-field>
 
-      <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons [length]="resultsLength">
+      <mat-paginator [length]="resultsLength" [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
       </mat-paginator>
     </div>
   </div>
 
-  <div class="table-container overflow-auto" [appScrollTop]="tableData">
-    <table mat-table [dataSource]="tableData"
-           matSort matSortDisableClear matSortDirection="asc"
+  <div [appScrollTop]="tableData" class="table-container overflow-auto">
+    <table [dataSource]="tableData" mat-table
+           matSort matSortDirection="asc" matSortDisableClear
            multiTemplateDataRows>
       <ng-container matColumnDef="select">
-        <th mat-header-cell *matHeaderCellDef>
+        <th *matHeaderCellDef mat-header-cell>
           <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selectedRows.hasValue() && isAllSelected()"
                         [indeterminate]="selectedRows.hasValue() && !isAllSelected()">
           </mat-checkbox>
         </th>
-        <td mat-cell *matCellDef="let row">
-          <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selectedRows.toggle(row) : null"
+        <td *matCellDef="let row" mat-cell>
+          <mat-checkbox (change)="$event ? selectedRows.toggle(row) : null" (click)="$event.stopPropagation()"
                         [checked]="selectedRows.isSelected(row)">
           </mat-checkbox>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="description">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Description</th>
-        <td mat-cell *matCellDef="let element"> {{element.description}}</td>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Description</th>
+        <td *matCellDef="let element" mat-cell> {{element.description}}</td>
       </ng-container>
       <ng-container matColumnDef="task__time_started">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Time started</th>
-        <td mat-cell *matCellDef="let element"><span
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Time started</th>
+        <td *matCellDef="let element" mat-cell><span
           *ngIf="element.task">{{element.task.time_started | date:'y-M-d H:mm:ss'}}</span>
         </td>
       </ng-container>
       <ng-container matColumnDef="task__time_completed">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Time completed</th>
-        <td mat-cell *matCellDef="let element">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Time completed</th>
+        <td *matCellDef="let element" mat-cell>
           <span
             *ngIf="element.task && element.task.time_completed">{{element.task.time_completed | date:'y-M-d H:mm:ss'}}</span>
           <span *ngIf="element.task && !element.task.time_completed">Null</span>
         </td>
       </ng-container>
       <ng-container matColumnDef="fields">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Fields</th>
-        <td mat-cell *matCellDef="let element"> {{element.fields | join:', '}}</td>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Fields</th>
+        <td *matCellDef="let element" mat-cell> {{element.fields | join:', '}}</td>
       </ng-container>
 
       <ng-container matColumnDef="author__username">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Author</th>
-        <td mat-cell *matCellDef="let element"> {{element.author_username}}</td>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Author</th>
+        <td *matCellDef="let element" mat-cell> {{element.author_username}}</td>
       </ng-container>
       <ng-container matColumnDef="f1_score">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> F1 score</th>
-        <td mat-cell *matCellDef="let element"> {{element.f1_score | number:'0.2-2'}}</td>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> F1 score</th>
+        <td *matCellDef="let element" mat-cell> {{element.f1_score | number:'0.2-2'}}</td>
       </ng-container>
       <ng-container matColumnDef="precision">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Precision</th>
-        <td mat-cell *matCellDef="let element"> {{element.precision | number:'0.2-2'}}</td>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Precision</th>
+        <td *matCellDef="let element" mat-cell> {{element.precision | number:'0.2-2'}}</td>
       </ng-container>
       <ng-container matColumnDef="recall">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Recall</th>
-        <td mat-cell *matCellDef="let element"> {{element.recall | number:'0.2-2' }}</td>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Recall</th>
+        <td *matCellDef="let element" mat-cell> {{element.recall | number:'0.2-2' }}</td>
       </ng-container>
       <ng-container matColumnDef="task__status">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Task</th>
-        <td mat-cell *matCellDef="let element">
-          <mat-progress-bar *ngIf="element.task && element.task.step !== 'training'" mode="determinate"
-                            [value]="element.task.progress">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Task</th>
+        <td *matCellDef="let element" mat-cell>
+          <mat-progress-bar *ngIf="element.task && element.task.step !== 'training'" [value]="element.task.progress"
+                            mode="determinate">
           </mat-progress-bar>
           <mat-progress-bar *ngIf="element.task && element.task.step === 'training' && element.task.status !== 'failed'"
-                            mode="indeterminate" [value]="element.task.progress">
+                            [value]="element.task.progress" mode="indeterminate">
           </mat-progress-bar>
           <mat-hint *ngIf="element.task">{{element.task.status}} {{element.task.step}}</mat-hint>
         </td>
@@ -98,10 +98,10 @@
 
 
       <ng-container matColumnDef="expandedDetail">
-        <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
-          <div class="element-detail" [@detailExpand] *ngIf="element == expandedElement">
+        <td *matCellDef="let element" [attr.colspan]="displayedColumns.length" mat-cell>
+          <div *ngIf="element == expandedElement" [@detailExpand] class="element-detail">
             <div class="flex-row element-detail-plot-fields">
-              <div *ngIf="element.plot"><img class="element-plot" [src]="element.plot" alt="tagger plot"></div>
+              <div *ngIf="element.plot"><img [src]="element.plot" alt="tagger plot" class="element-plot"></div>
               <div class="flex-col m-l-r-5">
                 <table class="simple-table">
                   <tr>
@@ -142,7 +142,7 @@
                   </tr>
                   <tr>
                     <th class="mat-body-strong">Query</th>
-                    <td><span class="action-text mat-body-strong pointer" (click)="openQueryDialog(element.query)">Show Query</span>
+                    <td><span (click)="openQueryDialog(element.query)" class="action-text mat-body-strong pointer">Show Query</span>
                   </tr>
                 </table>
               </div>
@@ -156,7 +156,7 @@
                   </tr>
                 </table>
               </div>
-              <div class="flex-col m-l-r-5" *ngIf="element.task">
+              <div *ngIf="element.task" class="flex-col m-l-r-5">
                 <table class="simple-table">
                   <tr>
                     <th class="mat-body-strong">Resource id</th>
@@ -188,7 +188,11 @@
                   </tr>
                   <tr>
                     <th class="mat-body-strong">Indices</th>
-                    <td>{{element.indices| join: ', '}}</td>
+                    <td>{{element.indices | getPropertyList: getIndicesName | join: ', '}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Tagger groups</th>
+                    <td>{{element.tagger_groups | join: ', '}}</td>
                   </tr>
                 </table>
               </div>
@@ -198,22 +202,22 @@
         </td>
       </ng-container>
       <ng-container matColumnDef="Modify">
-        <th mat-header-cell class="center-header-cell" *matHeaderCellDef>Actions</th>
-        <td mat-cell *matCellDef="let element; let i = dataIndex" (click)="$event.stopPropagation();">
+        <th *matHeaderCellDef class="center-header-cell" mat-header-cell>Actions</th>
+        <td (click)="$event.stopPropagation();" *matCellDef="let element; let i = dataIndex" mat-cell>
 
-          <button mat-icon-button color="primary" [matMenuTriggerFor]="editMenu"
-                  [matMenuTriggerData]="{element: element, i:i}">
+          <button [matMenuTriggerData]="{element: element, i:i}" [matMenuTriggerFor]="editMenu" color="primary"
+                  mat-icon-button>
             <mat-icon aria-label="Actions">more_vert</mat-icon>
           </button>
 
         </td>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-      <tr mat-row *matRowDef="let element; columns: displayedColumns;" class="element-row"
-          [class.expanded-row]="expandedElement === element"
-          (click)="expandedElement = expandedElement === element ? null : element"></tr>
-      <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
+      <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
+      <tr (click)="expandedElement = expandedElement === element ? null : element" *matRowDef="let element; columns: displayedColumns;" [class.expanded-row]="expandedElement === element"
+          class="element-row"
+          mat-row></tr>
+      <tr *matRowDef="let row; columns: ['expandedDetail']" class="detail-row" mat-row></tr>
 
     </table>
 
@@ -222,32 +226,32 @@
 
 </div>
 <mat-menu #editMenu="matMenu">
-  <ng-template matMenuContent let-element="element" let-i="i">
+  <ng-template let-element="element" let-i="i" matMenuContent>
     <ng-container *ngIf="element.task && element.task.status === 'completed'">
-      <button mat-menu-item (click)="listFeatures(element)" data-cy="appTaggerMenuListFeatures">
+      <button (click)="listFeatures(element)" data-cy="appTaggerMenuListFeatures" mat-menu-item>
         List features
       </button>
-      <button mat-menu-item (click)="editStopwordsDialog(element)" data-cy="appTaggerMenuStopWords">
+      <button (click)="editStopwordsDialog(element)" data-cy="appTaggerMenuStopWords" mat-menu-item>
         Stop words
       </button>
-      <button mat-menu-item (click)="tagTextDialog(element)" data-cy="appTaggerMenuTagText">
+      <button (click)="tagTextDialog(element)" data-cy="appTaggerMenuTagText" mat-menu-item>
         Tag text
       </button>
-      <button mat-menu-item (click)="tagDocDialog(element)" data-cy="appTaggerMenuTagDoc">
+      <button (click)="tagDocDialog(element)" data-cy="appTaggerMenuTagDoc" mat-menu-item>
         Tag doc
       </button>
-      <button mat-menu-item (click)="tagRandomDocDialog(element)" data-cy="appTaggerMenuTagRandomDoc">
+      <button (click)="tagRandomDocDialog(element)" data-cy="appTaggerMenuTagRandomDoc" mat-menu-item>
         Tag random doc
       </button>
-      <button (click)="edit(element)" mat-menu-item data-cy="appTaggerMenuEdit">
+      <button (click)="edit(element)" data-cy="appTaggerMenuEdit" mat-menu-item>
         Edit
       </button>
     </ng-container>
-    <button mat-menu-item (click)="retrainTagger(element)" data-cy="appTaggerMenuRetrain">
+    <button (click)="retrainTagger(element)" data-cy="appTaggerMenuRetrain" mat-menu-item>
       Retrain tagger
     </button>
     <mat-divider></mat-divider>
-    <button mat-menu-item (click)="onDelete(element, i)" data-cy="appTaggerMenuDelete">
+    <button (click)="onDelete(element, i)" data-cy="appTaggerMenuDelete" mat-menu-item>
       Delete
     </button>
   </ng-template>

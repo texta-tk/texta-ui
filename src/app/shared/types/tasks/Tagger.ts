@@ -23,6 +23,7 @@ export class Tagger {
   recall: number;
   f1_score: number;
   num_features: number;
+  tagger_groups: string[];
   indices: string[];
   plot: unknown;
   task: TaskStatus;
