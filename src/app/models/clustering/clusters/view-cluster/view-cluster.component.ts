@@ -43,7 +43,6 @@ export class ViewClusterComponent implements OnInit, OnDestroy, AfterViewInit {
   filterTerm$ = new Subject<string>();
 
   currentProject: Project;
-  resultsLength: number;
   clusteringId: number;
   public isLoadingResults = true;
 
@@ -72,7 +71,6 @@ export class ViewClusterComponent implements OnInit, OnDestroy, AfterViewInit {
       })).subscribe(x => {
         this.isLoadingResults = false;
         if (x && !(x instanceof HttpErrorResponse)) {
-          this.resultsLength = x.cluster_count;
           this.tableData.data = x.clusters;
           const state = this.localStorageService.getProjectState(this.currentProject);
           const clusteringState = `${this.clusteringId.toString()}`;

@@ -49,7 +49,6 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   filteringValues: { [key: string]: string } = {};
 
   currentProject: Project;
-  resultsLength: number;
   destroyed$ = new Subject<boolean>();
 
   constructor(private projectStore: ProjectStore,
@@ -61,8 +60,6 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   getIndicesName = (x: Index) => x.name;
 
   ngOnInit(): void {
-    this.tableData.sort = this.sort;
-    this.tableData.paginator = this.paginator;
 
     // Check for updates after 30s every 30s
     timer(30000, 30000).pipe(takeUntil(this.destroyed$), switchMap(_ =>
@@ -89,6 +86,8 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    this.tableData.sort = this.sort;
+    this.tableData.paginator = this.paginator;
     this.setUpPaginator();
   }
 
@@ -117,7 +116,6 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
       // Flip flag to show that loading has finished.
       this.isLoadingResults = false;
       if (data && !(data instanceof HttpErrorResponse)) {
-        this.resultsLength = data.count;
         this.tableData.data = data.results;
       } else if (data) {
         this.logService.snackBarError(data, 2000);

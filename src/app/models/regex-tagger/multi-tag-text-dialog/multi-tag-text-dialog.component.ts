@@ -39,7 +39,6 @@ export class MultiTagTextDialogComponent implements OnInit, OnDestroy {
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(currentProject => {
       if (currentProject) {
         this.currentProject = currentProject;
-        return this.lexiconService.getLexicons(currentProject.id);
       }
     });
   }

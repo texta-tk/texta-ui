@@ -22,7 +22,7 @@
     </a>
     <a
       [matMenuTriggerFor]="models"
-      [ngClass]="{'is-active': ['/tagger-groups', '/taggers', '/embeddings', '/neurotaggers', '/clustering'].includes(router.url)}"
+      [ngClass]="{'is-active': ['/tagger-groups', '/taggers', '/regex-tagger', '/regex-tagger-groups', '/embeddings', '/torchtaggers', '/clustering'].includes(router.url)}"
       class="pointer">
       <button class="nav-button" data-cy="appNavbarModels" mat-button>
         <mat-icon class="margin-right">storage</mat-icon>
@@ -38,7 +38,8 @@
       </button>
     </a>
     <a [matMenuTriggerFor]="tools"
-       [ngClass]="{'is-active': ['/reindexer', '/dataset-importer', 'mlp', '/anonymizers'].includes(router.url)}" class="pointer">
+       [ngClass]="{'is-active': ['/reindexer', '/dataset-importer', 'mlp', '/anonymizers'].includes(router.url)}"
+       class="pointer">
       <button class="nav-button" mat-button>
         <mat-icon class="margin-right">build</mat-icon>
         Tools
@@ -58,6 +59,8 @@
         *ngIf="projectResourceCounts?.num_torchtaggers">({{projectResourceCounts?.num_torchtaggers}})</span></a>
       <a [routerLink]="['regex-tagger']" data-cy="appNavbarModelMenuRegexTagger" mat-menu-item
          routerLinkActive="is-active-menu">Regex Taggers </a>
+      <a [routerLink]="['regex-tagger-groups']" data-cy="appNavbarModelMenuRegexTaggerGroups" mat-menu-item
+         routerLinkActive="is-active-menu">Regex Taggers Groups</a>
       <a [routerLink]="['embeddings']" data-cy="appNavbarModelMenuEmbeddings" mat-menu-item
          routerLinkActive="is-active-menu">Embeddings <span
         *ngIf="projectResourceCounts?.num_embeddings">({{projectResourceCounts?.num_embeddings}})</span></a>

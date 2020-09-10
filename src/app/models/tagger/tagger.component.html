@@ -22,7 +22,7 @@
         <input (keyup)="applyFilter($event.target, 'task_status')" matInput placeholder="Filter task status">
       </mat-form-field>
 
-      <mat-paginator [length]="resultsLength" [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
+      <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
       </mat-paginator>
     </div>
   </div>

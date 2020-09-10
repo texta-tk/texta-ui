@@ -40,7 +40,6 @@ export class ClusteringComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   currentProject: Project;
-  resultsLength: number;
   destroyed$ = new Subject<boolean>();
 
   constructor(private projectStore: ProjectStore,
@@ -52,8 +51,6 @@ export class ClusteringComponent implements OnInit, OnDestroy, AfterViewInit {
   public getIndexName = (x: Index) => x.name;
 
   ngOnInit(): void {
-    this.tableData.sort = this.sort;
-    this.tableData.paginator = this.paginator;
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(resp => {
       if (resp) {
         this.currentProject = resp;
@@ -67,6 +64,8 @@ export class ClusteringComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    this.tableData.sort = this.sort;
+    this.tableData.paginator = this.paginator;
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
@@ -91,7 +90,6 @@ export class ClusteringComponent implements OnInit, OnDestroy, AfterViewInit {
       // Flip flag to show that loading has finished.
       this.isLoadingResults = false;
       if (data && !(data instanceof HttpErrorResponse)) {
-        this.resultsLength = data.count;
         this.tableData.data = data.results;
       }
     });

@@ -1,0 +1,41 @@
+<h1 mat-dialog-title>New regex tagger group</h1>
+<div mat-dialog-content>
+  <form (ngSubmit)="onSubmit(regexTaggerGroupForm.value)" [formGroup]="regexTaggerGroupForm" class="flex-col">
+    <mat-form-field data-cy="appRegexTaggerGroupCreateDialogDesc">
+      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
+             placeholder="Description" required>
+
+      <mat-error *ngIf="regexTaggerGroupForm.get('descriptionFormControl')?.hasError('required')">
+        Description is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+
+    <mat-form-field data-cy="appRegexTaggerGroupCreateDialogRegexTaggerGroups">
+      <mat-label>Regex tagger groups</mat-label>
+      <mat-select [disableOptionCentering]="true"
+                  formControlName="regexTaggersFormControl" multiple panelClass="select-panel-reveal-input" required>
+        <mat-option *ngFor="let regexTagger of projectRegexTaggers" [value]="regexTagger">
+          {{regexTagger.description}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="regexTaggerGroupForm.get('regexTaggersFormControl')?.hasError('required')">
+        Regex tagger group is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <div class="flex-col">
+      <div class="flex-row">
+        <div class="flex-item-left">
+          <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
+        </div>
+        <div class="flex-item-right">
+          <button [disabled]="!regexTaggerGroupForm.valid" data-cy="appRegexTaggerGroupCreateDialogSubmit" mat-button
+                  type="submit">
+            Create
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
