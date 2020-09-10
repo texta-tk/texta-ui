@@ -57,10 +57,10 @@ const routes: Routes = [
     loadChildren: () => import('./models/embedding/embedding.module').then(m => m.EmbeddingModule)
   },
   {
-    path: 'clustering',
+    path: 'topic-analyzer',
     canActivate: [AuthGuard],
-    data: {breadcrumb: 'clustering', tooltip: 'Clustering list'},
-    loadChildren: () => import('./models/clustering/cluster.module').then(m => m.ClusterModule)
+    data: {breadcrumb: 'clustering', tooltip: 'Topic analyzer list'},
+    loadChildren: () => import('./models/topic-analyzer/topic-analyzer.module').then(m => m.TopicAnalyzerModule)
   },
   {
     path: 'searcher',

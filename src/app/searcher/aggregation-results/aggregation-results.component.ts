@@ -11,21 +11,21 @@ export interface AggregationData {
   treeData?: {
     // tslint:disable-next-line:no-any
     treeData?: any[],
-    name?: string,
+    name: string,
     // tslint:disable-next-line:no-any
     histoBuckets?: any[]
   }[];
   tableData?: {
     // tslint:disable-next-line:no-any
     tableData?: MatTableDataSource<any>,
-    name?: string
+    name: string
   }[];
   dateData?: { series: { value: number; name: string; extra?: { buckets: { key: string; doc_count: number }[] } }[], name: string }[];
   // only used when aggregating over texta_facts only
   textaFactsTableData?: {
     // tslint:disable-next-line:no-any
     data?: any,
-    name?: string,
+    name: string,
   }[];
 
 }

@@ -8,7 +8,7 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../../core/util/log.service';
 import {UserService} from '../../core/users/user.service';
 import {UserProfile} from '../../shared/types/UserProfile';
-import {mergeMap, take, takeUntil} from 'rxjs/operators';
+import {debounceTime, mergeMap, take, takeUntil} from 'rxjs/operators';
 import {from, Subject} from 'rxjs';
 import {MatSelect} from '@angular/material/select';
 import {UtilityFunctions} from '../../shared/UtilityFunctions';
@@ -42,6 +42,10 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
               private projectStore: ProjectStore,
               private coreService: CoreService,
               private projectService: ProjectService) {
+
+  }
+
+  initForm(): void {
     const indices = this.projectForm.get('indicesFormControl');
     if (indices) {
       indices.setValue(this.data.indices);
@@ -68,6 +72,7 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.initForm();
     this.coreService.getIndices().subscribe((resp: string[] | HttpErrorResponse) => {
       if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
@@ -84,7 +89,7 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
       }
     });
     this.indicesFilterFormControl.valueChanges
-      .pipe(takeUntil(this.destroyed$))
+      .pipe(takeUntil(this.destroyed$), debounceTime(300))
       .subscribe(() => {
         this.filterIndices();
       });
@@ -94,14 +99,28 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
     this.setInitialValue();
   }
 
+  onSubmit(formData: { indicesFormControl: string[]; usersFormControl: string[]; titleFormControl: string; }): void {
+    this.data.indices = formData.indicesFormControl;
+    this.data.users = formData.usersFormControl;
+    this.data.title = formData.titleFormControl;
+    this.projectService.editProject(this.data, this.data.id).subscribe((resp: Project | HttpErrorResponse) => {
+      if (resp instanceof HttpErrorResponse) {
+        this.logService.snackBarError(resp, 5000);
+      } else if (resp) {
+        this.projectStore.refreshProjects();
+        this.dialogRef.close();
+      }
+    });
+  }
+
   protected setInitialValue(): void {
     this.filteredIndices
-      .pipe(take(1), takeUntil(this.destroyed$))
+      .pipe(take(1))
       .subscribe(() => {
         // setting the compareWith property to a comparison function
         // triggers initializing the selection according to the initial value of
         // the form control (i.e. _initializeSelection())
-        // this needs to be done after the filteredBanks are loaded initially
+        // this needs to be done after the filteredIndices are loaded initially
         // and after the mat-option elements are available
         this.multiSelect.compareWith = (a: string, b: string) => a === b;
       });
@@ -119,24 +138,9 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
     } else {
       search = search.toLowerCase();
     }
-    // filter the banks
     this.filteredIndices.next(
       this.indices.filter(index => index.toLowerCase().indexOf(search) > -1)
     );
-  }
-
-  onSubmit(formData: { indicesFormControl: string[]; usersFormControl: string[]; titleFormControl: string; }): void {
-    this.data.indices = formData.indicesFormControl;
-    this.data.users = formData.usersFormControl;
-    this.data.title = formData.titleFormControl;
-    this.projectService.editProject(this.data, this.data.id).subscribe((resp: Project | HttpErrorResponse) => {
-      if (resp instanceof HttpErrorResponse) {
-        this.logService.snackBarError(resp, 5000);
-      } else if (resp) {
-        this.projectStore.refreshProjects();
-        this.dialogRef.close();
-      }
-    });
   }
 
 }

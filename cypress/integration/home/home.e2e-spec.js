@@ -42,7 +42,7 @@ describe('/health and project table tests', function () {
     cy.get('[data-cy=appProjectCreateDialogIndices]').click().then((projIndices => {
       cy.wrap(projIndices).should('have.class', 'mat-focused');
       cy.get('input.mat-select-search-input:last').type('texta_test_index');
-      cy.get('.mat-option-text:first').contains('texta_test_index').should('be.visible').click(); // todo texta test index
+      cy.get('.mat-option-text').contains('texta_test_index').should('be.visible').click(); // todo texta test index
       cy.closeCurrentCdkOverlay();
     }));
     cy.route('GET', 'projects').as('getProjects');

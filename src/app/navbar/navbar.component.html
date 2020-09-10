@@ -22,7 +22,7 @@
     </a>
     <a
       [matMenuTriggerFor]="models"
-      [ngClass]="{'is-active': ['/tagger-groups', '/taggers', '/regex-tagger', '/regex-tagger-groups', '/embeddings', '/torchtaggers', '/clustering'].includes(router.url)}"
+      [ngClass]="{'is-active': ['/tagger-groups', '/taggers', '/regex-tagger', '/regex-tagger-groups', '/embeddings', '/torchtaggers', '/topic-analyzer'].includes(router.url)}"
       class="pointer">
       <button class="nav-button" data-cy="appNavbarModels" mat-button>
         <mat-icon class="margin-right">storage</mat-icon>
@@ -64,8 +64,8 @@
       <a [routerLink]="['embeddings']" data-cy="appNavbarModelMenuEmbeddings" mat-menu-item
          routerLinkActive="is-active-menu">Embeddings <span
         *ngIf="projectResourceCounts?.num_embeddings">({{projectResourceCounts?.num_embeddings}})</span></a>
-      <a [routerLink]="['clustering']" data-cy="appNavbarModelMenuClusters" mat-menu-item
-         routerLinkActive="is-active-menu">Clusterings <span
+      <a [routerLink]="['topic-analyzer']" data-cy="appNavbarModelMenuClusters" mat-menu-item
+         routerLinkActive="is-active-menu">Topic Analyzer <span
         *ngIf="projectResourceCounts?.num_clusterings">({{projectResourceCounts?.num_clusterings}})</span></a>
     </mat-menu>
 
@@ -108,7 +108,7 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <button (click)="edit(projectControl.value)" *ngIf="currentProject" mat-icon-button matTooltip="Edit project">
+      <button (click)="edit(projectControl.value)" *ngIf="currentProject && user.is_superuser" mat-icon-button matTooltip="Edit project">
         <mat-icon aria-label="Edit Project">edit</mat-icon>
       </button>
       <div class="flex-row logout">
