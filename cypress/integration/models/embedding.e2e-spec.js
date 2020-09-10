@@ -18,8 +18,8 @@ describe('embeddings should work', function () {
   });
   function initEmbeddingsPage(){
     cy.visit('/embeddings');
-    cy.wait('@getEmbeddings');
     cy.wait('@getProjectIndices');
+    cy.wait('@getEmbeddings');
     cy.get('[data-cy=appNavbarProjectSelect]').click();
     cy.get('mat-option').contains('integration_test_project').click();
     cy.wait('@getEmbeddings');

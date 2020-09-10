@@ -1,16 +1,23 @@
-import {Component, Injector, Input, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+
 import {AggregationData} from '../aggregation-results.component';
 import {ComponentPortal, PortalInjector} from '@angular/cdk/portal';
-import {FlexibleConnectedPositionStrategy, Overlay, OverlayContainer, OverlayRef, ViewportRuler} from '@angular/cdk/overlay';
-import {PlotComponent} from 'angular-plotly.js';
+import {
+  FlexibleConnectedPositionStrategy,
+  Overlay,
+  OverlayContainer,
+  OverlayRef,
+  ViewportRuler
+} from '@angular/cdk/overlay';
 import {GraphSelectedPortalComponent} from './graph-selected-portal/graph-selected-portal.component';
 import {PORTAL_DATA} from './PortalToken';
 import {Platform} from '@angular/cdk/platform';
 import {SearcherComponentService} from '../../services/searcher-component.service';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
-import {Plotly} from 'angular-plotly.js/src/app/shared/plotly.interface';
+import {Plotly} from 'angular-plotly.js/lib/plotly.interface';
 import Layout = Plotly.Layout;
+import {PlotlyComponent} from 'angular-plotly.js';
+import {Component, Injector, Input, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 
 @Component({
   selector: 'app-aggregation-results-chart',
@@ -20,8 +27,7 @@ import Layout = Plotly.Layout;
 export class AggregationResultsChartComponent implements OnInit, OnDestroy {
   public graph: { data: unknown[], layout: Layout };
   revision = 0;
-  // @ts-ignore
-  @ViewChild(PlotComponent) plotly;
+  @ViewChild(PlotlyComponent) plotly: PlotlyComponent;
   overlayRef: OverlayRef;
 
   destroyed$: Subject<boolean> = new Subject();

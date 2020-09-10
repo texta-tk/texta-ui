@@ -9,8 +9,9 @@
     </mat-form-field>
     <mat-form-field class="max-width" data-cy="appProjectEditDialogIndices">
       <mat-select formControlName="indicesFormControl" placeholder="Select Indices" multiple>
+        <mat-option>
         <ngx-mat-select-search [formControl]="indicesFilterFormControl" placeholderLabel="Search" noEntriesFoundLabel="No entries"
-                               #multiSelect></ngx-mat-select-search>
+                               #multiSelect></ngx-mat-select-search></mat-option>
         <mat-option *ngFor="let item of (filteredIndices | async)" [value]="item">
           {{item}}
         </mat-option>
