@@ -13,8 +13,7 @@ import {LexiconService} from '../../../core/lexicon/lexicon.service';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
-import {Tagger} from "../../../shared/types/tasks/Tagger";
-import {RegexTagger} from "../../../shared/types/tasks/RegexTagger";
+import {RegexTagger} from '../../../shared/types/tasks/RegexTagger';
 
 @Component({
   selector: 'app-edit-regex-tagger-dialog',

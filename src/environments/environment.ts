@@ -4,7 +4,7 @@
 
 export const environment = {
   // apiUrl: 'https://rest-dev.texta.ee/api/v1',
-  apiHost: 'http://localhost',
+  apiHost: 'http://localhost:8000',
   apiBasePath: '/api/v1',
   production: false
 };

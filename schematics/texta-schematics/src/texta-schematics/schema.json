@@ -1,16 +1,9 @@
 {
   "$schema": "http://json-schema.org/schema",
-  "id": "simpleSchema",
-  "title": "Creates a simple schematic.",
+  "id": "textaSchematics",
+  "title": "Generate new texta model module",
   "type": "object",
   "properties": {
-    "project": {
-      "type": "string",
-      "description": "The name of the project.",
-      "$default": {
-        "$source": "projectName"
-      }
-    },
     "path": {
       "type": "string",
       "format": "path",
@@ -18,12 +11,13 @@
       "visible": false
     },
     "name": {
-      "description": "Specifies the name of the generated Class.",
+      "description": "Specifies the name of the generated module.",
       "type": "string",
       "$default": {
         "$source": "argv",
         "index": 0
-      }
+      },
+      "x-prompt": "Enter model name"
     },
     "spec": {
       "type": "boolean",
@@ -38,6 +32,5 @@
   },
   "required": [
     "name"
-  ],
-  "additionalProperties": false
+  ]
 }

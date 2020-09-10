@@ -28,7 +28,7 @@
 <mat-dialog-actions>
   <div class="flex-row max-width">
     <div class="flex-item-left">
-      <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
+      <button class="flex-item-left" mat-button mat-dialog-close data-cy="appRegexTaggerMultiTagDialogClose" type="button">Close</button>
     </div>
     <div class="flex-item-right">
       <button (click)="onSubmit(text, selectedTaggers)" [disabled]="!text" data-cy="appRegexTaggerMultiTagDialogSubmit"

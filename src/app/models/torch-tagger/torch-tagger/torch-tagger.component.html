@@ -22,7 +22,7 @@
         <mat-icon matSuffix>search</mat-icon>
         <input matInput (keyup)="applyFilter($event.target, 'task_status')" placeholder="Filter task status">
       </mat-form-field>
-      <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons [length]="resultsLength">
+      <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
       </mat-paginator>
     </div>
   </div>

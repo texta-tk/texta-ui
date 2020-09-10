@@ -17,14 +17,14 @@
       <button (click)="openMultiTagDialog()" data-cy="appRegexTaggerMultiTagBtn" mat-stroked-button>
         Multi tag text
       </button>
-      <mat-paginator [length]="resultsLength" [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
+      <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
       </mat-paginator>
     </div>
   </div>
 
   <div [appScrollTop]="tableData" class="table-container overflow-auto">
     <table [dataSource]="tableData" mat-table
-           matSort matSortDirection="desc" matSortDisableClear matSortActive="id"
+           matSort matSortDirection="desc" matSortActive="id"
            multiTemplateDataRows>
       <ng-container matColumnDef="select">
         <th *matHeaderCellDef mat-header-cell>
@@ -94,12 +94,16 @@
         </td>
       </ng-container>
 
-      <ng-container matColumnDef="edit">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header><div class="edit-header">Edit</div></th>
-        <td *matCellDef="let element;" mat-cell>
-          <button (click)="edit(element);$event.stopPropagation();" mat-icon-button>
-            <mat-icon aria-label="Edit regex tagger">edit</mat-icon>
+
+      <ng-container matColumnDef="actions">
+        <th *matHeaderCellDef class="center-header-cell" mat-header-cell>Actions</th>
+        <td (click)="$event.stopPropagation();" *matCellDef="let element; let i = dataIndex" mat-cell>
+
+          <button [matMenuTriggerData]="{element: element, i:i}" [matMenuTriggerFor]="editMenu" color="primary"
+                  mat-icon-button>
+            <mat-icon aria-label="Actions">more_vert</mat-icon>
           </button>
+
         </td>
       </ng-container>
       <ng-container matColumnDef="expandedDetail">
@@ -142,3 +146,27 @@
 
 
 </div>
+
+<mat-menu #editMenu="matMenu">
+  <ng-template let-element="element" let-i="i" matMenuContent>
+    <button (click)="onTagDoc(element)" data-cy="appRegexTaggerMenuTagDoc"
+            mat-menu-item>
+      Tag doc
+    </button>
+    <button (click)="onTagRandomDoc(element)" data-cy="appRegexTaggerMenuTagRandomDoc"
+            mat-menu-item>
+      Tag random doc
+    </button>
+    <button (click)="onTagText(element)" data-cy="appRegexTaggerMenuTagText"
+            mat-menu-item>
+      Tag texts
+    </button>
+    <mat-divider></mat-divider>
+    <button (click)="edit(element);" mat-menu-item>
+      Edit
+    </button>
+    <button (click)="onDelete(element, i)" data-cy="appRegexTaggerMenuDelete" mat-menu-item>
+      Delete
+    </button>
+  </ng-template>
+</mat-menu>

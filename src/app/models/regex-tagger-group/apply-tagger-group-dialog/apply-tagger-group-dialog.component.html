@@ -1,0 +1,71 @@
+<h1 mat-dialog-title>Apply regex tagger group to indices</h1>
+<div mat-dialog-content>
+  <form (ngSubmit)="onSubmit(regexTaggerGroupForm.value)" [formGroup]="regexTaggerGroupForm" class="flex-col">
+    <mat-form-field data-cy="appRegexTaggerGroupApplyTaggerDialogDesc">
+      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
+             placeholder="Description" required>
+
+      <mat-error *ngIf="regexTaggerGroupForm.get('descriptionFormControl')?.hasError('required')">
+        Description is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field data-cy="appRegexTaggerGroupApplyTaggerDialogIndices">
+      <mat-label>Indices</mat-label>
+      <mat-select (openedChange)="indicesOpenedChange($event)" [disableOptionCentering]="true"
+                  formControlName="indicesFormControl" multiple panelClass="select-panel-reveal-input" required>
+        <mat-option *ngFor="let projectIndex of indices" [value]="projectIndex">
+          {{projectIndex.index}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="regexTaggerGroupForm.get('indicesFormControl')?.hasError('required')">
+        Index is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field data-cy="appRegexTaggerGroupApplyTaggerDialogFields">
+      <mat-label>Select Fields</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="fieldsFormControl"
+                  multiple panelClass="select-panel-reveal-input" required>
+        <mat-option *ngFor="let fields of fieldsUnique" [value]="fields.path">
+          {{fields.path}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="regexTaggerGroupForm.get('fieldsFormControl')?.hasError('required')">
+        Field is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+
+    <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"
+                                   data-cy="appRegexTaggerGroupApplyTaggerDialogQuery">
+    </app-saved-search-autocomplete>
+
+    <mat-form-field data-cy="appRegexTaggerGroupApplyTaggerDialogTaggers">
+      <mat-label>Regex tagger groups</mat-label>
+      <mat-select [disableOptionCentering]="true"
+                  formControlName="regexTaggersFormControl" multiple panelClass="select-panel-reveal-input" required>
+        <mat-option *ngFor="let regexTagger of projectRegexTaggers" [value]="regexTagger">
+          {{regexTagger.description}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="regexTaggerGroupForm.get('regexTaggersFormControl')?.hasError('required')">
+        Regex tagger group is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <div class="flex-col">
+      <div class="flex-row">
+        <div class="flex-item-left">
+          <button class="flex-item-left" mat-button mat-dialog-close type="button"
+                  data-cy="appRegexTaggerGroupApplyTaggerDialogClose">Close</button>
+        </div>
+        <div class="flex-item-right">
+          <button [disabled]="!regexTaggerGroupForm.valid" data-cy="appRegexTaggerGroupApplyTaggerDialogSubmit"
+                  mat-button
+                  type="submit">
+            Apply
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

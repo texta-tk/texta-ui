@@ -1,0 +1,42 @@
+<h1 mat-dialog-title>Multi tag text</h1>
+<mat-dialog-content fxLayout="column">
+  <mat-form-field class="max-width" data-cy="appRegexTaggerGroupMultiTagDialogText">
+    <textarea [(ngModel)]="text" [ngModelOptions]="{standalone: true}" [rows]="5" matInput
+              placeholder="Tag text"></textarea>
+  </mat-form-field>
+  <mat-form-field class="max-width" data-cy="appRegexTaggerGroupMultiTagDialogTaggers">
+    <mat-label>Regex Tagger Groups</mat-label>
+    <mat-select [(ngModel)]="selectedTaggers"
+                [disableOptionCentering]="true" [ngModelOptions]="{standalone: true}" multiple
+                panelClass="select-panel-reveal-input">
+      <mat-option *ngFor="let tagger of taggers" [value]="tagger">
+        {{tagger.description}}
+      </mat-option>
+    </mat-select>
+    <mat-hint>Uses all regex-tagger-groups by default</mat-hint>
+  </mat-form-field>
+  <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+
+  <div *ngIf="result" class="m-top-10">
+    <div class="code-wrapper">
+      <code>
+        <pre *ngIf="result">{{result | json}}</pre>
+      </code>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <div class="flex-row max-width">
+    <div class="flex-item-left">
+      <button class="flex-item-left" mat-button mat-dialog-close type="button"
+              data-cy="appRegexTaggerGroupMultiTagDialogClose">Close</button>
+    </div>
+    <div class="flex-item-right">
+      <button (click)="onSubmit(text, selectedTaggers)" [disabled]="!text"
+              data-cy="appRegexTaggerGroupMultiTagDialogSubmit"
+              mat-button>
+        Tag
+      </button>
+    </div>
+  </div>
+</mat-dialog-actions>

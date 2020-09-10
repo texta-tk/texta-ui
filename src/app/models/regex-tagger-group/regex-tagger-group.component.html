@@ -1,0 +1,129 @@
+<div class="wrapper max-height" fxLayout="column">
+  <div class="table-paginator-row">
+    <div class="loading-bar">
+      <mat-progress-bar *ngIf="isLoadingResults" mode="indeterminate"></mat-progress-bar>
+    </div>
+    <div class="paginator-row">
+      <button (click)="openCreateDialog()" class="paginator-margin-left"
+              color="primary" data-cy="appRegexTaggerGroupCreateBtn" mat-raised-button>
+        CREATE
+      </button>
+      <button (click)="onDeleteAllSelected()" [disabled]="selectedRows.selected.length < 1" class="new-resource-btn"
+              color="warn" data-cy="appRegexTaggerGroupDeleteBtn"
+              mat-icon-button matTooltip="Delete selected">
+        <mat-icon>delete</mat-icon>
+      </button>
+      <button (click)="openMultiTagDialog()" data-cy="appRegexTaggerGroupMultiTagBtn" mat-stroked-button>
+        Multi tag text
+      </button>
+      <button (click)="applyTaggerGroup()" data-cy="appRegexTaggerGroupApplyTaggerGroupBtn" mat-stroked-button
+              style="margin-left: 10px">
+        Apply tagger group
+      </button>
+      <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
+      </mat-paginator>
+    </div>
+  </div>
+
+  <div [appScrollTop]="tableData" class="tasks-table overflow-auto">
+    <table [dataSource]="tableData" mat-table
+           matSort matSortActive="id" matSortDirection="desc"
+           multiTemplateDataRows>
+      <ng-container matColumnDef="select">
+        <th *matHeaderCellDef mat-header-cell>
+          <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selectedRows.hasValue() && isAllSelected()"
+                        [indeterminate]="selectedRows.hasValue() && !isAllSelected()">
+          </mat-checkbox>
+        </th>
+        <td *matCellDef="let row" mat-cell>
+          <mat-checkbox (change)="$event ? selectedRows.toggle(row) : null" (click)="$event.stopPropagation()"
+                        [checked]="selectedRows.isSelected(row)">
+          </mat-checkbox>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="id">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Id</th>
+        <td *matCellDef="let element" mat-cell> {{element.id}}</td>
+      </ng-container>
+      <ng-container matColumnDef="description">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Description</th>
+        <td *matCellDef="let element" mat-cell> {{element.description}}</td>
+      </ng-container>
+      <ng-container matColumnDef="author_username">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Author</th>
+        <td *matCellDef="let element" mat-cell>{{element.author_username}}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="regex_taggers">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Nr. of regex taggers</th>
+        <td *matCellDef="let element" mat-cell>{{element.regex_taggers.length}}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th *matHeaderCellDef class="center-header-cell" mat-header-cell>Actions</th>
+        <td (click)="$event.stopPropagation();" *matCellDef="let element; let i = dataIndex" mat-cell>
+
+          <button [matMenuTriggerData]="{element: element, i:i}" [matMenuTriggerFor]="editMenu" color="primary"
+                  mat-icon-button>
+            <mat-icon aria-label="Actions">more_vert</mat-icon>
+          </button>
+
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="expandedDetail">
+        <td *matCellDef="let element" [attr.colspan]="displayedColumns.length" mat-cell>
+          <div *ngIf="element == expandedElement" [@detailExpand] class="element-detail">
+            <div class="flex-col m-l-r-5" fxFlex="50">
+              <table class="simple-table">
+                <tr>
+                  <th class="mat-body-strong">Regex tagger description</th>
+                  <th class="mat-body-strong">id</th>
+                </tr>
+                <tr *ngFor="let tagger of element.tagger_info">
+                  <td>{{tagger.description}}</td>
+                  <td>{{tagger.tagger_id}}</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </td>
+      </ng-container>
+
+
+      <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
+      <tr (click)="expandedElement = expandedElement === element ? null : element"
+          *matRowDef="let element; columns: displayedColumns;"
+          [class.expanded-row]="expandedElement === element"
+          class="element-row"
+          mat-row></tr>
+      <tr *matRowDef="let row; columns: ['expandedDetail']" class="detail-row" mat-row></tr>
+
+    </table>
+
+  </div>
+
+
+</div>
+
+<mat-menu #editMenu="matMenu">
+  <ng-template let-element="element" let-i="i" matMenuContent>
+    <button (click)="onTagDoc(element)" data-cy="appRegexTaggerGroupMenuTagDoc"
+            mat-menu-item>
+      Tag doc
+    </button>
+    <button (click)="onTagRandomDoc(element)" data-cy="appRegexTaggerGroupMenuTagRandomDoc"
+            mat-menu-item>
+      Tag random doc
+    </button>
+    <button (click)="onTagText(element)" data-cy="appRegexTaggerGroupMenuTagText"
+            mat-menu-item>
+      Tag texts
+    </button>
+    <mat-divider></mat-divider>
+    <button (click)="onDelete(element, i)" data-cy="appRegexTaggerGroupMenuDelete" mat-menu-item>
+      Delete
+    </button>
+  </ng-template>
+</mat-menu>
