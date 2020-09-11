@@ -38,6 +38,7 @@ export class EditAnonymizerDialogComponent implements OnInit, OnDestroy {
         mimicCasingFormControl: new FormControl(this.data.mimic_casing),
         misspellingThresholdFormControl: new FormControl(this.data.misspelling_threshold, [
           Validators.required, Validators.min(0), Validators.max(1)]),
+        autoAdjustThresholdFormControl: new FormControl(this.data.auto_adjust_threshold),
       });
     }
   }
@@ -57,7 +58,8 @@ export class EditAnonymizerDialogComponent implements OnInit, OnDestroy {
       replace_single_last_names: formData.replaceSingleLastNamesFormControl,
       replace_single_first_names: formData.replaceSingleFirstNamesFormControl,
       mimic_casing: formData.mimicCasingFormControl,
-      misspelling_threshold: formData.misspellingThresholdFormControl
+      misspelling_threshold: formData.misspellingThresholdFormControl,
+      auto_adjust_threshold: formData.autoAdjustThresholdFormControl
     };
     this.anonymizerService.patchAnonymizer(this.currentProject.id, this.data.id, body).subscribe(resp => {
       if (resp instanceof HttpErrorResponse) {

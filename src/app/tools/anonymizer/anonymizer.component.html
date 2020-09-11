@@ -73,6 +73,13 @@
                         [(ngModel)]="element.mimic_casing"></mat-checkbox>
         </td>
       </ng-container>
+      <ng-container matColumnDef="auto_adjust_threshold">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Auto adjust threshold</th>
+        <td *matCellDef="let element" mat-cell>
+          <mat-checkbox (click)="$event.stopPropagation();" (ngModelChange)="updateAnonymizerRow(element)"
+                        [(ngModel)]="element.auto_adjust_threshold"></mat-checkbox>
+        </td>
+      </ng-container>
       <ng-container matColumnDef="actions">
         <th *matHeaderCellDef class="center-header-cell" mat-header-cell>Actions</th>
         <td (click)="$event.stopPropagation();" *matCellDef="let element; let i = dataIndex" mat-cell>
