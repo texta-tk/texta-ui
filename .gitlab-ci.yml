@@ -57,7 +57,7 @@ Cypress:
     - ci-test
   before_script:
     - npm ci
-    - ./wait_for_uaa.sh
+    - sh wait_for_uaa.sh
   script:
     - npm run cy:verify
     - npm run cy:info
