@@ -46,7 +46,7 @@ describe('/oauth and uaa auth tests', function () {
         cy.route('GET', '**/rest-auth/user/').as('userInfo');
 
         // Clear the cookies to prevent sessions taking over
-        cy.clearCookies()
+        cy.clearCookies({domain: null});
         // Make the access_token invalid
         cy.clearLocalStorage('access_token');
 
@@ -68,7 +68,7 @@ describe('/oauth and uaa auth tests', function () {
         cy.route('GET', '**/rest-auth/user/').as('userInfo');
 
         // Clear the cookies to prevent sessions taking over
-        cy.clearCookies()
+        cy.clearCookies({domain: null});
         // Make the access_token invalid
         cy.clearLocalStorage('access_token');
         cy.clearLocalStorage('refresh_token');
