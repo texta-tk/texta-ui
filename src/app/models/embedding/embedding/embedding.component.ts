@@ -47,7 +47,6 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
   currentProject: Project;
-  resultsLength: number;
 
   constructor(private projectStore: ProjectStore,
               private embeddingsService: EmbeddingsService,
@@ -58,8 +57,6 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
   getIndicesName = (x: Index) => x.name;
 
   ngOnInit(): void {
-    this.tableData.sort = this.sort;
-    this.tableData.paginator = this.paginator;
 
     // check for updates after 30s every 30s
     timer(30000, 30000).pipe(takeUntil(this.destroyed$),
@@ -93,6 +90,8 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    this.tableData.sort = this.sort;
+    this.tableData.paginator = this.paginator;
     this.setUpPaginator();
   }
 
@@ -124,7 +123,6 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
       if (data instanceof HttpErrorResponse) {
         this.logService.snackBarError(data, 2000);
       } else if (data) {
-        this.resultsLength = data.count;
         this.tableData.data = data.results;
       }
       this.isLoadingResults = false;

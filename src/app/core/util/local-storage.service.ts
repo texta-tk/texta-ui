@@ -89,7 +89,9 @@ export class LocalStorageService {
   }
 
   public setCurrentlySelectedProject(value: Project | null): void {
-    localStorage.setItem('selectedProject', JSON.stringify(value));
+    if (value) {
+      localStorage.setItem('selectedProject', JSON.stringify(value));
+    }
   }
 
 }

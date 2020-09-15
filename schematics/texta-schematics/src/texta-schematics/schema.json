@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "id": "textaSchematics",
+  "title": "Generate new texta model module",
+  "type": "object",
+  "properties": {
+    "path": {
+      "type": "string",
+      "format": "path",
+      "description": "The path to create the simple schematic within.",
+      "visible": false
+    },
+    "name": {
+      "description": "Specifies the name of the generated module.",
+      "type": "string",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      },
+      "x-prompt": "Enter model name"
+    },
+    "spec": {
+      "type": "boolean",
+      "description": "Specifies if a spec file is generated.",
+      "default": true
+    },
+    "flat": {
+      "type": "boolean",
+      "description": "Flag to indicate if a directory is created.",
+      "default": false
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

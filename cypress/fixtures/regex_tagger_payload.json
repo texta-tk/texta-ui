@@ -1,0 +1,16 @@
+{
+  "description": "test",
+  "lexicon": [
+    "tere"
+  ],
+  "counter_lexicon": [],
+  "operator": "and",
+  "match_type": "prefix",
+  "required_words": 1,
+  "phrase_slop": 0,
+  "counter_slop": 0,
+  "n_allowed_edits": 0,
+  "return_fuzzy_match": true,
+  "ignore_case": false,
+  "ignore_punctuation": false
+}

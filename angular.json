@@ -175,6 +175,11 @@
           }
         }
       }
+    },
+    "texta-schematics": {
+      "root": "schematics/",
+      "projectType": "application",
+      "prefix": "texta-schematics"
     }
   },
   "defaultProject": "texta"

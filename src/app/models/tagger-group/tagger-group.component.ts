@@ -20,7 +20,7 @@ import {ConfirmDialogComponent} from 'src/app/shared/components/dialogs/confirm-
 import {TaggerGroupTagRandomDocDialogComponent} from './tagger-group-tag-random-doc-dialog/tagger-group-tag-random-doc-dialog.component';
 import {expandRowAnimation} from '../../shared/animations';
 import {EditTaggerGroupDialogComponent} from './edit-tagger-group-dialog/edit-tagger-group-dialog.component';
-import {Index} from "../../shared/types/Index";
+import {Index} from '../../shared/types/Index';
 
 @Component({
   selector: 'app-tagger-group',
@@ -47,7 +47,6 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
   filteringValues: { [key: string]: string } = {};
 
   currentProject: Project;
-  resultsLength: number;
   destroyed$ = new Subject<boolean>();
 
 
@@ -59,8 +58,6 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.tableData.sort = this.sort;
-    this.tableData.paginator = this.paginator;
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(resp => {
       if (resp) {
         this.currentProject = resp;
@@ -74,6 +71,8 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    this.tableData.sort = this.sort;
+    this.tableData.paginator = this.paginator;
     this.setUpPaginator();
   }
 
@@ -104,7 +103,6 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
       if (data instanceof HttpErrorResponse) {
         this.logService.snackBarError(data, 2000);
       } else if (data) {
-        this.resultsLength = data.count;
         this.tableData.data = data.results;
       }
     });

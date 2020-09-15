@@ -1,0 +1,10 @@
+{
+  "$schema": "../node_modules/@angular-devkit/schematics/collection-schema.json",
+  "schematics": {
+    "generate-model": {
+      "description": "makes a new model module",
+      "factory": "./texta-schematics/index#generateTextaModelModule",
+      "schema": "./texta-schematics/schema.json"
+    }
+  }
+}

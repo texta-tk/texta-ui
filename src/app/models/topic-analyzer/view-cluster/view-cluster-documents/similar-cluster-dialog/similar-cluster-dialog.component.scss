@@ -1,0 +1,17 @@
+@import "../../../../../../variables/variables";
+
+table {
+  width: 100%;
+}
+.paginator-margin-left {
+  margin-left: 5px;
+}
+.paginator-row{
+  padding-left: 12px;
+  mat-form-field{
+    line-height: 1.6;
+  }
+  .char-limit{
+    width: 107px;
+  }
+}

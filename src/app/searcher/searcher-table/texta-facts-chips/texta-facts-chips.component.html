@@ -3,7 +3,7 @@
     <ng-container *ngIf="y < NUMBER_OF_CHIPS_TO_DISPLAY">
       <span (click)="buildSearch(fact.factName, factValue.key)" style.background-color="{{fact?.color?.backgroundColor}}"
             style.color="{{fact?.color?.textColor}}" title="{{fact.factName}}">
-        {{factValue.key}}
+        [{{fact.factName}}] {{factValue.key}}
         <ng-container *ngIf="factValue.count > 1">({{factValue.count}})</ng-container>
       </span>
     </ng-container>

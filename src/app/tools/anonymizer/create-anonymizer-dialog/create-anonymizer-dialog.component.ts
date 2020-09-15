@@ -9,8 +9,8 @@ import {ErrorStateMatcher} from '@angular/material/core';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {Project} from '../../../shared/types/Project';
 import {Subject} from 'rxjs';
-import {takeUntil} from "rxjs/operators";
-import {HttpErrorResponse} from "@angular/common/http";
+import {takeUntil} from 'rxjs/operators';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-create-anonymizer-dialog',
@@ -20,12 +20,13 @@ import {HttpErrorResponse} from "@angular/common/http";
 export class CreateAnonymizerDialogComponent implements OnInit, OnDestroy {
   anonymizerForm: FormGroup = new FormGroup({
     descriptionFormControl: new FormControl('', [Validators.required]),
-    replaceMisspelledNamesFormControl: new FormControl(true),
-    replaceSingleLastNamesFormControl: new FormControl(true),
-    replaceSingleFirstNamesFormControl: new FormControl(true),
-    mimicCasingFormControl: new FormControl(true),
+    replaceMisspelledNamesFormControl: new FormControl(false),
+    replaceSingleLastNamesFormControl: new FormControl(false),
+    replaceSingleFirstNamesFormControl: new FormControl(false),
+    mimicCasingFormControl: new FormControl(false),
     misspellingThresholdFormControl: new FormControl(0.9, [
       Validators.required, Validators.min(0), Validators.max(1)]),
+    autoAdjustThresholdFormControl: new FormControl(false),
   });
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   currentProject: Project;
@@ -53,7 +54,8 @@ export class CreateAnonymizerDialogComponent implements OnInit, OnDestroy {
       replace_single_last_names: formData.replaceSingleLastNamesFormControl,
       replace_single_first_names: formData.replaceSingleFirstNamesFormControl,
       mimic_casing: formData.mimicCasingFormControl,
-      misspelling_threshold: formData.misspellingThresholdFormControl
+      misspelling_threshold: formData.misspellingThresholdFormControl,
+      auto_adjust_threshold: formData.autoAdjustThresholdFormControl,
     };
     this.anonymizerService.createAnonymizer(this.currentProject.id, body).subscribe(resp => {
       if (resp instanceof HttpErrorResponse) {

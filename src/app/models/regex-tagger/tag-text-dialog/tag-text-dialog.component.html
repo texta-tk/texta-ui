@@ -1,0 +1,36 @@
+<h1 mat-dialog-title>Tag text</h1>
+
+<div mat-dialog-content>
+  <form #docForm="ngForm" (ngSubmit)="onSubmit()" class="max-width" id="docForm">
+
+    <mat-form-field class="max-width" data-cy="appRegexTaggerTagTextDialogText">
+      <input #text="ngModel" [(ngModel)]="model.text" matInput name="text" placeholder="text" required>
+      <mat-error *ngIf="text.hasError('required')">
+        Text is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+
+    <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+    <div class="m-top-10"><span class="mat-body-strong">Result: </span>
+      <div class="code-wrapper">
+        <code>
+          <pre *ngIf="result">{{result | json}}</pre>
+        </code>
+      </div>
+    </div>
+  </form>
+</div>
+<div mat-dialog-actions>
+
+  <div class="flex-col max-width">
+    <div class="flex-row">
+      <div class="flex-item-left">
+        <button mat-dialog-close="" mat-stroked-button data-cy="appRegexTaggerTagTextDialogClose">Close</button>
+      </div>
+      <div class="flex-item-right">
+        <button [disabled]="docForm.invalid" form="docForm" mat-stroked-button type="submit">Tag</button>
+      </div>
+    </div>
+  </div>
+</div>

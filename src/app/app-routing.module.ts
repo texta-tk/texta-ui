@@ -47,15 +47,20 @@ const routes: Routes = [
     loadChildren: () => import('./models/regex-tagger/regex-tagger.module').then(m => m.RegexTaggerModule)
   },
   {
+    path: 'regex-tagger-groups',
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./models/regex-tagger-group/regex-tagger-group.module').then(m => m.RegexTaggerGroupModule)
+  },
+  {
     path: 'embeddings',
     canActivate: [AuthGuard],
     loadChildren: () => import('./models/embedding/embedding.module').then(m => m.EmbeddingModule)
   },
   {
-    path: 'clustering',
+    path: 'topic-analyzer',
     canActivate: [AuthGuard],
-    data: {breadcrumb: 'clustering', tooltip: 'Clustering list'},
-    loadChildren: () => import('./models/clustering/cluster.module').then(m => m.ClusterModule)
+    data: {breadcrumb: 'clustering', tooltip: 'Topic analyzer list'},
+    loadChildren: () => import('./models/topic-analyzer/topic-analyzer.module').then(m => m.TopicAnalyzerModule)
   },
   {
     path: 'searcher',

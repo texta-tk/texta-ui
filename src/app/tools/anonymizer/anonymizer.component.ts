@@ -28,7 +28,7 @@ export class AnonymizerComponent implements OnInit, OnDestroy, AfterViewInit {
   public tableData: MatTableDataSource<Anonymizer> = new MatTableDataSource();
   selectedRows = new SelectionModel<Anonymizer>(true, []);
   public displayedColumns = ['select', 'id', 'description', 'misspelling_threshold',
-    'replace_misspelled_names', 'replace_single_last_names', 'replace_single_first_names', 'mimic_casing', 'actions'];
+    'replace_misspelled_names', 'replace_single_last_names', 'replace_single_first_names', 'mimic_casing', 'auto_adjust_threshold', 'actions'];
   public isLoadingResults = true;
 
   @ViewChild(MatSort) sort: MatSort;

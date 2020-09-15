@@ -6,6 +6,7 @@ import {of, Subject} from 'rxjs';
 import {SavedSearch} from '../../types/SavedSearch';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ProjectStore} from 'src/app/core/projects/project.store';
+import {MatFormFieldAppearance} from '@angular/material/form-field';
 
 @Component({
   selector: 'app-saved-search-autocomplete',
@@ -13,7 +14,7 @@ import {ProjectStore} from 'src/app/core/projects/project.store';
   styleUrls: ['./saved-search-autocomplete.component.scss']
 })
 export class SavedSearchAutocompleteComponent implements OnInit, OnDestroy {
-  @Input() appearance: 'legacy' | 'standard' | 'fill' | 'outline' | undefined = undefined;
+  @Input() appearance: MatFormFieldAppearance = 'standard';
   @Output() queryChanged = new EventEmitter<string>();
 
   defaultQuery = '{"query": {"match_all": {}}}';

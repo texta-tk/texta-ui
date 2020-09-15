@@ -1,4 +1,3 @@
-
 // tslint:disable:variable-name
 export class Project {
   url = '';
@@ -62,20 +61,24 @@ export class ProjectIndex {
     }
   }
 
-  static cleanProjectIndicesFields(fields: ProjectIndex[], whiteList: string[], blackList: string[]): ProjectIndex[] {
+  static cleanProjectIndicesFields(fields: ProjectIndex[], whiteList: string[], blackList: string[], whiteListAll?: boolean): ProjectIndex[] {
     fields = JSON.parse(JSON.stringify(fields)); // deep clone, dont want to change original
     const filteredField: ProjectIndex[] = [];
     const whiteListTypes = whiteList && whiteList.length > 0 ? whiteList : null;
     const blackListTypes = blackList && blackList.length > 0 ? blackList : null;
     for (const index of fields) {
       index.fields = index.fields.filter(element => {
-        if (whiteListTypes && whiteListTypes.includes(element.type)) {
-          return true;
+          if (whiteListTypes && whiteListTypes.includes(element.type)) {
+            return true;
+          }
+          if (blackListTypes && blackListTypes.includes(element.type)) {
+            return false;
+          }
+          if (whiteListAll) {
+            return true;
+          }
         }
-        if (blackListTypes && blackListTypes.includes(element.type)) {
-          return false;
-        }
-      });
+      );
       if (index.fields.length > 0) {
         filteredField.push(index);
       }

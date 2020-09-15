@@ -41,7 +41,6 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   filteringValues: { [key: string]: string } = {};
 
   currentProject: Project;
-  resultsLength: number;
   destroyed$ = new Subject<boolean>();
 
 
@@ -52,8 +51,6 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.tableData.sort = this.sort;
-    this.tableData.paginator = this.paginator;
 
     // Check for updates after 30s every 30s
     timer(30000, 30000).pipe(takeUntil(this.destroyed$), switchMap(_ =>
@@ -80,6 +77,8 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    this.tableData.sort = this.sort;
+    this.tableData.paginator = this.paginator;
     this.setUpPaginator();
   }
 
@@ -108,7 +107,6 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
       // Flip flag to show that loading has finished.
       this.isLoadingResults = false;
       if (data && !(data instanceof HttpErrorResponse)) {
-        this.resultsLength = data.count;
         this.tableData.data = data.results;
       }
     });
