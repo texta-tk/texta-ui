@@ -5,6 +5,16 @@ describe('/oauth and uaa auth tests', function () {
             cy.log(`SKIPPING UAA TEST AS test_uaa IS ${Cypress.env('test_uaa')}`)
             this.skip();
         } else {
+            // Clear sessionStorage, see https://github.com/cypress-io/cypress/issues/413
+            cy.window().then((win) => {
+                win.sessionStorage.clear()
+            })
+            // Clear the cookies to prevent sessions taking over
+            cy.clearCookies({domain: null});
+            // Make the access_token invalid
+            cy.clearLocalStorage('access_token');
+            cy.clearLocalStorage('refresh_token');
+
             cy.server();
             cy.visit('/');
 
