@@ -56,10 +56,28 @@ export class LocalStorageService {
 
   public deleteUser(): void {
     localStorage.removeItem('user');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
   }
 
   public setUser(value: UserAuth): void {
     localStorage.setItem('user', JSON.stringify(value));
+  }
+
+  public setOAuthAccessToken(value: string): void {
+    localStorage.setItem('access_token', value);
+  }
+
+  public setOAuthRefreshToken(value: string): void {
+    localStorage.setItem('refresh_token', value);
+  }
+
+  public getOAuthAccessToken(): string | null {
+    return localStorage.getItem('access_token');
+  }
+
+  public getOAuthRefreshToken(): string | null {
+    return localStorage.getItem('refresh_token');
   }
 
   public getCurrentlySelectedProject(): Project | null {
