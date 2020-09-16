@@ -48,7 +48,18 @@ describe('mlp should work', function () {
       expect(created.status).to.eq(201);
       assert.equal(created.response.body.task.status, 'created');
     });
-
+    cy.get('.mat-header-row > .cdk-column-id').should('be.visible').then(bb => {
+      cy.wrap([0, 0, 0, 0, 0, 0]).each(y => { // hack to wait for task to complete
+        cy.wrap(bb).click();
+        return cy.wait('@getMLPTasks').then((x) => {
+          if (x?.response?.body?.results[0]?.task?.status === 'completed') {
+            assert.equal(x?.response?.body?.results[0]?.task?.status, 'completed');
+            return false;
+          }
+          return cy.wait(5000);
+        });
+      })
+    });
 
     cy.get('[data-cy=appToolsMLPApplyTextBtn]').click();
     cy.wait('@optionsMLPTasks');
