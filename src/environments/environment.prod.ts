@@ -4,7 +4,7 @@ export const environment = {
   production: true,
   
   // For CF UAA authentication
-  useCloudFoundryUAA: JSON.parse('TEXTA_USE_UAA_REPLACE'),
+  useCloudFoundryUAA: JSON.parse('TEXTA_USE_UAA_REPLACE'.toLowerCase()),
   uaaConf: {
     uaaURL: 'TEXTA_UAA_AUTH_URL_REPLACE',
     // Callback URL defined on the UAA server, to which the user will be redirected after logging in on UAA
