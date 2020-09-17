@@ -5,6 +5,8 @@ import { UserService } from '../core/users/user.service';
 import { UserStore } from '../core/users/user.store';
 import { HttpErrorResponse } from '@angular/common/http';
 import { UserProfile } from '../shared/types/UserProfile';
+import { LogService } from '../core/util/log.service';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-uaa-oauth',
@@ -16,14 +18,14 @@ export class UaaOauthComponent implements OnInit {
     private route: ActivatedRoute,
     private localStorageService: LocalStorageService,
     private userService: UserService,
-    private userStore: UserStore,
+    private logService: LogService,
     private router: Router) { }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(queryParams => {
+    this.route.queryParams.pipe(switchMap(params => {
       // Get the tokens from queryParams
-      const accessToken = queryParams['access_token'];
-      const refreshToken = queryParams['refresh_token'];
+      const accessToken = params['access_token'];
+      const refreshToken = params['refresh_token'];
 
       // Set them to the localstorage to be used in the interceptor
       if (refreshToken) {
@@ -32,18 +34,15 @@ export class UaaOauthComponent implements OnInit {
 
       if (accessToken) {
         this.localStorageService.setOAuthAccessToken(accessToken);
-
-        // Get the profile here too just in case to prevent racecon with UserStore
-        this.userService.getUserProfile().subscribe((user: UserProfile | HttpErrorResponse) => {
-          if (user && !(user instanceof HttpErrorResponse)) {
-            this.userStore.setCurrentUser(user);
-          }
-        });
       }
-
-
-      this.router.navigate(['']);
-  });
+      return this.userService.getUserProfile();
+    })).subscribe(resp => {
+      if (resp instanceof HttpErrorResponse) {
+        this.logService.snackBarError(resp);
+      } else if (resp) {
+        this.router.navigate(['']);
+      }
+    });
   }
 
 }
