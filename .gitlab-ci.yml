@@ -4,6 +4,8 @@ services:
     - name: redis:latest
     - name: postgres:11
       alias: texta-postgres
+    - name: docker.texta.ee/texta/texta-uaa:latest
+      alias: texta-uaa
 
 variables:
     DJANGO_DATABASE_ENGINE: "django.db.backends.postgresql"
@@ -23,6 +25,16 @@ variables:
     npm_config_cache: "$CI_PROJECT_DIR/.npm"
     CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/Cypress"
     FF_NETWORK_PER_BUILD: 1
+    # UAA
+    TEXTA_USE_UAA: "True"
+    TEXTA_UAA_REDIRECT_URI: http://texta-rest/api/v1/uaa/callback
+    TEXTA_UAA_USER: test1
+    TEXTA_UAA_EMAIL: test1@test1.com
+    TEXTA_UAA_PWD: test1
+    TEXTA_UAA_URL: http://texta-uaa:8080/uaa
+    TEXTA_UAA_FRONT_REDIRECT_URL: http://localhost:4200/oauth
+    TEXTA_UAA_CLIENT_ID: login
+    TEXTA_UAA_CLIENT_SECRET: loginsecret
 
 stages:
   - unit-test
@@ -45,6 +57,7 @@ Cypress:
     - ci-test
   before_script:
     - npm ci
+    - sh wait_for_uaa.sh
   script:
     - npm run cy:verify
     - npm run cy:info
