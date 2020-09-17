@@ -1,5 +1,5 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {ClusterService} from '../../../core/models/clusters/cluster.service';
+import {ClusterService} from '../../../core/tools/clusters/cluster.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ClusterView} from '../../../shared/types/tasks/Cluster';
 import {ProjectStore} from '../../../core/projects/project.store';

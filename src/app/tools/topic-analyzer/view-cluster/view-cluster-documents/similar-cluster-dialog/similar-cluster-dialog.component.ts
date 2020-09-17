@@ -1,7 +1,7 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {LogService} from '../../../../../core/util/log.service';
 import {MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
-import {ClusterService} from '../../../../../core/models/clusters/cluster.service';
+import {ClusterService} from '../../../../../core/tools/clusters/cluster.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {MatTableDataSource} from '@angular/material/table';
 import {ClusterMoreLikeThis} from '../../../../../shared/types/tasks/Cluster';

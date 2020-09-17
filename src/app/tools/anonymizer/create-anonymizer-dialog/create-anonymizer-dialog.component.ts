@@ -20,10 +20,10 @@ import {HttpErrorResponse} from '@angular/common/http';
 export class CreateAnonymizerDialogComponent implements OnInit, OnDestroy {
   anonymizerForm: FormGroup = new FormGroup({
     descriptionFormControl: new FormControl('', [Validators.required]),
-    replaceMisspelledNamesFormControl: new FormControl(false),
-    replaceSingleLastNamesFormControl: new FormControl(false),
-    replaceSingleFirstNamesFormControl: new FormControl(false),
-    mimicCasingFormControl: new FormControl(false),
+    replaceMisspelledNamesFormControl: new FormControl(true),
+    replaceSingleLastNamesFormControl: new FormControl(true),
+    replaceSingleFirstNamesFormControl: new FormControl(true),
+    // mimicCasingFormControl: new FormControl(true),
     misspellingThresholdFormControl: new FormControl(0.9, [
       Validators.required, Validators.min(0), Validators.max(1)]),
     autoAdjustThresholdFormControl: new FormControl(false),
@@ -48,12 +48,12 @@ export class CreateAnonymizerDialogComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(formData: { [key: string]: unknown }): void {
+    // mimic_casing: formData.mimicCasingFormControl,
     const body = {
       description: formData.descriptionFormControl,
       replace_misspelled_names: formData.replaceMisspelledNamesFormControl,
       replace_single_last_names: formData.replaceSingleLastNamesFormControl,
       replace_single_first_names: formData.replaceSingleFirstNamesFormControl,
-      mimic_casing: formData.mimicCasingFormControl,
       misspelling_threshold: formData.misspellingThresholdFormControl,
       auto_adjust_threshold: formData.autoAdjustThresholdFormControl,
     };

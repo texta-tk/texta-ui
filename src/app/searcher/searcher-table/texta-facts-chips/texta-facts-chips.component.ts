@@ -20,7 +20,7 @@ export class TextaFactsChipsComponent implements OnInit {
       path: 'texta_facts',
       type: 'fact'
     }],
-    factName: [],
+    factName: [''],
     factNameOperator: 'must',
     factTextOperator: 'must',
     inputGroup: [{
@@ -44,7 +44,7 @@ export class TextaFactsChipsComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  buildSearch(fact: string, factValue: string): void {
+  buildFactValSearch(fact: string, factValue: string): void {
     const constraint = new SavedSearch();
     constraint.query_constraints = [];
     this.searchService.getAdvancedSearchConstraints$().pipe(take(1)).subscribe(constraintList => {
@@ -60,6 +60,30 @@ export class TextaFactsChipsComponent implements OnInit {
           const constraintBluePrint = {...this.constraintBluePrint};
           constraintBluePrint.inputGroup[0].factTextInput = factValue;
           constraintBluePrint.inputGroup[0].factTextName = fact;
+          constraint.query_constraints.push(constraintBluePrint);
+        }
+        constraint.query_constraints.push(...UtilityFunctions.convertConstraintListToJson(constraintList));
+        constraint.query_constraints = JSON.stringify(constraint.query_constraints);
+        this.searchService.nextSavedSearch(constraint);
+      }
+    });
+  }
+
+  buildFactNameSearch(fact: string): void {
+    const constraint = new SavedSearch();
+    constraint.query_constraints = [];
+    this.searchService.getAdvancedSearchConstraints$().pipe(take(1)).subscribe(constraintList => {
+      if (typeof constraint.query_constraints !== 'string') {
+        const factConstraint = constraintList.find(y => y instanceof FactConstraint && !(y.inputGroupArray.length > 0));
+        // inputGroup means its a fact_val constraint
+        if (factConstraint instanceof FactConstraint && (factConstraint.isFactValue || factConstraint.inputGroupArray.length === 0)) {
+          if (!factConstraint.factNameFormControl.value.includes(fact)) {
+            factConstraint.factNameFormControl.setValue([fact, ...factConstraint.factNameFormControl.value]);
+          }
+        } else {
+          const constraintBluePrint = {...this.constraintBluePrint};
+          constraintBluePrint.factName = [fact];
+          constraintBluePrint.inputGroup = [];
           constraint.query_constraints.push(constraintBluePrint);
         }
         constraint.query_constraints.push(...UtilityFunctions.convertConstraintListToJson(constraintList));

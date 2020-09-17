@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {ClusterService} from '../../../../../../core/models/clusters/cluster.service';
+import {ClusterService} from '../../../../../../core/tools/clusters/cluster.service';
 import {LogService} from '../../../../../../core/util/log.service';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {FormControl, FormGroup, Validators} from '@angular/forms';

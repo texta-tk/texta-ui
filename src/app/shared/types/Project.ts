@@ -16,13 +16,17 @@ export class Project {
 
 export class ProjectResourceCounts {
   num_lexicons = 0;
+  num_torchtaggers = 0;
   num_taggers = 0;
   num_tagger_groups = 0;
-  num_neurotaggers = 0;
   num_embeddings = 0;
-  num_embedding_clusters = 0;
-  num_torchtaggers = 0;
   num_clusterings = 0;
+  num_regex_taggers = 0;
+  num_regex_tagger_groups = 0;
+  num_anonymizers = 0;
+  num_mlp_workers = 0;
+  num_reindexers = 0;
+  num_dataset_importers = 0;
 }
 
 export interface ProjectFact {
