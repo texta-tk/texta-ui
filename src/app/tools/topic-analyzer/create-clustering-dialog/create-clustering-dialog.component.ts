@@ -12,7 +12,7 @@ import {mergeMap, takeUntil} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 import {Cluster} from '../../../shared/types/tasks/Cluster';
-import {ClusterService} from '../../../core/models/clusters/cluster.service';
+import {ClusterService} from '../../../core/tools/clusters/cluster.service';
 import {ClusterOptions} from '../../../shared/types/tasks/ClusterOptions';
 import {EmbeddingsService} from '../../../core/models/embeddings/embeddings.service';
 import {ResultsWrapper} from '../../../shared/types/Generic';

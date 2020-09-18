@@ -60,7 +60,7 @@ const routes: Routes = [
     path: 'topic-analyzer',
     canActivate: [AuthGuard],
     data: {breadcrumb: 'clustering', tooltip: 'Topic analyzer list'},
-    loadChildren: () => import('./models/topic-analyzer/topic-analyzer.module').then(m => m.TopicAnalyzerModule)
+    loadChildren: () => import('./tools/topic-analyzer/topic-analyzer.module').then(m => m.TopicAnalyzerModule)
   },
   {
     path: 'searcher',

@@ -2,7 +2,7 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {LogService} from '../../../core/util/log.service';
 import {HttpErrorResponse} from '@angular/common/http';
-import {ClusterService} from '../../../core/models/clusters/cluster.service';
+import {ClusterService} from '../../../core/tools/clusters/cluster.service';
 import {Cluster} from '../../../shared/types/tasks/Cluster';
 
 @Component({

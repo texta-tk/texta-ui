@@ -15,7 +15,7 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {ProjectStore} from '../../../../core/projects/project.store';
-import {ClusterService} from '../../../../core/models/clusters/cluster.service';
+import {ClusterService} from '../../../../core/tools/clusters/cluster.service';
 import {filter, switchMap, takeUntil} from 'rxjs/operators';
 import {Observable, of, Subject} from 'rxjs';
 import {LogService} from '../../../../core/util/log.service';

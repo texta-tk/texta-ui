@@ -47,8 +47,8 @@ export class CreateRegexTaggerDialogComponent implements OnInit, OnDestroy {
       Validators.required,
     ]),
 
-    fuzzyMatchFormControl: new FormControl(false),
-    ignoreCaseFormControl: new FormControl(false),
+    fuzzyMatchFormControl: new FormControl(true),
+    ignoreCaseFormControl: new FormControl(true),
     ignorePunctuationFormControl: new FormControl(false),
   });
 

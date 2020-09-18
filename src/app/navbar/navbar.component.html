@@ -16,14 +16,13 @@
       <button class="nav-button" mat-button>
         <mat-icon class="margin-right">library_books</mat-icon>
         Lexicons
-        <ng-container *ngIf="projectResourceCounts?.num_lexicons">({{projectResourceCounts?.num_lexicons}})
+        <ng-container *ngIf="projectResourceCounts">({{projectResourceCounts.num_lexicons}})
         </ng-container>
       </button>
     </a>
-    <a
-      [matMenuTriggerFor]="models"
-      [ngClass]="{'is-active': ['/tagger-groups', '/taggers', '/regex-tagger', '/regex-tagger-groups', '/embeddings', '/torchtaggers', '/topic-analyzer'].includes(router.url)}"
-      class="pointer">
+    <a [matMenuTriggerFor]="models"
+       [ngClass]="{'is-active': ['/tagger-groups', '/taggers', '/regex-tagger', '/regex-tagger-groups', '/embeddings', '/torchtaggers'].includes(router.url)}"
+       class="pointer">
       <button class="nav-button" data-cy="appNavbarModels" mat-button>
         <mat-icon class="margin-right">storage</mat-icon>
         Models
@@ -31,18 +30,27 @@
           ({{projectResourceCounts.num_torchtaggers +
         projectResourceCounts.num_taggers +
         projectResourceCounts.num_tagger_groups +
-        projectResourceCounts.num_embeddings + projectResourceCounts.num_clusterings}})
+        projectResourceCounts.num_regex_taggers +
+        projectResourceCounts.num_regex_tagger_groups +
+        projectResourceCounts.num_embeddings}})
         </ng-container>
 
         <mat-icon>arrow_drop_down</mat-icon>
       </button>
     </a>
     <a [matMenuTriggerFor]="tools"
-       [ngClass]="{'is-active': ['/reindexer', '/dataset-importer', 'mlp', '/anonymizers'].includes(router.url)}"
+       [ngClass]="{'is-active': ['/reindexer', '/dataset-importer', 'mlp', '/anonymizers', '/topic-analyzer'].includes(router.url)}"
        class="pointer">
       <button class="nav-button" mat-button>
         <mat-icon class="margin-right">build</mat-icon>
         Tools
+        <ng-container *ngIf="projectResourceCounts">
+          ({{projectResourceCounts.num_reindexers +
+        projectResourceCounts.num_anonymizers +
+        projectResourceCounts.num_dataset_importers +
+        projectResourceCounts.num_mlp_workers +
+        projectResourceCounts.num_clusterings}})
+        </ng-container>
         <mat-icon>arrow_drop_down</mat-icon>
       </button>
     </a>
@@ -50,30 +58,47 @@
     <mat-menu #models="matMenu">
       <a [routerLink]="['taggers']" data-cy="appNavbarModelMenuTaggers" mat-menu-item
          routerLinkActive="is-active-menu">Taggers <span
-        *ngIf="projectResourceCounts?.num_taggers">({{projectResourceCounts?.num_taggers}})</span></a>
+        *ngIf="projectResourceCounts?.num_taggers"> ({{projectResourceCounts.num_taggers}})</span></a>
       <a [routerLink]="['tagger-groups']" data-cy="appNavbarModelMenuTaggerGroups" mat-menu-item
          routerLinkActive="is-active-menu">Tagger Groups <span
-        *ngIf="projectResourceCounts?.num_tagger_groups">({{projectResourceCounts?.num_tagger_groups}})</span></a>
+        *ngIf="projectResourceCounts?.num_tagger_groups"> ({{projectResourceCounts.num_tagger_groups}})</span></a>
       <a [routerLink]="['torchtaggers']" data-cy="appNavbarModelMenuTorchTaggers" mat-menu-item
          routerLinkActive="is-active-menu">TorchTaggers <span
-        *ngIf="projectResourceCounts?.num_torchtaggers">({{projectResourceCounts?.num_torchtaggers}})</span></a>
+        *ngIf="projectResourceCounts?.num_torchtaggers"> ({{projectResourceCounts.num_torchtaggers}})</span></a>
       <a [routerLink]="['regex-tagger']" data-cy="appNavbarModelMenuRegexTagger" mat-menu-item
-         routerLinkActive="is-active-menu">Regex Taggers </a>
+         routerLinkActive="is-active-menu">Regex Taggers <span
+        *ngIf="projectResourceCounts?.num_regex_taggers"> ({{projectResourceCounts.num_regex_taggers}})</span></a>
+
       <a [routerLink]="['regex-tagger-groups']" data-cy="appNavbarModelMenuRegexTaggerGroups" mat-menu-item
-         routerLinkActive="is-active-menu">Regex Taggers Groups</a>
+         routerLinkActive="is-active-menu">Regex Taggers Groups <span
+        *ngIf="projectResourceCounts?.num_regex_tagger_groups">({{projectResourceCounts.num_regex_tagger_groups}})</span></a>
+
       <a [routerLink]="['embeddings']" data-cy="appNavbarModelMenuEmbeddings" mat-menu-item
          routerLinkActive="is-active-menu">Embeddings <span
-        *ngIf="projectResourceCounts?.num_embeddings">({{projectResourceCounts?.num_embeddings}})</span></a>
-      <a [routerLink]="['topic-analyzer']" data-cy="appNavbarModelMenuClusters" mat-menu-item
-         routerLinkActive="is-active-menu">Topic Analyzer <span
-        *ngIf="projectResourceCounts?.num_clusterings">({{projectResourceCounts?.num_clusterings}})</span></a>
+        *ngIf="projectResourceCounts?.num_embeddings">({{projectResourceCounts.num_embeddings}})</span></a>
     </mat-menu>
 
     <mat-menu #tools="matMenu">
-      <a [routerLink]="['reindexer']" mat-menu-item routerLinkActive="is-active-menu">Reindexer</a>
-      <a [routerLink]="['dataset-importer']" mat-menu-item routerLinkActive="is-active-menu">Dataset Importer</a>
-      <a [routerLink]="['mlp']" mat-menu-item routerLinkActive="is-active-menu">MLP</a>
-      <a [routerLink]="['anonymizers']" mat-menu-item routerLinkActive="is-active-menu">Anonymizers</a>
+      <a [routerLink]="['reindexer']" mat-menu-item routerLinkActive="is-active-menu">Reindexer <span
+        *ngIf="projectResourceCounts?.num_reindexers">({{projectResourceCounts.num_reindexers}})</span>
+      </a>
+
+      <a [routerLink]="['dataset-importer']" mat-menu-item routerLinkActive="is-active-menu">Dataset Importer <span
+        *ngIf="projectResourceCounts?.num_dataset_importers">({{projectResourceCounts.num_dataset_importers}})</span>
+      </a>
+
+      <a [routerLink]="['mlp']" mat-menu-item routerLinkActive="is-active-menu">MLP <span
+        *ngIf="projectResourceCounts?.num_mlp_workers">({{projectResourceCounts.num_mlp_workers}})</span>
+      </a>
+
+      <a [routerLink]="['anonymizers']" mat-menu-item routerLinkActive="is-active-menu">Anonymizer <span
+        *ngIf="projectResourceCounts?.num_anonymizers">({{projectResourceCounts.num_anonymizers}})</span>
+      </a>
+
+      <a [routerLink]="['topic-analyzer']" mat-menu-item
+         routerLinkActive="is-active-menu">Topic Analyzer <span
+        *ngIf="projectResourceCounts?.num_clusterings">({{projectResourceCounts.num_clusterings}})</span>
+      </a>
     </mat-menu>
 
     <div *ngIf="!user" class="flex-item-right login">
@@ -108,7 +133,8 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <button (click)="edit(projectControl.value)" *ngIf="currentProject && user.is_superuser" mat-icon-button matTooltip="Edit project">
+      <button (click)="edit(projectControl.value)" *ngIf="currentProject && user.is_superuser" mat-icon-button
+              matTooltip="Edit project">
         <mat-icon aria-label="Edit Project">edit</mat-icon>
       </button>
       <div class="flex-row logout">

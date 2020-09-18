@@ -35,7 +35,7 @@ export class EditAnonymizerDialogComponent implements OnInit, OnDestroy {
         replaceMisspelledNamesFormControl: new FormControl(this.data.replace_misspelled_names),
         replaceSingleLastNamesFormControl: new FormControl(this.data.replace_single_last_names),
         replaceSingleFirstNamesFormControl: new FormControl(this.data.replace_single_first_names),
-        mimicCasingFormControl: new FormControl(this.data.mimic_casing),
+        // mimicCasingFormControl: new FormControl(this.data.mimic_casing),
         misspellingThresholdFormControl: new FormControl(this.data.misspelling_threshold, [
           Validators.required, Validators.min(0), Validators.max(1)]),
         autoAdjustThresholdFormControl: new FormControl(this.data.auto_adjust_threshold),
@@ -57,7 +57,7 @@ export class EditAnonymizerDialogComponent implements OnInit, OnDestroy {
       replace_misspelled_names: formData.replaceMisspelledNamesFormControl,
       replace_single_last_names: formData.replaceSingleLastNamesFormControl,
       replace_single_first_names: formData.replaceSingleFirstNamesFormControl,
-      mimic_casing: formData.mimicCasingFormControl,
+      // mimic_casing: formData.mimicCasingFormControl,
       misspelling_threshold: formData.misspellingThresholdFormControl,
       auto_adjust_threshold: formData.autoAdjustThresholdFormControl
     };

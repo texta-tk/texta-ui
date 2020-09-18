@@ -8,3 +8,9 @@ span {
 span:hover{
   filter: brightness(80%);
 }
+h3{
+  cursor: pointer;
+}
+h3:hover{
+  text-decoration: underline;
+}
