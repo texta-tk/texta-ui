@@ -1,3 +1,4 @@
+import {TaskStatus} from './TaskStatus';
 
 export interface TaggerInfo {
   tagger_id: number;
@@ -9,7 +10,7 @@ export interface RegexTaggerGroup {
   url: string;
   regex_taggers: number[];
   author_username: string;
-  task?: unknown;
+  task: TaskStatus;
   description: string;
   tagger_info: TaggerInfo[];
 }

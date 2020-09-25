@@ -2,7 +2,7 @@ import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/c
 import {MatDialog} from '@angular/material/dialog';
 import {HttpErrorResponse} from '@angular/common/http';
 import {merge, of, Subject} from 'rxjs';
-import {debounceTime, startWith, switchMap, takeUntil} from 'rxjs/operators';
+import {debounceTime, startWith, switchMap, take, takeUntil} from 'rxjs/operators';
 import {MatTableDataSource} from '@angular/material/table';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatSort} from '@angular/material/sort';
@@ -34,13 +34,13 @@ export class RegexTaggerGroupComponent implements OnInit, OnDestroy, AfterViewIn
   expandedElement: RegexTaggerGroup | null;
   public tableData: MatTableDataSource<RegexTaggerGroup> = new MatTableDataSource();
   selectedRows = new SelectionModel<RegexTaggerGroup>(true, []);
-  public displayedColumns = ['select', 'id', 'author_username', 'description', 'regex_taggers', 'actions'];
+  public displayedColumns = ['select', 'id', 'author_username', 'description', 'regex_taggers', 'task__status', 'actions'];
   public isLoadingResults = true;
-
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   destroyed$: Subject<boolean> = new Subject<boolean>();
   currentProject: Project;
+  private updateTable = new Subject<boolean>();
 
   constructor(private projectStore: ProjectStore,
               private regexTaggerGroupService: RegexTaggerGroupService,
@@ -68,7 +68,7 @@ export class RegexTaggerGroupComponent implements OnInit, OnDestroy, AfterViewIn
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
-    merge(this.sort.sortChange, this.paginator.page)
+    merge(this.sort.sortChange, this.paginator.page, this.updateTable)
       .pipe(debounceTime(250), startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
@@ -167,20 +167,21 @@ export class RegexTaggerGroupComponent implements OnInit, OnDestroy, AfterViewIn
       width: '700px',
       data: JSON.parse(JSON.stringify(this.tableData.data)),
       disableClose: true
+    }).afterClosed().pipe(take(1)).subscribe(x => {
+      this.updateTable.next(true);
     });
   }
 
-  onDelete(cluster: RegexTaggerGroup, index: number): void {
+  onDelete(regexTaggerGroup: RegexTaggerGroup, index: number): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {confirmText: 'Delete', mainText: 'Are you sure you want to delete this regex tagger group?'}
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-
-        const body = {ids: [index]};
+        const body = {ids: [regexTaggerGroup.id]};
         this.regexTaggerGroupService.bulkDeleteRegexTaggerGroupTasks(this.currentProject.id, body).subscribe(() => {
-          this.logService.snackBarMessage(`Deleted regex tagger group ${cluster.description}`, 2000);
+          this.logService.snackBarMessage(`Deleted regex tagger group ${regexTaggerGroup.description}`, 2000);
           this.tableData.data.splice(index, 1);
           this.tableData.data = [...this.tableData.data];
         });
@@ -214,7 +215,6 @@ export class RegexTaggerGroupComponent implements OnInit, OnDestroy, AfterViewIn
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-
           const idsToDelete = this.selectedRows.selected.map((regexTaggerGroup: RegexTaggerGroup) => regexTaggerGroup.id);
           const body = {ids: idsToDelete};
 
