@@ -75,6 +75,7 @@ describe('regex-tagger-group should work', function () {
     cy.wait('@postRegexTaggers').then(resp => {
       expect(resp.status).to.eq(200);
     });
+    cy.wait('@getRegexTaggers');
   }
 
   function tagDoc() {
