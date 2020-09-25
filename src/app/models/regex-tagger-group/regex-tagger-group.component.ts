@@ -20,6 +20,7 @@ import {ApplyTaggerGroupDialogComponent} from './apply-tagger-group-dialog/apply
 import {TagTextDialogComponent} from './tag-text-dialog/tag-text-dialog.component';
 import {TagDocDialogComponent} from './tag-doc-dialog/tag-doc-dialog.component';
 import {TagRandomDocComponent} from './tag-random-doc/tag-random-doc.component';
+import {EditRegexTaggerGroupDialogComponent} from './edit-regex-tagger-group-dialog/edit-regex-tagger-group-dialog.component';
 
 @Component({
   selector: 'app-regex-tagger-group',
@@ -100,6 +101,24 @@ export class RegexTaggerGroupComponent implements OnInit, OnDestroy, AfterViewIn
     });
     dialogRef.afterClosed().subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.tableData.data = [resp, ...this.tableData.data];
+      }
+    });
+  }
+
+  edit(element: RegexTaggerGroup): void {
+    const dialogRef = this.dialog.open(EditRegexTaggerGroupDialogComponent, {
+      maxHeight: '90vh',
+      width: '800px',
+      disableClose: true,
+      data: element,
+    });
+    dialogRef.afterClosed().subscribe((resp: RegexTaggerGroup) => {
+      if (resp) {
+        const index = this.tableData.data.findIndex(x => x.id === resp.id);
+        if (index > -1) {
+          this.tableData.data.splice(index, 1);
+        }
         this.tableData.data = [resp, ...this.tableData.data];
       }
     });

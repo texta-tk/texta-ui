@@ -122,6 +122,9 @@
       Tag text
     </button>
     <mat-divider></mat-divider>
+    <button (click)="edit(element);" mat-menu-item>
+      Edit
+    </button>
     <button (click)="onDelete(element, i)" data-cy="appRegexTaggerGroupMenuDelete" mat-menu-item>
       Delete
     </button>
