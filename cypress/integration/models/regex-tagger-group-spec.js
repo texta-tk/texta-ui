@@ -21,10 +21,12 @@ describe('regex-tagger-group should work', function () {
     cy.wait('@getProjectIndices');
     cy.get('[data-cy=appNavbarProjectSelect]').click();
     cy.get('mat-option').contains('integration_test_project').click();
+    cy.wait('@getRegexTaggers');
   }
 
   function multiTagTest() {
     cy.get('[data-cy=appRegexTaggerGroupMultiTagBtn]').click();
+    cy.wait('@getRegexTaggers');
     cy.get('[data-cy=appRegexTaggerGroupMultiTagDialogText]').type('tere');
     cy.get('[data-cy=appRegexTaggerGroupMultiTagDialogTaggers]').click().then((taggers => {
       cy.wrap(taggers).should('have.class', 'mat-focused');
@@ -42,6 +44,7 @@ describe('regex-tagger-group should work', function () {
 
   function applyTaggerGroup() {
     cy.get('[data-cy=appRegexTaggerGroupApplyTaggerGroupBtn]').click();
+    cy.wait('@getRegexTaggers');
     cy.get('[data-cy=appRegexTaggerGroupApplyTaggerDialogDesc]').type('tere');
     cy.get('[data-cy=appRegexTaggerGroupApplyTaggerDialogIndices]').click().then((indices => {
       cy.wrap(indices).should('have.class', 'mat-focused');
@@ -72,10 +75,11 @@ describe('regex-tagger-group should work', function () {
       cy.wrap(grp).find('mat-error').should('have.length', 0)
     }));
     cy.get('[data-cy=appRegexTaggerGroupApplyTaggerDialogSubmit]').click();
-    cy.wait('@postRegexTaggers').then(resp => {
+    cy.wait(['@postRegexTaggers',]).then(resp => {
       expect(resp.status).to.eq(200);
     });
     cy.wait('@getRegexTaggers');
+
   }
 
   function tagDoc() {
@@ -100,7 +104,7 @@ describe('regex-tagger-group should work', function () {
     cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
     cy.wait('@postRegexTaggers').then(resp => {
       expect(resp.status).to.eq(200);
-      expect(resp.response.body.matches.length).to.eq(1, 'should have found a match');
+      expect(resp.response.body.tags[0].matches.length).to.eq(1, 'should have found a match');
     });
     cy.get('.code-wrapper').should('be.visible');
     cy.get('[data-cy=appRegexTaggerGroupTagDocDialogClose]').click();
@@ -149,7 +153,7 @@ describe('regex-tagger-group should work', function () {
 
     cy.wait('@postRegexTaggers').then(resp => {
       expect(resp.status).to.eq(200);
-      expect(resp.response.body.matches.length).to.eq(1, 'should have found a match');
+      expect(resp.response.body.tags[0].matches.length).to.eq(1, 'should have found a match');
     });
     cy.get('.code-wrapper').should('be.visible');
     cy.get('[data-cy=appRegexTaggerGroupTagTextDialogClose]').click();
