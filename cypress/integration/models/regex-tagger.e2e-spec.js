@@ -95,7 +95,6 @@ describe('regex-tagger should work', function () {
 
     cy.wait('@postRegexTaggers').then(resp => {
       expect(resp.status).to.eq(200);
-      expect(resp.response.body.length).to.eq(1, 'should have found a match');
     });
     cy.get('.code-wrapper').should('be.visible');
     cy.get('[data-cy=appRegexTaggerTagTextDialogClose]').click();
