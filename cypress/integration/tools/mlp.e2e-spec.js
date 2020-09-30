@@ -76,11 +76,11 @@ describe('mlp should work', function () {
       cy.get('.mat-option > .mat-pseudo-checkbox:first()').should('be.visible').click();
       cy.closeCurrentCdkOverlay();
       cy.wrap(analyzers).find('mat-error').should('have.length', 0); */
-    }));
+/*     }));
 
     cy.get('[data-cy=appMLPApplyDialogSubmit]').should('be.visible').click();
     cy.wait('@MLPTexts').then(created => {
       expect(created.status).to.eq(200);
-    });
+    }); */
   });
 });
