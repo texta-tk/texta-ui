@@ -2,7 +2,11 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
-import {RegexTaggerGroup} from '../../../../shared/types/tasks/RegexTaggerGroup';
+import {
+  RegexTaggerGroup,
+  RegexTaggerGroupTagRandomDocResult,
+  RegexTaggerGroupTagTextResult
+} from '../../../../shared/types/tasks/RegexTaggerGroup';
 import {ResultsWrapper} from '../../../../shared/types/Generic';
 import {LogService} from '../../../util/log.service';
 import {environment} from '../../../../../environments/environment';
@@ -41,16 +45,16 @@ export class RegexTaggerGroupService {
       catchError(this.logService.handleError<{ matches: unknown }>('tagDoc')));
   }
 
-  tagRandomDoc(projectId: number, groupId: number, body: unknown): Observable<{ matches: unknown, texts: string[] } | HttpErrorResponse> {
-    return this.http.post<{ matches: unknown, texts: string[] }>(`${this.apiUrl}/projects/${projectId}/regex_tagger_groups/${groupId}/tag_random_doc/`, body).pipe(
+  tagRandomDoc(projectId: number, groupId: number, body: unknown): Observable<RegexTaggerGroupTagRandomDocResult | HttpErrorResponse> {
+    return this.http.post<RegexTaggerGroupTagRandomDocResult>(`${this.apiUrl}/projects/${projectId}/regex_tagger_groups/${groupId}/tag_random_doc/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'tagRandomDoc')),
-      catchError(this.logService.handleError<{ matches: unknown, texts: string[] }>('tagRandomDoc')));
+      catchError(this.logService.handleError<RegexTaggerGroupTagRandomDocResult>('tagRandomDoc')));
   }
 
-  tagText(projectId: number, groupId: number, body: unknown): Observable<{ matches: unknown } | HttpErrorResponse> {
-    return this.http.post<{ matches: unknown }>(`${this.apiUrl}/projects/${projectId}/regex_tagger_groups/${groupId}/tag_text/`, body).pipe(
+  tagText(projectId: number, groupId: number, body: unknown): Observable<RegexTaggerGroupTagTextResult | HttpErrorResponse> {
+    return this.http.post<RegexTaggerGroupTagTextResult>(`${this.apiUrl}/projects/${projectId}/regex_tagger_groups/${groupId}/tag_text/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'tagText')),
-      catchError(this.logService.handleError<{ matches: unknown }>('tagText')));
+      catchError(this.logService.handleError<RegexTaggerGroupTagTextResult>('tagText')));
   }
 
   bulkDeleteRegexTaggerGroupTasks(projectId: number, body: unknown): Observable<{ 'num_deleted': number, 'deleted_types': { string: number }[] } | HttpErrorResponse> {

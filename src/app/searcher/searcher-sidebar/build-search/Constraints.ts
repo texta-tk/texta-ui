@@ -2,7 +2,7 @@ import {Field} from '../../../shared/types/Project';
 import {FormControl} from '@angular/forms';
 import {Lexicon} from '../../../shared/types/Lexicon';
 import {FromToInput} from '../../../shared/components/from-to-input/from-to-input.component';
-import {SearcherOptions} from '../../SearcherOptions';
+import {HighlightSettings} from '../../../shared/SettingVars';
 
 export class Constraint {
   fields: Field[];
@@ -120,8 +120,8 @@ export class ElasticsearchQuery {
       }
     },
     highlight: {
-      pre_tags: [SearcherOptions.PRE_TAG],
-      post_tags: [SearcherOptions.POST_TAG],
+      pre_tags: [HighlightSettings.PRE_TAG],
+      post_tags: [HighlightSettings.POST_TAG],
       number_of_fragments: 0,
       fields: {}
     },

@@ -5,22 +5,20 @@ import {RegexTaggerGroupRoutingModule} from './regex-tagger-group-routing.module
 import {SharedModule} from '../../shared/shared.module';
 import { MultiTagTextDialogComponent } from './multi-tag-text-dialog/multi-tag-text-dialog.component';
 import { TagTextDialogComponent } from './tag-text-dialog/tag-text-dialog.component';
-import { TagDocDialogComponent } from './tag-doc-dialog/tag-doc-dialog.component';
 import { ApplyTaggerGroupDialogComponent } from './apply-tagger-group-dialog/apply-tagger-group-dialog.component';
 import { TagRandomDocComponent } from './tag-random-doc/tag-random-doc.component';
 import { EditRegexTaggerGroupDialogComponent } from './edit-regex-tagger-group-dialog/edit-regex-tagger-group-dialog.component';
 
 @NgModule({
-    imports: [
-        SharedModule,
-        RegexTaggerGroupRoutingModule,
-    ],
+  imports: [
+    SharedModule,
+    RegexTaggerGroupRoutingModule,
+  ],
     declarations: [
     RegexTaggerGroupComponent,
     CreateRegexTaggerGroupDialogComponent,
     MultiTagTextDialogComponent,
     TagTextDialogComponent,
-    TagDocDialogComponent,
     ApplyTaggerGroupDialogComponent,
     TagRandomDocComponent,
     EditRegexTaggerGroupDialogComponent

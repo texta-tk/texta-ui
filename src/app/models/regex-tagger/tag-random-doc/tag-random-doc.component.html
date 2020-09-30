@@ -18,7 +18,7 @@
     </mat-form-field>
     <mat-form-field class="max-width" data-cy="appRegexTaggerTagRandomDocDialogfields">
       <mat-label>Select Fields</mat-label>
-      <mat-select #fields="ngModel" [(ngModel)]="model.fields" [disableOptionCentering]="true" multiple
+      <mat-select #fields="ngModel" [(ngModel)]="model.fields" (ngModelChange)="firstTimeTaggingOverFields = true" [disableOptionCentering]="true" multiple
                   name="fields" panelClass="select-panel-reveal-input" required>
         <mat-option *ngFor="let fields of fieldsUnique" [value]="fields.path">
           {{fields.path}}
@@ -30,13 +30,58 @@
     </mat-form-field>
 
     <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
-    <div class="m-top-10"><span class="mat-body-strong">Result: </span>
-      <div class="code-wrapper">
-        <code>
-          <pre *ngIf="result?.texts">{{result.texts.join(',') | json}}</pre>
-          <pre *ngIf="result?.matches">{{result.matches | json}}</pre>
-        </code>
-      </div>
+    <div *ngIf="result" class="m-bot-10">
+      <mat-accordion *ngIf="uniqueFacts.length > 0" displayMode="flat" multi>
+        <mat-expansion-panel (click)="selection.toggle(0)" [expanded]="selection.isSelected(0)">
+          <mat-expansion-panel-header [expandedHeight]="'48px'">
+            <mat-panel-title>
+              Tags
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div fxLayout="row wrap">
+            <app-fact-chip *ngFor="let item of uniqueFacts" [backGroundColor]="item.backgroundColor"
+                           [displayValue]="item.fact.fact"
+                           [hoverValue]="taggerIdAccessor(item.fact)"
+                           [textColor]="item.textColor"></app-fact-chip>
+          </div>
+        </mat-expansion-panel>
+        <mat-expansion-panel (click)="selection.toggle(1)" [expanded]="selection.isSelected(1)">
+          <mat-expansion-panel-header [expandedHeight]="'48px'">
+            <mat-panel-title>
+              Matches
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div fxLayout="row wrap">
+            <app-fact-chip *ngFor="let item of distinctMatches"
+                           [backGroundColor]="colorMap.get(item.fact)?.backgroundColor || ''"
+                           [displayValue]="item.str_val"
+                           [hoverValue]="taggerIdAccessor(item)"
+                           [textColor]="colorMap.get(item.fact)?.textColor || ''"></app-fact-chip>
+          </div>
+        </mat-expansion-panel>
+        <ng-container *ngFor="let field of resultFields; let i = index">
+          <mat-expansion-panel (click)="selection.toggle(field)" *ngIf="field !== 'texta_facts'"
+                               [expanded]="selection.isSelected(field)">
+            <mat-expansion-panel-header [expandedHeight]="'48px'">
+              <mat-panel-title>
+                {{field}}
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <ng-template matExpansionPanelContent>
+              <app-generic-highlighter
+                [highlightConfig]="{
+                currentColumn: field,
+                searcherHighlight: null,
+                highlightTextaFacts: true,
+                highlightHyperlinks: true,
+                titleAccessor: taggerIdAccessor,
+                colors: colorMap,
+                data:result.document}"></app-generic-highlighter>
+            </ng-template>
+          </mat-expansion-panel>
+        </ng-container>
+      </mat-accordion>
+      <h3 *ngIf="uniqueFacts.length === 0">No matches found</h3>
     </div>
   </form>
 </div>
@@ -45,7 +90,7 @@
   <div class="flex-col max-width">
     <div class="flex-row">
       <div class="flex-item-left">
-        <button mat-dialog-close="" mat-stroked-button data-cy="appRegexTaggerTagRandomDocDialogClose">Close</button>
+        <button data-cy="appRegexTaggerTagRandomDocDialogClose" mat-dialog-close="" mat-stroked-button>Close</button>
       </div>
       <div class="flex-item-right">
         <button [disabled]="docForm.invalid" form="docForm" mat-stroked-button type="submit">Tag</button>

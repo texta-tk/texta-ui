@@ -82,34 +82,6 @@ describe('regex-tagger-group should work', function () {
 
   }
 
-  function tagDoc() {
-    cy.get('.cdk-column-actions:nth(1)').should('be.visible').click('left');
-    cy.get('[data-cy=appRegexTaggerGroupMenuTagDoc]').should('be.visible').click();
-    cy.fixture('sample_doc').then(sampleDoc => {
-      let json = JSON.stringify(sampleDoc);
-      cy.get('[data-cy=appRegexTaggerGroupTagDocDialogDocument] input:first()').should('be.visible').click()
-        .clear().invoke('val', json).trigger('change');
-      cy.get('[data-cy=appRegexTaggerGroupTagDocDialogDocument]').click().type(' ');
-    });
-    cy.wait(300);
-    cy.get('[data-cy=appRegexTaggerGroupTagDocDialogFields]').click().then((field => {
-      cy.wrap(field).should('have.class', 'mat-focused');
-      cy.closeCurrentCdkOverlay();
-      cy.matFormFieldShouldHaveError(field, 'required');
-      cy.wrap(field).click();
-      cy.get('.mat-option-text').contains('comment_content').scrollIntoView().should('be.visible').click();
-      cy.closeCurrentCdkOverlay();
-      cy.wrap(field).find('mat-error').should('have.length', 0)
-    }));
-    cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
-    cy.wait('@postRegexTaggers').then(resp => {
-      expect(resp.status).to.eq(200);
-      expect(resp.response.body.tags[0].matches.length).to.eq(1, 'should have found a match');
-    });
-    cy.get('.code-wrapper').should('be.visible');
-    cy.get('[data-cy=appRegexTaggerGroupTagDocDialogClose]').click();
-  }
-
   function tagRandomDoc() {
     cy.get('.cdk-column-actions:nth(1)').should('be.visible').click('left');
     cy.get('[data-cy=appRegexTaggerGroupMenuTagRandomDoc]').should('be.visible').click();
@@ -188,9 +160,8 @@ describe('regex-tagger-group should work', function () {
 
     multiTagTest();
     applyTaggerGroup();
-    tagDoc();
-    tagRandomDoc();
-    tagText();
+    //tagRandomDoc();
+    //tagText();
 
 
     cy.get('.cdk-column-actions:nth(1)').click('left');

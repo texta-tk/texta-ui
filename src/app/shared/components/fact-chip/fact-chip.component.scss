@@ -1,0 +1,11 @@
+span {
+  padding: 4px 12px;
+  border-radius: 16px;
+  margin: 3px 3px 3px 0;
+  cursor: pointer;
+  transition: .2s filter;
+  display: block;
+}
+span:hover{
+  filter: brightness(80%);
+}

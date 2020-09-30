@@ -1,7 +1,7 @@
 /// <reference lib="webworker" />
 
 import {ClusterDocument} from '../../../../shared/types/tasks/Cluster';
-import {SearcherOptions} from '../../../../searcher/SearcherOptions';
+import {HighlightSettings} from '../../../../shared/SettingVars';
 
 addEventListener('message', (data) => {
   // This is running in the web-worker
@@ -17,7 +17,7 @@ addEventListener('message', (data) => {
           doc.highlight[col] = [''];
           for (const word of textSplit) {
             if (word && sigWords.includes(word)) {
-              const wordToAdd = SearcherOptions.PRE_TAG + word + SearcherOptions.POST_TAG;
+              const wordToAdd = HighlightSettings.PRE_TAG + word + HighlightSettings.POST_TAG;
               doc.highlight[col][0] = doc.highlight[col][0] + wordToAdd;
             } else {
               doc.highlight[col][0] = doc.highlight[col][0] + word;

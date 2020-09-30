@@ -149,10 +149,6 @@
 
 <mat-menu #editMenu="matMenu">
   <ng-template let-element="element" let-i="i" matMenuContent>
-    <button (click)="onTagDoc(element)" data-cy="appRegexTaggerMenuTagDoc"
-            mat-menu-item>
-      Tag doc
-    </button>
     <button (click)="onTagRandomDoc(element)" data-cy="appRegexTaggerMenuTagRandomDoc"
             mat-menu-item>
       Tag random doc
