@@ -12,12 +12,53 @@
 
 
     <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
-    <div class="m-top-10"><span class="mat-body-strong">Result: </span>
-      <div class="code-wrapper">
-        <code>
-          <pre *ngIf="result?.matches">{{result.matches | json}}</pre>
-        </code>
-      </div>
+    <div *ngIf="result" class="m-bot-10">
+      <mat-accordion *ngIf="uniqueFacts.length > 0" displayMode="flat" multi>
+        <mat-expansion-panel expanded>
+          <mat-expansion-panel-header [expandedHeight]="'48px'">
+            <mat-panel-title>
+              Tags
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div fxLayout="row wrap">
+            <app-fact-chip *ngFor="let item of uniqueFacts" [backGroundColor]="item.backgroundColor"
+                           [displayValue]="item.fact.fact"
+                           [hoverValue]="taggerIdAccessor(item.fact)"
+                           [textColor]="item.textColor"></app-fact-chip>
+          </div>
+        </mat-expansion-panel>
+        <mat-expansion-panel expanded>
+          <mat-expansion-panel-header [expandedHeight]="'48px'">
+            <mat-panel-title>
+              Matches
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div fxLayout="row wrap">
+            <app-fact-chip *ngFor="let item of distinctMatches"
+                           [backGroundColor]="colorMap.get(item.fact)?.backgroundColor || ''"
+                           [displayValue]="item.str_val"
+                           [hoverValue]="taggerIdAccessor(item)"
+                           [textColor]="colorMap.get(item.fact)?.textColor || ''"></app-fact-chip>
+          </div>
+        </mat-expansion-panel>
+        <mat-expansion-panel expanded>
+          <mat-expansion-panel-header [expandedHeight]="'48px'">
+            <mat-panel-title>
+              Text
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <app-generic-highlighter
+            [highlightConfig]="{
+            currentColumn: 'text',
+            searcherHighlight: null,
+            highlightTextaFacts: true,
+            highlightHyperlinks: true,
+            titleAccessor: taggerIdAccessor,
+            colors: colorMap,
+            data:{text:result.text, texta_facts: result.matches}}"></app-generic-highlighter>
+        </mat-expansion-panel>
+      </mat-accordion>
+      <h3 *ngIf="uniqueFacts.length === 0">No matches found</h3>
     </div>
   </form>
 </div>
@@ -26,7 +67,7 @@
   <div class="flex-col max-width">
     <div class="flex-row">
       <div class="flex-item-left">
-        <button mat-dialog-close="" mat-stroked-button data-cy="appRegexTaggerGroupTagTextDialogClose">Close</button>
+        <button data-cy="appRegexTaggerGroupTagTextDialogClose" mat-dialog-close="" mat-stroked-button>Close</button>
       </div>
       <div class="flex-item-right">
         <button [disabled]="docForm.invalid" form="docForm" mat-stroked-button type="submit">Tag</button>

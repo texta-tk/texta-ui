@@ -18,7 +18,6 @@ import {MultiTagTextDialogComponent} from './multi-tag-text-dialog/multi-tag-tex
 import {HttpErrorResponse} from '@angular/common/http';
 import {EditRegexTaggerDialogComponent} from './edit-regex-tagger-dialog/edit-regex-tagger-dialog.component';
 import {TagTextDialogComponent} from './tag-text-dialog/tag-text-dialog.component';
-import {TagDocDialogComponent} from './tag-doc-dialog/tag-doc-dialog.component';
 import {TagRandomDocComponent} from './tag-random-doc/tag-random-doc.component';
 
 @Component({
@@ -131,17 +130,7 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   onTagText(element: RegexTagger): void {
     this.dialog.open(TagTextDialogComponent, {
-      maxHeight: '750px',
-      width: '700px',
-      disableClose: true,
-      data: {currentProjectId: this.currentProject.id, tagger: element}
-    });
-  }
-
-
-  onTagDoc(element: RegexTagger): void {
-    this.dialog.open(TagDocDialogComponent, {
-      maxHeight: '750px',
+      maxHeight: '90vh',
       width: '700px',
       disableClose: true,
       data: {currentProjectId: this.currentProject.id, tagger: element}
@@ -150,7 +139,7 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onTagRandomDoc(element: RegexTagger): void {
     this.dialog.open(TagRandomDocComponent, {
-      maxHeight: '750px',
+      maxHeight: '90vh',
       width: '700px',
       disableClose: true,
       data: {currentProjectId: this.currentProject.id, tagger: element}

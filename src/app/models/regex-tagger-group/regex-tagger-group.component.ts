@@ -18,7 +18,6 @@ import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-di
 import {MultiTagTextDialogComponent} from './multi-tag-text-dialog/multi-tag-text-dialog.component';
 import {ApplyTaggerGroupDialogComponent} from './apply-tagger-group-dialog/apply-tagger-group-dialog.component';
 import {TagTextDialogComponent} from './tag-text-dialog/tag-text-dialog.component';
-import {TagDocDialogComponent} from './tag-doc-dialog/tag-doc-dialog.component';
 import {TagRandomDocComponent} from './tag-random-doc/tag-random-doc.component';
 import {EditRegexTaggerGroupDialogComponent} from './edit-regex-tagger-group-dialog/edit-regex-tagger-group-dialog.component';
 
@@ -126,17 +125,7 @@ export class RegexTaggerGroupComponent implements OnInit, OnDestroy, AfterViewIn
 
   onTagText(element: RegexTaggerGroup): void {
     this.dialog.open(TagTextDialogComponent, {
-      maxHeight: '750px',
-      width: '700px',
-      disableClose: true,
-      data: {currentProjectId: this.currentProject.id, tagger: element}
-    });
-  }
-
-
-  onTagDoc(element: RegexTaggerGroup): void {
-    this.dialog.open(TagDocDialogComponent, {
-      maxHeight: '750px',
+      maxHeight: '90vh',
       width: '700px',
       disableClose: true,
       data: {currentProjectId: this.currentProject.id, tagger: element}
@@ -145,7 +134,7 @@ export class RegexTaggerGroupComponent implements OnInit, OnDestroy, AfterViewIn
 
   onTagRandomDoc(element: RegexTaggerGroup): void {
     this.dialog.open(TagRandomDocComponent, {
-      maxHeight: '750px',
+      maxHeight: '90vh',
       width: '700px',
       disableClose: true,
       data: {currentProjectId: this.currentProject.id, tagger: element}
