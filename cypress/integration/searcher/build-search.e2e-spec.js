@@ -16,8 +16,10 @@ describe('searching and search related activities should be working correctly', 
       cy.wait('@getProjectIndices');
       cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible');
       cy.get('[data-cy=appNavbarSearcher]').click();
+      cy.wait('@searcherQuery');
       cy.get('[data-cy=appNavbarProjectSelect]').click();
       cy.get('mat-option').contains('integration_test_project').click();
+      cy.wait('@searcherQuery');
       cy.wait('@getProjectIndices');
     });
 
@@ -93,7 +95,7 @@ describe('searching and search related activities should be working correctly', 
     cy.get('[data-cy=matOptionSelectAll]').should('be.visible').click();
     cy.get('mat-option').contains('texta_facts').click();
     cy.closeCurrentCdkOverlay();
-    
+
     cy.get('.cdk-column-texta_facts > app-texta-facts-chips > span').should('not.exist');
 
     cy.get('[data-cy=appSearcherSideBarBuildSearchFactNameOperator]').click();

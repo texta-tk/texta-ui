@@ -15,10 +15,12 @@ describe('should be able to build aggregations', function () {
       cy.wait('@getUser');
       cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible');
       cy.get('[data-cy=appNavbarSearcher]').click();
-
       cy.wait('@getProjectIndices');
+      cy.wait('@searcherQuery');
       cy.get('[data-cy=appNavbarProjectSelect]').click();
       cy.get('mat-option').contains('integration_test_project').click();
+      cy.wait('@getProjectIndices');
+      cy.wait('@searcherQuery');
     });
   });
 

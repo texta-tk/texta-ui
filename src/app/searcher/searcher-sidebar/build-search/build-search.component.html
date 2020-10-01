@@ -1,25 +1,32 @@
 <div class="wrapper">
-  <mat-radio-group aria-label="Select an option" fxLayoutAlign="space-between" [(ngModel)]="searcherType"
+  <mat-radio-group (change)="saveTypeSelection($event.value)" [(ngModel)]="searcherType" aria-label="Select an option"
                    data-cy="appSearcherSidebarBuildSearchRadio"
-                   (change)="saveTypeSelection($event.value)">
+                   fxLayoutAlign="space-between">
     <mat-radio-button [value]="1">Simple search</mat-radio-button>
     <mat-radio-button [value]="2">Advanced search</mat-radio-button>
   </mat-radio-group>
   <app-advanced-search [hidden]="searcherType === 1 || searcherType === undefined"
                        [highlightMatching]="highlightMatching"
+                       [highlightSearcherMatches]="highlightSearcherMatches"
+                       [highlightTextaFacts]="highlightTextaFacts"
                        [showShortVersion]="showShortVersion ? showShortVersionContext: 0"></app-advanced-search>
   <app-simple-search [hidden]="searcherType === 2 || searcherType === undefined" [highlightMatching]="highlightMatching"
+                     [highlightSearcherMatches]="highlightSearcherMatches"
+                     [highlightTextaFacts]="highlightTextaFacts"
                      [showShortVersion]="showShortVersion ? showShortVersionContext: 0"></app-simple-search>
-  <div fxLayout="column" class="bg-grey search-options">
+  <div class="bg-grey search-options" fxLayout="column">
     <h4 class="flex-item-center">Search options</h4>
-    <mat-checkbox labelPosition="before" [(ngModel)]=highlightMatching>Only highlight matching facts:</mat-checkbox>
-    <mat-checkbox labelPosition="before" [(ngModel)]=showShortVersion>Show short version:</mat-checkbox>
-    <mat-slider *ngIf="showShortVersion" [(ngModel)]="showShortVersionContext" thumbLabel min="1" max="15"
-                step="1"></mat-slider>
+
+    <mat-checkbox [(ngModel)]=highlightTextaFacts labelPosition="before">Highlight facts:</mat-checkbox>
+    <mat-checkbox [(ngModel)]=highlightMatching labelPosition="before" *ngIf="highlightTextaFacts">Only highlight matching facts:</mat-checkbox>
+    <mat-checkbox [(ngModel)]=highlightSearcherMatches labelPosition="before">Highlight searcher matches:</mat-checkbox>
+    <mat-checkbox [(ngModel)]=showShortVersion labelPosition="before">Show short version:</mat-checkbox>
+    <mat-slider *ngIf="showShortVersion" [(ngModel)]="showShortVersionContext" max="15" min="1" step="1"
+                thumbLabel></mat-slider>
   </div>
   <div class="max-width">
-    <button class="max-width" mat-stroked-button (click)="queryNewSearch()"
-            data-cy="appSearcherBuildSearchSubmit">Search
+    <button (click)="queryNewSearch()" class="max-width" data-cy="appSearcherBuildSearchSubmit"
+            mat-stroked-button>Search
     </button>
   </div>
 </div>

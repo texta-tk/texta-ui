@@ -74,7 +74,11 @@ export class EditRegexTaggerGroupDialogComponent implements OnInit, OnDestroy {
         this.logService.snackBarMessage(`Edited Regex Tagger group: ${resp.description}`, 2000);
         this.dialogRef.close(resp);
       } else if (resp instanceof HttpErrorResponse) {
-        this.logService.snackBarError(resp, 5000);
+        if (resp.error.hasOwnProperty('lexicon')) {
+        this.logService.snackBarMessage(resp.error.lexicon.join(','), 5000);
+      } else {
+        this.logService.snackBarError(resp);
+      }
       }
     });
   }

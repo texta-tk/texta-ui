@@ -6,7 +6,7 @@ import {MatSort, Sort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {FormControl} from '@angular/forms';
 import {forkJoin, of, Subject} from 'rxjs';
-import {debounceTime, delay, switchMap, takeUntil} from 'rxjs/operators';
+import {debounceTime, delay, filter, switchMap, take, takeUntil} from 'rxjs/operators';
 import {ProjectStore} from '../../core/projects/project.store';
 import {ElasticsearchQuery} from '../searcher-sidebar/build-search/Constraints';
 import {Project, ProjectIndex} from '../../shared/types/Project';
@@ -30,7 +30,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
   public columnFormControl = new FormControl([]);
   public isLoadingResults = false;
   public paginatorLength: number;
-  public searchOptions: SearchOptions = {liveSearch: true};
+  public searchOptions: SearchOptions = {liveSearch: true, highlightTextaFacts: true, highlightSearcherMatches: true};
   public currentElasticQuery: ElasticsearchQuery;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
@@ -57,9 +57,9 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
         if (currentProjectState?.searcher?.itemsPerPage) {
           this.paginator.pageSize = currentProjectState.searcher.itemsPerPage;
         }
-        return this.projectStore.getSelectedProjectIndices();
+        return this.projectStore.getSelectedProjectIndices().pipe(filter(x => !!x), take(1));
       } else {
-        return of(null);
+        return of(undefined);
       }
     }))).pipe(switchMap(projField => {
       if (projField) {

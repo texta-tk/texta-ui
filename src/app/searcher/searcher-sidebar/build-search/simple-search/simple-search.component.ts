@@ -29,6 +29,9 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
   searchQueue$: Subject<void> = new Subject<void>();
   @Input() highlightMatching: boolean;
   @Input() showShortVersion: number;
+
+  @Input() highlightSearcherMatches: boolean;
+  @Input() highlightTextaFacts: boolean;
   currentUser: UserProfile;
 
   constructor(private projectStore: ProjectStore,
@@ -74,6 +77,8 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
           liveSearch: true,
           onlyShowMatchingColumns: true,
           showShortVersion: this.showShortVersion,
+          highlightSearcherMatches: this.highlightSearcherMatches,
+          highlightTextaFacts: this.highlightTextaFacts,
           onlyHighlightMatching: this.highlightMatching ? [] : undefined
         }));
       }

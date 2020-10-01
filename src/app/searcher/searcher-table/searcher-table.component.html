@@ -45,9 +45,9 @@
             <app-highlight
               [highlightConfig]="{
                           currentColumn: column,
-                          searcherHighlight: row.highlight,
-                          onlyHighlightMatching: this.searchOptions.onlyHighlightMatching,
-                          highlightTextaFacts: true,
+                          searcherHighlight: searchOptions.highlightSearcherMatches ? row.highlight : null,
+                          onlyHighlightMatching: searchOptions.onlyHighlightMatching,
+                          highlightTextaFacts: searchOptions.highlightTextaFacts,
                           highlightHyperlinks: true,
                           data: row.doc}">
 

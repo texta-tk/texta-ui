@@ -119,7 +119,11 @@ export class CreateRegexTaggerDialogComponent implements OnInit, OnDestroy {
       if (x && !(x instanceof HttpErrorResponse)) {
         this.dialogRef.close(x);
       } else {
-        this.logService.snackBarError(x, 2000);
+        if (x.error.hasOwnProperty('lexicon')) {
+          this.logService.snackBarMessage(x.error.lexicon.join(','), 5000);
+        } else {
+          this.logService.snackBarError(x);
+        }
       }
     });
   }

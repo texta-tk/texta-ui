@@ -20,5 +20,7 @@ export class SearchOptions {
   liveSearch: boolean;
   onlyHighlightMatching?: FactConstraint[];
   onlyShowMatchingColumns?: boolean;
+  highlightTextaFacts: boolean;
+  highlightSearcherMatches: boolean;
   showShortVersion?: number;
 }

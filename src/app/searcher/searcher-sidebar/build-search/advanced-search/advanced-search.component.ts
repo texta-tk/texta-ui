@@ -43,10 +43,14 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
   // building the whole search query onto this
   elasticQuery: ElasticsearchQuery = new ElasticsearchQuery();
   searchOptions: SearchOptions = {
-    liveSearch: true
+    liveSearch: true,
+    highlightTextaFacts: true,
+    highlightSearcherMatches: true,
   };
   @Input() highlightMatching: boolean;
   @Input() showShortVersion: number;
+  @Input() highlightSearcherMatches: boolean;
+  @Input() highlightTextaFacts: boolean;
   currentProject: Project;
   projectFields: ProjectIndex[] = [];
   fieldsUnique: Field[] = [];
@@ -128,6 +132,8 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
           this.searchOptions.onlyHighlightMatching = undefined;
         }
         this.searchOptions.showShortVersion = this.showShortVersion;
+        this.searchOptions.highlightSearcherMatches = this.highlightSearcherMatches;
+        this.searchOptions.highlightTextaFacts = this.highlightTextaFacts;
         this.searchService.nextSearch(new Search(result, this.elasticQuery, this.searchOptions));
       }
     });
