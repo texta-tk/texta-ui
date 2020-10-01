@@ -5,8 +5,8 @@ import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatSort, Sort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {FormControl} from '@angular/forms';
-import {of, Subject} from 'rxjs';
-import {debounceTime, switchMap, takeUntil} from 'rxjs/operators';
+import {forkJoin, of, Subject} from 'rxjs';
+import {debounceTime, delay, switchMap, takeUntil} from 'rxjs/operators';
 import {ProjectStore} from '../../core/projects/project.store';
 import {ElasticsearchQuery} from '../searcher-sidebar/build-search/Constraints';
 import {Project, ProjectIndex} from '../../shared/types/Project';
@@ -22,7 +22,7 @@ import {SearcherService} from '../../core/searcher/searcher.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearcherTableComponent implements OnInit, OnDestroy {
-  static totalCountLength: number; // hack for paginator max length with label, no easy way to do this
+  totalCountLength: number; // paginator max length with label
   // tslint:disable-next-line:no-any
   public tableData: MatTableDataSource<any> = new MatTableDataSource();
   public displayedColumns: string[] = [];
@@ -39,6 +39,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
   private destroy$: Subject<boolean> = new Subject();
   private projectFields: ProjectIndex[];
   private currentProject: Project;
+  private totalDocs = 0;
 
   constructor(public searchService: SearcherComponentService, private projectStore: ProjectStore,
               private searcherService: SearcherService,
@@ -60,7 +61,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
       } else {
         return of(null);
       }
-    }))).subscribe(projField => {
+    }))).pipe(switchMap(projField => {
       if (projField) {
         this.projectFields = projField;
         // combine all fields of all indexes into one unique array to make columns
@@ -69,6 +70,17 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
         this.setColumnsToDisplay();
         // project changed reset table
         this.tableData.data = [];
+      }
+      if (this.projectFields) {
+        return this.searcherService.search({
+          query: new ElasticsearchQuery().elasticSearchQuery,
+          indices: this.projectFields.map(x => x.index) || []
+        }, this.currentProject.id);
+      }
+      return of(null);
+    })).subscribe(resp => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.totalDocs = resp.count;
       }
     });
 
@@ -98,8 +110,8 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
           // filter out table columns by index, unique array(table columns have to be unique)
           this.setColumnsToDisplay();
         }
-        SearcherTableComponent.totalCountLength = resp.searchContent.count;
-        this.paginatorLength = SearcherTableComponent.totalCountLength > 10000 ? 10000 : SearcherTableComponent.totalCountLength;
+        this.totalCountLength = resp.searchContent.count;
+        this.paginatorLength = this.totalCountLength > 10000 ? 10000 : this.totalCountLength;
         this.tableData.data = resp.searchContent.results;
         this.currentElasticQuery = resp.elasticsearchQuery;
         if (this.currentElasticQuery.elasticSearchQuery) {
@@ -185,9 +197,9 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  countRangeLabel(page: number, pageSize: number, length: number): string {
+  countRangeLabel = (page: number, pageSize: number, length: number) => {
     if (length === 0 || pageSize === 0) {
-      return `0 of ${length}`;
+      return `0 of ${length}/${this.totalDocs}`;
     }
 
     length = Math.max(length, 0);
@@ -198,9 +210,9 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
       Math.min(startIndex + pageSize, length) :
       startIndex + pageSize;
     if (length >= 10000) {
-      return `${startIndex + 1} - ${endIndex} of 10000 (${SearcherTableComponent.totalCountLength})`;
+      return `${startIndex + 1} - ${endIndex} of 10000 (${this.totalCountLength}/${this.totalDocs})`;
     } else {
-      return `${startIndex + 1} - ${endIndex} of ${length}`;
+      return `${startIndex + 1} - ${endIndex} of ${length}/${this.totalDocs}`;
     }
   }
 
