@@ -104,7 +104,7 @@ describe('searching and search related activities should be working correctly', 
     cy.get('.cdk-column-texta_facts > app-texta-facts-chips > span').should('exist');
 
     // fact values
-    cy.get(':nth-child(1) > .cdk-column-texta_facts > app-texta-facts-chips > span').scrollIntoView().click()
+    cy.get(':nth-child(1) > .cdk-column-texta_facts > app-texta-facts-chips > span')[0].scrollIntoView().click()
       .then(span => {
         const text = span.text();
         cy.get('[data-cy=appSearcherSideBarBuildSearchFactValueInputGroupOperator]').click();
