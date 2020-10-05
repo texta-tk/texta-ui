@@ -103,7 +103,7 @@ export class GenericHighlighterComponent<T extends HighlightSpan> {
   }
 
   // convert searcher highlight into mlp fact format
-   makeSearcherHighlights(searcherHighlight: any, currentColumn: string): T[] {
+  makeSearcherHighlights(searcherHighlight: any, currentColumn: string): T[] {
     const highlight = searcherHighlight ? searcherHighlight[currentColumn] : null;
     if (highlight && highlight.length === 1) { // elasticsearch returns as array
       const highlightArray: T[] = [];
@@ -218,7 +218,9 @@ export class GenericHighlighterComponent<T extends HighlightSpan> {
   private makeHighLights(originalText: string | number, facts: T[], factColors: Map<string, LegibleColor>): HighlightObject<T>[] {
     // spans are strings, convert them to 2d array and flatten
     facts.forEach(fact => {
-      (fact.spans) = JSON.parse(fact.spans as string).flat();
+      if (typeof fact.spans === 'string') {
+        (fact.spans) = JSON.parse(fact.spans as string).flat();
+      }
     });
     // remove document wide facts and empty facts (facts that have same span start and end index)
     facts = facts.filter(x => x.spans[0] !== x.spans[1]);

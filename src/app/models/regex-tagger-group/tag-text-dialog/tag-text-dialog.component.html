@@ -1,4 +1,6 @@
 <h1 mat-dialog-title>Tag text</h1>
+<mat-hint *ngIf="data.tagger"><span matTooltip="Description">{{data.tagger.description}}</span>: <span
+  matTooltip="Id">{{data.tagger.id}}</span></mat-hint>
 
 <div mat-dialog-content>
   <form #docForm="ngForm" (ngSubmit)="onSubmit()" class="max-width" id="docForm">
@@ -23,7 +25,7 @@
           <div fxLayout="row wrap">
             <app-fact-chip *ngFor="let item of uniqueFacts" [backGroundColor]="item.backgroundColor"
                            [displayValue]="item.fact.fact"
-                           [hoverValue]="taggerIdAccessor(item.fact)"
+                           [hoverValue]="''"
                            [textColor]="item.textColor"></app-fact-chip>
           </div>
         </mat-expansion-panel>

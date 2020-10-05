@@ -7,7 +7,7 @@ import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {
   Match,
   RegexTaggerGroup,
-  RegexTaggerGroupTagRandomDocResult,
+  RegexTaggerGroupTagRandomDocResult, RegexTaggerGroupTagTextResult,
 } from '../../../shared/types/tasks/RegexTaggerGroup';
 import {filter, take} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
@@ -46,7 +46,7 @@ export class TagRandomDocComponent implements OnInit {
               @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, tagger: RegexTaggerGroup; }) {
   }
 
-  taggerIdAccessor = (x: Match) => 'regex tagger id: ' + x.tagger_id.toString();
+  taggerIdAccessor = (x: Match) => 'regex tagger id: ' + JSON.parse(x.source)?.regextagger_id;
 
   ngOnInit(): void {
     this.projectStore.getProjectIndices().pipe(filter(x => !!x), take(1)).subscribe(x => {
@@ -81,11 +81,14 @@ export class TagRandomDocComponent implements OnInit {
         if (x && !(x instanceof HttpErrorResponse)) {
           this.colorMap = new Map();
           this.result = x;
+          this.result.matches.forEach(match => {
+            match.fact = match.str_val;
+          });
           // replace texta_facts with matches array
           const textaFacts = 'texta_facts';
           this.result.document[textaFacts] = this.result.matches;
           this.resultFields = Object.keys(x.document);
-          this.distinctMatches = UtilityFunctions.getDistinctByProperty(this.result.matches, (y => y.str_val));
+          this.distinctMatches = this.getDistinctMatches(this.result);
           this.fieldsWithMatches = UtilityFunctions.getDistinctByProperty(this.result.matches, (y => y.doc_path)).map(y => y.doc_path);
           this.resultFields.sort((a, b) => this.fieldsWithMatches.includes(a) ? -1 : 0);
 
@@ -111,7 +114,7 @@ export class TagRandomDocComponent implements OnInit {
 
   getUniqueFacts(matches: Match[]): { fact: Match; textColor: string; backgroundColor: string }[] {
     const returnVal: { fact: Match, textColor: string, backgroundColor: string }[] = [];
-    const uniques = UtilityFunctions.getDistinctByProperty(matches, (y => y.tagger_id));
+    const uniques = UtilityFunctions.getDistinctByProperty(matches, (y => y.fact));
     for (let i = 0; i < uniques.length; i++) {
       if (i < this.defaultColors.length) {
         const color = this.defaultColors[i];
@@ -136,5 +139,42 @@ export class TagRandomDocComponent implements OnInit {
       }
     }
     return returnVal;
+  }
+
+  getDistinctMatches(data: RegexTaggerGroupTagRandomDocResult): Match[] {
+    data.matches.forEach(fact => {
+      (fact.spans) = JSON.parse(fact.spans as string).flat();
+    });
+    // remove document wide facts and empty facts (facts that have same span start and end index)
+    const matches = data.matches.filter(x => x.spans[0] !== x.spans[1]);
+    matches.sort(this.sortByStartLowestSpan);
+    let previousMatch: Match | undefined;
+    for (const match of matches) {
+      previousMatch = match.doc_path !== previousMatch?.doc_path ? undefined : previousMatch;
+      const matchSpans: number[] = match.spans as number[];
+      const colContent = (data.document[match.doc_path] as number | string | object).toString();
+      if (colContent) {
+        match.str_val = colContent.substr(matchSpans[0], matchSpans[1] - matchSpans[0]);
+        if (previousMatch === undefined || previousMatch.spans[0] !== match.spans[0] && previousMatch.spans[1] !== match.spans[1]) {
+          previousMatch = match;
+        } else if (match && previousMatch) {
+          const src = JSON.parse(previousMatch.source);
+          const matchSrc = JSON.parse(match.source);
+          if (src.hasOwnProperty('regextagger_id') && matchSrc.hasOwnProperty('regextagger_id')) {
+            src.regextagger_id = src.regextagger_id + ', ' + matchSrc.regextagger_id;
+            previousMatch.source = JSON.stringify(src);
+          }
+        }
+      }
+    }
+    return UtilityFunctions.getDistinctByProperty(this.result.matches, (y => y.str_val));
+  }
+
+  private sortByStartLowestSpan(a: Match, b: Match): -1 | 1 {
+    if (a.spans[0] === b.spans[0]) {
+      return (a.spans[1] < b.spans[1]) ? -1 : 1; // sort by last span instead (need this for nested facts order)
+    } else {
+      return (a.spans[0] < b.spans[0]) ? -1 : 1;
+    }
   }
 }

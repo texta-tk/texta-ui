@@ -30,7 +30,7 @@ import {EditRegexTaggerGroupDialogComponent} from './edit-regex-tagger-group-dia
   ]
 })
 export class RegexTaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
-  expandedElement: RegexTaggerGroup | null;
+  expandedElements: boolean[] = [];
   public tableData: MatTableDataSource<RegexTaggerGroup> = new MatTableDataSource();
   selectedRows = new SelectionModel<RegexTaggerGroup>(true, []);
   public displayedColumns = ['select', 'id', 'author_username', 'description', 'regex_taggers', 'task__status', 'actions'];
@@ -67,28 +67,26 @@ export class RegexTaggerGroupComponent implements OnInit, OnDestroy, AfterViewIn
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
-    merge(this.sort.sortChange, this.paginator.page, this.updateTable)
-      .pipe(debounceTime(250), startWith({}),
-        switchMap(() => {
-          this.isLoadingResults = true;
-          return this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$));
-        }))
-      .pipe(
-        switchMap(proj => {
-          if (proj) {
-            const sortDirection = this.sort.direction === 'desc' ? '-' : '';
-            return this.regexTaggerGroupService.getRegexTaggerGroupTasks(
-              this.currentProject.id,
-              // Add 1 to to index because Material paginator starts from 0 and DRF paginator from 1
-              `ordering=${sortDirection}${this.sort.active}&page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`);
-          } else {
-            return of(null);
-          }
-        })).subscribe(data => {
+    merge(this.sort.sortChange, this.paginator.page, this.updateTable).pipe(debounceTime(250), startWith({}), switchMap(() => {
+      this.isLoadingResults = true;
+      return this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$));
+    })).pipe(switchMap(proj => {
+      if (proj) {
+        const sortDirection = this.sort.direction === 'desc' ? '-' : '';
+        return this.regexTaggerGroupService.getRegexTaggerGroupTasks(
+          this.currentProject.id,
+          // Add 1 to to index because Material paginator starts from 0 and DRF paginator from 1
+          `ordering=${sortDirection}${this.sort.active}&page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`);
+      } else {
+        return of(null);
+      }
+    })).subscribe(data => {
+      this.expandedElements = [];
       // Flip flag to show that loading has finished.
       this.isLoadingResults = false;
       if (data && !(data instanceof HttpErrorResponse)) {
         this.tableData.data = data.results;
+        this.expandedElements = new Array(data.results.length).fill(false);
       }
     });
   }

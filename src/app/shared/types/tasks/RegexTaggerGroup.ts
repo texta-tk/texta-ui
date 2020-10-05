@@ -21,6 +21,7 @@ export interface Match {
   doc_path: string;
   spans: string | number[];
   tagger_id: number;
+  source: string;
 }
 
 export interface RegexTaggerGroupTagTextResult {

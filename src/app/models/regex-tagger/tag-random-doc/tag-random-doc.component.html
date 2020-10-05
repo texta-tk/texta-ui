@@ -1,4 +1,7 @@
 <h1 mat-dialog-title>Tag random doc</h1>
+<mat-hint *ngIf="data.tagger"><span matTooltip="Description">{{data.tagger.description}}</span>: <span
+  matTooltip="Id">{{data.tagger.id}}</span></mat-hint>
+
 
 <div mat-dialog-content>
   <form #docForm="ngForm" (ngSubmit)="onSubmit()" class="max-width" id="docForm">
@@ -18,7 +21,8 @@
     </mat-form-field>
     <mat-form-field class="max-width" data-cy="appRegexTaggerTagRandomDocDialogfields">
       <mat-label>Select Fields</mat-label>
-      <mat-select #fields="ngModel" [(ngModel)]="model.fields" (ngModelChange)="firstTimeTaggingOverFields = true" [disableOptionCentering]="true" multiple
+      <mat-select #fields="ngModel" (ngModelChange)="firstTimeTaggingOverFields = true" [(ngModel)]="model.fields"
+                  [disableOptionCentering]="true" multiple
                   name="fields" panelClass="select-panel-reveal-input" required>
         <mat-option *ngFor="let fields of fieldsUnique" [value]="fields.path">
           {{fields.path}}

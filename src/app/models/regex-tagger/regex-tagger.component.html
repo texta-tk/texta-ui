@@ -15,7 +15,7 @@
         <mat-icon>delete</mat-icon>
       </button>
       <button (click)="openMultiTagDialog()" data-cy="appRegexTaggerMultiTagBtn" mat-stroked-button>
-        Multi tag text
+        Multitag Text
       </button>
       <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
       </mat-paginator>
@@ -24,7 +24,7 @@
 
   <div [appScrollTop]="tableData" class="table-container overflow-auto">
     <table [dataSource]="tableData" mat-table
-           matSort matSortDirection="desc" matSortActive="id"
+           matSort matSortActive="id" matSortDirection="desc"
            multiTemplateDataRows>
       <ng-container matColumnDef="select">
         <th *matHeaderCellDef mat-header-cell>
@@ -75,22 +75,22 @@
       <ng-container matColumnDef="ignoreCase">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Ignore case</th>
         <td *matCellDef="let element" mat-cell>
-          <mat-checkbox [(ngModel)]="element.ignore_case" (click)="$event.stopPropagation();"
-                        (ngModelChange)="updateRegexTaggerRow(element)"></mat-checkbox>
+          <mat-checkbox (click)="$event.stopPropagation();" (ngModelChange)="updateRegexTaggerRow(element)"
+                        [(ngModel)]="element.ignore_case"></mat-checkbox>
         </td>
       </ng-container>
       <ng-container matColumnDef="ignorePunctuation">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Ignore punctuation</th>
         <td *matCellDef="let element" mat-cell>
-          <mat-checkbox [(ngModel)]="element.ignore_punctuation" (click)="$event.stopPropagation();"
-                        (ngModelChange)="updateRegexTaggerRow(element)"></mat-checkbox>
+          <mat-checkbox (click)="$event.stopPropagation();" (ngModelChange)="updateRegexTaggerRow(element)"
+                        [(ngModel)]="element.ignore_punctuation"></mat-checkbox>
         </td>
       </ng-container>
       <ng-container matColumnDef="fuzzy">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Fuzzy match</th>
         <td *matCellDef="let element" mat-cell>
-          <mat-checkbox [(ngModel)]="element.return_fuzzy_match" (click)="$event.stopPropagation();"
-                        (ngModelChange)="updateRegexTaggerRow(element)"></mat-checkbox>
+          <mat-checkbox (click)="$event.stopPropagation();" (ngModelChange)="updateRegexTaggerRow(element)"
+                        [(ngModel)]="element.return_fuzzy_match"></mat-checkbox>
         </td>
       </ng-container>
 
@@ -106,9 +106,10 @@
 
         </td>
       </ng-container>
+
       <ng-container matColumnDef="expandedDetail">
-        <td *matCellDef="let element" [attr.colspan]="displayedColumns.length" mat-cell>
-          <div *ngIf="element == expandedElement" [@detailExpand] class="element-detail">
+        <td *matCellDef="let element; let i = dataIndex" [attr.colspan]="displayedColumns.length" mat-cell>
+          <div *ngIf="expandedElements[i]" [@detailExpand] class="element-detail">
             <div class="flex-col m-l-r-5" fxFlex="50">
               <table class="simple-table">
                 <tr>
@@ -129,13 +130,13 @@
                 </tr>
               </table>
             </div>
-
           </div>
         </td>
       </ng-container>
       <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
-      <tr (click)="expandedElement = expandedElement === element ? null : element"
-          *matRowDef="let element; columns: displayedColumns;" [class.expanded-row]="expandedElement === element"
+      <tr (click)="expandedElements[i] = !expandedElements[i]"
+          *matRowDef="let element; columns: displayedColumns; let i = dataIndex"
+          [class.expanded-row]="expandedElements[i]"
           class="element-row"
           mat-row></tr>
       <tr *matRowDef="let row; columns: ['expandedDetail']" class="detail-row" mat-row></tr>

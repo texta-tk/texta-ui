@@ -1,4 +1,6 @@
 <h1 mat-dialog-title>Tag text</h1>
+<mat-hint *ngIf="data.tagger"><span matTooltip="Description">{{data.tagger.description}}</span>: <span
+  matTooltip="Id">{{data.tagger.id}}</span></mat-hint>
 
 <div mat-dialog-content>
   <form #docForm="ngForm" (ngSubmit)="onSubmit()" class="max-width" id="docForm">

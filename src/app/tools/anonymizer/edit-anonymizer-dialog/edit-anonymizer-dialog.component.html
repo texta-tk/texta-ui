@@ -9,7 +9,7 @@
         Description is <strong>required</strong>
       </mat-error>
     </mat-form-field>
-    <mat-form-field>
+    <mat-form-field *ngIf="anonymizerForm.get('replaceMisspelledNamesFormControl')?.value">
       <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="misspellingThresholdFormControl"
              matInput
              max="1"
@@ -23,10 +23,6 @@
       <mat-error *ngIf="anonymizerForm.get('misspellingThresholdFormControl')?.hasError('max')">
         Threshold must be between <strong>0 and 1</strong>
       </mat-error>
-      <mat-hint>Minimum required Jaro-Winkler similarity of text matches and true names for anonymizing the matches.
-        Used only if Replace misspelled
-        names is on
-      </mat-hint>
     </mat-form-field>
     <mat-checkbox formControlName="replaceMisspelledNamesFormControl">Replace misspelled
       names

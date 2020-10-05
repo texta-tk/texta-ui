@@ -1,4 +1,6 @@
 <h1 mat-dialog-title>Tag random doc</h1>
+<mat-hint *ngIf="data.tagger"><span matTooltip="Description">{{data.tagger.description}}</span>: <span
+  matTooltip="Id">{{data.tagger.id}}</span></mat-hint>
 
 <div mat-dialog-content>
   <form #docForm="ngForm" (ngSubmit)="onSubmit()" class="max-width" id="docForm">
@@ -18,7 +20,8 @@
     </mat-form-field>
     <mat-form-field class="max-width" data-cy="appRegexTaggerGroupTagRandomDocDialogfields">
       <mat-label>Select Fields</mat-label>
-      <mat-select #fields="ngModel" [(ngModel)]="model.fields" (ngModelChange)="firstTimeTaggingOverFields = true" [disableOptionCentering]="true" multiple
+      <mat-select #fields="ngModel" (ngModelChange)="firstTimeTaggingOverFields = true" [(ngModel)]="model.fields"
+                  [disableOptionCentering]="true" multiple
                   name="fields" panelClass="select-panel-reveal-input" required>
         <mat-option *ngFor="let fields of fieldsUnique" [value]="fields.path">
           {{fields.path}}
@@ -32,8 +35,8 @@
     <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
     <div *ngIf="result" class="m-bot-10">
       <mat-accordion *ngIf="uniqueFacts.length > 0" displayMode="flat" multi>
-        <mat-expansion-panel (click)="selection.toggle(0)" [expanded]="selection.isSelected(0)">
-          <mat-expansion-panel-header [expandedHeight]="'48px'">
+        <mat-expansion-panel [expanded]="selection.isSelected(0)">
+          <mat-expansion-panel-header (click)="selection.toggle(0)" [expandedHeight]="'48px'">
             <mat-panel-title>
               Tags
             </mat-panel-title>
@@ -41,12 +44,12 @@
           <div fxLayout="row wrap">
             <app-fact-chip *ngFor="let item of uniqueFacts" [backGroundColor]="item.backgroundColor"
                            [displayValue]="item.fact.fact"
-                           [hoverValue]="taggerIdAccessor(item.fact)"
+                           [hoverValue]="''"
                            [textColor]="item.textColor"></app-fact-chip>
           </div>
         </mat-expansion-panel>
-        <mat-expansion-panel (click)="selection.toggle(1)" [expanded]="selection.isSelected(1)">
-          <mat-expansion-panel-header [expandedHeight]="'48px'">
+        <mat-expansion-panel [expanded]="selection.isSelected(1)">
+          <mat-expansion-panel-header (click)="selection.toggle(1)" [expandedHeight]="'48px'">
             <mat-panel-title>
               Matches
             </mat-panel-title>
@@ -60,9 +63,10 @@
           </div>
         </mat-expansion-panel>
         <ng-container *ngFor="let field of resultFields; let i = index">
-          <mat-expansion-panel (click)="selection.toggle(field)" *ngIf="field !== 'texta_facts'"
-                               [expanded]="selection.isSelected(field)">
-            <mat-expansion-panel-header [expandedHeight]="'48px'">
+          <mat-expansion-panel
+            [expanded]="selection.isSelected(field)">
+            <mat-expansion-panel-header (click)="selection.toggle(field)" *ngIf="field !== 'texta_facts'"
+                                        [expandedHeight]="'48px'">
               <mat-panel-title>
                 {{field}}
               </mat-panel-title>

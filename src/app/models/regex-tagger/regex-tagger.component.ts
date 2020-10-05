@@ -37,7 +37,7 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   destroyed$ = new Subject<boolean>();
   selectedRows = new SelectionModel<RegexTagger>(true, []);
   filteredSubject = new Subject();
-  expandedElement: RegexTagger | null;
+  expandedElements: boolean[] = [];
   currentProject: Project;
   patchRowQueue: Subject<RegexTagger> = new Subject();
 
@@ -77,12 +77,14 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
           return of(null);
         }
       })).subscribe(data => {
+      this.expandedElements = [];
       // Flip flag to show that loading has finished.
       if (data instanceof HttpErrorResponse) {
         this.logService.snackBarError(data, 2000);
       } else if (data) {
         this.isLoadingResults = false;
         this.tableData.data = data.results;
+        this.expandedElements = new Array(data.results.length).fill(false);
       }
     });
 
@@ -128,6 +130,7 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     });
   }
+
   onTagText(element: RegexTagger): void {
     this.dialog.open(TagTextDialogComponent, {
       maxHeight: '90vh',
@@ -145,6 +148,7 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
       data: {currentProjectId: this.currentProject.id, tagger: element}
     });
   }
+
   openMultiTagDialog(): void {
     this.dialog.open(MultiTagTextDialogComponent, {
       maxHeight: '90vh',
