@@ -18,7 +18,7 @@
       </button>
       <button (click)="applyTaggerGroup()" data-cy="appRegexTaggerGroupApplyTaggerGroupBtn" mat-stroked-button
               style="margin-left: 10px">
-        Apply Tagger Group
+        Apply Regex Tagger Group
       </button>
       <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
       </mat-paginator>
@@ -83,28 +83,31 @@
       </ng-container>
 
       <ng-container matColumnDef="expandedDetail">
-        <td *matCellDef="let element; let i = dataIndex" [attr.colspan]="displayedColumns.length" mat-cell>
-          <div *ngIf="expandedElements[i]" [@detailExpand] class="element-detail" style="flex-direction: column">
+        <td *matCellDef="let element; let i = dataIndex" [attr.colspan]="displayedColumns.length" class="expanded-detail"
+            mat-cell>
+          <div *ngIf="expandedElements[i]" [@detailExpand] class="element-detail">
             <div class="flex-col m-l-r-5" fxFlex="100">
               <table class="simple-table">
                 <tr>
-                  <th class="mat-body-strong">id</th>
+                  <th class="mat-body-strong">Id</th>
                   <th class="mat-body-strong">Description</th>
                   <th class="mat-body-strong">Operator</th>
-                  <th class="mat-body-strong">Match type</th>
-                  <th class="mat-body-strong">Required words</th>
-                  <th class="mat-body-strong">Phrase slop</th>
-                  <th class="mat-body-strong">Counter slop</th>
-                  <th class="mat-body-strong">Fuzzy match</th>
-                  <th class="mat-body-strong">Ignore case</th>
-                  <th class="mat-body-strong">Ignore punctuation</th>
+                  <th class="mat-body-strong">Match Type</th>
+                  <th class="mat-body-strong">Required Words</th>
+                  <th class="mat-body-strong">Phrase Slop</th>
+                  <th class="mat-body-strong">Counter Slop</th>
+                  <th class="mat-body-strong">Fuzzy Match</th>
+                  <th class="mat-body-strong">Ignore Case</th>
+                  <th class="mat-body-strong">Ignore Punctuation</th>
                 </tr>
                 <tr *ngFor="let tagger of element.tagger_info">
                   <td>{{tagger.id}}</td>
-                  <td>{{tagger.description}}</td>
+                  <td class="detail-desc-col" title="{{tagger.description}}">{{tagger.description}}</td>
                   <td>{{tagger.operator}}</td>
                   <td>{{tagger.match_type}}</td>
-                  <td>{{tagger.required_words}}</td>
+                  <td>{{tagger.required_words}}
+                    <a class="action-text pointer" matTooltipClass="white-space-pre-line" matTooltip="{{tagger.lexicon.join('\n')}}">Lexicon</a> /
+                  <a class="action-text pointer" matTooltipClass="white-space-pre-line" matTooltip="{{tagger.counter_lexicon.join('\n')}}">Counter Lexicon</a></td>
                   <td>{{tagger.phrase_slop}}</td>
                   <td>{{tagger.counter_slop}}</td>
                   <td>
@@ -122,8 +125,8 @@
             <div *ngIf="element.task" class="flex-col m-l-r-5">
               <table class="simple-table">
                 <tr>
-                  <th class="mat-body-strong">Resource id</th>
-                  <th class="mat-body-strong">Task id</th>
+                  <th class="mat-body-strong">Resource Id</th>
+                  <th class="mat-body-strong">Task Id</th>
                   <th class="mat-body-strong">Status</th>
                   <th class="mat-body-strong">Progress</th>
                   <th class="mat-body-strong">Errors</th>
@@ -163,11 +166,11 @@
   <ng-template let-element="element" let-i="i" matMenuContent>
     <button (click)="onTagRandomDoc(element)" data-cy="appRegexTaggerGroupMenuTagRandomDoc"
             mat-menu-item>
-      Tag random doc
+      Tag Random Doc
     </button>
     <button (click)="onTagText(element)" data-cy="appRegexTaggerGroupMenuTagText"
             mat-menu-item>
-      Tag text
+      Tag Text
     </button>
     <mat-divider></mat-divider>
     <button (click)="edit(element);" mat-menu-item>

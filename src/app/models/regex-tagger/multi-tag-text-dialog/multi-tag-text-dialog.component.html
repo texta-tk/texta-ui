@@ -1,12 +1,12 @@
-<h1 mat-dialog-title>Multi tag text</h1>
+<h1 mat-dialog-title>Multitag Text</h1>
 <mat-dialog-content fxLayout="column">
 
   <mat-form-field class="max-width" data-cy="appRegexTaggerMultiTagDialogText">
     <textarea [(ngModel)]="text" [ngModelOptions]="{standalone: true}" [rows]="5" matInput
-              placeholder="Tag text"></textarea>
+              placeholder="Text"></textarea>
   </mat-form-field>
   <mat-form-field class="max-width" data-cy="appRegexTaggerMultiTagDialogTaggers">
-    <mat-label>Tagger</mat-label>
+    <mat-label>Regex Taggers</mat-label>
     <mat-select [(ngModel)]="selectedTaggers"
                 [disableOptionCentering]="true" [ngModelOptions]="{standalone: true}" multiple
                 panelClass="select-panel-reveal-input">

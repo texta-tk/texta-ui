@@ -21,7 +21,7 @@
       </button>
     </a>
     <a [matMenuTriggerFor]="models"
-       [ngClass]="{'is-active': ['/tagger-groups', '/taggers', '/regex-tagger', '/regex-tagger-groups', '/embeddings', '/torchtaggers'].includes(router.url)}"
+       [ngClass]="{'is-active': ['/tagger-groups', '/taggers', '/regex-taggers', '/regex-tagger-groups', '/embeddings', '/torch-taggers'].includes(router.url)}"
        class="pointer">
       <button class="nav-button" data-cy="appNavbarModels" mat-button>
         <mat-icon class="margin-right">storage</mat-icon>
@@ -62,17 +62,16 @@
       <a [routerLink]="['tagger-groups']" data-cy="appNavbarModelMenuTaggerGroups" mat-menu-item
          routerLinkActive="is-active-menu">Tagger Groups <span
         *ngIf="projectResourceCounts?.num_tagger_groups"> ({{projectResourceCounts.num_tagger_groups}})</span></a>
-      <a [routerLink]="['torchtaggers']" data-cy="appNavbarModelMenuTorchTaggers" mat-menu-item
-         routerLinkActive="is-active-menu">TorchTaggers <span
+      <a [routerLink]="['torch-taggers']" data-cy="appNavbarModelMenuTorchTaggers" mat-menu-item
+         routerLinkActive="is-active-menu">Torch Taggers <span
         *ngIf="projectResourceCounts?.num_torchtaggers"> ({{projectResourceCounts.num_torchtaggers}})</span></a>
-      <a [routerLink]="['regex-tagger']" data-cy="appNavbarModelMenuRegexTagger" mat-menu-item
+      <a [routerLink]="['regex-taggers']" data-cy="appNavbarModelMenuRegexTagger" mat-menu-item
          routerLinkActive="is-active-menu">Regex Taggers <span
         *ngIf="projectResourceCounts?.num_regex_taggers"> ({{projectResourceCounts.num_regex_taggers}})</span></a>
-
       <a [routerLink]="['regex-tagger-groups']" data-cy="appNavbarModelMenuRegexTaggerGroups" mat-menu-item
          routerLinkActive="is-active-menu">Regex Taggers Groups <span
-        *ngIf="projectResourceCounts?.num_regex_tagger_groups">({{projectResourceCounts.num_regex_tagger_groups}})</span></a>
-
+        *ngIf="projectResourceCounts?.num_regex_tagger_groups">({{projectResourceCounts.num_regex_tagger_groups}}
+        )</span></a>
       <a [routerLink]="['embeddings']" data-cy="appNavbarModelMenuEmbeddings" mat-menu-item
          routerLinkActive="is-active-menu">Embeddings <span
         *ngIf="projectResourceCounts?.num_embeddings">({{projectResourceCounts.num_embeddings}})</span></a>

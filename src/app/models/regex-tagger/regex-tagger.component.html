@@ -1,5 +1,4 @@
 <div class="wrapper flex-col max-height">
-
   <div class="table-paginator-row">
     <div class="loading-bar">
       <mat-progress-bar *ngIf="isLoadingResults" mode="indeterminate"></mat-progress-bar>
@@ -53,41 +52,41 @@
         <td *matCellDef="let element" mat-cell> {{element.operator}}</td>
       </ng-container>
       <ng-container matColumnDef="matchType">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header>Match type</th>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Match Type</th>
         <td *matCellDef="let element" mat-cell> {{element.match_type}}</td>
       </ng-container>
       <ng-container matColumnDef="requiredWords">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header>Required words</th>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Required Words</th>
         <td *matCellDef="let element" mat-cell> {{element.required_words}}</td>
       </ng-container>
       <ng-container matColumnDef="phraseSlop">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header>Phrase slop</th>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Phrase Slop</th>
         <td *matCellDef="let element" mat-cell> {{element.phrase_slop}}</td>
       </ng-container>
       <ng-container matColumnDef="counterSlop">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header>Counter slop</th>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Counter Slop</th>
         <td *matCellDef="let element" mat-cell> {{element.counter_slop}}</td>
       </ng-container>
       <ng-container matColumnDef="nAllowedEdits">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header>Allowed edits</th>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Allowed Edits</th>
         <td *matCellDef="let element" mat-cell> {{element.n_allowed_edits}}</td>
       </ng-container>
       <ng-container matColumnDef="ignoreCase">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header>Ignore case</th>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Ignore Case</th>
         <td *matCellDef="let element" mat-cell>
           <mat-checkbox (click)="$event.stopPropagation();" (ngModelChange)="updateRegexTaggerRow(element)"
                         [(ngModel)]="element.ignore_case"></mat-checkbox>
         </td>
       </ng-container>
       <ng-container matColumnDef="ignorePunctuation">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header>Ignore punctuation</th>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Ignore Punctuation</th>
         <td *matCellDef="let element" mat-cell>
           <mat-checkbox (click)="$event.stopPropagation();" (ngModelChange)="updateRegexTaggerRow(element)"
                         [(ngModel)]="element.ignore_punctuation"></mat-checkbox>
         </td>
       </ng-container>
       <ng-container matColumnDef="fuzzy">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header>Fuzzy match</th>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Fuzzy Match</th>
         <td *matCellDef="let element" mat-cell>
           <mat-checkbox (click)="$event.stopPropagation();" (ngModelChange)="updateRegexTaggerRow(element)"
                         [(ngModel)]="element.return_fuzzy_match"></mat-checkbox>
@@ -103,17 +102,16 @@
                   mat-icon-button>
             <mat-icon aria-label="Actions">more_vert</mat-icon>
           </button>
-
         </td>
       </ng-container>
 
       <ng-container matColumnDef="expandedDetail">
-        <td *matCellDef="let element; let i = dataIndex" [attr.colspan]="displayedColumns.length" mat-cell>
+        <td *matCellDef="let element; let i = dataIndex" [attr.colspan]="displayedColumns.length" mat-cell class="expanded-detail">
           <div *ngIf="expandedElements[i]" [@detailExpand] class="element-detail">
             <div class="flex-col m-l-r-5" fxFlex="50">
               <table class="simple-table">
                 <tr>
-                  <th class="mat-body-strong">Lexicon words</th>
+                  <th class="mat-body-strong">Lexicon Words</th>
                 </tr>
                 <tr *ngFor="let val of element.lexicon">
                   <td>{{val}}</td>
@@ -123,7 +121,7 @@
             <div class="flex-col m-l-r-5" fxFlex="50">
               <table class="simple-table">
                 <tr>
-                  <th class="mat-body-strong">Counter Lexicon words</th>
+                  <th class="mat-body-strong">Counter Lexicon Words</th>
                 </tr>
                 <tr *ngFor="let tt of element.counter_lexicon">
                   <td>{{tt}}</td>
@@ -142,21 +140,18 @@
       <tr *matRowDef="let row; columns: ['expandedDetail']" class="detail-row" mat-row></tr>
 
     </table>
-
   </div>
-
-
 </div>
 
 <mat-menu #editMenu="matMenu">
   <ng-template let-element="element" let-i="i" matMenuContent>
     <button (click)="onTagRandomDoc(element)" data-cy="appRegexTaggerMenuTagRandomDoc"
             mat-menu-item>
-      Tag random doc
+      Tag Random Doc
     </button>
     <button (click)="onTagText(element)" data-cy="appRegexTaggerMenuTagText"
             mat-menu-item>
-      Tag text
+      Tag Text
     </button>
     <mat-divider></mat-divider>
     <button (click)="edit(element);" mat-menu-item>

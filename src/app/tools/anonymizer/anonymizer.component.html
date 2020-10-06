@@ -42,39 +42,39 @@
         <td *matCellDef="let element" mat-cell> {{element.description}}</td>
       </ng-container>
       <ng-container matColumnDef="misspelling_threshold">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header>Misspelling threshold</th>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Misspelling Threshold</th>
         <td *matCellDef="let element" mat-cell> {{element.misspelling_threshold}}</td>
       </ng-container>
       <ng-container matColumnDef="replace_misspelled_names">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header>Replace misspelled names</th>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Replace Misspelled Names</th>
         <td *matCellDef="let element" mat-cell>
           <mat-checkbox (click)="$event.stopPropagation();" (ngModelChange)="updateAnonymizerRow(element)"
                         [(ngModel)]="element.replace_misspelled_names"></mat-checkbox>
         </td>
       </ng-container>
       <ng-container matColumnDef="replace_single_last_names">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header>Replace single last names</th>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Replace Single Last Names</th>
         <td *matCellDef="let element" mat-cell>
           <mat-checkbox (click)="$event.stopPropagation();" (ngModelChange)="updateAnonymizerRow(element)"
                         [(ngModel)]="element.replace_single_last_names"></mat-checkbox>
         </td>
       </ng-container>
       <ng-container matColumnDef="replace_single_first_names">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header>Replace single first names</th>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Replace Single First Names</th>
         <td *matCellDef="let element" mat-cell>
           <mat-checkbox (click)="$event.stopPropagation();" (ngModelChange)="updateAnonymizerRow(element)"
                         [(ngModel)]="element.replace_single_first_names"></mat-checkbox>
         </td>
       </ng-container>
       <ng-container matColumnDef="mimic_casing">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header>Mimic casing</th>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Mimic Casing</th>
         <td *matCellDef="let element" mat-cell>
           <mat-checkbox (click)="$event.stopPropagation();" (ngModelChange)="updateAnonymizerRow(element)"
                         [(ngModel)]="element.mimic_casing"></mat-checkbox>
         </td>
       </ng-container>
       <ng-container matColumnDef="auto_adjust_threshold">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header>Auto adjust threshold</th>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Auto Adjust Threshold</th>
         <td *matCellDef="let element" mat-cell>
           <mat-checkbox (click)="$event.stopPropagation();" (ngModelChange)="updateAnonymizerRow(element)"
                         [(ngModel)]="element.auto_adjust_threshold"></mat-checkbox>
@@ -104,7 +104,7 @@
 <mat-menu #actionsMenu="matMenu">
   <ng-template let-element="element" let-i="i" matMenuContent>
     <button (click)="openAnonymizeTextDialog(element)" data-cy="appAnonymizerTextAction" mat-menu-item>
-      Anonymize text
+      Anonymize Text
     </button>
     <button (click)="openEditDialog(element)" data-cy="appAnonymizerEditAction" mat-menu-item>
       Edit

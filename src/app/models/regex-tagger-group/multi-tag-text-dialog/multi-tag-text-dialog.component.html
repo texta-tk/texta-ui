@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>Multi tag text</h1>
+<h1 mat-dialog-title>Multitag Text</h1>
 <mat-dialog-content fxLayout="column">
   <mat-form-field class="max-width" data-cy="appRegexTaggerGroupMultiTagDialogText">
     <textarea [(ngModel)]="text" [ngModelOptions]="{standalone: true}" [rows]="5" matInput
@@ -13,7 +13,7 @@
         {{tagger.description}}
       </mat-option>
     </mat-select>
-    <mat-hint>Uses all regex-tagger-groups by default</mat-hint>
+    <mat-hint>Uses all Regex Tagger Groups by default</mat-hint>
   </mat-form-field>
   <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
 

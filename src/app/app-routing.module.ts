@@ -27,7 +27,7 @@ const routes: Routes = [
     loadChildren: () => import('./management/management.module').then(m => m.ManagementModule)
   },
   {
-    path: 'torchtaggers',
+    path: 'torch-taggers',
     canActivate: [AuthGuard],
     loadChildren: () => import('./models/torch-tagger/torch-tagger.module').then(m => m.TorchTaggerModule)
   },
@@ -42,7 +42,7 @@ const routes: Routes = [
     loadChildren: () => import('./models/tagger/tagger.module').then(m => m.TaggerModule)
   },
   {
-    path: 'regex-tagger',
+    path: 'regex-taggers',
     canActivate: [AuthGuard],
     loadChildren: () => import('./models/regex-tagger/regex-tagger.module').then(m => m.RegexTaggerModule)
   },

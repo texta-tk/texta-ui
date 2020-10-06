@@ -1,7 +1,11 @@
-<h1 mat-dialog-title>Tag random doc</h1>
-<mat-hint *ngIf="data.tagger"><span matTooltip="Description">{{data.tagger.description}}</span>: <span
-  matTooltip="Id">{{data.tagger.id}}</span></mat-hint>
-
+<div class="flex-row">
+  <h1 mat-dialog-title>Tag Random Doc</h1>
+  <mat-chip-list disabled>
+    <mat-chip *ngIf="data.tagger" color="primary" selected><span
+      matTooltip="Description">{{data.tagger.description}}</span>: <span
+      matTooltip="Id">{{data.tagger.id}}</span></mat-chip>
+  </mat-chip-list>
+</div>
 <div mat-dialog-content>
   <form #docForm="ngForm" (ngSubmit)="onSubmit()" class="max-width" id="docForm">
 

@@ -230,7 +230,9 @@ pre {
 .block {
   display: block;
 }
-
+.white-space-pre-line{
+  white-space: pre-line;
+}
 
 .select-panel-reveal-input {
   margin-top: 30px;

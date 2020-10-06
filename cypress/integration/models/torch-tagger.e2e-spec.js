@@ -1,4 +1,4 @@
-describe('torchTaggers should work', function () {
+describe('Torch Taggers should work', function () {
   beforeEach(function () {
     cy.fixture('users').then((user) => {
       cy.server();
@@ -16,7 +16,7 @@ describe('torchTaggers should work', function () {
     });
   });
   function initTorchTagger() {
-    cy.visit('/torchtaggers');
+    cy.visit('/torch-taggers');
     cy.wait('@getProjectIndices');
     cy.wait('@getTorchTaggers');
     cy.get('[data-cy=appNavbarProjectSelect]').click();

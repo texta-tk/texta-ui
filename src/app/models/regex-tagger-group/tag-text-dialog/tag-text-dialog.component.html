@@ -1,7 +1,11 @@
-<h1 mat-dialog-title>Tag text</h1>
-<mat-hint *ngIf="data.tagger"><span matTooltip="Description">{{data.tagger.description}}</span>: <span
-  matTooltip="Id">{{data.tagger.id}}</span></mat-hint>
-
+<div class="flex-row">
+  <h1 mat-dialog-title>Tag Text</h1>
+  <mat-chip-list disabled>
+    <mat-chip *ngIf="data.tagger" color="primary" selected><span
+      matTooltip="Description">{{data.tagger.description}}</span>: <span
+      matTooltip="Id">{{data.tagger.id}}</span></mat-chip>
+  </mat-chip-list>
+</div>
 <div mat-dialog-content>
   <form #docForm="ngForm" (ngSubmit)="onSubmit()" class="max-width" id="docForm">
 
@@ -11,7 +15,6 @@
         Text is <strong>required</strong>
       </mat-error>
     </mat-form-field>
-
 
     <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
     <div *ngIf="result" class="m-bot-10">

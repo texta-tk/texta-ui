@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>Apply regex tagger group to indices</h1>
+<h1 mat-dialog-title>Apply Regex Tagger Group to indices</h1>
 <div mat-dialog-content>
   <form (ngSubmit)="onSubmit(regexTaggerGroupForm.value)" [formGroup]="regexTaggerGroupForm" class="flex-col">
     <mat-form-field data-cy="appRegexTaggerGroupApplyTaggerDialogDesc">
@@ -40,7 +40,7 @@
     </app-saved-search-autocomplete>
 
     <mat-form-field data-cy="appRegexTaggerGroupApplyTaggerDialogTaggers">
-      <mat-label>Regex tagger groups</mat-label>
+      <mat-label>Regex Tagger Groups</mat-label>
       <mat-select [disableOptionCentering]="true"
                   formControlName="regexTaggersFormControl" multiple panelClass="select-panel-reveal-input" required>
         <mat-option *ngFor="let regexTagger of projectRegexTaggers" [value]="regexTagger">
@@ -48,7 +48,7 @@
         </mat-option>
       </mat-select>
       <mat-error *ngIf="regexTaggerGroupForm.get('regexTaggersFormControl')?.hasError('required')">
-        Regex tagger group is <strong>required</strong>
+        Regex Tagger Group is <strong>required</strong>
       </mat-error>
     </mat-form-field>
 

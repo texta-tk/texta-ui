@@ -6,8 +6,15 @@
 mat-expansion-panel {
   border: 1px solid #d9d9d9;
 }
-mat-hint{
-  display: block;
-  margin-top: -20px;
-  margin-bottom: 5px;
+
+h1 {
+  display: inline-block;
+}
+
+mat-chip-list {
+  margin-left: auto;
+}
+
+.mat-chip.mat-standard-chip.mat-chip-disabled {
+  opacity: 1;
 }

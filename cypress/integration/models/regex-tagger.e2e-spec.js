@@ -1,4 +1,4 @@
-describe('regex-tagger should work', function () {
+describe('regex-taggers should work', function () {
   beforeEach(function () {
     cy.wait(100);
     cy.fixture('users').then((user) => {
@@ -16,7 +16,7 @@ describe('regex-tagger should work', function () {
   });
 
   function initPage() {
-    cy.visit('/regex-tagger');
+    cy.visit('/regex-taggers');
     cy.wait('@getRegexTaggers');
     cy.wait('@getProjectIndices');
     cy.get('[data-cy=appNavbarProjectSelect]').click();
