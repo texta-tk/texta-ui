@@ -84,16 +84,38 @@
 
       <ng-container matColumnDef="expandedDetail">
         <td *matCellDef="let element; let i = dataIndex" [attr.colspan]="displayedColumns.length" mat-cell>
-          <div *ngIf="expandedElements[i]" [@detailExpand] class="element-detail">
-            <div class="flex-col m-l-r-5" fxFlex="50">
+          <div *ngIf="expandedElements[i]" [@detailExpand] class="element-detail" style="flex-direction: column">
+            <div class="flex-col m-l-r-5" fxFlex="100">
               <table class="simple-table">
                 <tr>
-                  <th class="mat-body-strong">Regex Tagger description</th>
                   <th class="mat-body-strong">id</th>
+                  <th class="mat-body-strong">Description</th>
+                  <th class="mat-body-strong">Operator</th>
+                  <th class="mat-body-strong">Match type</th>
+                  <th class="mat-body-strong">Required words</th>
+                  <th class="mat-body-strong">Phrase slop</th>
+                  <th class="mat-body-strong">Counter slop</th>
+                  <th class="mat-body-strong">Fuzzy match</th>
+                  <th class="mat-body-strong">Ignore case</th>
+                  <th class="mat-body-strong">Ignore punctuation</th>
                 </tr>
                 <tr *ngFor="let tagger of element.tagger_info">
+                  <td>{{tagger.id}}</td>
                   <td>{{tagger.description}}</td>
-                  <td>{{tagger.tagger_id}}</td>
+                  <td>{{tagger.operator}}</td>
+                  <td>{{tagger.match_type}}</td>
+                  <td>{{tagger.required_words}}</td>
+                  <td>{{tagger.phrase_slop}}</td>
+                  <td>{{tagger.counter_slop}}</td>
+                  <td>
+                    <mat-checkbox [checked]="tagger.return_fuzzy_match" disabled></mat-checkbox>
+                  </td>
+                  <td>
+                    <mat-checkbox [checked]="tagger.ignore_case" disabled></mat-checkbox>
+                  </td>
+                  <td>
+                    <mat-checkbox [checked]="tagger.ignore_punctuation" disabled></mat-checkbox>
+                  </td>
                 </tr>
               </table>
             </div>
@@ -101,30 +123,20 @@
               <table class="simple-table">
                 <tr>
                   <th class="mat-body-strong">Resource id</th>
-                  <td>{{element.id}}</td>
-                </tr>
-                <tr>
                   <th class="mat-body-strong">Task id</th>
-                  <td>{{element.task.id}}</td>
-                </tr>
-                <tr>
                   <th class="mat-body-strong">Status</th>
-                  <td>{{element.task.status}}</td>
-                </tr>
-                <tr>
                   <th class="mat-body-strong">Progress</th>
-                  <td>{{element.task.progress}}</td>
-                </tr>
-                <tr>
                   <th class="mat-body-strong">Errors</th>
-                  <td>{{element.task.errors}}</td>
-                </tr>
-                <tr>
                   <th class="mat-body-strong">Step</th>
-                  <td>{{element.task.step}}</td>
+                  <th class="mat-body-strong">Last Update</th>
                 </tr>
                 <tr>
-                  <th class="mat-body-strong">Last Update</th>
+                  <td>{{element.id}}</td>
+                  <td>{{element.task.id}}</td>
+                  <td>{{element.task.status}}</td>
+                  <td>{{element.task.progress}}</td>
+                  <td>{{element.task.errors}}</td>
+                  <td>{{element.task.step}}</td>
                   <td>{{element.task.last_update | date:'y-M-d H:mm:ss'}}</td>
                 </tr>
               </table>

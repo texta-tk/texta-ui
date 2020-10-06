@@ -104,7 +104,7 @@ export class AnonymizerComponent implements OnInit, OnDestroy, AfterViewInit {
   openAnonymizeTextDialog(element: Anonymizer): void {
     this.dialog.open(AnonymizeTextDialogComponent, {
       maxHeight: '650px',
-      width: '70vw',
+      width: '50vw',
       data: element
     });
   }

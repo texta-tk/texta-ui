@@ -1,9 +1,6 @@
 import {TaskStatus} from './TaskStatus';
+import {RegexTagger} from './RegexTagger';
 
-export interface TaggerInfo {
-  tagger_id: number;
-  description: string;
-}
 
 export interface RegexTaggerGroup {
   id: number;
@@ -12,7 +9,7 @@ export interface RegexTaggerGroup {
   author_username: string;
   task: TaskStatus;
   description: string;
-  tagger_info: TaggerInfo[];
+  tagger_info: RegexTagger[];
 }
 
 export interface Match {

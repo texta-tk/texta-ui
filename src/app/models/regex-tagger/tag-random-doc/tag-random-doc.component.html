@@ -36,8 +36,8 @@
     <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
     <div *ngIf="result" class="m-bot-10">
       <mat-accordion *ngIf="uniqueFacts.length > 0" displayMode="flat" multi>
-        <mat-expansion-panel (click)="selection.toggle(0)" [expanded]="selection.isSelected(0)">
-          <mat-expansion-panel-header [expandedHeight]="'48px'">
+        <mat-expansion-panel [expanded]="selection.isSelected(0)">
+          <mat-expansion-panel-header (click)="selection.toggle(0)" [expandedHeight]="'48px'">
             <mat-panel-title>
               Tags
             </mat-panel-title>
@@ -49,8 +49,8 @@
                            [textColor]="item.textColor"></app-fact-chip>
           </div>
         </mat-expansion-panel>
-        <mat-expansion-panel (click)="selection.toggle(1)" [expanded]="selection.isSelected(1)">
-          <mat-expansion-panel-header [expandedHeight]="'48px'">
+        <mat-expansion-panel [expanded]="selection.isSelected(1)">
+          <mat-expansion-panel-header (click)="selection.toggle(1)" [expandedHeight]="'48px'">
             <mat-panel-title>
               Matches
             </mat-panel-title>
@@ -64,9 +64,9 @@
           </div>
         </mat-expansion-panel>
         <ng-container *ngFor="let field of resultFields; let i = index">
-          <mat-expansion-panel (click)="selection.toggle(field)" *ngIf="field !== 'texta_facts'"
+          <mat-expansion-panel *ngIf="field !== 'texta_facts'"
                                [expanded]="selection.isSelected(field)">
-            <mat-expansion-panel-header [expandedHeight]="'48px'">
+            <mat-expansion-panel-header (click)="selection.toggle(field)" [expandedHeight]="'48px'">
               <mat-panel-title>
                 {{field}}
               </mat-panel-title>
