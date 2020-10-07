@@ -50,18 +50,16 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     // paginator label hack
     this.paginator._intl.getRangeLabel = this.countRangeLabel;
 
-    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$), switchMap((project => {
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$)).subscribe((project => {
       if (project) {
         this.currentProject = project;
         const currentProjectState = this.localStorage.getProjectState(project);
         if (currentProjectState?.searcher?.itemsPerPage) {
           this.paginator.pageSize = currentProjectState.searcher.itemsPerPage;
         }
-        return this.projectStore.getSelectedProjectIndices().pipe(filter(x => !!x), take(1));
-      } else {
-        return of(undefined);
       }
-    }))).pipe(switchMap(projField => {
+    }));
+    this.projectStore.getSelectedProjectIndices().pipe(switchMap(projField => {
       if (projField) {
         this.projectFields = projField;
         // combine all fields of all indexes into one unique array to make columns
