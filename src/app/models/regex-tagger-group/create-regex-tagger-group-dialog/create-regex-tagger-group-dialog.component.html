@@ -16,7 +16,7 @@
       <mat-select [disableOptionCentering]="true"
                   formControlName="regexTaggersFormControl" multiple panelClass="select-panel-reveal-input" required>
         <mat-option *ngFor="let regexTagger of projectRegexTaggers" [value]="regexTagger">
-          {{regexTagger.description}}
+          {{regexTagger.id}}: {{regexTagger.description}}
         </mat-option>
       </mat-select>
       <mat-error *ngIf="regexTaggerGroupForm.get('regexTaggersFormControl')?.hasError('required')">

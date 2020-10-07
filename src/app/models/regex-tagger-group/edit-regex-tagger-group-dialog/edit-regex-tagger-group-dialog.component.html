@@ -12,15 +12,15 @@
 
 
     <mat-form-field data-cy="appRegexTaggerGroupCreateDialogRegexTaggerGroups">
-      <mat-label>Regex Tagger Groups</mat-label>
+      <mat-label>Regex Taggers</mat-label>
       <mat-select [disableOptionCentering]="true"
                   formControlName="regexTaggersFormControl" multiple panelClass="select-panel-reveal-input" required>
         <mat-option *ngFor="let regexTagger of projectRegexTaggers" [value]="regexTagger.id">
-          {{regexTagger.description}}
+          {{regexTagger.id}}: {{regexTagger.description}}
         </mat-option>
       </mat-select>
       <mat-error *ngIf="regexTaggerGroupForm.get('regexTaggersFormControl')?.hasError('required')">
-        Regex Tagger Group is <strong>required</strong>
+        Regex Tagger is <strong>required</strong>
       </mat-error>
     </mat-form-field>
 

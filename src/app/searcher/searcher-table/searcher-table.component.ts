@@ -6,7 +6,7 @@ import {MatSort, Sort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {FormControl} from '@angular/forms';
 import {forkJoin, of, Subject} from 'rxjs';
-import {debounceTime, delay, filter, switchMap, take, takeUntil} from 'rxjs/operators';
+import {debounceTime, delay, distinctUntilChanged, filter, switchMap, take, takeUntil} from 'rxjs/operators';
 import {ProjectStore} from '../../core/projects/project.store';
 import {ElasticsearchQuery} from '../searcher-sidebar/build-search/Constraints';
 import {Project, ProjectIndex} from '../../shared/types/Project';
@@ -59,24 +59,26 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
         }
       }
     }));
-    this.projectStore.getSelectedProjectIndices().pipe(switchMap(projField => {
-      if (projField) {
-        this.projectFields = projField;
-        // combine all fields of all indexes into one unique array to make columns
-        // @ts-ignore
-        this.displayedColumns = [...new Set([].concat.apply([], (projField.map(x => x.fields.map(y => y.path)))))];
-        this.setColumnsToDisplay();
-        // project changed reset table
-        this.tableData.data = [];
-      }
-      if (this.projectFields) {
-        return this.searcherService.search({
-          query: new ElasticsearchQuery().elasticSearchQuery,
-          indices: this.projectFields.map(x => x.index) || []
-        }, this.currentProject.id);
-      }
-      return of(null);
-    })).subscribe(resp => {
+    this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroy$), filter(x => !!x), distinctUntilChanged(),
+      switchMap(projField => {
+        if (projField) {
+          this.projectFields = projField;
+          // combine all fields of all indexes into one unique array to make columns
+          // @ts-ignore
+          this.displayedColumns = [...new Set([].concat.apply([], (projField.map(x => x.fields.map(y => y.path)))))];
+          this.setColumnsToDisplay();
+          // project changed reset table
+          this.tableData.data = [];
+        }
+        if (projField) {
+          return this.searcherService.search({
+            query: new ElasticsearchQuery().elasticSearchQuery,
+            indices: projField.map(x => x.index) || []
+          }, this.currentProject.id);
+        }
+        return of(null);
+      })
+    ).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.totalDocs = resp.count;
       }
