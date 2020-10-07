@@ -53,7 +53,7 @@
 
             </app-highlight>
           </ng-container>
-          <ng-container *ngIf="!!searchOptions.showShortVersion">
+          <ng-container *ngIf="!!searchOptions.showShortVersion && !(row.doc[column] | isObject)">
             <app-short-version
               [params]="{data: row.doc, currentColumn: column, searcherHighlight: row.highlight, contextWindow: searchOptions.showShortVersion}"></app-short-version>
           </ng-container>
