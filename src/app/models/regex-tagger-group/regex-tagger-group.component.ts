@@ -30,7 +30,7 @@ import {EditRegexTaggerGroupDialogComponent} from './edit-regex-tagger-group-dia
   ]
 })
 export class RegexTaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
-  expandedElements: boolean[] = [];
+  expandedElements: [boolean, boolean[]][] = [];
   public tableData: MatTableDataSource<RegexTaggerGroup> = new MatTableDataSource();
   selectedRows = new SelectionModel<RegexTaggerGroup>(true, []);
   public displayedColumns = ['select', 'id', 'author_username', 'description', 'regex_taggers', 'task__status', 'actions'];
@@ -39,6 +39,7 @@ export class RegexTaggerGroupComponent implements OnInit, OnDestroy, AfterViewIn
   @ViewChild(MatPaginator) paginator: MatPaginator;
   destroyed$: Subject<boolean> = new Subject<boolean>();
   currentProject: Project;
+  resultsLength: number;
   private updateTable = new Subject<boolean>();
 
   constructor(private projectStore: ProjectStore,
@@ -48,6 +49,8 @@ export class RegexTaggerGroupComponent implements OnInit, OnDestroy, AfterViewIn
   }
 
   ngOnInit(): void {
+    this.tableData.sort = this.sort;
+    this.tableData.paginator = this.paginator;
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(x => {
       if (x) {
         this.isLoadingResults = true;
@@ -62,8 +65,6 @@ export class RegexTaggerGroupComponent implements OnInit, OnDestroy, AfterViewIn
   }
 
   ngAfterViewInit(): void {
-    this.tableData.sort = this.sort;
-    this.tableData.paginator = this.paginator;
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
@@ -85,8 +86,12 @@ export class RegexTaggerGroupComponent implements OnInit, OnDestroy, AfterViewIn
       // Flip flag to show that loading has finished.
       this.isLoadingResults = false;
       if (data && !(data instanceof HttpErrorResponse)) {
+        this.resultsLength = data.count;
+        data.results.forEach(x => {
+          const arrayToAdd: [boolean, boolean[]] = [false, new Array(x.regex_taggers.length).fill(false)];
+          this.expandedElements.push(arrayToAdd);
+        });
         this.tableData.data = data.results;
-        this.expandedElements = new Array(data.results.length).fill(false);
       }
     });
   }
@@ -98,7 +103,7 @@ export class RegexTaggerGroupComponent implements OnInit, OnDestroy, AfterViewIn
     });
     dialogRef.afterClosed().subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.tableData.data = [resp, ...this.tableData.data];
+        this.updateTable.next(true);
       }
     });
   }
@@ -169,8 +174,7 @@ export class RegexTaggerGroupComponent implements OnInit, OnDestroy, AfterViewIn
         const body = {ids: [regexTaggerGroup.id]};
         this.regexTaggerGroupService.bulkDeleteRegexTaggerGroupTasks(this.currentProject.id, body).subscribe(() => {
           this.logService.snackBarMessage(`Deleted regex tagger group ${regexTaggerGroup.description}`, 2000);
-          this.tableData.data.splice(index, 1);
-          this.tableData.data = [...this.tableData.data];
+          this.updateTable.next(true);
         });
       }
     });
@@ -207,20 +211,12 @@ export class RegexTaggerGroupComponent implements OnInit, OnDestroy, AfterViewIn
 
           this.regexTaggerGroupService.bulkDeleteRegexTaggerGroupTasks(this.currentProject.id, body).subscribe(() => {
             this.logService.snackBarMessage(`Deleted ${this.selectedRows.selected.length} Regex Tagger Groups.`, 2000);
-            this.removeSelectedRows();
+            this.selectedRows.clear();
+            this.updateTable.next(true);
           });
         }
       });
     }
-  }
-
-  removeSelectedRows(): void {
-    this.selectedRows.selected.forEach((selected: RegexTaggerGroup) => {
-      const index: number = (this.tableData.data as RegexTaggerGroup[]).findIndex(regexTaggerGroup => regexTaggerGroup.id === selected.id);
-      this.tableData.data.splice(index, 1);
-      this.tableData.data = [...this.tableData.data];
-    });
-    this.selectedRows.clear();
   }
 
   ngOnDestroy(): void {

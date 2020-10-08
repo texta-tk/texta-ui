@@ -20,7 +20,7 @@
               style="margin-left: 10px">
         Apply Regex Tagger Group
       </button>
-      <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
+      <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons [length]="resultsLength">
       </mat-paginator>
     </div>
   </div>
@@ -83,9 +83,10 @@
       </ng-container>
 
       <ng-container matColumnDef="expandedDetail">
-        <td *matCellDef="let element; let i = dataIndex" [attr.colspan]="displayedColumns.length" class="expanded-detail"
+        <td *matCellDef="let element; let i = dataIndex" [attr.colspan]="displayedColumns.length"
+            class="expanded-detail"
             mat-cell>
-          <div *ngIf="expandedElements[i]" [@detailExpand] class="element-detail">
+          <div *ngIf="expandedElements[i][0]" [@detailExpand] class="element-detail">
             <div class="flex-col m-l-r-5" fxFlex="100">
               <table class="simple-table">
                 <tr>
@@ -100,26 +101,51 @@
                   <th class="mat-body-strong">Ignore Case</th>
                   <th class="mat-body-strong">Ignore Punctuation</th>
                 </tr>
-                <tr *ngFor="let tagger of element.tagger_info">
-                  <td>{{tagger.id}}</td>
-                  <td class="detail-desc-col" title="{{tagger.description}}">{{tagger.description}}</td>
-                  <td>{{tagger.operator}}</td>
-                  <td>{{tagger.match_type}}</td>
-                  <td>{{tagger.required_words}}
-                    <a class="action-text pointer" matTooltipClass="white-space-pre-line" matTooltip="{{tagger.lexicon.join('\n')}}">Lexicon</a> /
-                  <a class="action-text pointer" matTooltipClass="white-space-pre-line" matTooltip="{{tagger.counter_lexicon.join('\n')}}">Counter Lexicon</a></td>
-                  <td>{{tagger.phrase_slop}}</td>
-                  <td>{{tagger.counter_slop}}</td>
-                  <td>
-                    <mat-checkbox [checked]="tagger.return_fuzzy_match" disabled></mat-checkbox>
-                  </td>
-                  <td>
-                    <mat-checkbox [checked]="tagger.ignore_case" disabled></mat-checkbox>
-                  </td>
-                  <td>
-                    <mat-checkbox [checked]="tagger.ignore_punctuation" disabled></mat-checkbox>
-                  </td>
-                </tr>
+                <ng-container *ngFor="let tagger of element.tagger_info; let innerIndex = index">
+                  <tr (click)="this.expandedElements[i][1][innerIndex] = !this.expandedElements[i][1][innerIndex];"
+                      role="row" class="inner-element-row" [class.expanded-row]="expandedElements[i][1][innerIndex]" >
+                    <td>{{tagger.id}}</td>
+                    <td class="detail-desc-col" title="{{tagger.description}}">{{tagger.description}}</td>
+                    <td>{{tagger.operator}}</td>
+                    <td>{{tagger.match_type}}</td>
+                    <td>{{tagger.required_words}}</td>
+                    <td>{{tagger.phrase_slop}}</td>
+                    <td>{{tagger.counter_slop}}</td>
+                    <td>
+                      <mat-checkbox [checked]="tagger.return_fuzzy_match" disabled></mat-checkbox>
+                    </td>
+                    <td>
+                      <mat-checkbox [checked]="tagger.ignore_case" disabled></mat-checkbox>
+                    </td>
+                    <td>
+                      <mat-checkbox [checked]="tagger.ignore_punctuation" disabled></mat-checkbox>
+                    </td>
+                  </tr>
+                  <tr class="detail-row inner-regex-tagger-table-row"
+                      role="row">
+                    <td [attr.colspan]="10" class="expanded-detail">
+                      <div *ngIf="expandedElements[i][1][innerIndex]" [@detailExpand] class="element-detail">
+                        <div class="flex-col" fxFlex="100">
+                          <table>
+                            <tr>
+                              <th class="mat-body-strong">Lexicon</th>
+                              <th class="mat-body-strong">Counter Lexicon</th>
+                            </tr>
+                            <tr>
+                              <td>
+                                <div class="flex-col"><span *ngFor="let item of tagger.lexicon">{{item}}</span></div>
+                              </td>
+                              <td>
+                                <div class="flex-col"><span *ngFor="let item of tagger.counter_lexicon">{{item}}</span>
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </ng-container>
               </table>
             </div>
             <div *ngIf="element.task" class="flex-col m-l-r-5">
@@ -150,9 +176,9 @@
 
 
       <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
-      <tr (click)="expandedElements[i] = !expandedElements[i]"
+      <tr (click)="expandedElements[i][0] = !expandedElements[i][0]"
           *matRowDef="let element; columns: displayedColumns; let i = dataIndex"
-          [class.expanded-row]="expandedElements[i]"
+          [class.expanded-row]="expandedElements[i][0]"
           class="element-row"
           mat-row></tr>
       <tr *matRowDef="let row; columns: ['expandedDetail']" class="detail-row" mat-row></tr>

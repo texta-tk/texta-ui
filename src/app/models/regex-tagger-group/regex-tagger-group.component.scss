@@ -1,17 +1,51 @@
 
-
 :host {
   overflow: hidden;
 }
-.element-detail{
+
+.element-detail {
+  padding-left: 14px;
   flex-direction: column;
 }
-.expanded-detail{
+
+.expanded-detail {
   background-color: ivory;
 }
-.detail-desc-col{
+
+.detail-desc-col {
   max-width: 70px;
   text-overflow: ellipsis;
   overflow: hidden;
   word-break: keep-all;
+}
+
+.inner-regex-tagger-table-row {
+  table {
+    border-collapse: collapse;
+    table-layout: fixed;
+    padding: 14px;
+    th {
+      border: 1px solid #dddddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    td {
+      border: 1px solid #dddddd;
+      padding: 8px;
+      text-align: left;
+    }
+  }
+  .element-detail{
+    padding-left: 0;
+    background-color: white;
+  }
+}
+
+.inner-element-row:hover {
+  background: #ffffd5;
+}
+
+.simple-table > tr > td.expanded-detail{
+  padding: 0;
 }

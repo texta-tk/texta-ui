@@ -48,16 +48,19 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
 
   currentProject: Project;
   destroyed$ = new Subject<boolean>();
+  resultsLength: number;
 
-
-  getIndicesName = (x: Index) => x.name;
   constructor(public dialog: MatDialog,
               private projectStore: ProjectStore,
               private taggerGroupService: TaggerGroupService,
               private logService: LogService) {
   }
 
+  getIndicesName = (x: Index) => x.name;
+
   ngOnInit(): void {
+    this.tableData.sort = this.sort;
+    this.tableData.paginator = this.paginator;
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(resp => {
       if (resp) {
         this.currentProject = resp;
@@ -71,8 +74,6 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.tableData.sort = this.sort;
-    this.tableData.paginator = this.paginator;
     this.setUpPaginator();
   }
 
@@ -103,6 +104,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
       if (data instanceof HttpErrorResponse) {
         this.logService.snackBarError(data, 2000);
       } else if (data) {
+        this.resultsLength = data.count;
         this.tableData.data = data.results;
       }
     });

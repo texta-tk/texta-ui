@@ -164,13 +164,12 @@ pre {
 }
 
 .simple-table {
-  margin: 5px;
   font-family: arial, sans-serif;
   width: 100%;
   border-collapse: collapse;
 }
 
-.simple-table td, .simple-table th {
+.simple-table > tr > td, .simple-table > tr > th {
   border: 1px solid #dddddd;
   text-align: left;
   padding: 8px;

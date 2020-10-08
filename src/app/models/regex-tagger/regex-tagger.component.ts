@@ -40,6 +40,7 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElements: boolean[] = [];
   currentProject: Project;
   patchRowQueue: Subject<RegexTagger> = new Subject();
+  resultsLength: number;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -51,6 +52,8 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.tableData.sort = this.sort;
+    this.tableData.paginator = this.paginator;
     this.patchRowQueue.pipe(takeUntil(this.destroyed$), debounceTime(50)).subscribe(row => {
       if (this.currentProject) {
         this.regexTaggerService.patchRegexTagger(this.currentProject.id, row.id, row).subscribe();
@@ -60,8 +63,6 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
   ngAfterViewInit(): void {   // If the user changes the sort order, reset back to the first page.
-    this.tableData.sort = this.sort;
-    this.tableData.paginator = this.paginator;
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
     merge(this.sort.sortChange, this.paginator.page, this.filteredSubject)
@@ -84,6 +85,7 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
       } else if (data) {
         this.isLoadingResults = false;
         this.tableData.data = data.results;
+        this.resultsLength = data.count;
         this.expandedElements = new Array(data.results.length).fill(false);
       }
     });

@@ -107,11 +107,11 @@
     </div>
 
 
-    <div *ngIf="user" class="flex-item-right flex-row user-name" fxLayoutAlign="center center">
+    <div *ngIf="user" class="flex-item-right flex-row user-name" fxLayoutAlign="baseline baseline">
       <mat-form-field *ngIf="projectFields" class="project-select">
         <mat-select (openedChange)="indexSelectionOpenedChange($event)" [compareWith]="compareIndices"
                     [disableOptionCentering]="true"
-                    [formControl]="projectFieldsControl" [placeholder]="projectFields.length < 1 ? 'No indices' : ''"
+                    [formControl]="projectFieldsControl" placeholder="Indices"
                     data-cy="appNavbarProjectFieldsSelect"
                     multiple
                     panelClass="select-panel-reveal-input">
@@ -121,10 +121,10 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field class="project-select" floatLabel="never">
+      <mat-form-field class="project-select" >
         <mat-select (selectionChange)="projectStore.setCurrentProject($event.value)" [compareWith]="compareProjects"
                     [disableOptionCentering]="true" [formControl]="projectControl"
-                    [placeholder]="currentProject ? currentProject.id+': '+currentProject.title : 'No projects'"
+                    placeholder="Projects"
                     data-cy="appNavbarProjectSelect"
                     panelClass="select-panel-reveal-input">
           <mat-option *ngFor="let item of projects" [value]="item">

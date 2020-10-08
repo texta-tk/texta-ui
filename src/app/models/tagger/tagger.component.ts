@@ -47,6 +47,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   // For custom filtering, such as text search in description
   inputFilterQuery = '';
   filteringValues: { [key: string]: string } = {};
+  resultsLength: number;
 
   currentProject: Project;
   destroyed$ = new Subject<boolean>();
@@ -60,6 +61,8 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   getIndicesName = (x: Index) => x.name;
 
   ngOnInit(): void {
+    this.tableData.sort = this.sort;
+    this.tableData.paginator = this.paginator;
 
     // Check for updates after 30s every 30s
     timer(30000, 30000).pipe(takeUntil(this.destroyed$), switchMap(_ =>
@@ -86,8 +89,6 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.tableData.sort = this.sort;
-    this.tableData.paginator = this.paginator;
     this.setUpPaginator();
   }
 
@@ -116,6 +117,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
       // Flip flag to show that loading has finished.
       this.isLoadingResults = false;
       if (data && !(data instanceof HttpErrorResponse)) {
+        this.resultsLength = data.count;
         this.tableData.data = data.results;
       } else if (data) {
         this.logService.snackBarError(data, 2000);
