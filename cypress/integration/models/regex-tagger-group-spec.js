@@ -156,6 +156,7 @@ describe('regex-tagger-group should work', function () {
     cy.wait('@postRegexTaggers').then(created => {
       expect(created.status).to.eq(201);
     });
+    cy.wait('@getRegexTaggers');
     cy.wait(1000);
 
     multiTagTest();
