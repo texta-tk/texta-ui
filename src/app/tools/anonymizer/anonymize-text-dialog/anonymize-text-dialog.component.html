@@ -1,10 +1,16 @@
 <h1 mat-dialog-title>Anonymize Text</h1>
 <div mat-dialog-content>
   <form (ngSubmit)="onSubmit(anonymizerForm.value)" [formGroup]="anonymizerForm" fxLayout="column">
-    <mat-form-field data-cy="appAnonymizerAnonymizeText">
-      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="textFormControl" matInput
-             placeholder="Text" required>
 
+    <mat-form-field data-cy="appAnonymizerAnonymizeText">
+      <mat-label>Text</mat-label>
+      <textarea [errorStateMatcher]="matcher" autocomplete="off" cdkAutosizeMaxRows="6"
+                cdkAutosizeMinRows="3"
+                cdkTextareaAutosize
+                formControlName="textFormControl"
+                matInput
+                required>
+      </textarea>
       <mat-error *ngIf="anonymizerForm.get('textFormControl')?.hasError('required')">
         Text is <strong>required</strong>
       </mat-error>
@@ -15,8 +21,8 @@
                 cdkAutosizeMinRows="3"
                 cdkTextareaAutosize
                 formControlName="namesFormControl"
-                placeholder="Last name, First name"
-                matInput>
+                matInput
+                placeholder="Last name, First name">
       </textarea>
       <mat-error *ngIf="anonymizerForm.get('namesFormControl')?.hasError('required')">
         Names are <strong>required</strong>
