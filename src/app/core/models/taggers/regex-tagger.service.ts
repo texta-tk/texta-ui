@@ -10,7 +10,7 @@ import {
   RegexTaggerGroupTagTextResult,
   RegexTaggerTagRandomDocResult,
   RegexTaggerTagTextResult
-} from "../../../shared/types/tasks/RegexTaggerGroup";
+} from '../../../shared/types/tasks/RegexTaggerGroup';
 
 @Injectable({
   providedIn: 'root'
@@ -45,6 +45,13 @@ export class RegexTaggerService {
       tap(e => this.logService.logStatus(e, 'tagText')),
       catchError(this.logService.handleError<RegexTaggerTagTextResult>('tagText')));
   }
+
+  duplicate(projectId: number, taggerId: number, tagger: RegexTagger): Observable<{ message: string } | HttpErrorResponse> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/projects/${projectId}/regex_taggers/${taggerId}/duplicate/`, tagger).pipe(
+      tap(e => this.logService.logStatus(e, 'duplicate')),
+      catchError(this.logService.handleError<{ message: string }>('duplicate')));
+  }
+
 
   bulkDeleteRegexTaggers(projectId: number, body: unknown): Observable<unknown> {
     return this.http.post<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>

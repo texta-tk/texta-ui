@@ -36,14 +36,13 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   destroyed$ = new Subject<boolean>();
   selectedRows = new SelectionModel<RegexTagger>(true, []);
-  filteredSubject = new Subject();
   expandedElements: boolean[] = [];
   currentProject: Project;
   patchRowQueue: Subject<RegexTagger> = new Subject();
   resultsLength: number;
-
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  private updateTable = new Subject<boolean>();
 
   constructor(private projectStore: ProjectStore,
               private regexTaggerService: RegexTaggerService,
@@ -65,7 +64,7 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit(): void {   // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
-    merge(this.sort.sortChange, this.paginator.page, this.filteredSubject)
+    merge(this.sort.sortChange, this.paginator.page, this.updateTable)
       .pipe(debounceTime(250), switchMap(() => {
         if (this.currentProject) {
           this.isLoadingResults = true;
@@ -95,7 +94,7 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
         this.currentProject = resp;
         if (this.paginator) {
           this.paginator.pageIndex = 0;
-          this.filteredSubject.next(''); // refresh table
+          this.updateTable.next(true); // refresh table
         }
       }
     });
@@ -115,6 +114,17 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
           this.tableData.data.splice(index, 1);
         }
         this.tableData.data = [resp, ...this.tableData.data];
+      }
+    });
+  }
+
+  duplicateRegexTagger(element: RegexTagger): void {
+    this.regexTaggerService.duplicate(this.currentProject.id, element.id, element).subscribe(x => {
+      if (x && !(x instanceof HttpErrorResponse)) {
+        this.logService.snackBarMessage(x.message, 4000);
+        this.updateTable.next(true);
+      } else if (x) {
+        this.logService.snackBarError(x);
       }
     });
   }
