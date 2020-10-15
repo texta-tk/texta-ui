@@ -61,7 +61,7 @@ describe('mlp should work', function () {
       })
     });
 
-    cy.get('[data-cy=appToolsMLPApplyTextBtn]').click();
+ /*    cy.get('[data-cy=appToolsMLPApplyTextBtn]').click();
     cy.wait('@optionsMLPTasks');
     cy.get('[data-cy=appMLPApplyDialogText]').then((desc => {
       cy.wrap(desc).should('have.class', 'mat-focused').type('b').find('input').clear();
@@ -81,6 +81,6 @@ describe('mlp should work', function () {
     cy.get('[data-cy=appMLPApplyDialogSubmit]').should('be.visible').click();
     cy.wait('@MLPTexts').then(created => {
       expect(created.status).to.eq(200);
-    });
+    }); */
   });
 });
