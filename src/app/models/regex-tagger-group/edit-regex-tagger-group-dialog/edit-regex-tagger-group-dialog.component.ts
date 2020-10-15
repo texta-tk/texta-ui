@@ -54,7 +54,7 @@ export class EditRegexTaggerGroupDialogComponent implements OnInit, OnDestroy {
       return of(null);
     })).subscribe(x => {
       if (x && !(x instanceof HttpErrorResponse)) {
-        this.projectRegexTaggers = x.results;
+        this.projectRegexTaggers = x.results.sort((a, b) => a.id - b.id);
       } else if (x) {
         this.logService.snackBarError(x);
       }

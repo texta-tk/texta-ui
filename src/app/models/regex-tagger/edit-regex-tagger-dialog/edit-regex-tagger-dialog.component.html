@@ -12,7 +12,7 @@
     <mat-form-field data-cy="appRegexTaggerEditDialogLexicon">
       <textarea
         [errorStateMatcher]="matcher"
-        [rows]="5"
+        [rows]="8"
         formControlName="lexiconFormControl"
         matInput placeholder="Lexicon (newline separated)" required></textarea>
       <a (click)="$event.stopPropagation();" *ngIf="lexicons.length > 0"
