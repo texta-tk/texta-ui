@@ -39,7 +39,7 @@ describe('Anonymizer should work', function () {
     cy.get('.cdk-column-actions:nth(1)').click('left');
     cy.get('[data-cy=appAnonymizerTextAction]').click();
     cy.get('[data-cy=appAnonymizerAnonymizeText]').then((text => {
-      cy.wrap(text).should('have.class', 'mat-focused').type('b').find('input').clear();
+      cy.wrap(text).should('have.class', 'mat-focused').type('b').find('textarea').clear();
       cy.matFormFieldShouldHaveError(text, 'required');
       cy.wrap(text).type('arvati Silver Semiskarile mõistetud 9 aasta ja 6 kuu pikkusest vangistusest maha eelmise kohtuotsusega mõistetud karistuse ärakantud osa ja lõplikuks karistuseks mõisteti Silver Semiskarile 4 aastat 2 kuud ja 15 päeva vangistust, kandmise algusega 20. septembrist 2018;', {delay: 0});
     }));
