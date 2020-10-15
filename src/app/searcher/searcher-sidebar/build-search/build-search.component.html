@@ -17,10 +17,18 @@
   <div class="bg-grey search-options" fxLayout="column">
     <h4 class="flex-item-center">Search options</h4>
 
-    <mat-checkbox [(ngModel)]=highlightTextaFacts labelPosition="before">Highlight facts:</mat-checkbox>
-    <mat-checkbox [(ngModel)]=highlightMatching labelPosition="before" *ngIf="highlightTextaFacts">Only highlight matching facts:</mat-checkbox>
-    <mat-checkbox [(ngModel)]=highlightSearcherMatches labelPosition="before">Highlight searcher matches:</mat-checkbox>
-    <mat-checkbox [(ngModel)]=showShortVersion labelPosition="before">Show short version:</mat-checkbox>
+    <mat-checkbox [(ngModel)]=highlightTextaFacts data-cy="appSearcherSidebarBuildSearchHighlightFacts"
+                  labelPosition="before">Highlight facts:
+    </mat-checkbox>
+    <mat-checkbox *ngIf="highlightTextaFacts" [(ngModel)]=highlightMatching
+                  data-cy="appSearcherSidebarBuildSearchHighlightMatchingFacts" labelPosition="before">Only highlight matching facts:
+    </mat-checkbox>
+    <mat-checkbox [(ngModel)]=highlightSearcherMatches data-cy="appSearcherSidebarBuildSearchHighlightSearcher"
+                  labelPosition="before">Highlight searcher matches:
+    </mat-checkbox>
+    <mat-checkbox [(ngModel)]=showShortVersion data-cy="appSearcherSidebarBuildSearchShowShortVersion" labelPosition="before">
+      Show short version:
+    </mat-checkbox>
     <mat-slider *ngIf="showShortVersion" [(ngModel)]="showShortVersionContext" max="15" min="1" step="1"
                 thumbLabel></mat-slider>
   </div>

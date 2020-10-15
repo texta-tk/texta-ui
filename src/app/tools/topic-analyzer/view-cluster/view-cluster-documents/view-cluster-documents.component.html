@@ -64,16 +64,17 @@
       <ng-container *ngFor="let column of infiniteColumns" [matColumnDef]="column">
         <th *matHeaderCellDef class="table-row" mat-header-cell mat-sort-header>{{column}}</th>
         <td *matCellDef="let row" mat-cell>
-          <app-highlight #el (click)="el.toggleTextLimit()" *ngIf="!(row.content[column] | isObject)"
+          <app-generic-highlighter #el (click)="el.toggleTextLimit()" *ngIf="!(row.content[column] | isObject)"
                          [highlightConfig]="{
                           currentColumn: column,
                           searcherHighlight: row.highlight,
                           highlightTextaFacts: false,
                           charLimit: charLimit,
                           highlightHyperlinks: false,
+                          titleAccessor: textaFactAccessor,
                           data: row.content}"
                          [ngClass]="{'pointer': row.content[column] && row.content[column].length > charLimit}">
-          </app-highlight>
+          </app-generic-highlighter>
         </td>
       </ng-container>
 

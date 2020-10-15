@@ -1,10 +1,11 @@
 {
   "description": "test",
   "lexicon": [
+    "a",
     "tere"
   ],
   "counter_lexicon": [],
-  "operator": "and",
+  "operator": "or",
   "match_type": "prefix",
   "required_words": 1,
   "phrase_slop": 0,

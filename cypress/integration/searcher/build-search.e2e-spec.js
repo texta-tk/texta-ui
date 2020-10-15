@@ -58,7 +58,24 @@ describe('searching and search related activities should be working correctly', 
     // simple
     cy.get('app-simple-search input').click().type('reisija');
     cy.wait('@searcherQuery');
-    cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted div').should('be.visible');
+    cy.get(':nth-child(1) > .cdk-column-comment_content > app-highlight span').should('be.visible');
+    // change proj, to test projectindices subscribers
+    cy.get('[data-cy=appNavbarProjectSelect]').click();
+    cy.get('mat-option:nth(2)').contains('integration_test_project').click();
+    cy.wait('@searcherQuery');
+    cy.wait('@getProjectIndices');
+
+    // test searcher options, showShortVersion, highlight search matches
+    cy.get('[data-cy=appSearcherSidebarBuildSearchShowShortVersion]').click();
+    cy.get('app-simple-search input').click().clear().type('reisija');
+    cy.wait('@searcherQuery');
+    cy.get(':nth-child(1) > .cdk-column-comment_content > app-short-version').should('be.visible');
+
+    cy.get('[data-cy=appSearcherSidebarBuildSearchShowShortVersion]').click();
+    cy.get('[data-cy=appSearcherSidebarBuildSearchHighlightSearcher]').click();
+    cy.get('app-simple-search input').click().clear().type('reisija');
+    cy.wait('@searcherQuery');
+    cy.get(':nth-child(1) > .cdk-column-comment_content > app-highlight span').should('not.be.visible');
 
     // date
     cy.get('[data-cy=appSearcherSidebarBuildSearchRadio] mat-radio-button:not(:first())').should('be.visible').click();
@@ -94,10 +111,13 @@ describe('searching and search related activities should be working correctly', 
     cy.get('[data-cy=appSearcherTableColumnSelect]').should('be.visible').click();
     cy.get('[data-cy=matOptionSelectAll]').should('be.visible').click();
     cy.get('mat-option').contains('texta_facts').click();
+    cy.get('mat-option').contains('comment_content').click();
     cy.closeCurrentCdkOverlay();
 
     cy.get('.cdk-column-texta_facts > app-texta-facts-chips > span').should('not.exist');
 
+    cy.get('[data-cy=appSearcherSidebarBuildSearchHighlightFacts]').click();
+    cy.get(':nth-child(1) > .cdk-column-comment_content > app-highlight span').should('not.be.visible');
     cy.get('[data-cy=appSearcherSideBarBuildSearchFactNameOperator]').click();
     cy.get('mat-option').contains('and').click();
     cy.wait('@searcherQuery');

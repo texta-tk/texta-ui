@@ -99,16 +99,22 @@ describe('regex-tagger-group should work', function () {
       cy.closeCurrentCdkOverlay();
       cy.matFormFieldShouldHaveError(fields, 'required');
       cy.wrap(fields).click();
-      cy.get('.mat-option-text:nth(1)').should('be.visible').click();
+      cy.get('.mat-option-text').contains('comment_content').should('be.visible').click();
       cy.closeCurrentCdkOverlay();
       cy.wrap(fields).find('mat-error').should('have.length', 0)
     }));
 
-    cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
-    cy.wait('@postRegexTaggers').then(resp => {
-      expect(resp.status).to.eq(200);
-    });
-    cy.get('.code-wrapper').should('be.visible');
+    cy.wrap([0, 0, 0, 0, 0]).each(y => { // hack to wait for task to complete
+      cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
+      cy.wait('@postRegexTaggers').then(resp => {
+        expect(resp.status).to.eq(200);
+        if (resp?.response?.body?.result) {
+          cy.get('app-fact-chip').should('be.visible');
+        }else{
+          cy.get('[data-cy=appRegexTaggerGroupTagRandomDocDialogIndices]').should('be.visible');
+        }
+      });
+    })
     cy.get('[data-cy=appRegexTaggerGroupTagRandomDocDialogClose]').click();
 
   }
@@ -125,9 +131,10 @@ describe('regex-tagger-group should work', function () {
 
     cy.wait('@postRegexTaggers').then(resp => {
       expect(resp.status).to.eq(200);
-      expect(resp.response.body.tags[0].matches.length).to.eq(1, 'should have found a match');
+      if (resp?.response?.body?.result) {
+        cy.get('app-fact-chip').should('be.visible');
+      }
     });
-    cy.get('.code-wrapper').should('be.visible');
     cy.get('[data-cy=appRegexTaggerGroupTagTextDialogClose]').click();
   }
 
@@ -161,8 +168,8 @@ describe('regex-tagger-group should work', function () {
 
     multiTagTest();
     applyTaggerGroup();
-    //tagRandomDoc();
-    //tagText();
+    tagRandomDoc();
+    tagText();
 
 
     cy.get('.cdk-column-actions:nth(1)').click('left');

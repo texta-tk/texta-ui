@@ -9,7 +9,6 @@ import {SimilarClusterDialogComponent} from './view-cluster/view-cluster-documen
 import {SimilarOptionsDialogComponent} from './view-cluster/view-cluster-documents/similar-cluster-dialog/similar-options-dialog/similar-options-dialog.component';
 import {TagClusterDialogComponent} from './view-cluster/view-cluster-documents/tag-cluster-dialog/tag-cluster-dialog.component';
 import { EditStopwordsDialogComponent } from './edit-stopwords-dialog/edit-stopwords-dialog.component';
-import {SearcherModule} from '../../searcher/searcher.module';
 
 
 @NgModule({
@@ -23,8 +22,7 @@ import {SearcherModule} from '../../searcher/searcher.module';
     EditStopwordsDialogComponent],
   imports: [
     SharedModule,
-    TopicAnalyzerRoutingModule,
-    SearcherModule
+    TopicAnalyzerRoutingModule
   ]
 })
 export class TopicAnalyzerModule {

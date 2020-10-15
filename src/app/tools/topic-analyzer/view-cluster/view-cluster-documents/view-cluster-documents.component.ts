@@ -26,6 +26,7 @@ import {SimilarClusterDialogComponent} from './similar-cluster-dialog/similar-cl
 import {TagClusterDialogComponent} from './tag-cluster-dialog/tag-cluster-dialog.component';
 import {LocalStorageService} from '../../../../core/util/local-storage.service';
 import {SignificantWordsWorker} from './SignificantWordsWorker';
+import {TextaFact} from '../../../../shared/types/Search';
 
 
 @Component({
@@ -61,6 +62,8 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
     private localStorageService: LocalStorageService,
     private clusterService: ClusterService) {
   }
+
+  textaFactAccessor = (x: TextaFact) => x.fact;
 
   ngOnInit(): void {
     this.clusterDocumentsQueue$.pipe(takeUntil(this.destroyed$), switchMap(x => {

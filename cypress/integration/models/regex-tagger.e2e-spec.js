@@ -40,16 +40,21 @@ describe('regex-taggers should work', function () {
       cy.closeCurrentCdkOverlay();
       cy.matFormFieldShouldHaveError(fields, 'required');
       cy.wrap(fields).click();
-      cy.get('.mat-option-text:nth(1)').should('be.visible').click();
+      cy.get('.mat-option-text').contains('comment_content').should('be.visible').click();
       cy.closeCurrentCdkOverlay();
       cy.wrap(fields).find('mat-error').should('have.length', 0)
     }));
-
-    cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
-    cy.wait('@postRegexTaggers').then(resp => {
-      expect(resp.status).to.eq(200);
-    });
-    cy.get('.code-wrapper').should('be.visible');
+    cy.wrap([0, 0, 0, 0, 0]).each(y => { // hack to wait for task to complete
+      cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
+      cy.wait('@postRegexTaggers').then(resp => {
+        expect(resp.status).to.eq(200);
+        if (resp?.response?.body?.result) {
+          cy.get('app-fact-chip').should('be.visible');
+        }else{
+          cy.get('[data-cy=appRegexTaggerTagRandomDocDialogIndices]').should('be.visible');
+        }
+      });
+    })
     cy.get('[data-cy=appRegexTaggerTagRandomDocDialogClose]').click();
 
   }
@@ -66,8 +71,10 @@ describe('regex-taggers should work', function () {
 
     cy.wait('@postRegexTaggers').then(resp => {
       expect(resp.status).to.eq(200);
+      if (resp?.response?.body?.result) {
+        cy.get('app-fact-chip').should('be.visible');
+      }
     });
-    cy.get('.code-wrapper').should('be.visible');
     cy.get('[data-cy=appRegexTaggerTagTextDialogClose]').click();
   }
 
@@ -83,7 +90,7 @@ describe('regex-taggers should work', function () {
     cy.get('[data-cy=appRegexTaggerCreateDialogLexicon]').click().then((desc => {
       cy.wrap(desc).should('have.class', 'mat-focused').type('b').find('textarea').clear();
       cy.matFormFieldShouldHaveError(desc, 'required');
-      cy.wrap(desc).type('tere');
+      cy.wrap(desc).type('a');
     }));
 
     cy.get('[data-cy=appRegexTaggerCreateDialogSubmit]').click();
@@ -105,8 +112,8 @@ describe('regex-taggers should work', function () {
     cy.get('.code-wrapper').should('be.visible');
     cy.get('[data-cy=appRegexTaggerMultiTagDialogClose]').click();
 
-    //tagRandomDoc();
-    //tagText();
+    tagRandomDoc();
+    tagText();
 
     cy.get('.cdk-column-actions:nth(1)').click('left');
     cy.get('[data-cy=appRegexTaggerMenuDelete]').click();

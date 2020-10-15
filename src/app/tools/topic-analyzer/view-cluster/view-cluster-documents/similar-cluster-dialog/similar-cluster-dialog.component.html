@@ -54,16 +54,17 @@
         <th *matHeaderCellDef class="table-row" mat-header-cell mat-sort-header>{{column}}</th>
         <td *matCellDef="let row" mat-cell>
           <ng-container *ngIf="!(row._source[column] | isObject)">
-            <app-highlight #el (click)="el.toggleTextLimit()" [highlightConfig]="{
+            <app-generic-highlighter #el (click)="el.toggleTextLimit()" [highlightConfig]="{
                           currentColumn: column,
                           searcherHighlight: row.highlight,
                           highlightTextaFacts: false,
+                          titleAccessor: textaFactAccessor,
                           charLimit: charLimit,
                           highlightHyperlinks: false,
                           data: row._source}"
                            [ngClass]="{'pointer': row._source[column] && row._source[column].length > charLimit}"
                            class="pointer">
-            </app-highlight>
+            </app-generic-highlighter>
           </ng-container>
         </td>
       </ng-container>

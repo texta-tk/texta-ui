@@ -24,3 +24,10 @@ export class SearchOptions {
   highlightSearcherMatches: boolean;
   showShortVersion?: number;
 }
+
+export interface TextaFact {
+  doc_path: string;
+  fact: string;
+  spans: string | number[];
+  str_val: string;
+}

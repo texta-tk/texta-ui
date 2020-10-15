@@ -15,6 +15,7 @@ import {ConfirmDialogComponent} from '../../../../../shared/components/dialogs/c
 import {LocalStorageService} from '../../../../../core/util/local-storage.service';
 import {SignificantWordsWorker} from '../SignificantWordsWorker';
 import {ElasticSearchSourceResponse} from '../../../../../shared/types/Generic';
+import {TextaFact} from '../../../../../shared/types/Search';
 
 @Component({
   selector: 'app-similar-cluster-dialog',
@@ -36,6 +37,7 @@ export class SimilarClusterDialogComponent implements OnInit, AfterViewInit, OnD
   queryOptions: unknown;
   charLimit = 300;
 
+  textaFactAccessor = (x: TextaFact) => x.fact;
   constructor(private clusterService: ClusterService, private logService: LogService, private localStorageService: LocalStorageService,
               public dialog: MatDialog,
               @Inject(MAT_DIALOG_DATA) public data: {
