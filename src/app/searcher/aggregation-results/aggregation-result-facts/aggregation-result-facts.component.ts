@@ -26,7 +26,7 @@ export class AggregationResultFactsComponent {
   // tslint:disable-next-line:no-any
   dataSource: any[];
   displayedColumns = ['key', 'doc_count'];
-
+  readonly CHART_MAX_ITEMS = 20;
   ngxChartData: BarChartDataCategories[] = []; // for select
   chartData: BarChartData[] = []; // for actual chart data
   customColors: unknown[] = [];
@@ -49,16 +49,24 @@ export class AggregationResultFactsComponent {
       for (const item of value) {
         this.ngxChartData.push({
           key: item.key,
-          value: item.buckets.flatMap(x => {
+          value: [...item.buckets.flatMap(x => {
             // item.key hack so i can seperate identical names with colors, used in formatYAxisTicks
             const factName = `[${item.key}]|${x.key}`;
             this.customColors.push({name: factName, value: COLORS.get(item.key)?.backgroundColor});
-            return [{name: factName, value: x.fact_val_reverse.doc_count, extra: {key: item.key, name: x.key, term_count: x.doc_count}}];
-          })
+            return [{
+              name: factName,
+              value: x.fact_val_reverse.doc_count,
+              extra: {key: item.key, name: x.key, term_count: x.doc_count}
+            }];
+          }), ...(Array(this.CHART_MAX_ITEMS).fill('').map((_, i) => [{
+            value: 0,
+            name: `@#!|${i}`,
+            extra: {key: '', name: '', term_count: 0}
+          }]).flat())].slice(0, this.CHART_MAX_ITEMS)
         });
       }
-      this.selectedFacts = [this.ngxChartData[0]];
-      this.chartData = this.ngxChartData[0].value.slice(0, 30);
+      this.selectedFacts = this.ngxChartData;
+      this.chartData = this.selectedFacts.flatMap(x => x.value).sort((a, b) => (a.value < b.value) ? 1 : -1).slice(0, this.CHART_MAX_ITEMS);
     }
   }
 
@@ -74,24 +82,18 @@ export class AggregationResultFactsComponent {
 
   formatYAxisTicks(val: string): string {
     let origName: string | string[] = val.split('|'); // take out the ID (KEY, PER, ORG etc)
+    if (origName.length > 0 && origName[0] === '@#!') { // make placeholder titles empty so they dont show up in barchart
+      return '';
+    }
     origName.shift();
     origName = origName.join('|');
 
-    const split = origName.split(' ');
-    let stringValue = '';
-    for (const item of split) {
-      if (stringValue.length + item.length < 16) {
-        stringValue += item + (split.length !== 1 ? ' ' : '');
-      } else if (stringValue === '') {
-        return split[0].substr(0, 16) + (split.length > 1 ? '...' : '');
-      }
-    }
-    return origName.length === stringValue.trim().length ? stringValue : stringValue + '...';
+    return origName;
   }
 
   openedChange(val: boolean): void {
     if (this.selectedFacts.length >= 0) {
-      this.chartData = this.selectedFacts.flatMap(x => x.value).sort((a, b) => (a.value < b.value) ? 1 : -1).slice(0, 30);
+      this.chartData = this.selectedFacts.flatMap(x => x.value).sort((a, b) => (a.value < b.value) ? 1 : -1).slice(0, this.CHART_MAX_ITEMS);
     }
   }
 }

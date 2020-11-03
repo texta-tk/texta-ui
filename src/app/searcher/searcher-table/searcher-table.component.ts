@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {SearcherComponentService} from '../services/searcher-component.service';
 import {Search, SearchOptions} from '../../shared/types/Search';
-import {MatPaginator, PageEvent} from '@angular/material/paginator';
+import {MatPaginator, MatPaginatorIntl, PageEvent} from '@angular/material/paginator';
 import {MatSort, Sort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {FormControl} from '@angular/forms';
@@ -19,6 +19,7 @@ import {SearcherService} from '../../core/searcher/searcher.service';
   selector: 'app-searcher-table',
   templateUrl: './searcher-table.component.html',
   styleUrls: ['./searcher-table.component.scss'],
+  providers: [{provide: MatPaginatorIntl, useClass: MatPaginatorIntl}], // changing paginator intl here, dont want to affect whole app
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearcherTableComponent implements OnInit, OnDestroy {
@@ -201,7 +202,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     if (length === 0 || pageSize === 0) {
       return `0 of ${length}/${this.totalDocs}`;
     }
-
+    
     length = Math.max(length, 0);
     const startIndex = page * pageSize;
 
