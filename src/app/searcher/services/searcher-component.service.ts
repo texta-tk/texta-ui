@@ -32,16 +32,16 @@ export class SearcherComponentService {
       factTextInput: 'texta-facts-chips-placeholder'
     }]
   };
-  private searchSubject = new BehaviorSubject<Search | null>(null);
+  private searchSubject = new Subject<Search | null>();
   // tslint:disable-next-line:no-any
-  private aggregationSubject = new BehaviorSubject<{ globalAgg: any, agg: any } | null>(null);
+  private aggregationSubject = new Subject<{ globalAgg: any, agg: any } | null>();
   // so query wouldnt be null (we use current query in aggs so we dont want null even if user hasnt searched everything,
   private savedSearchUpdate = new Subject<boolean>();
   // we still want to be able to make aggs)
   private elasticQuerySubject = new BehaviorSubject<ElasticsearchQuery>(new ElasticsearchQuery());
   private isLoading = new BehaviorSubject<boolean>(false);
-  private savedSearch = new BehaviorSubject<SavedSearch | null>(null);
-  private advancedSearchConstraints$ = new BehaviorSubject<Constraint[]>([]);
+  private savedSearch = new Subject<SavedSearch | null>();
+  private advancedSearchConstraints$ = new Subject<Constraint[]>();
 
   constructor(private localStorage: LocalStorageService) {
   }

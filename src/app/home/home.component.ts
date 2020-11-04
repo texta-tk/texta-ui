@@ -3,9 +3,10 @@ import {Health} from '../shared/types/Project';
 import {HttpErrorResponse} from '@angular/common/http';
 import {UserStore} from '../core/users/user.store';
 import {UserProfile} from '../shared/types/UserProfile';
-import {Subscription} from 'rxjs';
+import {of, Subject, Subscription} from 'rxjs';
 import * as projectPackage from '../../../package.json';
 import {CoreService} from '../core/core.service';
+import {switchMap, takeUntil} from 'rxjs/operators';
 
 
 @Component({
@@ -16,30 +17,36 @@ import {CoreService} from '../core/core.service';
 export class HomeComponent implements OnInit, OnDestroy {
   health: Health;
   unreachable: boolean;
-  userSub: Subscription;
   user: UserProfile | null;
   frontVersion = projectPackage.version;
+  destroyed$ = new Subject<boolean>();
 
   constructor(private coreService: CoreService, private userStore: UserStore) {
 
   }
 
   ngOnInit(): void {
-    this.userSub = this.userStore.getCurrentUser().subscribe(user => {
-      this.user = user;
-      this.coreService.getHealth().subscribe((resp: Health | HttpErrorResponse) => {
-        if (resp && !(resp instanceof HttpErrorResponse)) {
-          this.health = resp;
-          this.unreachable = false;
-        } else {
-          this.unreachable = true;
-        }
-      });
+    this.userStore.getCurrentUser().pipe(takeUntil(this.destroyed$), switchMap(user => {
+      if (user) {
+        this.user = user;
+        return this.coreService.getHealth().pipe(takeUntil(this.destroyed$)); // when we route out, dont care about this request anymore
+      } else {
+        return of(null);
+      }
+    })).subscribe(resp => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.health = resp;
+        this.unreachable = false;
+      } else {
+        this.unreachable = true;
+      }
     });
+
   }
 
   ngOnDestroy(): void {
-    this.userSub.unsubscribe();
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
   }
 
 }

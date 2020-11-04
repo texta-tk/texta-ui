@@ -1,4 +1,4 @@
-<div class="wrapper">
+<div class="wrapper" *ngIf="searcherType">
   <mat-radio-group (change)="saveTypeSelection($event.value)" [(ngModel)]="searcherType" aria-label="Select an option"
                    data-cy="appSearcherSidebarBuildSearchRadio"
                    fxLayoutAlign="space-between">

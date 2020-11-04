@@ -3,6 +3,7 @@ import {DateConstraint, ElasticsearchQuery} from '../../Constraints';
 import {FormControl, FormGroup} from '@angular/forms';
 import {debounceTime, distinctUntilChanged, startWith, takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
+import {SearcherOptions} from "../../../../SearcherOptions";
 
 @Component({
   selector: 'app-date-constraints',
@@ -36,7 +37,7 @@ export class DateConstraintsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-
+    let firstRun = true;
     if (this._dateConstraint) {
       const fieldPaths = this._dateConstraint.fields.map(x => x.path);
       // todo fix in TS 3.7
@@ -45,12 +46,14 @@ export class DateConstraintsComponent implements OnInit, OnDestroy {
       this.range.valueChanges.pipe(
         takeUntil(this.destroyed$),
         startWith(this.range.value as object),
-        debounceTime(100), // skip duplicate emissions
+        debounceTime(SearcherOptions.SEARCH_DEBOUNCE_TIME), // skip duplicate emissions
         distinctUntilChanged()).subscribe(value => {
         if (this.range.valid) {
           this.makeDateQuery(fieldPaths, value.dateFromFormControl, value.dateToFormControl);
-          if (value.dateFromFormControl !== value.dateToFormControl) {
+          if (!firstRun) {
             this.constraintChanged.emit(this.elasticSearchQuery);
+          }else{
+            firstRun = false;
           }
         }
       });

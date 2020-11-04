@@ -71,6 +71,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
           // project changed reset table
           this.tableData.data = [];
         }
+        // todo remove me after totaldocs change
         if (projField) {
           return this.searcherService.search({
             query: new ElasticsearchQuery().elasticSearchQuery,
@@ -202,7 +203,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     if (length === 0 || pageSize === 0) {
       return `0 of ${length}/${this.totalDocs}`;
     }
-    
+
     length = Math.max(length, 0);
     const startIndex = page * pageSize;
 

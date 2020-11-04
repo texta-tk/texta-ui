@@ -1,4 +1,13 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild
+} from '@angular/core';
 import {Search} from '../../../shared/types/Search';
 import {SearcherComponentService} from '../../services/searcher-component.service';
 import {AdvancedSearchComponent} from './advanced-search/advanced-search.component';
@@ -33,6 +42,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
   constructor(
     public searchService: SearcherComponentService,
     private localStorageService: LocalStorageService,
+    private changeDetectorRef: ChangeDetectorRef,
     private projectStore: ProjectStore) {
   }
 
@@ -46,6 +56,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
         } else {
           this.searcherType = 1;
         }
+        this.changeDetectorRef.markForCheck();
       }
     });
 
