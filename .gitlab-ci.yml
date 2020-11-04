@@ -25,6 +25,8 @@ variables:
     npm_config_cache: "$CI_PROJECT_DIR/.npm"
     CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/Cypress"
     FF_NETWORK_PER_BUILD: 1
+    # MLP
+    TEXTA_LANGUAGE_CODES: et
     # UAA
     TEXTA_USE_UAA: "True"
     TEXTA_UAA_REDIRECT_URI: http://texta-rest/api/v1/uaa/callback
