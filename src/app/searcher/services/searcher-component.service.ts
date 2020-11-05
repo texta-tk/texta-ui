@@ -41,7 +41,7 @@ export class SearcherComponentService {
   private elasticQuerySubject = new BehaviorSubject<ElasticsearchQuery>(new ElasticsearchQuery());
   private isLoading = new BehaviorSubject<boolean>(false);
   private savedSearch = new Subject<SavedSearch | null>();
-  private advancedSearchConstraints$ = new Subject<Constraint[]>();
+  private advancedSearchConstraints$ = new BehaviorSubject<Constraint[]>([]);
 
   constructor(private localStorage: LocalStorageService) {
   }
