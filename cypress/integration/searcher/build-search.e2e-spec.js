@@ -86,7 +86,6 @@ describe('searching and search related activities should be working correctly', 
       .should('be.visible')
       .click()
       .type('1/3/2016');
-    cy.wait('@searcherQuery');
     cy.get('[data-cy=appSearcherSideBarBuildSearchDateConstraintEnd]')
       .should('be.visible')
       .click()
