@@ -90,6 +90,8 @@ describe('searching and search related activities should be working correctly', 
       .should('be.visible')
       .click()
       .type('3/24/2020');
+    cy.wait(1000); // todo searchoptions debouncetime
+    cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
     cy.wait('@searcherQuery');
     cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted div').should('be.visible');
 
