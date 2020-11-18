@@ -65,13 +65,13 @@ describe('searching and search related activities should be working correctly', 
     cy.wait('@searcherQuery');
     cy.wait('@getProjectIndices');
 
-    // test searcher options, showShortVersion, highlight search matches
-    cy.get('[data-cy=appSearcherSidebarBuildSearchShowShortVersion]').click();
+    // test searcher options, highlight search matches
+    cy.get('[data-cy=appSearcherSidebarSearcherOptionsPanel]').click();
     cy.get('app-simple-search input').click().clear().type('reisija');
     cy.wait('@searcherQuery');
-    cy.get(':nth-child(1) > .cdk-column-comment_content > app-short-version').should('be.visible');
-
+    cy.get(':nth-child(1) > .cdk-column-comment_content > app-highlight span').should('be.visible');
     cy.get('[data-cy=appSearcherSidebarBuildSearchShowShortVersion]').click();
+    
     cy.get('[data-cy=appSearcherSidebarBuildSearchHighlightSearcher]').click();
     cy.get('app-simple-search input').click().clear().type('reisija');
     cy.wait('@searcherQuery');

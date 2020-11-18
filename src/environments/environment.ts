@@ -3,9 +3,10 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  apiHost: 'http://localhost:8000',
+  apiHost: 'https://rest-dev.texta.ee',
   apiBasePath: '/api/v1',
   production: false,
+  fileFieldReplace: 'texta_filepath',
 
   // For CF UAA authentication
   useCloudFoundryUAA: true,

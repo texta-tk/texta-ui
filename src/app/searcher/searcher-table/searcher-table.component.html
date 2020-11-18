@@ -41,7 +41,7 @@
                  {{row.doc[column] | json}}
               </pre>
           </ng-container>
-          <ng-container *ngIf="!(!!searchOptions.showShortVersion) && !(row.doc[column] | isObject)">
+          <ng-container *ngIf="!(row.doc[column] | isObject)">
             <app-highlight
               [highlightConfig]="{
                           currentColumn: column,
@@ -49,13 +49,9 @@
                           onlyHighlightMatching: searchOptions.onlyHighlightMatching,
                           highlightTextaFacts: searchOptions.highlightTextaFacts,
                           highlightHyperlinks: true,
+                          showShortVersion: searchOptions.showShortVersion,
                           data: row.doc}">
-
             </app-highlight>
-          </ng-container>
-          <ng-container *ngIf="!!searchOptions.showShortVersion && !(row.doc[column] | isObject)">
-            <app-short-version
-              [params]="{data: row.doc, currentColumn: column, searcherHighlight: row.highlight, contextWindow: searchOptions.showShortVersion}"></app-short-version>
           </ng-container>
         </td>
       </ng-container>

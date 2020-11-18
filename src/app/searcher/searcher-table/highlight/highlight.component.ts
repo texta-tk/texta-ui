@@ -3,6 +3,7 @@ import {FactConstraint} from '../../searcher-sidebar/build-search/Constraints';
 import * as LinkifyIt from 'linkify-it';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 import {HighlightSettings} from '../../../shared/SettingVars';
+import {environment} from '../../../../environments/environment';
 
 // tslint:disable:no-any
 export interface HighlightSpan {
@@ -22,6 +23,7 @@ export interface HighlightConfig {
   highlightTextaFacts: boolean;
   highlightHyperlinks: boolean;
   charLimit?: number;
+  showShortVersion?: number | undefined;
   data: any;
 }
 
@@ -36,8 +38,13 @@ interface HighlightObject {
   span?: HighlightSpan;
   color?: LegibleColor;
   nested?: HighlightObject;
+  shortVersion?: {
+    spans?: HighlightObject[];
+  };
+  isVisible?: boolean;
+  fullText?: string;
+  shortText?: string;
 }
-
 
 @Component({
   selector: 'app-highlight',
@@ -57,8 +64,10 @@ export class HighlightComponent {
     ['EMAIL', {backgroundColor: '#9fffe0', textColor: 'black'}],
   ]);
   static linkify = new LinkifyIt();
+  static readonly HYPERLINKS_COL = environment.fileFieldReplace; // hosted_filepath
   highlightArray: HighlightObject[] = [];
   isTextLimited: boolean;
+  textHidden = true;
 
   constructor() {
   }
@@ -90,7 +99,10 @@ export class HighlightComponent {
     facts.forEach(fact => {
       if (!HighlightComponent.colors.has(fact.fact)) {
         // tslint:disable-next-line:no-bitwise
-        HighlightComponent.colors.set(fact.fact, {backgroundColor: `hsla(${~~(360 * Math.random())},70%,70%,0.8)`, textColor: 'black'});
+        HighlightComponent.colors.set(fact.fact, {
+          backgroundColor: `hsla(${~~(360 * Math.random())},70%,70%,0.8)`,
+          textColor: 'black'
+        });
       }
     });
     return HighlightComponent.colors;
@@ -125,6 +137,261 @@ export class HighlightComponent {
     return [];
   }
 
+  static makeHyperlinksClickable(currentColumnData: unknown, colName: string): HighlightSpan[] {
+    // Very quick check, that can give false positives.
+    if (colName === HighlightComponent.HYPERLINKS_COL) {
+      currentColumnData = environment.apiHost + '/' + currentColumnData;
+    }
+    if (isNaN(Number(currentColumnData)) && HighlightComponent.linkify.pretest(currentColumnData as string)) {
+      const highlightArray: HighlightSpan[] = [];
+      const matches = HighlightComponent.linkify.match(currentColumnData as string);
+      if (matches && matches.length > 0) {
+        for (const match of matches) {
+          const f: HighlightSpan = {} as HighlightSpan;
+          f.doc_path = colName;
+          f.fact = '';
+          f.urlSpan = true;
+          f.spans = `[[${match.index}, ${match.lastIndex}]]`;
+          f.str_val = match.url;
+          highlightArray.push(f);
+        }
+      }
+      return highlightArray;
+    }
+    return [];
+  }
+
+  static makeShowShortVersion(maxWordDistance: number, highlightObjects: HighlightObject[]): HighlightObject[] {
+    const showShortVersionHighlightObjects: HighlightObject[] = [];
+    let parentShortVersionSpan: HighlightObject | undefined;
+    let colHasSearcherHighlight = false;
+    for (let index = 0; index < highlightObjects.length; index++) {
+      const highlightObject = highlightObjects[index];
+      if (!parentShortVersionSpan) {
+        parentShortVersionSpan = {
+          text: '',
+          highlighted: false,
+          shortVersion: {spans: [highlightObject]}, isVisible: true,
+        };
+      } else if (parentShortVersionSpan && HighlightComponent.highlightHasSearcherHighlight(highlightObject)) {
+        parentShortVersionSpan.isVisible = false;
+        colHasSearcherHighlight = true;
+        showShortVersionHighlightObjects.push(parentShortVersionSpan);
+        showShortVersionHighlightObjects.push(highlightObject);
+        parentShortVersionSpan = undefined;
+      } else if (parentShortVersionSpan) {
+        if (parentShortVersionSpan?.shortVersion?.spans) {
+          parentShortVersionSpan.shortVersion.spans.push(highlightObject);
+        }
+      }
+    }
+    if (parentShortVersionSpan) {
+      parentShortVersionSpan.isVisible = !colHasSearcherHighlight;
+      showShortVersionHighlightObjects.push(parentShortVersionSpan);
+    }
+
+    if (colHasSearcherHighlight) {
+      showShortVersionHighlightObjects.forEach(x => x.shortVersion?.spans?.forEach(y => y.isVisible = false));
+      return HighlightComponent.cutShortVersionExtraText(showShortVersionHighlightObjects, maxWordDistance);
+    }
+
+    return showShortVersionHighlightObjects[0]?.shortVersion?.spans || [];
+  }
+
+  static cutShortVersionExtraText(highlights: HighlightObject[], maxWordDistance: number): HighlightObject[] {
+    const newArray: HighlightObject[] = [];
+    const wordRegex = RegExp(/\w/);
+    for (let index = 0; index < highlights.length; index++) {
+      const x = highlights[index];
+      if (x.shortVersion?.spans && index === 0) {// start // todo
+        let wordCount = 0;
+        for (let i = x.shortVersion.spans.length - 1; i >= 0; i--) {
+          x.shortVersion.spans[i].isVisible = true;
+          x.shortVersion.spans[i].shortText = x.shortVersion.spans[i].text;
+          wordCount += HighlightComponent.setSpanShortVersion(x.shortVersion.spans[i], 'end', maxWordDistance - wordCount, wordRegex);
+          if (wordCount === maxWordDistance) {
+            x.shortVersion.spans.splice(i, 0, {text: '... ', fullText: '... ', highlighted: false, isVisible: true});
+            break;
+          }
+        }
+      } else if (HighlightComponent.highlightHasSearcherHighlight(highlights[index - 1]) && HighlightComponent.highlightHasSearcherHighlight(highlights[index + 1])) { // middle
+        // check text length to see if we even need to shorten anything
+        const concentatedText = x.shortVersion?.spans?.map(text => text.text).join('') || '';
+        const frontWordCount = concentatedText.split(/(\s)/g).filter(y => !!y);
+        const totalWords: number = frontWordCount.map(y => {
+          if (wordRegex.test(y)) {
+            return y;
+          }
+          return '';
+        }).filter(y => !!y).length;
+        if (totalWords > maxWordDistance * 2) {
+          // shorten start first
+          let wordCount = 0;
+          const spans = x?.shortVersion?.spans || [];
+          for (let i = 0; i < spans.length; i++) {
+            spans[i].isVisible = true;
+            spans[i].shortText = spans[i].text;
+            wordCount += HighlightComponent.setSpanShortVersion(spans[i], 'start', maxWordDistance - wordCount, wordRegex);
+            if (spans.length === 1) {
+              spans.splice(1, 0, {text: ' ... \n', fullText: ' ... \n', highlighted: false, isVisible: true});
+              break;
+            } else if (wordCount === maxWordDistance) {
+              spans.splice(i + 1, 0, {text: ' ... \n', fullText: ' ... \n', highlighted: false, isVisible: true});
+              break;
+            }
+          }
+          // shorten end
+          wordCount = 0;
+          for (let i = spans.length - 1; i >= 0; i--) {
+            if (wordCount === maxWordDistance) {
+              break;
+            }
+            if (!spans[i].fullText) { // this is here so we dont modify the previous ' ... \n' span
+              spans[i].isVisible = true;
+              spans[i].shortText = spans[i].text;
+            }
+            const spanCopy = JSON.parse(JSON.stringify(spans[i]));
+            const newWords = HighlightComponent.setSpanShortVersion(spanCopy, 'end', maxWordDistance - wordCount, wordRegex);
+            wordCount += newWords;
+            if (newWords && !spans[i].fullText) { // if newords and the span wasnt already modified by start
+              spans.splice(i, 1, spanCopy);
+            } else if (wordCount === maxWordDistance) {// if span was modified already then its last iteration anyway
+              const insertIndex = spans.findIndex(y => y.text === ' ... \n');
+              spans.splice(insertIndex + 1, 0, spanCopy);
+              break;
+            }
+          }
+        } else {
+          x.shortVersion?.spans?.forEach(y => {
+            y.shortText = y.text; // so i know which spans need to always be shown
+            y.isVisible = true;
+          });
+        }
+      } else if (x.shortVersion?.spans && index === highlights.length - 1) { // end
+        let wordCount = 0;
+        for (let i = 0; i < x.shortVersion.spans.length; i++) {
+          if (wordCount === maxWordDistance) {
+            x.shortVersion.spans.splice(i, 0, {text: ' ...', fullText: ' ...', highlighted: false, isVisible: true});
+            break;
+          }
+          x.shortVersion.spans[i].isVisible = true;
+          x.shortVersion.spans[i].shortText = x.shortVersion.spans[i].text;
+          // lastspan
+          wordCount += HighlightComponent.setSpanShortVersion(x.shortVersion.spans[i], 'start', maxWordDistance - wordCount, wordRegex);
+          if (x.shortVersion.spans.length === 1 && wordCount === maxWordDistance) {
+            x.shortVersion.spans.splice(1, 0, {text: ' ...', fullText: ' ...', highlighted: false, isVisible: true});
+            break;
+          }
+        }
+      }
+      newArray.push(x);
+    }
+    return newArray;
+  }
+
+  static setSpanShortVersion(highlightObject: HighlightObject, startFrom: 'start' | 'end', maxWordDistance: number, wordRegex: RegExp): number {
+    if (!highlightObject.fullText) {
+      highlightObject.fullText = highlightObject.text;
+    }
+    if (startFrom === 'end') {
+      const splitSpanText = highlightObject.fullText.split(/(\s)/g).filter(y => !!y);
+      let wordCount = 0;
+      const words: string[] = [];
+      for (let i = splitSpanText.length - 1; wordCount < maxWordDistance && i >= 0; i--) {
+        if (wordRegex.test(splitSpanText[i])) {
+          wordCount += 1;
+        }
+        words.push(splitSpanText[i]);
+        if (wordCount === maxWordDistance && splitSpanText[i - 1]) { // otherwise we would be trimming sentence ends, spaces, newlines etc
+          words.push(splitSpanText[i - 1]);
+        }
+      }
+      highlightObject.shortText = words.reverse().join('');
+      highlightObject.text = highlightObject.shortText;
+      return wordCount;
+    } else if (startFrom === 'start') {
+      const splitSpanText = highlightObject.fullText.split(/(\s)/g).filter(y => !!y);
+      let wordCount = 0;
+      const words: string[] = [];
+      for (let i = 0; wordCount < maxWordDistance && i < splitSpanText.length; i++) {
+        if (wordRegex.test(splitSpanText[i])) {
+          wordCount += 1;
+        }
+        words.push(splitSpanText[i]);
+        if (wordCount === maxWordDistance && splitSpanText[i + 1]) { // otherwise we would be trimming sentence ends, spaces, newlines etc
+          words.push(splitSpanText[i + 1]);
+        }
+      }
+      highlightObject.shortText = words.join('');
+      highlightObject.text = highlightObject.shortText;
+      return wordCount;
+    }
+    return 0;
+  }
+
+  static highlightHasSearcherHighlight(highlight: HighlightObject): boolean {
+    const stack: HighlightObject[] = [];
+    if (highlight) {
+      stack.push(highlight);
+    }
+    while (stack.length) {
+      if (stack[0].span?.searcherHighlight) {
+        return true;
+      } else if (stack[0].nested) {
+        stack.push(stack[0].nested);
+      }
+      stack.shift();
+    }
+    return false;
+  }
+
+  toggleShowShortVersion(span: HighlightObject): void {
+    let lastFullTextSpan: HighlightObject | undefined;
+    span.shortVersion?.spans?.forEach(x => {
+      if (!span.isVisible) { // if showing
+        if (x.fullText && x.shortText) {
+          if (lastFullTextSpan?.fullText === x.fullText) {
+            x.isVisible = !x.isVisible;
+          }
+          x.text = x.fullText;
+          lastFullTextSpan = x;
+        } else {
+          // if its an unmodified span, dont switch visible state
+          // they should always be visible because they fit the word context range
+          if (x.fullText || !x.isVisible) {
+            x.isVisible = !x.isVisible;
+          }
+        }
+      } else {
+        if (x.fullText && x.shortText) {
+          if (lastFullTextSpan?.fullText === x.fullText) {
+            x.isVisible = !x.isVisible;
+          }
+          x.text = x.shortText || '';
+          lastFullTextSpan = x;
+        } else {
+          // if its an unmodified span, dont switch visible state
+          // they should always be visible because they fit the word context range
+          if (!x.isVisible || !x.shortText) {
+            x.isVisible = !x.isVisible;
+          }
+        }
+      }
+    });
+    span.isVisible = !span.isVisible;
+  }
+
+  toggleAllShowShortVersions(): void {
+    this.highlightArray.forEach(x => {
+      if (x.shortVersion?.spans) {
+        if (x.isVisible === !this.textHidden) {
+          this.toggleShowShortVersion(x);
+        }
+      }
+    });
+    this.textHidden = !this.textHidden;
+  }
+
   public toggleTextLimit(): void {
     if (window.getSelection()?.type !== 'Range') {
       const edited: any = (({data, ...o}) => o)(this._highlightConfig);
@@ -151,7 +418,8 @@ export class HighlightComponent {
         highlightConfig.data[highlightConfig.currentColumn] = highlightConfig.data[highlightConfig.currentColumn].trim();
       }
       if (highlightConfig.highlightHyperlinks) {
-        hyperLinks = this.makeHyperlinksClickable(highlightConfig.data[highlightConfig.currentColumn], highlightConfig.currentColumn);
+        hyperLinks = HighlightComponent.makeHyperlinksClickable(highlightConfig.data[highlightConfig.currentColumn],
+          highlightConfig.currentColumn);
       }
 
       const highlightTerms = [
@@ -160,7 +428,12 @@ export class HighlightComponent {
         ...fieldFacts
       ];
       const colors = HighlightComponent.generateColorsForFacts(highlightTerms);
-      this.highlightArray = this.makeHighLights(highlightConfig.data[highlightConfig.currentColumn], highlightTerms, colors);
+      const highlights = this.makeHighLights(highlightConfig.data[highlightConfig.currentColumn], highlightTerms, colors);
+      if (highlightConfig.showShortVersion && highlightConfig.searcherHighlight) {
+        this.highlightArray = HighlightComponent.makeShowShortVersion(highlightConfig.showShortVersion, highlights);
+      } else {
+        this.highlightArray = highlights;
+      }
     } else {
       this.highlightArray = [];
     }
@@ -174,27 +447,6 @@ export class HighlightComponent {
     }
     fieldFacts = UtilityFunctions.getDistinctByProperty<HighlightSpan>(fieldFacts, (x => x.spans));
     return fieldFacts;
-  }
-
-  makeHyperlinksClickable(currentColumn: string | number, colName: string): HighlightSpan[] {
-    // Very quick check, that can give false positives.
-    if (isNaN(Number(currentColumn)) && HighlightComponent.linkify.pretest(currentColumn as string)) {
-      const highlightArray: HighlightSpan[] = [];
-      const matches = HighlightComponent.linkify.match(currentColumn as string);
-      if (matches && matches.length > 0) {
-        for (const match of matches) {
-          const f: HighlightSpan = {} as HighlightSpan;
-          f.doc_path = colName;
-          f.fact = '';
-          f.urlSpan = true;
-          f.spans = `[[${match.index}, ${match.lastIndex}]]`;
-          f.str_val = match.url;
-          highlightArray.push(f);
-        }
-      }
-      return highlightArray;
-    }
-    return [];
   }
 
   getOnlyMatchingFacts(fieldFacts: HighlightSpan[], highlightConfig: HighlightConfig): HighlightSpan[] {

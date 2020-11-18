@@ -27,7 +27,7 @@ import {Project} from '../../../shared/types/Project';
 export class BuildSearchComponent implements OnInit, OnDestroy {
   @Output() searchButtonClick = new EventEmitter<Search>();
   highlightMatching = false;
-  showShortVersion = false;
+  showShortVersion = true;
   highlightSearcherMatches = true;
   highlightTextaFacts = true;
   showShortVersionContext = 6;

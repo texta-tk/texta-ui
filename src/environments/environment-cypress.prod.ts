@@ -2,6 +2,7 @@ export const environment = {
   apiHost: 'http://texta-rest',
   apiBasePath: '/api/v1',
   production: true,
+  fileFieldReplace: 'texta_filepath',
   
   // For CF UAA authentication
   useCloudFoundryUAA: true,

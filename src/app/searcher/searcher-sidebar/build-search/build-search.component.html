@@ -1,4 +1,4 @@
-<div class="wrapper" *ngIf="searcherType">
+<div *ngIf="searcherType" class="wrapper">
   <mat-radio-group (change)="saveTypeSelection($event.value)" [(ngModel)]="searcherType" aria-label="Select an option"
                    data-cy="appSearcherSidebarBuildSearchRadio"
                    fxLayoutAlign="space-between">
@@ -14,24 +14,34 @@
                      [highlightSearcherMatches]="highlightSearcherMatches"
                      [highlightTextaFacts]="highlightTextaFacts"
                      [showShortVersion]="showShortVersion ? showShortVersionContext: 0"></app-simple-search>
-  <div class="bg-grey search-options" fxLayout="column">
-    <h4 class="flex-item-center">Search options</h4>
 
-    <mat-checkbox [(ngModel)]=highlightTextaFacts data-cy="appSearcherSidebarBuildSearchHighlightFacts"
-                  labelPosition="before">Highlight facts:
-    </mat-checkbox>
-    <mat-checkbox *ngIf="highlightTextaFacts" [(ngModel)]=highlightMatching
-                  data-cy="appSearcherSidebarBuildSearchHighlightMatchingFacts" labelPosition="before">Only highlight matching facts:
-    </mat-checkbox>
-    <mat-checkbox [(ngModel)]=highlightSearcherMatches data-cy="appSearcherSidebarBuildSearchHighlightSearcher"
-                  labelPosition="before">Highlight searcher matches:
-    </mat-checkbox>
-    <mat-checkbox [(ngModel)]=showShortVersion data-cy="appSearcherSidebarBuildSearchShowShortVersion" labelPosition="before">
-      Show short version:
-    </mat-checkbox>
-    <mat-slider *ngIf="showShortVersion" [(ngModel)]="showShortVersionContext" max="15" min="1" step="1"
-                thumbLabel></mat-slider>
-  </div>
+  <mat-expansion-panel class="expansion-panel-less-padding">
+    <mat-expansion-panel-header data-cy="appSearcherSidebarSearcherOptionsPanel">
+      <mat-panel-title>
+        Searcher options
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <div class="search-options" fxLayout="column">
+      <mat-checkbox [(ngModel)]=highlightTextaFacts data-cy="appSearcherSidebarBuildSearchHighlightFacts"
+                    labelPosition="before">Highlight facts:
+      </mat-checkbox>
+      <mat-checkbox *ngIf="highlightTextaFacts" [(ngModel)]=highlightMatching
+                    data-cy="appSearcherSidebarBuildSearchHighlightMatchingFacts" labelPosition="before">Only
+        highlight
+        matching facts:
+      </mat-checkbox>
+      <mat-checkbox [(ngModel)]=highlightSearcherMatches data-cy="appSearcherSidebarBuildSearchHighlightSearcher"
+                    labelPosition="before">Highlight searcher matches:
+      </mat-checkbox>
+      <mat-checkbox [(ngModel)]=showShortVersion data-cy="appSearcherSidebarBuildSearchShowShortVersion"
+                    labelPosition="before">
+        Show short version:
+      </mat-checkbox>
+      <mat-slider *ngIf="showShortVersion" [(ngModel)]="showShortVersionContext" max="15" min="1" step="1"
+                  thumbLabel></mat-slider>
+    </div>
+  </mat-expansion-panel>
   <div class="max-width">
     <button (click)="queryNewSearch()" class="max-width" data-cy="appSearcherBuildSearchSubmit"
             mat-stroked-button>Search

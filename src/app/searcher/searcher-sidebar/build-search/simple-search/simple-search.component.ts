@@ -103,14 +103,17 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
     if (value && this.projectFields) {
       const fields = ProjectIndex.cleanProjectIndicesFields(this.projectFields, ['text'], []).map(x => x.fields).flat();
       const fieldPathArray = fields.map(y => y.path);
-      this.elasticSearchQuery.elasticSearchQuery.query = {
-        multi_match: {
-          fields: fieldPathArray,
-          query: value,
-          type: 'best_fields',
-          operator: 'and',
-        }
-      };
+      this.elasticSearchQuery = new ElasticsearchQuery();
+      value.split(' ').forEach(x => {
+        this.elasticSearchQuery.elasticSearchQuery.query.bool?.must.push({
+          multi_match: {
+            fields: fieldPathArray,
+            query: x,
+            type: 'phrase_prefix',
+            operator: 'and',
+          }
+        });
+      });
       for (const field of fieldPathArray) {
         // @ts-ignore
         this.elasticSearchQuery.elasticSearchQuery.highlight.fields[field] = {};
@@ -142,6 +145,9 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
       const query = JSON.parse(search.query);
       if (query?.query?.multi_match?.query) {
         this.searchFormControl.setValue(query.query.multi_match.query);
+      } else if (query?.query?.bool?.must && query.query.bool.must.length > 0) {
+        const sq: string[] = query.query.bool.must.map((x: { multi_match: { query: string; }; }) => x.multi_match.query);
+        this.searchFormControl.setValue(sq.join(' '));
       }
     }
   }

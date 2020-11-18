@@ -4,16 +4,16 @@
   mat-radio-group {
     margin-bottom: 1.2em;
   }
+
+  mat-expansion-panel {
+    margin-top: 1em;
+    margin-bottom: 1em;
+  }
 }
 
 .search-options {
   h4 {
     margin: 0.25em 0 0;
-  }
-
-  mat-checkbox {
-    margin-left: 1em;
-    margin-right: 1em;
   }
 
   ::ng-deep .mat-checkbox-layout {
@@ -26,10 +26,4 @@
       margin-left: auto;
     }
   }
-
-  margin-bottom: 5px;
-}
-
-.bg-grey {
-  background-color: #EFEFEF;
 }

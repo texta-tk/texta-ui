@@ -1,22 +1,23 @@
-<div [title]="isTextLimited !== undefined ? isTextLimited ? 'Expand' : 'Collapse': ''">
-  <ng-container *ngFor="let highlight of highlightArray">
-    <ng-template [ngIf]="highlight.highlighted && !highlight.span?.searcherHighlight && !highlight.span?.urlSpan">
-      <span style="cursor: pointer;" style.background-color="{{highlight?.color?.backgroundColor}}"
-            style.color="{{highlight?.color?.textColor}}"
-            title="{{highlight.span?.fact}}: {{highlight.span?.str_val}}">{{highlight.text}}</span>
-    </ng-template>
-    <ng-template [ngIf]="highlight.highlighted && highlight.span?.searcherHighlight">
-      <span style="cursor: pointer;" style.background-color="{{highlight?.color?.backgroundColor}}"
-            style.color="{{highlight?.color?.textColor}}">{{highlight.text}}</span>
-    </ng-template>
-    <ng-template [ngIf]="highlight.highlighted && highlight.span?.urlSpan">
-      <a href="{{highlight.span?.str_val}}" target="_blank">{{highlight.text}}</a>
-    </ng-template>
-    <ng-template [ngIf]="highlight.nested">
-      <ng-container [ngTemplateOutletContext]={highlight:highlight.nested} [ngTemplateOutlet]="factTemplate">
+<div *ngIf="!_highlightConfig?.showShortVersion"
+     [title]="isTextLimited !== undefined ? isTextLimited ? 'Expand' : 'Collapse': ''">
+  <ng-container *ngFor="let highlight of highlightArray; let i = index;">
+    <ng-container [ngTemplateOutletContext]={highlight:highlight} [ngTemplateOutlet]="highlightTemplate">
+    </ng-container>
+  </ng-container>
+</div>
+<div *ngIf="_highlightConfig?.showShortVersion">
+  <ng-container *ngFor="let highlight of highlightArray; let i = index;">
+    <ng-container *ngIf="highlight?.shortVersion?.spans"> <!--hidden text-->
+      <span *ngFor="let highlightShortSpan of highlight?.shortVersion?.spans"
+            [matMenuTriggerData]="{highlight: highlight}" [matMenuTriggerFor]="contextOptions" style="cursor: pointer;">
+        <ng-container *ngIf="highlightShortSpan.isVisible" [ngTemplateOutletContext]={highlight:highlightShortSpan} [ngTemplateOutlet]="highlightTemplate">
+        </ng-container>
+      </span>
+    </ng-container>
+    <ng-container *ngIf="!highlight?.shortVersion?.spans">
+      <ng-container [ngTemplateOutletContext]={highlight:highlight} [ngTemplateOutlet]="highlightTemplate">
       </ng-container>
-    </ng-template>
-    <ng-template [ngIf]="!highlight.highlighted">{{highlight.text}}</ng-template>
+    </ng-container>
   </ng-container>
 </div>
 <ng-template #factTemplate let-highlight="highlight">
@@ -33,3 +34,30 @@
     </ng-container>
   </ng-template>
 </ng-template>
+<ng-template #highlightTemplate let-highlight="highlight">
+  <ng-template [ngIf]="highlight.highlighted && !highlight.span?.searcherHighlight && !highlight.span?.urlSpan">
+      <span style="cursor: pointer;" style.background-color="{{highlight?.color?.backgroundColor}}"
+            style.color="{{highlight?.color?.textColor}}"
+            title="{{highlight.span?.fact}}: {{highlight.span?.str_val}}">{{highlight.text}}</span>
+  </ng-template>
+  <ng-template [ngIf]="highlight.highlighted && highlight.span?.searcherHighlight">
+      <span style="cursor: pointer;" style.background-color="{{highlight?.color?.backgroundColor}}"
+            style.color="{{highlight?.color?.textColor}}">{{highlight.text}}</span>
+  </ng-template>
+  <ng-template [ngIf]="highlight.highlighted && highlight.span?.urlSpan">
+    <a href="{{highlight.span?.str_val}}" target="_blank">{{highlight.text}}</a>
+  </ng-template>
+  <ng-template [ngIf]="highlight.nested">
+    <ng-container [ngTemplateOutletContext]={highlight:highlight.nested} [ngTemplateOutlet]="factTemplate">
+    </ng-container>
+  </ng-template>
+  <ng-template [ngIf]="!highlight.highlighted">{{highlight.text}}</ng-template>
+</ng-template>
+<mat-menu #contextOptions="matMenu">
+  <ng-template let-highlight="highlight" matMenuContent>
+    <button (click)="toggleShowShortVersion(highlight)" mat-menu-item>Toggle content
+    </button>
+
+    <button (click)="toggleAllShowShortVersions()" mat-menu-item>Toggle all</button>
+  </ng-template>
+</mat-menu>

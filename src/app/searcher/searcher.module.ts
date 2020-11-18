@@ -22,13 +22,12 @@ import {DatePipe} from '@angular/common';
 import {AggregationResultsChartComponent} from './aggregation-results/aggregation-results-chart/aggregation-results-chart.component';
 import {SimpleSearchComponent} from './searcher-sidebar/build-search/simple-search/simple-search.component';
 import {AdvancedSearchComponent} from './searcher-sidebar/build-search/advanced-search/advanced-search.component';
-import {ShortVersionComponent} from './searcher-table/short-version/short-version.component';
 import {TextaFactsChipsComponent} from './searcher-table/texta-facts-chips/texta-facts-chips.component';
 import {NumberConstraintsComponent} from './searcher-sidebar/build-search/advanced-search/number-constraints/number-constraints.component';
 import {AggregationResultFactsComponent} from './aggregation-results/aggregation-result-facts/aggregation-result-facts.component';
-import { GraphSelectedPortalComponent } from './aggregation-results/aggregation-results-chart/graph-selected-portal/graph-selected-portal.component';
-import { EditSavedSearchDialogComponent } from './searcher-sidebar/saved-searches/edit-saved-search-dialog/edit-saved-search-dialog.component';
-import {SearcherComponentService} from "./services/searcher-component.service";
+import {GraphSelectedPortalComponent} from './aggregation-results/aggregation-results-chart/graph-selected-portal/graph-selected-portal.component';
+import {EditSavedSearchDialogComponent} from './searcher-sidebar/saved-searches/edit-saved-search-dialog/edit-saved-search-dialog.component';
+import {SearcherComponentService} from './services/searcher-component.service';
 
 @NgModule({
   declarations: [
@@ -52,7 +51,6 @@ import {SearcherComponentService} from "./services/searcher-component.service";
     AggregationResultsChartComponent,
     SimpleSearchComponent,
     AdvancedSearchComponent,
-    ShortVersionComponent,
     TextaFactsChipsComponent,
     NumberConstraintsComponent,
     AggregationResultFactsComponent,

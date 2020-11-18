@@ -20,13 +20,23 @@ mat-optgroup {
     padding-left: 30px;
   }
 }
-mat-chip-list.chip-list-space-evenly{
-    div{
-      justify-content: space-evenly !important;
-    }
-}
 
+mat-chip-list.chip-list-space-evenly {
+  div {
+    justify-content: space-evenly !important;
+  }
+}
 // panelClass for mat dialog to remove padding
 .custom-no-padding-dialog .mat-dialog-container {
   padding: 0 !important;
+}
+
+.expansion-panel-less-padding {
+  mat-expansion-panel-header {
+    padding: 0 10px;
+  }
+
+  .mat-expansion-panel-body {
+    padding: 0 10px 0;
+  }
 }
