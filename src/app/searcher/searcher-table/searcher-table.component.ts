@@ -14,6 +14,7 @@ import {LocalStorageService} from '../../core/util/local-storage.service';
 import {SearcherOptions} from '../SearcherOptions';
 import {HttpErrorResponse} from '@angular/common/http';
 import {SearcherService} from '../../core/searcher/searcher.service';
+import {ProjectService} from "../../core/projects/project.service";
 
 @Component({
   selector: 'app-searcher-table',
@@ -43,7 +44,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
   private totalDocs = 0;
 
   constructor(public searchService: SearcherComponentService, private projectStore: ProjectStore,
-              private searcherService: SearcherService,
+              private searcherService: SearcherService, private projectService: ProjectService,
               private localStorage: LocalStorageService) {
   }
 
@@ -147,6 +148,19 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
         this.searchService.nextSearch(new Search(result, this.currentElasticQuery, this.searchOptions));
       }
     });
+  }
+
+  exportSearch(): void {
+    if (this.currentElasticQuery?.elasticSearchQuery && this.currentProject) {
+      const indices = this.projectFields.map(y => y.index);
+      this.projectService.exportSearch(this.currentProject.id, this.currentElasticQuery.elasticSearchQuery, indices).subscribe(resp => {
+        if (resp && !(resp instanceof HttpErrorResponse)) {
+          const a = document.createElement('a');
+          a.href = resp;
+          a.click();
+        }
+      });
+    }
   }
 
   // tslint:disable-next-line:no-any

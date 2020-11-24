@@ -5,6 +5,7 @@ import {LogService} from '../util/log.service';
 import {Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
 import {Project, ProjectFact, ProjectIndex, ProjectResourceCounts} from '../../shared/types/Project';
+import {ElasticsearchQueryStructure} from "../../searcher/searcher-sidebar/build-search/Constraints";
 
 @Injectable({
   providedIn: 'root'
@@ -38,6 +39,15 @@ export class ProjectService {
     ).pipe(
       tap(e => this.logService.logStatus(e, 'createProject')),
       catchError(this.logService.handleError<Project>('createProject')));
+  }
+
+  exportSearch(projId: number, query: unknown, indices: string[]): Observable<string | HttpErrorResponse> {
+    return this.http.post<string>(
+      `${this.apiUrl}/projects/${projId}/export_search/`,
+      {indices, query}
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'exportSearch')),
+      catchError(this.logService.handleError<string>('exportSearch')));
   }
 
   getProjectById(id: number): Observable<Project | HttpErrorResponse> {
