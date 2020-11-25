@@ -9,7 +9,8 @@
         <mat-option value="must_not">not</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field fxFlex>
+    <!-- idk why, but auto doesnt work, this calc hack for some reason does -->
+    <mat-form-field fxFlex="3 3 calc(1em + 20px)">
       <mat-label>Match</mat-label>
       <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
                   [formControl]="matchFormControl">
@@ -17,9 +18,10 @@
         <mat-option value="best_fields">word</mat-option>
         <mat-option value="phrase">phrase</mat-option>
         <mat-option value="regexp">regex</mat-option>
+        <mat-option value="fuzzy">fuzzy</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field fxFlex="20">
+    <mat-form-field fxFlex="20" *ngIf="matchFormControl.value !== 'fuzzy'">
       <mat-label>Slop</mat-label>
       <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
                   [formControl]="slopFormControl">
@@ -30,6 +32,14 @@
         <mat-option value="4">4</mat-option>
         <mat-option value="5">5</mat-option>
       </mat-select>
+    </mat-form-field>
+    <mat-form-field fxFlex="20" *ngIf="matchFormControl.value === 'fuzzy'">
+      <mat-label>Fuzziness</mat-label>
+      <input type="number" min="0" [formControl]="fuzzinessFormControl" matInput>
+    </mat-form-field>
+    <mat-form-field fxFlex="20" *ngIf="matchFormControl.value === 'fuzzy'">
+      <mat-label>Prefix length</mat-label>
+      <input type="number" min="0" [formControl]="prefixLengthFormControl" matInput>
     </mat-form-field>
   </div>
   <div fxLayout="column">

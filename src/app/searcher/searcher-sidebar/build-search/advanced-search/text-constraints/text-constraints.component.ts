@@ -30,10 +30,12 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
   // tslint:disable-next-line:no-any
   constraintQuery: any;
   // so i dont have to rename everything if i decide to refactor something
-  textAreaFormControl: FormControl = new FormControl();
-  slopFormControl: FormControl = new FormControl();
-  matchFormControl: FormControl = new FormControl();
-  operatorFormControl: FormControl = new FormControl();
+  textAreaFormControl = new FormControl();
+  slopFormControl = new FormControl();
+  matchFormControl = new FormControl();
+  operatorFormControl = new FormControl();
+  fuzzinessFormControl = new FormControl();
+  prefixLengthFormControl = new FormControl();
   lexicons: Lexicon[] = [];
 
   constructor() {
@@ -49,6 +51,8 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
       this.slopFormControl = this._textConstraint.slopFormControl;
       this.matchFormControl = this._textConstraint.matchFormControl;
       this.operatorFormControl = this._textConstraint.operatorFormControl;
+      this.fuzzinessFormControl = this._textConstraint.fuzzinessFormControl;
+      this.prefixLengthFormControl = this._textConstraint.prefixLengthFormControl;
       if (this._textConstraint.lexicons) {
         this.lexicons = this._textConstraint.lexicons;
       }
@@ -68,7 +72,11 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
           fields: this._textConstraint.fields.map(x => x.path)
         }
       };
-
+      const fuzzyBlueprint = {
+        value: '',
+        fuzziness: this.fuzzinessFormControl.value,
+        prefix_length: this.fuzzinessFormControl.value,
+      };
       this.constraintQuery = {
         bool: {
           [this.operatorFormControl.value]: formQueries
@@ -82,6 +90,8 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
         startWith(this.textAreaFormControl.value as object, this.textAreaFormControl.value as object), pairwise()).subscribe(value => {
         if (this.matchFormControl.value === 'regexp') {
           this.buildRegexQuery(formQueries, value[1], this._textConstraint.fields.map(x => x.path));
+        } else if (this.matchFormControl.value === 'fuzzy') {
+          this.buildFuzzyQuery(formQueries, value[1], this._textConstraint.fields.map(x => x.path), fuzzyBlueprint);
         } else {
           this.buildTextareaMultiMatchQuery(formQueries, value[1], multiMatchBlueprint);
         }
@@ -96,6 +106,8 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
         if (this.textAreaFormControl.value && this.textAreaFormControl.value.length > 0) {
           if (value === 'regexp') {
             this.buildRegexQuery(formQueries, this.textAreaFormControl.value, this._textConstraint.fields.map(x => x.path));
+          } else if (this.matchFormControl.value === 'fuzzy') {
+            this.buildFuzzyQuery(formQueries, this.textAreaFormControl.value, this._textConstraint.fields.map(x => x.path), fuzzyBlueprint);
           } else {
             this.buildTextareaMultiMatchQuery(formQueries, this.textAreaFormControl.value, multiMatchBlueprint);
           }
@@ -118,10 +130,54 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
         // update slop
         if (this.textAreaFormControl.value && this.textAreaFormControl.value.length > 0) {
           this.buildTextareaMultiMatchQuery(formQueries, this.textAreaFormControl.value, multiMatchBlueprint);
+          this.constraintChanged.emit(this.elasticSearchQuery);
         }
-        this.constraintChanged.emit(this.elasticSearchQuery);
       });
 
+      this.fuzzinessFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(value => {
+        fuzzyBlueprint.fuzziness = value;
+        if (this.textAreaFormControl.value && this.textAreaFormControl.value.length > 0) {
+          this.buildFuzzyQuery(formQueries, this.textAreaFormControl.value, this._textConstraint.fields.map(x => x.path), fuzzyBlueprint);
+          this.constraintChanged.emit(this.elasticSearchQuery);
+        }
+      });
+
+      this.prefixLengthFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(value => {
+        fuzzyBlueprint.prefix_length = value;
+        if (this.textAreaFormControl.value && this.textAreaFormControl.value.length > 0) {
+          this.buildFuzzyQuery(formQueries, this.textAreaFormControl.value, this._textConstraint.fields.map(x => x.path), fuzzyBlueprint);
+          this.constraintChanged.emit(this.elasticSearchQuery);
+        }
+      });
+    }
+  }
+
+  buildFuzzyQuery(formQueries: unknown[], formValue: string, fields: string[], fuzzyBluePrint: unknown): void {
+// gonna rebuild formqueries so delete previous
+    formQueries.splice(0, formQueries.length);
+    const textareaValues = this.stringToArray(formValue, '\n');
+
+    if (textareaValues.length > 0) {
+      for (const line of textareaValues) {
+        // tslint:disable-next-line:no-any
+        const newFormQuery: any = {
+          bool: {
+            should: [],
+            minimum_should_match: 1
+          }
+        };
+        // tslint:disable-next-line:no-any
+        const fuzzyQuery: any = {
+          fuzzy: {}
+        };
+        for (const field of fields) {
+          const clone = JSON.parse(JSON.stringify(fuzzyBluePrint));
+          clone.value = line;
+          fuzzyQuery.fuzzy[field] = clone;
+        }
+        newFormQuery.bool.should.push(fuzzyQuery);
+        formQueries.push(newFormQuery);
+      }
     }
   }
 

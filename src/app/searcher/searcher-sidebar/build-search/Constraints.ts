@@ -19,12 +19,16 @@ export class TextConstraint extends Constraint {
   slopFormControl = new FormControl();
   matchFormControl = new FormControl();
   operatorFormControl = new FormControl();
+  fuzzinessFormControl = new FormControl();
+  prefixLengthFormControl = new FormControl();
   lexicons: Lexicon[];
 
-  constructor(fields: Field[], lexicons?: Lexicon[], match?: undefined, text?: undefined, operator?: undefined, slop?: undefined) {
+  constructor(fields: Field[], lexicons?: Lexicon[], match?: undefined, text?: undefined, operator?: undefined, slop?: undefined, fuzziness?: undefined, prefixLength?: undefined) {
     super(fields);
     this.operatorFormControl.setValue(operator ? operator : 'must');
     this.matchFormControl.setValue(match ? match : 'phrase_prefix');
+    this.fuzzinessFormControl.setValue(fuzziness ? fuzziness : 2);
+    this.prefixLengthFormControl.setValue(prefixLength ? prefixLength : 0);
     this.slopFormControl.setValue(slop ? slop : '0');
     this.textAreaFormControl.setValue(text ? text : '');
     if (lexicons) {

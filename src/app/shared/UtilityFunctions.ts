@@ -64,7 +64,9 @@ export class UtilityFunctions {
           match: constraint.matchFormControl.value,
           slop: constraint.slopFormControl.value,
           text: constraint.textAreaFormControl.value,
-          operator: constraint.operatorFormControl.value
+          operator: constraint.operatorFormControl.value,
+          fuzziness: constraint.fuzzinessFormControl.value,
+          prefix_length: constraint.prefixLengthFormControl.value
         });
       }
       if (constraint instanceof DateConstraint) {
