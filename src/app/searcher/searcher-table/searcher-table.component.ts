@@ -157,6 +157,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
         if (resp && !(resp instanceof HttpErrorResponse)) {
           const a = document.createElement('a');
           a.href = resp;
+          a.download = resp;
           a.click();
         }
       });
