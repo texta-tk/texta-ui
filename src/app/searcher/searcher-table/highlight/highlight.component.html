@@ -1,11 +1,10 @@
-<div *ngIf="!_highlightConfig?.showShortVersion"
-     [title]="isTextLimited !== undefined ? isTextLimited ? 'Expand' : 'Collapse': ''">
+<ng-container *ngIf="!_highlightConfig?.showShortVersion">
   <ng-container *ngFor="let highlight of highlightArray; let i = index;">
     <ng-container [ngTemplateOutletContext]={highlight:highlight} [ngTemplateOutlet]="highlightTemplate">
     </ng-container>
   </ng-container>
-</div>
-<div *ngIf="_highlightConfig?.showShortVersion">
+</ng-container>
+<ng-container *ngIf="_highlightConfig?.showShortVersion">
   <ng-container *ngFor="let highlight of highlightArray; let i = index;">
     <ng-container *ngIf="highlight?.shortVersion?.spans"> <!--hidden text-->
       <span *ngFor="let highlightShortSpan of highlight?.shortVersion?.spans"
@@ -19,7 +18,7 @@
       </ng-container>
     </ng-container>
   </ng-container>
-</div>
+</ng-container>
 <ng-template #factTemplate let-highlight="highlight">
   <ng-template [ngIf]="highlight.span?.urlSpan">
     <a href="{{highlight.span?.str_val}}" target="_blank">{{highlight.text}}</a>

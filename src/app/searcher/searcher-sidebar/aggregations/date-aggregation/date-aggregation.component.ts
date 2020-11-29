@@ -31,10 +31,8 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
   dateRangeWeek = false;
   maxDate: Date;
   minDate: Date;
-  range = new FormGroup({
-    dateFromFormControl: new FormControl(),
-    dateToFormControl: new FormControl()
-  });
+  dateFromFormControl: FormControl = new FormControl();
+  dateToFormControl: FormControl = new FormControl();
 
   constructor(
     private searchService: SearcherComponentService,
@@ -73,15 +71,10 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
         this.minDate = new Date((resp as any).aggs.min_date.value);
         // tslint:disable-next-line:no-any
         this.maxDate = new Date((resp as any).aggs.max_date.value);
-        this.range.setValue({
-          dateFromFormControl: this.minDate,
-          dateToFormControl: this.maxDate,
-        });
+        this.dateFromFormControl.setValue(this.minDate);
+        this.dateToFormControl.setValue(this.maxDate);
         this.makeDateAggregation(this.minDate, this.maxDate);
       }
-    });
-    this.range.valueChanges.pipe(takeUntil(this.destroy$), debounceTime(100), distinctUntilChanged()).subscribe(x => {
-      this.makeDateAggregation(x.dateFromFormControl, x.dateToFormControl);
     });
     // reset selection
     this.relativeFrequency.emit(false);

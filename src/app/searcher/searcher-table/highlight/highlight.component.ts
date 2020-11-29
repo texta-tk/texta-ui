@@ -22,7 +22,6 @@ export interface HighlightConfig {
   onlyHighlightMatching?: FactConstraint[];
   highlightTextaFacts: boolean;
   highlightHyperlinks: boolean;
-  charLimit?: number;
   showShortVersion?: number | undefined;
   data: any;
 }
@@ -66,7 +65,6 @@ export class HighlightComponent {
   static linkify = new LinkifyIt();
   static readonly HYPERLINKS_COL = environment.fileFieldReplace; // hosted_filepath
   highlightArray: HighlightObject[] = [];
-  isTextLimited: boolean;
   textHidden = true;
 
   constructor() {
@@ -78,21 +76,7 @@ export class HighlightComponent {
 
   @Input() set highlightConfig(highlightConfig: HighlightConfig) {
     this._highlightConfig = highlightConfig;
-    if (highlightConfig.charLimit && highlightConfig.charLimit !== 0 &&
-      highlightConfig.data[highlightConfig.currentColumn] !== null && highlightConfig.data[highlightConfig.currentColumn] !== undefined
-      && (isNaN(Number(highlightConfig.data[highlightConfig.currentColumn])))) {
-
-      // slice original text for charlimit bounds, deep clone
-      const edited: any = (({data, ...o}) => o)(highlightConfig);
-      edited.data = Object.assign({}, highlightConfig.data);
-      if (edited.data[edited.currentColumn].length > edited.charLimit) {
-        this.isTextLimited = true;
-      }
-      edited.data[edited.currentColumn] = edited.data[edited.currentColumn].slice(0, edited.charLimit);
-      this.makeHighlightArray(edited);
-    } else {
-      this.makeHighlightArray(highlightConfig);
-    }
+    this.makeHighlightArray(highlightConfig);
   }
 
   static generateColorsForFacts(facts: { fact: string }[]): Map<string, LegibleColor> {
@@ -392,17 +376,6 @@ export class HighlightComponent {
     this.textHidden = !this.textHidden;
   }
 
-  public toggleTextLimit(): void {
-    if (window.getSelection()?.type !== 'Range') {
-      const edited: any = (({data, ...o}) => o)(this._highlightConfig);
-      edited.data = Object.assign({}, this._highlightConfig.data);
-      if (edited.charLimit !== 0 && edited && !this.isTextLimited) {
-        edited.data[edited.currentColumn] = edited.data[edited.currentColumn].slice(0, edited.charLimit);
-      }
-      this.makeHighlightArray(edited);
-      this.isTextLimited = !this.isTextLimited;
-    }
-  }
 
   makeHighlightArray(highlightConfig: HighlightConfig): void {
     if (highlightConfig.data[highlightConfig.currentColumn] !== null && highlightConfig.data[highlightConfig.currentColumn] !== undefined) {

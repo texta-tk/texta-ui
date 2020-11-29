@@ -19,7 +19,7 @@
         </mat-select>
       </mat-form-field>
       <button mat-stroked-button (click)="drawerToggle.emit(true)">Toggle drawer</button>
-      <button mat-stroked-button (click)="exportSearch()" style="margin-left: 5px">Export results</button>
+      <button mat-stroked-button data-cy="appSearcherTableExport" (click)="exportSearch()" style="margin-left: 5px">Export results</button>
       <mat-paginator (page)="pageChange($event)" [pageSizeOptions]="[10, 20, 50]" [length]="paginatorLength"
                      showFirstLastButtons>
 
