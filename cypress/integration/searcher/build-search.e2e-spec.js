@@ -144,6 +144,7 @@ describe('searching and search related activities should be working correctly', 
         cy.get('mat-option').contains('is').click();
         cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
         cy.wait('@searcherQuery');
+        cy.wait(1000); // texta facts are async rendered
         cy.get('.cdk-column-texta_facts > app-texta-facts-chips > span').contains(text).should('exist');
 
         cy.get('[data-cy=appSearcherSideBarBuildSearchFactValueInputGroupAdd]').click();
