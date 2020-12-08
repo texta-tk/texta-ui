@@ -1,17 +1,16 @@
 describe('searching and search related activities should be working correctly', function () {
   beforeEach(function () {
     cy.fixture('users').then((user) => {
-      cy.server();
       cy.login(user.username, user.password);
       cy.createTestProject().then(x => {
         assert.isNotNull(x.body.id, 'should have project id');
         cy.createTestSavedSearch(x.body.id);
       });
-      cy.route('GET', '**user**').as('getUser');
-      cy.route('GET', '**projects**').as('projects');
-      cy.route('POST', '**export_search**').as('export');
-      cy.route('GET', '**get_fields**').as('getProjectIndices');
-      cy.route('POST', 'search_by_query').as('searcherQuery');
+      cy.intercept('GET', '**user**').as('getUser');
+      cy.intercept('GET', '**projects**').as('projects');
+      cy.intercept('POST', '**export_search**').as('export');
+      cy.intercept('GET', '**get_fields**').as('getProjectIndices');
+      cy.intercept('POST', 'search_by_query').as('searcherQuery');
       cy.visit('/');
       cy.wait('@getUser');
       cy.wait('@getProjectIndices');
@@ -55,7 +54,7 @@ describe('searching and search related activities should be working correctly', 
     cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted ').should('be.visible');
 
     cy.get('[data-cy=appSearcherTableExport]').click();
-    cy.wait('@export').then(x=>{
+    cy.wait('@export').then(x => {
       assert(typeof x.response.body === 'string');
     })
     // todo test appSearcherSidebarSavedSearches
@@ -81,7 +80,7 @@ describe('searching and search related activities should be working correctly', 
     cy.get('[data-cy=appSearcherSidebarBuildSearchHighlightSearcher]').click();
     cy.get('app-simple-search input').click().clear().type('reisija');
     cy.wait('@searcherQuery');
-    cy.get(':nth-child(1) > .cdk-column-comment_content > app-highlight span').should('not.be.visible');
+    cy.get(':nth-child(1) > .cdk-column-comment_content > app-highlight span span').should('not.exist');
 
     // date
     cy.get('[data-cy=appSearcherSidebarBuildSearchRadio] mat-radio-button:not(:first())').should('be.visible').click();
@@ -124,7 +123,7 @@ describe('searching and search related activities should be working correctly', 
     cy.get('.cdk-column-texta_facts > app-texta-facts-chips > span').should('not.exist');
 
     cy.get('[data-cy=appSearcherSidebarBuildSearchHighlightFacts]').click();
-    cy.get(':nth-child(1) > .cdk-column-comment_content > app-highlight span').should('not.be.visible');
+    cy.get(':nth-child(1) > .cdk-column-comment_content > app-highlight span span').should('not.exist');
     cy.get('[data-cy=appSearcherSideBarBuildSearchFactNameOperator]').click();
     cy.get('mat-option').contains('and').click();
     cy.wait('@searcherQuery');
@@ -154,16 +153,19 @@ describe('searching and search related activities should be working correctly', 
         cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
         cy.wait('@searcherQuery');
 
+        cy.intercept('POST', '**autocomplete_fact_values**', req => {
+          if (req.body.hasOwnProperty('startswith') && req.body.startswith === 'foo') {
+            req.alias = 'autocompleteTest'
+          }
+        });
         cy.get('[data-cy=appSearcherSideBarBuildSearchFactValueInputGroupName]:last()').click();
-        cy.route('POST', '**autocomplete_fact_values**').as('autoComplete');
-        cy.get('mat-option').contains('test').click();
-        cy.get('[data-cy=appSearcherSideBarBuildSearchFactValueInputGroupValue]:last()').click().type('test');
-        cy.wait('@autoComplete'); // click intiates request aswell
-        cy.wait('@autoComplete');
-        cy.get('.mat-option-text').contains('test').click();
+        cy.get('mat-option').contains('TEEMA').click();
+        cy.get('[data-cy=appSearcherSideBarBuildSearchFactValueInputGroupValue]:last()').click().type('foo');
+        cy.wait('@autocompleteTest');
+        cy.get('.mat-option-text').contains('foo').click();
 
         cy.wait('@searcherQuery');
-        cy.get('.cdk-column-texta_facts > app-texta-facts-chips > span').contains('test').should('exist');
+        cy.get('.cdk-column-texta_facts > app-texta-facts-chips > span').contains('foo').should('exist');
       });
 
 
@@ -172,7 +174,6 @@ describe('searching and search related activities should be working correctly', 
     // todo test appSearcherSideBarBuildSearchCloseConstraint
   });
   it('saved search should be working', function () {
-    cy.closeCurrentCdkOverlay();
     cy.get('[data-cy=appSearcherSidebarSavedSearches] .cdk-column-name:nth(1)').should('be.visible').click('left');
     cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
     cy.wait('@searcherQuery');
@@ -185,7 +186,7 @@ describe('searching and search related activities should be working correctly', 
     cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted ').should('be.visible');
     cy.get('[data-cy=appSearcherSidebarSaveSearchButton]').should('be.visible').click();
     cy.get('mat-dialog-container input').click().type('delete_me');
-    cy.route('GET', '**/searches').as('saveSearch');
+    cy.intercept('GET', '**/searches').as('saveSearch');
     cy.get('[type="submit"]').click();
     cy.wait('@saveSearch');
     cy.get('[data-cy=appSearcherSidebarSavedSearches] .cdk-column-name').contains('delete_me').should('be.visible');

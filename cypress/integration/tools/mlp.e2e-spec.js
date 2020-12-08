@@ -2,18 +2,17 @@ describe('mlp should work', function () {
   beforeEach(function () {
     cy.wait(100);
     cy.fixture('users').then((user) => {
-      cy.server();
       cy.login(user.username, user.password);
       cy.createTestProject().then(x => {
         assert.isNotNull(x.body.id, 'should have project id');
         cy.wrap(x.body.id).as('projectId');
-        cy.route('GET', '**user**').as('getUser');
-        cy.route('GET', '**get_fields**').as('getProjectIndices');
-        cy.route('GET', '**/mlp_index/**').as('getMLPTasks');
-        cy.route('OPTIONS', '**/mlp_index/**').as('optionsMLPTasks');
-        cy.route('DELETE', '**/mlp_index/**').as('bulkDeleteMLPTasks');
-        cy.route('POST', '**/mlp_index/**').as('createMLPTask');
-        cy.route('POST', '**/mlp/texts/**').as('MLPTexts');
+        cy.intercept('GET', '**user**').as('getUser');
+        cy.intercept('GET', '**get_fields**').as('getProjectIndices');
+        cy.intercept('GET', '**/mlp_index/**').as('getMLPTasks');
+        cy.intercept('OPTIONS', '**/mlp_index/**').as('optionsMLPTasks');
+        cy.intercept('DELETE', '**/mlp_index/**').as('bulkDeleteMLPTasks');
+        cy.intercept('POST', '**/mlp_index/**').as('createMLPTask');
+        cy.intercept('POST', '**/mlp/texts/**').as('MLPTexts');
       });
     });
   });
@@ -45,7 +44,7 @@ describe('mlp should work', function () {
     }));
     cy.get('[data-cy=appMLPCreateDialogSubmit]').should('be.visible').click();
     cy.wait('@createMLPTask').then(created => {
-      expect(created.status).to.eq(201);
+      expect(created.response.statusCode).to.eq(201);
       assert.equal(created.response.body.task.status, 'created');
     });
     cy.get('.mat-header-row > .cdk-column-id').should('be.visible').then(bb => {

@@ -2,15 +2,14 @@ describe('regex-tagger-group should work', function () {
   beforeEach(function () {
     cy.wait(100);
     cy.fixture('users').then((user) => {
-      cy.server();
       cy.login(user.username, user.password);
       cy.createTestProject().then(x => {
         assert.isNotNull(x.body.id, 'should have project id');
         cy.wrap(x.body.id).as('projectId');
-        cy.route('GET', '**user**').as('getUser');
-        cy.route('GET', '**get_fields**').as('getProjectIndices');
-        cy.route('GET', '**/regex_tagger_groups/**').as('getRegexTaggers');
-        cy.route('POST', '**/regex_tagger_groups/**').as('postRegexTaggers');
+        cy.intercept('GET', '**user**').as('getUser');
+        cy.intercept('GET', '**get_fields**').as('getProjectIndices');
+        cy.intercept('GET', '**/regex_tagger_groups/**').as('getRegexTaggers');
+        cy.intercept('POST', '**/regex_tagger_groups/**').as('postRegexTaggers');
       });
     });
   });
@@ -35,7 +34,7 @@ describe('regex-tagger-group should work', function () {
     }));
     cy.get('[data-cy=appRegexTaggerGroupMultiTagDialogSubmit]').click();
     cy.wait('@postRegexTaggers').then(resp => {
-      expect(resp.status).to.eq(200);
+      expect(resp.response.statusCode).to.eq(200);
       expect(resp.response.body.length).to.eq(1);
     });
     cy.get('.code-wrapper').should('be.visible');
@@ -76,7 +75,7 @@ describe('regex-tagger-group should work', function () {
     }));
     cy.get('[data-cy=appRegexTaggerGroupApplyTaggerDialogSubmit]').click();
     cy.wait(['@postRegexTaggers',]).then(resp => {
-      expect(resp.status).to.eq(200);
+      expect(resp.response.statusCode).to.eq(200);
     });
     cy.wait('@getRegexTaggers');
 
@@ -107,7 +106,7 @@ describe('regex-tagger-group should work', function () {
     cy.wrap([0, 0, 0, 0, 0]).each(y => { // hack to wait for task to complete
       cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
       cy.wait('@postRegexTaggers').then(resp => {
-        expect(resp.status).to.eq(200);
+        expect(resp.response.statusCode).to.eq(200);
         if (resp?.response?.body?.result) {
           cy.get('app-fact-chip').should('be.visible');
         }else{
@@ -130,7 +129,7 @@ describe('regex-tagger-group should work', function () {
     cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
 
     cy.wait('@postRegexTaggers').then(resp => {
-      expect(resp.status).to.eq(200);
+      expect(resp.response.statusCode).to.eq(200);
       if (resp?.response?.body?.result) {
         cy.get('app-fact-chip').should('be.visible');
       }
@@ -161,7 +160,7 @@ describe('regex-tagger-group should work', function () {
 
     cy.get('[data-cy=appRegexTaggerGroupCreateDialogSubmit]').click();
     cy.wait('@postRegexTaggers').then(created => {
-      expect(created.status).to.eq(201);
+      expect(created.response.statusCode).to.eq(201);
     });
     cy.wait('@getRegexTaggers');
     cy.wait(1000);

@@ -1,22 +1,19 @@
 describe('Torch Taggers should work', function () {
   beforeEach(function () {
     cy.fixture('users').then((user) => {
-      cy.server();
       cy.login(user.username, user.password);
       cy.createTestProject().then(x => {
         assert.isNotNull(x.body.id, 'should have project id');
         cy.wrap(x.body.id).as('projectId');
-        cy.route('GET', '**user**').as('getUser');
-        cy.route('GET', '**get_fields**').as('getProjectIndices');
-        cy.route('GET', '**/torchtaggers/**').as('getTorchTaggers');
-        cy.route('DELETE', '**/torchtaggers/**').as('deleteTorchTaggers');
-        cy.route('POST', '**/torchtaggers/**').as('postTorchTaggers');
-        cy.route('PATCH', '**/torchtaggers/**').as('patchTorchTaggers');
       });
     });
   });
   function initTorchTagger() {
+    cy.intercept('GET', '**user**').as('getUser');
+    cy.intercept('GET', '**get_fields**').as('getProjectIndices');
+    cy.intercept('GET', '**/torchtaggers/**').as('getTorchTaggers');
     cy.visit('/torch-taggers');
+    cy.wait('@getUser')
     cy.wait('@getProjectIndices');
     cy.wait('@getTorchTaggers');
     cy.get('[data-cy=appNavbarProjectSelect]').click();
@@ -62,9 +59,10 @@ describe('Torch Taggers should work', function () {
         cy.wrap(sample).should('be.visible').find('input').clear();
         cy.wrap(sample).type('10');
       }));
+      cy.intercept('POST', '**/torchtaggers/**').as('postTorchTaggers');
       cy.get('[data-cy=appTorchTaggerCreateDialogSubmit]').should('be.visible').click();
       cy.wait('@postTorchTaggers').then(created=>{
-        expect(created.status).to.eq(201);
+        expect(created.response.statusCode).to.eq(201);
         assert.equal(created.response.body.task.status, 'created');
       });
 
@@ -73,8 +71,7 @@ describe('Torch Taggers should work', function () {
   it('extra_actions should work', function () {
     cy.importTestTorchTagger(this.projectId).then(x => {
       initTorchTagger();
-      cy.wait('@getTorchTaggers');
-      cy.wait(100);
+      cy.intercept('POST', '**/torchtaggers/**').as('postTorchTaggers');
       // tag text
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
       cy.get('[data-cy=appTorchTaggerMenuTagText]').should('be.visible').click();
@@ -82,7 +79,7 @@ describe('Torch Taggers should work', function () {
         .clear()
         .type('Kinnipeetavate arvu vähenedes nende ülalpidamiskulud suurenevad. ');
       cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
-      cy.wait('@postTorchTaggers');
+      cy.wait('@postTorchTaggers').its('response.statusCode').should('eq', 200);
       cy.closeCurrentCdkOverlay();
       // edit
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
@@ -90,9 +87,13 @@ describe('Torch Taggers should work', function () {
       cy.get('app-edit-torch-tagger-dialog input:first()').should('be.visible').click()
         .clear()
         .type('newName');
+
+      cy.intercept('PATCH', '**/torchtaggers/**').as('patchTorchTaggers');
       cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
       cy.wait('@patchTorchTaggers');
       cy.closeCurrentCdkOverlay();
+
+      cy.intercept('DELETE', '**/torchtaggers/*/').as('deleteTorchTaggers');
       // delete torchtagger
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
       cy.get('[data-cy=appTorchTaggerMenuDelete]').should('be.visible').click();

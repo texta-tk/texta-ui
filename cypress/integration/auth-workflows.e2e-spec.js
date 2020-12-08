@@ -1,9 +1,8 @@
 describe('register and login workflows', function () {
   beforeEach(function () {
     cy.visit('/');
-    cy.server();
     cy.fixture('users').as('usersJSON');
-    cy.route('GET', '**user**').as('getUser');
+    cy.intercept('GET', '**user**').as('getUser');
   });
   it('Should display a popup on navigation and be able to log in and logout', function () {
     cy.get('[data-cy=appSharedLoginDialogUsername]').type(this.usersJSON.username);
@@ -11,7 +10,7 @@ describe('register and login workflows', function () {
     cy.get('[data-cy=appSharedLoginDialogSubmit]').click();
     cy.wait('@getUser');
     cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible').click();
-    cy.route('POST', 'logout').as('logout');
+    cy.intercept('POST', 'logout').as('logout');
     cy.get('[data-cy=appNavbarlogOutMenuItem]').should('be.visible').click();
     cy.wait('@logout');
   });
@@ -82,18 +81,9 @@ describe('register and login workflows', function () {
     cy.get('[data-cy=appSharedRegisterDialogError').contains('common');
     cy.get('[data-cy=appSharedRegisterDialogPassword1]').type('35');
     cy.get('[data-cy=appSharedRegisterDialogPassword2]').type('35');
-    cy.server();
-    cy.route({
-      method: 'POST',
-      url: '**/rest-auth/registration/',
-      response: {username: 'A user with that username already exists.'},
-      status: 400
-    });
     cy.get('[data-cy=appSharedRegisterDialogSubmit]').click();
-    cy.get('[data-cy=appSharedRegisterDialogError]').contains('username');
-    cy.route('GET', `${Cypress.env('api_basePath')}/rest-auth/user/`).as('getUser');
-    cy.route('POST', 'logout').as('logout');
-    cy.server({enable: false});
+    cy.intercept('GET', `${Cypress.env('api_basePath')}/rest-auth/user/`).as('getUser');
+    cy.intercept('POST', 'logout').as('logout');
     cy.get('[data-cy=appSharedRegisterDialogSubmit]').click();
     cy.wait('@getUser').then(x=>{
       assert.isNotNull(x.response.body.url, 'is not null');
@@ -108,25 +98,5 @@ describe('register and login workflows', function () {
       console.log(x);
     });
 
-
-/*    cy.login(this.usersJSON.username, this.usersJSON.password);
-    cy.visit('/');
-
-    cy.route('DELETE', 'api/v1/users/!*!/').as('deleteUser');*/
-    // now delete the user we just registered with
-/*    cy.visit('/');
-    cy.get('[data-cy=appSharedLoginDialogUsername]').type(this.usersJSON.username);
-    cy.get('[data-cy=appSharedLoginDialogPassword]').type(this.usersJSON.password);
-    cy.get('[data-cy=appSharedLoginDialogSubmit]').click();
-    cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible').click();
-    cy.get('[data-cy=appNavbarUserMenuManagement]').should('be.visible').click();
-    cy.wait('@getUser');
-    cy.get('app-users .mat-header-row > .cdk-column-id').should('be.visible').click();
-    cy.get('tbody > :nth-child(1) > .cdk-column-username').contains('delete_me_im_test_account_btw_please_dont_take_my_username');
-    cy.get('tbody > :nth-child(1) > .cdk-column-delete').should('be.visible').click('left');
-    cy.server();
-    cy.route('DELETE', 'api/v1/users/!*!/').as('deleteUser');
-    cy.get('[data-cy=appConfirmDialogSubmit]').should('be.visible').click();
-    cy.wait('@deleteUser');*/
   })
 });

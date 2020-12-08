@@ -2,15 +2,14 @@ describe('regex-taggers should work', function () {
   beforeEach(function () {
     cy.wait(100);
     cy.fixture('users').then((user) => {
-      cy.server();
       cy.login(user.username, user.password);
       cy.createTestProject().then(x => {
         assert.isNotNull(x.body.id, 'should have project id');
         cy.wrap(x.body.id).as('projectId');
-        cy.route('GET', '**user**').as('getUser');
-        cy.route('GET', '**get_fields**').as('getProjectIndices');
-        cy.route('GET', '**/regex_taggers/**').as('getRegexTaggers');
-        cy.route('POST', '**/regex_taggers/**').as('postRegexTaggers');
+        cy.intercept('GET', '**user**').as('getUser');
+        cy.intercept('GET', '**get_fields**').as('getProjectIndices');
+        cy.intercept('GET', '**/regex_taggers/**').as('getRegexTaggers');
+        cy.intercept('POST', '**/regex_taggers/**').as('postRegexTaggers');
       });
     });
   });
@@ -47,10 +46,10 @@ describe('regex-taggers should work', function () {
     cy.wrap([0, 0, 0, 0, 0]).each(y => { // hack to wait for task to complete
       cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
       cy.wait('@postRegexTaggers').then(resp => {
-        expect(resp.status).to.eq(200);
+        cy.wrap(resp).its('response.statusCode').should('eq', 200);
         if (resp?.response?.body?.result) {
           cy.get('app-fact-chip').should('be.visible');
-        }else{
+        } else {
           cy.get('[data-cy=appRegexTaggerTagRandomDocDialogIndices]').should('be.visible');
         }
       });
@@ -69,12 +68,13 @@ describe('regex-taggers should work', function () {
 
     cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
 
-    cy.wait('@postRegexTaggers').then(resp => {
-      expect(resp.status).to.eq(200);
-      if (resp?.response?.body?.result) {
+
+    cy.wait('@postRegexTaggers').then(intercepted => {
+      cy.wrap(intercepted).its('response.statusCode').should('eq', 200);
+      if (intercepted?.response?.body?.result) {
         cy.get('app-fact-chip').should('be.visible');
       }
-    });
+    })
     cy.get('[data-cy=appRegexTaggerTagTextDialogClose]').click();
   }
 
@@ -94,9 +94,7 @@ describe('regex-taggers should work', function () {
     }));
 
     cy.get('[data-cy=appRegexTaggerCreateDialogSubmit]').click();
-    cy.wait('@postRegexTaggers').then(created => {
-      expect(created.status).to.eq(201);
-    });
+    cy.wait('@postRegexTaggers').its('response.statusCode').should('eq', 201);
     cy.wait(1000);
     cy.get('[data-cy=appRegexTaggerMultiTagBtn]').click();
     cy.get('[data-cy=appRegexTaggerMultiTagDialogText]').type('test');
@@ -106,9 +104,7 @@ describe('regex-taggers should work', function () {
       cy.closeCurrentCdkOverlay();
     }));
     cy.get('[data-cy=appRegexTaggerMultiTagDialogSubmit]').click();
-    cy.wait('@postRegexTaggers').then(tag => {
-      expect(tag.status).to.eq(200);
-    });
+    cy.wait('@postRegexTaggers').its('response.statusCode').should('eq', 200);
     cy.get('.code-wrapper').should('be.visible');
     cy.get('[data-cy=appRegexTaggerMultiTagDialogClose]').click();
 
