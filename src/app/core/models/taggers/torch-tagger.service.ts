@@ -31,6 +31,13 @@ export class TorchTaggerService {
       catchError(this.logService.handleError<TorchTagger>('editTorchTagger')));
   }
 
+  retrainTagger(projectId: number, taggerId: number): Observable<unknown> {
+    return this.http.post<unknown>(`${this.apiUrl}/projects/${projectId}/torchtaggers/${taggerId}/retrain_tagger/`, {}
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'retrainTorchTagger')),
+      catchError(this.logService.handleError<unknown>('retrainTorchTagger')));
+  }
+
   bulkDeleteTorchTaggers(projectId: number, body: unknown): Observable<unknown> {
     return this.http.post<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>
     (`${this.apiUrl}/projects/${projectId}/torchtaggers/bulk_delete/`, body).pipe(
@@ -57,9 +64,9 @@ export class TorchTaggerService {
       catchError(this.logService.handleError<TorchTagger>('createTorchTagger')));
   }
 
-  tagText(body: unknown, projectId: number, taggerId: number): Observable<{ result: boolean, probability: number }  | HttpErrorResponse> {
-    return this.http.post<{ result: boolean, probability: number } >(`${this.apiUrl}/projects/${projectId}/torchtaggers/${taggerId}/tag_text/`, body).pipe(
+  tagText(body: unknown, projectId: number, taggerId: number): Observable<{ result: boolean, probability: number } | HttpErrorResponse> {
+    return this.http.post<{ result: boolean, probability: number }>(`${this.apiUrl}/projects/${projectId}/torchtaggers/${taggerId}/tag_text/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'tagTorchText')),
-      catchError(this.logService.handleError<{ result: boolean, probability: number } >('tagTorchText')));
+      catchError(this.logService.handleError<{ result: boolean, probability: number }>('tagTorchText')));
   }
 }

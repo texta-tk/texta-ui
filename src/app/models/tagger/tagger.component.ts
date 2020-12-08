@@ -22,7 +22,7 @@ import {ConfirmDialogComponent} from 'src/app/shared/components/dialogs/confirm-
 import {ListFeaturesDialogComponent} from './list-features-dialog/list-features-dialog.component';
 import {expandRowAnimation} from '../../shared/animations';
 import {EditTaggerDialogComponent} from './edit-tagger-dialog/edit-tagger-dialog.component';
-import {Index} from "../../shared/types/Index";
+import {Index} from '../../shared/types/Index';
 
 @Component({
   selector: 'app-tagger',
@@ -144,7 +144,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
       this.taggerService.retrainTagger(this.currentProject.id, value.id)
         .subscribe(resp => {
           if (resp && !(resp instanceof HttpErrorResponse)) {
-            this.logService.snackBarMessage('Successfully started retraining tagger', 4000);
+            this.logService.snackBarMessage('Successfully started retraining', 4000);
           } else if (resp instanceof HttpErrorResponse) {
             this.logService.snackBarError(resp, 5000);
           }

@@ -42,6 +42,7 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   resultsLength: number;
   currentProject: Project;
   destroyed$ = new Subject<boolean>();
+  private updateTable = new Subject<boolean>();
 
 
   constructor(private projectStore: ProjectStore,
@@ -86,7 +87,7 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
-    merge(this.sort.sortChange, this.paginator.page, this.filteredSubject)
+    merge(this.sort.sortChange, this.paginator.page, this.filteredSubject, this.updateTable)
       .pipe(debounceTime(250), startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
@@ -127,6 +128,18 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  retrainTagger(value: { id: number; }): void {
+    if (this.currentProject) {
+      this.torchtaggerService.retrainTagger(this.currentProject.id, value.id)
+        .subscribe(resp => {
+          if (resp && !(resp instanceof HttpErrorResponse)) {
+            this.logService.snackBarMessage('Successfully started retraining', 2000);
+          } else if (resp instanceof HttpErrorResponse) {
+            this.logService.snackBarError(resp, 5000);
+          }
+        }, () => null, () => this.updateTable.next(true));
+    }
+  }
 
   ngOnDestroy(): void {
     this.destroyed$.next(true);

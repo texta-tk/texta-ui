@@ -232,6 +232,9 @@
       <button (click)="edit(element)" mat-menu-item data-cy="appTorchTaggerMenuEdit">
         Edit
       </button>
+      <button (click)="retrainTagger(element)" data-cy="appTaggerMenuRetrain" mat-menu-item>
+        Retrain tagger
+      </button>
       <mat-divider></mat-divider>
     </div>
     <button mat-menu-item (click)="onDelete(element, i)" data-cy="appTorchTaggerMenuDelete">
