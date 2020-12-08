@@ -3,7 +3,7 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  apiHost: 'http://localhost',
+  apiHost: 'https://rest-dev.texta.ee',
   apiBasePath: '/api/v1',
   production: false,
   fileFieldReplace: 'texta_filepath',

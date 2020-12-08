@@ -15,7 +15,6 @@ describe('/oauth and uaa auth tests', function () {
             cy.clearLocalStorage('access_token');
             cy.clearLocalStorage('refresh_token');
 
-            cy.server();
             cy.visit('/');
 
             // Navigate to the UAA login
@@ -34,12 +33,12 @@ describe('/oauth and uaa auth tests', function () {
     });
 
 
-    it('should be able to log in and out with uaa', function () { 
+    it('should be able to log in and out with uaa', function () {
         // Verify logged in
         cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible').click();
 
         // Logout
-        cy.route('POST', 'logout').as('logout');
+        cy.intercept('POST', 'logout').as('logout');
         cy.get('[data-cy=appNavbarlogOutMenuItem]').should('be.visible').click();
         cy.wait('@logout');
 
@@ -52,8 +51,8 @@ describe('/oauth and uaa auth tests', function () {
         // Verify logged in
         cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible');
 
-        cy.route('POST', '**/uaa/refresh-token/').as('refreshToken');
-        cy.route('GET', '**/rest-auth/user/').as('userInfo');
+        cy.intercept('POST', '**/uaa/refresh-token/').as('refreshToken');
+        cy.intercept('GET', '**/rest-auth/user/').as('userInfo');
 
         // Clear the cookies to prevent sessions taking over
         cy.clearCookies({domain: null});
@@ -75,7 +74,7 @@ describe('/oauth and uaa auth tests', function () {
         // Verify logged in
         cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible');
 
-        cy.route('GET', '**/rest-auth/user/').as('userInfo');
+        cy.intercept('GET', '**/rest-auth/user/').as('userInfo');
 
         // Clear the cookies to prevent sessions taking over
         cy.clearCookies({domain: null});

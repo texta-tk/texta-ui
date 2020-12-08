@@ -2,16 +2,15 @@ describe('Anonymizer should work', function () {
   beforeEach(function () {
     cy.wait(100);
     cy.fixture('users').then((user) => {
-      cy.server();
       cy.login(user.username, user.password);
       cy.createTestProject().then(x => {
         assert.isNotNull(x.body.id, 'should have project id');
         cy.wrap(x.body.id).as('projectId');
-        cy.route('GET', '**user**').as('getUser');
-        cy.route('GET', '**get_fields**').as('getProjectIndices');
-        cy.route('GET', '**/anonymizers/**').as('getAnonymizers');
-        cy.route('POST', '**/anonymizers/**').as('postAnonymizer');
-        cy.route('POST', '**/anonymize_text/**').as('AnonymizeText');
+        cy.intercept('GET', '**user**').as('getUser');
+        cy.intercept('GET', '**get_fields**').as('getProjectIndices');
+        cy.intercept('GET', '**/anonymizers/**').as('getAnonymizers');
+        cy.intercept('POST', '**/anonymizers/').as('postAnonymizer');
+        cy.intercept('POST', '**/anonymize_text/**').as('AnonymizeText');
       });
     });
   });
@@ -33,7 +32,7 @@ describe('Anonymizer should work', function () {
     }));
     cy.get('[data-cy=appAnonymizerCreateDialogSubmit]').should('be.visible').click();
     cy.wait('@postAnonymizer').then(created => {
-      expect(created.status).to.eq(201);
+      expect(created.response.statusCode).to.eq(201);
     });
 
     cy.get('.cdk-column-actions:nth(1)').click('left');
@@ -53,10 +52,11 @@ describe('Anonymizer should work', function () {
       cy.get('pre').should('be.visible');
       cy.closeCurrentCdkOverlay();
       cy.wait(100);
+      cy.intercept('POST', '**/anonymizers/bulk_delete/').as('bulkDelete');
       cy.get('.mat-header-row > .cdk-column-select').click(24,24);
       cy.get('[data-cy=appAnonymizerDeleteBtn]').click();
       cy.get('[type="submit"]').click();
-      cy.wait('@postAnonymizer').its('responseBody')
+      cy.wait('@bulkDelete').its('response.body')
         .should('have.property', 'num_deleted');
     });
   });

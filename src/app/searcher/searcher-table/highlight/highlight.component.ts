@@ -543,16 +543,20 @@ export class HighlightComponent {
 
   private makeFactNestedHighlightRecursive(highlightObject: HighlightObject, factToInsert: HighlightSpan | undefined,
                                            color: LegibleColor | undefined, textToInsert: string): HighlightObject {
-    if (typeof highlightObject.nested === 'undefined') {
-      highlightObject.nested = {
-        text: textToInsert,
-        highlighted: true,
-        span: factToInsert,
-        color,
-        nested: undefined
-      };
-    } else {
-      this.makeFactNestedHighlightRecursive(highlightObject.nested, factToInsert, color, textToInsert);
+    let stack = highlightObject;
+    while (stack) {
+      if (stack.nested === undefined) {
+        stack.nested = {
+          text: textToInsert,
+          highlighted: true,
+          span: factToInsert,
+          color,
+          nested: undefined
+        };
+        break;
+      } else {
+        stack = stack.nested as HighlightObject;
+      }
     }
     return highlightObject;
   }

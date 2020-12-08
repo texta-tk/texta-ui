@@ -1,16 +1,13 @@
 describe('dataset-importer should work', function () {
   beforeEach(function () {
     cy.fixture('users').then((user) => {
-      cy.server();
       cy.login(user.username, user.password);
       cy.createTestProject().then(x => {
         assert.isNotNull(x.body.id, 'should have project id');
         cy.wrap(x.body.id).as('projectId');
-        cy.route('GET', '**user**').as('getUser');
-        cy.route('GET', '**get_fields**').as('getProjectIndices');
-        cy.route('GET', '**/dataset_imports/**').as('getDatasets');
-        cy.route('DELETE', '**/dataset_imports/**').as('deleteDatasets');
-        cy.route('POST', '**/dataset_imports/**').as('postDatasets');
+        cy.intercept('GET', '**user**').as('getUser');
+        cy.intercept('GET', '**get_fields**').as('getProjectIndices');
+        cy.intercept('GET', '**/dataset_imports/**').as('getDatasets');
       });
     });
   });
@@ -22,6 +19,7 @@ describe('dataset-importer should work', function () {
   }
   it('should be able to create a new dataset task', function () {
     initImporterPage();
+    cy.intercept('POST', '**/dataset_imports/**').as('postDatasets');
     cy.get('[data-cy=appToolsDatasetImporterCreateBtn]').should('be.visible').click();
     cy.get('[data-cy=appDatasetImporterCreateDialogDesc]').then((desc => {
       cy.wrap(desc).should('have.class', 'mat-focused').type('b').find('input').clear();
@@ -38,8 +36,9 @@ describe('dataset-importer should work', function () {
     });
     cy.get('[data-cy=appDatasetImporterCreateDialogSubmit]').should('be.visible').click();
     cy.wait('@postDatasets').then(created=>{
-      expect(created.status).to.eq(201);
+      expect(created.response.statusCode).to.eq(201);
       assert.equal(created.response.body.task.status, 'created');
+      cy.intercept('DELETE', '**/dataset_imports/**').as('deleteDatasets');
       // delete dataset task
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
       cy.get('[data-cy=appDatasetImportMenuDelete]').should('be.visible').click();

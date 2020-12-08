@@ -1,16 +1,15 @@
 describe('should be able to build aggregations', function () {
   beforeEach(function () {
     cy.fixture('users').then((user) => {
-      cy.server();
       cy.login(user.username, user.password);
       cy.createTestProject().then(x => {
         assert.isNotNull(x.body.id, 'should have project id');
         cy.createTestSavedSearch(x.body.id);
       });
-      cy.route('GET', '**user**').as('getUser');
-      cy.route('GET', '**projects**').as('projects');
-      cy.route('GET', '**get_fields**').as('getProjectIndices');
-      cy.route('POST', 'search_by_query').as('searcherQuery');
+      cy.intercept('GET', '**user**').as('getUser');
+      cy.intercept('GET', '**projects**').as('projects');
+      cy.intercept('GET', '**get_fields**').as('getProjectIndices');
+      cy.intercept('POST', 'search_by_query').as('searcherQuery');
       cy.visit('/');
       cy.wait('@getUser');
       cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible');
@@ -116,12 +115,12 @@ describe('should be able to build aggregations', function () {
     cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]:last()').scrollIntoView().click();
     cy.get('mat-option').contains('comment_subject').scrollIntoView().click();
     cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]:first()').scrollIntoView().click();
-    cy.get('mat-option').contains('@timestamp').scrollIntoView().click({force: true});
+    cy.get('mat-option').contains('@timestamp').scrollIntoView().click();
     cy.wait('@searcherQuery');
     submitAndCheckGraphResult(1);
     cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]:first()').scrollIntoView().click();
-    cy.get('mat-option').contains('comment_subject').scrollIntoView().click({force: true});
-    cy.wait(100);
+    cy.get('mat-option').contains('comment_subject').scrollIntoView().click();
+    cy.closeCurrentCdkOverlay();
     cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]:last()').scrollIntoView().click();
     cy.get('mat-option').contains('@timestamp').scrollIntoView().click();
     cy.wait('@searcherQuery');

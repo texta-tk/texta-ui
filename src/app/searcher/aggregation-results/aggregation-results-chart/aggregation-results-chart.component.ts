@@ -1,4 +1,3 @@
-
 import {AggregationData} from '../aggregation-results.component';
 import {ComponentPortal, PortalInjector} from '@angular/cdk/portal';
 import {
@@ -51,6 +50,7 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
           namelength: 25,
         },
         hoverdistance: -1,
+        xaxis: {type: 'date'},
         yaxis: {title: {text: ''}},
         legend: {
           orientation: 'h',

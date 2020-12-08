@@ -2,17 +2,16 @@ describe('tagger groups should work', function () {
   beforeEach(function () {
     cy.wait(100);
     cy.fixture('users').then((user) => {
-      cy.server();
       cy.login(user.username, user.password);
       cy.createTestProject().then(x => {
         assert.isNotNull(x.body.id, 'should have project id');
         cy.wrap(x.body.id).as('projectId');
-        cy.route('GET', '**user**').as('getUser');
-        cy.route('GET', '**get_fields**').as('getProjectIndices');
-        cy.route('GET', '**/tagger_groups/**').as('getTaggerGroups');
-        cy.route('DELETE', '**/tagger_groups/**').as('deleteTaggerGroups');
-        cy.route('POST', '**/tagger_groups/**').as('postTaggerGroups');
-        cy.route('PATCH', '**/tagger_groups/**').as('patchTaggerGroups');
+        cy.intercept('GET', '**user**').as('getUser');
+        cy.intercept('GET', '**get_fields**').as('getProjectIndices');
+        cy.intercept('GET', '**/tagger_groups/**').as('getTaggerGroups');
+        cy.intercept('DELETE', '**/tagger_groups/**').as('deleteTaggerGroups');
+        cy.intercept('POST', '**/tagger_groups/').as('postTaggerGroups');
+        cy.intercept('PATCH', '**/tagger_groups/**').as('patchTaggerGroups');
       });
     });
   });
@@ -47,7 +46,7 @@ describe('tagger groups should work', function () {
     }));
     cy.get('[data-cy=appTaggerGroupCreateDialogSubmit]').should('be.visible').click();
     cy.wait('@postTaggerGroups').then(created=>{
-      expect(created.status).to.eq(201);
+      expect(created.response.statusCode).to.eq(201);
     });
   });
 
@@ -59,11 +58,13 @@ describe('tagger groups should work', function () {
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
       cy.get('[data-cy=appTaggerGroupMenuModelList]').should('be.visible').click();
       cy.wait('@getTaggerGroups').then(x=>{
-        expect(x.status).to.eq(200);
+        expect(x.response.statusCode).to.eq(200);
       });
       cy.get('app-models-list-dialog tr').should('have.length', 4);
       cy.closeCurrentCdkOverlay();
       // tag text
+
+      cy.intercept('POST', '**/tag_text/').as('tagText');
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
       cy.get('[data-cy=appTaggerGroupMenuTagText]').should('be.visible').click();
       cy.get('app-tagger-group-tag-text-dialog input:first()').should('be.visible').click()
@@ -71,11 +72,12 @@ describe('tagger groups should work', function () {
         .type('Kinnipeetavate arvu vähenedes nende ülalpidamiskulud suurenevad. ');
       cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
       // this can take a long time
-      cy.wait('@postTaggerGroups', {timeout: 60000}).then(x=>{
-        expect(x.status).to.eq(200);
+      cy.wait('@tagText', {timeout: 60000}).then(x=>{
+        expect(x.response.statusCode).to.eq(200);
       });
       cy.closeCurrentCdkOverlay();
       // Tag doc
+      cy.intercept('POST', '**/tag_doc/').as('tagDoc');
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
       cy.get('[data-cy=appTaggerGroupMenuTagDoc]').should('be.visible').click();
       cy.fixture('sample_doc').then(sampleDoc=>{
@@ -84,13 +86,13 @@ describe('tagger groups should work', function () {
           .clear().invoke('val', json).trigger('change');
       });
       cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
-      cy.wait('@postTaggerGroups', {timeout: 60000}).then(x=>{
-        expect(x.status).to.eq(200);
+      cy.wait('@tagDoc', {timeout: 60000}).then(x=>{
+        expect(x.response.statusCode).to.eq(200);
       });
       cy.closeCurrentCdkOverlay();
       // Tag random doc
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
-      cy.route('POST', '**/tag_random_doc/**').as('tagRandomDoc');
+      cy.intercept('POST', '**/tag_random_doc/**').as('tagRandomDoc');
       cy.get('[data-cy=appTaggerGroupMenuTagRandomDoc]').should('be.visible').click();
       cy.wait('@tagRandomDoc', {timeout: 120000});
       cy.get('app-tagger-group-tag-random-doc-dialog button').should('be.visible').click();
@@ -104,7 +106,7 @@ describe('tagger groups should work', function () {
         .type('newName');
       cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
       cy.wait('@patchTaggerGroups').then(x=>{
-        expect(x.status).to.eq(200);
+        expect(x.response.statusCode).to.eq(200);
       });
       cy.closeCurrentCdkOverlay();
       // delete
