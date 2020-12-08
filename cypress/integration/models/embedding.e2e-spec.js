@@ -2,28 +2,24 @@ describe('embeddings should work', function () {
   beforeEach(function () {
     cy.wait(100);
     cy.fixture('users').then((user) => {
-      cy.server();
       cy.login(user.username, user.password);
       cy.createTestProject().then(x => {
         assert.isNotNull(x.body.id, 'should have project id');
         cy.wrap(x.body.id).as('projectId');
-        cy.route('GET', '**user**').as('getUser');
-        cy.route('GET', '**get_fields**').as('getProjectIndices');
-        cy.route('GET', '**/embeddings/**').as('getEmbeddings');
-        cy.route('DELETE', '**/embeddings/**').as('deleteEmbeddings');
-        cy.route('POST', '**/embeddings/**').as('postEmbeddings');
-        cy.route('PATCH', '**/embeddings/**').as('patchEmbeddings');
+        cy.intercept('GET', '**user**').as('getUser');
+        cy.intercept('GET', '**get_fields**').as('getProjectIndices');
+        cy.intercept('DELETE', '**/embeddings/**').as('deleteEmbeddings');
+        cy.intercept('PATCH', '**/embeddings/**').as('patchEmbeddings');
       });
     });
   });
   function initEmbeddingsPage(){
+    cy.intercept('GET', '**/embeddings/**').as('getEmbeddings');
     cy.visit('/embeddings');
     cy.wait('@getProjectIndices');
     cy.wait('@getEmbeddings');
     cy.get('[data-cy=appNavbarProjectSelect]').click();
     cy.get('mat-option').contains('integration_test_project').click();
-    cy.wait('@getEmbeddings');
-    cy.wait('@getProjectIndices');
   }
   it('should be able to create an embedding', function () {
     initEmbeddingsPage();
@@ -46,11 +42,12 @@ describe('embeddings should work', function () {
       cy.wrap(dimensions).should('be.visible').find('input').clear();
       cy.wrap(dimensions).type('1');
     }));
+    cy.intercept('POST', '**/embeddings/**').as('postEmbeddings');
     cy.get('[data-cy=appEmbeddingCreateDialogSubmit]').should('be.visible').click();
-    cy.wait('@postEmbeddings').then(created=>{
-      expect(created.status).to.eq(201);
-      assert.equal(created.response.body.task.status, 'created');
-    });
+    cy.wait('@postEmbeddings').then((interception) => {
+      cy.wrap(interception).its('response.statusCode').should('eq', 201);
+      cy.wrap(interception).its('response.body.task.status').should('eq', 'created');
+    })
   });
   it('extra_actions should work', function () {
     cy.importTestEmbedding(this.projectId).then(x => {
@@ -61,7 +58,7 @@ describe('embeddings should work', function () {
       cy.get('app-phrase-dialog input:first()').should('be.visible').click()
         .clear()
         .type('Kinnipeetavate arvu vähenedes nende ülalpidamiskulud suurenevad. ');
-      cy.route('POST', '**/embeddings/**').as('postEmbeddings');
+      cy.intercept('POST', '**/embeddings/**').as('postEmbeddings');
       cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
       cy.wait('@postEmbeddings');
       cy.closeCurrentCdkOverlay();

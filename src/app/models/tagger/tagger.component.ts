@@ -178,10 +178,10 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dialog.open(EditTaggerDialogComponent, {
       width: '700px',
       data: tagger
-    }).afterClosed().subscribe((x: Tagger | HttpErrorResponse) => {
+    }).afterClosed().subscribe((x: Tagger | HttpErrorResponse | undefined) => {
       if (x && !(x instanceof HttpErrorResponse)) {
         tagger.description = x.description;
-      } else {
+      } else if (x instanceof HttpErrorResponse) {
         this.logService.snackBarError(x, 3000);
       }
     });

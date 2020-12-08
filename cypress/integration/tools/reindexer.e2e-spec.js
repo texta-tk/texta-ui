@@ -2,25 +2,23 @@ describe('reindexer should work', function () {
   beforeEach(function () {
     cy.wait(100);
     cy.fixture('users').then((user) => {
-      cy.server();
       cy.login(user.username, user.password);
       cy.createTestProject().then(x => {
         assert.isNotNull(x.body.id, 'should have project id');
         cy.wrap(x.body.id).as('projectId');
-        cy.route('GET', '**user**').as('getUser');
-        cy.route('GET', '**get_fields**').as('getProjectIndices');
-        cy.route('GET', '**/reindexer/**').as('getIndices');
-        cy.route('DELETE', '**/reindexer/**').as('deleteIndices');
-        cy.route('POST', '**/reindexer/**').as('postIndices');
+        cy.intercept('GET', '**user**').as('getUser');
+        cy.intercept('GET', '**get_fields**').as('getProjectIndices');
       });
     });
   });
 
   function initReindexerPage() {
+    cy.intercept('GET', '**/reindexer/**').as('getIndices');
     cy.visit('/reindexer');
     cy.wait('@getIndices');
     cy.get('[data-cy=appNavbarProjectSelect]').click();
     cy.get('mat-option').contains('integration_test_project').click();
+    cy.wait('@getIndices');
   }
 
   it('should be able to create a new reindexer task', function () {
@@ -45,9 +43,10 @@ describe('reindexer should work', function () {
       cy.closeCurrentCdkOverlay();
       cy.wrap(indices).find('mat-error').should('have.length', 0);
     }));
+    cy.intercept('POST', '**/reindexer/**').as('postIndices');
     cy.get('[data-cy=appReindexerCreateDialogSubmit]').should('be.visible').click();
     cy.wait('@postIndices').then(created => {
-      expect(created.status).to.eq(201);
+      expect(created.response.statusCode).to.eq(201);
       assert.equal(created.response.body.task.status, 'created');
     });
   });
@@ -102,10 +101,9 @@ describe('reindexer should work', function () {
       headers: {'Authorization': 'Token ' + JSON.parse(localStorage.getItem('user')).key}
     }).then(x => {
       initReindexerPage();
-
-      cy.wait('@getIndices');
       // delete reindex task
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
+      cy.intercept('DELETE', '**/reindexer/**').as('deleteIndices');
       cy.get('[data-cy=appReindexerMenuDelete]').should('be.visible').click();
       cy.get('[data-cy=appConfirmDialogSubmit]').should('be.visible').click();
       cy.wait('@deleteIndices');

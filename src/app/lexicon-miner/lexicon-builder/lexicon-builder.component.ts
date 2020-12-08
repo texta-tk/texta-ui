@@ -74,6 +74,10 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
     });
   }
 
+  cancelSuggestions(): void {
+    this.predictions = [];
+  }
+
   getSavedDefaultEmbedding(): void {
     const state = this.localStorageService.getProjectState(this.currentProject);
     if (state?.lexicons.embeddingId) {

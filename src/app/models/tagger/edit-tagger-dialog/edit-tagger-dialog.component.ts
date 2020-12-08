@@ -31,11 +31,7 @@ export class EditTaggerDialogComponent {
       }
       return of(null);
     })).subscribe(resp => {
-      if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.dialogRef.close(resp);
-      } else if (resp instanceof HttpErrorResponse) {
-        this.dialogRef.close(resp);
-      }
+      this.dialogRef.close(resp);
     });
   }
 

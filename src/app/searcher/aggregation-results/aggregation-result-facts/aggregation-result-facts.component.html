@@ -8,22 +8,22 @@
           <th *matHeaderCellDef mat-header-cell>Value</th>
           <td (click)="makeSearch(item.key, element.key)" *matCellDef="let element" class="table-row pointer" mat-cell
               title="Add to search constraint">
-            <span>{{element.key}}</span><br><span>({{element.doc_count}})</span></td>
+            <span>{{element.key}}</span><br><span matTooltipPosition="above" matTooltip="Number of fact values across documents">({{element.doc_count}})</span></td>
         </ng-container>
         <ng-container matColumnDef="doc_count">
           <th *matHeaderCellDef mat-header-cell>Doc count</th>
-          <td *matCellDef="let element" class="table-row" mat-cell><span>{{element.fact_val_reverse.doc_count}}</span>
+          <td *matCellDef="let element" class="table-row" mat-cell><span matTooltipPosition="above" matTooltip="Number of documents this fact value is in">{{element.fact_val_reverse.doc_count}}</span>
           </td>
         </ng-container>
         <!-- Header row first group -->
         <ng-container matColumnDef="header-row-first-group">
           <th *matHeaderCellDef [attr.colspan]="2" mat-header-cell style="text-align: center"> {{item.key}}
             <br>
-            <ng-container *ngIf="!item.fact_val_reverse">
+            <ng-container *ngIf="!item.top_reverse_nested">
               ({{item.doc_count}})
             </ng-container>
-            <ng-container *ngIf="item.fact_val_reverse">
-              ({{item.fact_val_reverse.doc_count}})
+            <ng-container *ngIf="item.top_reverse_nested">
+              <span matTooltip="Number of documents with this fact">({{item.top_reverse_nested.doc_count}})</span>
             </ng-container>
           </th>
         </ng-container>
