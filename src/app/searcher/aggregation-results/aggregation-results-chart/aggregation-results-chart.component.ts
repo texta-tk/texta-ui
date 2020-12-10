@@ -37,7 +37,7 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
   }
 
   @Input() set yLabel(val: string) {
-    this.graph.layout.yaxis.title.text = val;
+    this.graph.layout['yaxis'] = {title: {text: val}};
   }
 
   // tslint:disable-next-line:no-any
@@ -51,7 +51,6 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
         },
         hoverdistance: -1,
         xaxis: {type: 'date'},
-        yaxis: {title: {text: ''}},
         legend: {
           orientation: 'h',
           xanchor: 'center',

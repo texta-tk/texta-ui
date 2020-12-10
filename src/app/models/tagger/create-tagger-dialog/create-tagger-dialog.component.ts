@@ -5,10 +5,10 @@ import {MatDialogRef} from '@angular/material/dialog';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {ProjectService} from '../../../core/projects/project.service';
 import {HttpErrorResponse} from '@angular/common/http';
-import {Field, Project, ProjectIndex} from '../../../shared/types/Project';
+import {Field, Project, ProjectFact, ProjectIndex} from '../../../shared/types/Project';
 import {TaggerService} from '../../../core/models/taggers/tagger.service';
 import {ProjectStore} from '../../../core/projects/project.store';
-import {mergeMap, take, takeUntil} from 'rxjs/operators';
+import {mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
 import {merge, of, Subject} from 'rxjs';
 import {TaggerOptions} from '../../../shared/types/tasks/TaggerOptions';
 import {LogService} from '../../../core/util/log.service';
@@ -31,6 +31,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
       Validators.required,
     ]),
     indicesFormControl: new FormControl([], [Validators.required]),
+    factNameFormControl: new FormControl(Validators.required),
     fieldsFormControl: new FormControl([], [Validators.required]),
     embeddingFormControl: new FormControl(),
     vectorizerFormControl: new FormControl([Validators.required]),
@@ -47,6 +48,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
   destroyed$ = new Subject<boolean>();
   fieldsUnique: Field[] = [];
   projectIndices: ProjectIndex[] = [];
+  projectFacts: ProjectFact[];
 
   constructor(private dialogRef: MatDialogRef<CreateTaggerDialogComponent>,
               private taggerService: TaggerService,
@@ -92,6 +94,20 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
         }
       }
     });
+
+    this.projectStore.getCurrentIndicesFacts().pipe(take(1)).subscribe(x => this.projectFacts = x ? x : []);
+  }
+
+  getFactsForIndices(val: ProjectIndex[]): void {
+    if (val.length > 0) {
+      this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat()).subscribe(resp => {
+        if (resp && !(resp instanceof HttpErrorResponse)) {
+          this.projectFacts = resp;
+        } else {
+          this.logService.snackBarError(resp);
+        }
+      });
+    }
   }
 
   getFieldsForIndices(indices: ProjectIndex[]): void {
@@ -104,6 +120,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && (indicesForm?.value && indicesForm.value.length > 0)) {
       this.getFieldsForIndices(indicesForm?.value);
+      this.getFactsForIndices(indicesForm?.value);
     }
   }
 
@@ -125,6 +142,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
       vectorizer: formData.vectorizerFormControl.value,
       classifier: formData.classifierFormControl.value,
       maximum_sample_size: formData.sampleSizeFormControl,
+      fact_name: formData.factNameFormControl,
       negative_multiplier: formData.negativeMultiplierFormControl,
       ...this.query ? {query: this.query} : {},
     };

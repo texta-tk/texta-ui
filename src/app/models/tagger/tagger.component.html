@@ -104,6 +104,10 @@
               <div *ngIf="element.plot"><img [src]="element.plot" alt="tagger plot" class="element-plot"></div>
               <div class="flex-col m-l-r-5">
                 <table class="simple-table">
+                  <tr *ngIf="element?.fact_name">
+                    <th class="mat-body-strong">Fact Name</th>
+                    <td>{{element.fact_name}}</td>
+                  </tr>
                   <tr>
                     <th class="mat-body-strong">Maximum Sample Size</th>
                     <td>{{element.maximum_sample_size}}</td>

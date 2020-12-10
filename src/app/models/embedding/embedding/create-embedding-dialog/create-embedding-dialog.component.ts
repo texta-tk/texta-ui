@@ -26,7 +26,8 @@ export class CreateEmbeddingDialogComponent implements OnInit {
     indicesFormControl: new FormControl([], [Validators.required]),
     fieldsFormControl: new FormControl([], [Validators.required]),
     dimensionsFormControl: new FormControl(100, [Validators.required]),
-    frequencyFormControl: new FormControl(5, [Validators.required])
+    frequencyFormControl: new FormControl(5, [Validators.required]),
+    usePhraserFormControl: new FormControl(false)
 
   });
   defaultQuery = '{"query": {"match_all": {}}}';
@@ -78,7 +79,7 @@ export class CreateEmbeddingDialogComponent implements OnInit {
 
   onSubmit(formData: {
     fieldsFormControl: Field[]; descriptionFormControl: string;
-    indicesFormControl: ProjectIndex[]; dimensionsFormControl: number; frequencyFormControl: number;
+    indicesFormControl: ProjectIndex[]; dimensionsFormControl: number; frequencyFormControl: number; usePhraserFormControl: boolean;
   }): void {
     // temp
     const fieldsToSend = this.generateFieldsFormat(formData.fieldsFormControl);
@@ -88,6 +89,7 @@ export class CreateEmbeddingDialogComponent implements OnInit {
       indices: formData.indicesFormControl.map(x => [{name: x.index}]).flat(),
       num_dimensions: formData.dimensionsFormControl,
       min_freq: formData.frequencyFormControl,
+      use_phraser: formData.usePhraserFormControl,
       ...this.query ? {query: this.query} : {},
     };
 
