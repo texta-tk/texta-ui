@@ -80,7 +80,7 @@ export class DateConstraintsComponent implements OnInit, OnDestroy {
     console.log('destroy date-constraint');
     const query = this.elasticSearchQuery?.elasticSearchQuery?.query?.bool?.must;
     const index = query?.indexOf(this.constraintQuery, 0);
-    if (index && index > -1) {
+    if (index != null && index > -1) {
       query?.splice(index, 1);
     }
     this.destroyed$.next(true);
