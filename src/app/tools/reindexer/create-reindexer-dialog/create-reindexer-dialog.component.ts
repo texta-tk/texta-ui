@@ -27,6 +27,7 @@ export class CreateReindexerDialogComponent implements OnInit {
     fieldsFormControl: new FormControl({value: [], disabled: true}),
     fieldTypesFormControl: new FormControl(''),
     indicesFormControl: new FormControl([], [Validators.required]),
+    addFactsMappingFormControl: new FormControl(false)
   });
   defaultQuery = '{"query": {"match_all": {}}}';
   query = this.defaultQuery;
@@ -93,6 +94,7 @@ export class CreateReindexerDialogComponent implements OnInit {
   onSubmit(formData: {
     fieldsFormControl: Field[]; descriptionFormControl: string;
     newNameFormControl: string; fieldTypesFormControl: string; indicesFormControl: string[]; randomSizeFormControl: number;
+    addFactsMappingFormControl: boolean;
   }): void {
     // temp
     const fieldsToSend = formData.fieldsFormControl.map(x => x.path);
@@ -104,6 +106,7 @@ export class CreateReindexerDialogComponent implements OnInit {
       indices: formData.indicesFormControl,
       ...this.query ? {query: this.query} : {},
       ...formData.randomSizeFormControl ? {random_size: formData.randomSizeFormControl} : {},
+      add_facts_mapping: formData.addFactsMappingFormControl
     };
 
     this.projectStore.getCurrentProject().pipe(take(1), mergeMap(project => {

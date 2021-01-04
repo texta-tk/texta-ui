@@ -117,7 +117,7 @@ export class ReindexerComponent implements OnInit, OnDestroy {
 
   openCreateDialog(): void {
     const dialogRef = this.dialog.open(CreateReindexerDialogComponent, {
-      maxHeight: '650px',
+      maxHeight: '90%',
       width: '700px',
     });
     dialogRef.afterClosed().subscribe(resp => {

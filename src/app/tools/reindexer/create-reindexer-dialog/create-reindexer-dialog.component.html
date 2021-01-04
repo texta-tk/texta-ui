@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>New Reindexer</h1>
 <div mat-dialog-content>
-  <form class="flex-col" [formGroup]="reindexerForm" (ngSubmit)="onSubmit(reindexerForm?.value)">
+  <form fxLayout="column" [formGroup]="reindexerForm" (ngSubmit)="onSubmit(reindexerForm?.value)" fxLayoutGap="10px">
     <mat-form-field data-cy="appReindexerCreateDialogDesc">
       <input matInput placeholder="Description" autocomplete="off" formControlName="descriptionFormControl"
              [errorStateMatcher]="matcher" required>
@@ -70,6 +70,8 @@
       <mat-hint>If added, selects a random subset from all samples</mat-hint>
     </mat-form-field>
 
+    <mat-checkbox formControlName="addFactsMappingFormControl">Add facts mapping
+    </mat-checkbox>
 
     <div class="flex-col">
       <div class="flex-row">
