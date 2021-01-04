@@ -67,7 +67,7 @@ export class HighlightComponent {
   highlightArray: HighlightObject[] = [];
   textHidden = true;
 
-  constructor(private ngZone: NgZone, private changeDetectorRef: ChangeDetectorRef, private renderer2: Renderer2) {
+  constructor() {
   }
 
   // tslint:disable:no-any
@@ -76,9 +76,7 @@ export class HighlightComponent {
 
   @Input() set highlightConfig(highlightConfig: HighlightConfig) {
     this._highlightConfig = highlightConfig;
-    this.ngZone.runOutsideAngular(() => {
-      this.makeHighlightArray(highlightConfig, () => this.ngZone.run(() => this.changeDetectorRef.markForCheck()));
-    });
+    this.makeHighlightArray(highlightConfig);
   }
 
   static generateColorsForFacts(facts: { fact: string }[]): Map<string, LegibleColor> {
@@ -379,42 +377,39 @@ export class HighlightComponent {
   }
 
 
-  makeHighlightArray(highlightConfig: HighlightConfig, doneCallback: () => void): void {
-    setTimeout(() => {
-      if (highlightConfig.data[highlightConfig.currentColumn] !== null && highlightConfig.data[highlightConfig.currentColumn] !== undefined) {
-        let fieldFacts: HighlightSpan[] = [];
-        let hyperLinks: HighlightSpan[] = [];
-        if (highlightConfig.highlightTextaFacts) {
-          fieldFacts = this.constructFactArray(highlightConfig);
-        }
-        // elastic fields arent trimmed by default, so elasticsearch highlights are going to be misaligned because
-        // elasticsearch highlighter trims the field, MLP also trims the field
-        // trim it here cause we need to get hyperlinks with trimmed columndata so it wouldnt be misaligned
-        if ((isNaN(Number(highlightConfig.data[highlightConfig.currentColumn])))) {
-          highlightConfig.data[highlightConfig.currentColumn] = highlightConfig.data[highlightConfig.currentColumn].trim();
-        }
-        if (highlightConfig.highlightHyperlinks) {
-          hyperLinks = HighlightComponent.makeHyperlinksClickable(highlightConfig.data[highlightConfig.currentColumn],
-            highlightConfig.currentColumn);
-        }
-
-        const highlightTerms = [
-          ...hyperLinks,
-          ...HighlightComponent.makeSearcherHighlights(highlightConfig.searcherHighlight, highlightConfig.currentColumn),
-          ...fieldFacts
-        ];
-        const colors = HighlightComponent.generateColorsForFacts(highlightTerms);
-        const highlights = this.makeHighLights(highlightConfig.data[highlightConfig.currentColumn], highlightTerms, colors);
-        if (highlightConfig.showShortVersion && highlightConfig.searcherHighlight) {
-          this.highlightArray = HighlightComponent.makeShowShortVersion(highlightConfig.showShortVersion, highlights);
-        } else {
-          this.highlightArray = highlights;
-        }
-      } else {
-        this.highlightArray = [];
+  makeHighlightArray(highlightConfig: HighlightConfig): void {
+    if (highlightConfig.data[highlightConfig.currentColumn] !== null && highlightConfig.data[highlightConfig.currentColumn] !== undefined) {
+      let fieldFacts: HighlightSpan[] = [];
+      let hyperLinks: HighlightSpan[] = [];
+      if (highlightConfig.highlightTextaFacts) {
+        fieldFacts = this.constructFactArray(highlightConfig);
       }
-      doneCallback();
-    }, 1);
+      // elastic fields arent trimmed by default, so elasticsearch highlights are going to be misaligned because
+      // elasticsearch highlighter trims the field, MLP also trims the field
+      // trim it here cause we need to get hyperlinks with trimmed columndata so it wouldnt be misaligned
+      if ((isNaN(Number(highlightConfig.data[highlightConfig.currentColumn])))) {
+        highlightConfig.data[highlightConfig.currentColumn] = highlightConfig.data[highlightConfig.currentColumn].trim();
+      }
+      if (highlightConfig.highlightHyperlinks) {
+        hyperLinks = HighlightComponent.makeHyperlinksClickable(highlightConfig.data[highlightConfig.currentColumn],
+          highlightConfig.currentColumn);
+      }
+
+      const highlightTerms = [
+        ...hyperLinks,
+        ...HighlightComponent.makeSearcherHighlights(highlightConfig.searcherHighlight, highlightConfig.currentColumn),
+        ...fieldFacts
+      ];
+      const colors = HighlightComponent.generateColorsForFacts(highlightTerms);
+      const highlights = this.makeHighLights(highlightConfig.data[highlightConfig.currentColumn], highlightTerms, colors);
+      if (highlightConfig.showShortVersion && highlightConfig.searcherHighlight) {
+        this.highlightArray = HighlightComponent.makeShowShortVersion(highlightConfig.showShortVersion, highlights);
+      } else {
+        this.highlightArray = highlights;
+      }
+    } else {
+      this.highlightArray = [];
+    }
   }
 
   constructFactArray(highlightConfig: HighlightConfig): HighlightSpan[] {
