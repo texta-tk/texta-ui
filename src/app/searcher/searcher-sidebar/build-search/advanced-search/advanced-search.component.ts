@@ -231,7 +231,6 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     if (event === this.elasticQuery && this.searchOptions.liveSearch) {
       // reset page when we change query
       this.elasticQuery.elasticSearchQuery.from = 0;
-      this.searchQueue$.next();
     }
   }
 

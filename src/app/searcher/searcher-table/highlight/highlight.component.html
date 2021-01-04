@@ -8,7 +8,7 @@
   <ng-container *ngFor="let highlight of highlightArray; let i = index;">
     <ng-container *ngIf="highlight?.shortVersion?.spans"> <!--hidden text-->
       <span *ngFor="let highlightShortSpan of highlight?.shortVersion?.spans"
-            [matMenuTriggerData]="{highlight: highlight}" [matMenuTriggerFor]="contextOptions" style="cursor: pointer;">
+            (click)="toggleShowShortVersion(highlight)" style="cursor: pointer;">
         <ng-container *ngIf="highlightShortSpan.isVisible" [ngTemplateOutletContext]={highlight:highlightShortSpan} [ngTemplateOutlet]="highlightTemplate">
         </ng-container>
       </span>
@@ -52,11 +52,3 @@
   </ng-template>
   <ng-template [ngIf]="!highlight.highlighted">{{highlight.text}}</ng-template>
 </ng-template>
-<mat-menu #contextOptions="matMenu">
-  <ng-template let-highlight="highlight" matMenuContent>
-    <button (click)="toggleShowShortVersion(highlight)" mat-menu-item>Toggle content
-    </button>
-
-    <button (click)="toggleAllShowShortVersions()" mat-menu-item>Toggle all</button>
-  </ng-template>
-</mat-menu>

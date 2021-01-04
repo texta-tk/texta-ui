@@ -54,13 +54,9 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
         this.currentProject = project;
       }
     });
-    this.searchFormControl.valueChanges.pipe(debounceTime(SearcherOptions.SEARCH_DEBOUNCE_TIME),
-      takeUntil(this.destroy$)).subscribe(value => {
-      this.makeQuery(value);
-      this.searchQueue$.next();
-    });
     this.searchQueue$.pipe(debounceTime(SearcherOptions.SEARCH_DEBOUNCE_TIME), takeUntil(this.destroy$),
       switchMap((_) => {
+        this.makeQuery(this.searchFormControl.value);
         this.searcherComponentService.setIsLoading(true);
         if (this.elasticSearchQuery) { // check that they arent same
           this.searcherComponentService.setQuerySizeFromLocalStorage(this.currentProject, this.elasticSearchQuery);
