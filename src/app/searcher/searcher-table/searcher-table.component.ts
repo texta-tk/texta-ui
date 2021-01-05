@@ -72,7 +72,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
           // project changed reset table
           this.tableData.data = [];
         }
-        // todo remove me after totaldocs change
+        // todo remove me after total-docs endpoint / fix
         if (projField) {
           return this.searcherService.search({
             query: new ElasticsearchQuery().elasticSearchQuery,
@@ -238,6 +238,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
   }
 
   private setColumnsToDisplay(): void {
+    debugger
     const currentProjectState = this.localStorage.getProjectState(this.currentProject);
     if (currentProjectState?.searcher?.selectedFields && currentProjectState.searcher.selectedFields.length >= 1) {
       let fieldsExist = true;
@@ -252,7 +253,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
         return;
       }
     }
-    this.columnsToDisplay = this.displayedColumns;
+    this.columnsToDisplay = this.displayedColumns.slice(0, 10);
     this.columnFormControl.setValue(this.columnsToDisplay);
   }
 
