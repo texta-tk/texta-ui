@@ -238,7 +238,6 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
   }
 
   private setColumnsToDisplay(): void {
-    debugger
     const currentProjectState = this.localStorage.getProjectState(this.currentProject);
     if (currentProjectState?.searcher?.selectedFields && currentProjectState.searcher.selectedFields.length >= 1) {
       let fieldsExist = true;

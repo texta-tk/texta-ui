@@ -1,4 +1,12 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, NgZone, Renderer2} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Input,
+  NgZone,
+  Renderer2,
+  ElementRef, OnDestroy
+} from '@angular/core';
 import {FactConstraint} from '../../searcher-sidebar/build-search/Constraints';
 import * as LinkifyIt from 'linkify-it';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
@@ -66,8 +74,10 @@ export class HighlightComponent {
   static readonly HYPERLINKS_COL = environment.fileFieldReplace; // hosted_filepath
   highlightArray: HighlightObject[] = [];
   textHidden = true;
+  listenerList: (() => any)[] = [];
 
-  constructor() {
+  constructor(private renderer2: Renderer2, private el: ElementRef, private cdrf: ChangeDetectorRef) {
+    this.cdrf.detach();
   }
 
   // tslint:disable:no-any
@@ -410,6 +420,7 @@ export class HighlightComponent {
     } else {
       this.highlightArray = [];
     }
+    this.renderDom(this.highlightArray);
   }
 
   constructFactArray(highlightConfig: HighlightConfig): HighlightSpan[] {
@@ -732,7 +743,6 @@ export class HighlightComponent {
 
   }
 
-
   private detectOverlappingFacts(facts: HighlightSpan[]): Map<HighlightSpan, HighlightSpan[]> {
     let overLappingFacts: Map<HighlightSpan, HighlightSpan[]> = new Map<HighlightSpan, HighlightSpan[]>();
     if (facts.length > 0) {
@@ -791,6 +801,93 @@ export class HighlightComponent {
     }
   }
 
+  private renderDom(highlightArray: HighlightObject[]): void {
+    // incase we are rerendering destroy all previous eventlisteners
+    this.listenerList.forEach(x => {
+      x();
+    });
+    const wrapper = this.renderer2.createElement('div');
+    if (!this._highlightConfig?.showShortVersion) {
+      for (const highlight of highlightArray) {
+        this.renderHighlightTemplate(wrapper, highlight);
+      }
+    } else {
+      for (const highlight of highlightArray) {
+        if (highlight?.shortVersion?.spans) {
+          for (const spans of highlight.shortVersion.spans) {
+            const s = this.renderer2.createElement('span');
+            this.renderer2.setStyle(s, 'cursor', 'pointer');
+            const removeListener = this.renderer2.listen(s, 'click', ($event) => {
+              this.toggleShowShortVersion(highlight);
+              this.renderer2.removeChild(this.el.nativeElement, wrapper);
+              this.renderDom(highlightArray);
+            });
+            this.listenerList.push(removeListener);
+            this.renderer2.appendChild(wrapper, s);
+            if (spans.isVisible) {
+              this.renderHighlightTemplate(s, spans);
+            }
+          }
+        } else if (!highlight?.shortVersion?.spans) {
+          this.renderHighlightTemplate(wrapper, highlight);
+        }
+      }
+    }
+    this.renderer2.appendChild(this.el.nativeElement, wrapper);
+  }
+
+  private renderFactTemplate(wrapper: any, highlight: HighlightObject): void {
+    if (highlight.span?.urlSpan) {
+      const a = this.renderer2.createElement('a');
+      const t = this.renderer2.createText(highlight.text);
+      this.renderer2.setProperty(a, 'target', '_blank');
+      this.renderer2.appendChild(a, t);
+      this.renderer2.appendChild(wrapper, a);
+    } else if (!highlight.span?.urlSpan) {
+      const s = this.renderer2.createElement('span');
+      const t = this.renderer2.createText(highlight.text);
+      this.renderer2.setStyle(s, 'background-color', highlight?.color?.backgroundColor);
+      this.renderer2.setStyle(s, 'color', highlight?.color?.textColor);
+      this.renderer2.setStyle(s, 'cursor', 'pointer');
+      this.renderer2.setProperty(s, 'title', `${highlight.span?.fact} ${highlight.span?.str_val}`);
+      this.renderer2.appendChild(s, t);
+      this.renderer2.appendChild(wrapper, s);
+    } else if (highlight.nested) {
+      this.renderFactTemplate(wrapper, highlight);
+    }
+  }
+
+  private renderHighlightTemplate(wrapper: any, highlight: HighlightObject): void {
+    if (highlight.highlighted && !highlight.span?.searcherHighlight && !highlight.span?.urlSpan) {
+      const s = this.renderer2.createElement('span');
+      const t = this.renderer2.createText(highlight.text);
+      this.renderer2.setStyle(s, 'background-color', highlight?.color?.backgroundColor);
+      this.renderer2.setStyle(s, 'color', highlight?.color?.textColor);
+      this.renderer2.setStyle(s, 'cursor', 'pointer');
+      this.renderer2.appendChild(s, t);
+      this.renderer2.appendChild(wrapper, s);
+    } else if (highlight.highlighted && highlight.span?.searcherHighlight) {
+      const s = this.renderer2.createElement('span');
+      const t = this.renderer2.createText(highlight.text);
+      this.renderer2.setStyle(s, 'background-color', highlight?.color?.backgroundColor);
+      this.renderer2.setStyle(s, 'color', highlight?.color?.textColor);
+      this.renderer2.setStyle(s, 'cursor', 'pointer');
+      this.renderer2.setProperty(s, 'title', `${highlight.span?.fact} ${highlight.span?.str_val}`);
+      this.renderer2.appendChild(s, t);
+      this.renderer2.appendChild(wrapper, s);
+    } else if (highlight.highlighted && highlight.span?.urlSpan) {
+      const a = this.renderer2.createElement('a');
+      const t = this.renderer2.createText(highlight.text);
+      this.renderer2.setProperty(a, 'target', '_blank');
+      this.renderer2.appendChild(a, t);
+      this.renderer2.appendChild(wrapper, a);
+    } else if (highlight.nested) {
+      this.renderFactTemplate(wrapper, highlight);
+    } else if (!highlight.highlighted) {
+      const t = this.renderer2.createText(highlight.text);
+      this.renderer2.appendChild(wrapper, t);
+    }
+  }
 }
 
 HighlightComponent.linkify.set({fuzzyLink: false, fuzzyEmail: false});
