@@ -124,6 +124,7 @@ describe('searching and search related activities should be working correctly', 
 
     cy.get('[data-cy=appSearcherTableColumnSelect]').should('be.visible').click();
     cy.get('[data-cy=matOptionSelectAll]').should('be.visible').click();
+    cy.get('[data-cy=matOptionSelectAll]').should('be.visible').click();
     cy.get('mat-option').contains('texta_facts').click();
     cy.get('mat-option').contains('comment_content').click();
     cy.closeCurrentCdkOverlay();
