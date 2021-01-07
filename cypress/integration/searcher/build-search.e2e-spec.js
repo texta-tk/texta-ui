@@ -113,6 +113,7 @@ describe('searching and search related activities should be working correctly', 
 
     cy.get('[data-cy=appSearcherSideBarBuildSearchFactNameOperator]').click();
     cy.get('mat-option').contains('not').click();
+    cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
     cy.wait('@searcherQuery');
     cy.get('[data-cy=appSearcherSideBarBuildSearchFactNameName]').click();
     cy.get('mat-option').contains('TEEMA').click();
