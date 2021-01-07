@@ -28,7 +28,7 @@ variables:
     # MLP
     TEXTA_LANGUAGE_CODES: et
     # UAA
-    TEXTA_USE_UAA: "False"
+    TEXTA_USE_UAA: "True"
     TEXTA_UAA_REDIRECT_URI: http://texta-rest/api/v1/uaa/callback
     TEXTA_UAA_USER: test1
     TEXTA_UAA_EMAIL: test1@test1.com
