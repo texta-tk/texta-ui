@@ -169,13 +169,13 @@ describe('searching and search related activities should be working correctly', 
           }
         });
         cy.get('[data-cy=appSearcherSideBarBuildSearchFactValueInputGroupName]:last()').click();
-        cy.get('mat-option').contains('TEEMA').click();
-        cy.get('[data-cy=appSearcherSideBarBuildSearchFactValueInputGroupValue]:last()').click().type('foo');
+        cy.get('mat-option').contains('test').click();
+        cy.get('[data-cy=appSearcherSideBarBuildSearchFactValueInputGroupValue]:last()').click().type('test');
         cy.wait('@autocompleteTest');
         cy.get('.mat-option-text').contains('foo').click();
         cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
         cy.wait('@searcherQuery');
-        cy.get('.cdk-column-texta_facts > app-texta-facts-chips > span').contains('foo').should('exist');
+        cy.get('.cdk-column-texta_facts > app-texta-facts-chips > span').contains('test').should('exist');
       });
 
 
