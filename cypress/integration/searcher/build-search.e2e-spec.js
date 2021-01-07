@@ -38,6 +38,9 @@ describe('searching and search related activities should be working correctly', 
     cy.wait('@searcherQuery');
     cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted ').should('be.visible');
     cy.get('[data-cy=appSearcherTableColumnSelect]').should('be.visible').click();
+    // select all
+    cy.get('[data-cy=matOptionSelectAll]').should('be.visible').click();
+    // deselect all
     cy.get('[data-cy=matOptionSelectAll]').should('be.visible').click();
     cy.get('mat-option').contains('comment_content').click();
     cy.closeCurrentCdkOverlay();
@@ -62,6 +65,7 @@ describe('searching and search related activities should be working correctly', 
   it('should work when building various queries with simple and advanced search', function () {
     // simple
     cy.get('app-simple-search input').click().type('reisija');
+    cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
     cy.wait('@searcherQuery');
     cy.get(':nth-child(1) > .cdk-column-comment_content > app-highlight span').should('be.visible');
     // change proj, to test projectindices subscribers
@@ -73,12 +77,14 @@ describe('searching and search related activities should be working correctly', 
     // test searcher options, highlight search matches
     cy.get('[data-cy=appSearcherSidebarSearcherOptionsPanel]').click();
     cy.get('app-simple-search input').click().clear().type('reisija');
+    cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
     cy.wait('@searcherQuery');
     cy.get(':nth-child(1) > .cdk-column-comment_content > app-highlight span').should('be.visible');
     cy.get('[data-cy=appSearcherSidebarBuildSearchShowShortVersion]').click();
 
     cy.get('[data-cy=appSearcherSidebarBuildSearchHighlightSearcher]').click();
     cy.get('app-simple-search input').click().clear().type('reisija');
+    cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
     cy.wait('@searcherQuery');
     cy.get(':nth-child(1) > .cdk-column-comment_content > app-highlight span span').should('not.exist');
 
@@ -182,6 +188,7 @@ describe('searching and search related activities should be working correctly', 
       .click()
       .clear()
       .type('tere');
+    cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
     cy.wait('@searcherQuery');
     cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted ').should('be.visible');
     cy.get('[data-cy=appSearcherSidebarSaveSearchButton]').should('be.visible').click();
