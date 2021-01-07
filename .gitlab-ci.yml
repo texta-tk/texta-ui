@@ -21,6 +21,7 @@ variables:
     TEXTA_MLP_URL: http://mlp-dev.texta.ee:5000
     TEXTA_REDIS_URL: redis://redis:6379/0
     TEXTA_API_URL: http://texta-rest
+    TEXTA_ADMIN_PASSWORD: 1234
     TEXTA_USE_CSRF: "False"
     npm_config_cache: "$CI_PROJECT_DIR/.npm"
     CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/Cypress"
