@@ -164,7 +164,7 @@ describe('searching and search related activities should be working correctly', 
         cy.wait('@searcherQuery');
 
         cy.intercept('POST', '**autocomplete_fact_values**', req => {
-          if (req.body.hasOwnProperty('startswith') && req.body.startswith === 'foo') {
+          if (req.body.hasOwnProperty('startswith') && req.body.startswith === 'test') {
             req.alias = 'autocompleteTest'
           }
         });
@@ -172,7 +172,7 @@ describe('searching and search related activities should be working correctly', 
         cy.get('mat-option').contains('test').click();
         cy.get('[data-cy=appSearcherSideBarBuildSearchFactValueInputGroupValue]:last()').click().type('test');
         cy.wait('@autocompleteTest');
-        cy.get('.mat-option-text').contains('foo').click();
+        cy.get('.mat-option-text').contains('test').click();
         cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
         cy.wait('@searcherQuery');
         cy.get('.cdk-column-texta_facts > app-texta-facts-chips > span').contains('test').should('exist');
