@@ -66,7 +66,7 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
           const mode = el.series.length > 100 ? 'lines+points' : 'lines+points+markers';
           if (series[0].extra) { // date->term structure plots, saved searches
             this.graph.data.push({
-              x: series.map(x => x.name),
+              x: series.map(x => new Date(x.name)),
               y: series.map(x => x.value),
               hovertext: series.map(x => x?.extra?.buckets.map(y => `${y.key.slice(0, 30)}:<b>${y.doc_count}</b><br>`).join('')),
               type: 'scattergl',
@@ -76,7 +76,7 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
             });
           } else {
             this.graph.data.push({ // regular plots, no nesting, saved searches
-              x: series.map(x => x.name),
+              x: series.map(x => new Date(x.name)),
               y: series.map(x => x.value),
               type: 'scattergl',
               mode,
@@ -90,12 +90,13 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
       this.graph.layout.hoverdistance = 33;
       this.graph.layout.showlegend = false;
       for (const el of val) {
+        const mode = el.series.length > 100 ? 'lines+points' : 'lines+points+markers';
         const series = el.series;
         this.graph.data.push({
-          x: series.map(x => x.name),
+          x: series.map(x => new Date(x.name)),
           y: series.map(x => x.value),
           type: 'scattergl',
-          mode: 'lines+points+markers',
+          mode,
           /*          line: {shape: 'spline'},*/
           name: el.name,
         });
