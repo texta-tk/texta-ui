@@ -11,7 +11,7 @@ import {CreateProjectDialogComponent} from './create-project-dialog/create-proje
 import {ProjectStore} from '../core/projects/project.store';
 import {EditProjectDialogComponent} from './edit-project-dialog/edit-project-dialog.component';
 import {UserProfile} from '../shared/types/UserProfile';
-import {delay, map, mergeMap, startWith, takeUntil, toArray} from 'rxjs/operators';
+import {debounceTime, delay, map, mergeMap, startWith, takeUntil, toArray} from 'rxjs/operators';
 import {UserService} from '../core/users/user.service';
 import {ConfirmDialogComponent} from '../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {ProjectService} from '../core/projects/project.service';
@@ -37,6 +37,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   public authorFilterControl = new FormControl();
+  public titleFilterControl = new FormControl();
   private urlsToRequest: Subject<string[]> = new Subject();
 
   constructor(
@@ -59,6 +60,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
         this.filteredUsers = this.authorFilterControl.valueChanges
           .pipe(
             startWith(''),
+            takeUntil(this.destroyed$),
             map(value => {
               const filterVal = value.toLowerCase();
               if (value === '') {
@@ -69,6 +71,15 @@ export class ProjectComponent implements OnInit, OnDestroy {
           );
       }
     });
+
+    this.titleFilterControl.valueChanges.pipe(takeUntil(this.destroyed$), debounceTime(200)).subscribe(x => {
+      this.projectService.getProjects('title=' + x).subscribe(projects => {
+        if (projects && !(projects instanceof HttpErrorResponse)) {
+          this.tableData.data = projects;
+        }
+      });
+    });
+
     // delay so we could navigate to the page smoothly, and then start rendering the table which takes resources
     this.projectStore.getProjects().pipe(delay(100), takeUntil(this.destroyed$)).subscribe(projects => {
       if (projects) {

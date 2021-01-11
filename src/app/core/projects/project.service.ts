@@ -5,7 +5,6 @@ import {LogService} from '../util/log.service';
 import {Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
 import {Project, ProjectFact, ProjectIndex, ProjectResourceCounts} from '../../shared/types/Project';
-import {ElasticsearchQueryStructure} from "../../searcher/searcher-sidebar/build-search/Constraints";
 
 @Injectable({
   providedIn: 'root'
@@ -17,8 +16,8 @@ export class ProjectService {
               private logService: LogService) {
   }
 
-  getProjects(): Observable<Project[] | HttpErrorResponse> {
-    return this.http.get<Project[]>(`${this.apiUrl}/projects/`).pipe(
+  getProjects(query?: string): Observable<Project[] | HttpErrorResponse> {
+    return this.http.get<Project[]>(`${this.apiUrl}/projects/?${query}`).pipe(
       tap(e => this.logService.logStatus(e, 'getProjects')),
       catchError(this.logService.handleError<Project[]>('getProjects')));
   }

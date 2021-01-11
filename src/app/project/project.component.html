@@ -12,7 +12,7 @@
               (click)="openCreateDialog()">
         CREATE
       </button>
-      <mat-form-field class="m-l-15">
+      <mat-form-field class="m-l-15 author">
         <input matInput
                placeholder="Filter by author"
                aria-label="Filter by author"
@@ -25,7 +25,14 @@
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
-      <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
+      <mat-form-field class="m-l-15 title">
+        <input matInput
+               placeholder="Filter by title"
+               aria-label="Filter by title"
+               [formControl]="titleFilterControl">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+      <mat-paginator [pageSizeOptions]="[25, 50, 100]" hidePageSize="true" showFirstLastButtons>
       </mat-paginator>
     </div>
   </div>

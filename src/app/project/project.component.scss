@@ -17,8 +17,18 @@ table {
   width: 40px;
   text-align: center;
 }
-
+.paginator-row{
+  .author{
+    max-width: 150px;
+  }
+  .title{
+    max-width: 150px;
+  }
+}
 
 .indices-column-header{
   margin-left: 8px;
+}
+::ng-deep .mat-paginator-range-label{
+  margin: 0 !important;
 }
