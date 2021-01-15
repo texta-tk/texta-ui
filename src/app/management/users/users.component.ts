@@ -58,7 +58,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   togglePermissions(row: UserProfile): void {
-    if (row.id !== 1 && row.id === this.currentUser.id) {
+    if (row.id !== 1 && row.id !== this.currentUser.id) {
       this.userService.toggleSuperUser(row.id, {is_superuser: !row.is_superuser}).subscribe((resp: UserProfile | HttpErrorResponse) => {
         if (resp instanceof HttpErrorResponse) {
           this.logService.snackBarError(resp, 2000);
