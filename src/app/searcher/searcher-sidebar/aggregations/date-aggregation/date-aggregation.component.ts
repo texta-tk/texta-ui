@@ -87,27 +87,18 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
     this.dateRangeTo.range = {[this.fieldsFormControl.value.path]: {lte: toDate}};
     // tslint:disable-next-line:no-any
     let returnquery: { [key: string]: any };
-    let format: 'y' | 'MMM-y' | 'd-M-y';
-    if (this.dateInterval === 'year') {
-      format = 'y';
-    } else if (this.dateInterval === 'month') {
-      format = 'MMM-y';
-    } else {
-      format = 'd-M-y';
-    }
     returnquery = {
       agg_histo: {
         filter: {bool: {must: [{bool: {must: [this.dateRangeFrom, this.dateRangeTo]}}]}},
         aggs: {
           agg_histo: {
             date_histogram: {
-              format,
               field: this.fieldsFormControl.value.path,
               interval: this.dateInterval,
               min_doc_count: 0,
               extended_bounds: {
-                min: this.pipe.transform(startDate, format),
-                max: this.pipe.transform(toDate, format),
+                min: startDate,
+                max: toDate
               }
             }
           }

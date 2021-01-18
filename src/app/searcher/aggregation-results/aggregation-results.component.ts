@@ -58,7 +58,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     for (const element of buckets) {
       dateData.push({
         value: element.doc_count,
-        name: element.key_as_string
+        name: new Date(element.key).toLocaleString()
       });
     }
     return dateData;
@@ -73,7 +73,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     for (const element of buckets) {
       dateData.push({
         value: element.doc_count,
-        name: element.key_as_string,
+        name: new Date(element.key).toLocaleString(),
         extra: {buckets: element.buckets}
       });
     }
