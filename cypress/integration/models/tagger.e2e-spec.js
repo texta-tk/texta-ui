@@ -66,7 +66,7 @@ describe('taggers should work', function () {
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
       cy.get('[data-cy=appTaggerMenuTagRandomDoc]').should('be.visible').click();
       cy.wait('@getTaggers');
-      cy.get('app-tag-random-doc-dialog .mat-dialog-actions span').should('have.length', 3);
+      cy.get('app-tag-random-doc-dialog .mat-dialog-actions span').should('have.length.is.greaterThan', 2);
       cy.closeCurrentCdkOverlay();
 
       // patch tagger
