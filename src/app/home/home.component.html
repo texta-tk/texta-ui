@@ -15,7 +15,7 @@
         </mat-chip-list>
       </mat-card>
 
-      <mat-card class="usage-card center-margin m-top-10" fxLayout="row wrap" fxLayoutGap="5px">
+      <mat-card class="usage-card center-margin" fxLayout="row wrap">
         <div fxFlex="1 0 125px">
           <h4 class="mat-h4 center-text"> DISK SPACE </h4>
           <mat-progress-spinner
@@ -67,13 +67,16 @@
         </div>
       </mat-card>
 
-
-      <mat-card class="counts-card center-margin" fxLayout="row wrap" fxLayoutGap="5px">
-
-        <div fxFlex>
+      <mat-card class="counts-card center-margin" fxLayout="row wrap">
+        <div [matTooltip]="health.host.gpu.devices | join:'\n'" fxFlex matTooltipClass="white-space-pre-line">
           <span [ngClass]="health.host.gpu.count > 0 ? 'primary-text' : 'accent-text'"
                 class="count-text center-text block">  {{health.host.gpu.count}} </span>
           <span class="mat-hint center-text block">GPUs</span>
+        </div>
+        <div fxFlex>
+          <span [ngClass]="health.host.cpu.count > 0 ? 'primary-text' : 'accent-text'"
+                class="count-text center-text block">  {{health.host.cpu.count}} </span>
+          <span class="mat-hint center-text block">CPUs</span>
         </div>
 
         <div fxFlex>
@@ -81,8 +84,31 @@
                 class="count-text center-text block">  {{health.toolkit.active_tasks}} </span>
           <span class="mat-hint center-text block">Active Tasks</span>
         </div>
-
       </mat-card>
+      <div class="m-top-10" style="max-width: 625px; margin: auto;">
+        <h4 style="margin-bottom: 0">Elasticsearch nodes</h4></div>
+      <mat-card class="usage-card center-margin " fxLayout="row wrap"
+                fxLayoutGap="5px">
+        <div *ngFor="let item of health.services.elastic.disk; let i =index" style="min-width: 180px">
+          <h4 class="mat-h4 center-text"> NODE: {{i + 1}}</h4>
+          <mat-progress-spinner
+            [color]="((item.used / item.total) * 100) < 85 ? 'primary' : 'warn'"
+            [mode]="'determinate'"
+            [value]="(item.used / item.total) * 100"
+            class="center-margin"
+          >
+          </mat-progress-spinner>
+          <div style="position:relative; top: -60px;">
+            <span
+              class="block center-text">{{(((item.used / item.total) * 100))| number:'1.0-0' }}
+              % </span>
+          </div>
+          <span class="mat-hint mat-small center-text block"> {{item.used | number}}
+            /  {{item.total| number}} {{item.unit}} </span>
+        </div>
+      </mat-card>
+
+
     </div>
   </div>
 </div>

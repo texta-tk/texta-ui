@@ -91,10 +91,11 @@ export class ProjectIndex {
   }
 }
 
+
 // for the project/{id}/heath endpoint
 export interface Health {
   host: {
-    cpu: { percent: number };
+    cpu: { percent: number; count: number; };
     gpu: { count: number; devices: string[] };
     memory: { free: number, total: number, used: number, unit: string };
     disk: { free: number, total: number, used: number, unit: string };
@@ -107,6 +108,7 @@ export interface Health {
     elastic: {
       url: string;
       alive: boolean;
+      disk: { free: number, total: number, used: number, unit: string }[];
       status: {
         name: string;
         cluster_name: string;
