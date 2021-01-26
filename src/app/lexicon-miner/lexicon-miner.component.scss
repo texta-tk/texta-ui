@@ -1,33 +1,23 @@
-mat-list {
-  max-height: 480px;
-  overflow: auto;
+
+table {
+  width: 100%;
 }
 
-.wrapper {
-  justify-content: center;
-  margin-top: 20px;
+
+:host {
+  overflow: hidden;
 }
 
-.lexicons {
-  max-width: 450px;
-  min-width: 450px;
+.mat-cell {
+  word-break: break-word;
 }
 
-.active-lexicon {
-  color: red;
+.mat-column-Modify {
+  width: 60px;
+  text-align: center;
 }
 
-h3 {
-  padding-left: 16px;
-}
 
-@media only screen and (max-width: 1450px) {
-  .lexicon-builder {
-    width: 100%;
-    margin-right: 20px;
-  }
-  .lexicons {
-    margin-left: 20px;
-    min-width: unset;
-  }
+tr:hover {
+  background: #eeeeee;
 }

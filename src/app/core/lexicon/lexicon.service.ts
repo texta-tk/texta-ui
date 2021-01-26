@@ -25,6 +25,13 @@ export class LexiconService {
       catchError(this.logService.handleError<{ count: number, results: Lexicon[] }>('getLexicons')));
   }
 
+  getLexicon(projectId: number, lexiconId: number): Observable<Lexicon | HttpErrorResponse> {
+    return this.http.get<Lexicon>(
+      `${this.apiUrl}/projects/${projectId}/lexicons/${lexiconId}/`,
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'getLexicon')),
+      catchError(this.logService.handleError<Lexicon>('getLexicon')));
+  }
 
   deleteLexicon(projectId: number, lexiconId: number): Observable<Lexicon | HttpErrorResponse> {
     return this.http.delete<Lexicon>(

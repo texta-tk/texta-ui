@@ -1,27 +1,113 @@
-<div class="flex-row max-width wrapper">
-  <div class="flex-col lexicons mat-elevation-z2">
-    <div class="flex-row">
-      <h3>Lexicons</h3>
+<div class="wrapper max-height" fxLayout="column">
+  <div class="table-paginator-row">
+    <div class="loading-bar">
+      <mat-progress-bar *ngIf="isLoadingResults" mode="indeterminate"></mat-progress-bar>
     </div>
+    <div class="paginator-row">
+      <button (click)="openCreateDialog()" class="paginator-margin-left"
+              color="primary" data-cy="appLexiconCreateBtn" mat-raised-button>
+        CREATE
+      </button>
+      <mat-paginator [length]="resultsLength" [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
+      </mat-paginator>
+    </div>
+  </div>
 
-    <mat-action-list class="overflow-auto" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50"
-      [scrollWindow]="false" (scrolled)="onScrollLexicons()">
-      <mat-list-item disableRipple="true" data-cy="appLexiconNewListItem">
-        <input matInput type="text" placeholder="New lexicon..." [(ngModel)]="newLexiconDescription">
-        <button mat-button *ngIf="newLexiconDescription" matSuffix aria-label="Add" (click)="createNewLexicon()">Add
-        </button>
-      </mat-list-item>
+  <div [appScrollTop]="tableData" class="table-container overflow-auto">
+    <table [dataSource]="tableData" mat-table
+           matSort matSortDirection="asc" matSortDisableClear>
+      <ng-container matColumnDef="id">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Id</th>
+        <td *matCellDef="let element" mat-cell> {{element.id}}</td>
+      </ng-container>
+      <ng-container matColumnDef="description">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Description</th>
+        <td *matCellDef="let element" mat-cell> {{element.description}}</td>
+      </ng-container>
 
-      <mat-list-item [ngClass]="{'active-lexicon': selectedLexicon? item.id === selectedLexicon.id : false}"
-                     data-cy="appLexiconListItem"
-        *ngFor="let item of lexicons" (click)="selectLexicon(item)">
-        <span matLine>{{item.description}}</span>
-        <button mat-icon-button (mousedown)="$event.stopPropagation();" (click)="deleteLexicon(item);">
-          <mat-icon>clear</mat-icon>
-        </button>
-      </mat-list-item>
-    </mat-action-list>
+      <ng-container matColumnDef="author">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Author</th>
+        <td *matCellDef="let element" mat-cell> {{element.author}}</td>
+      </ng-container>
+      <ng-container matColumnDef="positives_used">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Pos. Used</th>
+        <td *matCellDef="let element" mat-cell>
+          <button (click)="$event.stopPropagation()" [matMenuTriggerData]="{element: element.positives_used}"
+                  [matMenuTriggerFor]="listMenu"
+                  mat-stroked-button>
+            {{ element.positives_used.length }}
+          </button>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="positives_unused">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Pos. Unused</th>
+        <td *matCellDef="let element" mat-cell>
+          <button (click)="$event.stopPropagation()" [matMenuTriggerData]="{element: element.positives_unused}"
+                  [matMenuTriggerFor]="listMenu"
+                  mat-stroked-button>
+            {{ element.positives_unused.length }}
+          </button>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="negatives_used">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Neg. Used</th>
+        <td *matCellDef="let element" mat-cell>
+          <button (click)="$event.stopPropagation()" [matMenuTriggerData]="{element: element.negatives_used}"
+                  [matMenuTriggerFor]="listMenu"
+                  mat-stroked-button>
+            {{ element.negatives_used.length }}
+          </button>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="negatives_unused">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Neg. Unused</th>
+        <td *matCellDef="let element" mat-cell>
+          <button (click)="$event.stopPropagation()" [matMenuTriggerData]="{element: element.negatives_unused}"
+                  [matMenuTriggerFor]="listMenu"
+                  mat-stroked-button>
+            {{ element.negatives_unused.length }}
+          </button>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="Modify">
+        <th *matHeaderCellDef class="center-header-cell" mat-header-cell>Actions</th>
+        <td (click)="$event.stopPropagation();" *matCellDef="let element; let i = dataIndex" mat-cell>
+
+          <button [matMenuTriggerData]="{element: element, i:i}" [matMenuTriggerFor]="editMenu" color="primary"
+                  mat-icon-button>
+            <mat-icon aria-label="Actions">more_vert</mat-icon>
+          </button>
+
+        </td>
+      </ng-container>
+
+
+      <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
+      <tr *matRowDef="let element; columns: displayedColumns;" [routerLink]="[element.id]" class="element-row pointer"
+          mat-row></tr>
+
+    </table>
+
+  </div>
+
+
 </div>
-
-<app-lexicon-builder class="lexicon-builder" [lexicon]="selectedLexicon"></app-lexicon-builder>
-</div>
+<mat-menu #editMenu="matMenu">
+  <ng-template let-element="element" let-i="i" matMenuContent>
+    <button [routerLink]="[element.id]" data-cy="appLexiconMenuViewLexicons"
+            mat-menu-item>
+      View Lexicons
+    </button>
+    <mat-divider></mat-divider>
+    <button (click)="onDelete(element, i)" data-cy="appLexiconMenuDelete" mat-menu-item>
+      Delete
+    </button>
+  </ng-template>
+</mat-menu>
+<mat-menu #listMenu="matMenu">
+  <ng-template let-element="element" matMenuContent>
+    <ng-template [ngForOf]="element" let-item ngFor>
+      <button mat-menu-item>{{ item }}</button>
+    </ng-template>
+  </ng-template>
+</mat-menu>

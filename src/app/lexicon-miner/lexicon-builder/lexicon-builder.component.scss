@@ -1,77 +1,72 @@
-.embedding-row {
-  align-items: center;
+:host {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
 
-  button {
-    margin-left: 10px;
-    max-height: 36px;
+.header-row {
+  align-items: baseline;
+  padding-right: 24px;
+}
+
+.grid-container {
+  overflow: hidden;
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-bottom: 24px;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 0px 24px;
+  grid-template-areas:
+    "pos_unused pos_used suggestions"
+    "neg_unused neg_used suggestions";
+}
+
+.suggestions {
+  grid-area: suggestions;
+}
+
+.pos_unused {
+  grid-area: pos_unused;
+
+  .header {
+    align-items: center;
+
+    button {
+      margin-left: auto;
+    }
   }
 }
 
-.wrapper {
-  .card {
-    margin-left: 20px;
-    height: 705px;
-    padding: 0 16px;
-    width: 450px;
-    max-width: 450px;
-  }
+.pos_used {
+  grid-area: pos_used;
 
-  .negative {
-    height: 55%;
+  .header {
+    align-items: center;
 
-    .negatives {
-      max-height: 80%;
+    button {
+      margin-left: auto;
     }
   }
-  .flex-row-wrap {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    overflow-y: auto;
-  }
-
 }
 
-@media only screen and (max-width: 1450px) {
-  .wrapper {
-    flex-wrap: wrap;
-    width: 100%;
+.neg_unused {
+  grid-area: neg_unused;
+}
 
-    .card {
-      max-width: unset;
-      width: 100%;
-      height: 58.5vh;
-    }
+.neg_used {
+  grid-area: neg_used;
+}
 
-    .predictions {
-      height: 33vh;
-    }
-
-    .list-item {
-      width: 25%;
-    }
-
-    .negative {
-      height: 50%;
-    }
-
-    .predictions {
-      flex-wrap: wrap-reverse;
-
-      .mat-selection-list {
-        display: flex;
-        flex-wrap: wrap-reverse;
-
-        .mat-list-item {
-          max-width: 400px;
-        }
-      }
-    }
-  }
+.buttons-row {
+  margin-left: auto;
 }
 
 .item-padding {
-    padding: 16px 0;
+  padding: 16px 0;
 }
 
 .list-item {
@@ -81,4 +76,20 @@
 
 .list-item:hover {
   background-color: #f0f0f0;
+}
+
+.flex-row-wrap {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  overflow-y: auto;
+}
+
+textarea {
+  resize: none;
+}
+
+.loading-bar {
+  height: 4px;
+  background-color: transparent;
 }

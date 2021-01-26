@@ -100,8 +100,11 @@ export class EditRegexTaggerDialogComponent implements OnInit, OnDestroy {
     if (control) {
       const formControlValue = control.value as string;
       let phrases = '';
-      if (val.phrases) {
-        val.phrases.forEach(x => {
+      if (val.positives_used || val.positives_unused) {
+        val.positives_used.forEach(x => {
+          phrases += x + '\n';
+        });
+        val.positives_unused.forEach(x => {
           phrases += x + '\n';
         });
       }
