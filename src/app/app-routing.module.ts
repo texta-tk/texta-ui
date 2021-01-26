@@ -16,8 +16,9 @@ const routes: Routes = [
     loadChildren: () => import('./user-settings/user-settings.module').then(m => m.UserSettingsModule)
   },
   {
-    path: 'lexicon-miner',
+    path: 'lexicons',
     canActivate: [AuthGuard],
+    data: {breadcrumb: 'Lexicons', tooltip: 'Lexicon list'},
     loadChildren: () => import('./lexicon-miner/lexicon-miner.module').then(m => m.LexiconMinerModule)
   },
   {
