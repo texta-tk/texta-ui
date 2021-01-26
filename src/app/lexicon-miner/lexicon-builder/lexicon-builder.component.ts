@@ -2,171 +2,204 @@ import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Lexicon} from '../../shared/types/Lexicon';
 import {LexiconService} from '../../core/lexicon/lexicon.service';
 import {ProjectStore} from '../../core/projects/project.store';
-import {switchMap, takeUntil} from 'rxjs/operators';
+import {filter, pairwise, switchMap, take, takeUntil} from 'rxjs/operators';
 import {Project} from '../../shared/types/Project';
-import {of, Subject} from 'rxjs';
+import {BehaviorSubject, of, Subject} from 'rxjs';
 import {EmbeddingsService} from '../../core/models/embeddings/embeddings.service';
 import {HttpErrorResponse} from '@angular/common/http';
-import {Embedding, EmbeddingPrediction} from '../../shared/types/tasks/Embedding';
 import {LogService} from '../../core/util/log.service';
 import {LocalStorageService} from 'src/app/core/util/local-storage.service';
+import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
+import {ActivatedRoute, CanDeactivate, NavigationStart, Router} from '@angular/router';
+import {Embedding, EmbeddingPrediction} from '../../shared/types/tasks/Embedding';
+import {CanDeactivateComponent} from "../../core/auth/deactivate.guard";
+import {UtilityFunctions} from "../../shared/UtilityFunctions";
 
-// tslint:disable:variable-name
+interface TextareaLexicon {
+  positives_used: string;
+  negatives_used: string;
+  positives_unused: string;
+  negatives_unused: string;
+}
+
 @Component({
   selector: 'app-lexicon-builder',
   templateUrl: './lexicon-builder.component.html',
   styleUrls: ['./lexicon-builder.component.scss']
 })
-export class LexiconBuilderComponent implements OnInit, OnDestroy {
-  outputSize = 20;
-  positives: string;
-  predictions: EmbeddingPrediction[] = [];
-  negatives: string[] = [];
-  destroy$: Subject<boolean> = new Subject<boolean>();
-  embeddings: Embedding[];
-  selectedEmbedding: Embedding | null;
+export class LexiconBuilderComponent implements OnInit, OnDestroy, CanDeactivateComponent {
+  newSuggestions: EmbeddingPrediction[] = [];
+  textareaLexicon: TextareaLexicon;
+  lexicon: Lexicon;
+  destroyed$: Subject<boolean> = new Subject<boolean>();
+  currentProject: BehaviorSubject<Project | null> = new BehaviorSubject<Project | null>(null);
+  selectedEmbedding: Embedding | undefined;
+  embeddings: Embedding[] = [];
   isLoadingPredictions = false;
-  currentProject: Project;
 
   constructor(private logService: LogService,
               private lexiconService: LexiconService,
               private embeddingService: EmbeddingsService,
+              private route: ActivatedRoute,
+              private router: Router,
               private projectStore: ProjectStore,
               private localStorageService: LocalStorageService) {
   }
 
-  _lexicon: Lexicon | null;
-
-  @Input() set lexicon(value: Lexicon | null) {
-    if (value) {
-      this._lexicon = value;
-      this.positives = this.stringListToString(value.phrases);
-      this.predictions = [];
-      this.negatives = value.discarded_phrases;
-    } else {
-      this._lexicon = null;
-      this.predictions = [];
-      this.positives = '';
-      this.selectedEmbedding = null;
-      this.negatives = [];
-    }
-  }
-
   ngOnInit(): void {
-    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$), switchMap(currentProject => {
-      if (currentProject) {
-        this.currentProject = currentProject;
-        return this.embeddingService.getEmbeddings(currentProject.id);
+    const lexiconId = Number(this.route.snapshot.paramMap.get('lexiconId'));
+    if (lexiconId) {
+      this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), switchMap(proj => {
+        if (proj) {
+          if (this.currentProject.value && proj) {
+            this.router.navigate(['lexicons']);
+            this.destroyed$.next(true);
+          }
+          this.currentProject.next(proj);
+          return this.lexiconService.getLexicon(proj.id, lexiconId);
+        }
+        return of(null);
+      })).subscribe(resp => {
+        if (resp && !(resp instanceof HttpErrorResponse)) {
+          this.lexicon = resp;
+          this.textareaLexicon = this.lexiconToTextareaLexicon(resp);
+        } else if (resp) {
+          this.logService.snackBarError(resp);
+        }
+      });
+    }
+    this.currentProject.pipe(takeUntil(this.destroyed$), switchMap(proj => {
+      if (proj) {
+        return this.embeddingService.getEmbeddings(proj.id);
       }
       return of(null);
     })).subscribe(resp => {
-      if (resp) {
-        if (resp instanceof HttpErrorResponse) {
-          this.logService.snackBarError(resp, 5000);
-        } else {
-          this.embeddings = resp.results.filter((embedding: Embedding) => {
-            return embedding.task.status === 'completed';
-          });
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.embeddings = resp.results.filter((embedding: Embedding) => {
+          return embedding.task.status === 'completed';
+        });
+        this.getSavedDefaultEmbedding();
 
-          this.getSavedDefaultEmbedding();
+      } else if (resp) {
+        this.logService.snackBarError(resp);
+      }
+    });
+  }
+
+  getSavedDefaultEmbedding(): void {
+    this.currentProject.pipe(take(1)).subscribe(proj => {
+      if (proj) {
+        const state = this.localStorageService.getProjectState(proj);
+        if (state?.lexicons.embeddingId) {
+          this.embeddings.forEach((embedding: Embedding) => {
+            if (state?.lexicons.embeddingId === embedding.id) {
+              this.selectedEmbedding = embedding;
+            }
+          });
         }
       }
     });
   }
 
-  cancelSuggestions(): void {
-    this.predictions = [];
-  }
-
-  getSavedDefaultEmbedding(): void {
-    const state = this.localStorageService.getProjectState(this.currentProject);
-    if (state?.lexicons.embeddingId) {
-      this.embeddings.forEach((embedding: Embedding) => {
-        if (state?.lexicons.embeddingId === embedding.id) {
-          this.selectedEmbedding = embedding;
+  saveEmbeddingChoice(embedding: Embedding): void {
+    this.currentProject.pipe(take(1)).subscribe(proj => {
+      if (proj) {
+        const state = this.localStorageService.getProjectState(proj);
+        if (state) {
+          state.lexicons.embeddingId = embedding.id;
+          this.localStorageService.updateProjectState(proj, state);
         }
-      });
-    }
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
+      }
+    });
   }
 
   getNewSuggestions(): void {
-    // predictions filtered out to only contain negatives
-    this.negatives = [...this.negatives, ...this.predictions.map(y => y.phrase)];
-    // update lexicon object so when changing lexicons it saves state
-    if (this.currentProject && this._lexicon && this.selectedEmbedding) {
-      this._lexicon.discarded_phrases = this.negatives;
-      this._lexicon.phrases = this.newLineStringToList(this.positives);
-      this.predictions = [];
+    const embedding = this.selectedEmbedding;
+    if (embedding && this.textareaLexicon) {
+      if (this.newSuggestions.length > 0) {
+        this.textareaLexicon.negatives_used = this.appendSuggestionsToTextarea(this.textareaLexicon.negatives_used, this.newSuggestions);
+      }
       this.isLoadingPredictions = true;
-      this.embeddingService.predict({
-        positives: this._lexicon.phrases,
-        negatives: this._lexicon.discarded_phrases,
-        output_size: this.outputSize,
-      }, this.currentProject.id, this.selectedEmbedding.id).subscribe(resp => {
-        if (resp) {
-          if (resp instanceof HttpErrorResponse) {
-            this.logService.snackBarError(resp, 5000);
-          } else {
-            this.predictions = resp;
-            if (this.predictions.length === 0) {
-              this.logService.snackBarMessage('No words found', 5000);
-            }
-          }
+
+      this.currentProject.pipe(take(1), switchMap(proj => {
+        if (proj) {
+          return this.embeddingService.predict(this.formatPredictQuery(this.textareaLexicon), proj.id, embedding.id);
         }
-      }, undefined, () => this.isLoadingPredictions = false);
+        return of(null);
+      })).subscribe(resp => {
+        this.isLoadingPredictions = false;
+        if (resp && !(resp instanceof HttpErrorResponse)) {
+          // to avoid layout thrashing with loading icon
+          this.newSuggestions = resp;
+        } else if (resp) {
+          this.logService.snackBarError(resp);
+        }
+      });
     }
+  }
+
+  clearSuggestions(): void {
+    if (this.textareaLexicon) {
+      this.textareaLexicon.negatives_unused = this.appendSuggestionsToTextarea(this.textareaLexicon.negatives_unused, this.newSuggestions);
+      this.newSuggestions = [];
+    }
+
   }
 
   saveLexicon(): void {
-    // so i can save lexicon words without embedding
-    if (this._lexicon && this.currentProject) {
-      this._lexicon.phrases = this.newLineStringToList(this.positives);
-
-      const requestBody = {
-        description: this._lexicon.description,
-        phrases: this._lexicon.phrases,
-        discarded_phrases: this._lexicon.discarded_phrases
-      };
-
-      this.lexiconService.updateLexicon(requestBody, this.currentProject.id, this._lexicon.id)
-        .subscribe(resp => {
-          if (resp && !(resp instanceof HttpErrorResponse)) {
-            this.logService.snackBarMessage('Lexicon saved', 3000);
-          } else if (resp instanceof HttpErrorResponse) {
-            this.logService.snackBarMessage('There was an error saving the lexicon', 3000);
-          }
-        });
+    if (this.textareaLexicon) {
+      this.currentProject.pipe(take(1), switchMap(proj => {
+        if (proj) {
+          const body: Partial<Lexicon> = {
+            negatives_unused: this.newLineStringToList(this.textareaLexicon.negatives_unused),
+            positives_used: this.newLineStringToList(this.textareaLexicon.positives_used),
+            positives_unused: this.newLineStringToList(this.textareaLexicon.positives_unused),
+            negatives_used: this.newLineStringToList(this.textareaLexicon.negatives_used),
+          };
+          return this.lexiconService.updateLexicon(body, proj.id, this.lexicon.id);
+        }
+        return of(null);
+      })).subscribe(resp => {
+        if (resp && !(resp instanceof HttpErrorResponse)) {
+          this.lexicon = resp;
+          this.logService.snackBarMessage('Lexicon saved', 3000);
+        } else if (resp) {
+          this.logService.snackBarError(resp);
+        }
+      });
     }
   }
 
-  addPositive(value: { phrase: string, score: number, model: string }): void {
-    // remove selected item from predictions list
-    if (this._lexicon) {
-      this.predictions = this.predictions.filter(x => {
-        return x.phrase !== value.phrase;
-      });
-      this.positives += this.positives.endsWith('\n') ? value.phrase + '\n' : '\n' + value.phrase;
-      this._lexicon.phrases = this.newLineStringToList(this.positives);
-    }
+  formatPredictQuery(lexicon: TextareaLexicon): Partial<Lexicon> & { output_size: number } {
+    const returnval: Partial<Lexicon> & { output_size: number } = {
+      negatives_unused: [],
+      negatives_used: [],
+      positives_used: [],
+      positives_unused: [],
+      output_size: 25
+    };
+    returnval.negatives_unused = this.newLineStringToList(lexicon.negatives_unused);
+    returnval.negatives_used = this.newLineStringToList(lexicon.negatives_used);
+    returnval.positives_used = this.newLineStringToList(lexicon.positives_used);
+    returnval.positives_unused = this.newLineStringToList(lexicon.positives_unused);
+    return returnval;
   }
 
-  removeNegative(value: string): void {
-    // remove selected item from predictions list
-    if (this._lexicon) {
-      this.negatives = this.negatives.filter(x => {
-        return x !== value;
-      });
-      this._lexicon.discarded_phrases = this.negatives;
-    }
+  lexiconToTextareaLexicon(lexicon: Lexicon): TextareaLexicon {
+    const returnval = {
+      negatives_unused: '',
+      negatives_used: '',
+      positives_used: '',
+      positives_unused: ''
+    };
+    returnval.negatives_unused = this.stringListToString(lexicon.negatives_unused);
+    returnval.negatives_used = this.stringListToString(lexicon.negatives_used);
+    returnval.positives_used = this.stringListToString(lexicon.positives_used);
+    returnval.positives_unused = this.stringListToString(lexicon.positives_unused);
+    return returnval;
   }
 
   stringListToString(stringList: string[]): string {
-
     let returnStr = '';
     if (stringList) {
       stringList.forEach(x => {
@@ -182,11 +215,44 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy {
     return stringList.filter(x => x !== '');
   }
 
-  saveEmbeddingChoice(embedding: Embedding): void {
-    const state = this.localStorageService.getProjectState(this.currentProject);
-    if (state) {
-      state.lexicons.embeddingId = embedding.id;
-      this.localStorageService.updateProjectState(this.currentProject, state);
+  ngOnDestroy(): void {
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
+  }
+
+  addPositive(suggestion: EmbeddingPrediction): void {
+    if (this.textareaLexicon) {
+      // remove selected item from predictions list
+      this.newSuggestions = this.newSuggestions.filter(x => {
+        return x.phrase !== suggestion.phrase;
+      });
+      this.textareaLexicon.positives_used = this.appendSuggestionsToTextarea(this.textareaLexicon.positives_used, [suggestion]);
     }
+  }
+
+  appendSuggestionsToTextarea(textAreaString: string, suggestions: EmbeddingPrediction[]): string {
+    suggestions.forEach(el => {
+      if (textAreaString === '') {
+        textAreaString += el.phrase + '\n';
+      } else {
+        textAreaString += textAreaString.endsWith('\n') ? el.phrase + '\n' : '\n' + el.phrase;
+      }
+    });
+    return textAreaString;
+  }
+
+  canDeactivate(): boolean {
+    const body = this.formatPredictQuery(this.textareaLexicon);
+    if (body.negatives_unused && !UtilityFunctions.arrayValuesEqual(body.negatives_unused, this.lexicon.negatives_unused)) {
+      return false;
+    }
+    if (body.negatives_used && !UtilityFunctions.arrayValuesEqual(body.negatives_used, this.lexicon.negatives_used)) {
+      return false;
+    }
+    if (body.positives_used && !UtilityFunctions.arrayValuesEqual(body.positives_used, this.lexicon.positives_used)) {
+      return false;
+    }
+    return !(body.positives_unused && !UtilityFunctions.arrayValuesEqual(body.positives_unused, this.lexicon.positives_unused));
+
   }
 }

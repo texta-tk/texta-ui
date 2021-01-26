@@ -1,77 +1,123 @@
-<div class="flex-row wrapper">
-  <div class="card mat-elevation-z2" fxLayout="column">
-    <div class="lexicon">
-      <h3>Lexicon words</h3>
-      <div *ngIf="!!_lexicon" fxFlexAlign="center" fxLayout="column">
-        <mat-form-field data-cy="appLexiconEmbedding">
-          <mat-label>Select Embedding</mat-label>
-          <mat-select (selectionChange)="saveEmbeddingChoice($event.value)" [(value)]="selectedEmbedding"
-                      [disableOptionCentering]="true" panelClass="select-panel-reveal-input">
-            <mat-option *ngFor="let embedding of embeddings" [value]="embedding">
-              {{embedding.description}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+<div class="flex-col max-height">
+  <div class="flex-row header-row">
+    <app-breadcrumb></app-breadcrumb>
+    <mat-form-field data-cy="appLexiconEmbedding">
+      <mat-label>Select Embedding</mat-label>
+      <mat-select (selectionChange)="saveEmbeddingChoice($event.value)" [(value)]="selectedEmbedding"
+                  [disableOptionCentering]="true" panelClass="select-panel-reveal-input">
+        <mat-option *ngFor="let embedding of embeddings" [value]="embedding">
+          {{embedding.description}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <div class="buttons-row" fxLayout="row" fxLayoutGap="5px">
+      <button (click)="getNewSuggestions()" [disabled]="!selectedEmbedding" color="accent"
+              data-cy="appLexiconNewSuggestionsBtn"
+              fxFlex="grow"
+              mat-raised-button
+              matTooltip="Select an embedding to get new word suggestions">
+        New Suggestions
+      </button>
+      <button (click)="clearSuggestions()" color="accent"
+              data-cy="appLexiconCancelBtn" fxFlex="grow" mat-stroked-button
+              matTooltip="Clear the suggestion list without adding them as negatives">Clear Suggestions
+      </button>
+      <button (click)="saveLexicon()" color="primary"
+              data-cy="appLexiconSaveBtn" fxFlex="initial" mat-raised-button>Save
+      </button>
+    </div>
 
-        <mat-form-field appearance="outline" class="textarea max-width" data-cy="appLexiconWords" floatLabel="never">
+  </div>
+  <div *ngIf="textareaLexicon" class="grid-container">
+    <div class="suggestions flex-col">
+      <div class="header">
+        <h3>Suggestions</h3>
+      </div>
+      <div class="loading-bar">
+        <mat-progress-bar *ngIf="isLoadingPredictions" mode="indeterminate"></mat-progress-bar>
+      </div>
+      <div class="flex-row-wrap">
+        <div (click)="addPositive(suggestion)"
+             *ngFor="let suggestion of newSuggestions"
+             class="list-item pointer item-padding"
+             data-cy="appLexiconPredictions">
+          <span>{{suggestion.phrase}}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pos_unused flex-col">
+      <div class="header flex-row">
+        <h3>Positives unused</h3>
+      </div>
+      <div class="max-height overflow-auto">
+        <mat-form-field appearance="outline" class="stretch-height max-width" data-cy="appLexiconWords"
+                        floatLabel="never">
           <mat-label>Enter words here</mat-label>
-          <textarea [(ngModel)]="positives" cdkAutosizeMaxRows="5" cdkAutosizeMinRows="1" cdkTextareaAutosize
+          <textarea [(ngModel)]="textareaLexicon.positives_unused"
                     class="max-width"
                     matInput
                     placeholder="Enter words here"
           ></textarea>
         </mat-form-field>
 
-        <div fxLayout="row" fxLayoutGap="5px">
-          <button (click)="getNewSuggestions()" [disabled]="!selectedEmbedding" color="accent" data-cy="appLexiconNewSuggestionsBtn"
-                  fxFlex="grow"
-                  mat-stroked-button
-                  matTooltip="Select an embedding to get new word suggestions">
-            New Suggestions
-          </button>
-          <button (click)="cancelSuggestions()" color="warn"
-                  data-cy="appLexiconCancelBtn" fxFlex="grow" mat-stroked-button
-                  matTooltip="Clear the suggestion list without adding them as negatives">Clear Suggestions
-          </button>
-          <button (click)="saveLexicon()" color="primary"
-                  data-cy="appLexiconSaveBtn" fxFlex="initial" mat-stroked-button>Save
-          </button>
-        </div>
+      </div>
+    </div>
+
+    <div class="pos_used flex-col">
+      <div class="header flex-row">
+        <h3>Positives</h3>
+      </div>
+      <div class="max-height overflow-auto">
+        <mat-form-field appearance="outline" class="stretch-height max-width" data-cy="appLexiconWords"
+                        floatLabel="never">
+          <mat-label>Enter words here</mat-label>
+          <textarea [(ngModel)]="textareaLexicon.positives_used"
+                    class="max-width"
+                    matInput
+                    placeholder="Enter words here"
+          ></textarea>
+        </mat-form-field>
 
       </div>
     </div>
 
-    <div *ngIf="negatives.length > 0" class="negative">
-      <h3>Negative words</h3>
-      <div class="negatives flex-row-wrap">
-        <mat-chip-list>
-          <mat-chip (click)="removeNegative(negative)" *ngFor="let negative of negatives" color="warn" data-cy="appLexiconNegatives"
-                    removable="true"
-                    selected>{{negative}}
-          </mat-chip>
-        </mat-chip-list>
+    <div class="neg_unused flex-col">
+      <div class="header">
+        <h3>Negatives unused</h3>
       </div>
-    </div>
-  </div>
 
-  <div class="card predictions mat-elevation-z2" fxLayout="column">
-    <h3>Suggestions
-    </h3>
-    <div *ngIf="isLoadingPredictions" fxFlex="70%" fxLayoutAlign="center center">
-      <mat-spinner></mat-spinner>
-    </div>
-    <div class="flex-row-wrap">
-      <div (click)="addPositive(prediction)"
-           *ngFor="let prediction of predictions"
-           class="list-item pointer item-padding"
-           data-cy="appLexiconPredictions">
-        <span>{{prediction.phrase}}</span>
+      <div class="max-height overflow-auto">
+        <mat-form-field appearance="outline" class="stretch-height max-width" data-cy="appLexiconWords"
+                        floatLabel="never">
+          <mat-label>Enter words here</mat-label>
+          <textarea [(ngModel)]="textareaLexicon.negatives_unused"
+                    class="max-width"
+                    matInput
+                    placeholder="Enter words here"
+          ></textarea>
+        </mat-form-field>
+
       </div>
     </div>
-    <!-- <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"ion-list #predictedWords>
-      <mat-list-option *ngFor="let prediction of predictions" [value]="prediction">
-        {{prediction.phrase}}
-      </mat-list-option>
-    </mat-selection-list> -->
+
+    <div class="neg_used flex-col">
+      <div class="header">
+        <h3>Negatives</h3>
+      </div>
+
+      <div class="max-height overflow-auto">
+        <mat-form-field appearance="outline" class="stretch-height max-width" data-cy="appLexiconWords"
+                        floatLabel="never">
+          <mat-label>Enter words here</mat-label>
+          <textarea [(ngModel)]="textareaLexicon.negatives_used"
+                    class="max-width"
+                    matInput
+                    placeholder="Enter words here"
+          ></textarea>
+        </mat-form-field>
+
+      </div>
+    </div>
   </div>
 </div>

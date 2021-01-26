@@ -2,13 +2,21 @@ import {NgModule} from '@angular/core';
 import {AuthGuard} from '../core/auth/auth.guard';
 import {LexiconMinerComponent} from './lexicon-miner.component';
 import {RouterModule, Routes} from '@angular/router';
+import {LexiconBuilderComponent} from './lexicon-builder/lexicon-builder.component';
+import {DeactivateGuard} from '../core/auth/deactivate.guard';
 
 const routes: Routes = [
   {
     path: '',
     canActivate: [AuthGuard],
     component: LexiconMinerComponent,
+    data: {breadcrumb: 'Lexicons', tooltip: 'Lexicons'}
   },
+  {
+    path: ':lexiconId',
+    canDeactivate: [DeactivateGuard],
+    component: LexiconBuilderComponent, data: {breadcrumb: '', tooltip: 'Lexicon ID'}
+  }
 ];
 
 @NgModule({

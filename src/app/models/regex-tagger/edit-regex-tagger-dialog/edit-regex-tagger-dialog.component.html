@@ -133,7 +133,7 @@
         {{ lexicon.description }}
       </button>
       <mat-menu #lexiconDetailed="matMenu">
-        <div *ngFor="let phrase of lexicon.phrases" disabled mat-menu-item>{{ phrase }}</div>
+        <div *ngFor="let phrase of lexicon.positives_used" disabled mat-menu-item>{{ phrase }}</div>
       </mat-menu>
     </ng-container>
 

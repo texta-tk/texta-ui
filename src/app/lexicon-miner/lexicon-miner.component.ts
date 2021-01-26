@@ -1,14 +1,18 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {of, Subject} from 'rxjs';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {merge, of, Subject, Subscription} from 'rxjs';
 import {Lexicon} from '../shared/types/Lexicon';
 import {LogService} from '../core/util/log.service';
 import {LexiconService} from '../core/lexicon/lexicon.service';
 import {ProjectStore} from '../core/projects/project.store';
-import {switchMap, takeUntil} from 'rxjs/operators';
+import {debounceTime, startWith, switchMap, takeUntil} from 'rxjs/operators';
 import {Project} from '../shared/types/Project';
 import {HttpErrorResponse} from '@angular/common/http';
 import {MatDialog} from '@angular/material/dialog';
 import {ConfirmDialogComponent} from '../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {MatTableDataSource} from '@angular/material/table';
+import {MatSort} from '@angular/material/sort';
+import {MatPaginator} from '@angular/material/paginator';
+import {CreateLexiconDialogComponentComponent} from './create-lexicon-dialog-component/create-lexicon-dialog-component.component';
 
 
 @Component({
@@ -16,110 +20,106 @@ import {ConfirmDialogComponent} from '../shared/components/dialogs/confirm-dialo
   templateUrl: './lexicon-miner.component.html',
   styleUrls: ['./lexicon-miner.component.scss']
 })
-export class LexiconMinerComponent implements OnInit, OnDestroy {
-  destroy$: Subject<boolean> = new Subject<boolean>();
-  lexicons: Lexicon[] = [];
-  newLexiconDescription = '';
-  selectedLexicon: Lexicon | null;
-  currentProject: Project;
-  pageSize = 30;
-  totalLexicons: number;
+export class LexiconMinerComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  constructor(private logService: LogService, private dialog: MatDialog,
-              private lexiconService: LexiconService, private projectStore: ProjectStore) {
+  public tableData: MatTableDataSource<Lexicon> = new MatTableDataSource();
+  public displayedColumns = ['id', 'description', 'author', 'positives_used', 'positives_unused', 'negatives_used', 'negatives_unused'];
+  public isLoadingResults = true;
+
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+
+  currentProject: Project;
+  destroyed$ = new Subject<boolean>();
+  resultsLength: number;
+
+  constructor(private projectStore: ProjectStore,
+              private lexiconService: LexiconService,
+              public dialog: MatDialog,
+              public logService: LogService) {
   }
 
   ngOnInit(): void {
-    // you need both lexicons and embeddings to use lexicon miner, so just forkjoin if one of them errors cant do anything
-    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroy$), switchMap(currentProject => {
-      if (currentProject) {
-        this.currentProject = currentProject;
-        return this.lexiconService.getLexicons(
-          currentProject.id,
-          `page=1&page_size=${this.pageSize}`
-        );
+    this.tableData.sort = this.sort;
+    this.tableData.paginator = this.paginator;
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(resp => {
+      if (resp) {
+        this.currentProject = resp;
+        if (this.paginator) {
+          this.paginator.pageIndex = 0;
+        }
+      } else {
+        this.isLoadingResults = false;
       }
-      return of(null);
-    })).subscribe(resp => {
-        if (resp) {
-          if (resp instanceof HttpErrorResponse) {
-            this.logService.snackBarError(resp, 5000);
+    });
+  }
+
+  ngAfterViewInit(): void {
+    // If the user changes the sort order, reset back to the first page.
+    this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
+
+    merge(this.sort.sortChange, this.paginator.page)
+      .pipe(debounceTime(250), startWith({}),
+        switchMap(() => {
+          this.isLoadingResults = true;
+          return this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$));
+        }))
+      .pipe(
+        switchMap(proj => {
+          if (proj) {
+            const sortDirection = this.sort.direction === 'desc' ? '-' : '';
+            return this.lexiconService.getLexicons(
+              this.currentProject.id,
+              // Add 1 to to index because Material paginator starts from 0 and DRF paginator from 1
+              `ordering=${sortDirection}${this.sort.active}&page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`);
           } else {
-            this.selectedLexicon = null;
-            this.totalLexicons = resp.count;
-            this.lexicons = resp.results;
+            return of(null);
           }
-        }
+        })).subscribe((data) => {
+      // Flip flag to show that loading has finished.
+      this.isLoadingResults = false;
+      if (data && !(data instanceof HttpErrorResponse)) {
+        this.resultsLength = data.count;
+        this.tableData.data = data.results;
       }
-    );
+    });
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
+
+  openCreateDialog(): void {
+    const dialogRef = this.dialog.open(CreateLexiconDialogComponentComponent, {
+      maxHeight: '90vh',
+      width: '800px',
+      disableClose: true
+    });
+    dialogRef.afterClosed().subscribe((resp: Lexicon | HttpErrorResponse) => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.tableData.data = [...this.tableData.data, resp];
+        this.logService.snackBarMessage(`Created Lexicon ${resp.description}`, 2000);
+      } else if (resp instanceof HttpErrorResponse) {
+        this.logService.snackBarError(resp, 5000);
+      }
+    });
   }
 
-  createNewLexicon(): void {
-    if (this.currentProject) {
-      this.lexiconService.createLexicon({
-          description: this.newLexiconDescription,
-          phrases: []
-        }, this.currentProject.id
-      ).subscribe(resp => {
-        if (resp instanceof HttpErrorResponse) {
-          this.logService.snackBarError(resp, 5000);
-        } else {
-          this.lexicons.push(resp);
-          this.logService.snackBarMessage(`Created lexicon ${resp.description}`, 2000);
-        }
-        this.projectStore.refreshSelectedProjectResourceCounts();
-        this.newLexiconDescription = '';
-      });
-    }
-  }
-
-  deleteLexicon(lexicon: Lexicon): void {
+  onDelete(lexicon: Lexicon, index: number): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: {confirmText: 'Delete', mainText: `Are you sure you want to delete this Lexion?`}
+      data: {confirmText: 'Delete', mainText: 'Are you sure you want to delete this Lexicon?'}
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        return this.lexiconService.deleteLexicon(this.currentProject.id, lexicon.id)
-          .subscribe((resp: Lexicon | HttpErrorResponse) => {
-            if (resp instanceof HttpErrorResponse) {
-              this.logService.snackBarError(resp, 5000);
-            } else {
-              this.logService.snackBarMessage(`Deleted lexicon ${lexicon.description}`, 3000);
-              const position = this.lexicons.findIndex(x => x.id === lexicon.id);
-              this.lexicons.splice(position, 1);
-              // update lexicon count in navbar
-              this.projectStore.refreshSelectedProjectResourceCounts();
-            }
-          });
+        this.lexiconService.deleteLexicon(this.currentProject.id, lexicon.id).subscribe(() => {
+          this.logService.snackBarMessage(`Deleted Lexicon ${lexicon.description}`, 2000);
+          this.tableData.data.splice(index, 1);
+          this.tableData.data = [...this.tableData.data];
+        });
       }
     });
   }
 
-  selectLexicon(lexicon: Lexicon): void {
-    if (this.selectedLexicon !== lexicon) {
-      this.selectedLexicon = lexicon;
-    }
-  }
-
-  onScrollLexicons(): void {
-    if (this.currentProject && this.lexicons.length < this.totalLexicons) {
-      this.lexiconService.getLexicons(
-        this.currentProject.id,
-        `page=${Math.round(this.lexicons.length / this.pageSize) + 1}&page_size=${this.pageSize}`)
-        .subscribe(resp => {
-          if (resp instanceof HttpErrorResponse) {
-            this.logService.snackBarError(resp, 2000);
-          } else if (resp) {
-            this.totalLexicons = resp.count;
-            this.lexicons = [...this.lexicons, ...resp.results];
-          }
-        });
-    }
+  ngOnDestroy(): void {
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
   }
 }
