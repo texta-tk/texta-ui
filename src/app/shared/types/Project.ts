@@ -108,7 +108,7 @@ export interface Health {
     elastic: {
       url: string;
       alive: boolean;
-      disk: { free: number, total: number, used: number, unit: string }[];
+      disk: { free: number, total: number, used: number, unit: string, host: string }[];
       status: {
         name: string;
         cluster_name: string;

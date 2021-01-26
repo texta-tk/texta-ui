@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Health} from '../shared/types/Project';
 import {HttpErrorResponse} from '@angular/common/http';
 import {UserStore} from '../core/users/user.store';
@@ -7,6 +7,9 @@ import {of, Subject, Subscription} from 'rxjs';
 import * as projectPackage from '../../../package.json';
 import {CoreService} from '../core/core.service';
 import {switchMap, takeUntil} from 'rxjs/operators';
+import {PlotlyComponent} from "angular-plotly.js";
+import {Plotly} from "angular-plotly.js/lib/plotly.interface";
+import Layout = Plotly.Layout;
 
 
 @Component({

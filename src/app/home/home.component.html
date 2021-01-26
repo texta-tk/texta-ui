@@ -85,30 +85,20 @@
           <span class="mat-hint center-text block">Active Tasks</span>
         </div>
       </mat-card>
-      <div class="m-top-10" style="max-width: 625px; margin: auto;">
-        <h4 style="margin-bottom: 0">Elasticsearch nodes</h4></div>
-      <mat-card class="usage-card center-margin " fxLayout="row wrap"
-                fxLayoutGap="5px">
-        <div *ngFor="let item of health.services.elastic.disk; let i =index" style="min-width: 180px">
-          <h4 class="mat-h4 center-text"> NODE: {{i + 1}}</h4>
-          <mat-progress-spinner
-            [color]="((item.used / item.total) * 100) < 85 ? 'primary' : 'warn'"
-            [mode]="'determinate'"
-            [value]="(item.used / item.total) * 100"
-            class="center-margin"
-          >
-          </mat-progress-spinner>
-          <div style="position:relative; top: -60px;">
-            <span
-              class="block center-text">{{(((item.used / item.total) * 100))| number:'1.0-0' }}
-              % </span>
-          </div>
-          <span class="mat-hint mat-small center-text block"> {{item.used | number}}
-            /  {{item.total| number}} {{item.unit}} </span>
-        </div>
-      </mat-card>
-
-
-    </div>
-  </div>
-</div>
+  <!--        <div *ngFor="let item of health.services.elastic.disk; let i =index" style="min-width: 180px">
+            <h4 class="mat-h4 center-text"> NODE: {{i + 1}}</h4>
+            <mat-progress-spinner
+              [color]="((item.used / item.total) * 100) < 85 ? 'primary' : 'warn'"
+              [mode]="'determinate'"
+              [value]="(item.used / item.total) * 100"
+              class="center-margin"
+            >
+            </mat-progress-spinner>
+            <div style="position:relative; top: -60px;">
+              <span
+                class="block center-text">{{(((item.used / item.total) * 100))| number:'1.0-0' }}
+                % </span>
+            </div>
+            <span class="mat-hint mat-small center-text block"> {{item.used | number}}
+              /  {{item.total| number}} {{item.unit}} </span>
+          </div>-->
