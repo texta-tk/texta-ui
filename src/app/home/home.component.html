@@ -85,20 +85,19 @@
           <span class="mat-hint center-text block">Active Tasks</span>
         </div>
       </mat-card>
-  <!--        <div *ngFor="let item of health.services.elastic.disk; let i =index" style="min-width: 180px">
-            <h4 class="mat-h4 center-text"> NODE: {{i + 1}}</h4>
-            <mat-progress-spinner
-              [color]="((item.used / item.total) * 100) < 85 ? 'primary' : 'warn'"
-              [mode]="'determinate'"
-              [value]="(item.used / item.total) * 100"
-              class="center-margin"
-            >
-            </mat-progress-spinner>
-            <div style="position:relative; top: -60px;">
-              <span
-                class="block center-text">{{(((item.used / item.total) * 100))| number:'1.0-0' }}
-                % </span>
-            </div>
-            <span class="mat-hint mat-small center-text block"> {{item.used | number}}
-              /  {{item.total| number}} {{item.unit}} </span>
-          </div>-->
+      <mat-card class="usage-card center-margin" style="max-height: 350px; overflow: auto;" fxLayout="row wrap">
+        <table class="simple-table">
+          <tr>
+            <th>Name</th>
+            <th>Disk usage</th>
+            <th>Disk size</th>
+          </tr>
+
+          <tr *ngFor="let item of health.services.elastic.disk; let i =index">
+            <td>{{item.host}}</td>
+            <td [style.background-color]="((item.used / item.total) * 100) < 85 ? 'lightgreen' : '#ff6961'">{{item.used}} {{item.unit}} ({{(item.used / item.total)| percent}})</td>
+            <td>{{item.total}} {{item.unit}}</td>
+          </tr>
+        </table>
+      </mat-card>
+
