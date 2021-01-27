@@ -36,7 +36,7 @@
       <div class="loading-bar">
         <mat-progress-bar *ngIf="isLoadingPredictions" mode="indeterminate"></mat-progress-bar>
       </div>
-      <div class="flex-row-wrap">
+      <div class="flex-col" style="flex-wrap: wrap;overflow: auto;">
         <div (click)="addPositive(suggestion)"
              *ngFor="let suggestion of newSuggestions"
              class="list-item pointer item-padding"

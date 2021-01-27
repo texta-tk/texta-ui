@@ -23,7 +23,7 @@ import {CreateLexiconDialogComponentComponent} from './create-lexicon-dialog-com
 export class LexiconMinerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public tableData: MatTableDataSource<Lexicon> = new MatTableDataSource();
-  public displayedColumns = ['id', 'description', 'author', 'positives_used', 'positives_unused', 'negatives_used', 'negatives_unused'];
+  public displayedColumns = ['id', 'description', 'author', 'positives_used', 'positives_unused', 'negatives_used', 'negatives_unused', 'delete'];
   public isLoadingResults = true;
 
   @ViewChild(MatSort) sort: MatSort;

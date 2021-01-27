@@ -9,7 +9,8 @@
               color="primary" data-cy="appModelsTaggerCreateBtn" mat-raised-button>
         CREATE
       </button>
-      <button (click)="onDeleteAllSelected()" [disabled]="selectedRows.selected.length < 1" class="new-resource-btn" color="warn"
+      <button (click)="onDeleteAllSelected()" [disabled]="selectedRows.selected.length < 1" class="new-resource-btn"
+              color="warn"
               mat-icon-button matTooltip="Delete selected">
         <mat-icon>delete</mat-icon>
       </button>
@@ -22,7 +23,7 @@
         <input (keyup)="applyFilter($event.target, 'task_status')" matInput placeholder="Filter task status">
       </mat-form-field>
 
-      <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons [length]="resultsLength">
+      <mat-paginator [length]="resultsLength" [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
       </mat-paginator>
     </div>
   </div>
@@ -200,7 +201,6 @@
                   </tr>
                 </table>
               </div>
-
             </div>
           </div>
         </td>
@@ -218,7 +218,8 @@
       </ng-container>
 
       <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
-      <tr (click)="expandedElement = expandedElement === element ? null : element" *matRowDef="let element; columns: displayedColumns;" [class.expanded-row]="expandedElement === element"
+      <tr (click)="expandedElement = expandedElement === element ? null : element"
+          *matRowDef="let element; columns: displayedColumns;" [class.expanded-row]="expandedElement === element"
           class="element-row"
           mat-row></tr>
       <tr *matRowDef="let row; columns: ['expandedDetail']" class="detail-row" mat-row></tr>
