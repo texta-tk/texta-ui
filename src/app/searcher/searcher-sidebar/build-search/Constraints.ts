@@ -123,6 +123,7 @@ export class ElasticsearchQuery {
         minimum_should_match: 0,
       }
     },
+    track_total_hits: true,
     highlight: {
       pre_tags: [HighlightSettings.PRE_TAG],
       post_tags: [HighlightSettings.POST_TAG],
@@ -140,6 +141,7 @@ export interface ElasticsearchQueryStructure {
   highlight: HighlightStructure;
   query: QueryStructure;
   aggs?: AggregationStructure;
+  track_total_hits: boolean;
   size: number;
   from: number;
   // tslint:disable-next-line:no-any

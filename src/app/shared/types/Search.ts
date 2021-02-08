@@ -2,7 +2,7 @@ import {ElasticsearchQuery, FactConstraint} from '../../searcher/searcher-sideba
 
 export class Search {
   // tslint:disable-next-line:no-any
-  constructor(public searchContent: { count: number, aggs?: any, results: { highlight: unknown, doc: unknown }[] },
+  constructor(public searchContent: SearchByQueryResponse,
               public elasticsearchQuery: ElasticsearchQuery,
               public searchOptions: SearchOptions) {
     this.elasticsearchQuery = JSON.parse(JSON.stringify(elasticsearchQuery));
@@ -12,7 +12,7 @@ export class Search {
 
 export interface SearchByQueryResponse {
   results: { highlight: unknown, doc: unknown }[];
-  count: number;
+  count: { value: number; relation: string };
   aggs?: unknown;
 }
 

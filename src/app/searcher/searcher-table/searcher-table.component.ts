@@ -83,7 +83,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
       })
     ).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.totalDocs = resp.count;
+        this.totalDocs = resp.count.value;
       }
     });
 
@@ -113,7 +113,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
           // filter out table columns by index, unique array(table columns have to be unique)
           this.setColumnsToDisplay();
         }
-        this.totalCountLength = resp.searchContent.count;
+        this.totalCountLength = resp.searchContent.count.value;
         this.paginatorLength = this.totalCountLength > 10000 ? 10000 : this.totalCountLength;
         this.tableData.data = resp.searchContent.results;
         this.currentElasticQuery = resp.elasticsearchQuery;
