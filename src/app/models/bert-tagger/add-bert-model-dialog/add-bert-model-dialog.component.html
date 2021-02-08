@@ -1,0 +1,27 @@
+<h1 mat-dialog-title>Add Bert Model</h1>
+<mat-dialog-content>
+  <mat-form-field class="max-width">
+    <input #ctrl="ngModel" [(ngModel)]="modelName"
+           autocomplete="off" matInput placeholder="Model name" required>
+    <mat-error *ngIf="ctrl?.hasError('required') && ctrl.dirty">
+      Model name is <strong>required</strong>
+    </mat-error>
+    <mat-hint>
+      Model name from: <a href="https://huggingface.co/models" target="_blank">https://huggingface.co/models</a>
+    </mat-hint>
+  </mat-form-field>
+
+</mat-dialog-content>
+<mat-dialog-actions>
+  <div class="flex-col max-width">
+    <div class="flex-row">
+      <div class="flex-item-left">
+        <button class="flex-item-left" mat-button mat-dialog-close="" type="button">Close</button>
+      </div>
+      <div class="flex-item-right">
+        <button (click)="onSubmit()" [disabled]="modelName == ''" mat-button type="submit">Submit</button>
+      </div>
+    </div>
+
+  </div>
+</mat-dialog-actions>

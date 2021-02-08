@@ -58,6 +58,11 @@ const routes: Routes = [
     loadChildren: () => import('./models/embedding/embedding.module').then(m => m.EmbeddingModule)
   },
   {
+    path: 'bert-taggers',
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./models/bert-tagger/bert-tagger.module').then(m => m.BertTaggerModule)
+  },
+  {
     path: 'topic-analyzer',
     canActivate: [AuthGuard],
     data: {breadcrumb: 'clustering', tooltip: 'Topic analyzer list'},

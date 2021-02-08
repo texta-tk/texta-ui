@@ -21,7 +21,7 @@
       </button>
     </a>
     <a [matMenuTriggerFor]="models"
-       [ngClass]="{'is-active': ['/tagger-groups', '/taggers', '/regex-taggers', '/regex-tagger-groups', '/embeddings', '/torch-taggers'].includes(router.url)}"
+       [ngClass]="{'is-active': ['/tagger-groups', '/taggers', '/regex-taggers', '/regex-tagger-groups', '/embeddings', '/torch-taggers', '/bert-taggers'].includes(router.url)}"
        class="pointer">
       <button class="nav-button" data-cy="appNavbarModels" mat-button>
         <mat-icon class="margin-right">storage</mat-icon>
@@ -32,6 +32,7 @@
         projectResourceCounts.num_tagger_groups +
         projectResourceCounts.num_regex_taggers +
         projectResourceCounts.num_regex_tagger_groups +
+        projectResourceCounts.num_bert_taggers +
         projectResourceCounts.num_embeddings}})
         </ng-container>
 
@@ -70,8 +71,10 @@
         *ngIf="projectResourceCounts?.num_regex_taggers"> ({{projectResourceCounts.num_regex_taggers}})</span></a>
       <a [routerLink]="['regex-tagger-groups']" data-cy="appNavbarModelMenuRegexTaggerGroups" mat-menu-item
          routerLinkActive="is-active-menu">Regex Taggers Groups <span
-        *ngIf="projectResourceCounts?.num_regex_tagger_groups">({{projectResourceCounts.num_regex_tagger_groups}}
-        )</span></a>
+        *ngIf="projectResourceCounts?.num_regex_tagger_groups">({{projectResourceCounts.num_regex_tagger_groups}})</span></a>
+      <a [routerLink]="['bert-taggers']" data-cy="appNavbarModelMenuBertTaggers" mat-menu-item
+         routerLinkActive="is-active-menu">Bert Taggers <span
+        *ngIf="projectResourceCounts?.num_bert_taggers">({{projectResourceCounts.num_bert_taggers}})</span></a>
       <a [routerLink]="['embeddings']" data-cy="appNavbarModelMenuEmbeddings" mat-menu-item
          routerLinkActive="is-active-menu">Embeddings <span
         *ngIf="projectResourceCounts?.num_embeddings">({{projectResourceCounts.num_embeddings}})</span></a>
@@ -111,22 +114,22 @@
       <mat-form-field *ngIf="projectFields" class="project-select">
         <mat-select (openedChange)="indexSelectionOpenedChange($event)" [compareWith]="compareIndices"
                     [disableOptionCentering]="true"
-                    [formControl]="projectFieldsControl" placeholder="Indices"
-                    data-cy="appNavbarProjectFieldsSelect"
+                    [formControl]="projectFieldsControl" data-cy="appNavbarProjectFieldsSelect"
                     multiple
-                    panelClass="select-panel-reveal-input">
+                    panelClass="select-panel-reveal-input"
+                    placeholder="Indices">
           <app-mat-option-select-all></app-mat-option-select-all>
           <mat-option *ngFor="let item of projectFields" [value]="item">
             {{item.index}}
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field class="project-select" >
+      <mat-form-field class="project-select">
         <mat-select (selectionChange)="projectStore.setCurrentProject($event.value)" [compareWith]="compareProjects"
                     [disableOptionCentering]="true" [formControl]="projectControl"
-                    placeholder="Projects"
                     data-cy="appNavbarProjectSelect"
-                    panelClass="select-panel-reveal-input">
+                    panelClass="select-panel-reveal-input"
+                    placeholder="Projects">
           <mat-option *ngFor="let item of projects" [value]="item">
             {{item.id}}: {{item.title}}
           </mat-option>

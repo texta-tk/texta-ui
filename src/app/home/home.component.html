@@ -68,7 +68,7 @@
       </mat-card>
 
       <mat-card class="counts-card center-margin" fxLayout="row wrap">
-        <div [matTooltip]="health.host.gpu.devices | join:'\n'" fxFlex matTooltipClass="white-space-pre-line">
+        <div [matTooltip]="health.host.gpu.devices | json" fxFlex matTooltipClass="white-space-pre-line">
           <span [ngClass]="health.host.gpu.count > 0 ? 'primary-text' : 'accent-text'"
                 class="count-text center-text block">  {{health.host.gpu.count}} </span>
           <span class="mat-hint center-text block">GPUs</span>

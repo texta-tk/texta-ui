@@ -27,6 +27,7 @@ export class ProjectResourceCounts {
   num_mlp_workers = 0;
   num_reindexers = 0;
   num_dataset_importers = 0;
+  num_bert_taggers = 0;
 }
 
 export interface ProjectFact {
@@ -96,7 +97,7 @@ export class ProjectIndex {
 export interface Health {
   host: {
     cpu: { percent: number; count: number; };
-    gpu: { count: number; devices: string[] };
+    gpu: { count: number; devices: { id: number; memory: { free: number, total: number, used: number, unit: string }, name: string }[] };
     memory: { free: number, total: number, used: number, unit: string };
     disk: { free: number, total: number, used: number, unit: string };
   };

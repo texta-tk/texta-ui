@@ -31,7 +31,7 @@ export class LogService {
 
   public snackBarError(error: HttpErrorResponse, time = 5000): void {
     if (error.error.hasOwnProperty('detail')) {
-      this.snackBar.open(`${error.statusText}: ${error.error.detail}`, 'Close', {
+      this.snackBar.open(`${error.error.detail}`, 'Close', {
         duration: time,
       });
     } else {

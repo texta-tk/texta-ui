@@ -1,0 +1,135 @@
+<h1 mat-dialog-title>New Bert Tagger</h1>
+<mat-dialog-content>
+  <form (ngSubmit)="onSubmit(bertTaggerForm.value)" [formGroup]="bertTaggerForm" class="flex-col" id="bertForm">
+    <mat-form-field data-cy="appBertTaggerCreateDialogDesc">
+      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
+             placeholder="Description" required>
+
+      <mat-error *ngIf="bertTaggerForm.get('descriptionFormControl')?.hasError('required')">
+        Description is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+
+    <mat-form-field data-cy="appBertTaggerCreateDialogIndices">
+      <mat-label>Indices</mat-label>
+      <mat-select (openedChange)="indicesOpenedChange($event)" [disableOptionCentering]="true"
+                  formControlName="indicesFormControl" multiple panelClass="select-panel-reveal-input" required>
+        <mat-option *ngFor="let projectIndex of projectIndices" [value]="projectIndex">
+          {{projectIndex.index}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="bertTaggerForm.get('indicesFormControl')?.hasError('required')">
+        Select at least <strong>1 index</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Select Fields</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="fieldsFormControl"
+                  multiple panelClass="select-panel-reveal-input">
+        <mat-option *ngFor="let fields of fieldsUnique" [value]="fields.path">
+          {{fields.path}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Fact name</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="factNameFormControl"
+                  panelClass="select-panel-reveal-input">
+        <mat-option>None</mat-option>
+        <mat-option *ngFor="let fact of projectFacts" [value]="fact">
+          {{fact}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"
+                                   data-cy="appBertTaggerCreateDialogQuery"></app-saved-search-autocomplete>
+
+    <mat-form-field>
+      <mat-label>Bert model</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="bertModelFormControl"
+                  panelClass="select-panel-reveal-input">
+        <mat-option *ngFor="let model of bertModels" [value]="model">
+          {{model}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <div fxFlex="column" fxLayoutGap="5px">
+
+      <mat-form-field fxFlex="50%">
+        <input formControlName="minSampleSizeFormControl" matInput placeholder="Minimum sample size" step="50"
+               type="number">
+      </mat-form-field>
+      <mat-form-field fxFlex="50%">
+        <input formControlName="sampleSizeFormControl" matInput placeholder="Maximum sample size" step="1000"
+               type="number">
+      </mat-form-field>
+
+    </div>
+    <mat-form-field>
+      <input formControlName="negativeMultiplierFormControl" matInput pattern="([0-9]*|[0-9]*[.]?)\d*"
+             placeholder="Negative multiplier" step="0.1"
+             type="number">
+    </mat-form-field>
+
+    <mat-form-field>
+      <input formControlName="maxLengthFormControl" matInput
+             placeholder="Maximum sequence length of BERT tokenized input text used for training"
+             type="number">
+    </mat-form-field>
+
+    <!--advanced -->
+    <mat-expansion-panel expanded="false">
+      <mat-expansion-panel-header>
+        <h3>Advanced settings</h3>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
+          <mat-form-field class="advanced-setting">
+            <input formControlName="numEpochsFormControl" matInput placeholder="Number of training epochs."
+                   type="number">
+          </mat-form-field>
+
+          <mat-form-field class="advanced-setting">
+            <input formControlName="learningRateFormControl" matInput placeholder="Learning rate"
+                   type="number">
+          </mat-form-field>
+
+          <mat-form-field class="advanced-setting">
+            <input formControlName="epsFormControl"
+                   matInput placeholder="Eps" type="number">
+            <mat-hint>Term added to the denominator to improve numerical stability</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field class="advanced-setting">
+            <input formControlName="batchSizeFormControl" matInput
+                   placeholder="Batch size"
+                   type="number">
+            <mat-hint>Batch size used for training. NB! Autoscaled based on max length if too large</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field class="advanced-setting">
+            <input formControlName="splitRatioFormControl" matInput
+                   placeholder="Split ratio"
+                   type="number">
+            <mat-hint>Proportion of documents used for training; others are used for validation</mat-hint>
+          </mat-form-field>
+      </ng-template>
+    </mat-expansion-panel>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <div class="flex-row max-width">
+    <div class="flex-item-left">
+      <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
+    </div>
+    <div class="flex-item-right">
+      <button [disabled]="!bertTaggerForm.valid" data-cy="appBertTaggerCreateDialogSubmit" form="bertForm" mat-button
+              type="submit">
+        Create
+      </button>
+    </div>
+  </div>
+</mat-dialog-actions>
