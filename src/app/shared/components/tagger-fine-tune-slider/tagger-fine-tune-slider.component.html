@@ -1,0 +1,20 @@
+<p>Proportion of positive examples</p>
+<mat-slider (input)="sliderChange($event)" [displayWith]="formatLabel" max="100" min="0" step="1" [value]="sliderVal"
+            thumbLabel></mat-slider>
+<table class="simple-table">
+  <tr>
+    <th class="mat-body-strong">F1 score</th>
+    <td
+      style.background="linear-gradient(90deg, #c5e1a5 {{(f1_score*100)}}%, #FFF {{(f1_score *100)}}%)">{{f1_score | number}}</td>
+  </tr>
+  <tr>
+    <th class="mat-body-strong">Precision</th>
+    <td
+      style.background="linear-gradient(90deg, wheat {{(precision*100)}}%, #FFF {{(precision*100)}}%)">{{precision | number}}</td>
+  </tr>
+  <tr>
+    <th class="mat-body-strong">Recall</th>
+    <td
+      style.background="linear-gradient(90deg, #3f51b5bd {{(recall*100)}}%, #FFF {{(recall*100)}}%)">{{recall | number}}</td>
+  </tr>
+</table>

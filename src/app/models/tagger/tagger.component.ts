@@ -33,7 +33,7 @@ import {Index} from '../../shared/types/Index';
   ]
 })
 export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
-  
+
   expandedElement: Tagger | null;
   public tableData: MatTableDataSource<Tagger> = new MatTableDataSource();
   selectedRows = new SelectionModel<Tagger>(true, []);

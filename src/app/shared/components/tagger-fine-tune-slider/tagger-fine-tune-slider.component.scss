@@ -1,0 +1,20 @@
+mat-slider {
+  width: 300px;
+}
+
+p {
+  margin-bottom: 0;
+  padding: 8px 8px 0;
+}
+
+table {
+  width: 300px;
+  th{
+    width: 60px;
+  }
+}
+
+::ng-deep .mat-slider-thumb-label {
+  width: 30px !important;
+  height: 30px !important;
+}

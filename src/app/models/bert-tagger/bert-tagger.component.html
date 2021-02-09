@@ -228,6 +228,10 @@
                   </tr>
                 </table>
               </div>
+              <div class="flex-col" *ngIf="element.confusion_matrix.length > 5">
+                <app-tagger-fine-tune-slider
+                  [data]="{precision: element.precision, recall: element.recall, f1_score: element.f1_score, confusion_matrix: element.confusion_matrix}"></app-tagger-fine-tune-slider>
+              </div>
             </div>
           </div>
         </td>
