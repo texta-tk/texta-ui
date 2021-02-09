@@ -1,7 +1,43 @@
-<div>
-  <div mat-dialog-content>
-    <div class="m-top-10"><span class="mat-body-strong">Result: </span>
-      <div class="code-wrapper">
+<div class="flex-row">
+  <h1 mat-dialog-title>Tag Random Doc</h1>
+  <mat-chip-list disabled>
+    <mat-chip *ngIf="data.tagger" color="primary" selected><span
+      [matTooltip]="'Id: '+data.tagger.id">{{data.tagger.description}}</span></mat-chip>
+  </mat-chip-list>
+</div>
+<div mat-dialog-content>
+  <form #docForm="ngForm" (ngSubmit)="onSubmit()" class="max-width" id="docForm">
+
+    <mat-form-field class="max-width" data-cy="appRegexTaggerGroupTagRandomDocDialogIndices">
+      <mat-label>Indices</mat-label>
+      <mat-select #indices="ngModel" (openedChange)="indicesOpenedChange($event)"
+                  [(ngModel)]="model.indices" [disableOptionCentering]="true" multiple name="indices"
+                  panelClass="select-panel-reveal-input" required>
+        <mat-option *ngFor="let projectIndex of projectIndices" [value]="projectIndex">
+          {{projectIndex.index}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="indices.hasError('required')">
+        Index is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="max-width" data-cy="appRegexTaggerGroupTagRandomDocDialogfields">
+      <mat-label>Select Fields</mat-label>
+      <mat-select #fields="ngModel" [(ngModel)]="model.fields"
+                  [disableOptionCentering]="true" multiple
+                  name="fields" panelClass="select-panel-reveal-input" required>
+        <mat-option *ngFor="let fields of fieldsUnique" [value]="fields.path">
+          {{fields.path}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="fields.hasError('required')">
+        Field is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <div class="m-top-10"><span *ngIf="result" class="mat-body-strong">Result: </span>
+      <div *ngIf="result"  class="code-wrapper">
         <code>
           <pre *ngIf="result">
                     {{result.document | json}}
@@ -12,15 +48,15 @@
         <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
       </div>
     </div>
-  </div>
-  <div mat-dialog-actions fxLayout="row" fxLayoutAlign="space-between center">
-    <div *ngIf="result" fxFlex>
-      <span class="mat-body-strong">Result: </span> {{result?.prediction?.result}}
-      <br>
-      <span class="mat-body-strong">Probability:</span> {{result?.prediction?.probability}}
-    </div>
-    <button fxFlex="150px" mat-flat-button color="primary" (click)="onSubmit()" [disabled]="isLoading">New random doc
-    </button>
-  </div>
+  </form>
 </div>
-
+<div fxLayout="row" fxLayoutAlign="space-between center" mat-dialog-actions>
+  <div *ngIf="result" fxFlex>
+    <span class="mat-body-strong">Result: </span> {{result?.prediction?.result}}
+    <br>
+    <span class="mat-body-strong">Probability:</span> {{result?.prediction?.probability}}
+  </div>
+  <button style="margin-left: auto" (click)="onSubmit()" [disabled]="isLoading ||docForm.invalid" color="primary" form="docForm" fxFlex="150px"
+          mat-flat-button>New random doc
+  </button>
+</div>

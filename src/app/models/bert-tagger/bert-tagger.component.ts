@@ -9,7 +9,7 @@ import {MatSort} from '@angular/material/sort';
 import {MatPaginator} from '@angular/material/paginator';
 import {CreateBertTaggerDialogComponent} from './create-bert-tagger-dialog/create-bert-tagger-dialog.component';
 import {expandRowAnimation} from '../../shared/animations';
-import {BertTagger} from '../../shared/types/tasks/BertTagger';
+import {BertTagger, Index} from '../../shared/types/tasks/BertTagger';
 import {Project} from '../../shared/types/Project';
 import {ProjectStore} from '../../core/projects/project.store';
 import {BertTaggerService} from '../../core/models/bert-tagger/bert-tagger.service';
@@ -19,8 +19,8 @@ import {AddBertModelDialogComponent} from './add-bert-model-dialog/add-bert-mode
 import {TagTextDialogComponent} from './tag-text-dialog/tag-text-dialog.component';
 import {TagRandomDocDialogComponent} from './tag-random-doc-dialog/tag-random-doc-dialog.component';
 import {EditBertTaggerDialogComponent} from './edit-bert-tagger-dialog/edit-bert-tagger-dialog.component';
-import {EpochReportsDialogComponent} from "./epoch-reports-dialog/epoch-reports-dialog.component";
-
+import {EpochReportsDialogComponent} from './epoch-reports-dialog/epoch-reports-dialog.component';
+import {QueryDialogComponent} from '../../shared/components/dialogs/query-dialog/query-dialog.component';
 @Component({
   selector: 'app-bert-tagger',
   templateUrl: './bert-tagger.component.html',
@@ -33,7 +33,8 @@ export class BertTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: BertTagger | null;
   public tableData: MatTableDataSource<BertTagger> = new MatTableDataSource();
   selectedRows = new SelectionModel<BertTagger>(true, []);
-  public displayedColumns = ['select', 'id', 'description', 'task__time_started', 'task__time_completed', 'task__status', 'actions'];
+  public displayedColumns = ['select', 'author__username', 'description', 'fields', 'task__time_started',
+    'task__time_completed', 'f1_score', 'precision', 'recall', 'task__status', 'actions'];
   public isLoadingResults = true;
 
   @ViewChild(MatSort) sort: MatSort;
@@ -47,6 +48,7 @@ export class BertTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
               public dialog: MatDialog,
               private logService: LogService) {
   }
+  getIndicesName = (x: Index) => x.name;
 
   ngOnInit(): void {
 
@@ -95,7 +97,13 @@ export class BertTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     });
   }
-
+  openQueryDialog(query: string): void {
+    this.dialog.open(QueryDialogComponent, {
+      data: {query},
+      maxHeight: '665px',
+      width: '700px',
+    });
+  }
   downloadModelDialog(): void {
     const dialogRef = this.dialog.open(AddBertModelDialogComponent, {
       maxHeight: '90vh',
@@ -121,9 +129,9 @@ export class BertTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  tagTextDialog(tagger: BertTagger): void {
+  tagTextDialog(bertTagger: BertTagger): void {
     this.dialog.open(TagTextDialogComponent, {
-      data: {taggerId: tagger.id, currentProjectId: this.currentProject.id},
+      data: {tagger: bertTagger, currentProjectId: this.currentProject.id},
       maxHeight: '665px',
       width: '700px',
     });
@@ -140,7 +148,7 @@ export class BertTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   tagRandomDocDialog(tagger: BertTagger): void {
     this.dialog.open(TagRandomDocDialogComponent, {
       data: {tagger, currentProjectId: this.currentProject.id},
-      maxHeight: '665px',
+      maxHeight: '90vh',
       width: '1200px',
     });
   }

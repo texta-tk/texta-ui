@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { TagTextDialogComponent } from './tag-text-dialog.component';
+import {TagTextDialogComponent} from './tag-text-dialog.component';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {SharedModule} from '../../../shared/shared.module';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
@@ -14,13 +14,13 @@ describe('TagTextDialogComponent', () => {
   const mockDialogRef = {
     close: jasmine.createSpy('close')
   };
-  const data = {currentProjectId: 1, taggerId: 2};
+  const data = {currentProjectId: 1, taggerId: {id: 2}};
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule
       ],
-      declarations: [ TagTextDialogComponent ],
+      declarations: [TagTextDialogComponent],
       providers: [
         {
           provide: MatDialogRef,
@@ -31,7 +31,7 @@ describe('TagTextDialogComponent', () => {
           useValue: data
         }]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {
