@@ -68,7 +68,7 @@
       </mat-card>
 
       <mat-card class="counts-card center-margin" fxLayout="row wrap">
-        <div [matTooltip]="health.host.gpu.devices | json" fxFlex matTooltipClass="white-space-pre-line">
+        <div fxFlex>
           <span [ngClass]="health.host.gpu.count > 0 ? 'primary-text' : 'accent-text'"
                 class="count-text center-text block">  {{health.host.gpu.count}} </span>
           <span class="mat-hint center-text block">GPUs</span>
@@ -85,19 +85,45 @@
           <span class="mat-hint center-text block">Active Tasks</span>
         </div>
       </mat-card>
-      <mat-card class="usage-card center-margin" style="max-height: 350px; overflow: auto;" fxLayout="row wrap">
+
+      <mat-card class="usage-card center-margin" fxLayout="row wrap" style="max-height: 350px; overflow: auto;">
         <table class="simple-table">
           <tr>
-            <th>Name</th>
+            <th>Graphics card</th>
+            <th>Memory usage</th>
+            <th>Total Memory</th>
+          </tr>
+
+          <tr *ngFor="let item of health.host.gpu.devices; let i =index">
+            <td>{{item.name}}</td>
+            <td
+              style.background="linear-gradient(90deg, {{((item.memory.used / item.memory.total) * 100) < 95 ? 'lightgreen' : '#ff6961'}} {{(item.memory.used / item.memory.total) * 100}}%, #FFF {{(item.memory.used / item.memory.total) * 100}}%)">{{item.memory.used | number}} {{item.memory.unit}}
+              ({{(item.memory.used / item.memory.total)| percent}})
+            </td>
+            <td>{{item.memory.total | number}} {{item.memory.unit}}</td>
+          </tr>
+        </table>
+      </mat-card>
+
+      <mat-card class="usage-card center-margin" fxLayout="row wrap" style="max-height: 350px; overflow: auto;">
+        <table class="simple-table">
+          <tr>
+            <th>Elasticsearch node</th>
             <th>Disk usage</th>
             <th>Disk size</th>
           </tr>
 
           <tr *ngFor="let item of health.services.elastic.disk; let i =index">
             <td>{{item.host}}</td>
-            <td [style.background-color]="((item.used / item.total) * 100) < 85 ? 'lightgreen' : '#ff6961'">{{item.used}} {{item.unit}} ({{(item.used / item.total)| percent}})</td>
+            <td
+              style.background="linear-gradient(90deg, {{((item.used / item.total) * 100) < 85 ? 'lightgreen' : '#ff6961'}} {{(item.used / item.total) * 100}}%, #FFF {{(item.used / item.total) * 100}}%)">{{item.used}} {{item.unit}}
+              ({{(item.used / item.total)| percent}})
+            </td>
             <td>{{item.total}} {{item.unit}}</td>
           </tr>
         </table>
       </mat-card>
 
+    </div>
+  </div>
+</div>
