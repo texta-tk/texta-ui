@@ -35,6 +35,8 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
       fieldsFormControl: new FormControl([], [Validators.required]),
       indicesFormControl: new FormControl([], [Validators.required]),
       embeddingFormControl: new FormControl(),
+      snowballFormControl: new FormControl(),
+      scoringFormControl: new FormControl(),
       vectorizerFormControl: new FormControl([Validators.required]),
       classifierFormControl: new FormControl([Validators.required]),
       sampleSizeFormControl: new FormControl(10000, [Validators.required]),
@@ -136,6 +138,8 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
     const taggerBody = {
       fields: formData.taggerForm.fieldsFormControl,
       indices: formData.taggerForm.indicesFormControl.map((x: ProjectIndex) => [{name: x.index}]).flat(),
+      snowball_language: formData.taggerForm.snowballFormControl.value,
+      scoring_function: formData.taggerForm.scoringFormControl.value,
       vectorizer: formData.taggerForm.vectorizerFormControl.value,
       classifier: formData.taggerForm.classifierFormControl.value,
       maximum_sample_size: formData.taggerForm.sampleSizeFormControl,
@@ -171,6 +175,14 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
       const classifier = taggerForm.get('classifierFormControl');
       if (classifier) {
         classifier.setValue(options.actions.POST.classifier.choices[0]);
+      }
+      const snowball = taggerForm.get('snowballFormControl');
+      if (snowball) {
+        snowball.setValue(options.actions.POST.snowball_language.choices[0]);
+      }
+      const scoringFunction = taggerForm.get('scoringFormControl');
+      if (scoringFunction) {
+        scoringFunction.setValue(options.actions.POST.scoring_function.choices[0]);
       }
     }
   }

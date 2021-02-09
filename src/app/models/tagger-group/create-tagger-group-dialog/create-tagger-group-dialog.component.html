@@ -1,9 +1,9 @@
 <h1 mat-dialog-title>New Tagger Group</h1>
-<div mat-dialog-content>
-  <form class="flex-col" [formGroup]="taggerGroupForm" (ngSubmit)="onSubmit()">
+<mat-dialog-content>
+  <form (ngSubmit)="onSubmit()" [formGroup]="taggerGroupForm" class="flex-col" id="taggerForm">
     <mat-form-field data-cy="appTaggerGroupCreateDialogDesc">
-      <input matInput placeholder="Description" autocomplete="off" formControlName="descriptionFormControl"
-             [errorStateMatcher]="matcher" required>
+      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
+             placeholder="Description" required>
 
       <mat-error *ngIf="taggerGroupForm.get('descriptionFormControl')?.hasError('required')">
         Description is <strong>required</strong>
@@ -11,7 +11,8 @@
     </mat-form-field>
     <mat-form-field>
       <mat-label>Fact name</mat-label>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="factNameFormControl">
+      <mat-select [disableOptionCentering]="true" formControlName="factNameFormControl"
+                  panelClass="select-panel-reveal-input">
         <mat-option>None</mat-option>
         <mat-option *ngFor="let fact of projectFacts" [value]="fact">
           {{fact}}
@@ -19,15 +20,15 @@
       </mat-select>
     </mat-form-field>
     <mat-form-field>
-      <input matInput type="number" step="50" placeholder="Minimum sample size"
-             formControlName="taggerGroupSampleSizeFormControl">
+      <input formControlName="taggerGroupSampleSizeFormControl" matInput placeholder="Minimum sample size" step="50"
+             type="number">
     </mat-form-field>
     <div class="flex-col" formGroupName="taggerForm">
       <h3>Tagger</h3>
       <mat-form-field>
         <mat-label>Indices</mat-label>
-        <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" #indicesSelect
-                    formControlName="indicesFormControl" multiple required (openedChange)="indicesOpenedChange($event)">
+        <mat-select #indicesSelect (openedChange)="indicesOpenedChange($event)" [disableOptionCentering]="true"
+                    formControlName="indicesFormControl" multiple panelClass="select-panel-reveal-input" required>
           <mat-option *ngFor="let projectIndex of projectIndices" [value]="projectIndex">
             {{projectIndex.index}}
           </mat-option>
@@ -38,10 +39,11 @@
       </mat-form-field>
       <mat-form-field data-cy="appTaggerGroupCreateDialogFields">
         <mat-label>Select Fields</mat-label>
-        <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="fieldsFormControl" multiple required>
-            <mat-option *ngFor="let fields of fieldsUnique" [value]="fields.path">
-              {{fields.path}}
-            </mat-option>
+        <mat-select [disableOptionCentering]="true" formControlName="fieldsFormControl"
+                    multiple panelClass="select-panel-reveal-input" required>
+          <mat-option *ngFor="let fields of fieldsUnique" [value]="fields.path">
+            {{fields.path}}
+          </mat-option>
         </mat-select>
         <mat-error *ngIf="taggerGroupForm.get('taggerForm')?.get('fieldsFormControl')?.hasError('required')">
           Field is <strong>required</strong>
@@ -50,7 +52,8 @@
 
       <mat-form-field>
         <mat-label>Select Embedding</mat-label>
-        <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="embeddingFormControl">
+        <mat-select [disableOptionCentering]="true" formControlName="embeddingFormControl"
+                    panelClass="select-panel-reveal-input">
           <mat-option>None</mat-option>
           <mat-option *ngFor="let item of embeddings" [value]="item">
             {{item.description}}
@@ -61,8 +64,29 @@
         </mat-error>
       </mat-form-field>
       <mat-form-field>
+        <mat-label>Snowball Language</mat-label>
+        <mat-select [disableOptionCentering]="true" formControlName="snowballFormControl"
+                    panelClass="select-panel-reveal-input">
+          <mat-option *ngFor="let item of taggerOptions.actions.POST.snowball_language.choices" [value]="item">
+            {{item.display_name === null ? 'none' : item.display_name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Scoring Function</mat-label>
+        <mat-select [disableOptionCentering]="true" formControlName="scoringFormControl"
+                    panelClass="select-panel-reveal-input">
+          <mat-option *ngFor="let item of taggerOptions.actions.POST.scoring_function.choices" [value]="item">
+            {{item.display_name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field>
         <mat-label>Vectorizer</mat-label>
-        <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="vectorizerFormControl" required>
+        <mat-select [disableOptionCentering]="true" formControlName="vectorizerFormControl"
+                    panelClass="select-panel-reveal-input" required>
           <mat-option *ngFor="let item of taggerOptions.actions.POST.vectorizer.choices" [value]="item">
             {{item.display_name}}
           </mat-option>
@@ -73,7 +97,8 @@
       </mat-form-field>
       <mat-form-field>
         <mat-label>Classifier</mat-label>
-        <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" formControlName="classifierFormControl" required>
+        <mat-select [disableOptionCentering]="true" formControlName="classifierFormControl"
+                    panelClass="select-panel-reveal-input" required>
           <mat-option *ngFor="let item of taggerOptions.actions.POST.classifier.choices" [value]="item">
             {{item.display_name}}
           </mat-option>
@@ -84,25 +109,31 @@
       </mat-form-field>
 
       <mat-form-field data-cy="appTaggerGroupCreateDialogSample">
-        <input matInput type="number" step="1000" placeholder="Maximum sample size" formControlName="sampleSizeFormControl">
+        <input formControlName="sampleSizeFormControl" matInput placeholder="Maximum sample size" step="1000"
+               type="number">
       </mat-form-field>
       <mat-form-field>
-        <input matInput type="number" step="0.1" placeholder="Negative multiplier" formControlName="negativeMultiplierFormControl">
+        <input formControlName="negativeMultiplierFormControl" matInput placeholder="Negative multiplier" step="0.1"
+               type="number">
       </mat-form-field>
 
 
     </div>
-    <div class="flex-col">
-      <div class="flex-row">
-        <div class="flex-item-left">
-          <button type="button" class="flex-item-left" mat-button mat-dialog-close>Close</button>
-        </div>
-        <div class="flex-item-right">
-          <button type="submit" [disabled]="!taggerGroupForm.valid"
-                  data-cy="appTaggerGroupCreateDialogSubmit" mat-button>Create</button>
-        </div>
-      </div>
 
-    </div>
   </form>
-</div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <div class="flex-col max-width">
+    <div class="flex-row">
+      <div class="flex-item-left">
+        <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
+      </div>
+      <div class="flex-item-right">
+        <button [disabled]="!taggerGroupForm.valid" data-cy="appTaggerGroupCreateDialogSubmit" form="taggerForm"
+                mat-button type="submit">Create
+        </button>
+      </div>
+    </div>
+
+  </div>
+</mat-dialog-actions>

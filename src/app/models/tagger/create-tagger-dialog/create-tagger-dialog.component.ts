@@ -34,6 +34,8 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
     factNameFormControl: new FormControl(Validators.required),
     fieldsFormControl: new FormControl([], [Validators.required]),
     embeddingFormControl: new FormControl(),
+    snowballFormControl: new FormControl(),
+    scoringFormControl: new FormControl(),
     vectorizerFormControl: new FormControl([Validators.required]),
     classifierFormControl: new FormControl([Validators.required]),
     sampleSizeFormControl: new FormControl(10000, [Validators.required]),
@@ -142,6 +144,8 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
       vectorizer: formData.vectorizerFormControl.value,
       classifier: formData.classifierFormControl.value,
       maximum_sample_size: formData.sampleSizeFormControl,
+      snowball_language: formData.snowballFormControl.value,
+      scoring_function: formData.scoringFormControl.value,
       fact_name: formData.factNameFormControl,
       negative_multiplier: formData.negativeMultiplierFormControl,
       ...this.query ? {query: this.query} : {},
@@ -170,6 +174,14 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
     const classifier = this.taggerForm.get('classifierFormControl');
     if (classifier) {
       classifier.setValue(options.actions.POST.classifier.choices[0]);
+    }
+    const snowball = this.taggerForm.get('snowballFormControl');
+    if (snowball) {
+      snowball.setValue(options.actions.POST.snowball_language.choices[0]);
+    }
+    const scoringFunction = this.taggerForm.get('scoringFormControl');
+    if (scoringFunction) {
+      scoringFunction.setValue(options.actions.POST.scoring_function.choices[0]);
     }
   }
 

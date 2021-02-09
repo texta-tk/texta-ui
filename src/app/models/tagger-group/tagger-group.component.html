@@ -117,7 +117,7 @@
                     <th class="mat-body-strong">Failed</th>
                     <td>{{element.tagger_status.failed}}</td>
                   </tr>
-                  <tr>
+                  <tr *ngIf="element.indices">
                     <th class="mat-body-strong">Indices</th>
                     <td>{{element.indices | getPropertyList: getIndicesName | join: ', '}}</td>
                   </tr>

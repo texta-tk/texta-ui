@@ -232,7 +232,22 @@ class Task {
   label: string;
   children: Children;
 }
-
+class SnowballLanguage{
+  type: string;
+  required: boolean;
+  read_only: boolean;
+  label: string;
+  help_text: string;
+  choices: Choice[];
+}
+class ScoringFunction{
+  type: string;
+  required: boolean;
+  read_only: boolean;
+  label: string;
+  help_text: string;
+  choices: Choice[];
+}
 class POST {
   id: Id;
   url: Url;
@@ -250,6 +265,8 @@ class POST {
   precision: Precision;
   recall: Recall;
   f1_score: F1Score;
+  snowball_language: SnowballLanguage;
+  scoring_function: ScoringFunction;
   num_features: NumFeatures;
   plot: Plot;
   task: Task;
@@ -286,6 +303,8 @@ export class TaggerOptions {
     out.actions.POST.precision = new Precision();
     out.actions.POST.query = new Query();
     out.actions.POST.recall = new Recall();
+    out.actions.POST.scoring_function = new ScoringFunction();
+    out.actions.POST.snowball_language = new SnowballLanguage();
     out.actions.POST.stop_words = new StopWords();
     out.actions.POST.task = new Task();
     out.actions.POST.url = new Url();
