@@ -31,6 +31,13 @@ export class TorchTaggerService {
       catchError(this.logService.handleError<TorchTagger>('editTorchTagger')));
   }
 
+  torchEpochReport(projectId: number, taggerId: number): Observable<unknown | HttpErrorResponse> {
+    return this.http.get<unknown>(
+      `${this.apiUrl}/projects/${projectId}/torchtaggers/${taggerId}/epoch_reports/`,
+    ).pipe(tap(e => this.logService.logStatus(e, 'torchEpochReport')),
+      catchError(this.logService.handleError<unknown>('torchEpochReport')));
+  }
+
   retrainTagger(projectId: number, taggerId: number): Observable<unknown> {
     return this.http.post<unknown>(`${this.apiUrl}/projects/${projectId}/torchtaggers/${taggerId}/retrain_tagger/`, {}
     ).pipe(

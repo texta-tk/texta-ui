@@ -226,6 +226,9 @@
 <mat-menu #editMenu="matMenu">
   <ng-template matMenuContent let-element="element" let-i="i">
     <div *ngIf="element.task.status === 'completed'">
+      <button (click)="epochReportDialog(element)" data-cy="appTorchTaggerMenuEpoch" mat-menu-item>
+        Epoch reports
+      </button>
       <button mat-menu-item (click)="tagTextDialog(element)" data-cy="appTorchTaggerMenuTagText">
         Tag Text
       </button>
