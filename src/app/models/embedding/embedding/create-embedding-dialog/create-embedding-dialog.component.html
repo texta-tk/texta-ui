@@ -23,7 +23,7 @@
       </mat-error>
     </mat-form-field>
 
-    <mat-form-field data-cy="appEmbeddingCreateDialogFields">
+    <mat-form-field class="m-bot-10" data-cy="appEmbeddingCreateDialogFields">
       <mat-label>Select Fields</mat-label>
       <mat-select [disableOptionCentering]="true" formControlName="fieldsFormControl"
                   multiple panelClass="select-panel-reveal-input" required>
@@ -34,9 +34,25 @@
       <mat-error *ngIf="embeddingForm.get('fieldsFormControl')?.hasError('required')">
         Field is <strong>required</strong>
       </mat-error>
+      <mat-hint>MLP preprocessed lemma (or text) field is recommended!</mat-hint>
     </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Embedding Type</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="embeddingTypeFormControl"
+                  panelClass="select-panel-reveal-input">
+        <ng-container *ngIf="embeddingOptions">
+          <mat-option *ngFor="let item of embeddingOptions.actions.POST.embedding_type.choices" [value]="item">
+            {{item.display_name}}
+          </mat-option>
+        </ng-container>
+      </mat-select>
+    </mat-form-field>
+
+
     <mat-form-field data-cy="appEmbeddingCreateDialogDimensions">
-      <input formControlName="dimensionsFormControl" matInput pattern="[1-9]\d*" placeholder="Number of Dimensions" step="50"
+      <input formControlName="dimensionsFormControl" matInput pattern="[1-9]\d*" placeholder="Number of Dimensions"
+             step="50"
              type="number">
     </mat-form-field>
     <mat-form-field>

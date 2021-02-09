@@ -4,13 +4,15 @@ import {MatDialogRef} from '@angular/material/dialog';
 import {EmbeddingsService} from '../../../../core/models/embeddings/embeddings.service';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {LiveErrorStateMatcher} from '../../../../shared/CustomerErrorStateMatchers';
-import {mergeMap, take, takeUntil} from 'rxjs/operators';
+import {mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
 import {of, Subject} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ProjectStore} from '../../../../core/projects/project.store';
 import {Field, ProjectIndex} from '../../../../shared/types/Project';
 import {ProjectService} from '../../../../core/projects/project.service';
 import {UtilityFunctions} from '../../../../shared/UtilityFunctions';
+import {LogService} from "../../../../core/util/log.service";
+import {EmbeddingOptions} from "../../../../shared/types/tasks/Embedding";
 
 @Component({
   selector: 'app-create-embedding-dialog',
@@ -25,6 +27,7 @@ export class CreateEmbeddingDialogComponent implements OnInit {
     ]),
     indicesFormControl: new FormControl([], [Validators.required]),
     fieldsFormControl: new FormControl([], [Validators.required]),
+    embeddingTypeFormControl: new FormControl(),
     dimensionsFormControl: new FormControl(100, [Validators.required]),
     frequencyFormControl: new FormControl(5, [Validators.required]),
     usePhraserFormControl: new FormControl(false)
@@ -37,9 +40,11 @@ export class CreateEmbeddingDialogComponent implements OnInit {
   destroyed$ = new Subject<boolean>();
   fieldsUnique: Field[] = [];
   projectIndices: ProjectIndex[] = [];
+  embeddingOptions: EmbeddingOptions;
 
   constructor(private dialogRef: MatDialogRef<CreateEmbeddingDialogComponent>,
               private projectService: ProjectService,
+              private logService: LogService,
               private embeddingService: EmbeddingsService,
               private projectStore: ProjectStore) {
   }
@@ -56,6 +61,23 @@ export class CreateEmbeddingDialogComponent implements OnInit {
     this.projectStore.getProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(projIndices => {
       if (projIndices) {
         this.projectIndices = projIndices;
+      }
+    });
+
+    this.projectStore.getCurrentProject().pipe(take(1), switchMap(proj => {
+      if (proj) {
+        return this.embeddingService.getEmbeddingOptions(proj.id);
+      }
+      return of(null);
+    })).subscribe(resp => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.embeddingOptions = resp;
+        const embeddingType = this.embeddingForm.get('embeddingTypeFormControl');
+        if (embeddingType) {
+          embeddingType.setValue(resp.actions.POST.embedding_type.choices[0]);
+        }
+      } else if (resp) {
+        this.logService.snackBarError(resp);
       }
     });
   }
@@ -79,7 +101,7 @@ export class CreateEmbeddingDialogComponent implements OnInit {
 
   onSubmit(formData: {
     fieldsFormControl: Field[]; descriptionFormControl: string;
-    indicesFormControl: ProjectIndex[]; dimensionsFormControl: number; frequencyFormControl: number; usePhraserFormControl: boolean;
+    indicesFormControl: ProjectIndex[]; dimensionsFormControl: number; frequencyFormControl: number; usePhraserFormControl: boolean; embeddingTypeFormControl: { value: string, display_name: string }
   }): void {
     // temp
     const fieldsToSend = this.generateFieldsFormat(formData.fieldsFormControl);
@@ -88,6 +110,7 @@ export class CreateEmbeddingDialogComponent implements OnInit {
       fields: fieldsToSend,
       indices: formData.indicesFormControl.map(x => [{name: x.index}]).flat(),
       num_dimensions: formData.dimensionsFormControl,
+      embedding_type: formData.embeddingTypeFormControl.value,
       min_freq: formData.frequencyFormControl,
       use_phraser: formData.usePhraserFormControl,
       ...this.query ? {query: this.query} : {},

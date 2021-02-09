@@ -5,7 +5,7 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {LocalStorageService} from '../../util/local-storage.service';
 import {LogService} from '../../util/log.service';
 import {environment} from '../../../../environments/environment';
-import {Embedding, EmbeddingPrediction} from '../../../shared/types/tasks/Embedding';
+import {Embedding, EmbeddingOptions, EmbeddingPrediction} from '../../../shared/types/tasks/Embedding';
 import {ResultsWrapper} from '../../../shared/types/Generic';
 
 
@@ -69,4 +69,11 @@ export class EmbeddingsService {
       catchError(this.logService.handleError<unknown>('deleteEmbedding')));
   }
 
+  getEmbeddingOptions(projectId: number): Observable<EmbeddingOptions | HttpErrorResponse> {
+    return this.http.options<EmbeddingOptions>(
+      `${this.apiUrl}/projects/${projectId}/embeddings/`
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'getEmbeddingOptions')),
+      catchError(this.logService.handleError<EmbeddingOptions>('getEmbeddingOptions')));
+  }
 }
