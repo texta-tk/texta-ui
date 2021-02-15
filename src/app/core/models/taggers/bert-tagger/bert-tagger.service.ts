@@ -2,10 +2,10 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
-import {environment} from '../../../../environments/environment';
-import {LogService} from '../../util/log.service';
-import {ResultsWrapper} from '../../../shared/types/Generic';
-import {BertTagger} from '../../../shared/types/tasks/BertTagger';
+import {environment} from '../../../../../environments/environment';
+import {LogService} from '../../../util/log.service';
+import {ResultsWrapper} from '../../../../shared/types/Generic';
+import {BertTagger} from '../../../../shared/types/tasks/BertTagger';
 
 @Injectable({
   providedIn: 'root'

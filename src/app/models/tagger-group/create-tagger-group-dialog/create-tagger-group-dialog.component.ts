@@ -138,7 +138,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
     const taggerBody = {
       fields: formData.taggerForm.fieldsFormControl,
       indices: formData.taggerForm.indicesFormControl.map((x: ProjectIndex) => [{name: x.index}]).flat(),
-      snowball_language: formData.taggerForm.snowballFormControl.value,
+      ...formData.taggerForm.snowballFormControl.value ? {snowball_language: formData.taggerForm.snowballFormControl.value} : {},
       scoring_function: formData.taggerForm.scoringFormControl.value,
       vectorizer: formData.taggerForm.vectorizerFormControl.value,
       classifier: formData.taggerForm.classifierFormControl.value,

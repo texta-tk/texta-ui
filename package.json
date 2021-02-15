@@ -1,6 +1,6 @@
 {
   "name": "texta",
-  "version": "1.5.15",
+  "version": "1.5.16",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -54,7 +54,7 @@
     "@types/jasminewd2": "^2.0.8",
     "@types/node": "^12.12.38",
     "codelyzer": "^6.0.0",
-    "cypress": "^6.2.1",
+    "cypress": "^6.4.0",
     "cypress-file-upload": "^4.0.6",
     "jasmine-core": "~3.5.0",
     "jasmine-spec-reporter": "~5.0.0",

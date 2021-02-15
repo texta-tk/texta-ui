@@ -8,7 +8,7 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {Field, Project, ProjectFact, ProjectIndex} from '../../../shared/types/Project';
 import {ProjectService} from '../../../core/projects/project.service';
-import {BertTaggerService} from '../../../core/models/bert-tagger/bert-tagger.service';
+import {BertTaggerService} from '../../../core/models/taggers/bert-tagger/bert-tagger.service';
 import {LogService} from '../../../core/util/log.service';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';

@@ -5,7 +5,7 @@ import {ProjectStore} from '../../../core/projects/project.store';
 import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {filter, take} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
-import {BertTaggerService} from '../../../core/models/bert-tagger/bert-tagger.service';
+import {BertTaggerService} from '../../../core/models/taggers/bert-tagger/bert-tagger.service';
 import {BertTagger} from '../../../shared/types/tasks/BertTagger';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 

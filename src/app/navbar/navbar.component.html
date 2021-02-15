@@ -40,7 +40,7 @@
       </button>
     </a>
     <a [matMenuTriggerFor]="tools"
-       [ngClass]="{'is-active': ['/reindexer', '/dataset-importer', 'mlp', '/anonymizers', '/topic-analyzer'].includes(router.url)}"
+       [ngClass]="{'is-active': ['/reindexer', '/index-splitter', '/dataset-importer', 'mlp', '/anonymizers', '/topic-analyzer'].includes(router.url)}"
        class="pointer">
       <button class="nav-button" mat-button>
         <mat-icon class="margin-right">build</mat-icon>
@@ -50,6 +50,7 @@
         projectResourceCounts.num_anonymizers +
         projectResourceCounts.num_dataset_importers +
         projectResourceCounts.num_mlp_workers +
+        projectResourceCounts.num_index_splitters +
         projectResourceCounts.num_clusterings}})
         </ng-container>
         <mat-icon>arrow_drop_down</mat-icon>
@@ -71,7 +72,8 @@
         *ngIf="projectResourceCounts?.num_regex_taggers"> ({{projectResourceCounts.num_regex_taggers}})</span></a>
       <a [routerLink]="['regex-tagger-groups']" data-cy="appNavbarModelMenuRegexTaggerGroups" mat-menu-item
          routerLinkActive="is-active-menu">Regex Taggers Groups <span
-        *ngIf="projectResourceCounts?.num_regex_tagger_groups">({{projectResourceCounts.num_regex_tagger_groups}})</span></a>
+        *ngIf="projectResourceCounts?.num_regex_tagger_groups">({{projectResourceCounts.num_regex_tagger_groups}}
+        )</span></a>
       <a [routerLink]="['bert-taggers']" data-cy="appNavbarModelMenuBertTaggers" mat-menu-item
          routerLinkActive="is-active-menu">Bert Taggers <span
         *ngIf="projectResourceCounts?.num_bert_taggers">({{projectResourceCounts.num_bert_taggers}})</span></a>
@@ -84,7 +86,9 @@
       <a [routerLink]="['reindexer']" mat-menu-item routerLinkActive="is-active-menu">Reindexer <span
         *ngIf="projectResourceCounts?.num_reindexers">({{projectResourceCounts.num_reindexers}})</span>
       </a>
-
+      <a [routerLink]="['index-splitter']" mat-menu-item routerLinkActive="is-active-menu">Index Splitter <span
+        *ngIf="projectResourceCounts?.num_index_splitters">({{projectResourceCounts.num_index_splitters}})</span>
+      </a>
       <a [routerLink]="['dataset-importer']" mat-menu-item routerLinkActive="is-active-menu">Dataset Importer <span
         *ngIf="projectResourceCounts?.num_dataset_importers">({{projectResourceCounts.num_dataset_importers}})</span>
       </a>

@@ -1,0 +1,113 @@
+<h1 mat-dialog-title>New Index Splitter</h1>
+<mat-dialog-content>
+  <form (ngSubmit)="onSubmit(indexSplitterForm.value)" [formGroup]="indexSplitterForm" class="flex-col" id="createForm">
+    <mat-form-field data-cy="appIndexSplitterCreateDialogDesc">
+      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
+             placeholder="Description" required>
+
+      <mat-error *ngIf="indexSplitterForm.get('descriptionFormControl')?.hasError('required')">
+        Description is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+
+    <mat-form-field data-cy="appIndexSplitterCreateDialogIndices">
+      <mat-label>Indices</mat-label>
+      <mat-select (openedChange)="indicesOpenedChange($event)" [disableOptionCentering]="true"
+                  formControlName="indicesFormControl" multiple panelClass="select-panel-reveal-input" required>
+        <mat-option *ngFor="let projectIndex of projectIndices" [value]="projectIndex">
+          {{projectIndex.index}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="indexSplitterForm.get('indicesFormControl')?.hasError('required')">
+        Select at least <strong>1 index</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Select Fields</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="fieldsFormControl"
+                  multiple panelClass="select-panel-reveal-input">
+        <mat-option *ngFor="let fields of fieldsUnique" [value]="fields.path">
+          {{fields.path}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"
+                                   data-cy="appIndexSplitterCreateDialogQuery">
+    </app-saved-search-autocomplete>
+
+    <mat-form-field>
+      <input formControlName="scrollSizeFormControl" matInput max="10000"
+             min="1" pattern="([0-9]*|[0-9]*[.]?)\d*" placeholder="Scroll size" step="100"
+             type="number">
+    </mat-form-field>
+
+    <mat-form-field data-cy="appIndexSplitterCreateDialogTrainIndex">
+      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="trainIndexFormControl" matInput
+             placeholder="Name of the train index" required>
+      <mat-error *ngIf="indexSplitterForm.get('trainIndexFormControl')?.hasError('required')">
+        Train index is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field data-cy="appIndexSplitterCreateDialogTestIndex">
+      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="testIndexFormControl" matInput
+             placeholder="Name of the test index" required>
+      <mat-error *ngIf="indexSplitterForm.get('testIndexFormControl')?.hasError('required')">
+        Test index is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="m-bot-10">
+      <input formControlName="testSizeIndexFormControl" matInput max="10000"
+             min="1" pattern="([0-9]*|[0-9]*[.]?)\d*" placeholder="Test size" step="100"
+             type="number">
+      <mat-hint>Size of the test set. Represents a percentage with "random" or "original" distribution and a quantity
+        with "equal" or "custom" distribution
+      </mat-hint>
+    </mat-form-field>
+    <mat-form-field class="m-bot-10">
+      <input autocomplete="off" formControlName="factFormControl" matInput
+             placeholder="Fact">
+      <mat-hint>Name of the fact on which the test index distribution will base</mat-hint>
+    </mat-form-field>
+    <mat-form-field class="m-bot-10">
+      <input autocomplete="off" formControlName="strValFormControl" matInput
+             placeholder="Str val">
+      <mat-hint>Name of the fact value on which the test index distribution will base</mat-hint>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Distribution</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="distributionFormControl"
+                  panelClass="select-panel-reveal-input">
+        <ng-container *ngIf="indexSplitterOptions">
+          <mat-option *ngFor="let item of indexSplitterOptions.actions.POST.distribution.choices" [value]="item">
+            {{item.display_name}}
+          </mat-option>
+        </ng-container>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <input autocomplete="off" formControlName="customDistributionFormControl" matInput
+             placeholder="Custom distribution">
+      <mat-hint>A dictionary containing custom label distribution with keys as labels and values as quantities
+      </mat-hint>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <div class="flex-row max-width">
+    <div class="flex-item-left">
+      <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
+    </div>
+    <div class="flex-item-right">
+      <button [disabled]="!indexSplitterForm.valid" data-cy="appIndexSplitterCreateDialogSubmit" form="createForm"
+              mat-button
+              type="submit">
+        Create
+      </button>
+    </div>
+  </div>
+</mat-dialog-actions>

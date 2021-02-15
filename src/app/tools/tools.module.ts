@@ -12,6 +12,7 @@ import { AnonymizerComponent } from './anonymizer/anonymizer.component';
 import { CreateAnonymizerDialogComponent } from './anonymizer/create-anonymizer-dialog/create-anonymizer-dialog.component';
 import { AnonymizeTextDialogComponent } from './anonymizer/anonymize-text-dialog/anonymize-text-dialog.component';
 import { EditAnonymizerDialogComponent } from './anonymizer/edit-anonymizer-dialog/edit-anonymizer-dialog.component';
+import {IndexSplitterModule} from './index-splitter/index-splitter.module';
 
 @NgModule({
   declarations: [

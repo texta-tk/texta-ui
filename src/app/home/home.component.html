@@ -86,7 +86,7 @@
         </div>
       </mat-card>
 
-      <mat-card class="usage-card center-margin" fxLayout="row wrap" style="max-height: 350px; overflow: auto;">
+      <mat-card class="usage-card center-margin" fxLayout="row wrap" style="max-height: 350px; overflow: auto;" *ngIf="health.host.gpu.devices.length > 0">
         <table class="simple-table">
           <tr>
             <th>Graphics card</th>

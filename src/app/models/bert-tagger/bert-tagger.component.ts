@@ -12,7 +12,7 @@ import {expandRowAnimation} from '../../shared/animations';
 import {BertTagger, Index} from '../../shared/types/tasks/BertTagger';
 import {Project} from '../../shared/types/Project';
 import {ProjectStore} from '../../core/projects/project.store';
-import {BertTaggerService} from '../../core/models/bert-tagger/bert-tagger.service';
+import {BertTaggerService} from '../../core/models/taggers/bert-tagger/bert-tagger.service';
 import {LogService} from '../../core/util/log.service';
 import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {AddBertModelDialogComponent} from './add-bert-model-dialog/add-bert-model-dialog.component';

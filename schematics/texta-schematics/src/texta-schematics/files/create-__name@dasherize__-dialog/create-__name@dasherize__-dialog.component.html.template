@@ -1,5 +1,5 @@
 <h1 mat-dialog-title>New <%= classify(name) %> task</h1>
-<div mat-dialog-content>
+<mat-dialog-content>
   <form (ngSubmit)="onSubmit(<%= camelize(name) %>Form.value)" [formGroup]="<%= camelize(name) %>Form" class="flex-col">
     <mat-form-field data-cy="app<%= classify(name) %>CreateDialogDesc">
       <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
@@ -34,18 +34,17 @@
       </mat-select>
     </mat-form-field>
 
-
-    <div class="flex-col">
-      <div class="flex-row">
-        <div class="flex-item-left">
-          <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
-        </div>
-        <div class="flex-item-right">
-          <button [disabled]="!<%= camelize(name) %>Form.valid" data-cy="app<%= classify(name) %>CreateDialogSubmit" mat-button type="submit">
-            Create
-          </button>
-        </div>
-      </div>
-    </div>
   </form>
-</div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <div class="flex-row max-width">
+    <div class="flex-item-left">
+      <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
+    </div>
+    <div class="flex-item-right">
+      <button [disabled]="!<%= camelize(name) %>Form.valid" data-cy="app<%= classify(name) %>CreateDialogSubmit" mat-button type="submit">
+        Create
+      </button>
+    </div>
+  </div>
+</mat-dialog-actions>
