@@ -144,7 +144,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
       vectorizer: formData.vectorizerFormControl.value,
       classifier: formData.classifierFormControl.value,
       maximum_sample_size: formData.sampleSizeFormControl,
-      snowball_language: formData.snowballFormControl.value,
+      ...formData.snowballFormControl.value ? {snowball_language: formData.snowballFormControl.value} : {},
       scoring_function: formData.scoringFormControl.value,
       fact_name: formData.factNameFormControl,
       negative_multiplier: formData.negativeMultiplierFormControl,
@@ -161,7 +161,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.dialogRef.close(resp);
       } else if (resp instanceof HttpErrorResponse) {
-        this.dialogRef.close(resp);
+        this.logService.snackBarError(resp);
       }
     });
   }

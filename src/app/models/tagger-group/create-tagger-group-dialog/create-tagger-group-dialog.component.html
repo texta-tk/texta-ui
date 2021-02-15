@@ -123,17 +123,14 @@
   </form>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <div class="flex-col max-width">
-    <div class="flex-row">
-      <div class="flex-item-left">
-        <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
-      </div>
-      <div class="flex-item-right">
-        <button [disabled]="!taggerGroupForm.valid" data-cy="appTaggerGroupCreateDialogSubmit" form="taggerForm"
-                mat-button type="submit">Create
-        </button>
-      </div>
+  <div class="flex-row max-width">
+    <div class="flex-item-left">
+      <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
     </div>
-
+    <div class="flex-item-right">
+      <button [disabled]="!taggerGroupForm.valid" data-cy="appTaggerGroupCreateDialogSubmit" form="taggerForm"
+              mat-button type="submit">Create
+      </button>
+    </div>
   </div>
 </mat-dialog-actions>

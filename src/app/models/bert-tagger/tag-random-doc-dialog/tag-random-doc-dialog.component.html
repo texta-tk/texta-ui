@@ -8,7 +8,7 @@
 <div mat-dialog-content>
   <form #docForm="ngForm" (ngSubmit)="onSubmit()" class="max-width" id="docForm">
 
-    <mat-form-field class="max-width" data-cy="appRegexTaggerGroupTagRandomDocDialogIndices">
+    <mat-form-field class="max-width" data-cy="appBertTaggerGroupTagRandomDocDialogIndices">
       <mat-label>Indices</mat-label>
       <mat-select #indices="ngModel" (openedChange)="indicesOpenedChange($event)"
                   [(ngModel)]="model.indices" [disableOptionCentering]="true" multiple name="indices"
@@ -22,7 +22,7 @@
       </mat-error>
     </mat-form-field>
 
-    <mat-form-field class="max-width" data-cy="appRegexTaggerGroupTagRandomDocDialogfields">
+    <mat-form-field class="max-width" data-cy="appBertTaggerGroupTagRandomDocDialogfields">
       <mat-label>Select Fields</mat-label>
       <mat-select #fields="ngModel" [(ngModel)]="model.fields"
                   [disableOptionCentering]="true" multiple
@@ -37,7 +37,7 @@
     </mat-form-field>
 
     <div class="m-top-10"><span *ngIf="result" class="mat-body-strong">Result: </span>
-      <div *ngIf="result"  class="code-wrapper">
+      <div *ngIf="result" class="code-wrapper">
         <code>
           <pre *ngIf="result">
                     {{result.document | json}}
@@ -50,13 +50,29 @@
     </div>
   </form>
 </div>
-<div fxLayout="row" fxLayoutAlign="space-between center" mat-dialog-actions>
+<div fxLayout="row" fxLayoutAlign="space-between center">
   <div *ngIf="result" fxFlex>
     <span class="mat-body-strong">Result: </span> {{result?.prediction?.result}}
     <br>
     <span class="mat-body-strong">Probability:</span> {{result?.prediction?.probability}}
   </div>
-  <button style="margin-left: auto" (click)="onSubmit()" [disabled]="isLoading ||docForm.invalid" color="primary" form="docForm" fxFlex="150px"
-          mat-flat-button>New random doc
-  </button>
+
+</div>
+
+<div mat-dialog-actions>
+
+  <div class="flex-col max-width">
+    <div class="flex-row">
+      <div class="flex-item-left">
+        <button data-cy="appBertTaggerTagRandomDocDialogClose" mat-dialog-close="" mat-stroked-button>Close</button>
+      </div>
+      <div class="flex-item-right">
+
+        <button (click)="onSubmit()" [disabled]="isLoading ||docForm.invalid" color="primary" form="docForm"
+                fxFlex="150px" mat-flat-button
+                style="margin-left: auto">New random doc
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

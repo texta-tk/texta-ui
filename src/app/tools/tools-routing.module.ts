@@ -5,12 +5,18 @@ import {DatasetImporterComponent} from './dataset-importer/dataset-importer.comp
 import {MLPComponent} from './mlp/mlp.component';
 import {AuthGuard} from '../core/auth/auth.guard';
 import {AnonymizerComponent} from './anonymizer/anonymizer.component';
+import {IndexSplitterComponent} from './index-splitter/index-splitter.component';
 
 const routes: Routes = [
   {
     path: 'reindexer',
     canActivate: [AuthGuard],
     component: ReindexerComponent
+  },
+  {
+    path: 'index-splitter',
+    canActivate: [AuthGuard],
+    component: IndexSplitterComponent
   },
   {
     path: 'dataset-importer',

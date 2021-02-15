@@ -69,6 +69,11 @@ const routes: Routes = [
     loadChildren: () => import('./tools/topic-analyzer/topic-analyzer.module').then(m => m.TopicAnalyzerModule)
   },
   {
+    path: 'index-splitter',
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./tools/index-splitter/index-splitter.module').then(m => m.IndexSplitterModule)
+  },
+  {
     path: 'searcher',
     canActivate: [AuthGuard],
     loadChildren: () => import('./searcher/searcher.module').then(m => m.SearcherModule)

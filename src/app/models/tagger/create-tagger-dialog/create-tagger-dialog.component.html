@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>New Tagger</h1>
-<div mat-dialog-content>
-  <form (ngSubmit)="onSubmit(taggerForm.value)" [formGroup]="taggerForm" class="flex-col">
+<mat-dialog-content>
+  <form (ngSubmit)="onSubmit(taggerForm.value)" [formGroup]="taggerForm" class="flex-col" id="taggerForm">
     <mat-form-field data-cy="appTaggerCreateDialogDesc">
       <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
              placeholder="Description" required>
@@ -115,19 +115,17 @@
       <input formControlName="negativeMultiplierFormControl" matInput pattern="([0-9]*|[0-9]*[.]?)\d*" placeholder="Negative Multiplier" step="0.1"
              type="number">
     </mat-form-field>
-    <div class="flex-col">
-      <div class="flex-row">
-        <div class="flex-item-left">
-          <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
-        </div>
-        <div class="flex-item-right">
-          <button [disabled]="!taggerForm.valid" data-cy="appTaggerCreateDialogSubmit" mat-button type="submit">Create
-          </button>
-        </div>
-      </div>
-
-    </div>
-
-
   </form>
-</div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <div class="flex-row max-width">
+    <div class="flex-item-left">
+      <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
+    </div>
+    <div class="flex-item-right">
+      <button [disabled]="!taggerForm.valid" form="taggerForm" data-cy="appTaggerCreateDialogSubmit" mat-button type="submit">Create
+      </button>
+    </div>
+  </div>
+</mat-dialog-actions>

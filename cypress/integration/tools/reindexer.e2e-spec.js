@@ -32,7 +32,7 @@ describe('reindexer should work', function () {
     cy.get('[data-cy=appReindexerCreateDialogIndexName]').click().then((name => {
       cy.wrap(name).should('have.class', 'mat-focused').type('b').find('input').clear();
       cy.matFormFieldShouldHaveError(name, 'required');
-      cy.wrap(name).type('newIndex');
+      cy.wrap(name).type('new_index');
     }));
     cy.get('[data-cy=appReindexerCreateDialogIndices]').click().then((indices => {
       cy.wrap(indices).should('have.class', 'mat-focused');

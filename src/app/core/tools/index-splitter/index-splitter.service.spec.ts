@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { BertTaggerService } from './bert-tagger.service';
+import { IndexSplitterService } from './index-splitter.service';
 import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {SharedModule} from '../../../shared/shared.module';
+import {SharedModule} from "../../../shared/shared.module";
 
-describe('BertTaggerService', () => {
-  let service: BertTaggerService;
+describe('IndexSplitterService', () => {
+  let service: IndexSplitterService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({imports: [
@@ -14,7 +14,7 @@ describe('BertTaggerService', () => {
         SharedModule,
         HttpClientTestingModule
       ]});
-    service = TestBed.inject(BertTaggerService);
+    service = TestBed.inject(IndexSplitterService);
   });
 
   it('should be created', () => {

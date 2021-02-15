@@ -2,7 +2,7 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {LogService} from '../../../core/util/log.service';
 import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {HttpErrorResponse} from '@angular/common/http';
-import {BertTaggerService} from '../../../core/models/bert-tagger/bert-tagger.service';
+import {BertTaggerService} from '../../../core/models/taggers/bert-tagger/bert-tagger.service';
 import {BertTagger} from '../../../shared/types/tasks/BertTagger';
 
 @Component({
