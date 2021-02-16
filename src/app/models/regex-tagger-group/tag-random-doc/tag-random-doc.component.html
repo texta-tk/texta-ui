@@ -37,7 +37,8 @@
 
     <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
     <div *ngIf="result" class="m-bot-10">
-      <mat-accordion *ngIf="uniqueFacts.length > 0" displayMode="flat" multi>
+      <h3 data-cy="appRegexTaggerGroupTagRandomDocNoMatches" class="m-top-5" *ngIf="uniqueFacts.length === 0">No matches found</h3>
+      <mat-accordion displayMode="flat" multi>
         <mat-expansion-panel [expanded]="selection.isSelected(0)">
           <mat-expansion-panel-header (click)="selection.toggle(0)" [expandedHeight]="'48px'">
             <mat-panel-title>
@@ -88,7 +89,6 @@
           </mat-expansion-panel>
         </ng-container>
       </mat-accordion>
-      <h3 data-cy="appRegexTaggerGroupTagRandomDocNoMatches" *ngIf="uniqueFacts.length === 0">No matches found</h3>
     </div>
   </form>
 </div>
