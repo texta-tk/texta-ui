@@ -143,7 +143,22 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy, CanDeactivate
       this.textareaLexicon.negatives_unused = this.appendSuggestionsToTextarea(this.textareaLexicon.negatives_unused, this.newSuggestions);
       this.newSuggestions = [];
     }
+  }
 
+  moveLexiconWords(textareaOrigin: keyof TextareaLexicon, textareaDestination: keyof TextareaLexicon): void {
+    if (textareaOrigin && textareaDestination && textareaOrigin !== textareaDestination) {
+      const toMove = this.newLineStringToList(this.textareaLexicon[textareaOrigin]);
+      let destination = this.textareaLexicon[textareaDestination];
+      toMove.forEach(el => {
+        if (destination === '') {
+          destination += el + '\n';
+        } else {
+          destination += destination.endsWith('\n') ? el + '\n' : '\n' + el;
+        }
+      });
+      this.textareaLexicon[textareaDestination] = destination;
+      this.textareaLexicon[textareaOrigin] = '';
+    }
   }
 
   saveLexicon(): void {

@@ -119,5 +119,36 @@
 
       </div>
     </div>
+
+    <div class="pos_buttons">
+      <button (click)="moveLexiconWords('positives_used', 'positives_unused')" aria-label="Move positive used to unused"
+              mat-icon-button
+              matTooltip="Move positive used to unused"
+              matTooltipShowDelay="500">
+        <mat-icon>west</mat-icon>
+      </button>
+
+      <button (click)="moveLexiconWords('positives_unused', 'positives_used')" aria-label="Move positive unused to used"
+              mat-icon-button
+              matTooltip="Move positive unused to used"
+              matTooltipShowDelay="500">
+        <mat-icon>east</mat-icon>
+      </button>
+    </div>
+
+    <div class="neg_buttons">
+      <button (click)="moveLexiconWords('negatives_used', 'negatives_unused')" aria-label="Move negative used to unused"
+              mat-icon-button
+              matTooltip="Move negative used to unused"
+              matTooltipShowDelay="500">
+        <mat-icon>west</mat-icon>
+      </button>
+      <button (click)="moveLexiconWords('negatives_unused', 'negatives_used')" aria-label="Move negative unused to used"
+              mat-icon-button
+              matTooltip="Move negative unused to used"
+              matTooltipShowDelay="500">
+        <mat-icon>east</mat-icon>
+      </button>
+    </div>
   </div>
 </div>

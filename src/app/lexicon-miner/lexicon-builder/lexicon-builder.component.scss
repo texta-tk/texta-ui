@@ -13,20 +13,42 @@
   overflow: hidden;
   padding-left: 24px;
   padding-right: 24px;
-  padding-bottom: 24px;
   width: 100%;
   height: 100%;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr) 50px minmax(0, 1fr) minmax(0, 1fr);
   grid-template-rows: repeat(2, minmax(0, 1fr));
-  gap: 0px 24px;
   grid-template-areas:
-    "pos_unused pos_used suggestions"
-    "neg_unused neg_used suggestions";
+    "pos_unused pos_buttons pos_used suggestions"
+    "neg_unused neg_buttons neg_used suggestions";
+}
+
+h3 {
+  margin-top: 0;
 }
 
 .suggestions {
   grid-area: suggestions;
+  padding-left: 24px;
+  padding-bottom: 24px;
+}
+
+.pos_buttons {
+  grid-area: pos_buttons;
+  max-width: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.neg_buttons {
+  grid-area: neg_buttons;
+  max-width: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .pos_unused {
