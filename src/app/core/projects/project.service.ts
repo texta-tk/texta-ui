@@ -65,6 +65,14 @@ export class ProjectService {
       catchError(this.logService.handleError<ProjectIndex[]>('getProjectFields')));
   }
 
+  getIndicesDocCounts(id: number, body: unknown): Observable<unknown | HttpErrorResponse> {
+    return this.http.post<unknown>(
+      `${this.apiUrl}/projects/${id}/count_indices/`, body
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'getIndicesDocCounts')),
+      catchError(this.logService.handleError<unknown>('getIndicesDocCounts')));
+  }
+
   projectFactValueAutoComplete(id: number, factName: string, limitN: number, startsWith: string): Observable<string[] | HttpErrorResponse> {
     const body = {
       limit: limitN,
