@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>Create Lexicon</h1>
 <div mat-dialog-content>
-  <mat-form-field class="max-width">
+  <mat-form-field class="max-width" data-cy="appLexiconCreateDialogDesc">
     <input [errorStateMatcher]="matcher" autocomplete="off" matInput
            placeholder="Description" required [(ngModel)]="description" #ctrl="ngModel">
     <mat-error *ngIf="ctrl?.hasError('required')">
