@@ -26,20 +26,20 @@
               {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
             </mat-icon>
           </button>
-          <ng-container *ngIf="node.key_as_string">
+          <ng-container *ngIf="node.key_as_string"> <!--date > leaf node -->
             ({{node.doc_count}}) {{node.key_as_string}}
           </ng-container>
           <ng-container *ngIf="!node.key_as_string">
-            <ng-container *ngIf="!node.top_reverse_nested">
+            <ng-container *ngIf="!node.top_reverse_nested"> <!-- text > leaf node -->
               <ng-container *ngIf="!node.fact_val_reverse">
                 ({{node.doc_count}}) {{node.key}}
               </ng-container>
-              <ng-container *ngIf="node.fact_val_reverse">
+              <ng-container *ngIf="node.fact_val_reverse"> <!-- fact_value > leaf node -->
                 <button mat-button (click)="makeSearch(node)" title="Add to search constraint">({{node.fact_val_reverse.doc_count}}) {{node.key}}</button>
               </ng-container>
             </ng-container>
-            <ng-container *ngIf="node.top_reverse_nested">
-              ({{node.top_reverse_nested.doc_count}}) {{node.key}}
+            <ng-container *ngIf="node.top_reverse_nested"> <!-- fact name > leaf node -->
+              <button mat-button (click)="makeFactNameConstraint(node)" title="Add to search constraint">({{node.top_reverse_nested.doc_count}}) {{node.key}}</button>
             </ng-container>
           </ng-container>
           <button mat-icon-button (click)="openDialog(node)">

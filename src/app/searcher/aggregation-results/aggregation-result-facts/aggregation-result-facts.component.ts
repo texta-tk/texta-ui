@@ -80,6 +80,10 @@ export class AggregationResultFactsComponent {
     this.searchService.createConstraintFromFact(factName, factValue);
   }
 
+  makeFactNameSearch(fact: string): void {
+    this.searchService.buildFactNameSearch(fact);
+  }
+
   formatYAxisTicks(val: string): string {
     let origName: string | string[] = val.split('|'); // take out the ID (KEY, PER, ORG etc)
     if (origName.length > 0 && origName[0] === '@#!') { // make placeholder titles empty so they dont show up in barchart

@@ -51,9 +51,9 @@ export class AggregationResultsTreeComponent implements OnDestroy {
     }
   }
 
-  formatDateData(buckets: { key_as_string: string, key: number, doc_count: number }[]): {value: number, name: string}[] {
+  formatDateData(buckets: { key_as_string: string, key: number, doc_count: number }[]): { value: number, name: string }[] {
     // tslint:disable-next-line:no-any
-    const dateData: {value: number, name: string}[] = [];
+    const dateData: { value: number, name: string }[] = [];
     for (const element of buckets) {
       dateData.push({
         value: element.doc_count,
@@ -77,5 +77,11 @@ export class AggregationResultsTreeComponent implements OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.complete();
+  }
+
+  makeFactNameConstraint(node: { key: string; }): void {
+    if (node.key) {
+      this.searchComponentService.buildFactNameSearch(node.key);
+    }
   }
 }

@@ -15,21 +15,6 @@ import {FactConstraint, FactTextInputGroup} from '../../searcher-sidebar/build-s
 export class TextaFactsChipsComponent implements OnInit {
   readonly NUMBER_OF_CHIPS_TO_DISPLAY = 25;
   factList: { factName: string, showing: boolean, factValues: { key: string, count: number }[], color: LegibleColor }[] = [];
-  constraintBluePrint = {
-    fields: [{
-      path: 'texta_facts',
-      type: 'fact'
-    }],
-    factName: [''],
-    factNameOperator: 'must',
-    factTextOperator: 'must',
-    inputGroup: [{
-      factTextOperator: 'must',
-      factTextName: 'texta-facts-chips-placeholder',
-      factTextInput: 'texta-facts-chips-placeholder'
-    }]
-  };
-
 
   constructor(public searchService: SearcherComponentService, private changeDetectorRef: ChangeDetectorRef,
               private ngZone: NgZone) {
@@ -45,52 +30,11 @@ export class TextaFactsChipsComponent implements OnInit {
   }
 
   buildFactValSearch(fact: string, factValue: string): void {
-    const constraint = new SavedSearch();
-    constraint.query_constraints = [];
-    this.searchService.getAdvancedSearchConstraints$().pipe(take(1)).subscribe(constraintList => {
-      if (typeof constraint.query_constraints !== 'string') {
-        const factConstraint = constraintList.find(y => y instanceof FactConstraint && y.inputGroupArray.length > 0);
-        // inputGroup means its a fact_val constraint
-        if (factConstraint instanceof FactConstraint && factConstraint.inputGroupArray.length > 0) {
-          if (!factConstraint.inputGroupArray.some(group => group.factTextFactNameFormControl.value === fact &&
-            group.factTextInputFormControl.value === factValue)) {
-            factConstraint.inputGroupArray.push(new FactTextInputGroup('must', fact, factValue));
-          }
-        } else {
-          const constraintBluePrint = {...this.constraintBluePrint};
-          constraintBluePrint.inputGroup[0].factTextInput = factValue;
-          constraintBluePrint.inputGroup[0].factTextName = fact;
-          constraint.query_constraints.push(constraintBluePrint);
-        }
-        constraint.query_constraints.push(...UtilityFunctions.convertConstraintListToJson(constraintList));
-        constraint.query_constraints = JSON.stringify(constraint.query_constraints);
-        this.searchService.nextSavedSearch(constraint);
-      }
-    });
+    this.searchService.createConstraintFromFact(fact, factValue);
   }
 
   buildFactNameSearch(fact: string): void {
-    const constraint = new SavedSearch();
-    constraint.query_constraints = [];
-    this.searchService.getAdvancedSearchConstraints$().pipe(take(1)).subscribe(constraintList => {
-      if (typeof constraint.query_constraints !== 'string') {
-        const factConstraint = constraintList.find(y => y instanceof FactConstraint && !(y.inputGroupArray.length > 0));
-        // inputGroup means its a fact_val constraint
-        if (factConstraint instanceof FactConstraint && (factConstraint.isFactValue || factConstraint.inputGroupArray.length === 0)) {
-          if (!factConstraint.factNameFormControl.value.includes(fact)) {
-            factConstraint.factNameFormControl.setValue([fact, ...factConstraint.factNameFormControl.value]);
-          }
-        } else {
-          const constraintBluePrint = {...this.constraintBluePrint};
-          constraintBluePrint.factName = [fact];
-          constraintBluePrint.inputGroup = [];
-          constraint.query_constraints.push(constraintBluePrint);
-        }
-        constraint.query_constraints.push(...UtilityFunctions.convertConstraintListToJson(constraintList));
-        constraint.query_constraints = JSON.stringify(constraint.query_constraints);
-        this.searchService.nextSavedSearch(constraint);
-      }
-    });
+    this.searchService.buildFactNameSearch(fact);
   }
 
   buildChipList(facts: { fact: string, str_val: string }[], doneCallback: () => void): void {
