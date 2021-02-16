@@ -5,7 +5,7 @@
       [matTooltip]="'Id: '+data.tagger.id">{{data.tagger.description}}</span></mat-chip>
   </mat-chip-list>
 </div>
-<mat-form-field class="max-width">
+<mat-form-field class="max-width" data-cy="appBertTaggerTagTextDialogText">
   <input #textInput matInput placeholder="Tag text">
 </mat-form-field>
 <mat-checkbox [(ngModel)]="feedback">Feedback</mat-checkbox>
@@ -21,6 +21,9 @@
 </div>
 <div class="flex-col">
   <div class="flex-row">
+    <div class="flex-item-left">
+      <button data-cy="appBertTaggerTagTextDialogClose" mat-dialog-close="" mat-stroked-button>Close</button>
+    </div>
     <div class="flex-item-right">
       <button (click)="onSubmit(textInput.value)" mat-button type="submit">Post</button>
     </div>

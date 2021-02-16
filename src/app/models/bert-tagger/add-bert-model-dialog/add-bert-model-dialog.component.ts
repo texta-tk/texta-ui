@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
-import {BertTaggerService} from '../../../core/models/bert-tagger/bert-tagger.service';
+import {BertTaggerService} from '../../../core/models/taggers/bert-tagger/bert-tagger.service';
 import {mergeMap, take} from 'rxjs/operators';
 import {of} from 'rxjs';
 import {ProjectStore} from '../../../core/projects/project.store';

@@ -6,7 +6,7 @@ import {ProjectStore} from '../../../core/projects/project.store';
 import {mergeMap, take} from 'rxjs/operators';
 import {of} from 'rxjs';
 import {BertTagger} from '../../../shared/types/tasks/BertTagger';
-import {BertTaggerService} from '../../../core/models/bert-tagger/bert-tagger.service';
+import {BertTaggerService} from '../../../core/models/taggers/bert-tagger/bert-tagger.service';
 
 @Component({
   selector: 'app-edit-bert-tagger-dialog',

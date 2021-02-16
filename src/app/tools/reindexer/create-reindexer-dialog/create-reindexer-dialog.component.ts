@@ -123,7 +123,7 @@ export class CreateReindexerDialogComponent implements OnInit {
           // tslint:disable-next-line:no-non-null-assertion
           this.reindexerForm.get('newNameFormControl')!.setErrors({alreadyExists: true});
         } else {
-          this.dialogRef.close(resp);
+          this.logService.snackBarError(resp);
         }
       }
     });
