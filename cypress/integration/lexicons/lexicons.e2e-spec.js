@@ -23,7 +23,6 @@ describe('lexicons should work', function () {
       cy.wait('@getLexicons')
       cy.get('[data-cy=appNavbarProjectSelect]').click();
       cy.get('mat-option').contains('integration_test_project').click();
-      cy.wait('@getLexicons')
       cy.get('[data-cy=appLexiconCreateBtn]').click();
 
       cy.get('[data-cy=appLexiconCreateDialogDesc]').should('be.visible').click().type('testLex');
