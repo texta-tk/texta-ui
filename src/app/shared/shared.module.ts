@@ -58,7 +58,7 @@ import {FactChipComponent} from './components/fact-chip/fact-chip.component';
 import {GenericHighlighterComponent} from './components/generic-highlighter/generic-highlighter.component';
 import {AccessorPipe} from './pipes/accessor.pipe';
 import {TaggerFineTuneSliderComponent} from './components/tagger-fine-tune-slider/tagger-fine-tune-slider.component';
-import {PlotlyViaWindowModule} from 'angular-plotly.js';
+
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
@@ -84,7 +84,6 @@ import {PlotlyViaWindowModule} from 'angular-plotly.js';
   imports: [
     RouterModule,
     CommonModule,
-    PlotlyViaWindowModule,
     ReactiveFormsModule,
     FormsModule,
     FlexLayoutModule,
@@ -125,7 +124,6 @@ import {PlotlyViaWindowModule} from 'angular-plotly.js';
   ],
   exports: [
     CommonModule,
-    PlotlyViaWindowModule,
     ReactiveFormsModule,
     FormsModule,
     FlexLayoutModule,

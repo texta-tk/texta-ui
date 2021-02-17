@@ -15,8 +15,10 @@ describe('AggregationResultsChartComponent', () => {
   const mockDialogRef = {
     close: jasmine.createSpy('close')
   };
+  let windowSpy: jasmine.SpyObj<Window>;
   const data = {aggregationData: []};
   beforeEach(async(() => {
+    windowSpy = jasmine.createSpyObj('Window', ['addEventListener', 'removeEventListener']);
     TestBed.configureTestingModule({
 
       imports: [

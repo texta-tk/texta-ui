@@ -22,19 +22,26 @@ import {AggregationResultsTreeComponent} from './aggregation-results/aggregation
 import {AggregationResultsDialogComponent} from './aggregation-results/aggregation-results-dialog/aggregation-results-dialog.component';
 import {DatePipe} from '@angular/common';
 import {AggregationResultsChartComponent} from './aggregation-results/aggregation-results-chart/aggregation-results-chart.component';
-import {SearcherModule} from "./searcher.module";
+import {SearcherComponentService} from "./services/searcher-component.service";
+import {SearchServiceSpy} from "./services/searcher-component.service.spec";
+
 
 describe('SearcherComponent', () => {
   let component: SearcherComponent;
   let fixture: ComponentFixture<SearcherComponent>;
-
+  let windowSpy: jasmine.SpyObj<Window>;
   beforeEach(async(() => {
+    windowSpy = jasmine.createSpyObj('Window', ['addEventListener', 'removeEventListener']);
     TestBed.configureTestingModule({
       imports: [
-        SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule, SearcherModule
+        SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule
       ]
-    })
-      .compileComponents();
+    }).overrideComponent(SearcherComponent, {
+      set: {
+        providers: [
+          {provide: SearcherComponentService, useClass: SearchServiceSpy}
+        ]
+      }}).compileComponents();
   }));
 
   beforeEach(() => {

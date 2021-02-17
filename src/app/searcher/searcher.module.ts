@@ -28,6 +28,7 @@ import {AggregationResultFactsComponent} from './aggregation-results/aggregation
 import {GraphSelectedPortalComponent} from './aggregation-results/aggregation-results-chart/graph-selected-portal/graph-selected-portal.component';
 import {EditSavedSearchDialogComponent} from './searcher-sidebar/saved-searches/edit-saved-search-dialog/edit-saved-search-dialog.component';
 import {SearcherComponentService} from './services/searcher-component.service';
+import {PlotlyViaWindowModule} from 'angular-plotly.js';
 
 @NgModule({
   declarations: [
@@ -59,6 +60,7 @@ import {SearcherComponentService} from './services/searcher-component.service';
   ],
   imports: [
     SharedModule,
+    PlotlyViaWindowModule,
     SearcherRoutingModule
   ],
   exports: [

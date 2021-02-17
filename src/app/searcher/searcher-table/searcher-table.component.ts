@@ -74,16 +74,15 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
         }
         // todo remove me after total-docs endpoint / fix
         if (projField) {
-          return this.searcherService.search({
-            query: new ElasticsearchQuery().elasticSearchQuery,
+          return this.projectService.getIndicesDocCounts(this.currentProject.id, {
             indices: projField.map(x => x.index) || []
-          }, this.currentProject.id);
+          });
         }
         return of(null);
       })
     ).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.totalDocs = resp.count.value;
+        this.totalDocs = resp;
       }
     });
 
