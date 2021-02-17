@@ -54,15 +54,11 @@ import {FromToInputComponent} from './components/from-to-input/from-to-input.com
 import {ScrollTopDirective} from './directives/scroll-top.directive';
 import {PortalModule} from '@angular/cdk/portal';
 import {OverlayModule} from '@angular/cdk/overlay';
-import {PlotlyViaCDNModule} from 'angular-plotly.js';
-import { FactChipComponent } from './components/fact-chip/fact-chip.component';
-import { GenericHighlighterComponent } from './components/generic-highlighter/generic-highlighter.component';
-import { AccessorPipe } from './pipes/accessor.pipe';
-import { TaggerFineTuneSliderComponent } from './components/tagger-fine-tune-slider/tagger-fine-tune-slider.component';
-
-
-PlotlyViaCDNModule.setPlotlyVersion('1.49.4'); // can be `latest` or any version number (i.e.: '1.40.0')
-PlotlyViaCDNModule.setPlotlyBundle('gl2d'); // 'basic', 'cartesian', 'geo', 'gl3d', 'gl2d', 'mapbox' or 'finance'
+import {FactChipComponent} from './components/fact-chip/fact-chip.component';
+import {GenericHighlighterComponent} from './components/generic-highlighter/generic-highlighter.component';
+import {AccessorPipe} from './pipes/accessor.pipe';
+import {TaggerFineTuneSliderComponent} from './components/tagger-fine-tune-slider/tagger-fine-tune-slider.component';
+import {PlotlyViaWindowModule} from 'angular-plotly.js';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
@@ -88,7 +84,7 @@ PlotlyViaCDNModule.setPlotlyBundle('gl2d'); // 'basic', 'cartesian', 'geo', 'gl3
   imports: [
     RouterModule,
     CommonModule,
-    PlotlyViaCDNModule,
+    PlotlyViaWindowModule,
     ReactiveFormsModule,
     FormsModule,
     FlexLayoutModule,
@@ -127,62 +123,62 @@ PlotlyViaCDNModule.setPlotlyBundle('gl2d'); // 'basic', 'cartesian', 'geo', 'gl3
     OverlayModule,
     NgxMatSelectSearchModule
   ],
-    exports: [
-        CommonModule,
-        PlotlyViaCDNModule,
-        ReactiveFormsModule,
-        FormsModule,
-        FlexLayoutModule,
-        ScrollingModule,
-        MatFormFieldModule,
-        MatCheckboxModule,
-        MatInputModule,
-        MatToolbarModule,
-        MatSnackBarModule,
-        MatSelectModule,
-        MatAutocompleteModule,
-        MatIconModule,
-        MatDialogModule,
-        MatButtonModule,
-        MatCardModule,
-        MatSidenavModule,
-        MatListModule,
-        MatMenuModule,
-        MatTableModule,
-        MatChipsModule,
-        MatProgressSpinnerModule,
-        MatPaginatorModule,
-        MatSortModule,
-        MatTabsModule,
-        MatProgressBarModule,
-        MatExpansionModule,
-        MatDatepickerModule,
-        MatNativeDateModule,
-        MatTooltipModule,
-        MatSliderModule,
-        MatTreeModule,
-        MatRadioModule,
-        GenericTableComponent,
-        SavedSearchAutocompleteComponent,
-        MatOptionSelectAllComponent,
-        FormatTextaFactsPipe,
-        IsObjectPipe,
-        BarChartModule,
-        GroupSameValuesPipe,
-        InfiniteScrollModule,
-        MaterialFileInputModule,
-        NgxMatSelectSearchModule,
-        GetPropertyListPipe,
-        JoinPipe,
-        BreadcrumbComponent,
-        FromToInputComponent,
-        PortalModule,
-        OverlayModule,
-        ScrollTopDirective,
-        FactChipComponent,
-        GenericHighlighterComponent,
-        TaggerFineTuneSliderComponent
-    ]
+  exports: [
+    CommonModule,
+    PlotlyViaWindowModule,
+    ReactiveFormsModule,
+    FormsModule,
+    FlexLayoutModule,
+    ScrollingModule,
+    MatFormFieldModule,
+    MatCheckboxModule,
+    MatInputModule,
+    MatToolbarModule,
+    MatSnackBarModule,
+    MatSelectModule,
+    MatAutocompleteModule,
+    MatIconModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatCardModule,
+    MatSidenavModule,
+    MatListModule,
+    MatMenuModule,
+    MatTableModule,
+    MatChipsModule,
+    MatProgressSpinnerModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatTabsModule,
+    MatProgressBarModule,
+    MatExpansionModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatTooltipModule,
+    MatSliderModule,
+    MatTreeModule,
+    MatRadioModule,
+    GenericTableComponent,
+    SavedSearchAutocompleteComponent,
+    MatOptionSelectAllComponent,
+    FormatTextaFactsPipe,
+    IsObjectPipe,
+    BarChartModule,
+    GroupSameValuesPipe,
+    InfiniteScrollModule,
+    MaterialFileInputModule,
+    NgxMatSelectSearchModule,
+    GetPropertyListPipe,
+    JoinPipe,
+    BreadcrumbComponent,
+    FromToInputComponent,
+    PortalModule,
+    OverlayModule,
+    ScrollTopDirective,
+    FactChipComponent,
+    GenericHighlighterComponent,
+    TaggerFineTuneSliderComponent
+  ]
 })
 export class SharedModule {
 }

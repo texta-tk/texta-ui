@@ -33,9 +33,9 @@
             ],
             "styles": [
               "src/custom-theme.scss",
-              "src/styles.scss"
+              "src/styles.scss",
             ],
-            "scripts": [],
+            "scripts": ["node_modules/plotly.js/dist/plotly-gl2d.min.js"],
             "webWorkerTsConfig": "tsconfig.worker.json"
           },
           "configurations": {
@@ -59,7 +59,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "1.5mb",
-                  "maximumError": "2mb"
+                  "maximumError": "4mb"
                 },
                 {
                   "type": "anyComponentStyle",

@@ -1,6 +1,6 @@
 {
   "name": "texta",
-  "version": "1.5.18",
+  "version": "1.5.19",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -31,6 +31,7 @@
     "@angular/platform-browser": "~10.1.6",
     "@angular/platform-browser-dynamic": "~10.1.6",
     "@angular/router": "~10.1.6",
+    "@fontsource/roboto": "^4.2.1",
     "@swimlane/ngx-charts": "^16.0.0",
     "@types/linkify-it": "^2.1.0",
     "angular-plotly.js": "^3.0.0",
