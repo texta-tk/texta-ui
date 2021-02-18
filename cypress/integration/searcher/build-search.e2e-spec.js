@@ -69,7 +69,6 @@ describe('searching and search related activities should be working correctly', 
     // change proj, to test projectindices subscribers
     cy.get('[data-cy=appNavbarProjectSelect]').click();
     cy.get('mat-option:nth(2)').contains('integration_test_project').click();
-    cy.wait('@searcherQuery');
     cy.wait('@getProjectIndices');
 
     // test searcher options, highlight search matches
