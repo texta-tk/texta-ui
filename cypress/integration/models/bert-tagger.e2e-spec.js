@@ -23,27 +23,10 @@ describe('bert-taggers should work', function () {
   }
 
   function tagRandomDoc() {
-    cy.get('.cdk-column-actions:nth(1)').should('be.visible').click('left');
+    cy.get('.cdk-column-actions:nth(1)').should('be.visible').click();
     cy.get('[data-cy=appBertTaggerMenuTagRandomDoc]').should('be.visible').click();
-    cy.get('[data-cy=appBertTaggerTagRandomDocDialogIndices]').click().then((indices => {
-      cy.wrap(indices).should('have.class', 'mat-focused');
-      cy.closeCurrentCdkOverlay();
-      cy.matFormFieldShouldHaveError(indices, 'required');
-      cy.wrap(indices).click();
-      cy.get('.mat-option-text:nth(0)').should('be.visible').click();
-      cy.closeCurrentCdkOverlay();
-      cy.wrap(indices).find('mat-error').should('have.length', 0)
-    }));
-    cy.get('[data-cy=appBertTaggerTagRandomDocDialogfields]').click().then((fields => {
-      cy.wrap(fields).should('have.class', 'mat-focused');
-      cy.closeCurrentCdkOverlay();
-      cy.matFormFieldShouldHaveError(fields, 'required');
-      cy.wrap(fields).click();
-      cy.get('.mat-option-text').contains('comment_content').should('be.visible').click();
-      cy.closeCurrentCdkOverlay();
-      cy.wrap(fields).find('mat-error').should('have.length', 0)
-    }));
-    cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
+
+    cy.get('[data-cy=appBertTaggerTagRandomDocDialogSubmit]').should('be.visible').click();
     cy.wait('@postbertTaggers').then(resp => {
       cy.wrap(resp).its('response.statusCode').should('eq', 200);
       cy.get('[data-cy=appBertTaggerTagRandomDocDialogClose]').click();
@@ -53,20 +36,18 @@ describe('bert-taggers should work', function () {
 
 
   function tagText() {
-    cy.get('.cdk-column-actions:nth(1)').should('be.visible').click('left');
+    cy.get('.cdk-column-actions:nth(1)').should('be.visible').click();
     cy.get('[data-cy=appBertTaggerMenuTagText]').should('be.visible').click();
     cy.get('[data-cy=appBertTaggerTagTextDialogText] input:first()').should('be.visible').click()
       .clear().invoke('val', 'tere Ooot, misasi see võõrast aiast maasikate võtmine on, kui ta vargus pole???').trigger('change');
     cy.get('[data-cy=appBertTaggerTagTextDialogText]').click().type(' ');
 
-    cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
+    cy.get(' [type="submit"]').should('be.visible').click();
 
 
     cy.wait('@postbertTaggers').then(intercepted => {
       cy.wrap(intercepted).its('response.statusCode').should('eq', 200);
-      if (intercepted?.response?.body?.result) {
-        cy.get('app-fact-chip').should('be.visible');
-      }
+
     })
     cy.get('[data-cy=appBertTaggerTagTextDialogClose]').click();
   }
@@ -96,47 +77,28 @@ describe('bert-taggers should work', function () {
       cy.closeCurrentCdkOverlay();
       cy.wrap(fields).find('mat-error').should('have.length', 0)
     }));
-    cy.get('[data-cy=appBertTaggerCreateDialogQuery]').type('{\n' +
-      '  "query": {\n' +
-      '    "bool": {\n' +
-      '      "must": [\n' +
-      '        {\n' +
-      '          "multi_match": {\n' +
-      '            "fields": [\n' +
-      '              "comment_content",\n' +
-      '            ],\n' +
-      '            "query": "tere",\n' +
-      '            "type": "phrase_prefix",\n' +
-      '            "operator": "and"\n' +
-      '          }\n' +
-      '        }\n' +
-      '      ],\n' +
-      '      "filter": [],\n' +
-      '      "must_not": [],\n' +
-      '      "should": [],\n' +
-      '      "minimum_should_match": 0\n' +
-      '    }\n' +
-      '  }\n' +
-      '}')
+    cy.get('[data-cy=appBertTaggerCreateDialogQuery]').type('{"query":{"bool":{"must":[],"filter":[],"must_not":[],"should":[{"bool":{"must":[{"bool":{"should":[{"multi_match":{"query":"tere","type":"phrase_prefix","slop":"0","fields":["comment_content"]}}],"minimum_should_match":1}}]}}],"minimum_should_match":1}}}',{ parseSpecialCharSequences: false })
     cy.get('[data-cy=appBertTaggerCreateDialogSubmit]').click();
     cy.wait('@postbertTaggers').its('response.statusCode').should('eq', 201);
     cy.wait(1000);
     cy.get('.mat-header-row > .cdk-column-author__username').should('be.visible').then(bb => {
-      cy.wrap([0, 0, 0, 0, 0]).each(y => { // hack to wait for task to complete
+      cy.wrap([0, 0, 0]).each(xy => { // hack to wait for task to complete
         cy.wrap(bb).click();
-        return cy.wait('@getbertTaggers').then((x) => {
-          if (x?.response?.body?.results[0]?.task?.status === 'completed') {
-            assert.equal(x?.response?.body?.results[0]?.task?.status, 'completed');
+         cy.wait('@getbertTaggers').then((intercepted) => {
+          console.log(intercepted)
+          if (intercepted?.response?.body?.results[0]?.task?.status === 'completed') {
+            assert.equal(intercepted?.response?.body?.results[0]?.task?.status, 'completed');
             return false;
+          }else {
+            return cy.wait(15000);
           }
-          return cy.wait(5000);
         });
       })
     });
     tagRandomDoc();
     tagText();
 
-    cy.get('.cdk-column-actions:nth(1)').click('left');
+    cy.get('.cdk-column-actions:nth(1)').click();
     cy.get('[data-cy=appBertTaggerMenuDelete]').click();
     cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
     cy.get('.cdk-column-actions').should('have.length', 1);

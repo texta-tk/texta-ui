@@ -8,7 +8,7 @@
 <div mat-dialog-content>
   <form #docForm="ngForm" (ngSubmit)="onSubmit()" class="max-width" id="docForm">
 
-    <mat-form-field class="max-width" data-cy="appBertTaggerGroupTagRandomDocDialogIndices">
+    <mat-form-field class="max-width" data-cy="appBertTaggerTagRandomDocDialogIndices">
       <mat-label>Indices</mat-label>
       <mat-select #indices="ngModel" (openedChange)="indicesOpenedChange($event)"
                   [(ngModel)]="model.indices" [disableOptionCentering]="true" multiple name="indices"
@@ -22,7 +22,7 @@
       </mat-error>
     </mat-form-field>
 
-    <mat-form-field class="max-width" data-cy="appBertTaggerGroupTagRandomDocDialogfields">
+    <mat-form-field class="max-width" data-cy="appBertTaggerTagRandomDocDialogfields">
       <mat-label>Select Fields</mat-label>
       <mat-select #fields="ngModel" [(ngModel)]="model.fields"
                   [disableOptionCentering]="true" multiple
@@ -68,7 +68,7 @@
       </div>
       <div class="flex-item-right">
 
-        <button (click)="onSubmit()" [disabled]="isLoading ||docForm.invalid" color="primary" form="docForm"
+        <button (click)="onSubmit()" [disabled]="isLoading ||docForm.invalid" color="primary" form="docForm" data-cy="appBertTaggerTagRandomDocDialogSubmit"
                 fxFlex="150px" mat-flat-button
                 style="margin-left: auto">New random doc
         </button>
