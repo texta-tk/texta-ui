@@ -160,19 +160,19 @@ describe('searching and search related activities should be working correctly', 
         cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
         cy.wait('@searcherQuery');
         // todo, when test index is final
-       /* cy.intercept('POST', '**autocomplete_fact_values**', req => {
-          if (req.body.hasOwnProperty('startswith') && req.body.startswith === 'test') {
+        cy.intercept('POST', '**autocomplete_fact_values**', req => {
+          if (req.body.hasOwnProperty('startswith') && req.body.startswith === 'bar') {
             req.alias = 'autocompleteTest'
           }
         });
         cy.get('[data-cy=appSearcherSideBarBuildSearchFactValueInputGroupName]:last()').click();
-        cy.get('mat-option').contains('test').click();
-        cy.get('[data-cy=appSearcherSideBarBuildSearchFactValueInputGroupValue]:last()').click().type('test');
+        cy.get('mat-option').contains('TEEMA').click();
+        cy.get('[data-cy=appSearcherSideBarBuildSearchFactValueInputGroupValue]:last()').click().type('bar');
         cy.wait('@autocompleteTest');
-        cy.get('.mat-option-text').contains('test').click();
+        cy.get('.mat-option-text').contains('bar').click();
         cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
         cy.wait('@searcherQuery');
-        cy.get('.cdk-column-texta_facts > app-texta-facts-chips > span').contains('test').should('exist');*/
+        cy.get('.cdk-column-texta_facts > app-texta-facts-chips > span').contains('bar').should('exist');
       });
 
 

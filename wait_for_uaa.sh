@@ -17,3 +17,4 @@ until $(curl --output /dev/null --silent --head --fail "$TEXTA_HEALTH_URL"); do
     sleep 5
 done
 echo "texta-rest backend running."
+
