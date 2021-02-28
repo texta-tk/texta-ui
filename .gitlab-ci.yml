@@ -6,6 +6,10 @@ services:
       alias: texta-postgres
     - name: docker.texta.ee/texta/texta-uaa:latest
       alias: texta-uaa
+    - name: docker.elastic.co/elasticsearch/elasticsearch-oss:7.10.2
+      alias: texta-elastic
+      command: [ "bin/elasticsearch", "-Ediscovery.type=single-node" ]
+
 
 variables:
     DJANGO_DATABASE_ENGINE: "django.db.backends.postgresql"
@@ -17,7 +21,7 @@ variables:
     POSTGRES_DATABASE: docker
     POSTGRES_USER: docker
     POSTGRES_PASSWORD: docker
-    TEXTA_ES_URL: http://elastic-dev.texta.ee:9200
+    TEXTA_ES_URL: http://texta-elastic:9200
     TEXTA_MLP_URL: http://mlp-dev.texta.ee:5000
     TEXTA_REDIS_URL: redis://redis:6379/0
     TEXTA_API_URL: http://texta-rest
@@ -40,8 +44,8 @@ variables:
     TEXTA_UAA_CLIENT_SECRET: loginsecret
 
 stages:
-  - unit-test
   - e2e-test
+  - unit-test
   - build
 
 Karma:
@@ -60,6 +64,9 @@ Cypress:
     - ci-test
   before_script:
     - npm ci
+    - apt-get update && apt-get install python3-pip -y
+    - pip3 install elasticsearch==7.*
+    - python3 import_test_data.py
     - sh wait_for_uaa.sh
   script:
     - npm run cy:verify

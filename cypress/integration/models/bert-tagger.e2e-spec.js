@@ -82,7 +82,7 @@ describe('bert-taggers should work', function () {
     cy.wait('@postbertTaggers').its('response.statusCode').should('eq', 201);
     cy.wait(1000);
     cy.get('.mat-header-row > .cdk-column-author__username').should('be.visible').then(bb => {
-      cy.wrap([0, 0, 0]).each(xy => { // hack to wait for task to complete
+      cy.wrap([0, 0, 0, 0]).each(xy => { // hack to wait for task to complete
         cy.wrap(bb).click();
          cy.wait('@getbertTaggers').then((intercepted) => {
           console.log(intercepted)
