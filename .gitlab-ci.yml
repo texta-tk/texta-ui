@@ -48,6 +48,13 @@ stages:
   - unit-test
   - build
 
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .npm
+    - cache/Cypress
+    - node_modules
+
 Karma:
   image: circleci/node:10-browsers
   script:
