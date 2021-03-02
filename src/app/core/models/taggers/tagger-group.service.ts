@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {environment} from '../../../../environments/environment';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {catchError, tap} from 'rxjs/operators';
@@ -17,12 +17,13 @@ export class TaggerGroupService {
   constructor(private http: HttpClient, private localStorageService: LocalStorageService,
               private logService: LogService) {
   }
-  getTaggerGroups(projectId: number,  params = ''): Observable<{count: number, results: TaggerGroup[]} | HttpErrorResponse> {
-    return this.http.get<{count: number, results: TaggerGroup[]}>(
+
+  getTaggerGroups(projectId: number, params = ''): Observable<{ count: number, results: TaggerGroup[] } | HttpErrorResponse> {
+    return this.http.get<{ count: number, results: TaggerGroup[] }>(
       `${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/?${params}`,
     ).pipe(
       tap(e => this.logService.logStatus(e, 'getTaggerGroups')),
-      catchError(this.logService.handleError<{count: number, results: TaggerGroup[]}>('getTaggerGroups')));
+      catchError(this.logService.handleError<{ count: number, results: TaggerGroup[] }>('getTaggerGroups')));
   }
 
   createTaggerGroup(body: unknown, projectId: number): Observable<TaggerGroup | HttpErrorResponse> {
@@ -43,7 +44,7 @@ export class TaggerGroupService {
   }
 
   modelsRetrain(taggerGroupId: number, projectId: number): Observable<HttpErrorResponse | { success: 'retraining tasks created' }> {
-    return this.http.post<{'success': 'retraining tasks created'}>(
+    return this.http.post<{ 'success': 'retraining tasks created' }>(
       `${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/${taggerGroupId}/models_retrain/`, {}
     ).pipe(
       tap(e => this.logService.logStatus(e, 'modelsRetrain')),
@@ -59,7 +60,7 @@ export class TaggerGroupService {
   }
 
   tagText(body: unknown, projectId: number, taggerId: number):
-   Observable<{ probability: number, tag: string, tagger_id: number }[] | HttpErrorResponse> {
+    Observable<{ probability: number, tag: string, tagger_id: number }[] | HttpErrorResponse> {
     return this.http.post<{ probability: number, tag: string, tagger_id: number }[]>(
       `${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/${taggerId}/tag_text/`,
       body
@@ -69,7 +70,7 @@ export class TaggerGroupService {
   }
 
   tagDoc(body: unknown, projectId: number, taggerId: number):
-   Observable<{ probability: number, tag: string, tagger_id: number }[] | HttpErrorResponse> {
+    Observable<{ probability: number, tag: string, tagger_id: number }[] | HttpErrorResponse> {
     return this.http.post<{ probability: number, tag: string, tagger_id: number }[]>(
       `${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/${taggerId}/tag_doc/`,
       body
@@ -86,7 +87,7 @@ export class TaggerGroupService {
   }
 
   bulkDeleteTaggerGroups(projectId: number, body: unknown): Observable<unknown> {
-    return this.http.post<{'num_deleted': number, 'deleted_types': {string: number}[] }>
+    return this.http.post<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>
     (`${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/bulk_delete/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'bulkDeleteTaggerGroups')),
       catchError(this.logService.handleError<unknown>('bulkDeleteTaggerGroups')));
@@ -98,4 +99,10 @@ export class TaggerGroupService {
       catchError(this.logService.handleError<unknown>('deleteTaggerGroup')));
   }
 
+  applyToIndex(projectId: number, taggerId: number, body: unknown): Observable<{ message: string } | HttpErrorResponse> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/${taggerId}/apply_to_index/`, body
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'applyToIndex')),
+      catchError(this.logService.handleError('applyToIndex')));
+  }
 }

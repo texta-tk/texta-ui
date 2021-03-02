@@ -100,4 +100,10 @@ export class BertTaggerService {
       catchError(this.logService.handleError<BertTagger>('editTagger')));
   }
 
+  applyToIndex(projectId: number, taggerId: number, body: unknown): Observable<{ message: string } | HttpErrorResponse> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/projects/${projectId}/bert_taggers/${taggerId}/apply_to_index/`, body
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'applyToIndex')),
+      catchError(this.logService.handleError('applyToIndex')));
+  }
 }

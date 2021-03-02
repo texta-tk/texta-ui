@@ -21,6 +21,7 @@ import {TagRandomDocDialogComponent} from './tag-random-doc-dialog/tag-random-do
 import {EditBertTaggerDialogComponent} from './edit-bert-tagger-dialog/edit-bert-tagger-dialog.component';
 import {EpochReportsDialogComponent} from './epoch-reports-dialog/epoch-reports-dialog.component';
 import {QueryDialogComponent} from '../../shared/components/dialogs/query-dialog/query-dialog.component';
+import {ApplyToIndexDialogComponent} from './apply-to-index-dialog/apply-to-index-dialog.component';
 @Component({
   selector: 'app-bert-tagger',
   templateUrl: './bert-tagger.component.html',
@@ -245,6 +246,13 @@ export class BertTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  applyToIndexDialog(tagger: BertTagger): void {
+    this.dialog.open(ApplyToIndexDialogComponent, {
+      data: tagger,
+      maxHeight: '90vh',
+      width: '700px',
+    });
+  }
   ngOnDestroy(): void {
     this.destroyed$.next(true);
     this.destroyed$.complete();

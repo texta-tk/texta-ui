@@ -7,6 +7,7 @@ import {RegexTaggerComponent} from './regex-tagger.component';
 import { EditRegexTaggerDialogComponent } from './edit-regex-tagger-dialog/edit-regex-tagger-dialog.component';
 import {TagTextDialogComponent} from './tag-text-dialog/tag-text-dialog.component';
 import {TagRandomDocComponent} from './tag-random-doc/tag-random-doc.component';
+import { ApplyToIndexDialogComponent } from './apply-to-index-dialog/apply-to-index-dialog.component';
 
 
 @NgModule({
@@ -16,7 +17,8 @@ import {TagRandomDocComponent} from './tag-random-doc/tag-random-doc.component';
     RegexTaggerComponent,
     TagTextDialogComponent,
     TagRandomDocComponent,
-    EditRegexTaggerDialogComponent
+    EditRegexTaggerDialogComponent,
+    ApplyToIndexDialogComponent
   ],
   imports: [
     SharedModule,

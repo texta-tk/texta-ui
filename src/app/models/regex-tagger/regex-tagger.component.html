@@ -145,6 +145,9 @@
 
 <mat-menu #editMenu="matMenu">
   <ng-template let-element="element" let-i="i" matMenuContent>
+    <button (click)="applyToIndexDialog(element)" data-cy="appRegexTaggerMenuApplyToIndices" mat-menu-item>
+      Apply to indices
+    </button>
     <button (click)="onTagRandomDoc(element)" data-cy="appRegexTaggerMenuTagRandomDoc"
             mat-menu-item>
       Tag Random Doc

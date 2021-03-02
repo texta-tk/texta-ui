@@ -1,0 +1,108 @@
+<div class="flex-row">
+  <h1 mat-dialog-title>Apply to indices</h1>
+  <mat-chip-list disabled>
+    <mat-chip *ngIf="data?.id" color="primary" selected><span
+      [matTooltip]="'Id: '+data.id">{{data.description}}</span></mat-chip>
+  </mat-chip-list>
+</div>
+<div mat-dialog-content>
+  <form (ngSubmit)="onSubmit(applyForm.value)" [formGroup]="applyForm" class="flex-col" id="applyForm">
+    <mat-form-field data-cy="appTaggerApplyDialogDesc">
+      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
+             placeholder="Description" required>
+
+      <mat-error *ngIf="applyForm.get('descriptionFormControl')?.hasError('required')">
+        Description is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field data-cy="appTaggerApplyDialogIndices">
+      <mat-label>Indices</mat-label>
+      <mat-select (openedChange)="indicesOpenedChange($event)" [disableOptionCentering]="true"
+                  formControlName="indicesFormControl" multiple panelClass="select-panel-reveal-input" required>
+        <mat-option *ngFor="let projectIndex of indices" [value]="projectIndex">
+          {{projectIndex.index}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="applyForm.get('indicesFormControl')?.hasError('required')">
+        Index is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field data-cy="appTaggerApplyDialogFields">
+      <mat-label>Select Fields</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="fieldsFormControl"
+                  multiple panelClass="select-panel-reveal-input" required>
+        <mat-option *ngFor="let fields of fieldsUnique" [value]="fields.path">
+          {{fields.path}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="applyForm.get('fieldsFormControl')?.hasError('required')">
+        Field is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+
+    <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)">
+    </app-saved-search-autocomplete>
+
+    <mat-form-field data-cy="appTaggerApplyDialogFactName">
+      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="factNameFormControl" matInput
+             placeholder="Fact name" required>
+
+      <mat-error *ngIf="applyForm.get('factNameFormControl')?.hasError('required')">
+        Fact name is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <input autocomplete="off" formControlName="factValueFormControl" matInput
+             placeholder="Fact value">
+    </mat-form-field>
+
+    <mat-checkbox formControlName="lemmatizeFormControl"
+                  matTooltip="Use MLP lemmatizer if available. Use only if training data was lemmatized."
+                  matTooltipPosition="left">Lemmatize
+    </mat-checkbox>
+    <!--advanced -->
+    <mat-expansion-panel expanded="false">
+      <mat-expansion-panel-header>
+        <h3>Advanced settings</h3>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
+        <mat-form-field class="advanced-setting">
+          <input formControlName="esTimeoutFormControl" matInput placeholder="Elasticsearch timeout"
+                 type="number">
+          <mat-hint>Elasticsearch scroll timeout in minutes.</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field class="advanced-setting">
+          <input formControlName="bulkSizeFormControl" matInput placeholder="Bulk size"
+                 type="number">
+          <mat-hint>How many documents should be sent towards Elasticsearch at once.</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field class="advanced-setting m-bot-10">
+          <input formControlName="chunkSizeFormControl"
+                 matInput placeholder="Max chunk bytes" type="number">
+          <mat-hint>Data size in bytes that Elasticsearch should accept to prevent Entity Too Large errors.</mat-hint>
+        </mat-form-field>
+
+      </ng-template>
+    </mat-expansion-panel>
+  </form>
+</div>
+<mat-dialog-actions>
+  <div class="flex-row max-width">
+    <div class="flex-item-left">
+      <button class="flex-item-left" data-cy="appTaggerApplyDialogClose" mat-button mat-dialog-close
+              type="button">Close
+      </button>
+    </div>
+    <div class="flex-item-right">
+      <button [disabled]="!applyForm.valid" data-cy="appTaggerApplyDialogSubmit"
+              form="applyForm"
+              mat-button
+              type="submit">
+        Apply
+      </button>
+    </div>
+  </div>
+</mat-dialog-actions>

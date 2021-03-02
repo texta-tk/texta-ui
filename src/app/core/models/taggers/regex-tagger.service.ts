@@ -87,4 +87,10 @@ export class RegexTaggerService {
       catchError(this.logService.handleError<unknown>('multiTagText')));
   }
 
+  applyToIndex(projectId: number, taggerId: number, body: unknown): Observable<{ message: string } | HttpErrorResponse> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/projects/${projectId}/regex_taggers/${taggerId}/apply_to_index/`, body
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'applyToIndex')),
+      catchError(this.logService.handleError('applyToIndex')));
+  }
 }

@@ -19,6 +19,7 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {EditRegexTaggerDialogComponent} from './edit-regex-tagger-dialog/edit-regex-tagger-dialog.component';
 import {TagTextDialogComponent} from './tag-text-dialog/tag-text-dialog.component';
 import {TagRandomDocComponent} from './tag-random-doc/tag-random-doc.component';
+import { ApplyToIndexDialogComponent } from './apply-to-index-dialog/apply-to-index-dialog.component';
 
 @Component({
   selector: 'app-regex-tagger',
@@ -238,6 +239,14 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   updateRegexTaggerRow(row: RegexTagger): void {
     this.patchRowQueue.next(row);
+  }
+
+  applyToIndexDialog(tagger: RegexTagger): void {
+    this.dialog.open(ApplyToIndexDialogComponent, {
+      data: tagger,
+      maxHeight: '90vh',
+      width: '700px',
+    });
   }
 
   ngOnDestroy(): void {

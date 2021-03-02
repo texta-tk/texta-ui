@@ -23,6 +23,7 @@ import {ListFeaturesDialogComponent} from './list-features-dialog/list-features-
 import {expandRowAnimation} from '../../shared/animations';
 import {EditTaggerDialogComponent} from './edit-tagger-dialog/edit-tagger-dialog.component';
 import {Index} from '../../shared/types/Index';
+import {ApplyToIndexDialogComponent} from "./apply-to-index-dialog/apply-to-index-dialog.component";
 
 @Component({
   selector: 'app-tagger',
@@ -322,5 +323,13 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
         this.inputFilterQuery += `&${field}=${this.filteringValues[field]}`;
       }
     }
+  }
+
+  applyToIndexDialog(tagger: Tagger): void {
+    this.dialog.open(ApplyToIndexDialogComponent, {
+      data: tagger,
+      maxHeight: '90vh',
+      width: '700px',
+    });
   }
 }

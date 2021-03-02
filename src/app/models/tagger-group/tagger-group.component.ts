@@ -21,6 +21,7 @@ import {TaggerGroupTagRandomDocDialogComponent} from './tagger-group-tag-random-
 import {expandRowAnimation} from '../../shared/animations';
 import {EditTaggerGroupDialogComponent} from './edit-tagger-group-dialog/edit-tagger-group-dialog.component';
 import {Index} from '../../shared/types/Index';
+import { ApplyToIndexDialogComponent } from './apply-to-index-dialog/apply-to-index-dialog.component';
 
 @Component({
   selector: 'app-tagger-group',
@@ -118,7 +119,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
 
   openCreateDialog(): void {
     const dialogRef = this.dialog.open(CreateTaggerGroupDialogComponent, {
-      maxHeight: '860px',
+      maxHeight: '90vh',
       width: '700px',
       disableClose: true
     });
@@ -270,5 +271,12 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
         this.inputFilterQuery += `&${field}=${this.filteringValues[field]}`;
       }
     }
+  }
+  applyToIndexDialog(tagger: TaggerGroup): void {
+    this.dialog.open(ApplyToIndexDialogComponent, {
+      data: tagger,
+      maxHeight: '90vh',
+      width: '700px',
+    });
   }
 }

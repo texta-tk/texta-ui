@@ -18,7 +18,8 @@ import {TorchTaggerService} from '../../../core/models/taggers/torch-tagger.serv
 import {TorchTagTextDialogComponent} from '../torch-tag-text-dialog/torch-tag-text-dialog.component';
 import {expandRowAnimation} from '../../../shared/animations';
 import {EditTorchTaggerDialogComponent} from '../edit-torch-tagger-dialog/edit-torch-tagger-dialog.component';
-import { EpochReportsDialogComponent } from '../epoch-reports-dialog/epoch-reports-dialog.component';
+import {EpochReportsDialogComponent} from '../epoch-reports-dialog/epoch-reports-dialog.component';
+import { ApplyToIndexDialogComponent } from '../apply-to-index-dialog/apply-to-index-dialog.component';
 
 @Component({
   selector: 'app-torch-tagger',
@@ -83,6 +84,7 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit(): void {
     this.setUpPaginator();
   }
+
   epochReportDialog(tagger: TorchTagger): void {
     this.dialog.open(EpochReportsDialogComponent, {
       data: {taggerId: tagger.id, currentProjectId: this.currentProject.id},
@@ -90,6 +92,7 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
       width: '700px',
     });
   }
+
   setUpPaginator(): void {
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
@@ -280,6 +283,14 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dialog.open(TorchTagTextDialogComponent, {
       data: {torchTorchTaggerId: tagger.id, currentProjectId: this.currentProject.id},
       maxHeight: '665px',
+      width: '700px',
+    });
+  }
+
+  applyToIndexDialog(tagger: TorchTagger): void {
+    this.dialog.open(ApplyToIndexDialogComponent, {
+      data: tagger,
+      maxHeight: '90vh',
       width: '700px',
     });
   }

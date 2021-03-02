@@ -8,6 +8,7 @@ import {TagRandomDocDialogComponent} from './tag-random-doc-dialog/tag-random-do
 import {TagTextDialogComponent} from './tag-text-dialog/tag-text-dialog.component';
 import {EpochReportsDialogComponent} from './epoch-reports-dialog/epoch-reports-dialog.component';
 import {EditBertTaggerDialogComponent} from './edit-bert-tagger-dialog/edit-bert-tagger-dialog.component';
+import { ApplyToIndexDialogComponent } from './apply-to-index-dialog/apply-to-index-dialog.component';
 
 @NgModule({
   imports: [
@@ -21,7 +22,8 @@ import {EditBertTaggerDialogComponent} from './edit-bert-tagger-dialog/edit-bert
     TagRandomDocDialogComponent,
     TagTextDialogComponent,
     EpochReportsDialogComponent,
-    EditBertTaggerDialogComponent
+    EditBertTaggerDialogComponent,
+    ApplyToIndexDialogComponent
   ],
   providers: [],
 })

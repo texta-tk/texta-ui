@@ -9,6 +9,7 @@ import {TagRandomDocDialogComponent} from './tag-random-doc-dialog/tag-random-do
 import {TagTextDialogComponent} from './tag-text-dialog/tag-text-dialog.component';
 import {TaggerRoutingModule} from './tagger-routing.module';
 import {TaggerComponent} from './tagger.component';
+import { ApplyToIndexDialogComponent } from './apply-to-index-dialog/apply-to-index-dialog.component';
 
 
 @NgModule({
@@ -20,7 +21,8 @@ import {TaggerComponent} from './tagger.component';
     TagDocDialogComponent,
     TagRandomDocDialogComponent,
     TagTextDialogComponent,
-    TaggerComponent
+    TaggerComponent,
+    ApplyToIndexDialogComponent
   ],
   imports: [
     SharedModule,

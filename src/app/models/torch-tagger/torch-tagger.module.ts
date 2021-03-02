@@ -6,6 +6,7 @@ import {TorchTaggerRoutingModule} from './torch-tagger-routing.module';
 import {TorchTagTextDialogComponent} from './torch-tag-text-dialog/torch-tag-text-dialog.component';
 import {EditTorchTaggerDialogComponent} from './edit-torch-tagger-dialog/edit-torch-tagger-dialog.component';
 import { EpochReportsDialogComponent } from './epoch-reports-dialog/epoch-reports-dialog.component';
+import {ApplyToIndexDialogComponent} from './apply-to-index-dialog/apply-to-index-dialog.component';
 
 @NgModule({
   declarations: [
@@ -14,6 +15,7 @@ import { EpochReportsDialogComponent } from './epoch-reports-dialog/epoch-report
     TorchTagTextDialogComponent,
     EditTorchTaggerDialogComponent,
     EpochReportsDialogComponent,
+    ApplyToIndexDialogComponent
   ],
   imports: [
     SharedModule,

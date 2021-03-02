@@ -128,4 +128,11 @@ export class TaggerService {
       tap(e => this.logService.logStatus(e, 'bulkDeleteTaggers')),
       catchError(this.logService.handleError<unknown>('bulkDeleteTaggers')));
   }
+
+  applyToIndex(projectId: number, taggerId: number, body: unknown): Observable<{ message: string } | HttpErrorResponse> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/projects/${projectId}/taggers/${taggerId}/apply_to_index/`, body
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'applyToIndex')),
+      catchError(this.logService.handleError('applyToIndex')));
+  }
 }

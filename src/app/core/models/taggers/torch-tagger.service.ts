@@ -76,4 +76,11 @@ export class TorchTaggerService {
       tap(e => this.logService.logStatus(e, 'tagTorchText')),
       catchError(this.logService.handleError<{ result: boolean, probability: number }>('tagTorchText')));
   }
+
+  applyToIndex(projectId: number, taggerId: number, body: unknown): Observable<{ message: string } | HttpErrorResponse> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/projects/${projectId}/torchtaggers/${taggerId}/apply_to_index/`, body
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'applyToIndex')),
+      catchError(this.logService.handleError('applyToIndex')));
+  }
 }
