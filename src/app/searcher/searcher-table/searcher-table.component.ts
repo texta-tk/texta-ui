@@ -15,6 +15,7 @@ import {SearcherOptions} from '../SearcherOptions';
 import {HttpErrorResponse} from '@angular/common/http';
 import {SearcherService} from '../../core/searcher/searcher.service';
 import {ProjectService} from "../../core/projects/project.service";
+import {UtilityFunctions} from "../../shared/UtilityFunctions";
 
 @Component({
   selector: 'app-searcher-table',
@@ -89,29 +90,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     this.searchService.getSearch().pipe(takeUntil(this.destroy$)).subscribe(resp => {
       if (resp && resp.searchOptions) {
         this.searchOptions = resp.searchOptions;
-        if (this.searchOptions.onlyShowMatchingColumns) {
-          const highlights = resp.searchContent.results.map(x => x.highlight).flat();
-          const columnsToHighlight: string[] = [];
-          highlights.forEach(x => {
-            // tslint:disable-next-line:no-any
-            for (const col in x as any) {
-              // tslint:disable-next-line:no-any
-              if ((x as any).hasOwnProperty(col)) {
-                columnsToHighlight.push(col);
-              }
-            }
-          });
-          if (columnsToHighlight.length > 0) {
-            // @ts-ignore
-            this.columnsToDisplay = [...new Set([].concat.apply([], columnsToHighlight))] as string[];
-            this.columnFormControl.setValue(this.columnsToDisplay);
-          } else {
-            this.setColumnsToDisplay();
-          }
-        } else {
-          // filter out table columns by index, unique array(table columns have to be unique)
-          this.setColumnsToDisplay();
-        }
+        this.setColumnsToDisplay();
         this.totalCountLength = resp.searchContent.count.value;
         this.paginatorLength = this.totalCountLength > 10000 ? 10000 : this.totalCountLength;
         this.tableData.data = resp.searchContent.results;

@@ -40,7 +40,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject();
   aggregation: unknown;
   aggregationData: AggregationData;
-  timeLineYLabel = 'document count';
+  timeLineYLabel = 'number of hits';
 
   constructor(public searchService: SearcherComponentService, public dialog: MatDialog) {
   }
@@ -92,7 +92,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
           this.timeLineYLabel = 'frequency';
           this.convertHistoToRelativeFrequency(aggregation); // doesnt work for deeply nested histo
         } else {
-          this.timeLineYLabel = 'document count';
+          this.timeLineYLabel = 'number of hits';
         }
         this.parseAggregationResults(aggregation.agg);
       }

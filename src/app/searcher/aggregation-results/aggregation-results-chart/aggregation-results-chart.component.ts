@@ -28,8 +28,8 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
   revision = 0;
   @ViewChild(PlotlyComponent) plotly: PlotlyComponent;
   overlayRef: OverlayRef;
-
   destroyed$: Subject<boolean> = new Subject();
+  title = '';
 
   constructor(private overlay: Overlay, private injector: Injector, private ngZone: NgZone,
               private platform: Platform, private overLayContainer: OverlayContainer,
@@ -37,7 +37,8 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
   }
 
   @Input() set yLabel(val: string) {
-    this.graph.layout['yaxis'] = {title: {text: val}};
+    this.title = val;
+    this.graph.layout['yaxis'] = {title: {text: this.title}};
   }
 
   // tslint:disable-next-line:no-any
@@ -51,6 +52,7 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
         },
         hoverdistance: -1,
         xaxis: {type: 'date'},
+        yaxis: {title: {text: this.title}},
         legend: {
           orientation: 'h',
           xanchor: 'center',
