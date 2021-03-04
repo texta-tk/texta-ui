@@ -109,6 +109,9 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     };
     if (aggregation && aggregation.aggs) {
       for (const aggKey of Object.keys(aggregation.aggs)) {
+        if(aggregation.aggs[aggKey].hasOwnProperty(aggKey)){
+          aggregation.aggs[aggKey] = aggregation.aggs[aggKey][aggKey];
+        }
         // first object is aggregation name either savedSearch description or the agg type
         let rootAggObj = aggregation.aggs[aggKey];
         const rootAggPropKeys: string[] = Object.keys(rootAggObj);
@@ -262,6 +265,9 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   // tslint:disable-next-line:no-any
   private convertHistoToRelativeFrequency(aggs: { agg: any, globalAgg: any }): void {
     for (const aggKey of Object.keys(aggs.agg.aggs)) {
+      if(aggs.agg.aggs[aggKey].hasOwnProperty(aggKey)){
+        aggs.agg.aggs[aggKey] = aggs.agg.aggs[aggKey][aggKey];
+      }
       if (aggs.agg.aggs[aggKey].hasOwnProperty('agg_histo')) {
         // when the first key is agg_histo then the results are aligned with eachother, when the date is nested just skip relative
         const rawBucket = this.bucketAccessor(this.navNestedAggByKey(aggs.agg.aggs[aggKey], 'agg_histo'));

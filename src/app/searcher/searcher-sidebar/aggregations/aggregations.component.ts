@@ -96,10 +96,29 @@ export class AggregationsComponent implements OnInit, OnDestroy {
     };
     for (const savedSearch of this.searchService.savedSearchSelection.selected) {
       const savedSearchQuery = JSON.parse(savedSearch.query);
-      body.query.aggs[savedSearch.description] = {
-        aggs: {...joinedAggregation},
-        filter: savedSearchQuery.query
-      };
+
+      if (!this.searchQueryExcluded) {
+        const query = JSON.parse(JSON.stringify(savedSearchQuery.query));
+        if (this.searcherElasticSearchQuery?.query?.bool) {
+          query.bool.filter = {bool: this.searcherElasticSearchQuery.query.bool};
+          body.query.aggs[savedSearch.description] = {
+            aggs: {
+              [savedSearch.description]: {
+                aggs: {...joinedAggregation},
+                filter: savedSearchQuery.query
+              }
+            },
+            filter: this.searcherElasticSearchQuery.query
+          };
+        } else if (this.searcherElasticSearchQuery?.query?.multi_match) {
+          debugger
+        }
+      } else {
+        body.query.aggs[savedSearch.description] = {
+          aggs: {...joinedAggregation},
+          filter: savedSearchQuery.query
+        };
+      }
     }
 
     if (!this.searchQueryExcluded) {
@@ -120,7 +139,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
     this.searchService.setIsLoading(true);
     // need 2 seperate requests to calculate relative frequency
     forkJoin({
-      globalAgg: this.dateRelativeFrequency ? this.searcherService.search({
+      globalAgg: this.dateRelativeFrequency ? this.searcherService.search(!this.searchQueryExcluded ? body : {
         query: {
           size: 0,
           aggs: joinedAggregation
