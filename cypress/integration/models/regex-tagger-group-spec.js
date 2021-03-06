@@ -75,7 +75,7 @@ describe('regex-tagger-group should work', function () {
     }));
     cy.get('[data-cy=appRegexTaggerGroupApplyTaggerDialogSubmit]').click();
     cy.wait(['@postRegexTaggers',]).then(resp => {
-      expect(resp.response.statusCode).to.eq(200);
+      expect(resp.response.statusCode).to.eq(201);
     });
     cy.wait('@getRegexTaggers');
 
