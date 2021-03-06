@@ -106,7 +106,7 @@ describe('regex-tagger-group should work', function () {
     cy.wrap([0, 0, 0, 0, 0]).each(y => { // hack to wait for task to complete
       cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
       cy.wait('@postRegexTaggers').then(resp => {
-        expect(resp.response.statusCode).to.eq(201);
+        expect(resp.response.statusCode).to.eq(200);
         if (resp?.response?.body?.result) {
           cy.get('app-fact-chip').should('be.visible');
         }else{
