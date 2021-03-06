@@ -46,7 +46,7 @@ describe('regex-taggers should work', function () {
     cy.wrap([0, 0, 0, 0, 0]).each(y => { // hack to wait for task to complete
       cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
       cy.wait('@postRegexTaggers').then(resp => {
-        cy.wrap(resp).its('response.statusCode').should('eq', 201);
+        cy.wrap(resp).its('response.statusCode').should('eq', 200);
         if (resp?.response?.body?.result) {
           cy.get('app-fact-chip').should('be.visible');
         } else {
