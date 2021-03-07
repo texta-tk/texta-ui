@@ -14,8 +14,7 @@ import {LocalStorageService} from '../../core/util/local-storage.service';
 import {SearcherOptions} from '../SearcherOptions';
 import {HttpErrorResponse} from '@angular/common/http';
 import {SearcherService} from '../../core/searcher/searcher.service';
-import {ProjectService} from "../../core/projects/project.service";
-import {UtilityFunctions} from "../../shared/UtilityFunctions";
+import {ProjectService} from '../../core/projects/project.service';
 
 @Component({
   selector: 'app-searcher-table',
@@ -91,7 +90,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
       if (resp && resp.searchOptions) {
         this.searchOptions = resp.searchOptions;
         this.setColumnsToDisplay();
-        this.totalCountLength = resp.searchContent.count.value;
+        this.totalCountLength = typeof resp.searchContent.count !== 'number' ? resp.searchContent.count.value : resp.searchContent.count;
         this.paginatorLength = this.totalCountLength > 10000 ? 10000 : this.totalCountLength;
         this.tableData.data = resp.searchContent.results;
         this.currentElasticQuery = resp.elasticsearchQuery;
