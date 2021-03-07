@@ -16,22 +16,22 @@
       *ngIf="aggregationData.textaFactsTableData !== undefined && aggregationData.textaFactsTableData.length > 0"
       dynamicHeight
       mat-stretch-tabs>
-      <mat-tab *ngFor="let item of aggregationData.textaFactsTableData">
+      <mat-tab *ngFor="let item of aggregationData.textaFactsTableData" >
         <ng-container *ngIf="{ viewState: 'tree' } as state">
           <ng-template mat-tab-label>
-            {{item.name}}
-            <button (click)="state.viewState = 'tree'" [color]="state.viewState === 'tree' ? 'primary' : undefined"
-                    mat-icon-button>
-              <mat-icon>account_tree</mat-icon>
-            </button>
-            <button (click)="state.viewState = 'table'" [color]="state.viewState === 'table' ? 'primary' : undefined"
-                    mat-icon-button>
-              <mat-icon>table_view</mat-icon>
-            </button>
-            <button (click)="state.viewState = 'chart'" [color]="state.viewState === 'chart' ? 'primary' : undefined"
-                    mat-icon-button>
-              <mat-icon>assessment</mat-icon>
-            </button>
+              {{item.name}}
+              <button (click)="state.viewState = 'tree'" [color]="state.viewState === 'tree' ? 'primary' : undefined"
+                      mat-icon-button>
+                <mat-icon>account_tree</mat-icon>
+              </button>
+              <button (click)="state.viewState = 'table'" [color]="state.viewState === 'table' ? 'primary' : undefined"
+                      mat-icon-button>
+                <mat-icon>table_view</mat-icon>
+              </button>
+              <button (click)="state.viewState = 'chart'" [color]="state.viewState === 'chart' ? 'primary' : undefined"
+                      mat-icon-button>
+                <mat-icon>assessment</mat-icon>
+              </button>
           </ng-template>
           <app-aggregation-result-facts [data]="item.data"
                                         [viewState]="state.viewState"></app-aggregation-result-facts>
@@ -64,5 +64,4 @@
       </mat-tab>
     </mat-tab-group>
   </ng-container>
-
 </div>

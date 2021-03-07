@@ -19,3 +19,6 @@ app-aggregation-results-chart {
 ::ng-deep .mat-tab-body-wrapper{
   height: 100%;
 }
+::ng-deep .mat-tab-label{
+  opacity: 1 !important;
+}
