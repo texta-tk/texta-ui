@@ -12,7 +12,7 @@ import {LocalStorageService} from 'src/app/core/util/local-storage.service';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import {ActivatedRoute, CanDeactivate, NavigationStart, Router} from '@angular/router';
 import {Embedding, EmbeddingPrediction} from '../../shared/types/tasks/Embedding';
-import {CanDeactivateComponent} from "../../core/auth/deactivate.guard";
+import {CanDeactivateComponent} from "../../core/guards/deactivate.guard";
 import {UtilityFunctions} from "../../shared/UtilityFunctions";
 
 interface TextareaLexicon {

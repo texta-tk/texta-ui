@@ -59,6 +59,7 @@ import {GenericHighlighterComponent} from './components/generic-highlighter/gene
 import {AccessorPipe} from './pipes/accessor.pipe';
 import {TaggerFineTuneSliderComponent} from './components/tagger-fine-tune-slider/tagger-fine-tune-slider.component';
 import {A11yModule} from '@angular/cdk/a11y';
+import { ProjectGuardDialogComponent } from './components/dialogs/project-guard-dialog/project-guard-dialog.component';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
@@ -80,6 +81,7 @@ import {A11yModule} from '@angular/cdk/a11y';
     GenericHighlighterComponent,
     AccessorPipe,
     TaggerFineTuneSliderComponent,
+    ProjectGuardDialogComponent,
   ],
   imports: [
     RouterModule,
