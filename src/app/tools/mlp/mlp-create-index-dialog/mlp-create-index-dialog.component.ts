@@ -21,7 +21,7 @@ import {MLP} from '../../../shared/types/tasks/MLP';
   styleUrls: ['./mlp-create-index-dialog.component.scss']
 })
 export class MLPCreateIndexDialogComponent implements OnInit, OnDestroy {
-  defaultQuery = {query: {match_all: {}}};
+  defaultQuery = '{"query": {"match_all": {}}}';
   query: unknown = this.defaultQuery;
 
   MLPForm = new FormGroup({

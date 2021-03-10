@@ -27,13 +27,12 @@ export class ProjectGuard implements CanActivate, CanActivateChild {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     return this.projectStore.getProjects().pipe(take(1), switchMap(projs => {
-      console.log(projs);
       if (projs && projs.length === 0) {
         return this.dialog.open(ProjectGuardDialogComponent).afterClosed().pipe(map(result => {
           return result;
         }));
       } else {
-        return of(false);
+        return of(true);
       }
     }));
   }
