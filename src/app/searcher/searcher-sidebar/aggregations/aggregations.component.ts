@@ -31,7 +31,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject();
   aggregationList: AggregationForm[] = [];
   searcherElasticSearchQuery: ElasticsearchQueryStructure;
-  searchQueryExcluded = false;
+  searchQueryIncluded = true;
   dateAlreadySelected = false;
   dateRelativeFrequency = false;
 
@@ -89,20 +89,39 @@ export class AggregationsComponent implements OnInit, OnDestroy {
     const aggregationType = Object.keys(joinedAggregation)[0];
     const body = {
       query: {
-        aggs: {...!this.searchQueryExcluded ? joinedAggregation : {}},
+        aggs: {...this.searchQueryIncluded ? joinedAggregation : {}},
         size: 0 // ignore results, performance improvement
       },
       indices: this.projectFields.map(y => y.index)
     };
     for (const savedSearch of this.searchService.savedSearchSelection.selected) {
       const savedSearchQuery = JSON.parse(savedSearch.query);
-      body.query.aggs[savedSearch.description] = {
-        aggs: {...joinedAggregation},
-        filter: savedSearchQuery.query
-      };
+
+      if (this.searchQueryIncluded) {
+        const query = JSON.parse(JSON.stringify(savedSearchQuery.query));
+        if (this.searcherElasticSearchQuery?.query?.bool) {
+          query.bool.filter = {bool: this.searcherElasticSearchQuery.query.bool};
+          body.query.aggs[savedSearch.description] = {
+            aggs: {
+              [savedSearch.description]: {
+                aggs: {...joinedAggregation},
+                filter: savedSearchQuery.query
+              }
+            },
+            filter: this.searcherElasticSearchQuery.query
+          };
+        } else if (this.searcherElasticSearchQuery?.query?.multi_match) {
+          this.logService.snackBarMessage('ERROR: Unexpected query. Please contact the developers!', 5000);
+        }
+      } else {
+        body.query.aggs[savedSearch.description] = {
+          aggs: {...joinedAggregation},
+          filter: savedSearchQuery.query
+        };
+      }
     }
 
-    if (!this.searchQueryExcluded) {
+    if (this.searchQueryIncluded) {
       if (this.searcherElasticSearchQuery?.query?.bool) {
         body.query.aggs[aggregationType] = {
           aggs: joinedAggregation,
@@ -120,7 +139,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
     this.searchService.setIsLoading(true);
     // need 2 seperate requests to calculate relative frequency
     forkJoin({
-      globalAgg: this.dateRelativeFrequency ? this.searcherService.search({
+      globalAgg: this.dateRelativeFrequency ? this.searcherService.search(this.searchQueryIncluded ? body : {
         query: {
           size: 0,
           aggs: joinedAggregation

@@ -11,13 +11,15 @@
       </mat-select>
     </mat-form-field>
     <div class="buttons-row" fxLayout="row" fxLayoutGap="5px">
-      <button (click)="getNewSuggestions()" [disabled]="!selectedEmbedding" color="accent"
-              data-cy="appLexiconNewSuggestionsBtn"
-              fxFlex="grow"
-              mat-raised-button
-              matTooltip="Select an embedding to get new word suggestions">
-        New Suggestions
-      </button>
+      <div
+        [matTooltipDisabled]="!!selectedEmbedding" matTooltip="Select an embedding to get new word suggestions">
+        <button (click)="getNewSuggestions()" [disabled]="!selectedEmbedding" color="accent"
+                data-cy="appLexiconNewSuggestionsBtn"
+                fxFlex="grow"
+                mat-raised-button>
+          New Suggestions
+        </button>
+      </div>
       <button (click)="clearSuggestions()" color="accent"
               data-cy="appLexiconCancelBtn" fxFlex="grow" mat-stroked-button
               matTooltip="Clear the suggestion list without adding them as negatives">Clear Suggestions
@@ -52,12 +54,12 @@
       </div>
       <div class="max-height overflow-auto">
         <mat-form-field appearance="outline" class="stretch-height max-width" data-cy="appLexiconPositiveUnUsedWords"
-                        floatLabel="never">
+                        floatLabel="always">
           <mat-label>Enter words here</mat-label>
           <textarea [(ngModel)]="textareaLexicon.positives_unused"
                     class="max-width"
                     matInput
-                    placeholder="Enter words here"
+                    placeholder="Words you want to keep in the lexicon but don't want to base new suggestions on"
           ></textarea>
         </mat-form-field>
 
@@ -70,12 +72,13 @@
       </div>
       <div class="max-height overflow-auto">
         <mat-form-field appearance="outline" class="stretch-height max-width" data-cy="appLexiconPositiveUsedWords"
-                        floatLabel="never">
+                        floatLabel="always">
           <mat-label>Enter words here</mat-label>
           <textarea [(ngModel)]="textareaLexicon.positives_used"
+                    autofocus cdkFocusInitial
                     class="max-width"
                     matInput
-                    placeholder="Enter words here"
+                    placeholder="Words to base new suggestions on"
           ></textarea>
         </mat-form-field>
 
@@ -89,12 +92,12 @@
 
       <div class="max-height overflow-auto">
         <mat-form-field appearance="outline" class="stretch-height max-width" data-cy="appLexiconNegativeUnUsedWords"
-                        floatLabel="never">
+                        floatLabel="always">
           <mat-label>Enter words here</mat-label>
           <textarea [(ngModel)]="textareaLexicon.negatives_unused"
                     class="max-width"
                     matInput
-                    placeholder="Enter words here"
+                    placeholder="Words you don't want to keep in the lexicon and don't want to base new suggestions on"
           ></textarea>
         </mat-form-field>
 
@@ -108,12 +111,12 @@
 
       <div class="max-height overflow-auto">
         <mat-form-field appearance="outline" class="stretch-height max-width" data-cy="appLexiconNegativeUsedWords"
-                        floatLabel="never">
+                        floatLabel="always">
           <mat-label>Enter words here</mat-label>
           <textarea [(ngModel)]="textareaLexicon.negatives_used"
                     class="max-width"
                     matInput
-                    placeholder="Enter words here"
+                    placeholder="Words that you don't want to see when basing new suggestions"
           ></textarea>
         </mat-form-field>
 

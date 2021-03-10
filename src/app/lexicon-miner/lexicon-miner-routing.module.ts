@@ -3,7 +3,7 @@ import {AuthGuard} from '../core/auth/auth.guard';
 import {LexiconMinerComponent} from './lexicon-miner.component';
 import {RouterModule, Routes} from '@angular/router';
 import {LexiconBuilderComponent} from './lexicon-builder/lexicon-builder.component';
-import {DeactivateGuard} from '../core/auth/deactivate.guard';
+import {DeactivateGuard} from '../core/guards/deactivate.guard';
 
 const routes: Routes = [
   {
