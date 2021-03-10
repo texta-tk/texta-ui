@@ -41,7 +41,7 @@ describe('should be able to build aggregations', function () {
       let totalLines = 0;
       for (const el in x.response.body.aggs) {
         if (x.response.body.aggs.hasOwnProperty(el)) {
-          totalLines += getBuckets(x.response.body.aggs[el]).length
+          totalLines += getBuckets(x.response.body.aggs[el][el]).length
         }
       }
       assert(totalLines === amountOfLines, 'aggs should return correct amount of data')

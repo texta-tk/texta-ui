@@ -161,18 +161,18 @@ describe('searching and search related activities should be working correctly', 
         cy.wait('@searcherQuery');
         // todo, when test index is final
         cy.intercept('POST', '**autocomplete_fact_values**', req => {
-          if (req.body.hasOwnProperty('startswith') && req.body.startswith === 'bar') {
+          if (req.body.hasOwnProperty('startswith') && req.body.startswith === 'foo') {
             req.alias = 'autocompleteTest'
           }
         });
         cy.get('[data-cy=appSearcherSideBarBuildSearchFactValueInputGroupName]:last()').click();
         cy.get('mat-option').contains('TEEMA').click();
-        cy.get('[data-cy=appSearcherSideBarBuildSearchFactValueInputGroupValue]:last()').click().type('bar');
+        cy.get('[data-cy=appSearcherSideBarBuildSearchFactValueInputGroupValue]:last()').click().type('foo');
         cy.wait('@autocompleteTest');
-        cy.get('.mat-option-text').contains('bar').click();
+        cy.get('.mat-option-text').contains('foo').click();
         cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
         cy.wait('@searcherQuery');
-        cy.get('.cdk-column-texta_facts > app-texta-facts-chips > span').contains('bar').should('exist');
+        cy.get('.cdk-column-texta_facts > app-texta-facts-chips > span').contains('foo').should('exist');
       });
 
 

@@ -109,7 +109,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     };
     if (aggregation && aggregation.aggs) {
       for (const aggKey of Object.keys(aggregation.aggs)) {
-        if(aggregation.aggs[aggKey].hasOwnProperty(aggKey)){
+        if(aggregation.aggs[aggKey].hasOwnProperty(aggKey) && !aggregation.aggs[aggKey][aggKey].hasOwnProperty('buckets')){
           aggregation.aggs[aggKey] = aggregation.aggs[aggKey][aggKey];
         }
         // first object is aggregation name either savedSearch description or the agg type
@@ -265,7 +265,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   // tslint:disable-next-line:no-any
   private convertHistoToRelativeFrequency(aggs: { agg: any, globalAgg: any }): void {
     for (const aggKey of Object.keys(aggs.agg.aggs)) {
-      if(aggs.agg.aggs[aggKey].hasOwnProperty(aggKey)){
+      if(aggs.agg.aggs[aggKey].hasOwnProperty(aggKey)  && !aggs.agg.aggs[aggKey][aggKey].hasOwnProperty('buckets')){
         aggs.agg.aggs[aggKey] = aggs.agg.aggs[aggKey][aggKey];
       }
       if (aggs.agg.aggs[aggKey].hasOwnProperty('agg_histo')) {
