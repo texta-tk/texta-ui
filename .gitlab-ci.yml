@@ -1,5 +1,5 @@
 services:
-    - name: docker.texta.ee/texta/texta-rest:latest
+    - name: docker.texta.ee/texta/texta-rest/test-rest:latest
       alias: texta-rest
     - name: redis:latest
     - name: postgres:11
