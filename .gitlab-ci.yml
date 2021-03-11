@@ -96,9 +96,7 @@ build:
     - ng build --prod
     - mkdir release
     - tar -czvf release/texta-rest-front-latest.tar.gz dist/TEXTA
-    - cp release/texta-rest-front-latest.tar.gz release/texta-rest-front-${CI_COMMIT_TAG}.tar.gz
+    #- cp release/texta-rest-front-latest.tar.gz release/texta-rest-front-${CI_COMMIT_TAG}.tar.gz
     - ssh-add <(echo "$STAGING_PRIVATE_KEY")
     - ssh texta-docs@web.texta.ee "mkdir -p /opt/packages/texta-rest-front"
     - scp -r release/* texta-docs@web.texta.ee:/opt/packages/texta-rest-front
-  only:
-    - tags
