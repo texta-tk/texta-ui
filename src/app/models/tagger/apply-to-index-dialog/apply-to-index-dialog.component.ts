@@ -41,7 +41,7 @@ export class ApplyToIndexDialogComponent implements OnInit, OnDestroy {
     fieldsFormControl: new FormControl([], [Validators.required]),
     factNameFormControl: new FormControl('', [Validators.required]),
     factValueFormControl: new FormControl(''),
-    lemmatizeFormControl: new FormControl(false),
+    lemmatizeFormControl: new FormControl(),
     esTimeoutFormControl: new FormControl(),
     bulkSizeFormControl: new FormControl(),
     chunkSizeFormControl: new FormControl(),
@@ -54,6 +54,7 @@ export class ApplyToIndexDialogComponent implements OnInit, OnDestroy {
   indices: ProjectIndex[];
   fieldsUnique: Field[] = [];
 
+
   constructor(private dialogRef: MatDialogRef<ApplyToIndexDialogComponent>,
               private projectService: ProjectService,
               @Inject(MAT_DIALOG_DATA) public data: Tagger,
@@ -63,9 +64,18 @@ export class ApplyToIndexDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.projectStore.getCurrentProject().pipe(filter(x => !!x), take(1)).subscribe(proj => {
+    this.projectStore.getCurrentProject().pipe(filter(x => !!x), take(1), switchMap(proj => {
       if (proj) {
         this.currentProject = proj;
+        return this.taggerService.applyToIndexOptions(proj.id, this.data.id);
+      }
+      return of(null);
+    })).subscribe(options => {
+      if (options && !(options instanceof HttpErrorResponse)) {
+        this.applyForm.get('lemmatizeFormControl')?.setValue(options.actions.POST.lemmatize.default);
+        this.applyForm.get('esTimeoutFormControl')?.setValue(options.actions.POST.es_timeout.default);
+        this.applyForm.get('bulkSizeFormControl')?.setValue(options.actions.POST.bulk_size.default);
+        this.applyForm.get('chunkSizeFormControl')?.setValue(options.actions.POST.max_chunk_bytes.default);
       }
     });
     this.projectStore.getProjectIndices().pipe(filter(x => !!x), take(1)).subscribe(indices => {

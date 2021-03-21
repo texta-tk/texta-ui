@@ -123,7 +123,7 @@
                     panelClass="select-panel-reveal-input"
                     placeholder="Indices">
           <app-mat-option-select-all></app-mat-option-select-all>
-          <mat-option *ngFor="let item of projectFields" [value]="item">
+          <mat-option *ngFor="let item of projectFields" [value]="item" [title]="item.index">
             {{item.index}}
           </mat-option>
         </mat-select>
@@ -134,7 +134,7 @@
                     data-cy="appNavbarProjectSelect"
                     panelClass="select-panel-reveal-input"
                     placeholder="Projects">
-          <mat-option *ngFor="let item of projects" [value]="item">
+          <mat-option *ngFor="let item of projects" [value]="item" [title]="item.title">
             {{item.id}}: {{item.title}}
           </mat-option>
         </mat-select>

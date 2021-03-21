@@ -20,7 +20,6 @@ interface SubmitFormModel {
   fieldsFormControl: Field[];
   factNameFormControl: string;
   factValueFormControl: string;
-  lemmatizeFormControl: boolean;
   esTimeoutFormControl: number;
   bulkSizeFormControl: number;
   chunkSizeFormControl: number;
@@ -42,7 +41,6 @@ export class ApplyToIndexDialogComponent implements OnInit, OnDestroy {
     fieldsFormControl: new FormControl([], [Validators.required]),
     factNameFormControl: new FormControl('', [Validators.required]),
     factValueFormControl: new FormControl(''),
-    lemmatizeFormControl: new FormControl(false),
     esTimeoutFormControl: new FormControl(),
     bulkSizeFormControl: new FormControl(),
     chunkSizeFormControl: new FormControl(),
@@ -64,9 +62,17 @@ export class ApplyToIndexDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.projectStore.getCurrentProject().pipe(filter(x => !!x), take(1)).subscribe(proj => {
+    this.projectStore.getCurrentProject().pipe(filter(x => !!x), take(1), switchMap(proj => {
       if (proj) {
         this.currentProject = proj;
+        return this.torchTaggerService.applyToIndexOptions(proj.id, this.data.id);
+      }
+      return of(null);
+    })).subscribe(options => {
+      if (options && !(options instanceof HttpErrorResponse)) {
+        this.applyForm.get('esTimeoutFormControl')?.setValue(options.actions.POST.es_timeout.default);
+        this.applyForm.get('bulkSizeFormControl')?.setValue(options.actions.POST.bulk_size.default);
+        this.applyForm.get('chunkSizeFormControl')?.setValue(options.actions.POST.max_chunk_bytes.default);
       }
     });
     this.projectStore.getProjectIndices().pipe(filter(x => !!x), take(1)).subscribe(indices => {
@@ -101,7 +107,6 @@ export class ApplyToIndexDialogComponent implements OnInit, OnDestroy {
       indices: formData.indicesFormControl.map((x: ProjectIndex) => [{name: x.index}]).flat(),
       fields: formData.fieldsFormControl,
       ...this.query ? {query: this.query} : {},
-      lemmatize: formData.lemmatizeFormControl,
       ...formData.esTimeoutFormControl ? {es_timeout: formData.esTimeoutFormControl} : {},
       ...formData.bulkSizeFormControl ? {bulk_size: formData.bulkSizeFormControl} : {},
       ...formData.chunkSizeFormControl ? {max_chunk_bytes: formData.chunkSizeFormControl} : {},

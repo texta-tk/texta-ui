@@ -82,7 +82,6 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
 
   makeDateAggregation(startDate: Date, toDate: Date): void {
     this.checkDateInterval(startDate, toDate);
-
     this.dateRangeFrom.range = {[this.fieldsFormControl.value.path]: {gte: startDate}};
     this.dateRangeTo.range = {[this.fieldsFormControl.value.path]: {lte: toDate}};
     // tslint:disable-next-line:no-any

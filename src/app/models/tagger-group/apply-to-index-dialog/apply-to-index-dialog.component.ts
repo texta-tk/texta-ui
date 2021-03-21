@@ -42,8 +42,8 @@ export class ApplyToIndexDialogComponent implements OnInit, OnDestroy {
     indicesFormControl: new FormControl([], [Validators.required]),
     fieldsFormControl: new FormControl([], [Validators.required]),
     factNameFormControl: new FormControl('', [Validators.required]),
-    lemmatizeFormControl: new FormControl(false),
-    nerFormControl: new FormControl(false),
+    lemmatizeFormControl: new FormControl(),
+    nerFormControl: new FormControl(),
     nSimilarFormControl: new FormControl(),
     nCandidateFormControl: new FormControl(),
     esTimeoutFormControl: new FormControl(),
@@ -67,9 +67,21 @@ export class ApplyToIndexDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.projectStore.getCurrentProject().pipe(filter(x => !!x), take(1)).subscribe(proj => {
+    this.projectStore.getCurrentProject().pipe(filter(x => !!x), take(1), switchMap(proj => {
       if (proj) {
         this.currentProject = proj;
+        return this.taggerGroupService.applyToIndexOptions(proj.id, this.data.id);
+      }
+      return of(null);
+    })).subscribe(options => {
+      if (options && !(options instanceof HttpErrorResponse)) {
+        this.applyForm.get('lemmatizeFormControl')?.setValue(options.actions.POST.lemmatize.default);
+        this.applyForm.get('nerFormControl')?.setValue(options.actions.POST.use_ner.default);
+        this.applyForm.get('nSimilarFormControl')?.setValue(options.actions.POST.n_similar_docs.default);
+        this.applyForm.get('nCandidateFormControl')?.setValue(options.actions.POST.n_candidate_tags.default);
+        this.applyForm.get('esTimeoutFormControl')?.setValue(options.actions.POST.es_timeout.default);
+        this.applyForm.get('bulkSizeFormControl')?.setValue(options.actions.POST.bulk_size.default);
+        this.applyForm.get('chunkSizeFormControl')?.setValue(options.actions.POST.max_chunk_bytes.default);
       }
     });
     this.projectStore.getProjectIndices().pipe(filter(x => !!x), take(1)).subscribe(indices => {

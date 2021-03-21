@@ -85,9 +85,9 @@ export class AggregationsComponent implements OnInit, OnDestroy {
   }
 
   aggregate(): void {
+    debugger
     const joinedAggregation = this.makeAggregations(this.aggregationList);
     const aggregationType = Object.keys(joinedAggregation)[0];
-    debugger
     const body = {
       query: {
         aggs: {...joinedAggregation},

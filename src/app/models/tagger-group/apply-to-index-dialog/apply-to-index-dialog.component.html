@@ -52,15 +52,16 @@
         Fact name is <strong>required</strong>
       </mat-error>
     </mat-form-field>
-
-    <mat-checkbox formControlName="lemmatizeFormControl"
-                  matTooltip="Use MLP lemmatizer if available. Use only if training data was lemmatized."
-                  matTooltipPosition="left">Lemmatize
-    </mat-checkbox>
-    <mat-checkbox formControlName="nerFormControl"
-                  matTooltip="Use MLP Named Entity Recognition to detect tag candidates."
-                  matTooltipPosition="left">Use ner
-    </mat-checkbox>
+    <div class="flex-row" >
+      <mat-checkbox formControlName="lemmatizeFormControl"
+                    matTooltip="Use MLP lemmatizer if available. Use only if training data was lemmatized."
+                    matTooltipPosition="left">Lemmatize
+      </mat-checkbox>
+      <mat-checkbox style="margin-left: 15px" formControlName="nerFormControl"
+                    matTooltip="Use MLP Named Entity Recognition to detect tag candidates."
+                    matTooltipPosition="left">Use ner
+      </mat-checkbox>
+    </div>
     <!--advanced -->
     <mat-expansion-panel expanded="false">
       <mat-expansion-panel-header>

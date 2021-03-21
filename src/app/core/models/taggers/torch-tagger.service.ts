@@ -83,4 +83,15 @@ export class TorchTaggerService {
       tap(e => this.logService.logStatus(e, 'applyToIndex')),
       catchError(this.logService.handleError('applyToIndex')));
   }
+  
+  // tslint:disable-next-line:no-any
+  applyToIndexOptions(projectId: number, taskId: number): Observable<any | HttpErrorResponse> {
+    // tslint:disable-next-line:no-any
+    return this.http.options<any>(
+      `${this.apiUrl}/projects/${projectId}/torchtaggers/${taskId}/apply_to_index/`
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'applyToIndexOptions')),
+      // tslint:disable-next-line:no-any
+      catchError(this.logService.handleError<any>('applyToIndexOptions')));
+  }
 }

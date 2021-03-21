@@ -61,9 +61,17 @@ export class ApplyToIndexDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.projectStore.getCurrentProject().pipe(filter(x => !!x), take(1)).subscribe(proj => {
+    this.projectStore.getCurrentProject().pipe(filter(x => !!x), take(1), switchMap(proj => {
       if (proj) {
         this.currentProject = proj;
+        return this.bertTaggerService.applyToIndexOptions(proj.id, this.data.id);
+      }
+      return of(null);
+    })).subscribe(options => {
+      if (options && !(options instanceof HttpErrorResponse)) {
+        this.applyForm.get('esTimeoutFormControl')?.setValue(options.actions.POST.es_timeout.default);
+        this.applyForm.get('bulkSizeFormControl')?.setValue(options.actions.POST.bulk_size.default);
+        this.applyForm.get('chunkSizeFormControl')?.setValue(options.actions.POST.max_chunk_bytes.default);
       }
     });
     this.projectStore.getProjectIndices().pipe(filter(x => !!x), take(1)).subscribe(indices => {
