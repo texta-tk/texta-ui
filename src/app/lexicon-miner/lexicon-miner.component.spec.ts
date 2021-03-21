@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { LexiconMinerComponent } from './lexicon-miner.component';
 import {RouterTestingModule} from '@angular/router/testing';
@@ -11,7 +11,7 @@ describe('LexiconMinerComponent', () => {
   let component: LexiconMinerComponent;
   let fixture: ComponentFixture<LexiconMinerComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ LexiconMinerComponent, LexiconBuilderComponent ],
       imports: [

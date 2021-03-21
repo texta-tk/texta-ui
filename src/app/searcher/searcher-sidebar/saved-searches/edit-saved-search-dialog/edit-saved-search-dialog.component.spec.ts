@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { EditSavedSearchDialogComponent } from './edit-saved-search-dialog.component';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
@@ -14,7 +14,7 @@ describe('EditSavedSearchDialogComponent', () => {
     close: jasmine.createSpy('close')
   };
   const data = { data: {id: 1, description: 'tere'} };
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ EditSavedSearchDialogComponent ],
       imports: [

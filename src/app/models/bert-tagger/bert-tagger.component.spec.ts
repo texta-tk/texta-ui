@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { BertTaggerComponent } from './bert-tagger.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
@@ -10,7 +10,7 @@ describe('BertTaggerComponent', () => {
   let component: BertTaggerComponent;
   let fixture: ComponentFixture<BertTaggerComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ BertTaggerComponent ],
       imports: [

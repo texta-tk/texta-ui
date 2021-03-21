@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { MLPApplyTextDialogComponent } from './mlp-apply-text-dialog.component';
 import {SharedModule} from '../../../shared/shared.module';
@@ -13,7 +13,7 @@ describe('MlpApplyTextDialogComponent', () => {
   const mockDialogRef = {
     close: jasmine.createSpy('close')
   };
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule

@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {TagTextDialogComponent} from './tag-text-dialog.component';
 import {RouterTestingModule} from '@angular/router/testing';
@@ -14,7 +14,7 @@ describe('TagTextDialogComponent', () => {
     close: jasmine.createSpy('close')
   };
   const data = {currentProjectId: 1, taggerId: 2};
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [TagTextDialogComponent],
       imports: [

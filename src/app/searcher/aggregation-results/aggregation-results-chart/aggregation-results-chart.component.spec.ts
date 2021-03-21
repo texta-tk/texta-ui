@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {AggregationResultsChartComponent} from './aggregation-results-chart.component';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
@@ -17,7 +17,7 @@ describe('AggregationResultsChartComponent', () => {
   };
   let windowSpy: jasmine.SpyObj<Window>;
   const data = {aggregationData: []};
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     windowSpy = jasmine.createSpyObj('Window', ['addEventListener', 'removeEventListener']);
     TestBed.configureTestingModule({
 

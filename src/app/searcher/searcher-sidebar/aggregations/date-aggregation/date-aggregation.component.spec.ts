@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {DateAggregationComponent} from './date-aggregation.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
@@ -13,7 +13,7 @@ describe('DateAggregationComponent', () => {
   let component: DateAggregationComponent;
   let fixture: ComponentFixture<DateAggregationComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [DateAggregationComponent],
       imports: [

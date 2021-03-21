@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { CoreVariablesComponent } from './core-variables.component';
 import {SharedModule} from '../../shared/shared.module';
@@ -10,7 +10,7 @@ describe('CoreVariablesComponent', () => {
   let component: CoreVariablesComponent;
   let fixture: ComponentFixture<CoreVariablesComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule

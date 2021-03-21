@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {HighlightComponent} from './highlight.component';
 import {SharedModule} from '../../../shared/shared.module';
@@ -10,7 +10,7 @@ describe('HighlightComponent', () => {
   let component: HighlightComponent;
   let fixture: ComponentFixture<HighlightComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         BrowserAnimationsModule, SharedModule

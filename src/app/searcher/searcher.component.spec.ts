@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {SearcherComponent} from './searcher.component';
 import {SharedModule} from '../shared/shared.module';
@@ -30,7 +30,7 @@ describe('SearcherComponent', () => {
   let component: SearcherComponent;
   let fixture: ComponentFixture<SearcherComponent>;
   let windowSpy: jasmine.SpyObj<Window>;
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     windowSpy = jasmine.createSpyObj('Window', ['addEventListener', 'removeEventListener']);
     TestBed.configureTestingModule({
       imports: [

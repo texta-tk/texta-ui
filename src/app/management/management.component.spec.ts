@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ManagementComponent } from './management.component';
 import {SharedModule} from '../shared/shared.module';
@@ -10,7 +10,7 @@ describe('ManagementComponent', () => {
   let component: ManagementComponent;
   let fixture: ComponentFixture<ManagementComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule

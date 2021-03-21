@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {FromToInputComponent} from './from-to-input.component';
 import {SharedModule} from '../../shared.module';
@@ -10,7 +10,7 @@ describe('FromToInputComponent', () => {
   let component: FromToInputComponent;
   let fixture: ComponentFixture<FromToInputComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule],
       declarations: [FromToInputComponent]

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { RegexTaggerComponent } from './regex-tagger.component';
 import {SharedModule} from '../../shared/shared.module';
@@ -10,7 +10,7 @@ describe('RegexTaggerComponent', () => {
   let component: RegexTaggerComponent;
   let fixture: ComponentFixture<RegexTaggerComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule

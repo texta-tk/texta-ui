@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {AggregationResultsTreeComponent} from './aggregation-results-tree.component';
 import {RouterTestingModule} from '@angular/router/testing';
@@ -13,7 +13,7 @@ describe('AggregationResultsTreeComponent', () => {
   let component: AggregationResultsTreeComponent;
   let fixture: ComponentFixture<AggregationResultsTreeComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [AggregationResultsTreeComponent],
       imports: [

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { CreateBertTaggerDialogComponent } from './create-bert-tagger-dialog.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
@@ -13,7 +13,7 @@ describe('CreateBertTaggerDialogComponent', () => {
   const mockDialogRef = {
     close: jasmine.createSpy('close')
   };
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule

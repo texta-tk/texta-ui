@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TagDocDialogComponent } from './tag-doc-dialog.component';
 import {RouterTestingModule} from '@angular/router/testing';
@@ -15,7 +15,7 @@ describe('TagDocDialogComponent', () => {
     close: jasmine.createSpy('close')
   };
   const data = {currentProjectId: 1, tagger: new Tagger()};
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ TagDocDialogComponent ],
       imports: [

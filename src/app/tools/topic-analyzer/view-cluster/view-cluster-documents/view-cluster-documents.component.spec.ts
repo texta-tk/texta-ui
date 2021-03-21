@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ViewClusterDocumentsComponent } from './view-cluster-documents.component';
 import {SharedModule} from '../../../../shared/shared.module';
@@ -10,7 +10,7 @@ describe('ViewClusterDocumentsComponent', () => {
   let component: ViewClusterDocumentsComponent;
   let fixture: ComponentFixture<ViewClusterDocumentsComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ViewClusterDocumentsComponent ],
       imports: [

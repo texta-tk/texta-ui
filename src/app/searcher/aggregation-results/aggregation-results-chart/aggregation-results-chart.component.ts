@@ -132,7 +132,7 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
       }
       if (this.platform) {
         const positionStrategy = new FlexibleConnectedPositionStrategy(this.plotly.plotEl,
-          new ViewportRuler(this.platform, this.ngZone), document, this.platform, this.overLayContainer);
+          new ViewportRuler(this.platform, this.ngZone, document), document, this.platform, this.overLayContainer);
         positionStrategy.withPositions([{
           originX: 'start',
           originY: 'bottom',

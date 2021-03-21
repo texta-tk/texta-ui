@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TagRandomDocComponent } from './tag-random-doc.component';
 import {SharedModule} from '../../../shared/shared.module';
@@ -15,7 +15,7 @@ describe('TagRandomDocComponent', () => {
     close: jasmine.createSpy('close')
   };
   const tagger = { currentProjectId: 1, tagger: {} };
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule

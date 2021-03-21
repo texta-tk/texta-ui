@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TopicAnalyzerComponent } from './topic-analyzer.component';
 import {SharedModule} from '../../shared/shared.module';
@@ -10,7 +10,7 @@ describe('TopicAnalyzerComponent', () => {
   let component: TopicAnalyzerComponent;
   let fixture: ComponentFixture<TopicAnalyzerComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ TopicAnalyzerComponent ],
       imports: [

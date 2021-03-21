@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {AggregationResultFactsComponent} from './aggregation-result-facts.component';
 import {SearcherComponentService} from '../../services/searcher-component.service';
@@ -8,7 +8,7 @@ describe('AggregationResultFactsComponent', () => {
   let component: AggregationResultFactsComponent;
   let fixture: ComponentFixture<AggregationResultFactsComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [AggregationResultFactsComponent]
     }).overrideComponent(AggregationResultFactsComponent, {

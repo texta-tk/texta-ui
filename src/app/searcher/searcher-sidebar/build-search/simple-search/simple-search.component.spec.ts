@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { SimpleSearchComponent } from './simple-search.component';
 import {SharedModule} from '../../../../shared/shared.module';
@@ -12,7 +12,7 @@ describe('SimpleSearchComponent', () => {
   let component: SimpleSearchComponent;
   let fixture: ComponentFixture<SimpleSearchComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule

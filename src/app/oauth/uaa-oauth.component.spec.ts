@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { UaaOauthComponent } from './uaa-oauth.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
@@ -10,7 +10,7 @@ describe('UaaOauthComponent', () => {
   let component: UaaOauthComponent;
   let fixture: ComponentFixture<UaaOauthComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule],
       declarations: [ UaaOauthComponent ]

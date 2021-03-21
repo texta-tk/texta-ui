@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { LexiconBuilderComponent } from './lexicon-builder.component';
 import {SharedModule} from '../../shared/shared.module';
@@ -10,7 +10,7 @@ describe('LexiconBuilderComponent', () => {
   let component: LexiconBuilderComponent;
   let fixture: ComponentFixture<LexiconBuilderComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule

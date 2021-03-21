@@ -1,8 +1,4 @@
-import {
-  async,
-  ComponentFixture,
-  TestBed
-} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {TextConstraintsComponent} from './text-constraints.component';
 import {SharedModule} from '../../../../../shared/shared.module';
@@ -17,7 +13,7 @@ describe('TextConstraintsComponent', () => {
   // tslint:disable-next-line:max-line-length no-any
   const constraintQueryAccessor = ((x: { bool: { [x: string]: { [x: string]: { bool: { should: { [x: string]: any; }[]; }; }; }; }; }, i: string | number, operator: 'must' | 'must_not' | 'should', type: 'multi_match' | 'regexp') => x.bool[operator][i].bool.should[0][type]);
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule
