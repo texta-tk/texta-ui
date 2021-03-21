@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { GraphSelectedPortalComponent } from './graph-selected-portal.component';
 import {PORTAL_DATA} from '../PortalToken';
@@ -8,7 +8,7 @@ describe('GraphSelectedPortalComponent', () => {
   let fixture: ComponentFixture<GraphSelectedPortalComponent>;
 
   const data = {total: 20};
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ GraphSelectedPortalComponent ],
       providers: [

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { EditProjectDialogComponent } from './edit-project-dialog.component';
 import {SharedModule} from '../../shared/shared.module';
@@ -15,7 +15,7 @@ describe('EditProjectDialogComponent', () => {
     close: jasmine.createSpy('close')
   };
   const project = new Project();
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule

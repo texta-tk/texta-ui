@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { RegistrationDialogComponent } from './registration-dialog.component';
 import {SharedModule} from '../../../shared.module';
@@ -14,7 +14,7 @@ describe('RegistrationDialogComponent', () => {
     close: jasmine.createSpy('close')
   };
   const data = { returnUrl: '' };
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
 
       imports: [SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule],

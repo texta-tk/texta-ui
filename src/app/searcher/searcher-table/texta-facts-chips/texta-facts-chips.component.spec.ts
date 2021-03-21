@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TextaFactsChipsComponent } from './texta-facts-chips.component';
 import {SearcherComponentService} from '../../services/searcher-component.service';
@@ -8,7 +8,7 @@ describe('TextaFactsChipsComponent', () => {
   let component: TextaFactsChipsComponent;
   let fixture: ComponentFixture<TextaFactsChipsComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ TextaFactsChipsComponent ]
     }).overrideComponent(TextaFactsChipsComponent, {

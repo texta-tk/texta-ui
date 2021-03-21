@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TorchTagTextDialogComponent } from './torch-tag-text-dialog.component';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -14,7 +14,7 @@ describe('TorchTagTextDialogComponent', () => {
     close: jasmine.createSpy('close')
   };
   const data = {currentProjectId: 1, taggerId: 2};
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [TorchTagTextDialogComponent],
       imports: [

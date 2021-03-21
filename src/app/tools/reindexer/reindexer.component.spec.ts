@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ReindexerComponent } from './reindexer.component';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -10,7 +10,7 @@ describe('ReindexerComponent', () => {
   let component: ReindexerComponent;
   let fixture: ComponentFixture<ReindexerComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ReindexerComponent ],
       imports: [

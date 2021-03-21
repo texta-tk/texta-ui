@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { CreateTaggerDialogComponent } from './create-tagger-dialog.component';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -13,7 +13,7 @@ describe('CreateTaggerDialogComponent', () => {
   const mockDialogRef = {
     close: jasmine.createSpy('close')
   };
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule

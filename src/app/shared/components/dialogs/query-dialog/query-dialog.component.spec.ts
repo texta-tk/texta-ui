@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {QueryDialogComponent} from './query-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -10,7 +10,7 @@ describe('QueryDialogComponent', () => {
     close: jasmine.createSpy('close')
   };
   const data = {query: JSON.stringify({bool: {must: ['tere']}})};
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [QueryDialogComponent],
       providers: [

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { EmbeddingComponent } from './embedding.component';
 import {SharedModule} from '../../../shared/shared.module';
@@ -10,7 +10,7 @@ describe('EmbeddingComponent', () => {
   let component: EmbeddingComponent;
   let fixture: ComponentFixture<EmbeddingComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule

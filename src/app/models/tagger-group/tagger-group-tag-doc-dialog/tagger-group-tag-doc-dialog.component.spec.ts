@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TaggerGroupTagDocDialogComponent } from './tagger-group-tag-doc-dialog.component';
 import { TaggerGroup } from 'src/app/shared/types/tasks/Tagger';
@@ -17,7 +17,7 @@ describe('TaggerGroupTagDocDialogComponent', () => {
 
   const data = {currentProjectId: 1, tagger: new TaggerGroup()};
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ TaggerGroupTagDocDialogComponent ],
       imports: [

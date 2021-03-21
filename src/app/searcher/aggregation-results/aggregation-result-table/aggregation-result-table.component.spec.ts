@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {AggregationResultTableComponent} from './aggregation-result-table.component';
 import {SharedModule} from '../../../shared/shared.module';
@@ -10,7 +10,7 @@ describe('AggregationResultTableComponent', () => {
   let component: AggregationResultTableComponent;
   let fixture: ComponentFixture<AggregationResultTableComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [AggregationResultTableComponent],
       imports: [

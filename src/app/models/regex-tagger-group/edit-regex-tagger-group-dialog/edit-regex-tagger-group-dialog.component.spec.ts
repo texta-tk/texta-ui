@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {EditRegexTaggerGroupDialogComponent} from './edit-regex-tagger-group-dialog.component';
 import {SharedModule} from '../../../shared/shared.module';
@@ -15,7 +15,7 @@ describe('EditRegexTaggerGroupDialogComponent', () => {
     close: jasmine.createSpy('close')
   };
   const tagger = {id: 21, description: 'yea', regex_taggers: [1]};
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule

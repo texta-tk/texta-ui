@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { NumberConstraintsComponent } from './number-constraints.component';
 import {SharedModule} from '../../../../../shared/shared.module';
@@ -12,7 +12,7 @@ describe('NumberConstraintsComponent', () => {
   let component: NumberConstraintsComponent;
   let fixture: ComponentFixture<NumberConstraintsComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule

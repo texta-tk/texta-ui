@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {TextAggregationComponent} from './text-aggregation.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
@@ -13,7 +13,7 @@ describe('TextAggregationComponent', () => {
   let component: TextAggregationComponent;
   let fixture: ComponentFixture<TextAggregationComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [TextAggregationComponent],
       imports: [

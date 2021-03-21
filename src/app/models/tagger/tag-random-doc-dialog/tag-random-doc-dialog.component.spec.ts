@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {TagRandomDocDialogComponent} from './tag-random-doc-dialog.component';
 import {SharedModule} from '../../../shared/shared.module';
@@ -16,7 +16,7 @@ describe('TagRandomDocDialogComponent', () => {
   };
   const data = {currentProjectId: 1, tagger: new Tagger()};
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule

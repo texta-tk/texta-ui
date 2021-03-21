@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {DateConstraintsComponent} from './date-constraints.component';
 import {SharedModule} from '../../../../../shared/shared.module';
@@ -10,7 +10,7 @@ import {DateConstraint, ElasticsearchQuery} from '../../Constraints';
 describe('DateConstraintsComponent', () => {
   let component: DateConstraintsComponent;
   let fixture: ComponentFixture<DateConstraintsComponent>;
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule

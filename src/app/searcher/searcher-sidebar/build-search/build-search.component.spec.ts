@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {BuildSearchComponent} from './build-search.component';
 import {SharedModule} from '../../../shared/shared.module';
@@ -16,7 +16,7 @@ describe('BuildSearchComponent', () => {
   let component: BuildSearchComponent;
   let fixture: ComponentFixture<BuildSearchComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule

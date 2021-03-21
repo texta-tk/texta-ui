@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { IndexSplitterComponent } from './index-splitter.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
@@ -10,7 +10,7 @@ describe('IndexSplitterComponent', () => {
   let component: IndexSplitterComponent;
   let fixture: ComponentFixture<IndexSplitterComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ IndexSplitterComponent ],
       imports: [

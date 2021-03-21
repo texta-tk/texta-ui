@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {EditEmbeddingDialogComponent} from './edit-embedding-dialog.component';
 import {SharedModule} from '../../../../shared/shared.module';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
@@ -14,7 +14,7 @@ describe('EditEmbeddingDialogComponent', () => {
     close: jasmine.createSpy('close')
   };
   const embedding = new Embedding();
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule

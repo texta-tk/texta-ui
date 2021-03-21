@@ -1,4 +1,4 @@
-import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 
 import {FactConstraintsComponent} from './fact-constraints.component';
 import {SharedModule} from '../../../../../shared/shared.module';
@@ -20,7 +20,7 @@ describe('FactConstraintsComponent', () => {
   // tslint:disable-next-line:no-any
   const innerNestedAccessor = (x: { nested: any; }) => x.nested.query.bool.must;
   let factValueAutoComplete;
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     const projectService = jasmine.createSpyObj('ProjectService', ['projectFactValueAutoComplete']);
     factValueAutoComplete = projectService.projectFactValueAutoComplete.and.returnValue(of(['Putin', 'Donald', 'Mao', 'Stalin', 'Hitler']));
 

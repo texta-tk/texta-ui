@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TaggerGroupTagTextDialogComponent } from './tagger-group-tag-text-dialog.component';
 import {SharedModule} from '../../../shared/shared.module';
@@ -14,7 +14,7 @@ describe('TaggerGroupTagTextDialogComponent', () => {
     close: jasmine.createSpy('close')
   };
   const data = {currentProjectId: 1, tagger: 1};
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ TaggerGroupTagTextDialogComponent ],
       imports: [

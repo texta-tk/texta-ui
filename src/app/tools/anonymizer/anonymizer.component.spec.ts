@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { AnonymizerComponent } from './anonymizer.component';
 import {SharedModule} from '../../shared/shared.module';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
@@ -9,7 +9,7 @@ describe('AnonymizerComponent', () => {
   let component: AnonymizerComponent;
   let fixture: ComponentFixture<AnonymizerComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule
