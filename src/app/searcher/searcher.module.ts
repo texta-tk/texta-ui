@@ -29,7 +29,7 @@ import {GraphSelectedPortalComponent} from './aggregation-results/aggregation-re
 import {EditSavedSearchDialogComponent} from './searcher-sidebar/saved-searches/edit-saved-search-dialog/edit-saved-search-dialog.component';
 import {SearcherComponentService} from './services/searcher-component.service';
 import {PlotlyViaWindowModule} from 'angular-plotly.js';
-
+import {DragDropModule} from '@angular/cdk/drag-drop';
 @NgModule({
   declarations: [
     SearcherComponent,
@@ -61,7 +61,8 @@ import {PlotlyViaWindowModule} from 'angular-plotly.js';
   imports: [
     SharedModule,
     PlotlyViaWindowModule,
-    SearcherRoutingModule
+    SearcherRoutingModule,
+    DragDropModule
   ],
   exports: [
     HighlightComponent

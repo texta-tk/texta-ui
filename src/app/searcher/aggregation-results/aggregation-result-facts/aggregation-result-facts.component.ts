@@ -1,6 +1,7 @@
 import {Component, Input} from '@angular/core';
 import {SearcherComponentService} from '../../services/searcher-component.service';
 import {HighlightComponent} from '../../searcher-table/highlight/highlight.component';
+import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 
 interface BarChartData {
   name: string;
@@ -99,5 +100,10 @@ export class AggregationResultFactsComponent {
     if (this.selectedFacts.length >= 0) {
       this.chartData = this.selectedFacts.flatMap(x => x.value).sort((a, b) => (a.value < b.value) ? 1 : -1).slice(0, this.CHART_MAX_ITEMS);
     }
+  }
+
+  // tslint:disable-next-line:no-any
+  drop(event: CdkDragDrop<any[]>): void {
+    moveItemInArray(this.dataSource, event.previousIndex, event.currentIndex);
   }
 }
