@@ -159,20 +159,23 @@ describe('searching and search related activities should be working correctly', 
         cy.get('mat-option').contains('not').click();
         cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
         cy.wait('@searcherQuery');
-        // todo, when test index is final
+        let foobar = 'foo';
+        if(text === 'foo '){
+          foobar = 'bar'
+        }
         cy.intercept('POST', '**autocomplete_fact_values**', req => {
-          if (req.body.hasOwnProperty('startswith') && req.body.startswith === 'foo') {
+          if (req.body.hasOwnProperty('startswith') && req.body.startswith === foobar) {
             req.alias = 'autocompleteTest'
           }
         });
         cy.get('[data-cy=appSearcherSideBarBuildSearchFactValueInputGroupName]:last()').click();
         cy.get('mat-option').contains('TEEMA').click();
-        cy.get('[data-cy=appSearcherSideBarBuildSearchFactValueInputGroupValue]:last()').click().type('foo');
+        cy.get('[data-cy=appSearcherSideBarBuildSearchFactValueInputGroupValue]:last()').type(foobar);
         cy.wait('@autocompleteTest');
-        cy.get('.mat-option-text').contains('foo').click();
+        cy.get('.mat-option-text').contains(foobar).click();
         cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
         cy.wait('@searcherQuery');
-        cy.get('.cdk-column-texta_facts > app-texta-facts-chips > span').contains('foo').should('exist');
+        cy.get('.cdk-column-texta_facts > app-texta-facts-chips > span').contains(foobar).should('exist');
       });
 
 
@@ -181,6 +184,7 @@ describe('searching and search related activities should be working correctly', 
     // todo test appSearcherSideBarBuildSearchCloseConstraint
   });
   it('saved search should be working', function () {
+    cy.wait(500);
     cy.get('[data-cy=appSearcherSidebarSavedSearches] .cdk-column-name:nth(1)').should('be.visible').click('left');
     cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
     cy.wait('@searcherQuery');
