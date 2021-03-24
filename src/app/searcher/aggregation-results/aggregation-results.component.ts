@@ -193,26 +193,27 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   populateAggData(rootAggObj, aggName, aggDataAccessor: (x: any) => any, aggregationType: 'agg_histo' | 'agg_fact' | 'agg_term', aggData: AggregationData): void {
     const formattedData = this.formatAggDataStructure(rootAggObj, rootAggObj,
       ['agg_histo', 'agg_fact', 'agg_fact_val', 'agg_term', 'fact_val_reverse']);
+    const MAIN_AGG_NAME = 'Aggregation results';
     if (this.bucketAccessor(formattedData).length > 0) {
       if (formattedData.nested) {
         // depth of 3 means this structure: agg -> sub-agg
         // tslint:disable-next-line:no-any
         if (aggregationType === 'agg_histo' && this.determineDepthOfObject(formattedData, (x: any) => x.buckets) === 3) {
           aggDataAccessor(aggData).push({
-            name: aggName === 'agg_histo' ? 'aggregation_results' : aggName,
+            name: aggName === 'agg_histo' ? MAIN_AGG_NAME : aggName,
             series: this.formatDateDataExtraBucket(this.bucketAccessor(formattedData))
           });
         } else {
           if (aggregationType === 'agg_fact' && this.determineDepthOfObject(formattedData, (x: { buckets: unknown; }) => x.buckets) === 3) {
             // @ts-ignore
             aggData.textaFactsTableData.push({
-              name: aggName === aggregationType ? 'aggregation_results' : aggName,
+              name: aggName === aggregationType ? MAIN_AGG_NAME : aggName,
               data: this.bucketAccessor(formattedData)
             });
           } else {
             // @ts-ignore
             aggData.treeData.push({
-              name: aggName === aggregationType ? 'aggregation_results' : aggName,
+              name: aggName === aggregationType ? MAIN_AGG_NAME : aggName,
               histoBuckets: formattedData.histoBuckets ? formattedData.histoBuckets : [],
               treeData: this.bucketAccessor(formattedData)
             });
@@ -221,11 +222,11 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
       } else if (aggregationType === 'agg_term') {
         aggDataAccessor(aggData).push({
           tableData: new MatTableDataSource(this.bucketAccessor(formattedData)),
-          name: aggName === aggregationType ? 'aggregation_results' : aggName
+          name: aggName === aggregationType ? MAIN_AGG_NAME : aggName
         });
       } else if (aggregationType === 'agg_histo') {
         aggDataAccessor(aggData).push({
-          name: aggName === 'agg_histo' ? 'aggregation_results' : aggName,
+          name: aggName === 'agg_histo' ? MAIN_AGG_NAME : aggName,
           series: this.formatDateData(this.bucketAccessor(formattedData))
         });
       }

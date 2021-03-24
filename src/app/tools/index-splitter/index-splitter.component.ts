@@ -39,6 +39,7 @@ export class IndexSplitterComponent implements OnInit, OnDestroy, AfterViewInit 
   destroyed$: Subject<boolean> = new Subject<boolean>();
   currentProject: Project;
 
+  public getIndexName = (x: Index) => x.name;
   constructor(private projectStore: ProjectStore,
               private indexSplitterService: IndexSplitterService,
               public dialog: MatDialog,
