@@ -20,6 +20,7 @@ interface SubmitFormModel {
   fieldsFormControl: Field[];
   factNameFormControl: string;
   lemmatizeFormControl: boolean;
+  maxTagsFormControl: number;
   nerFormControl: boolean;
   esTimeoutFormControl: number;
   nSimilarFormControl: number;
@@ -43,6 +44,7 @@ export class ApplyToIndexDialogComponent implements OnInit, OnDestroy {
     fieldsFormControl: new FormControl([], [Validators.required]),
     factNameFormControl: new FormControl('', [Validators.required]),
     lemmatizeFormControl: new FormControl(),
+    maxTagsFormControl: new FormControl(),
     nerFormControl: new FormControl(),
     nSimilarFormControl: new FormControl(),
     nCandidateFormControl: new FormControl(),
@@ -76,6 +78,7 @@ export class ApplyToIndexDialogComponent implements OnInit, OnDestroy {
     })).subscribe(options => {
       if (options && !(options instanceof HttpErrorResponse)) {
         this.applyForm.get('lemmatizeFormControl')?.setValue(options.actions.POST.lemmatize.default);
+        this.applyForm.get('maxTagsFormControl')?.setValue(options.actions.POST.max_tags.default);
         this.applyForm.get('nerFormControl')?.setValue(options.actions.POST.use_ner.default);
         this.applyForm.get('nSimilarFormControl')?.setValue(options.actions.POST.n_similar_docs.default);
         this.applyForm.get('nCandidateFormControl')?.setValue(options.actions.POST.n_candidate_tags.default);
@@ -117,6 +120,7 @@ export class ApplyToIndexDialogComponent implements OnInit, OnDestroy {
       ...this.query ? {query: this.query} : {},
       lemmatize: formData.lemmatizeFormControl,
       ...formData.esTimeoutFormControl ? {es_timeout: formData.esTimeoutFormControl} : {},
+      ...formData.maxTagsFormControl ? {max_tags: formData.maxTagsFormControl} : {},
       use_ner: formData.nerFormControl,
       ...formData.nSimilarFormControl ? {n_similar_docs: formData.nSimilarFormControl} : {},
       ...formData.nCandidateFormControl ? {n_candidate_tags: formData.nCandidateFormControl} : {},

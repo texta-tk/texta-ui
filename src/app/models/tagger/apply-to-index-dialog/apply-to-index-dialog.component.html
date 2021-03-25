@@ -55,9 +55,10 @@
     <mat-form-field>
       <input autocomplete="off" formControlName="factValueFormControl" matInput
              placeholder="Fact value">
+      <mat-hint>NB! Only applicable for binary taggers! Used as fact value when applying the tagger. Defaults to tagger description (binary) / tagger result (multiclass).</mat-hint>
     </mat-form-field>
 
-    <mat-checkbox formControlName="lemmatizeFormControl"
+    <mat-checkbox formControlName="lemmatizeFormControl" style="margin-top: 1em"
                   matTooltip="Use MLP lemmatizer if available. Use only if training data was lemmatized."
                   matTooltipPosition="left">Lemmatize
     </mat-checkbox>

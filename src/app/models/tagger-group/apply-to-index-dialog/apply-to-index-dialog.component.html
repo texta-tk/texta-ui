@@ -52,7 +52,12 @@
         Fact name is <strong>required</strong>
       </mat-error>
     </mat-form-field>
-    <div class="flex-row" >
+    <mat-form-field>
+      <input formControlName="maxTagsFormControl" matInput placeholder="Max tags"
+             type="number">
+      <mat-hint>Maximum number of tags per document.</mat-hint>
+    </mat-form-field>
+    <div class="flex-row" style="margin-top: 0.5em">
       <mat-checkbox formControlName="lemmatizeFormControl"
                     matTooltip="Use MLP lemmatizer if available. Use only if training data was lemmatized."
                     matTooltipPosition="left">Lemmatize

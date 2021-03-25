@@ -55,9 +55,10 @@
     <mat-form-field>
       <input autocomplete="off" formControlName="factValueFormControl" matInput
              placeholder="Fact value">
+      <mat-hint>NB! Only applicable for binary taggers! Used as fact value when applying the tagger. Defaults to tagger description (binary) / tagger result (multiclass).</mat-hint>
     </mat-form-field>
     <!--advanced -->
-    <mat-expansion-panel expanded="false">
+    <mat-expansion-panel expanded="false" style="margin-top: 1em">
       <mat-expansion-panel-header>
         <h3>Advanced settings</h3>
       </mat-expansion-panel-header>
