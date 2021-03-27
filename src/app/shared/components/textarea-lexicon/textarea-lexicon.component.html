@@ -1,0 +1,29 @@
+<textarea
+  [formControl]="textareaFormControl"
+  [required]="required"
+  [placeholder]="placeholder"
+  (input)="_handleInput()"
+  [rows]="5" matInput></textarea>
+<a (click)="$event.stopPropagation();" *ngIf="lexicons.length > 0"
+   [matMenuTriggerData]="{data: textareaFormControl}" [matMenuTriggerFor]="menu"
+   class="lexicon-fab pointer"
+   type="button">
+  Add lexicon
+</a>
+
+<mat-menu #menu="matMenu">
+  <ng-template let-data="data" matMenuContent>
+    <ng-container *ngFor="let lexicon of lexicons">
+      <ng-container *ngIf="(lexicon.positives_used|combineArray: [lexicon.positives_unused]).length > 0">
+        <button (click)="addLexicon(lexicon, data)" [matMenuTriggerFor]="lexiconDetailed" mat-menu-item>
+          {{ lexicon.description }}
+        </button>
+      </ng-container>
+      <mat-menu #lexiconDetailed="matMenu">
+        <div *ngFor="let phrase of lexicon.positives_used|combineArray: [lexicon.positives_unused]" disabled
+             mat-menu-item>{{ phrase }}</div>
+      </mat-menu>
+    </ng-container>
+
+  </ng-template>
+</mat-menu>

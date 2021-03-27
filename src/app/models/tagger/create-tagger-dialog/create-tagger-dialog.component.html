@@ -46,7 +46,9 @@
 
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"
                                    data-cy="appTaggerCreateDialogQuery"></app-saved-search-autocomplete>
-
+    <mat-form-field>
+      <app-textarea-lexicon formControlName="stopWordsFormControl" placeholder="Stopwords (newline separated)"></app-textarea-lexicon>
+    </mat-form-field>
 
     <mat-form-field data-cy="appTaggerCreateDialogEmbedding">
       <mat-label>Select Embedding</mat-label>

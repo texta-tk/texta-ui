@@ -36,7 +36,7 @@
                           (constraintChanged)="searchOnChange($event)"></app-date-constraints>
   </div>
   <div class="content" *ngIf="isFactNameConstraint(constraint)" data-cy="appSearcherSideBarBuildSearchFactConstraint">
-    <app-fact-constraints [factConstraint]="$any(constraint)" [elasticSearchQuery]="elasticQuery"
+    <app-fact-constraints [factConstraint]="$any(constraint)" [elasticSearchQuery]="elasticQuery" [indices]="selectedIndices"
                           [projectFacts]="projectFacts" [currentProject]="currentProject"
                           (constraintChanged)="searchOnChange($event)"></app-fact-constraints>
   </div>

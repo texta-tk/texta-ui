@@ -21,6 +21,7 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
   @Input() elasticSearchQuery: ElasticsearchQuery;
   @Input() projectFacts: ProjectFact[] = [];
   @Input() currentProject: Project;
+  @Input() indices: string[];
   @Output() constraintChanged = new EventEmitter<ElasticsearchQuery>(); // search as you type, emit changes
   destroyed$: Subject<boolean> = new Subject<boolean>();
   factNameOperatorFormControl = new FormControl();
@@ -124,7 +125,7 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
           return this.projectService.projectFactValueAutoComplete(this.currentProject.id,
             // todo fix in TS 3.7
             // tslint:disable-next-line:no-non-null-assertion
-            inputGroup!.factTextFactNameFormControl.value, 10, value);
+            inputGroup!.factTextFactNameFormControl.value, 10, value, this.indices);
         }
         return of(null);
       })).subscribe(val => {

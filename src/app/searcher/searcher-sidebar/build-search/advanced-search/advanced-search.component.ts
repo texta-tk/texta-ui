@@ -53,6 +53,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
   @Input() highlightTextaFacts: boolean;
   currentProject: Project;
   projectFields: ProjectIndex[] = [];
+  selectedIndices: string[];
   fieldsUnique: Field[] = [];
   public fieldsFiltered: BehaviorSubject<Field[]> = new BehaviorSubject<Field[]>([]);
   projectFacts: ProjectFact[] = [];
@@ -91,6 +92,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroy$)).subscribe(projectFields => {
       if (projectFields) {
         this.projectFields = ProjectIndex.sortTextaFactsAsFirstItem(projectFields);
+        this.selectedIndices = this.projectFields.map(x => x.index);
         const distinct = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(x => x.fields).flat(), (x => x.path));
         // seperate fact adding (fact_values and fact_names)
         for (const x of distinct) {

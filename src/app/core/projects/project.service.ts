@@ -73,11 +73,12 @@ export class ProjectService {
       catchError(this.logService.handleError<number>('getIndicesDocCounts')));
   }
 
-  projectFactValueAutoComplete(id: number, factName: string, limitN: number, startsWith: string): Observable<string[] | HttpErrorResponse> {
+  projectFactValueAutoComplete(id: number, factName: string, limitN: number, startsWith: string, indices?: string[]): Observable<string[] | HttpErrorResponse> {
     const body = {
       limit: limitN,
       startswith: startsWith,
-      fact_name: factName
+      fact_name: factName,
+      indices: indices || []
     };
     return this.http.post<string[]>(
       `${this.apiUrl}/projects/${id}/autocomplete_fact_values/`, body

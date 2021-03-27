@@ -56,10 +56,10 @@ export class TaggerService {
       catchError(this.logService.handleError<unknown>('retrainTagger')));
   }
 
-  getStopWords(projectId: number, taggerId: number): Observable<{ 'stop_words': string } | HttpErrorResponse> {
-    return this.http.get<{ 'stop_words': string }>(`${this.apiUrl}/projects/${projectId}/taggers/${taggerId}/stop_words/`).pipe(
+  getStopWords(projectId: number, taggerId: number): Observable<{ 'stop_words': string[] } | HttpErrorResponse> {
+    return this.http.get<{ 'stop_words': string[] }>(`${this.apiUrl}/projects/${projectId}/taggers/${taggerId}/stop_words/`).pipe(
       tap(e => this.logService.logStatus(e, 'getStopWords')),
-      catchError(this.logService.handleError<{ 'stop_words': string }>('getStopWords')));
+      catchError(this.logService.handleError<{ 'stop_words': string[] }>('getStopWords')));
   }
 
   listFeatures(projectId: number, taggerId: number): Observable<ListFeaturesResponse | HttpErrorResponse> {
