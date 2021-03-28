@@ -47,9 +47,9 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
   taggerOptions: TaggerOptions = TaggerOptions.createEmpty();
   embeddings: Embedding[];
   projectFields: ProjectIndex[];
+  fieldsUnique: Field[] = [];
   currentProject: Project;
   destroyed$ = new Subject<boolean>();
-  fieldsUnique: Field[] = [];
   projectIndices: ProjectIndex[] = [];
   projectFacts: ProjectFact[];
 
@@ -137,7 +137,9 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
 
   // tslint:disable-next-line:no-any
   onSubmit(formData: any): void {
-    const body = {
+    console.log(formData);
+    console.log(this.taggerForm.get('fieldsFormControl'));
+/*    const body = {
       description: formData.descriptionFormControl,
       indices: formData.indicesFormControl.map((x: ProjectIndex) => [{name: x.index}]).flat(),
       fields: formData.fieldsFormControl,
@@ -165,7 +167,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp);
       }
-    });
+    });*/
   }
 
   setDefaultFormValues(options: TaggerOptions): void {
