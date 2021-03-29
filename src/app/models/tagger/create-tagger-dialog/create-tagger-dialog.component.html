@@ -21,6 +21,14 @@
         Need at least 1 index
       </mat-error>
     </mat-form-field>
+    <mat-form-field data-cy="appTaggerCreateDialogFields" >
+      <mat-label>Select Field</mat-label>
+      <app-project-field-select formControlName="fieldsFormControl" [required]="true" [projectFields]="projectFields" ></app-project-field-select>
+      <mat-error *ngIf="taggerForm.get('fieldsFormControl')?.hasError('required')">
+        Field is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
     <mat-form-field>
       <mat-label>Fact name</mat-label>
       <mat-select [disableOptionCentering]="true" formControlName="factNameFormControl"
@@ -31,14 +39,6 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field data-cy="appTaggerCreateDialogFields">
-      <mat-label>Select Field</mat-label>
-      <app-project-field-select formControlName="fieldsFormControl" [required]="true" [projectFields]="projectFields" ></app-project-field-select>
-      <mat-error *ngIf="taggerForm.get('fieldsFormControl')?.hasError('required')">
-        Field is <strong>required</strong>
-      </mat-error>
-    </mat-form-field>
-
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"
                                    data-cy="appTaggerCreateDialogQuery"></app-saved-search-autocomplete>
     <mat-form-field>
@@ -121,7 +121,7 @@
       <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
     </div>
     <div class="flex-item-right">
-      <button [disabled]="!taggerForm.valid" form="taggerForm" data-cy="appTaggerCreateDialogSubmit" mat-button type="submit">Create
+      <button [disabled]="taggerForm.valid" form="taggerForm" data-cy="appTaggerCreateDialogSubmit" mat-button type="submit">Create
       </button>
     </div>
   </div>

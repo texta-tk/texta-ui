@@ -2,25 +2,26 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
-  HostBinding, Inject,
+  HostBinding,
+  Inject,
   Input,
   OnDestroy,
-  OnInit, Optional, Self,
+  OnInit,
+  Optional,
+  Self,
   ViewChild
 } from '@angular/core';
 import {MAT_FORM_FIELD, MatFormField, MatFormFieldControl} from '@angular/material/form-field';
-import {AbstractControl, ControlValueAccessor, FormBuilder, FormControl, NgControl} from '@angular/forms';
+import {ControlValueAccessor, FormBuilder, FormControl, NgControl} from '@angular/forms';
 import {Field, Project, ProjectIndex} from '../../types/Project';
 import {Lexicon} from '../../types/Lexicon';
-import {BehaviorSubject, of, Subject} from 'rxjs';
+import {Subject} from 'rxjs';
 import {MatMenuTrigger} from '@angular/material/menu';
 import {LogService} from '../../../core/util/log.service';
-import {LexiconService} from '../../../core/lexicon/lexicon.service';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {FocusMonitor} from '@angular/cdk/a11y';
 import {coerceBooleanProperty} from '@angular/cdk/coercion';
-import {debounceTime, switchMap, takeUntil} from 'rxjs/operators';
-import {HttpErrorResponse} from '@angular/common/http';
+import {takeUntil} from 'rxjs/operators';
 import {UtilityFunctions} from '../../UtilityFunctions';
 import {MatSelect} from '@angular/material/select';
 
@@ -28,12 +29,11 @@ import {MatSelect} from '@angular/material/select';
   selector: 'app-project-field-select',
   templateUrl: './project-field-select.component.html',
   styleUrls: ['./project-field-select.component.scss'],
-  providers: [{provide: MatFormFieldControl, useExisting: ProjectFieldSelectComponent}],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  providers: [{provide: MatFormFieldControl, useExisting: ProjectFieldSelectComponent}]
 })
 export class ProjectFieldSelectComponent implements OnInit, OnDestroy, ControlValueAccessor, MatFormFieldControl<string[]> {
   static nextId = 0;
-  fieldFormControl: FormControl = new FormControl([]);
+  fieldFormControl: FormControl;
   currentProject: Project;
   lexicons: Lexicon[] = [];
   destroyed$: Subject<boolean> = new Subject();
@@ -47,6 +47,7 @@ export class ProjectFieldSelectComponent implements OnInit, OnDestroy, ControlVa
   @Input('aria-describedby') userAriaDescribedBy: string;
   fieldsUnique: Field[] = [];
   @ViewChild('select') selectCtrl: MatSelect;
+  fieldIndexMap: Map<string, string[]> = new Map<string, string[]>();
 
   constructor(private logService: LogService,
               private projectStore: ProjectStore,
@@ -55,34 +56,44 @@ export class ProjectFieldSelectComponent implements OnInit, OnDestroy, ControlVa
               @Optional() @Inject(MAT_FORM_FIELD) public _formField: MatFormField,
               @Self() public ngControl: NgControl) {
     fm.monitor(elRef, true).subscribe(origin => {
-        this.focused = !!origin;
+      if (!this.disabled) {
+        if (!this.selectCtrl?.panelOpen) {
+          this.focused = !!origin;
+          this.stateChanges.next();
+        }
+      }
     });
     if (this.ngControl != null) {
+      this.fieldFormControl = new FormControl([], this.ngControl.validator);
       this.ngControl.valueAccessor = this;
     }
 
   }
 
-  // tslint:disable-next-line:typedef
-  get errorState() {
-    return this.ngControl.errors !== null && this.fieldFormControl.touched;
+  get errorState(): boolean {
+    return this.ngControl.errors !== null && !!this.ngControl.touched;
   }
 
   private _projectFields: ProjectIndex[];
 
   @Input() set projectFields(value: ProjectIndex[]) {
-    if (value) {
+    if (value && value.length > 0) {
+      this.value = [];
       this._projectFields = ProjectIndex.sortTextaFactsAsFirstItem(value);
       this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this._projectFields.map(x => x.fields).flat(), (x => x.path));
+      this.fieldIndexMap = this.mapFieldToIndex(value);
+      this.disabled = false;
+    } else {
+      this.value = [];
+      this._projectFields = [];
+      this.fieldsUnique = [];
+      this.disabled = true;
     }
   }
 
   @Input()
   get value(): string[] | null {
-    if (this.fieldFormControl.valid) {
-      return this.fieldFormControl.value;
-    }
-    return null;
+    return this.fieldFormControl.value;
   }
 
   set value(stopWords: string[] | null) {
@@ -99,7 +110,7 @@ export class ProjectFieldSelectComponent implements OnInit, OnDestroy, ControlVa
     if (!this.selectCtrl) {
       return false;
     }
-    return this.selectCtrl?.panelOpen || !this.empty || (this.selectCtrl?.focused && !!this._placeholder);
+    return this.selectCtrl?.panelOpen || !this.empty || (this.focused && !!this._placeholder);
   }
 
   private _required = false;
@@ -141,6 +152,10 @@ export class ProjectFieldSelectComponent implements OnInit, OnDestroy, ControlVa
     this.stateChanges.next();
   }
 
+  setDisabledState(isDisabled: boolean): void {
+    this.disabled = isDisabled;
+  }
+
   // tslint:disable-next-line:no-any
   onChange = (_: any) => {
   }
@@ -161,7 +176,6 @@ export class ProjectFieldSelectComponent implements OnInit, OnDestroy, ControlVa
     this.fieldFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(x => {
       this.onChange(this.value);
     });
-
   }
 
 
@@ -189,10 +203,34 @@ export class ProjectFieldSelectComponent implements OnInit, OnDestroy, ControlVa
 
   selectBlur(event: boolean): void {
     if (!event) {
-      console.log('hmm');
-      this.fieldFormControl.markAsTouched();
+      this.focused = false;
       this.onTouched();
       this.stateChanges.next();
     }
+  }
+
+  // for keyboard interaction leaves focus
+  onSelectFocusLeave($event: unknown): void {
+    if (!this.selectCtrl.panelOpen) {
+      this.onTouched();
+      this.stateChanges.next();
+    }
+  }
+
+  private mapFieldToIndex(projIndx: ProjectIndex[]): Map<string, string[]> {
+    const outMap = new Map<string, string[]>();
+    for (const indx of projIndx) {
+      for (const fields of indx.fields) {
+        if (outMap.has(fields.path)) {
+          const prevIndices = outMap.get(fields.path);
+          if (prevIndices) {
+            outMap.set(fields.path, [...prevIndices, indx.index]);
+          }
+        } else {
+          outMap.set(fields.path, [indx.index])
+        }
+      }
+    }
+    return outMap;
   }
 }

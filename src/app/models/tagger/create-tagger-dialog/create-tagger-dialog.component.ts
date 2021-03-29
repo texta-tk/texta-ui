@@ -66,7 +66,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
       if (currentProjIndices) {
         const indicesForm = this.taggerForm.get('indicesFormControl');
         indicesForm?.setValue(currentProjIndices);
-        this.getFieldsForIndices(currentProjIndices);
+        this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
       }
     });
 
@@ -113,17 +113,12 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
     }
   }
 
-  getFieldsForIndices(indices: ProjectIndex[]): void {
-    this.projectFields = ProjectIndex.cleanProjectIndicesFields(indices, ['text'], []);
-    this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
-  }
 
   public indicesOpenedChange(opened: boolean): void {
     const indicesForm = this.taggerForm.get('indicesFormControl');
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
-    if (!opened && (indicesForm?.value && indicesForm.value.length > 0)) {
-      this.getFieldsForIndices(indicesForm?.value);
-      this.getFactsForIndices(indicesForm?.value);
+    if (!opened && indicesForm?.value) {
+      this.projectFields = ProjectIndex.cleanProjectIndicesFields(indicesForm.value, ['text'], []);
     }
   }
 
@@ -137,9 +132,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
 
   // tslint:disable-next-line:no-any
   onSubmit(formData: any): void {
-    console.log(formData);
-    console.log(this.taggerForm.get('fieldsFormControl'));
-/*    const body = {
+    const body = {
       description: formData.descriptionFormControl,
       indices: formData.indicesFormControl.map((x: ProjectIndex) => [{name: x.index}]).flat(),
       fields: formData.fieldsFormControl,
@@ -167,7 +160,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp);
       }
-    });*/
+    });
   }
 
   setDefaultFormValues(options: TaggerOptions): void {
