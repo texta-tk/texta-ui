@@ -110,6 +110,8 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
           this.logService.snackBarError(resp);
         }
       });
+    } else {
+      this.projectFacts = [];
     }
   }
 
@@ -117,8 +119,9 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
   public indicesOpenedChange(opened: boolean): void {
     const indicesForm = this.taggerForm.get('indicesFormControl');
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
-    if (!opened && indicesForm?.value) {
+    if (!opened && indicesForm?.value && !UtilityFunctions.arrayValuesEqual(indicesForm?.value, this.projectFields, (x => x.index))) {
       this.projectFields = ProjectIndex.cleanProjectIndicesFields(indicesForm.value, ['text'], []);
+      this.getFactsForIndices(indicesForm?.value);
     }
   }
 

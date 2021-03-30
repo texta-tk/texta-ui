@@ -14,12 +14,17 @@ export class UtilityFunctions {
   static propertiesToArray<T, K extends keyof T>(o: T, propertyNames: K[]): T[K][] {
     return propertyNames.map(n => o[n]);
   }
+
   /*
   * check if each array element exists in both arrays for each element
   * */
-  static arrayValuesEqual(arr1: string[], arr2: string[]): boolean {
+  static arrayValuesEqual<T>(arr1: T[], arr2: T[], accessor?: (x: T) => unknown): boolean {
     if (arr1.length === arr2.length) {
-      return arr1.every(x => arr2.includes(x));
+      if (accessor) {
+        return arr1.every(x => arr2.find(y => accessor(y) === accessor(x)));
+      } else {
+        return arr1.every(x => arr2.includes(x));
+      }
     } else {
       return false;
     }
