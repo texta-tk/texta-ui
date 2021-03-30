@@ -81,7 +81,7 @@ export class ProjectFieldSelectComponent implements OnInit, OnDestroy, ControlVa
       this.value = [];
       this._projectFields = ProjectIndex.sortTextaFactsAsFirstItem(value);
       this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this._projectFields.map(x => x.fields).flat(), (x => x.path));
-      this.fieldIndexMap = this.mapFieldToIndex(value);
+      this.fieldIndexMap = ProjectIndex.getFieldToIndexMap(value);
       this.disabled = false;
     } else {
       this.value = [];
@@ -215,22 +215,5 @@ export class ProjectFieldSelectComponent implements OnInit, OnDestroy, ControlVa
       this.onTouched();
       this.stateChanges.next();
     }
-  }
-
-  private mapFieldToIndex(projIndx: ProjectIndex[]): Map<string, string[]> {
-    const outMap = new Map<string, string[]>();
-    for (const indx of projIndx) {
-      for (const fields of indx.fields) {
-        if (outMap.has(fields.path)) {
-          const prevIndices = outMap.get(fields.path);
-          if (prevIndices) {
-            outMap.set(fields.path, [...prevIndices, indx.index]);
-          }
-        } else {
-          outMap.set(fields.path, [indx.index])
-        }
-      }
-    }
-    return outMap;
   }
 }

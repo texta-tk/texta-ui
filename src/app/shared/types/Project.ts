@@ -91,6 +91,23 @@ export class ProjectIndex {
     }
     return filteredField;
   }
+
+  static getFieldToIndexMap(projIndx: ProjectIndex[]): Map<string, string[]> {
+    const outMap = new Map<string, string[]>();
+    for (const indx of projIndx) {
+      for (const fields of indx.fields) {
+        if (outMap.has(fields.path)) {
+          const prevIndices = outMap.get(fields.path);
+          if (prevIndices) {
+            outMap.set(fields.path, [...prevIndices, indx.index]);
+          }
+        } else {
+          outMap.set(fields.path, [indx.index]);
+        }
+      }
+    }
+    return outMap;
+  }
 }
 
 

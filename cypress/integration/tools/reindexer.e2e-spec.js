@@ -34,15 +34,6 @@ describe('reindexer should work', function () {
       cy.matFormFieldShouldHaveError(name, 'required');
       cy.wrap(name).type('new_index');
     }));
-    cy.get('[data-cy=appReindexerCreateDialogIndices]').click().then((indices => {
-      cy.wrap(indices).should('have.class', 'mat-focused');
-      cy.closeCurrentCdkOverlay();
-      cy.matFormFieldShouldHaveError(indices, 'required');
-      cy.wrap(indices).click();
-      cy.get('.mat-option > .mat-pseudo-checkbox:first()').should('be.visible').click();
-      cy.closeCurrentCdkOverlay();
-      cy.wrap(indices).find('mat-error').should('have.length', 0);
-    }));
     cy.intercept('POST', '**/reindexer/**').as('postIndices');
     cy.get('[data-cy=appReindexerCreateDialogSubmit]').should('be.visible').click();
     cy.wait('@postIndices').then(created => {

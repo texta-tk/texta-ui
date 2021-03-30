@@ -125,7 +125,7 @@ describe('taggers should work', function () {
     });
 
     cy.get('.mat-header-row > .cdk-column-author__username').should('be.visible').then(bb => {
-      cy.wrap([0, 0, 0, 0, 0]).each(y => { // hack to wait for task to complete
+      cy.wrap([0, 0, 0, 0, 0, 0, 0, 0]).each(y => { // hack to wait for task to complete
         cy.wrap(bb).click();
         return cy.wait('@getTaggers').then((x) => {
           if (x?.response?.body?.results[0]?.task?.status === 'completed') {
