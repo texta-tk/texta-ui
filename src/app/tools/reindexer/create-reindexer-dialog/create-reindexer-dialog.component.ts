@@ -90,7 +90,7 @@ export class CreateReindexerDialogComponent implements OnInit {
 
   onSubmit(formData: {
     fieldsFormControl: string[]; descriptionFormControl: string;
-    newNameFormControl: string; fieldTypesFormControl: string; indicesFormControl: string[]; randomSizeFormControl: number;
+    newNameFormControl: string; fieldTypesFormControl: string; indicesFormControl: { index: string }[]; randomSizeFormControl: number;
     addFactsMappingFormControl: boolean;
   }): void {
     // temp
@@ -100,7 +100,7 @@ export class CreateReindexerDialogComponent implements OnInit {
       new_index: formData.newNameFormControl,
       fields: fieldsToSend,
       field_type: formData.fieldTypesFormControl ? JSON.parse(formData.fieldTypesFormControl) : [],
-      indices: formData.indicesFormControl,
+      indices: formData.indicesFormControl.map(x=>x.index),
       ...this.query ? {query: this.query} : {},
       ...formData.randomSizeFormControl ? {random_size: formData.randomSizeFormControl} : {},
       add_facts_mapping: formData.addFactsMappingFormControl
