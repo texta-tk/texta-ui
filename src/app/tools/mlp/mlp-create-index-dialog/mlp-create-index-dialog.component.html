@@ -24,23 +24,19 @@
       </mat-error>
     </mat-form-field>
 
+    <mat-form-field>
+      <mat-label>Select Fields</mat-label>
+      <app-project-field-select [projectFields]="projectFields"
+                                formControlName="fieldsFormControl"></app-project-field-select>
+    </mat-form-field>
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"
                                    data-cy="appMLPCreateDialogQuery">
     </app-saved-search-autocomplete>
 
-    <mat-form-field>
-      <mat-label>Select Fields</mat-label>
-      <mat-select [disableOptionCentering]="true" formControlName="fieldsFormControl"
-                  multiple panelClass="select-panel-reveal-input">
-        <mat-option *ngFor="let fields of fieldsUnique" [value]="fields.path">
-          {{fields.path}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
     <mat-form-field data-cy="appMLPCreateDialogAnalyzers">
       <mat-label>Analyzers</mat-label>
       <mat-select [disableOptionCentering]="true" formControlName="analyzersFormControl"
-                  panelClass="select-panel-reveal-input" multiple required>
+                  multiple panelClass="select-panel-reveal-input" required>
         <ng-container *ngIf="analyzers">
           <mat-option *ngFor="let item of analyzers" [value]="item.value">
             {{item.display_name}}

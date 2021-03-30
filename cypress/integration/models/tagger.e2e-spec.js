@@ -109,7 +109,7 @@ describe('taggers should work', function () {
       cy.closeCurrentCdkOverlay();
       cy.matFormFieldShouldHaveError(fields, 'required');
       cy.wrap(fields).click();
-      cy.get('.mat-option-text:nth(1)').should('be.visible').click();
+      cy.get('.mat-option-text').contains('comment_content').click();
       cy.closeCurrentCdkOverlay();
       cy.wrap(fields).find('mat-error').should('have.length', 0)
     }));
@@ -125,7 +125,7 @@ describe('taggers should work', function () {
     });
 
     cy.get('.mat-header-row > .cdk-column-author__username').should('be.visible').then(bb => {
-      cy.wrap([0, 0, 0, 0, 0]).each(y => { // hack to wait for task to complete
+      cy.wrap([0, 0, 0, 0, 0, 0, 0, 0]).each(y => { // hack to wait for task to complete
         cy.wrap(bb).click();
         return cy.wait('@getTaggers').then((x) => {
           if (x?.response?.body?.results[0]?.task?.status === 'completed') {

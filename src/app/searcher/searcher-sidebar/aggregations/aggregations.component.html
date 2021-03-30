@@ -11,7 +11,7 @@
       <mat-label>Select Fields</mat-label>
       <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" data-cy="appSearcherSidebarAggregationsSelectField"
                   [formControl]="aggregation.formControl">
-        <mat-option *ngFor="let fields of (fieldsFiltered | async)" [value]="fields"
+        <mat-option *ngFor="let fields of (fieldsFiltered | async)" [value]="fields" title="{{fieldIndexMap.get(fields.path)?.join('\n')}}"
                     [disabled]="fields.type === 'date' && aggregation.formControl.value.type !== 'date' && dateAlreadySelected">
           {{fields.path}}
         </mat-option>

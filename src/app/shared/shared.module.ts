@@ -62,6 +62,7 @@ import {A11yModule} from '@angular/cdk/a11y';
 import { ProjectGuardDialogComponent } from './components/dialogs/project-guard-dialog/project-guard-dialog.component';
 import { TextareaLexiconComponent } from './components/textarea-lexicon/textarea-lexicon.component';
 import { CombineArrayPipe } from './pipes/combine-array.pipe';
+import { ProjectFieldSelectComponent } from './components/project-field-select/project-field-select.component';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
@@ -86,6 +87,7 @@ import { CombineArrayPipe } from './pipes/combine-array.pipe';
     ProjectGuardDialogComponent,
     TextareaLexiconComponent,
     CombineArrayPipe,
+    ProjectFieldSelectComponent,
   ],
   imports: [
     RouterModule,
@@ -184,7 +186,8 @@ import { CombineArrayPipe } from './pipes/combine-array.pipe';
         A11yModule,
         GenericHighlighterComponent,
         TaggerFineTuneSliderComponent,
-        TextareaLexiconComponent
+        TextareaLexiconComponent,
+        ProjectFieldSelectComponent
     ]
 })
 export class SharedModule {

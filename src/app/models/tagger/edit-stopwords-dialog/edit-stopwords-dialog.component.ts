@@ -3,7 +3,7 @@ import {LogService} from '../../../core/util/log.service';
 import {TaggerService} from '../../../core/models/taggers/tagger.service';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {HttpErrorResponse} from '@angular/common/http';
-import {FormControl} from "@angular/forms";
+import {FormControl} from '@angular/forms';
 
 @Component({
   selector: 'app-edit-stopwords-dialog',

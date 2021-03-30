@@ -28,13 +28,10 @@
       </mat-error>
     </mat-form-field>
     <mat-form-field data-cy="appBertTaggerApplyDialogFields">
-      <mat-label>Select Fields</mat-label>
-      <mat-select [disableOptionCentering]="true" formControlName="fieldsFormControl"
-                  multiple panelClass="select-panel-reveal-input" required>
-        <mat-option *ngFor="let fields of fieldsUnique" [value]="fields.path">
-          {{fields.path}}
-        </mat-option>
-      </mat-select>
+
+      <mat-label>Select Field</mat-label>
+      <app-project-field-select formControlName="fieldsFormControl" [required]="true" [projectFields]="projectFields" ></app-project-field-select>
+
       <mat-error *ngIf="applyForm.get('fieldsFormControl')?.hasError('required')">
         Field is <strong>required</strong>
       </mat-error>
