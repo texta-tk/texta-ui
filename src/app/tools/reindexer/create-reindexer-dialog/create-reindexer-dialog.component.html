@@ -22,12 +22,12 @@
     </mat-form-field>
 
 
-    <mat-form-field data-cy="appReindexerCreateDialogIndices">
+    <mat-form-field>
       <mat-label>Indices</mat-label>
-      <mat-select (selectionChange)="onIndexSelected($event)" panelClass="select-panel-reveal-input"
-                  [disableOptionCentering]="true" formControlName="indicesFormControl" multiple required>
-        <mat-option *ngFor="let index of indices" [value]="index">
-          {{index}}
+      <mat-select (openedChange)="indicesOpenedChange($event)" [disableOptionCentering]="true"
+                  formControlName="indicesFormControl" multiple panelClass="select-panel-reveal-input" required>
+        <mat-option *ngFor="let projectIndex of projectIndices" [value]="projectIndex">
+          {{projectIndex.index}}
         </mat-option>
       </mat-select>
       <mat-error *ngIf="reindexerForm?.get('indicesFormControl')?.hasError('required')">
@@ -36,17 +36,10 @@
     </mat-form-field>
 
 
-    <mat-form-field>
+    <mat-form-field  data-cy="appReindexerCreateDialogFields">
       <mat-label>Select Fields</mat-label>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
-                  formControlName="fieldsFormControl" multiple>
-        <app-mat-option-select-all></app-mat-option-select-all>
-        <mat-optgroup *ngFor="let group of filteredProjectFields" [label]="group.index">
-          <mat-option *ngFor="let fields of group.fields" [value]="fields">
-            {{fields.path}}
-          </mat-option>
-        </mat-optgroup>
-      </mat-select>
+      <app-project-field-select [projectFields]="projectFields" [required]="true"
+                                formControlName="fieldsFormControl"></app-project-field-select>
       <mat-error *ngIf="reindexerForm?.get('fieldsFormControl')?.hasError('required')">
         Field is <strong>required</strong>
       </mat-error>

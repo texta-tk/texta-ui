@@ -52,7 +52,7 @@ export class ApplyToIndexDialogComponent implements OnInit, OnDestroy {
   currentProject: Project;
   destroyed$: Subject<boolean> = new Subject<boolean>();
   indices: ProjectIndex[];
-  fieldsUnique: Field[] = [];
+  projectFields: ProjectIndex[] = [];
 
   constructor(private dialogRef: MatDialogRef<ApplyToIndexDialogComponent>,
               private projectService: ProjectService,
@@ -82,18 +82,21 @@ export class ApplyToIndexDialogComponent implements OnInit, OnDestroy {
         this.indices = indices;
       }
     });
+    this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(currentProjIndices => {
+      if (currentProjIndices) {
+        const indicesForm = this.applyForm.get('indicesFormControl');
+        indicesForm?.setValue(currentProjIndices);
+        this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, [], ['fact'], true);
+      }
+    });
   }
 
-  getFieldsForIndices(indices: ProjectIndex[]): void {
-    indices = ProjectIndex.cleanProjectIndicesFields(indices, [], ['fact'], true);
-    this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(indices.map(y => y.fields).flat(), (y => y.path));
-  }
 
   public indicesOpenedChange(opened: boolean): void {
     const indicesForm = this.applyForm.get('indicesFormControl');
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
-    if (!opened && (indicesForm?.value && indicesForm.value.length > 0)) {
-      this.getFieldsForIndices(indicesForm?.value);
+    if (!opened && indicesForm?.value && !UtilityFunctions.arrayValuesEqual(indicesForm?.value, this.projectFields, (x => x.index))) {
+      this.projectFields = ProjectIndex.cleanProjectIndicesFields(indicesForm?.value, [], ['fact'], true);
     }
   }
 

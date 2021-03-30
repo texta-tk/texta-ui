@@ -38,7 +38,6 @@ export class CreateEmbeddingDialogComponent implements OnInit {
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   projectFields: ProjectIndex[];
   destroyed$ = new Subject<boolean>();
-  fieldsUnique: Field[] = [];
   projectIndices: ProjectIndex[] = [];
   embeddingOptions: EmbeddingOptions;
 
@@ -54,7 +53,7 @@ export class CreateEmbeddingDialogComponent implements OnInit {
       if (currentProjIndices) {
         const indicesForm = this.embeddingForm.get('indicesFormControl');
         indicesForm?.setValue(currentProjIndices);
-        this.getFieldsForIndices(currentProjIndices);
+        this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
       }
     });
 
@@ -82,16 +81,11 @@ export class CreateEmbeddingDialogComponent implements OnInit {
     });
   }
 
-  getFieldsForIndices(indices: ProjectIndex[]): void {
-    this.projectFields = ProjectIndex.cleanProjectIndicesFields(indices, ['text'], []);
-    this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
-  }
-
   public indicesOpenedChange(opened: boolean): void {
     const indicesForm = this.embeddingForm.get('indicesFormControl');
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
-    if (!opened && (indicesForm?.value && indicesForm.value.length > 0)) {
-      this.getFieldsForIndices(indicesForm?.value);
+    if (!opened && indicesForm?.value && !UtilityFunctions.arrayValuesEqual(indicesForm?.value, this.projectFields, (x => x.index))) {
+      this.projectFields = ProjectIndex.cleanProjectIndicesFields(indicesForm.value, ['text'], []);
     }
   }
 
@@ -100,14 +94,12 @@ export class CreateEmbeddingDialogComponent implements OnInit {
   }
 
   onSubmit(formData: {
-    fieldsFormControl: Field[]; descriptionFormControl: string;
+    fieldsFormControl: string[]; descriptionFormControl: string;
     indicesFormControl: ProjectIndex[]; dimensionsFormControl: number; frequencyFormControl: number; usePhraserFormControl: boolean; embeddingTypeFormControl: { value: string, display_name: string }
   }): void {
-    // temp
-    const fieldsToSend = this.generateFieldsFormat(formData.fieldsFormControl);
     const body = {
       description: formData.descriptionFormControl,
-      fields: fieldsToSend,
+      fields: formData.fieldsFormControl,
       indices: formData.indicesFormControl.map(x => [{name: x.index}]).flat(),
       num_dimensions: formData.dimensionsFormControl,
       embedding_type: formData.embeddingTypeFormControl.value,
@@ -125,19 +117,10 @@ export class CreateEmbeddingDialogComponent implements OnInit {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.dialogRef.close(resp);
       } else if (resp instanceof HttpErrorResponse) {
-        this.dialogRef.close(resp);
+        this.logService.snackBarError(resp);
       }
     });
   }
-
-  generateFieldsFormat(fields: Field[]): string[] {
-    const output: string[] = [];
-    for (const field of fields) {
-      output.push(field.path);
-    }
-    return output;
-  }
-
 
   closeDialog(): void {
     this.dialogRef.close();

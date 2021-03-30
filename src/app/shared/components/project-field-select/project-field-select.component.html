@@ -1,0 +1,7 @@
+<mat-select #select [disableOptionCentering]="true" (focusout)="onSelectFocusLeave($event)" (openedChange)="selectBlur($event)"
+            [formControl]="fieldFormControl" multiple [required]="required" panelClass="select-panel-reveal-input">
+  <app-mat-option-select-all></app-mat-option-select-all>
+  <mat-option *ngFor="let fields of fieldsUnique" title="{{fieldIndexMap.get(fields.path)?.join('\n')}}" [value]="fields.path">
+    {{fields.path}}
+  </mat-option>
+</mat-select>

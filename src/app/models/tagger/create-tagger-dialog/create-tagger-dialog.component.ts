@@ -47,9 +47,9 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
   taggerOptions: TaggerOptions = TaggerOptions.createEmpty();
   embeddings: Embedding[];
   projectFields: ProjectIndex[];
+  fieldsUnique: Field[] = [];
   currentProject: Project;
   destroyed$ = new Subject<boolean>();
-  fieldsUnique: Field[] = [];
   projectIndices: ProjectIndex[] = [];
   projectFacts: ProjectFact[];
 
@@ -66,7 +66,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
       if (currentProjIndices) {
         const indicesForm = this.taggerForm.get('indicesFormControl');
         indicesForm?.setValue(currentProjIndices);
-        this.getFieldsForIndices(currentProjIndices);
+        this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
       }
     });
 
@@ -110,19 +110,17 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
           this.logService.snackBarError(resp);
         }
       });
+    } else {
+      this.projectFacts = [];
     }
   }
 
-  getFieldsForIndices(indices: ProjectIndex[]): void {
-    this.projectFields = ProjectIndex.cleanProjectIndicesFields(indices, ['text'], []);
-    this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
-  }
 
   public indicesOpenedChange(opened: boolean): void {
     const indicesForm = this.taggerForm.get('indicesFormControl');
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
-    if (!opened && (indicesForm?.value && indicesForm.value.length > 0)) {
-      this.getFieldsForIndices(indicesForm?.value);
+    if (!opened && indicesForm?.value && !UtilityFunctions.arrayValuesEqual(indicesForm?.value, this.projectFields, (x => x.index))) {
+      this.projectFields = ProjectIndex.cleanProjectIndicesFields(indicesForm.value, ['text'], []);
       this.getFactsForIndices(indicesForm?.value);
     }
   }

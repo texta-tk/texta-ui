@@ -60,6 +60,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject();
   lexicons: Lexicon[] = [];
   searchQueue$: Subject<void> = new Subject<void>();
+  fieldIndexMap: Map<string, string[]> = new Map<string, string[]>();
 
   constructor(private projectService: ProjectService,
               private projectStore: ProjectStore,
@@ -92,6 +93,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroy$)).subscribe(projectFields => {
       if (projectFields) {
         this.projectFields = ProjectIndex.sortTextaFactsAsFirstItem(projectFields);
+        this.fieldIndexMap = ProjectIndex.getFieldToIndexMap(projectFields);
         this.selectedIndices = this.projectFields.map(x => x.index);
         const distinct = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(x => x.fields).flat(), (x => x.path));
         // seperate fact adding (fact_values and fact_names)
