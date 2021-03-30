@@ -22,7 +22,7 @@
     </mat-form-field>
 
 
-    <mat-form-field data-cy="appReindexerCreateDialogIndices">
+    <mat-form-field>
       <mat-label>Indices</mat-label>
       <mat-select (openedChange)="indicesOpenedChange($event)" [disableOptionCentering]="true"
                   formControlName="indicesFormControl" multiple panelClass="select-panel-reveal-input" required>
@@ -36,7 +36,7 @@
     </mat-form-field>
 
 
-    <mat-form-field>
+    <mat-form-field  data-cy="appReindexerCreateDialogFields">
       <mat-label>Select Fields</mat-label>
       <app-project-field-select [projectFields]="projectFields" [required]="true"
                                 formControlName="fieldsFormControl"></app-project-field-select>
