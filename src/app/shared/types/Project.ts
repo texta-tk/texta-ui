@@ -29,6 +29,7 @@ export class ProjectResourceCounts {
   num_dataset_importers = 0;
   num_bert_taggers = 0;
   num_index_splitters = 0;
+  num_evaluators = 0;
 }
 
 export interface ProjectFact {

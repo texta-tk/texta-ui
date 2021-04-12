@@ -16,13 +16,12 @@ export class Create<%= classify(name) %>DialogComponent implements OnInit, OnDes
   <%= camelize(name) %>Form = new FormGroup({
     descriptionFormControl: new FormControl('', [Validators.required]),
     indicesFormControl: new FormControl([], [Validators.required]),
-    fieldsFormControl: new FormControl([]),
+    fieldsFormControl: new FormControl([], [Validators.required]),
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   currentProject: Project;
   destroyed$: Subject<boolean> = new Subject<boolean>();
-  fieldsUnique: Field[] = [];
   projectIndices: ProjectIndex[] = [];
   projectFields: ProjectIndex[];
 
@@ -38,7 +37,7 @@ export class Create<%= classify(name) %>DialogComponent implements OnInit, OnDes
       if (currentProjIndices) {
         const indicesForm = this.<%= camelize(name) %>Form.get('indicesFormControl');
         indicesForm?.setValue(currentProjIndices);
-        this.getFieldsForIndices(currentProjIndices);
+        this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
       }
     });
 
@@ -69,16 +68,11 @@ export class Create<%= classify(name) %>DialogComponent implements OnInit, OnDes
     });
   }
 
-  getFieldsForIndices(indices: ProjectIndex[]): void {
-    this.projectFields = ProjectIndex.cleanProjectIndicesFields(indices, ['text'], []);
-    this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
-  }
-
   public indicesOpenedChange(opened: unknown): void {
     const indicesForm = this.<%= camelize(name) %>Form.get('indicesFormControl');
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
-    if (!opened && (indicesForm?.value && indicesForm.value.length > 0)) {
-      this.getFieldsForIndices(indicesForm?.value);
+    if (!opened && indicesForm?.value && !UtilityFunctions.arrayValuesEqual(indicesForm?.value, this.projectFields, (x => x.index))) {
+      this.projectFields = ProjectIndex.cleanProjectIndicesFields(indicesForm.value, ['text'], []);
     }
   }
 

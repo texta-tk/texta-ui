@@ -1,0 +1,273 @@
+<div class="wrapper max-height" fxLayout="column">
+  <div class="table-paginator-row">
+    <div class="loading-bar">
+      <mat-progress-bar *ngIf="isLoadingResults" mode="indeterminate"></mat-progress-bar>
+    </div>
+    <div class="paginator-row">
+      <button (click)="openCreateDialog()" class="paginator-margin-left"
+              color="primary" data-cy="appEvaluatorCreateBtn" mat-raised-button>
+        CREATE
+      </button>
+      <button (click)="onDeleteAllSelected()" [disabled]="selectedRows.selected.length < 1" class="new-resource-btn"
+              color="warn" data-cy="appEvaluatorDeleteBtn"
+              mat-icon-button matTooltip="Delete selected">
+        <mat-icon>delete</mat-icon>
+      </button>
+      <mat-paginator [length]="resultsLength" [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
+      </mat-paginator>
+    </div>
+  </div>
+
+  <div [appScrollTop]="tableData" class="tasks-table overflow-auto">
+    <table [dataSource]="tableData" mat-table
+           matSort matSortDirection="asc"
+           multiTemplateDataRows>
+      <ng-container matColumnDef="select">
+        <th *matHeaderCellDef mat-header-cell>
+          <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selectedRows.hasValue() && isAllSelected()"
+                        [indeterminate]="selectedRows.hasValue() && !isAllSelected()">
+          </mat-checkbox>
+        </th>
+        <td *matCellDef="let row" mat-cell>
+          <mat-checkbox (change)="$event ? selectedRows.toggle(row) : null" (click)="$event.stopPropagation()"
+                        [checked]="selectedRows.isSelected(row)">
+          </mat-checkbox>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="description">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Description</th>
+        <td *matCellDef="let element" mat-cell> {{element.description}}</td>
+      </ng-container>
+      <ng-container matColumnDef="task__time_started">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Time started</th>
+        <td *matCellDef="let element" mat-cell><span
+          *ngIf="element.task">{{element.task.time_started | date:'y-M-d H:mm:ss'}}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="task__time_completed">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Time completed</th>
+        <td *matCellDef="let element" mat-cell>
+          <span
+            *ngIf="element.task && element.task.time_completed">{{element.task.time_completed | date:'y-M-d H:mm:ss'}}</span>
+          <span *ngIf="element.task && !element.task.time_completed">Null</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="eval_type">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Evaluation type</th>
+        <td *matCellDef="let element" mat-cell> {{element.evaluation_type}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="author__username">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Author</th>
+        <td *matCellDef="let element" mat-cell> {{element.author_username}}</td>
+      </ng-container>
+      <ng-container matColumnDef="f1_score">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> F1 score</th>
+        <td *matCellDef="let element" mat-cell> {{element.f1_score | number:'0.2-2'}}</td>
+      </ng-container>
+      <ng-container matColumnDef="precision">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Precision</th>
+        <td *matCellDef="let element" mat-cell> {{element.precision | number:'0.2-2'}}</td>
+      </ng-container>
+      <ng-container matColumnDef="recall">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Recall</th>
+        <td *matCellDef="let element" mat-cell> {{element.recall | number:'0.2-2' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="task__status">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Task</th>
+        <td *matCellDef="let element" mat-cell>
+          <mat-progress-bar *ngIf="element.task && element.task.step !== 'training'" [value]="element.task.progress"
+                            mode="determinate">
+          </mat-progress-bar>
+          <mat-progress-bar *ngIf="element.task && element.task.step === 'training' && element.task.status !== 'failed'"
+                            [value]="element.task.progress" mode="indeterminate">
+          </mat-progress-bar>
+          <mat-hint *ngIf="element.task">{{element.task.status}} {{element.task.step}}</mat-hint>
+        </td>
+      </ng-container>
+
+
+      <ng-container matColumnDef="expandedDetail">
+        <td *matCellDef="let element" [attr.colspan]="displayedColumns.length" mat-cell>
+          <div *ngIf="element == expandedElement" [@detailExpand] class="element-detail">
+            <div class="flex-row element-detail-plot-fields">
+              <div *ngIf="element.plot"><img [src]="element.plot" alt="evaluator plot" class="element-plot"></div>
+              <div class="flex-col m-l-r-5 m-top-5">
+                <table class="simple-table">
+                  <tr>
+                    <th class="mat-body-strong">Precision</th>
+                    <td>{{element.precision}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Recall</th>
+                    <td>{{element.recall}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">F1 Score</th>
+                    <td>{{element.f1_score}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Accuracy</th>
+                    <td>{{element.accuracy}}</td>
+                  </tr>
+                </table>
+              </div>
+              <div class="flex-col m-l-r-5 m-top-5">
+                <table class="simple-table">
+                  <tr>
+                    <th class="mat-body-strong">True fact</th>
+                    <td>{{element.true_fact}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">True fact value</th>
+                    <td>{{element.true_fact_value}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Predicted fact</th>
+                    <td>{{element.predicted_fact}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Predicted fact value</th>
+                    <td>{{element.predicted_fact_value}}</td>
+                  </tr>
+                </table>
+              </div>
+              <div class="flex-col m-l-r-5 m-top-5">
+                <table class="simple-table">
+                  <tr>
+                    <th class="mat-body-strong">Average function</th>
+                    <td>{{element.average_function}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Query</th>
+                    <td><span (click)="openQueryDialog(element.query)" class="action-text mat-body-strong pointer">Show Query</span>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Indices</th>
+                    <td>{{element.indices | getPropertyList: getIndicesName | join: ', '}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Scroll size</th>
+                    <td>{{element.scroll_size}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Elasticsearch timeout</th>
+                    <td>{{element.es_timeout}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Add individual results</th>
+                    <td>{{element.add_individual_results}}</td>
+                  </tr>
+                </table>
+              </div>
+              <div class="flex-col m-l-r-5 m-top-5">
+                <div *ngIf="element.task" class="flex-col m-l-r-5">
+                  <table class="simple-table">
+                    <tr>
+                      <th class="mat-body-strong">Resource id</th>
+                      <td>{{element.id}}</td>
+                    </tr>
+                    <tr>
+                      <th class="mat-body-strong">Task id</th>
+                      <td>{{element.task.id}}</td>
+                    </tr>
+                    <tr>
+                      <th class="mat-body-strong">Status</th>
+                      <td>{{element.task.status}}</td>
+                    </tr>
+                    <tr>
+                      <th class="mat-body-strong">Progress</th>
+                      <td>{{element.task.progress}}</td>
+                    </tr>
+                    <tr>
+                      <th class="mat-body-strong">Errors</th>
+                      <td>{{element.task.errors}}</td>
+                    </tr>
+                    <tr>
+                      <th class="mat-body-strong">Step</th>
+                      <td>{{element.task.step}}</td>
+                    </tr>
+                    <tr>
+                      <th class="mat-body-strong">Last Update</th>
+                      <td>{{element.task.last_update | date:'y-M-d H:mm:ss'}}</td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+              <div class="flex-col m-l-r-5 m-top-5">
+                <table class="simple-table">
+                  <tr>
+                    <th class="mat-body-strong">Nr. True classes</th>
+                    <td>{{element.n_true_classes}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Nr. Predicted classes</th>
+                    <td>{{element.n_predicted_classes}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Nr. Total classes</th>
+                    <td>{{element.n_total_classes}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Document count</th>
+                    <td>{{element.document_count}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Evaluation type</th>
+                    <td>{{element.evaluation_type}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Score after scroll</th>
+                    <td>{{element.score_after_scroll}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Scores imprecise</th>
+                    <td>{{element.scores_imprecise}}</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="Modify">
+        <th *matHeaderCellDef class="center-header-cell" mat-header-cell>Actions</th>
+        <td (click)="$event.stopPropagation();" *matCellDef="let element; let i = dataIndex" mat-cell>
+
+          <button [matMenuTriggerData]="{element: element, i:i}" [matMenuTriggerFor]="actionsMenu" color="primary"
+                  mat-icon-button>
+            <mat-icon aria-label="Actions">more_vert</mat-icon>
+          </button>
+
+        </td>
+      </ng-container>
+
+      <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
+      <tr (click)="expandedElement = expandedElement === element ? null : element"
+          *matRowDef="let element; columns: displayedColumns;"
+          [class.expanded-row]="expandedElement === element"
+          class="element-row"
+          mat-row></tr>
+      <tr *matRowDef="let row; columns: ['expandedDetail']" class="detail-row" mat-row></tr>
+
+    </table>
+
+  </div>
+
+
+</div>
+
+<mat-menu #actionsMenu="matMenu">
+  <ng-template let-element="element" let-i="i" matMenuContent>
+    <ng-container *ngIf="element.task && element.task.status === 'completed'">
+      <button (click)="openIndividualResults(element)" *ngIf="element.evaluation_type === 'multilabel'" data-cy="appEvaluatorMenuIndividualResults" mat-menu-item>
+        Individual results
+      </button>
+    </ng-container>
+      <mat-divider></mat-divider>
+      <button (click)="onDelete(element, i)" data-cy="appEvaluatorMenuDelete" mat-menu-item>
+        Delete
+      </button>
+  </ng-template>
+</mat-menu>

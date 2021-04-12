@@ -75,6 +75,11 @@ const routes: Routes = [
     loadChildren: () => import('./tools/index-splitter/index-splitter.module').then(m => m.IndexSplitterModule)
   },
   {
+    path: 'evaluator',
+    canActivate: [AuthGuard, ProjectGuard],
+    loadChildren: () => import('./tools/evaluator/evaluator.module').then(m => m.EvaluatorModule)
+  },
+  {
     path: 'searcher',
     canActivate: [AuthGuard, ProjectGuard],
     loadChildren: () => import('./searcher/searcher.module').then(m => m.SearcherModule)

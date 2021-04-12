@@ -33,7 +33,7 @@
             ],
             "styles": [
               "src/custom-theme.scss",
-              "src/styles.scss",
+              "src/styles.scss"
             ],
             "scripts": ["node_modules/plotly.js/dist/plotly-gl2d.min.js"],
             "webWorkerTsConfig": "tsconfig.worker.json"
