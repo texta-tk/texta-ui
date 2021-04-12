@@ -190,7 +190,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   editStopwordsDialog(tagger: Tagger): void {
     const dialogRef = this.dialog.open(EditStopwordsDialogComponent, {
-      data: {taggerId: tagger.id, currentProjectId: this.currentProject.id},
+      data: {taggerId: tagger.id, currentProjectId: this.currentProject.id, ignore_numbers: tagger.ignore_numbers},
       maxHeight: '90vh',
       width: '700px',
     });

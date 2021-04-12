@@ -13,7 +13,7 @@ describe('EditStopwordsDialogComponent', () => {
   const mockDialogRef = {
     close: jasmine.createSpy('close')
   };
-  const data = {currentProjectId: 1, taggerId: 2};
+  const data = {currentProjectId: 1, taggerId: 2, ignore_numbers: false};
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({

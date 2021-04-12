@@ -12,11 +12,13 @@ import {FormControl} from '@angular/forms';
 })
 export class EditStopwordsDialogComponent implements OnInit {
   stopWordsFormControl = new FormControl('');
+  ignoreNumbersFormControl: FormControl;
 
   constructor(private dialogRef: MatDialogRef<EditStopwordsDialogComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, taggerId: number; },
+              @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, taggerId: number; ignore_numbers: boolean | null },
               private taggerService: TaggerService,
               private logService: LogService) {
+    this.ignoreNumbersFormControl = new FormControl(!!data.ignore_numbers);
   }
 
   ngOnInit(): void {
@@ -31,7 +33,11 @@ export class EditStopwordsDialogComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.taggerService.postStopWords(this.data.currentProjectId, this.data.taggerId, {stop_words: this.stopWordsFormControl.value.split('\n').filter((x: string) => !!x)})
+    this.taggerService.postStopWords(this.data.currentProjectId, this.data.taggerId,
+      {
+        stop_words: this.stopWordsFormControl.value.split('\n').filter((x: string) => !!x),
+        ignore_numbers: this.ignoreNumbersFormControl.value
+      })
       .subscribe((resp: { 'stop_words': string } | HttpErrorResponse) => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
           this.logService.snackBarMessage('Successfully saved stop words!', 3000);

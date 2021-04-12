@@ -25,6 +25,7 @@ export class Tagger {
   num_features: number;
   tagger_groups: string[];
   indices: string[];
+  ignore_numbers: boolean;
   plot: unknown;
   task: TaskStatus;
 }

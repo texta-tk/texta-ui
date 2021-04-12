@@ -1,6 +1,10 @@
 <mat-form-field class="max-width">
   <app-textarea-lexicon [formControl]="stopWordsFormControl" placeholder="Stopwords (newline separated)"></app-textarea-lexicon>
 </mat-form-field>
+<mat-checkbox [formControl]="ignoreNumbersFormControl" style="margin-bottom: 10px"
+              matTooltip="If enabled, ignore all numbers as possible features."
+              matTooltipPosition="left">Ignore numbers
+</mat-checkbox>
 <div class="flex-col">
   <div class="flex-row">
     <div class="flex-item-left">
