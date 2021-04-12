@@ -50,7 +50,6 @@ export class CreateClusteringDialogComponent implements OnInit, OnDestroy {
   projectFields: ProjectIndex[];
   currentProject: Project;
   destroyed$ = new Subject<boolean>();
-  fieldsUnique: Field[] = [];
   projectIndices: ProjectIndex[] = [];
   embeddings: Embedding[];
 
@@ -67,7 +66,7 @@ export class CreateClusteringDialogComponent implements OnInit, OnDestroy {
       if (currentProjIndices) {
         const indicesForm = this.clusterForm.get('indicesFormControl');
         indicesForm?.setValue(currentProjIndices);
-        this.getFieldsForIndices(currentProjIndices);
+        this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
       }
     });
 
@@ -99,16 +98,11 @@ export class CreateClusteringDialogComponent implements OnInit, OnDestroy {
     });
   }
 
-  getFieldsForIndices(indices: ProjectIndex[]): void {
-    this.projectFields = ProjectIndex.cleanProjectIndicesFields(indices, ['text'], []);
-    this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
-  }
-
   public indicesOpenedChange(opened: unknown): void {
     const indicesForm = this.clusterForm.get('indicesFormControl');
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
-    if (!opened && (indicesForm?.value && indicesForm.value.length > 0)) {
-      this.getFieldsForIndices(indicesForm?.value);
+    if (!opened && indicesForm?.value && !UtilityFunctions.arrayValuesEqual(indicesForm?.value, this.projectFields, (x => x.index))) {
+      this.projectFields = ProjectIndex.cleanProjectIndicesFields(indicesForm.value, ['text'], []);
     }
   }
 

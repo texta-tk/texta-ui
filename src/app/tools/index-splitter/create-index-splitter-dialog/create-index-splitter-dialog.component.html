@@ -26,12 +26,7 @@
 
     <mat-form-field>
       <mat-label>Select Fields</mat-label>
-      <mat-select [disableOptionCentering]="true" formControlName="fieldsFormControl"
-                  multiple panelClass="select-panel-reveal-input">
-        <mat-option *ngFor="let fields of fieldsUnique" [value]="fields.path">
-          {{fields.path}}
-        </mat-option>
-      </mat-select>
+      <app-project-field-select formControlName="fieldsFormControl"  [projectFields]="projectFields" ></app-project-field-select>
     </mat-form-field>
 
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"

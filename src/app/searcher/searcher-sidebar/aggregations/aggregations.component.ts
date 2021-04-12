@@ -34,6 +34,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
   searchQueryIncluded = true;
   dateAlreadySelected = false;
   dateRelativeFrequency = false;
+  fieldIndexMap: Map<string, string[]> = new Map<string, string[]>();
 
   constructor(private projectStore: ProjectStore,
               private searcherService: SearcherService,
@@ -68,6 +69,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
       if (projectFields) {
         this.projectFields = ProjectIndex.cleanProjectIndicesFields(projectFields, ['fact', 'text', 'date'], []);
         this.projectFields = ProjectIndex.sortTextaFactsAsFirstItem(this.projectFields);
+        this.fieldIndexMap = ProjectIndex.getFieldToIndexMap(projectFields);
         const distinct = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(x => x.fields).flat(), (x => x.path));
         this.fieldsFiltered.next(distinct);
         this.fieldsUnique = distinct;

@@ -4,14 +4,14 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {MatDialogRef} from '@angular/material/dialog';
 import {LiveErrorStateMatcher} from 'src/app/shared/CustomerErrorStateMatchers';
-import {Field, ProjectIndex} from 'src/app/shared/types/Project';
+import {Field, Project, ProjectIndex} from 'src/app/shared/types/Project';
 import {ProjectService} from 'src/app/core/projects/project.service';
 import {ProjectStore} from 'src/app/core/projects/project.store';
-import {mergeMap, take} from 'rxjs/operators';
+import {filter, mergeMap, take, takeUntil} from 'rxjs/operators';
 import {forkJoin, of} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../../../core/util/log.service';
-import {MatSelectChange} from '@angular/material/select';
+import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 
 @Component({
   selector: 'app-create-reindexer-dialog',
@@ -24,7 +24,7 @@ export class CreateReindexerDialogComponent implements OnInit {
     descriptionFormControl: new FormControl('', [Validators.required]),
     newNameFormControl: new FormControl('', [Validators.required]),
     randomSizeFormControl: new FormControl(''),
-    fieldsFormControl: new FormControl({value: [], disabled: true}),
+    fieldsFormControl: new FormControl([], [Validators.required]),
     fieldTypesFormControl: new FormControl(''),
     indicesFormControl: new FormControl([], [Validators.required]),
     addFactsMappingFormControl: new FormControl(false)
@@ -32,10 +32,10 @@ export class CreateReindexerDialogComponent implements OnInit {
   defaultQuery = '{"query": {"match_all": {}}}';
   query = this.defaultQuery;
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
-  projectFields: ProjectIndex[];
-  filteredProjectFields: ProjectIndex[] = [];
-  indices: string[];
+  projectIndices: ProjectIndex[];
+  projectFields: ProjectIndex[] = [];
   reindexerOptions: unknown;
+  currentProject: Project;
 
   constructor(private dialogRef: MatDialogRef<CreateReindexerDialogComponent>,
               private projectService: ProjectService,
@@ -48,27 +48,30 @@ export class CreateReindexerDialogComponent implements OnInit {
 
     this.projectStore.getCurrentProject().pipe(take(1), mergeMap(currentProject => {
       if (currentProject) {
-        this.indices = currentProject.indices;
-        return forkJoin(
-          {
-            reindexerOptions: this.reindexerService.getReindexerOptions(currentProject.id),
-            projectFields: this.projectService.getProjectIndices(currentProject.id),
-          });
+        this.currentProject = currentProject;
+        return this.reindexerService.getReindexerOptions(currentProject.id);
       } else {
         return of(null);
       }
     })).subscribe(resp => {
       if (resp) {
-        if (!(resp.projectFields instanceof HttpErrorResponse)) {
-          this.projectFields = ProjectIndex.sortTextaFactsAsFirstItem(resp.projectFields);
+        if (!(resp instanceof HttpErrorResponse)) {
+          this.reindexerOptions = resp;
         } else {
-          this.logService.snackBarError(resp.projectFields, 2000);
+          this.logService.snackBarError(resp, 2000);
         }
-        if (!(resp.reindexerOptions instanceof HttpErrorResponse)) {
-          this.reindexerOptions = resp.reindexerOptions;
-        } else {
-          this.logService.snackBarError(resp.reindexerOptions, 2000);
-        }
+      }
+    });
+    this.projectStore.getSelectedProjectIndices().pipe(take(1), filter(x => !!x)).subscribe(currentProjIndices => {
+      if (currentProjIndices) {
+        const indicesForm = this.reindexerForm.get('indicesFormControl');
+        indicesForm?.setValue(currentProjIndices);
+        this.projectFields = currentProjIndices;
+      }
+    });
+    this.projectStore.getProjectIndices().pipe(take(1), filter(x => !!x)).subscribe(projIndices => {
+      if (projIndices) {
+        this.projectIndices = projIndices;
       }
     });
   }
@@ -77,51 +80,38 @@ export class CreateReindexerDialogComponent implements OnInit {
     this.query = query ? query : this.defaultQuery;
   }
 
-  onIndexSelected(val: MatSelectChange): void {
-    this.filteredProjectFields = this.projectFields.filter(x => val.value.includes(x.index));
-    if (this.filteredProjectFields.length > 0) {
-      this.reindexerForm.get('fieldsFormControl')?.reset({
-        value: [].concat.apply([], this.filteredProjectFields.map(x => x.fields) as never),
-        disabled: false
-      });
-    } else {
-      // todo fix in TS 3.7
-      // tslint:disable-next-line:no-non-null-assertion
-      this.reindexerForm.get('fieldsFormControl')!.disable();
+  public indicesOpenedChange(opened: boolean): void {
+    const indicesForm = this.reindexerForm.get('indicesFormControl');
+    // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
+    if (!opened && indicesForm?.value && !UtilityFunctions.arrayValuesEqual(indicesForm?.value, this.projectFields, (x => x.index))) {
+      this.projectFields = indicesForm?.value;
     }
   }
 
   onSubmit(formData: {
-    fieldsFormControl: Field[]; descriptionFormControl: string;
-    newNameFormControl: string; fieldTypesFormControl: string; indicesFormControl: string[]; randomSizeFormControl: number;
+    fieldsFormControl: string[]; descriptionFormControl: string;
+    newNameFormControl: string; fieldTypesFormControl: string; indicesFormControl: { index: string }[]; randomSizeFormControl: number;
     addFactsMappingFormControl: boolean;
   }): void {
     // temp
-    const fieldsToSend = formData.fieldsFormControl.map(x => x.path);
+    const fieldsToSend = formData.fieldsFormControl;
     const body = {
       description: formData.descriptionFormControl,
       new_index: formData.newNameFormControl,
       fields: fieldsToSend,
       field_type: formData.fieldTypesFormControl ? JSON.parse(formData.fieldTypesFormControl) : [],
-      indices: formData.indicesFormControl,
+      indices: formData.indicesFormControl.map(x=>x.index),
       ...this.query ? {query: this.query} : {},
       ...formData.randomSizeFormControl ? {random_size: formData.randomSizeFormControl} : {},
       add_facts_mapping: formData.addFactsMappingFormControl
     };
 
-    this.projectStore.getCurrentProject().pipe(take(1), mergeMap(project => {
-      if (project) {
-        return this.reindexerService.createReindexer(body, project.id);
-      }
-      return of(null);
-    })).subscribe(resp => {
+    this.reindexerService.createReindexer(body, this.currentProject.id).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.dialogRef.close(resp);
       } else if (resp instanceof HttpErrorResponse) {
         if (resp.status === 400 && resp.error.new_index) {
-          // todo fix in TS 3.7
-          // tslint:disable-next-line:no-non-null-assertion
-          this.reindexerForm.get('newNameFormControl')!.setErrors({alreadyExists: true});
+          this.reindexerForm.get('newNameFormControl')?.setErrors({alreadyExists: true});
         } else {
           this.logService.snackBarError(resp);
         }

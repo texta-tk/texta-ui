@@ -103,7 +103,7 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy, Afte
       if (x) {
         const indicesForm = this.torchTaggerForm.get('indicesFormControl');
         indicesForm?.setValue(x);
-        this.getFieldsForIndices(x);
+        this.projectFields = ProjectIndex.cleanProjectIndicesFields(x, ['text'], []);
       }
     });
 
@@ -128,16 +128,12 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy, Afte
     this.query = query ? query : this.defaultQuery;
   }
 
-  getFieldsForIndices(indices: ProjectIndex[]): void {
-    this.projectFields = ProjectIndex.cleanProjectIndicesFields(indices, ['text'], []);
-    this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(y => y.fields).flat(), (y => y.path));
-  }
 
   public indicesOpenedChange(opened: unknown): void {
     const indicesForm = this.torchTaggerForm.get('indicesFormControl');
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
-    if (!opened && (indicesForm?.value && indicesForm.value.length > 0)) {
-      this.getFieldsForIndices(indicesForm?.value);
+    if (!opened && indicesForm?.value && !UtilityFunctions.arrayValuesEqual(indicesForm?.value, this.projectFields, (x => x.index))) {
+      this.projectFields = ProjectIndex.cleanProjectIndicesFields(indicesForm.value, ['text'], []);
     }
   }
 

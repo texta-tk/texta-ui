@@ -34,14 +34,14 @@ describe('reindexer should work', function () {
       cy.matFormFieldShouldHaveError(name, 'required');
       cy.wrap(name).type('new_index');
     }));
-    cy.get('[data-cy=appReindexerCreateDialogIndices]').click().then((indices => {
-      cy.wrap(indices).should('have.class', 'mat-focused');
+    cy.get('[data-cy=appReindexerCreateDialogFields]').click().then((fields => {
+      cy.wrap(fields).should('have.class', 'mat-focused');
       cy.closeCurrentCdkOverlay();
-      cy.matFormFieldShouldHaveError(indices, 'required');
-      cy.wrap(indices).click();
-      cy.get('.mat-option > .mat-pseudo-checkbox:first()').should('be.visible').click();
+      cy.matFormFieldShouldHaveError(fields, 'required');
+      cy.wrap(fields).click();
+      cy.get('.mat-option-text').contains('comment_content').click();
       cy.closeCurrentCdkOverlay();
-      cy.wrap(indices).find('mat-error').should('have.length', 0);
+      cy.wrap(fields).find('mat-error').should('have.length', 0)
     }));
     cy.intercept('POST', '**/reindexer/**').as('postIndices');
     cy.get('[data-cy=appReindexerCreateDialogSubmit]').should('be.visible').click();
@@ -52,7 +52,8 @@ describe('reindexer should work', function () {
   });
   it('extra_actions should work', function () {
     cy.request({
-      method: 'POST', url: `${Cypress.env('api_host')}${Cypress.env('api_basePath')}/projects/${this.projectId}/reindexer/`,
+      method: 'POST',
+      url: `${Cypress.env('api_host')}${Cypress.env('api_basePath')}/projects/${this.projectId}/reindexer/`,
       body: {
         "description": "test",
         "new_index": "asdasdasasdasadada",

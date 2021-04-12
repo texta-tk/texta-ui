@@ -36,7 +36,7 @@ export class ApplyTaggerGroupDialogComponent implements OnInit, OnDestroy {
   destroyed$: Subject<boolean> = new Subject<boolean>();
   projectRegexTaggers: RegexTaggerGroup[] = [];
   indices: ProjectIndex[];
-  fieldsUnique: Field[] = [];
+  projectFields: ProjectIndex[] = [];
 
   constructor(private dialogRef: MatDialogRef<ApplyTaggerGroupDialogComponent>,
               private projectService: ProjectService,
@@ -68,18 +68,20 @@ export class ApplyTaggerGroupDialogComponent implements OnInit, OnDestroy {
         this.logService.snackBarError(x.indices);
       }
     });
-  }
-
-  getFieldsForIndices(indices: ProjectIndex[]): void {
-    indices = ProjectIndex.cleanProjectIndicesFields(indices, [], ['fact'], true);
-    this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(indices.map(y => y.fields).flat(), (y => y.path));
+    this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(currentProjIndices => {
+      if (currentProjIndices) {
+        const indicesForm = this.regexTaggerGroupForm.get('indicesFormControl');
+        indicesForm?.setValue(currentProjIndices);
+        this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, [], ['fact'], true);
+      }
+    });
   }
 
   public indicesOpenedChange(opened: boolean): void {
     const indicesForm = this.regexTaggerGroupForm.get('indicesFormControl');
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
-    if (!opened && (indicesForm?.value && indicesForm.value.length > 0)) {
-      this.getFieldsForIndices(indicesForm?.value);
+    if (!opened && indicesForm?.value && !UtilityFunctions.arrayValuesEqual(indicesForm?.value, this.projectFields, (x => x.index))) {
+      this.projectFields = ProjectIndex.cleanProjectIndicesFields(indicesForm?.value, [], ['fact'], true);
     }
   }
 

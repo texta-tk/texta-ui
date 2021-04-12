@@ -45,15 +45,7 @@ describe('regex-tagger-group should work', function () {
     cy.get('[data-cy=appRegexTaggerGroupApplyTaggerGroupBtn]').click();
     cy.wait('@getRegexTaggers');
     cy.get('[data-cy=appRegexTaggerGroupApplyTaggerDialogDesc]').type('tere');
-    cy.get('[data-cy=appRegexTaggerGroupApplyTaggerDialogIndices]').click().then((indices => {
-      cy.wrap(indices).should('have.class', 'mat-focused');
-      cy.closeCurrentCdkOverlay();
-      cy.matFormFieldShouldHaveError(indices, 'required');
-      cy.wrap(indices).click();
-      cy.get('.mat-option-text:nth(0)').should('be.visible').click();
-      cy.closeCurrentCdkOverlay();
-      cy.wrap(indices).find('mat-error').should('have.length', 0)
-    }));
+
     cy.get('[data-cy=appRegexTaggerGroupApplyTaggerDialogFields]').click().then((fields => {
       cy.wrap(fields).should('have.class', 'mat-focused');
       cy.closeCurrentCdkOverlay();
