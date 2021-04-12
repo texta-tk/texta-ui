@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>New Evaluator task</h1>
 <mat-dialog-content>
-  <form (ngSubmit)="onSubmit(evaluatorForm.value)" [formGroup]="evaluatorForm" class="flex-col">
+  <form (ngSubmit)="onSubmit(evaluatorForm.value)" [formGroup]="evaluatorForm" id="createForm" class="flex-col">
     <mat-form-field data-cy="appEvaluatorCreateDialogDesc">
       <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
              placeholder="Description" required>
@@ -24,15 +24,113 @@
       </mat-error>
     </mat-form-field>
 
-    <mat-form-field>
-          <mat-label>Select Fields</mat-label>
-          <app-project-field-select [projectFields]="projectFields" [required]="true"
-                                    formControlName="fieldsFormControl"></app-project-field-select>
-      <mat-error *ngIf="evaluatorForm.get('fieldsFormControl')?.hasError('required')">
-        Field is <strong>required</strong>
-      </mat-error>
-    </mat-form-field>
 
+    <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"
+                                   data-cy="appTaggerCreateDialogQuery"></app-saved-search-autocomplete>
+    <div fxLayout="row">
+      <mat-form-field data-cy="appEvaluatorCreateDialogTrueFactName" fxFlex>
+        <mat-label>True fact name</mat-label>
+        <mat-select (selectionChange)="factNameSelected($event, evaluatorForm.get('trueFactValueFormControl'))"
+                    [disableOptionCentering]="true"
+                    formControlName="trueFactNameFormControl"
+                    panelClass="select-panel-reveal-input" required>
+          <mat-option *ngFor="let fact of projectFacts" [value]="fact">
+            {{fact}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="m-l-15" data-cy="appEvaluatorCreateDialogTrueFactValue" fxFlex>
+        <input [matAutocomplete]="trueVal"
+               formControlName="trueFactValueFormControl"
+               matInput
+               placeholder="True fact value"
+               type="text">
+        <mat-autocomplete #trueVal="matAutocomplete"
+                          panelWidth="auto">
+          <mat-option *ngFor="let option of trueFactValueOptions" [disabled]="isLoadingOptions"
+                      [value]="option">
+            {{option}}
+          </mat-option>
+        </mat-autocomplete>
+        <mat-hint>
+          Select fact values for binary evaluation
+        </mat-hint>
+      </mat-form-field>
+    </div>
+    <div fxLayout="row">
+      <mat-form-field data-cy="appEvaluatorCreateDialogPredictedFactName" fxFlex>
+        <mat-label>Predicted fact name</mat-label>
+        <mat-select (selectionChange)="factNameSelected($event, evaluatorForm.get('predictedFactValueFormControl'))"
+                    [disableOptionCentering]="true"
+                    formControlName="predictedFactNameFormControl"
+                    panelClass="select-panel-reveal-input" required>
+          <mat-option *ngFor="let fact of projectFacts" [value]="fact">
+            {{fact}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="m-l-15" data-cy="appEvaluatorCreateDialogPredictedFactValue" fxFlex>
+        <input [matAutocomplete]="predictedVal"
+               formControlName="predictedFactValueFormControl"
+               matInput
+               placeholder="Predicted fact value"
+               type="text">
+        <mat-autocomplete #predictedVal="matAutocomplete"
+                          panelWidth="auto">
+          <mat-option *ngFor="let option of predictedFactValueOptions" [disabled]="isLoadingOptions"
+                      [value]="option">
+            {{option}}
+          </mat-option>
+        </mat-autocomplete>
+        <mat-hint>
+          Leave them empty for multilabel/multiclass evaluation
+        </mat-hint>
+      </mat-form-field>
+    </div>
+    <mat-form-field>
+      <mat-label>Average function</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="averageFunctionFormControl"
+                  panelClass="select-panel-reveal-input">
+        <ng-container *ngFor="let item of averageFunctionOptions">
+          <mat-option [disabled]="item.value === 'samples'
+          && evaluatorForm.get('predictedFactValueFormControl')?.value
+          && evaluatorForm.get('trueFactValueFormControl')?.value
+          || item.value === 'binary'  && !evaluatorForm.get('predictedFactValueFormControl')?.value
+          && !evaluatorForm.get('trueFactValueFormControl')?.value"
+                      [value]="item.value">
+            {{item.display_name}}
+          </mat-option>
+        </ng-container>
+      </mat-select>
+      <mat-hint>Read more about the average functions <a target="_blank" href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.precision_score.html">here</a></mat-hint>
+    </mat-form-field>
+    <mat-checkbox formControlName="addIndividualFormControl" style="margin-top: 1em"
+                  *ngIf="!evaluatorForm.get('predictedFactValueFormControl')?.value
+          && !evaluatorForm.get('trueFactValueFormControl')?.value"
+                  matTooltip="If enabled, individual label scores are calculated and stored as well."
+                  matTooltipPosition="left">Add individual results
+    </mat-checkbox>
+    <!--advanced -->
+    <mat-expansion-panel expanded="false">
+      <mat-expansion-panel-header>
+        <h3>Advanced settings</h3>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
+        <div fxLayout="row">
+        <mat-form-field fxFlex class="advanced-setting">
+          <input formControlName="esTimeoutFormControl" matInput placeholder="Elasticsearch timeout"
+                 type="number">
+          <mat-hint>Elasticsearch scroll timeout in minutes.</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field fxFlex class="advanced-setting m-l-15">
+          <input formControlName="scrollSizeFormControl" matInput placeholder="Scroll size"
+                 type="number">
+          <mat-hint>How many documents should be returned by one Elasticsearch scroll.</mat-hint>
+        </mat-form-field>
+        </div>
+      </ng-template>
+    </mat-expansion-panel>
   </form>
 </mat-dialog-content>
 <mat-dialog-actions>
@@ -41,7 +139,7 @@
       <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
     </div>
     <div class="flex-item-right">
-      <button [disabled]="!evaluatorForm.valid" data-cy="appEvaluatorCreateDialogSubmit" mat-button type="submit">
+      <button form="createForm" [disabled]="!evaluatorForm.valid" data-cy="appEvaluatorCreateDialogSubmit" mat-button type="submit">
         Create
       </button>
     </div>

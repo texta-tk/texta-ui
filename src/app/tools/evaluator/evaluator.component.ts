@@ -7,7 +7,7 @@ import {MatTableDataSource} from '@angular/material/table';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatSort} from '@angular/material/sort';
 import {MatPaginator} from '@angular/material/paginator';
-import { CreateEvaluatorDialogComponent } from './create-evaluator-dialog/create-evaluator-dialog.component';
+import {CreateEvaluatorDialogComponent} from './create-evaluator-dialog/create-evaluator-dialog.component';
 import {expandRowAnimation} from '../../shared/animations';
 import {Evaluator} from '../../shared/types/tasks/Evaluator';
 import {Project} from '../../shared/types/Project';
@@ -15,6 +15,9 @@ import {ProjectStore} from '../../core/projects/project.store';
 import {EvaluatorService} from '../../core/tools/evaluator/evaluator.service';
 import {LogService} from '../../core/util/log.service';
 import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {QueryDialogComponent} from '../../shared/components/dialogs/query-dialog/query-dialog.component';
+import {Index} from '../../shared/types/Index';
+import {IndividualResultsDialogComponent} from "./individual-results-dialog/individual-results-dialog.component";
 
 @Component({
   selector: 'app-evaluator',
@@ -28,7 +31,8 @@ export class EvaluatorComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: Evaluator | null;
   public tableData: MatTableDataSource<Evaluator> = new MatTableDataSource();
   selectedRows = new SelectionModel<Evaluator>(true, []);
-  public displayedColumns = ['select', 'id', 'description', 'task__time_started', 'task__time_completed', 'task__status'];
+  public displayedColumns = ['select', 'author__username', 'description', 'eval_type', 'task__time_started',
+    'task__time_completed', 'f1_score', 'precision', 'recall', 'task__status', 'Modify'];
   public isLoadingResults = true;
 
   @ViewChild(MatSort) sort: MatSort;
@@ -42,6 +46,8 @@ export class EvaluatorComponent implements OnInit, OnDestroy, AfterViewInit {
               public dialog: MatDialog,
               private logService: LogService) {
   }
+
+  getIndicesName = (x: Index) => x.name;
 
   ngOnInit(): void {
 
@@ -93,8 +99,9 @@ export class EvaluatorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   openCreateDialog(): void {
     const dialogRef = this.dialog.open(CreateEvaluatorDialogComponent, {
-      maxHeight: '650px',
+      maxHeight: '90vh',
       width: '700px',
+      disableClose: true,
     });
     dialogRef.afterClosed().subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
@@ -103,6 +110,30 @@ export class EvaluatorComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  openQueryDialog(query: string): void {
+    this.dialog.open(QueryDialogComponent, {
+      data: {query},
+      maxHeight: '665px',
+      width: '700px',
+    });
+  }
+
+  onDelete(evaluator: Evaluator, index: number): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {confirmText: 'Delete', mainText: 'Are you sure you want to delete this Task?'}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.evaluatorService.deleteEvaluator(this.currentProject.id, evaluator.id).subscribe(() => {
+          this.logService.snackBarMessage(`Deleted evaluator ${evaluator.description}`, 2000);
+          this.tableData.data.splice(index, 1);
+          this.tableData.data = [...this.tableData.data];
+          this.projectStore.refreshSelectedProjectResourceCounts();
+        });
+      }
+    });
+  }
 
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected(): boolean {
@@ -130,10 +161,8 @@ export class EvaluatorComponent implements OnInit, OnDestroy, AfterViewInit {
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-
           const idsToDelete = this.selectedRows.selected.map((evaluator: Evaluator) => evaluator.id);
           const body = {ids: idsToDelete};
-
           this.evaluatorService.bulkDeleteEvaluatorTasks(this.currentProject.id, body).subscribe(() => {
             this.logService.snackBarMessage(`Deleted ${this.selectedRows.selected.length} Tasks.`, 2000);
             this.removeSelectedRows();
@@ -155,5 +184,13 @@ export class EvaluatorComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy(): void {
     this.destroyed$.next(true);
     this.destroyed$.complete();
+  }
+
+  openIndividualResults(element: Evaluator): void {
+    this.dialog.open(IndividualResultsDialogComponent, {
+      data: {currentProjectId: this.currentProject.id, evaluatorId: element.id},
+      maxHeight: '665px',
+      width: '700px',
+    });
   }
 }

@@ -23,6 +23,12 @@ export class EvaluatorService {
       catchError(this.logService.handleError<ResultsWrapper<Evaluator>>('getEvaluatorTasks')));
   }
 
+  evaluatorIndividualResults(projectId: number, evaluatorId: number, body: unknown): Observable<unknown | HttpErrorResponse>  {
+    return this.http.post<Evaluator>(`${this.apiUrl}/projects/${projectId}/evaluators/${evaluatorId}/individual_results/`, body).pipe(
+      tap(e => this.logService.logStatus(e, 'evaluatorIndividualResults')),
+      catchError(this.logService.handleError<Evaluator>('evaluatorIndividualResults')));
+  }
+
   createEvaluatorTask(projectId: number, body: unknown): Observable<Evaluator | HttpErrorResponse> {
     return this.http.post<Evaluator>(`${this.apiUrl}/projects/${projectId}/evaluators/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'createEvaluatorTask')),
@@ -34,5 +40,22 @@ export class EvaluatorService {
     (`${this.apiUrl}/projects/${projectId}/evaluators/bulk_delete/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'bulkDeleteEvaluatorTasks')),
       catchError(this.logService.handleError<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>('bulkDeleteEvaluatorTasks')));
+  }
+
+  // tslint:disable-next-line:no-any
+  evaluatorOptions(projectId: number): Observable<any | HttpErrorResponse> {
+    // tslint:disable-next-line:no-any
+    return this.http.options<any>(
+      `${this.apiUrl}/projects/${projectId}/evaluators/`
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'evaluatorOptions')),
+      // tslint:disable-next-line:no-any
+      catchError(this.logService.handleError<any>('evaluatorOptions')));
+  }
+
+  deleteEvaluator(projectId: number, evalId: number): Observable<unknown | HttpErrorResponse> {
+    return this.http.delete(`${this.apiUrl}/projects/${projectId}/evaluators/${evalId}/`).pipe(
+      tap(e => this.logService.logStatus(e, 'deleteEvaluator')),
+      catchError(this.logService.handleError<unknown>('deleteEvaluator')));
   }
 }
