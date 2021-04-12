@@ -2,8 +2,7 @@
   [formControl]="textareaFormControl"
   [required]="required"
   [placeholder]="placeholder"
-  (input)="_handleInput()"
-  [rows]="5" matInput></textarea>
+  (input)="_handleInput()" cdkTextareaAutosize cdkAutosizeMinRows="5" cdkAutosizeMaxRows="35" matInput></textarea>
 <a (click)="$event.stopPropagation();" *ngIf="lexicons.length > 0"
    [matMenuTriggerData]="{data: textareaFormControl}" [matMenuTriggerFor]="menu"
    class="lexicon-fab pointer"

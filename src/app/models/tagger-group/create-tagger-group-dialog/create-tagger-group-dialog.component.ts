@@ -41,6 +41,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
       classifierFormControl: new FormControl([Validators.required]),
       sampleSizeFormControl: new FormControl(10000, [Validators.required]),
       negativeMultiplierFormControl: new FormControl(1.0, [Validators.required]),
+      ignoreNumbersFormControl: new FormControl(true),
 
     })
   });
@@ -144,6 +145,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
       classifier: formData.taggerForm.classifierFormControl.value,
       maximum_sample_size: formData.taggerForm.sampleSizeFormControl,
       negative_multiplier: formData.taggerForm.negativeMultiplierFormControl,
+      ignore_numbers: formData.ignoreNumbersFormControl,
       ...formData?.taggerForm?.embeddingFormControl?.id ? {embedding: formData.taggerForm.embeddingFormControl.id} : {},
     };
 

@@ -41,6 +41,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
     classifierFormControl: new FormControl([Validators.required]),
     sampleSizeFormControl: new FormControl(10000, [Validators.required]),
     negativeMultiplierFormControl: new FormControl(1.0, [Validators.required]),
+    ignoreNumbersFormControl: new FormControl(true),
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
@@ -149,6 +150,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
       ...formData.snowballFormControl.value ? {snowball_language: formData.snowballFormControl.value} : {},
       scoring_function: formData.scoringFormControl.value,
       fact_name: formData.factNameFormControl,
+      ignore_numbers: formData.ignoreNumbersFormControl,
       negative_multiplier: formData.negativeMultiplierFormControl,
       ...this.query ? {query: this.query} : {},
     };
