@@ -1,14 +1,26 @@
-<ng-container *ngIf="result">
-    <h1 mat-dialog-title>Showing {{result.showing_features}} features out of {{result.total_features}}</h1>
-    <mat-divider></mat-divider>
-    <mat-dialog-content class="results-wrapper">
-        <div *ngFor="let feature of result.features" class="m-top-10">
-            <span class="mat-body-strong">Feature:</span> {{feature.feature}}
-            <br>
-            <span class="mat-body-strong">Coefficient: </span>{{feature.coefficient}}
-            <br>
-            <br>
-            <mat-divider></mat-divider>
-        </div>
-    </mat-dialog-content>
+<ng-container>
+  <div fxLayout="row" style="align-items: baseline">
+    <h1 fxFlex mat-dialog-title>Showing {{size}} features out of {{result ? result.total_features : '...' }}</h1>
+    <mat-form-field fxFlex="10">
+      <input [(ngModel)]="size" matInput placeholder="size" type="number">
+    </mat-form-field>
+    <button (click)="fetchFeatures(size)" [disabled]="isLoading" color="primary" mat-raised-button
+            style="margin-left: 10px">Apply
+    </button>
+  </div>
+
+  <mat-divider></mat-divider>
+  <div style="height: 4px">
+    <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+  </div>
+  <mat-dialog-content *ngIf="result" class="results-wrapper">
+    <div *ngFor="let feature of result.features" class="m-top-10">
+      <span class="mat-body-strong">Feature:</span> {{feature.feature}}
+      <br>
+      <span class="mat-body-strong">Coefficient: </span>{{feature.coefficient}}
+      <br>
+      <br>
+      <mat-divider></mat-divider>
+    </div>
+  </mat-dialog-content>
 </ng-container>

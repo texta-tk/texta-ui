@@ -12,7 +12,8 @@ import {LogService} from 'src/app/core/util/log.service';
 })
 export class ListFeaturesDialogComponent implements OnInit {
   result: ListFeaturesResponse;
-
+  size = 100;
+  isLoading: boolean;
   constructor(private dialogRef: MatDialogRef<ListFeaturesDialogComponent>,
               @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, taggerId: number; },
               private taggerService: TaggerService,
@@ -20,13 +21,20 @@ export class ListFeaturesDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.fetchFeatures(this.size);
+
+  }
+
+  fetchFeatures(size: number): void {
+    this.isLoading = true;
     this.taggerService.listFeatures(this.data.currentProjectId,
-      this.data.taggerId).subscribe((resp: ListFeaturesResponse | HttpErrorResponse) => {
+      this.data.taggerId, size).subscribe((resp: ListFeaturesResponse | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.result = resp;
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 4000);
       }
+      this.isLoading = false;
     });
   }
 

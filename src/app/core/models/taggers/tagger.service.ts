@@ -62,8 +62,8 @@ export class TaggerService {
       catchError(this.logService.handleError<{ 'stop_words': string[] }>('getStopWords')));
   }
 
-  listFeatures(projectId: number, taggerId: number): Observable<ListFeaturesResponse | HttpErrorResponse> {
-    return this.http.get<ListFeaturesResponse>(`${this.apiUrl}/projects/${projectId}/taggers/${taggerId}/list_features/`).pipe(
+  listFeatures(projectId: number, taggerId: number, size: number): Observable<ListFeaturesResponse | HttpErrorResponse> {
+    return this.http.post<ListFeaturesResponse>(`${this.apiUrl}/projects/${projectId}/taggers/${taggerId}/list_features/`, {size}).pipe(
       tap(e => this.logService.logStatus(e, 'listFeatures')),
       catchError(this.logService.handleError<ListFeaturesResponse>('listFeatures')));
   }
