@@ -18,6 +18,7 @@ import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-di
 import {QueryDialogComponent} from '../../shared/components/dialogs/query-dialog/query-dialog.component';
 import {Index} from '../../shared/types/Index';
 import {IndividualResultsDialogComponent} from './individual-results-dialog/individual-results-dialog.component';
+import {FilteredAverageDialogComponent} from "./filtered-average-dialog/filtered-average-dialog.component";
 
 @Component({
   selector: 'app-evaluator',
@@ -189,8 +190,17 @@ export class EvaluatorComponent implements OnInit, OnDestroy, AfterViewInit {
   openIndividualResults(element: Evaluator): void {
     this.dialog.open(IndividualResultsDialogComponent, {
       data: {currentProjectId: this.currentProject.id, evaluatorId: element.id},
-      maxHeight: '665px',
+      maxHeight: '90vh',
       width: '700px',
     });
   }
+
+  openFilteredAverage(element: Evaluator): void {
+    this.dialog.open(FilteredAverageDialogComponent, {
+      data: {currentProjectId: this.currentProject.id, evaluatorId: element.id},
+      maxHeight: '90vh',
+      maxWidth: '700px',
+    });
+  }
+
 }

@@ -23,10 +23,16 @@ export class EvaluatorService {
       catchError(this.logService.handleError<ResultsWrapper<Evaluator>>('getEvaluatorTasks')));
   }
 
-  evaluatorIndividualResults(projectId: number, evaluatorId: number, body: unknown): Observable<unknown | HttpErrorResponse>  {
+  evaluatorIndividualResults(projectId: number, evaluatorId: number, body: unknown): Observable<unknown | HttpErrorResponse> {
     return this.http.post<Evaluator>(`${this.apiUrl}/projects/${projectId}/evaluators/${evaluatorId}/individual_results/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'evaluatorIndividualResults')),
       catchError(this.logService.handleError<Evaluator>('evaluatorIndividualResults')));
+  }
+
+  evaluatorFilteredAverage(projectId: number, evaluatorId: number, body: unknown): Observable<{ precision: number; recall: number; f1_score: number; accuracy: number; count: number; } | HttpErrorResponse> {
+    return this.http.post<{ precision: number; recall: number; f1_score: number; accuracy: number; count: number; }>(`${this.apiUrl}/projects/${projectId}/evaluators/${evaluatorId}/filtered_average/`, body).pipe(
+      tap(e => this.logService.logStatus(e, 'evaluatorFilteredAverage')),
+      catchError(this.logService.handleError<{ precision: number; recall: number; f1_score: number; accuracy: number; count: number; }>('evaluatorFilteredAverage')));
   }
 
   createEvaluatorTask(projectId: number, body: unknown): Observable<Evaluator | HttpErrorResponse> {

@@ -1,0 +1,67 @@
+<h1 mat-dialog-title>Filtered average</h1>
+<mat-dialog-content>
+
+  <table class="simple-table">
+    <tr>
+      <th></th>
+      <th class="mat-body-strong">Min score</th>
+      <th class="mat-body-strong">Max score</th>
+      <th class="mat-body-strong">Average score</th>
+    </tr>
+    <tr>
+      <td class="mat-body-strong">Precision</td>
+
+      <td><input [(ngModel)]="model.precision.min_score" max="1" min="0" step="0.1" type="number"></td>
+      <td><input [(ngModel)]="model.precision.max_score" max="1" min="0" step="0.1" type="number"></td>
+      <td><input [value]="result.precision" disabled></td>
+    </tr>
+    <tr>
+      <td class="mat-body-strong">Recall</td>
+      <td><input [(ngModel)]="model.recall.min_score" max="1" min="0" step="0.1" type="number"></td>
+      <td><input [(ngModel)]="model.recall.max_score" max="1" min="0" step="0.1" type="number"></td>
+      <td><input [value]="result.recall" disabled></td>
+    </tr>
+    <tr>
+      <td class="mat-body-strong">F1-score</td>
+      <td><input [(ngModel)]="model.f1_score.min_score" max="1" min="0" step="0.1" type="number"></td>
+      <td><input [(ngModel)]="model.f1_score.max_score" max="1" min="0" step="0.1" type="number"></td>
+      <td><input [value]="result.f1_score" disabled></td>
+    </tr>
+    <tr>
+      <td class="mat-body-strong">Accuracy</td>
+      <td><input [(ngModel)]="model.accuracy.min_score" max="1" min="0" step="0.1" type="number"></td>
+      <td><input [(ngModel)]="model.accuracy.max_score" max="1" min="0" step="0.1" type="number"></td>
+      <td><input [value]="result.accuracy" disabled></td>
+    </tr>
+  </table>
+  <div class="m-top-10" fxLayout="column" style="height: 175px">
+    <mat-form-field class="max-width m-top-10 m-bot-10">
+      <input [formControl]="minCountFormControl" matInput placeholder="Min count"
+             type="number">
+      <mat-hint>Required minimum number of tags present in the union set to include corresponding tag's scores to the
+        average calculation.
+      </mat-hint>
+    </mat-form-field>
+
+    <mat-form-field class="max-width m-top-10">
+      <input [formControl]="maxCountFormControl" matInput placeholder="Max count"
+             type="number">
+      <mat-hint>Required maximum number of tags present in the union set to include corresponding tag's scores to the
+        average calculation.
+      </mat-hint>
+    </mat-form-field>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <div class="flex-row max-width">
+    <div class="flex-item-left">
+      <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
+    </div>
+    <div class="flex-item-right">
+      <button (click)="getNewAvgScore()"
+              color="primary" mat-raised-button>
+        Apply restrictions
+      </button>
+    </div>
+  </div>
+</mat-dialog-actions>

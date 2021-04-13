@@ -261,13 +261,18 @@
 <mat-menu #actionsMenu="matMenu">
   <ng-template let-element="element" let-i="i" matMenuContent>
     <ng-container *ngIf="element.task && element.task.status === 'completed'">
-      <button (click)="openIndividualResults(element)" *ngIf="element.evaluation_type === 'multilabel'" data-cy="appEvaluatorMenuIndividualResults" mat-menu-item>
+      <button (click)="openIndividualResults(element)" *ngIf="element.evaluation_type === 'multilabel'"
+              data-cy="appEvaluatorMenuIndividualResults" mat-menu-item>
         Individual results
       </button>
-    </ng-container>
-      <mat-divider></mat-divider>
-      <button (click)="onDelete(element, i)" data-cy="appEvaluatorMenuDelete" mat-menu-item>
-        Delete
+      <button (click)="openFilteredAverage(element)" *ngIf="element.evaluation_type === 'multilabel'"
+              data-cy="appEvaluatorMenuFilteredAverage" mat-menu-item>
+        Filtered average
       </button>
+      <mat-divider></mat-divider>
+    </ng-container>
+    <button (click)="onDelete(element, i)" data-cy="appEvaluatorMenuDelete" mat-menu-item>
+      Delete
+    </button>
   </ng-template>
 </mat-menu>
