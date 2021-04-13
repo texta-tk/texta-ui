@@ -32,6 +32,12 @@ export class CoreService {
       catchError(this.logService.handleError<string[]>('getIndices')));
   }
 
+  bulkDeleteElasticIndices(indices: number[]): Observable<{ num_deleted: number, deleted_types: unknown } | HttpErrorResponse> {
+    return this.http.post<{ num_deleted: number, deleted_types: unknown }>(`${this.apiUrl}/index/bulk_delete/`, {ids: indices}).pipe(
+      tap(e => this.logService.logStatus(e, 'bulkDeleteElasticIndices')),
+      catchError(this.logService.handleError<{ num_deleted: number, deleted_types: unknown }>('bulkDeleteElasticIndices')));
+  }
+
   getElasticIndices(params = ''): Observable<Index[] | HttpErrorResponse> {
     return this.http.get<Index[]>(`${this.apiUrl}/index/?${params}`).pipe(
       tap(e => this.logService.logStatus(e, 'getElasticIndices')),

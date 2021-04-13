@@ -17,7 +17,7 @@ import {LogService} from '../../core/util/log.service';
 import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {QueryDialogComponent} from '../../shared/components/dialogs/query-dialog/query-dialog.component';
 import {Index} from '../../shared/types/Index';
-import {IndividualResultsDialogComponent} from "./individual-results-dialog/individual-results-dialog.component";
+import {IndividualResultsDialogComponent} from './individual-results-dialog/individual-results-dialog.component';
 
 @Component({
   selector: 'app-evaluator',
@@ -28,7 +28,7 @@ import {IndividualResultsDialogComponent} from "./individual-results-dialog/indi
   ]
 })
 export class EvaluatorComponent implements OnInit, OnDestroy, AfterViewInit {
-  expandedElement: Evaluator | null;
+  expandedElements: boolean[] = [];
   public tableData: MatTableDataSource<Evaluator> = new MatTableDataSource();
   selectedRows = new SelectionModel<Evaluator>(true, []);
   public displayedColumns = ['select', 'author__username', 'description', 'eval_type', 'task__time_started',

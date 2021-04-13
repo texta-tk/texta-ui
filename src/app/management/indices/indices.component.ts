@@ -12,6 +12,7 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {Index} from '../../shared/types/Index';
 import {CoreService} from '../../core/core.service';
+import {SelectionModel} from '@angular/cdk/collections';
 
 
 @Component({
@@ -24,13 +25,14 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
   projects: Project[];
   public tableData: MatTableDataSource<Index> = new MatTableDataSource<Index>([]);
 
-  public displayedColumns = ['id', 'is_open', 'name', 'size', 'doc_count', 'delete'];
+  public displayedColumns = ['select', 'id', 'is_open', 'name', 'size', 'doc_count', 'delete'];
   public isLoadingResults = true;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   resultsLength: number;
   filterTerm$ = new Subject<string>();
+  selectedRows = new SelectionModel<Index>(true, []);
 
   constructor(private userService: UserService,
               private logService: LogService,
@@ -44,6 +46,7 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.tableData.paginator) {
         this.tableData.paginator.firstPage();
       }
+      this.selectedRows.clear();
     });
   }
 
@@ -104,6 +107,53 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       return true;
     };
+  }
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected(): boolean {
+    const numSelected = this.selectedRows.selected.length;
+    const numRows = this.tableData.filteredData.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterToggle(): void {
+    this.isAllSelected() ?
+      this.selectedRows.clear() :
+      (this.tableData.filteredData as Index[]).forEach(row => this.selectedRows.select(row));
+  }
+
+  onDeleteAllSelected(): void {
+    if (this.selectedRows.selected.length > 0) {
+      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+        data: {
+          confirmText: 'Delete',
+          mainText: `Delete the following indices: ${this.selectedRows.selected.map(x => x.name).join(', ')}`
+        },
+        maxHeight: '90vh'
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          const idsToDelete = this.selectedRows.selected.map((evaluator: Index) => evaluator.id);
+          this.coreService.bulkDeleteElasticIndices(idsToDelete).subscribe(response => {
+            if (!(response instanceof HttpErrorResponse)) {
+              this.logService.snackBarMessage(`Removed indices and related objects. Total deleted: ${response.num_deleted}`, 5000);
+              this.removeSelectedRows();
+            }
+          });
+        }
+      });
+    }
+  }
+
+  removeSelectedRows(): void {
+    this.selectedRows.selected.forEach((selected: Index) => {
+      const index: number = (this.tableData.filteredData as Index[]).findIndex(row => row.id === selected.id);
+      this.tableData.data.splice(index, 1);
+      this.tableData.data = [...this.tableData.data];
+    });
+    this.selectedRows.clear();
   }
 
   ngOnDestroy(): void {
