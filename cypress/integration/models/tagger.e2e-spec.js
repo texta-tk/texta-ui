@@ -29,16 +29,16 @@ describe('taggers should work', function () {
       cy.wait('@getTaggers');
       cy.wait(100);
 
+      cy.intercept('POST', '**/taggers/**').as('postTagger');
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
       cy.get('[data-cy=appTaggerMenuListFeatures]').should('be.visible').click();
-      cy.wait('@getTaggers');
+      cy.wait('@postTagger');
       cy.get('.mat-dialog-content > div').should('have.length', 8);
       cy.closeCurrentCdkOverlay();
       // Stop words
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
       cy.get('[data-cy=appTaggerMenuStopWords]').should('be.visible').click();
       cy.get('.mat-dialog-container textarea').should('be.visible').click().clear().type('ja');
-      cy.intercept('POST', '**/taggers/**').as('postTagger');
       cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
       cy.wait('@postTagger');
       cy.closeCurrentCdkOverlay();
