@@ -34,7 +34,7 @@
                     [disableOptionCentering]="true"
                     formControlName="trueFactNameFormControl"
                     panelClass="select-panel-reveal-input" required>
-          <mat-option *ngFor="let fact of projectFacts" [value]="fact">
+          <mat-option *ngFor="let fact of projectFacts" [value]="fact" title="{{fact}}">
             {{fact}}
           </mat-option>
         </mat-select>
@@ -48,7 +48,7 @@
         <mat-autocomplete #trueVal="matAutocomplete"
                           panelWidth="auto">
           <mat-option *ngFor="let option of trueFactValueOptions" [disabled]="isLoadingOptions"
-                      [value]="option">
+                      [value]="option"  title="{{option}}">
             {{option}}
           </mat-option>
         </mat-autocomplete>
@@ -64,7 +64,7 @@
                     [disableOptionCentering]="true"
                     formControlName="predictedFactNameFormControl"
                     panelClass="select-panel-reveal-input" required>
-          <mat-option *ngFor="let fact of projectFacts" [value]="fact">
+          <mat-option *ngFor="let fact of projectFacts" title="{{fact}}" [value]="fact">
             {{fact}}
           </mat-option>
         </mat-select>
@@ -78,7 +78,7 @@
         <mat-autocomplete #predictedVal="matAutocomplete"
                           panelWidth="auto">
           <mat-option *ngFor="let option of predictedFactValueOptions" [disabled]="isLoadingOptions"
-                      [value]="option">
+                      [value]="option" title="{{option}}">
             {{option}}
           </mat-option>
         </mat-autocomplete>

@@ -18,7 +18,9 @@ import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-di
 import {QueryDialogComponent} from '../../shared/components/dialogs/query-dialog/query-dialog.component';
 import {Index} from '../../shared/types/Index';
 import {IndividualResultsDialogComponent} from './individual-results-dialog/individual-results-dialog.component';
-import {FilteredAverageDialogComponent} from "./filtered-average-dialog/filtered-average-dialog.component";
+import {FilteredAverageDialogComponent} from './filtered-average-dialog/filtered-average-dialog.component';
+import {EditEvaluatorDialogComponent} from './edit-evaluator-dialog/edit-evaluator-dialog.component';
+import {Embedding} from "../../shared/types/tasks/Embedding";
 
 @Component({
   selector: 'app-evaluator',
@@ -32,7 +34,7 @@ export class EvaluatorComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElements: boolean[] = [];
   public tableData: MatTableDataSource<Evaluator> = new MatTableDataSource();
   selectedRows = new SelectionModel<Evaluator>(true, []);
-  public displayedColumns = ['select', 'author__username', 'description', 'eval_type', 'task__time_started',
+  public displayedColumns = ['select', 'author__username', 'description', 'eval_type', 'avg_func', 'task__time_started',
     'task__time_completed', 'f1_score', 'precision', 'recall', 'task__status', 'Modify'];
   public isLoadingResults = true;
 
@@ -203,4 +205,17 @@ export class EvaluatorComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  onEdit(element: Evaluator): void {
+    this.dialog.open(EditEvaluatorDialogComponent, {
+      data: element,
+      maxHeight: '90vh',
+      width: '500px',
+    }).afterClosed().subscribe((x: Evaluator | HttpErrorResponse) => {
+      if (x && !(x instanceof HttpErrorResponse)) {
+        element.description = x.description;
+      } else if (x) {
+        this.logService.snackBarError(x, 3000);
+      }
+    });
+  }
 }

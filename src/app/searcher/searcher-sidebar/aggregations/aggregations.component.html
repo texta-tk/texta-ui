@@ -44,6 +44,9 @@
                 labelPosition="before">Apply current search to aggregations:
   </mat-checkbox>
 
+  <mat-checkbox class="exclude-search-checkbox" [(ngModel)]="onlySavedSearchAgg"
+                labelPosition="before">Only show saved search aggregations:
+  </mat-checkbox>
   <div class="max-width">
     <button class="max-width" mat-stroked-button (click)="aggregate()" data-cy="appSearcherSidebarAggregationsSubmit"
             [disabled]="!(aggregationList.length > 0 && aggregationList[0].formControl.value) || (searchService.getIsLoading() | async)">

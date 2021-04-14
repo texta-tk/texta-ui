@@ -168,7 +168,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
     }).afterClosed().subscribe((x: Embedding | HttpErrorResponse) => {
       if (x && !(x instanceof HttpErrorResponse)) {
         embedding.description = x.description;
-      } else {
+      } else if (x) {
         this.logService.snackBarError(x, 3000);
       }
     });

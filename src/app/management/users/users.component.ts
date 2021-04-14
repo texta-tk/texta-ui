@@ -25,7 +25,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   projects: Project[];
   public tableData: MatTableDataSource<UserProfile> = new MatTableDataSource<UserProfile>();
 
-  public displayedColumns = ['id', 'is_superuser', 'username', 'email', 'date_joined', 'last_login', 'delete'];
+  public displayedColumns = ['id', 'is_superuser', 'username', 'application', 'email', 'date_joined', 'last_login', 'delete'];
   public isLoadingResults = true;
 
   @ViewChild(MatSort, {static: true}) sort: MatSort;

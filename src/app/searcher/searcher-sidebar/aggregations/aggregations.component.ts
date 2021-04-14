@@ -32,6 +32,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
   aggregationList: AggregationForm[] = [];
   searcherElasticSearchQuery: ElasticsearchQueryStructure;
   searchQueryIncluded = true;
+  onlySavedSearchAgg = false;
   dateAlreadySelected = false;
   dateRelativeFrequency = false;
   fieldIndexMap: Map<string, string[]> = new Map<string, string[]>();
@@ -87,12 +88,11 @@ export class AggregationsComponent implements OnInit, OnDestroy {
   }
 
   aggregate(): void {
-    debugger
     const joinedAggregation = this.makeAggregations(this.aggregationList);
     const aggregationType = Object.keys(joinedAggregation)[0];
     const body = {
       query: {
-        aggs: {...joinedAggregation},
+        aggs: {...this.onlySavedSearchAgg ? {} : joinedAggregation},
         size: 0 // ignore results, performance improvement
       },
       indices: this.projectFields.map(y => y.index)
@@ -124,7 +124,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
       }
     }
 
-    if (this.searchQueryIncluded) {
+    if (this.searchQueryIncluded && !this.onlySavedSearchAgg) {
       if (this.searcherElasticSearchQuery?.query?.bool) {
         body.query.aggs[aggregationType] = {
           aggs: joinedAggregation,
@@ -142,13 +142,26 @@ export class AggregationsComponent implements OnInit, OnDestroy {
     this.searchService.setIsLoading(true);
     // need 2 seperate requests to calculate relative frequency
     forkJoin({
-      globalAgg: this.dateRelativeFrequency ? this.searcherService.search(this.searchQueryIncluded ? body : {
-        query: {
-          size: 0,
-          aggs: joinedAggregation
-        },
-        indices: this.projectFields.map(y => y.index)
-      }, this.currentProject.id) : of(null),
+      globalAgg: this.dateRelativeFrequency ? this.searcherService.search(this.searchQueryIncluded ?
+
+        {
+          query: {
+            size: 0,
+            aggs: {
+              [aggregationType]: {
+                aggs: joinedAggregation,
+                filter: {bool: this.searcherElasticSearchQuery.query.bool}
+              }
+            }
+          },
+          indices: this.projectFields.map(y => y.index)
+        } : {
+          query: {
+            size: 0,
+            aggs: joinedAggregation
+          },
+          indices: this.projectFields.map(y => y.index)
+        }, this.currentProject.id) : of(null),
       agg: this.searcherService.search(body, this.currentProject.id)
     }).subscribe(resp => {
       const aggResp = {globalAgg: {}, agg: {}};

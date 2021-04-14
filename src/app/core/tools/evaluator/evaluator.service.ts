@@ -23,6 +23,14 @@ export class EvaluatorService {
       catchError(this.logService.handleError<ResultsWrapper<Evaluator>>('getEvaluatorTasks')));
   }
 
+  editEvaluator(body: unknown, projectId: number, embeddingId: number): Observable<Evaluator | HttpErrorResponse> {
+    return this.http.patch<Evaluator>(
+      `${this.apiUrl}/projects/${projectId}/evaluators/${embeddingId}/`, body
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'editEvaluator')),
+      catchError(this.logService.handleError<Evaluator>('editEvaluator')));
+  }
+
   evaluatorIndividualResults(projectId: number, evaluatorId: number, body: unknown): Observable<unknown | HttpErrorResponse> {
     return this.http.post<Evaluator>(`${this.apiUrl}/projects/${projectId}/evaluators/${evaluatorId}/individual_results/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'evaluatorIndividualResults')),

@@ -5,6 +5,7 @@ import {EvaluatorRoutingModule} from './evaluator-routing.module';
 import {SharedModule} from '../../shared/shared.module';
 import { IndividualResultsDialogComponent } from './individual-results-dialog/individual-results-dialog.component';
 import { FilteredAverageDialogComponent } from './filtered-average-dialog/filtered-average-dialog.component';
+import { EditEvaluatorDialogComponent } from './edit-evaluator-dialog/edit-evaluator-dialog.component';
 
 @NgModule({
     imports: [
@@ -15,7 +16,8 @@ import { FilteredAverageDialogComponent } from './filtered-average-dialog/filter
     EvaluatorComponent,
     CreateEvaluatorDialogComponent,
     IndividualResultsDialogComponent,
-    FilteredAverageDialogComponent
+    FilteredAverageDialogComponent,
+    EditEvaluatorDialogComponent
     ],
     providers: [],
  })

@@ -12,4 +12,5 @@ export class UserProfile {
   last_login: Date;
   // only sometimes?? nullable
   active_project?: '';
+  profile:{application: string};
 }
