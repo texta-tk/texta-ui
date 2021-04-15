@@ -38,6 +38,9 @@
             {{fact}}
           </mat-option>
         </mat-select>
+        <mat-error *ngIf="evaluatorForm.get('trueFactNameFormControl')?.hasError('required')">
+          This field is <strong>required</strong>
+        </mat-error>
       </mat-form-field>
       <mat-form-field class="m-l-15" data-cy="appEvaluatorCreateDialogTrueFactValue" fxFlex>
         <input [matAutocomplete]="trueVal"
@@ -68,6 +71,10 @@
             {{fact}}
           </mat-option>
         </mat-select>
+
+        <mat-error *ngIf="evaluatorForm.get('predictedFactNameFormControl')?.hasError('required')">
+          This field is <strong>required</strong>
+        </mat-error>
       </mat-form-field>
       <mat-form-field class="m-l-15" data-cy="appEvaluatorCreateDialogPredictedFactValue" fxFlex>
         <input [matAutocomplete]="predictedVal"
