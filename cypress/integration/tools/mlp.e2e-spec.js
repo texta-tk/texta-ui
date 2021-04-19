@@ -42,6 +42,15 @@ describe('mlp should work', function () {
       cy.closeCurrentCdkOverlay();
       cy.wrap(analyzers).find('mat-error').should('have.length', 0);
     }));
+    cy.get('[data-cy=appMLPCreateDialogFields]').click().then((fields => {
+      cy.wrap(fields).should('have.class', 'mat-focused');
+      cy.closeCurrentCdkOverlay();
+      cy.matFormFieldShouldHaveError(fields, 'required');
+      cy.wrap(fields).click();
+      cy.get('.mat-option-text').contains('comment_content').click();
+      cy.closeCurrentCdkOverlay();
+      cy.wrap(fields).find('mat-error').should('have.length', 0)
+    }));
     cy.get('[data-cy=appMLPCreateDialogSubmit]').should('be.visible').click();
     cy.wait('@createMLPTask').then(created => {
       expect(created.response.statusCode).to.eq(201);

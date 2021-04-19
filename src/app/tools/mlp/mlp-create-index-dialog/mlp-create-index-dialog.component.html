@@ -24,10 +24,14 @@
       </mat-error>
     </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field data-cy="appMLPCreateDialogFields">
       <mat-label>Select Fields</mat-label>
-      <app-project-field-select [projectFields]="projectFields"
+      <app-project-field-select [projectFields]="projectFields" [required]="true"
                                 formControlName="fieldsFormControl"></app-project-field-select>
+
+      <mat-error *ngIf="MLPForm.get('fieldsFormControl')?.hasError('required')">
+        Field is <strong>required</strong>
+      </mat-error>
     </mat-form-field>
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"
                                    data-cy="appMLPCreateDialogQuery">

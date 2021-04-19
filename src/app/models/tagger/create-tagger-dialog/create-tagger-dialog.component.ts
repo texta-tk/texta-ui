@@ -16,6 +16,7 @@ import {Embedding} from '../../../shared/types/tasks/Embedding';
 import {EmbeddingsService} from '../../../core/models/embeddings/embeddings.service';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 import {ResultsWrapper} from '../../../shared/types/Generic';
+import {CoreService} from "../../../core/core.service";
 
 @Component({
   selector: 'app-create-tagger-dialog',
@@ -53,11 +54,13 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
   destroyed$ = new Subject<boolean>();
   projectIndices: ProjectIndex[] = [];
   projectFacts: ProjectFact[];
+  snowballLanguages: string[] = [];
 
   constructor(private dialogRef: MatDialogRef<CreateTaggerDialogComponent>,
               private taggerService: TaggerService,
               private logService: LogService,
               private projectService: ProjectService,
+              private coreService: CoreService,
               private embeddingService: EmbeddingsService,
               private projectStore: ProjectStore) {
   }
@@ -74,6 +77,18 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
     this.projectStore.getProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(projIndices => {
       if (projIndices) {
         this.projectIndices = projIndices;
+      }
+    });
+
+    this.coreService.getSnowballLanguages().subscribe(resp => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.snowballLanguages = resp;
+        const snowball = this.taggerForm.get('snowballFormControl');
+        if (snowball) {
+          snowball.setValue(resp);
+        }
+      } else {
+        this.logService.snackBarError(resp);
       }
     });
 
@@ -176,10 +191,6 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
     const classifier = this.taggerForm.get('classifierFormControl');
     if (classifier) {
       classifier.setValue(options.actions.POST.classifier.choices[0]);
-    }
-    const snowball = this.taggerForm.get('snowballFormControl');
-    if (snowball) {
-      snowball.setValue(options.actions.POST.snowball_language.choices[0]);
     }
     const scoringFunction = this.taggerForm.get('scoringFormControl');
     if (scoringFunction) {

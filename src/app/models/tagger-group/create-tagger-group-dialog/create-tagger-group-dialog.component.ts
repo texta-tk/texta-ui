@@ -17,6 +17,7 @@ import {forkJoin, of, Subject} from 'rxjs';
 import {TaggerGroupService} from '../../../core/models/taggers/tagger-group.service';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 import {MatSelect} from '@angular/material/select';
+import {CoreService} from "../../../core/core.service";
 
 @Component({
   selector: 'app-create-tagger-group-dialog',
@@ -55,6 +56,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
   destroyed$ = new Subject<boolean>();
   fieldsUnique: Field[] = [];
   projectIndices: ProjectIndex[] = [];
+  snowballLanguages: string[] = [];
   @ViewChild('indicesSelect') indicesSelect: MatSelect;
 
   constructor(private dialogRef: MatDialogRef<CreateTaggerGroupDialogComponent>,
@@ -62,6 +64,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
               private taggerGroupService: TaggerGroupService,
               private logService: LogService,
               private projectService: ProjectService,
+              private coreService: CoreService,
               private embeddingService: EmbeddingsService,
               private projectStore: ProjectStore) {
   }
@@ -78,6 +81,19 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
     this.projectStore.getProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(projIndices => {
       if (projIndices) {
         this.projectIndices = projIndices;
+      }
+    });
+
+    this.coreService.getSnowballLanguages().subscribe(resp => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.snowballLanguages = resp;
+        const taggerForm = this.taggerGroupForm.get('taggerForm');
+        const snowball = taggerForm?.get('snowballFormControl');
+        if (snowball) {
+          snowball.setValue(resp);
+        }
+      } else {
+        this.logService.snackBarError(resp);
       }
     });
 
@@ -165,6 +181,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
 
   setDefaultFormValues(options: TaggerOptions): void {
     const taggerForm = this.taggerGroupForm.get('taggerForm');
+
     if (taggerForm) {
       const vectorizer = taggerForm.get('vectorizerFormControl');
       if (vectorizer) {
@@ -173,10 +190,6 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
       const classifier = taggerForm.get('classifierFormControl');
       if (classifier) {
         classifier.setValue(options.actions.POST.classifier.choices[0]);
-      }
-      const snowball = taggerForm.get('snowballFormControl');
-      if (snowball) {
-        snowball.setValue(options.actions.POST.snowball_language.choices[0]);
       }
       const scoringFunction = taggerForm.get('scoringFormControl');
       if (scoringFunction) {

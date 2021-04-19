@@ -27,7 +27,7 @@ export class MLPCreateIndexDialogComponent implements OnInit, OnDestroy {
   MLPForm = new FormGroup({
     descriptionFormControl: new FormControl('', [Validators.required]),
     indicesFormControl: new FormControl([], [Validators.required]),
-    fieldsFormControl: new FormControl([]),
+    fieldsFormControl: new FormControl([], [Validators.required]),
     analyzersFormControl: new FormControl([], [Validators.required]),
   });
 
