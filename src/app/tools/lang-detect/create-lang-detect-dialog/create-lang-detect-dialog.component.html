@@ -1,0 +1,51 @@
+<h1 mat-dialog-title>New LangDetect task</h1>
+<mat-dialog-content>
+  <form (ngSubmit)="onSubmit(langDetectForm.value)" [formGroup]="langDetectForm" class="flex-col" id="langDetectForm">
+    <mat-form-field data-cy="appLangDetectCreateDialogDesc">
+      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
+             placeholder="Description" required>
+
+      <mat-error *ngIf="langDetectForm.get('descriptionFormControl')?.hasError('required')">
+        Description is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+
+    <mat-form-field data-cy="appLangDetectCreateDialogIndices">
+      <mat-label>Indices</mat-label>
+      <mat-select (openedChange)="indicesOpenedChange($event)" [disableOptionCentering]="true"
+                  formControlName="indicesFormControl" multiple panelClass="select-panel-reveal-input" required>
+        <mat-option *ngFor="let projectIndex of projectIndices" [value]="projectIndex">
+          {{projectIndex.index}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="langDetectForm.get('indicesFormControl')?.hasError('required')">
+        Select at least <strong>1 index</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+          <mat-label>Select Fields</mat-label>
+          <app-project-field-select [projectFields]="projectFields" [multiple]="false" [required]="true"
+                                    formControlName="fieldsFormControl"></app-project-field-select>
+      <mat-error *ngIf="langDetectForm.get('fieldsFormControl')?.hasError('required')">
+        Field is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"
+                                   data-cy="appLangDetectCreateDialogQuery"></app-saved-search-autocomplete>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <div class="flex-row max-width">
+    <div class="flex-item-left">
+      <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
+    </div>
+    <div class="flex-item-right">
+      <button [disabled]="!langDetectForm.valid" form="langDetectForm" data-cy="appLangDetectCreateDialogSubmit" mat-button type="submit">
+        Create
+      </button>
+    </div>
+  </div>
+</mat-dialog-actions>

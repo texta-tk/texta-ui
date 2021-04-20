@@ -52,7 +52,8 @@
         projectResourceCounts.num_mlp_workers +
         projectResourceCounts.num_index_splitters +
         projectResourceCounts.num_clusterings +
-          projectResourceCounts.num_evaluators}})
+        projectResourceCounts.num_evaluators +
+        projectResourceCounts.num_lang_detectors}})
         </ng-container>
         <mat-icon>arrow_drop_down</mat-icon>
       </button>
@@ -110,6 +111,11 @@
          routerLinkActive="is-active-menu">Evaluator <span
         *ngIf="projectResourceCounts?.num_evaluators">({{projectResourceCounts.num_evaluators}})</span>
       </a>
+
+      <a [routerLink]="['lang-detect']" mat-menu-item
+         routerLinkActive="is-active-menu">Language Detection <span
+        *ngIf="projectResourceCounts?.num_lang_detectors">({{projectResourceCounts.num_lang_detectors}})</span>
+      </a>
     </mat-menu>
 
     <div *ngIf="!user" class="flex-item-right login">
@@ -128,7 +134,7 @@
                     panelClass="select-panel-reveal-input"
                     placeholder="Indices">
           <app-mat-option-select-all></app-mat-option-select-all>
-          <mat-option *ngFor="let item of projectFields" [value]="item" [title]="item.index">
+          <mat-option *ngFor="let item of projectFields" [title]="item.index" [value]="item">
             {{item.index}}
           </mat-option>
         </mat-select>
@@ -139,7 +145,7 @@
                     data-cy="appNavbarProjectSelect"
                     panelClass="select-panel-reveal-input"
                     placeholder="Projects">
-          <mat-option *ngFor="let item of projects" [value]="item" [title]="item.title">
+          <mat-option *ngFor="let item of projects" [title]="item.title" [value]="item">
             {{item.id}}: {{item.title}}
           </mat-option>
         </mat-select>

@@ -1,13 +1,14 @@
-import {AfterViewInit, Component, Host, OnDestroy} from '@angular/core';
+import {AfterViewInit, Component, Host, Input, OnDestroy} from '@angular/core';
 import {MatPseudoCheckboxState} from '@angular/material/core';
 import {MatSelect} from '@angular/material/select';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
+import {coerceBooleanProperty} from '@angular/cdk/coercion';
 
 @Component({
   selector: 'app-mat-option-select-all',
   template: `
-    <div class="mat-option" data-cy="matOptionSelectAll" (click)="onSelectAllClick($event)">
+    <div class="mat-option" data-cy="matOptionSelectAll" (click)="onSelectAllClick($event)" *ngIf="multiple">
       <mat-pseudo-checkbox [state]="state" class="mat-option-pseudo-checkbox"></mat-pseudo-checkbox>
       <span class="mat-option-text">Select all</span>
     </div>
@@ -27,11 +28,22 @@ export class MatOptionSelectAllComponent implements AfterViewInit, OnDestroy {
 
   private destroyed = new Subject();
 
+  private _multiple = true;
+
+  @Input()
+  get multiple(): boolean {
+    return this._multiple;
+  }
+
+  set multiple(mult) {
+    this._multiple = coerceBooleanProperty(mult);
+  }
+
   constructor(@Host() private matSelect: MatSelect) {
   }
 
   ngAfterViewInit(): void {
-    if (this.matSelect && this.matSelect.ngControl && this.matSelect.ngControl.control) {
+    if (this.matSelect && this.matSelect.ngControl && this.matSelect.ngControl.control && this.matSelect.options) {
       this.options = this.matSelect.options.map(x => x.value);
       this.matSelect.options.changes
         .pipe(takeUntil(this.destroyed))

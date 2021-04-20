@@ -116,12 +116,24 @@ export class ProjectFieldSelectComponent implements OnInit, OnDestroy, ControlVa
   private _required = false;
 
   @Input()
-  get required() {
+  get required(): boolean {
     return this._required;
   }
 
   set required(req) {
     this._required = coerceBooleanProperty(req);
+    this.stateChanges.next();
+  }
+
+  private _multiple = true;
+
+  @Input()
+  get multiple(): boolean {
+    return this._multiple;
+  }
+
+  set multiple(mult) {
+    this._multiple = coerceBooleanProperty(mult);
     this.stateChanges.next();
   }
 

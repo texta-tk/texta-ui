@@ -1,1 +1,6 @@
-{{ data.query }}
+<ng-container *ngIf="data.query | isObject">
+  {{ data.query | json  }}
+</ng-container>
+<ng-container *ngIf="!(data.query | isObject)">
+  {{ data.query }}
+</ng-container>

@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {QueryDialogComponent} from './query-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {SharedModule} from '../../../shared.module';
 
 describe('QueryDialogComponent', () => {
   let component: QueryDialogComponent;
@@ -12,6 +13,7 @@ describe('QueryDialogComponent', () => {
   const data = {query: JSON.stringify({bool: {must: ['tere']}})};
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
+      imports: [SharedModule],
       declarations: [QueryDialogComponent],
       providers: [
         {
