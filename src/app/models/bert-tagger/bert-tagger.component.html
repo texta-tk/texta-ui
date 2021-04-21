@@ -160,6 +160,18 @@
                     <td>{{element.maximum_sample_size}}</td>
                   </tr>
                   <tr>
+                    <th class="mat-body-strong">Balance</th>
+                    <td>{{element.balance}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Use sentence shuffle</th>
+                    <td>{{element.use_sentence_shuffle}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Balance to max limit</th>
+                    <td>{{element.balance_to_max_limit}}</td>
+                  </tr>
+                  <tr>
                     <th class="mat-body-strong">Number of Epochs</th>
                     <td>{{element.num_epochs}}</td>
                   </tr>
@@ -228,7 +240,7 @@
                   </tr>
                 </table>
               </div>
-              <div class="flex-col" *ngIf="element.confusion_matrix.length > 5">
+              <div class="flex-col m-l-r-5" *ngIf="(element.confusion_matrix | parseJson)[0]?.length === 2">
                 <app-tagger-fine-tune-slider
                   [data]="{precision: element.precision, recall: element.recall, f1_score: element.f1_score, confusion_matrix: element.confusion_matrix}"></app-tagger-fine-tune-slider>
               </div>

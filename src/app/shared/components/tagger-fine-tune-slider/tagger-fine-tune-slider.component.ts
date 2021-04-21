@@ -49,17 +49,17 @@ export class TaggerFineTuneSliderComponent implements OnInit, OnDestroy {
       const tn = this.matrix[1][1];
       const nNeg = fp + tn;
       const nPos = tp + fn;
-      const tpr = tp / nPos;
-      const fpr = fp / nNeg;
-      const fnr = fn / nPos;
+      const tpr = (tp / nPos) || 0;
+      const fpr = (fp / nNeg) || 0;
+      const fnr = (fn / nPos) || 0;
       const sliderPos = $event.value;
       const sliderNeg = 100 - sliderPos;
       const tps = tpr * sliderPos;
       const fps = fpr * sliderNeg;
       const fns = fnr * sliderPos;
-      this.precision = tps / (tps + fps);
-      this.recall = tps / (tps + fns);
-      this.f1_score = 2 * (this.precision * this.recall) / (this.precision + this.recall);
+      this.precision = (tps / (tps + fps)) || 0;
+      this.recall = (tps / (tps + fns)) || 0;
+      this.f1_score = (2 * (this.precision * this.recall) / (this.precision + this.recall)) || 0;
     }
   }
 

@@ -27,6 +27,9 @@ interface OnSubmitParams {
     numEpochsFormControl: number;
     modelArchitectureFormControl: string;
     factNameFormControl: string
+    balanceFormControl: boolean;
+    sentenceShuffleFormControl: boolean;
+    maxBalanceFormControl: boolean;
   };
 }
 
@@ -49,6 +52,10 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy, Afte
     factNameFormControl: new FormControl(),
     modelArchitectureFormControl: new FormControl('', [Validators.required]),
     numEpochsFormControl: new FormControl(5, [Validators.required]),
+
+    balanceFormControl: new FormControl({value: false, disabled: true}),
+    sentenceShuffleFormControl: new FormControl({value: false, disabled: true}),
+    maxBalanceFormControl: new FormControl({value: false, disabled: true}),
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
@@ -70,7 +77,35 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy, Afte
               private projectStore: ProjectStore) {
   }
 
+  initFormControlListeners(): void {
+
+    this.torchTaggerForm.get('balanceFormControl')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(val => {
+      if (val) {
+        this.torchTaggerForm.get('maxBalanceFormControl')?.enable({emitEvent: false});
+        this.torchTaggerForm.get('sentenceShuffleFormControl')?.enable({emitEvent: false});
+      } else {
+        this.torchTaggerForm.get('maxBalanceFormControl')?.disable({emitEvent: false});
+        this.torchTaggerForm.get('sentenceShuffleFormControl')?.disable({emitEvent: false});
+      }
+    });
+    this.torchTaggerForm.get('factNameFormControl')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(val => {
+      if (val) {
+        if (this.torchTaggerForm.get('balanceFormControl')?.value) {
+          this.torchTaggerForm.get('maxBalanceFormControl')?.enable({emitEvent: false});
+          this.torchTaggerForm.get('sentenceShuffleFormControl')?.enable({emitEvent: false});
+        }
+        this.torchTaggerForm.get('balanceFormControl')?.enable({emitEvent: false});
+      } else {
+        this.torchTaggerForm.get('maxBalanceFormControl')?.disable({emitEvent: false});
+        this.torchTaggerForm.get('balanceFormControl')?.disable({emitEvent: false});
+        this.torchTaggerForm.get('sentenceShuffleFormControl')?.disable({emitEvent: false});
+      }
+    });
+  }
+
   ngOnInit(): void {
+    this.initFormControlListeners();
+
     this.projectStore.getCurrentProject().pipe(take(1), mergeMap(currentProject => {
       if (currentProject) {
         this.currentProject = currentProject;
@@ -150,6 +185,9 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy, Afte
         model_architecture: formData.modelArchitectureFormControl,
         ...this.query ? {query: this.query} : {},
         ...formData.factNameFormControl ? {fact_name: formData.factNameFormControl} : {},
+        ...formData.sentenceShuffleFormControl ? {use_sentence_shuffle: formData.sentenceShuffleFormControl} : {},
+        ...formData.balanceFormControl ? {balance: formData.balanceFormControl} : {},
+        ...formData.maxBalanceFormControl ? {balance_to_max_limit: formData.maxBalanceFormControl} : {},
       };
       this.torchTaggerService.createTorchTagger(this.currentProject.id, body).subscribe((resp: TorchTagger | HttpErrorResponse) => {
         if (resp && !(resp instanceof HttpErrorResponse)) {

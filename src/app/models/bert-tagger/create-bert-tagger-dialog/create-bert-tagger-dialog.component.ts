@@ -28,6 +28,9 @@ interface OnSubmitParams {
   epsFormControl: number;
   batchSizeFormControl: number;
   splitRatioFormControl: number;
+  balanceFormControl: boolean;
+  sentenceShuffleFormControl: boolean;
+  maxBalanceFormControl: boolean;
 }
 
 @Component({
@@ -46,12 +49,16 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
     ]),
     indicesFormControl: new FormControl([], [Validators.required]),
     fieldsFormControl: new FormControl([], [Validators.required]),
-    factNameFormControl: new FormControl(Validators.required),
+    factNameFormControl: new FormControl(),
     sampleSizeFormControl: new FormControl(10000, [Validators.required]),
     minSampleSizeFormControl: new FormControl(50, [Validators.required]),
     negativeMultiplierFormControl: new FormControl(1.0, [Validators.required]),
     maxLengthFormControl: new FormControl(64, [Validators.required]),
     bertModelFormControl: new FormControl([Validators.required]),
+
+    balanceFormControl: new FormControl({value: false, disabled: true}),
+    sentenceShuffleFormControl: new FormControl({value: false, disabled: true}),
+    maxBalanceFormControl: new FormControl({value: false, disabled: true}),
     // advanced
     numEpochsFormControl: new FormControl(2, [Validators.required]),
     learningRateFormControl: new FormControl(2e-5, [Validators.required]),
@@ -76,7 +83,35 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
               private projectStore: ProjectStore) {
   }
 
+  initFormControlListeners(): void {
+
+    this.bertTaggerForm.get('balanceFormControl')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(val => {
+      if (val) {
+        this.bertTaggerForm.get('maxBalanceFormControl')?.enable({emitEvent: false});
+        this.bertTaggerForm.get('sentenceShuffleFormControl')?.enable({emitEvent: false});
+      } else {
+        this.bertTaggerForm.get('maxBalanceFormControl')?.disable({emitEvent: false});
+        this.bertTaggerForm.get('sentenceShuffleFormControl')?.disable({emitEvent: false});
+      }
+    });
+    this.bertTaggerForm.get('factNameFormControl')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(val => {
+      if (val) {
+        if (this.bertTaggerForm.get('balanceFormControl')?.value) {
+          this.bertTaggerForm.get('maxBalanceFormControl')?.enable({emitEvent: false});
+          this.bertTaggerForm.get('sentenceShuffleFormControl')?.enable({emitEvent: false});
+        }
+        this.bertTaggerForm.get('balanceFormControl')?.enable({emitEvent: false});
+      } else {
+        this.bertTaggerForm.get('maxBalanceFormControl')?.disable({emitEvent: false});
+        this.bertTaggerForm.get('balanceFormControl')?.disable({emitEvent: false});
+        this.bertTaggerForm.get('sentenceShuffleFormControl')?.disable({emitEvent: false});
+      }
+    });
+  }
+
   ngOnInit(): void {
+    this.initFormControlListeners();
+
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(currentProjIndices => {
       if (currentProjIndices) {
         const indicesForm = this.bertTaggerForm.get('indicesFormControl');
@@ -136,9 +171,12 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
       batch_size: formData.batchSizeFormControl,
       split_ratio: formData.splitRatioFormControl,
       negative_multiplier: formData.negativeMultiplierFormControl,
+
+      ...formData.sentenceShuffleFormControl ? {use_sentence_shuffle: formData.sentenceShuffleFormControl} : {},
+      ...formData.balanceFormControl ? {balance: formData.balanceFormControl} : {},
+      ...formData.maxBalanceFormControl ? {balance_to_max_limit: formData.maxBalanceFormControl} : {},
       ...this.query ? {query: this.query} : {},
     };
-
     this.bertTaggerService.createBertTaggerTask(this.currentProject.id, body).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.logService.snackBarMessage(`Created new task: ${resp.description}`, 2000);

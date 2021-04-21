@@ -48,4 +48,7 @@ export interface BertTagger {
   negative_multiplier: number;
   num_examples: string;
   confusion_matrix: string;
+  balance: boolean;
+  balance_to_max_limit: boolean;
+  use_sentence_shuffle: boolean;
 }

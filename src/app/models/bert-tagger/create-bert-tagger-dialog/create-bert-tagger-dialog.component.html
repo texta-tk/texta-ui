@@ -43,7 +43,20 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
-
+    <div class="flex-row">
+      <mat-checkbox formControlName="balanceFormControl"
+                    matTooltip="Balance sample sizes of different classes. Only applicable for multiclass taggers."
+                    matTooltipPosition="left">Balance
+      </mat-checkbox>
+      <mat-checkbox formControlName="sentenceShuffleFormControl" class="m-l-15"
+                    matTooltip="Shuffle sentences in added examples. NB! Only applicable for multiclass taggers with balance enabled."
+                    matTooltipPosition="left">Use sentence shuffle
+      </mat-checkbox>
+      <mat-checkbox class="m-l-15" formControlName="maxBalanceFormControl"
+                    matTooltip="If enabled, the number of samples for each class is set to `maximum_sample_size`. Otherwise, it is set to max class size. NB! Only applicable for multiclass taggers with balance enabled"
+                    matTooltipPosition="left">Balance to max limit
+      </mat-checkbox>
+    </div>
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"
                                    data-cy="appBertTaggerCreateDialogQuery"></app-saved-search-autocomplete>
 

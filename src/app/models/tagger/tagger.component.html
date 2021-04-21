@@ -219,7 +219,7 @@
                 </table>
               </div>
 
-              <div class="flex-col m-l-r-5" *ngIf="element.confusion_matrix.length > 5">
+              <div class="flex-col m-l-r-5" *ngIf="(element.confusion_matrix | parseJson)[0]?.length === 2">
                 <app-tagger-fine-tune-slider
                   [data]="{precision: element.precision, recall: element.recall, f1_score: element.f1_score, confusion_matrix: element.confusion_matrix}"></app-tagger-fine-tune-slider>
               </div>

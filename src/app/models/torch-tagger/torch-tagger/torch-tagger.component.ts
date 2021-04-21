@@ -158,7 +158,7 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   openCreateDialog(): void {
     const dialogRef = this.dialog.open(CreateTorchTaggerDialogComponent, {
-      maxHeight: '850px',
+      maxHeight: '90vh',
       width: '700px',
       disableClose: true
     });
