@@ -30,7 +30,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
     descriptionFormControl: new FormControl('', [
       Validators.required,
     ]),
-    factNameFormControl: new FormControl(Validators.required),
+    factNameFormControl: new FormControl(),
     taggerGroupSampleSizeFormControl: new FormControl(50, [Validators.required]),
     taggerForm: new FormGroup({
       fieldsFormControl: new FormControl([], [Validators.required]),
@@ -43,7 +43,9 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
       sampleSizeFormControl: new FormControl(10000, [Validators.required]),
       negativeMultiplierFormControl: new FormControl(1.0, [Validators.required]),
       ignoreNumbersFormControl: new FormControl(true),
-
+      detectLangFormControl: new FormControl(false),
+      balanceFormControl: new FormControl({value: false, disabled: true}),
+      maxBalanceFormControl: new FormControl({value: false, disabled: true}),
     })
   });
 
@@ -69,7 +71,46 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
               private projectStore: ProjectStore) {
   }
 
+  initFormControlListeners(): void {
+
+    this.taggerGroupForm.get('taggerForm')?.get('balanceFormControl')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(val => {
+      if (val) {
+        this.taggerGroupForm.get('taggerForm')?.get('maxBalanceFormControl')?.enable({emitEvent: false});
+      } else {
+        this.taggerGroupForm.get('taggerForm')?.get('maxBalanceFormControl')?.disable({emitEvent: false});
+      }
+    });
+
+    this.taggerGroupForm.get('taggerForm')?.get('detectLangFormControl')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(val => {
+      if (val) {
+        this.taggerGroupForm.get('taggerForm')?.get('snowballFormControl')?.disable({emitEvent: false});
+      } else {
+        this.taggerGroupForm.get('taggerForm')?.get('snowballFormControl')?.enable({emitEvent: false});
+      }
+    });
+
+    this.taggerGroupForm.get('taggerForm')?.get('snowballFormControl')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(val => {
+      if (val) {
+        this.taggerGroupForm.get('taggerForm')?.get('detectLangFormControl')?.disable({emitEvent: false});
+      } else {
+        this.taggerGroupForm.get('taggerForm')?.get('detectLangFormControl')?.enable({emitEvent: false});
+      }
+    });
+    this.taggerGroupForm.get('factNameFormControl')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(val => {
+      if (val) {
+        if (this.taggerGroupForm.get('taggerForm')?.get('balanceFormControl')?.value) {
+          this.taggerGroupForm.get('taggerForm')?.get('maxBalanceFormControl')?.enable({emitEvent: false});
+        }
+        this.taggerGroupForm.get('taggerForm')?.get('balanceFormControl')?.enable({emitEvent: false});
+      } else {
+        this.taggerGroupForm.get('taggerForm')?.get('maxBalanceFormControl')?.disable({emitEvent: false});
+        this.taggerGroupForm.get('taggerForm')?.get('balanceFormControl')?.disable({emitEvent: false});
+      }
+    });
+  }
+
   ngOnInit(): void {
+    this.initFormControlListeners();
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(currentProjIndices => {
       if (currentProjIndices) {
         const indicesForm = this.taggerGroupForm.get('taggerForm')?.get('indicesFormControl');
@@ -87,11 +128,6 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
     this.coreService.getSnowballLanguages().subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.snowballLanguages = resp;
-        const taggerForm = this.taggerGroupForm.get('taggerForm');
-        const snowball = taggerForm?.get('snowballFormControl');
-        if (snowball) {
-          snowball.setValue(resp);
-        }
       } else {
         this.logService.snackBarError(resp);
       }
@@ -151,14 +187,17 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
     const taggerBody = {
       fields: formData.taggerForm.fieldsFormControl,
       indices: formData.taggerForm.indicesFormControl.map((x: ProjectIndex) => [{name: x.index}]).flat(),
-      ...formData.taggerForm.snowballFormControl.value ? {snowball_language: formData.taggerForm.snowballFormControl.value} : {},
+      ...formData?.taggerForm?.snowballFormControl ? {snowball_language: formData.taggerForm.snowballFormControl} : {},
       scoring_function: formData.taggerForm.scoringFormControl.value,
       vectorizer: formData.taggerForm.vectorizerFormControl.value,
       classifier: formData.taggerForm.classifierFormControl.value,
       maximum_sample_size: formData.taggerForm.sampleSizeFormControl,
       negative_multiplier: formData.taggerForm.negativeMultiplierFormControl,
-      ignore_numbers: formData.ignoreNumbersFormControl,
+      ignore_numbers: formData?.taggerForm?.ignoreNumbersFormControl,
       ...formData?.taggerForm?.embeddingFormControl?.id ? {embedding: formData.taggerForm.embeddingFormControl.id} : {},
+      ...formData?.taggerForm?.detectLangFormControl ? {detect_lang: formData.taggerForm.detectLangFormControl} : {},
+      ...formData?.taggerForm?.balanceFormControl ? {balance: formData.taggerForm.balanceFormControl} : {},
+      ...formData?.taggerForm?.maxBalanceFormControl ? {balance_to_max_limit: formData.taggerForm.maxBalanceFormControl} : {},
     };
 
     const body = {
@@ -167,7 +206,6 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
       minimum_sample_size: formData.taggerGroupSampleSizeFormControl,
       tagger: taggerBody
     };
-
     if (this.currentProject) {
       this.taggerGroupService.createTaggerGroup(body, this.currentProject.id).subscribe(resp => {
         if (resp instanceof HttpErrorResponse) {

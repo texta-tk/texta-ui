@@ -16,7 +16,7 @@ import {Embedding} from '../../../shared/types/tasks/Embedding';
 import {EmbeddingsService} from '../../../core/models/embeddings/embeddings.service';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 import {ResultsWrapper} from '../../../shared/types/Generic';
-import {CoreService} from "../../../core/core.service";
+import {CoreService} from '../../../core/core.service';
 
 @Component({
   selector: 'app-create-tagger-dialog',
@@ -32,7 +32,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
       Validators.required,
     ]),
     indicesFormControl: new FormControl([], [Validators.required]),
-    factNameFormControl: new FormControl(Validators.required),
+    factNameFormControl: new FormControl(),
     fieldsFormControl: new FormControl([], [Validators.required]),
     embeddingFormControl: new FormControl(),
     snowballFormControl: new FormControl(),
@@ -43,6 +43,9 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
     sampleSizeFormControl: new FormControl(10000, [Validators.required]),
     negativeMultiplierFormControl: new FormControl(1.0, [Validators.required]),
     ignoreNumbersFormControl: new FormControl(true),
+    detectLangFormControl: new FormControl(false),
+    balanceFormControl: new FormControl({value: false, disabled: true}),
+    maxBalanceFormControl: new FormControl({value: false, disabled: true}),
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
@@ -65,7 +68,47 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
               private projectStore: ProjectStore) {
   }
 
+  initFormControlListeners(): void {
+
+    this.taggerForm.get('balanceFormControl')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(val => {
+      if (val) {
+        this.taggerForm.get('maxBalanceFormControl')?.enable({emitEvent: false});
+      } else {
+        this.taggerForm.get('maxBalanceFormControl')?.disable({emitEvent: false});
+      }
+    });
+
+    this.taggerForm.get('detectLangFormControl')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(val => {
+      if (val) {
+        this.taggerForm.get('snowballFormControl')?.disable({emitEvent: false});
+      } else {
+        this.taggerForm.get('snowballFormControl')?.enable({emitEvent: false});
+      }
+    });
+
+    this.taggerForm.get('snowballFormControl')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(val => {
+      if (val) {
+        this.taggerForm.get('detectLangFormControl')?.disable({emitEvent: false});
+      } else {
+        this.taggerForm.get('detectLangFormControl')?.enable({emitEvent: false});
+      }
+    });
+    this.taggerForm.get('factNameFormControl')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(val => {
+      if (val) {
+        if (this.taggerForm.get('balanceFormControl')?.value) {
+          this.taggerForm.get('maxBalanceFormControl')?.enable({emitEvent: false});
+        }
+        this.taggerForm.get('balanceFormControl')?.enable({emitEvent: false});
+      } else {
+        this.taggerForm.get('maxBalanceFormControl')?.disable({emitEvent: false});
+        this.taggerForm.get('balanceFormControl')?.disable({emitEvent: false});
+      }
+    });
+  }
+
   ngOnInit(): void {
+    this.initFormControlListeners();
+
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(currentProjIndices => {
       if (currentProjIndices) {
         const indicesForm = this.taggerForm.get('indicesFormControl');
@@ -83,10 +126,6 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
     this.coreService.getSnowballLanguages().subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.snowballLanguages = resp;
-        const snowball = this.taggerForm.get('snowballFormControl');
-        if (snowball) {
-          snowball.setValue(resp);
-        }
       } else {
         this.logService.snackBarError(resp);
       }
@@ -160,14 +199,16 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
       classifier: formData.classifierFormControl.value,
       stop_words: formData.stopWordsFormControl.split('\n').filter((x: string) => !!x),
       maximum_sample_size: formData.sampleSizeFormControl,
-      ...formData.snowballFormControl.value ? {snowball_language: formData.snowballFormControl.value} : {},
+      ...formData.snowballFormControl ? {snowball_language: formData.snowballFormControl} : {},
       scoring_function: formData.scoringFormControl.value,
       fact_name: formData.factNameFormControl,
       ignore_numbers: formData.ignoreNumbersFormControl,
       negative_multiplier: formData.negativeMultiplierFormControl,
+      ...formData.detectLangFormControl ? {detect_lang: formData.detectLangFormControl} : {},
+      ...formData.balanceFormControl ? {balance: formData.balanceFormControl} : {},
+      ...formData.maxBalanceFormControl ? {balance_to_max_limit: formData.maxBalanceFormControl} : {},
       ...this.query ? {query: this.query} : {},
     };
-
     this.projectStore.getCurrentProject().pipe(take(1), mergeMap(currentProject => {
       if (currentProject) {
         return this.taggerService.createTagger(body, currentProject.id);

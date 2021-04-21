@@ -21,9 +21,10 @@
         Need at least 1 index
       </mat-error>
     </mat-form-field>
-    <mat-form-field data-cy="appTaggerCreateDialogFields" >
+    <mat-form-field data-cy="appTaggerCreateDialogFields">
       <mat-label>Select Fields</mat-label>
-      <app-project-field-select formControlName="fieldsFormControl" [required]="true" [projectFields]="projectFields" ></app-project-field-select>
+      <app-project-field-select [projectFields]="projectFields" [required]="true"
+                                formControlName="fieldsFormControl"></app-project-field-select>
       <mat-error *ngIf="taggerForm.get('fieldsFormControl')?.hasError('required')">
         Field is <strong>required</strong>
       </mat-error>
@@ -39,10 +40,21 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
+    <div class="flex-row">
+      <mat-checkbox formControlName="balanceFormControl"
+                    matTooltip="Balance sample sizes of different classes. Only applicable for multiclass taggers."
+                    matTooltipPosition="left">Balance
+      </mat-checkbox>
+      <mat-checkbox class="m-l-15" formControlName="maxBalanceFormControl"
+                    matTooltip="If enabled, the number of samples for each class is set to `maximum_sample_size`. Otherwise, it is set to max class size. NB! Only applicable for multiclass taggers with balance enabled"
+                    matTooltipPosition="left">Balance to max limit
+      </mat-checkbox>
+    </div>
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"
                                    data-cy="appTaggerCreateDialogQuery"></app-saved-search-autocomplete>
     <mat-form-field>
-      <app-textarea-lexicon formControlName="stopWordsFormControl" placeholder="Stopwords (newline separated)"></app-textarea-lexicon>
+      <app-textarea-lexicon formControlName="stopWordsFormControl"
+                            placeholder="Stopwords (newline separated)"></app-textarea-lexicon>
     </mat-form-field>
 
     <mat-form-field data-cy="appTaggerCreateDialogEmbedding">
@@ -64,10 +76,15 @@
       <mat-select [disableOptionCentering]="true" formControlName="snowballFormControl"
                   panelClass="select-panel-reveal-input">
         <mat-option *ngFor="let item of snowballLanguages" [value]="item">
-          {{item}}
+          {{item ? item : 'None'}}
         </mat-option>
       </mat-select>
     </mat-form-field>
+
+    <mat-checkbox formControlName="detectLangFormControl" class="m-bot-10"
+                  matTooltip="Whether to detect the language for the stemmer from the document itself. Disabled when using snowball language"
+                  matTooltipPosition="left">Detect language
+    </mat-checkbox>
 
     <mat-form-field>
       <mat-label>Scoring Function</mat-label>
@@ -105,13 +122,16 @@
     </mat-form-field>
 
     <mat-form-field data-cy="appTaggerCreateDialogSampleSize">
-      <input formControlName="sampleSizeFormControl" matInput pattern="[1-9]\d*" placeholder="Maximum sample size" step="1000"
+      <input formControlName="sampleSizeFormControl" matInput pattern="[1-9]\d*" placeholder="Maximum sample size"
+             step="1000"
              type="number">
     </mat-form-field>
     <mat-form-field>
-      <input formControlName="negativeMultiplierFormControl" matInput pattern="([0-9]*|[0-9]*[.]?)\d*" placeholder="Negative Multiplier" step="0.1"
+      <input formControlName="negativeMultiplierFormControl" matInput pattern="([0-9]*|[0-9]*[.]?)\d*"
+             placeholder="Negative Multiplier" step="0.1"
              type="number">
     </mat-form-field>
+
     <mat-checkbox formControlName="ignoreNumbersFormControl"
                   matTooltip="If enabled, ignore all numbers as possible features."
                   matTooltipPosition="left">Ignore numbers
@@ -125,7 +145,8 @@
       <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
     </div>
     <div class="flex-item-right">
-      <button [disabled]="!taggerForm.valid" form="taggerForm" data-cy="appTaggerCreateDialogSubmit" mat-button type="submit">Create
+      <button [disabled]="!taggerForm.valid" data-cy="appTaggerCreateDialogSubmit" form="taggerForm" mat-button
+              type="submit">Create
       </button>
     </div>
   </div>

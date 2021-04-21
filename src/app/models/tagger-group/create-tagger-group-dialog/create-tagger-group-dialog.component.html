@@ -19,7 +19,17 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field>
+    <div class="flex-row" formGroupName="taggerForm">
+      <mat-checkbox formControlName="balanceFormControl"
+                    matTooltip="Balance sample sizes of different classes. Only applicable for multiclass taggers."
+                    matTooltipPosition="left">Balance
+      </mat-checkbox>
+      <mat-checkbox class="m-l-15" formControlName="maxBalanceFormControl"
+                    matTooltip="If enabled, the number of samples for each class is set to `maximum_sample_size`. Otherwise, it is set to max class size. NB! Only applicable for multiclass taggers with balance enabled"
+                    matTooltipPosition="left">Balance to max limit
+      </mat-checkbox>
+    </div>
+    <mat-form-field class="m-top-10">
       <input formControlName="taggerGroupSampleSizeFormControl" matInput placeholder="Minimum sample size" step="50"
              type="number">
     </mat-form-field>
@@ -64,11 +74,14 @@
         <mat-select [disableOptionCentering]="true" formControlName="snowballFormControl"
                     panelClass="select-panel-reveal-input">
           <mat-option *ngFor="let item of snowballLanguages" [value]="item">
-            {{item}}
+            {{item ? item : 'None'}}
           </mat-option>
         </mat-select>
       </mat-form-field>
-
+      <mat-checkbox class="m-bot-10" formControlName="detectLangFormControl"
+                    matTooltip="Whether to detect the language for the stemmer from the document itself. Disabled when using snowball language"
+                    matTooltipPosition="left">Detect language
+      </mat-checkbox>
       <mat-form-field>
         <mat-label>Scoring Function</mat-label>
         <mat-select [disableOptionCentering]="true" formControlName="scoringFormControl"

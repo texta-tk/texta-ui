@@ -28,6 +28,9 @@ export class Tagger {
   ignore_numbers: boolean;
   plot: unknown;
   task: TaskStatus;
+  detect_lang: boolean;
+  balance: boolean;
+  balance_to_max_limit: boolean;
 }
 
 export enum TaggerVectorizerChoices {

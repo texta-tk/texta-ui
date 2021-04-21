@@ -114,6 +114,14 @@
                     <td>{{element.maximum_sample_size}}</td>
                   </tr>
                   <tr>
+                    <th class="mat-body-strong">Balance</th>
+                    <td>{{element.balance}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Balance to max limit</th>
+                    <td>{{element.balance_to_max_limit}}</td>
+                  </tr>
+                  <tr>
                     <th class="mat-body-strong">Negative Multiplier</th>
                     <td>{{element.negative_multiplier}}</td>
                   </tr>
@@ -132,6 +140,10 @@
                   <tr>
                     <th class="mat-body-strong">Snowball Language</th>
                     <td>{{element.snowball_language}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Detect Language</th>
+                    <td>{{element.detect_lang}}</td>
                   </tr>
                   <tr>
                     <th class="mat-body-strong">Scoring Function</th>
@@ -207,7 +219,7 @@
                 </table>
               </div>
 
-              <div class="flex-col" *ngIf="element.confusion_matrix.length > 5">
+              <div class="flex-col m-l-r-5" *ngIf="element.confusion_matrix.length > 5">
                 <app-tagger-fine-tune-slider
                   [data]="{precision: element.precision, recall: element.recall, f1_score: element.f1_score, confusion_matrix: element.confusion_matrix}"></app-tagger-fine-tune-slider>
               </div>
