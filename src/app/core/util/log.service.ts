@@ -38,6 +38,10 @@ export class LogService {
       this.snackBar.open(`${error.error.non_field_errors[0]}`, 'Close', {
         duration: time,
       });
+    }else if (error.error.hasOwnProperty('error')) {
+      this.snackBar.open(`${error.error.error}`, 'Close', {
+        duration: time,
+      });
     } else {
       this.snackBar.open(error.name + ': ' + error.status + ' ' + error.statusText, 'Close', {
         duration: time,

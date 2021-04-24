@@ -3,6 +3,7 @@
     <app-project></app-project>
   </div>
   <div class="health-wrapper" fxFlex="40%">
+    <mat-progress-spinner style="margin: auto; margin-top: 20%" mode="indeterminate" *ngIf="isLoading"></mat-progress-spinner>
     <div *ngIf="health?.services" data-cy="appHomeHealth">
       <mat-card class="service-status-card center-margin" fxLayout="row wrap" fxLayoutGap="5px">
         <mat-chip-list class="center-margin chip-list-space-evenly" disabled>

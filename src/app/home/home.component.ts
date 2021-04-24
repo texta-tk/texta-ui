@@ -23,6 +23,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   user: UserProfile | null;
   frontVersion = projectPackage.version;
   destroyed$ = new Subject<boolean>();
+  isLoading = true;
 
   constructor(private coreService: CoreService, private userStore: UserStore) {
 
@@ -39,6 +40,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     })).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.health = resp;
+        this.isLoading = false;
         this.unreachable = false;
       } else {
         this.unreachable = true;
