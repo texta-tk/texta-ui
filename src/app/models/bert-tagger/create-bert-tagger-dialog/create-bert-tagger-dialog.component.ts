@@ -162,7 +162,7 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
       maximum_sample_size: formData.sampleSizeFormControl,
       minimum_sample_size: formData.minSampleSizeFormControl,
       num_epochs: formData.numEpochsFormControl,
-      fact_name: formData.factNameFormControl,
+      ...formData.factNameFormControl ? {fact_name: formData.factNameFormControl} : {},
       indices: formData.indicesFormControl.map((x: ProjectIndex) => [{name: x.index}]).flat(),
       bert_model: formData.bertModelFormControl,
       learning_rate: formData.learningRateFormControl,

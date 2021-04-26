@@ -40,8 +40,8 @@ describe('/health and project table tests', function () {
       cy.get('.mat-option-text').contains('texta_test_index').should('be.visible').click(); // todo texta test index
       cy.closeCurrentCdkOverlay();
     }));
-    cy.intercept('GET', 'projects').as('getProjects');
     cy.intercept('POST', 'projects').as('postProjects');
+    cy.intercept('GET', '**/projects/**').as('getProjects');
     cy.get('[data-cy=appProjectCreateDialogSubmit]').should('be.visible').click();
     cy.wait('@postProjects');
     cy.wait('@getProjects');

@@ -201,7 +201,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
       maximum_sample_size: formData.sampleSizeFormControl,
       ...formData.snowballFormControl ? {snowball_language: formData.snowballFormControl} : {},
       scoring_function: formData.scoringFormControl.value,
-      fact_name: formData.factNameFormControl,
+      ...formData.factNameFormControl ? {fact_name: formData.factNameFormControl} : {},
       ignore_numbers: formData.ignoreNumbersFormControl,
       negative_multiplier: formData.negativeMultiplierFormControl,
       ...formData.detectLangFormControl ? {detect_lang: formData.detectLangFormControl} : {},

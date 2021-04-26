@@ -202,7 +202,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
 
     const body = {
       description: formData.descriptionFormControl,
-      fact_name: formData.factNameFormControl,
+      ...formData.factNameFormControl ? {fact_name: formData.factNameFormControl} : {},
       minimum_sample_size: formData.taggerGroupSampleSizeFormControl,
       tagger: taggerBody
     };
