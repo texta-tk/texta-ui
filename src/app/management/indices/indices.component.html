@@ -1,4 +1,4 @@
-<div fxLayout="column" class="wrapper max-height">
+<div class="wrapper max-height" fxLayout="column">
   <div class="table-paginator-row">
     <div class="loading-bar">
       <mat-progress-bar *ngIf="isLoadingResults" mode="indeterminate"></mat-progress-bar>
@@ -18,7 +18,7 @@
       </mat-paginator>
     </div>
   </div>
-  <div class="table-container overflow-auto" [appScrollTop]="tableData">
+  <div [appScrollTop]="tableData" class="table-container overflow-auto">
 
     <table [dataSource]="tableData" [trackBy]="trackById"
            mat-table matSort matSortActive="id" matSortDirection="asc" matSortDisableClear>
@@ -42,6 +42,14 @@
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Open</th>
         <td *matCellDef="let element" mat-cell>
           <mat-checkbox (click)="toggleIndexState(element)" [(ngModel)]="element.is_open"></mat-checkbox>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="facts">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Fact mapping</th>
+        <td *matCellDef="let element" mat-cell>
+          <mat-checkbox (click)="addFactMapping(element)" [(ngModel)]="element.has_validated_facts"
+                        [disabled]="element.has_validated_facts"
+                        [matTooltip]="element.has_validated_facts ? '' : 'Click to add fact mapping'"></mat-checkbox>
         </td>
       </ng-container>
       <ng-container matColumnDef="name">

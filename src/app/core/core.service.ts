@@ -63,6 +63,12 @@ export class CoreService {
       catchError(this.logService.handleError<{ message: string }>('editElasticIndex')));
   }
 
+  indexAddFactMapping(index: Index): Observable<{ message: string } | HttpErrorResponse> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/index/${index.id}/add_facts_mapping/`, {}).pipe(
+      tap(e => this.logService.logStatus(e, 'indexAddFactMapping')),
+      catchError(this.logService.handleError<{ message: string }>('indexAddFactMapping')));
+  }
+
   getCoreVariables(): Observable<CoreVariables[] | HttpErrorResponse> {
     return this.http.get<CoreVariables[]>(`${this.apiUrl}/core_variables/`).pipe(
       tap(e => this.logService.logStatus(e, 'getCoreVariables')),

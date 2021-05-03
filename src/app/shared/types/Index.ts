@@ -5,4 +5,5 @@ export interface Index {
   doc_count: number;
   size: number;
   url: string;
+  has_validated_facts: boolean;
 }

@@ -158,6 +158,7 @@ export interface ProjectState {
   searcher: {
     itemsPerPage: number;
     selectedFields: string[];
+    sidePanelsState: {buildSearch: boolean, savedSearch: boolean, aggregations: boolean}
     searcherType: 1 | 2;
   };
   models: {

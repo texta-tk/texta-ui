@@ -13,6 +13,7 @@ import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-di
 import {Index} from '../../shared/types/Index';
 import {CoreService} from '../../core/core.service';
 import {SelectionModel} from '@angular/cdk/collections';
+import {ConfirmDeleteDialogComponent} from "./confirm-delete-dialog/confirm-delete-dialog.component";
 
 
 @Component({
@@ -25,7 +26,7 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
   projects: Project[];
   public tableData: MatTableDataSource<Index> = new MatTableDataSource<Index>([]);
 
-  public displayedColumns = ['select', 'id', 'is_open', 'name', 'size', 'doc_count', 'delete'];
+  public displayedColumns = ['select', 'id', 'is_open', 'facts', 'name', 'size', 'doc_count', 'delete'];
   public isLoadingResults = true;
 
   @ViewChild(MatSort) sort: MatSort;
@@ -62,6 +63,18 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isLoadingResults = false;
       }
     });
+  }
+
+  addFactMapping(row: Index): void {
+    if (!row.has_validated_facts) {
+      this.coreService.indexAddFactMapping(row).subscribe((resp) => {
+        if (resp instanceof HttpErrorResponse) {
+          this.logService.snackBarError(resp, 2000);
+        } else if (resp) {
+          this.logService.snackBarMessage(resp.message, 5000);
+        }
+      });
+    }
   }
 
   toggleIndexState(row: Index): void {
@@ -125,10 +138,11 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onDeleteAllSelected(): void {
     if (this.selectedRows.selected.length > 0) {
-      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      const dialogRef = this.dialog.open(ConfirmDeleteDialogComponent, {
         data: {
           confirmText: 'Delete',
-          mainText: `Delete the following indices: ${this.selectedRows.selected.map(x => x.name).join(', ')}`
+          mainText: `Delete the following indices`,
+          indices:  this.selectedRows.selected
         },
         maxHeight: '90vh'
       });

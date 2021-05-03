@@ -1,0 +1,18 @@
+<h1 mat-dialog-title>{{title}}</h1>
+<div class="dialog-content-wrapper" mat-dialog-content>
+  <p>{{mainText}}</p>
+  <ul>
+    <li *ngFor="let item of this.data.indices">{{item.name}}</li>
+  </ul>
+  <div class="flex-col">
+    <div class="flex-row">
+      <div class="flex-item-left">
+        <button (click)="closeDialog()" class="flex-item-left" mat-button type="button">{{cancelText}}</button>
+      </div>
+      <div class="flex-item-right">
+        <button (click)="closeDialogConfirm()" [color]="confirmBtnColor" data-cy="appConfirmDialogSubmit" mat-raised-button
+                type="submit">{{confirmText}}</button>
+      </div>
+    </div>
+  </div>
+</div>

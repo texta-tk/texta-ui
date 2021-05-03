@@ -28,7 +28,8 @@ export class LocalStorageService {
           searcher: {
             itemsPerPage: 10,
             selectedFields: [],
-            searcherType: 1
+            searcherType: 1,
+            sidePanelsState: {buildSearch: true, savedSearch: true, aggregations: false}
           },
           models: {
             tagger: {itemsPerPage: 25},

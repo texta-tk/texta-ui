@@ -1,4 +1,4 @@
-<mat-accordion [multi]="true"> <!--[displayMode]="flat"-->
+<mat-accordion [multi]="true" *ngIf="currentProject"> <!--[displayMode]="flat"-->
   <mat-expansion-panel
     [expanded]="buildSearchExpanded" #buildSearchPanel>
     <mat-expansion-panel-header (click)="expandBuildSearchPanel()">
