@@ -150,7 +150,7 @@ export class LangDetectComponent implements OnInit, OnDestroy, AfterViewInit {
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         data: {
           confirmText: 'Delete',
-          mainText: `Are you sure you want to delete ${this.selectedRows.selected.length} Tasks?`
+          mainText: `Are you sure you want to delete ${this.selectedRows.selected.length} tasks?`
         }
       });
 
@@ -161,7 +161,7 @@ export class LangDetectComponent implements OnInit, OnDestroy, AfterViewInit {
           const body = {ids: idsToDelete};
 
           this.langDetectService.bulkDeleteLangDetectTasks(this.currentProject.id, body).subscribe(() => {
-            this.logService.snackBarMessage(`Deleted ${this.selectedRows.selected.length} Tasks.`, 2000);
+            this.logService.snackBarMessage(`Deleted ${this.selectedRows.selected.length} tasks.`, 2000);
             this.removeSelectedRows();
           });
         }

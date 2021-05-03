@@ -23,7 +23,7 @@ import {ListFeaturesDialogComponent} from './list-features-dialog/list-features-
 import {expandRowAnimation} from '../../shared/animations';
 import {EditTaggerDialogComponent} from './edit-tagger-dialog/edit-tagger-dialog.component';
 import {Index} from '../../shared/types/Index';
-import {ApplyToIndexDialogComponent} from "./apply-to-index-dialog/apply-to-index-dialog.component";
+import {ApplyToIndexDialogComponent} from './apply-to-index-dialog/apply-to-index-dialog.component';
 
 @Component({
   selector: 'app-tagger',

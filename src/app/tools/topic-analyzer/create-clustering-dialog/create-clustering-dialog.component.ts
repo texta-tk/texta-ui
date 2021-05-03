@@ -40,7 +40,7 @@ export class CreateClusteringDialogComponent implements OnInit, OnDestroy {
     numDimsFormControl: new FormControl(1000),
     useLSIFormControl: new FormControl(false),
     numTopicsFormControl: new FormControl(50),
-    stopWordsFormControl: new FormControl([]),
+    stopWordsFormControl: new FormControl(''),
     fieldsFormControl: new FormControl([], [Validators.required]),
     documentLimitFormControl: new FormControl(100),
   });
@@ -125,7 +125,7 @@ export class CreateClusteringDialogComponent implements OnInit, OnDestroy {
       num_dims: formData.numDimsFormControl,
       use_lsi: formData.useLSIFormControl,
       num_topics: formData.numTopicsFormControl,
-      stop_words: formData.stopWordsFormControl.length > 0 ? formData.stopWordsFormControl.split('\n') : [],
+      stop_words: formData.stopWordsFormControl.split('\n').filter((x: string) => !!x),
       fields: formData.fieldsFormControl,
       embedding: (formData.embeddingFormControl as Embedding) ? (formData.embeddingFormControl as Embedding).id : null,
       document_limit: formData.documentLimitFormControl,
