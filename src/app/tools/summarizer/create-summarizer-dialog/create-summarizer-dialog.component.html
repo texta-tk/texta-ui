@@ -1,0 +1,71 @@
+<h1 mat-dialog-title>New Summarizer task</h1>
+<mat-dialog-content>
+  <form (ngSubmit)="onSubmit(summarizerForm.value)" [formGroup]="summarizerForm" class="flex-col" id="summarizerForm">
+    <mat-form-field data-cy="appSummarizerCreateDialogDesc">
+      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
+             placeholder="Description" required>
+
+      <mat-error *ngIf="summarizerForm.get('descriptionFormControl')?.hasError('required')">
+        Description is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+
+    <mat-form-field data-cy="appSummarizerCreateDialogIndices">
+      <mat-label>Indices</mat-label>
+      <mat-select (openedChange)="indicesOpenedChange($event)" [disableOptionCentering]="true"
+                  formControlName="indicesFormControl" multiple panelClass="select-panel-reveal-input" required>
+        <mat-option *ngFor="let projectIndex of projectIndices" [value]="projectIndex">
+          {{projectIndex.index}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="summarizerForm.get('indicesFormControl')?.hasError('required')">
+        Select at least <strong>1 index</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+          <mat-label>Select Fields</mat-label>
+          <app-project-field-select [projectFields]="projectFields" [required]="true"
+                                    formControlName="fieldsFormControl"></app-project-field-select>
+      <mat-error *ngIf="summarizerForm.get('fieldsFormControl')?.hasError('required')">
+        Field is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field data-cy="appSummarizerCreateDialogAlgorithms">
+      <mat-label>Algorithms</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="algorithmsFormControl"
+                  multiple panelClass="select-panel-reveal-input">
+        <ng-container *ngIf="algorithms">
+          <mat-option *ngFor="let item of algorithms" [value]="item.value">
+            {{item.display_name}}
+          </mat-option>
+        </ng-container>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="ratioFormControl"
+             matInput
+             max="1"
+             min="0" placeholder="Ratio" step="0.1" type="number">
+      <mat-error *ngIf="summarizerForm.get('ratioFormControl')?.hasError('min')">
+        Ratio must be between <strong>0 and 1</strong>
+      </mat-error>
+      <mat-error *ngIf="summarizerForm.get('ratioFormControl')?.hasError('max')">
+        Ratio must be between <strong>0 and 1</strong>
+      </mat-error>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <div class="flex-row max-width">
+    <div class="flex-item-left">
+      <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
+    </div>
+    <div class="flex-item-right">
+      <button [disabled]="!summarizerForm.valid" form="summarizerForm" data-cy="appSummarizerCreateDialogSubmit" mat-button type="submit">
+        Create
+      </button>
+    </div>
+  </div>
+</mat-dialog-actions>

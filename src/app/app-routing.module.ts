@@ -80,6 +80,11 @@ const routes: Routes = [
     loadChildren: () => import('./tools/evaluator/evaluator.module').then(m => m.EvaluatorModule)
   },
   {
+    path: 'summarizers',
+    canActivate: [AuthGuard, ProjectGuard],
+    loadChildren: () => import('./tools/summarizer/summarizer.module').then(m => m.SummarizerModule)
+  },
+  {
     path: 'lang-detect',
     canActivate: [AuthGuard, ProjectGuard],
     loadChildren: () => import('./tools/lang-detect/lang-detect.module').then(m => m.LangDetectModule)
