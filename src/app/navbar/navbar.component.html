@@ -40,7 +40,7 @@
       </button>
     </a>
     <a [matMenuTriggerFor]="tools"
-       [ngClass]="{'is-active': ['/reindexer', '/index-splitter', '/dataset-importer', 'mlp', '/anonymizers', '/topic-analyzer', '/evaluators'].includes(router.url)}"
+       [ngClass]="{'is-active': ['/reindexer', '/index-splitter', '/dataset-importer', 'mlp', '/anonymizers', '/topic-analyzer', '/evaluators', '/summarizers'].includes(router.url)}"
        class="pointer">
       <button class="nav-button" mat-button>
         <mat-icon class="margin-right">build</mat-icon>
@@ -53,6 +53,7 @@
         projectResourceCounts.num_index_splitters +
         projectResourceCounts.num_clusterings +
         projectResourceCounts.num_evaluators +
+        projectResourceCounts.num_summarizers +
         projectResourceCounts.num_lang_detectors}})
         </ng-container>
         <mat-icon>arrow_drop_down</mat-icon>
@@ -111,7 +112,10 @@
          routerLinkActive="is-active-menu">Evaluator <span
         *ngIf="projectResourceCounts?.num_evaluators">({{projectResourceCounts.num_evaluators}})</span>
       </a>
-
+      <a [routerLink]="['summarizers']" mat-menu-item
+         routerLinkActive="is-active-menu">Summarizer <span
+        *ngIf="projectResourceCounts?.num_summarizers">({{projectResourceCounts.num_summarizers}})</span>
+      </a>
       <a [routerLink]="['lang-detect']" mat-menu-item
          routerLinkActive="is-active-menu">Language Detection <span
         *ngIf="projectResourceCounts?.num_lang_detectors">({{projectResourceCounts.num_lang_detectors}})</span>
