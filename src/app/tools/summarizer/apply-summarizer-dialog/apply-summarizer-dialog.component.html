@@ -1,0 +1,69 @@
+<h1 mat-dialog-title>Apply to text</h1>
+<div mat-dialog-content>
+  <form (ngSubmit)="onSubmit(summarizerForm.value)" [formGroup]="summarizerForm" class="flex-col">
+    <mat-form-field class="max-width" data-cy="appSummarizerApplyDialogText">
+      <textarea [errorStateMatcher]="matcher" formControlName="textFormControl" matInput placeholder="Text"
+                required></textarea>
+      <mat-error *ngIf="summarizerForm.get('textFormControl')?.hasError('required')">
+        Text is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field data-cy="appSummarizerApplyDialogAlgorithms">
+      <mat-label>Algorithms</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="algorithmsFormControl"
+                  multiple panelClass="select-panel-reveal-input">
+        <ng-container *ngIf="algorithms">
+          <mat-option *ngFor="let item of algorithms" [value]="item.value">
+            {{item.display_name}}
+          </mat-option>
+        </ng-container>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="ratioFormControl"
+             matInput
+             max="1"
+             min="0" placeholder="Ratio" step="0.1" type="number">
+      <mat-error *ngIf="summarizerForm.get('ratioFormControl')?.hasError('min')">
+        Ratio must be between <strong>0 and 1</strong>
+      </mat-error>
+      <mat-error *ngIf="summarizerForm.get('ratioFormControl')?.hasError('max')">
+        Ratio must be between <strong>0 and 1</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+    <div *ngIf="result" class="m-bot-10">
+      <mat-accordion multi>
+        <mat-expansion-panel *ngIf="result.lexrank" expanded>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Lexrank
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          {{result.lexrank}}
+        </mat-expansion-panel>
+
+        <mat-expansion-panel *ngIf="result.textrank" expanded>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Textrank
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          {{result.textrank}}
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+    <div class="flex-col">
+      <div class="flex-row">
+        <div class="flex-item-left">
+          <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
+        </div>
+        <div class="flex-item-right">
+          <button [disabled]="!summarizerForm.valid" data-cy="appSummarizerApplyDialogSubmit" mat-button type="submit">
+            Apply
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

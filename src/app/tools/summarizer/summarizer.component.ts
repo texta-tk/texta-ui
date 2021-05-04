@@ -17,6 +17,7 @@ import {expandRowAnimation} from '../../shared/animations';
 import {LogService} from '../../core/util/log.service';
 import {Index} from '../../shared/types/Index';
 import {QueryDialogComponent} from '../../shared/components/dialogs/query-dialog/query-dialog.component';
+import {ApplySummarizerDialogComponent} from './apply-summarizer-dialog/apply-summarizer-dialog.component';
 
 @Component({
   selector: 'app-summarizer',
@@ -167,5 +168,12 @@ export class SummarizerComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy(): void {
     this.destroyed$.next(true);
     this.destroyed$.complete();
+  }
+
+  openApplyTextDialog(): void {
+    this.dialog.open(ApplySummarizerDialogComponent, {
+      maxHeight: '80vh',
+      width: '700px',
+    });
   }
 }

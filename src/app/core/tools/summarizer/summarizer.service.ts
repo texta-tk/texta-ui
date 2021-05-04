@@ -30,6 +30,12 @@ export class SummarizerService {
       catchError(this.logService.handleError<Summarizer>('createSummarizerTask')));
   }
 
+  applySummarizerText(projectId: number, body: unknown): Observable<{ lexrank: string; textrank: string }[] | HttpErrorResponse> {
+    return this.http.post<{ lexrank: string; textrank: string }[]>(`${this.apiUrl}/summarizer/summarize`, body).pipe(
+      tap(e => this.logService.logStatus(e, 'applySummarizerText')),
+      catchError(this.logService.handleError<{ lexrank: string; textrank: string }[]>('applySummarizerText')));
+  }
+
   bulkDeleteSummarizerTasks(projectId: number, body: unknown): Observable<{ 'num_deleted': number, 'deleted_types': { string: number }[] } | HttpErrorResponse> {
     return this.http.post<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>
     (`${this.apiUrl}/projects/${projectId}/summarizer_index/bulk_delete/`, body).pipe(
