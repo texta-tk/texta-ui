@@ -60,7 +60,7 @@
              matInput
              placeholder="Value"
              type="text">
-      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="factValueSelected($event, inputGroup)"
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="changeFactValue($event, inputGroup)"
                         panelWidth="auto">
         <mat-option *ngFor="let option of inputGroup.filteredOptions" [disabled]="inputGroup.isLoadingOptions"
                     [value]="option">

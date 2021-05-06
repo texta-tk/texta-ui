@@ -1,7 +1,32 @@
 <div class="wrapper max-height" fxLayout="column">
   <div [appScrollTop]="tableDataSource" class="table-container overflow-auto">
+    <div class="table-paginator-row">
 
-    <table [dataSource]="tableDataSource" mat-table matSort multiTemplateDataRows>
+      <div class="paginator-row">
+        <button (click)="openLexiconDialog(selection.selected)" [disabled]="selection.selected.length < 1" class="paginator-margin-left" color="primary"
+                mat-raised-button>Add to lexicon
+        </button>
+        <mat-paginator [pageSizeOptions]="[20, 50, 100]" showFirstLastButtons>
+        </mat-paginator>
+      </div>
+    </div>
+    <table [dataSource]="tableDataSource" mat-table matSort>
+
+      <!-- Checkbox Column -->
+      <ng-container matColumnDef="select">
+        <th *matHeaderCellDef mat-header-cell>
+          <mat-checkbox (change)="$event ? masterToggle() : null"
+                        [checked]="selection.hasValue() && isAllSelected()"
+                        [indeterminate]="selection.hasValue() && !isAllSelected()">
+          </mat-checkbox>
+        </th>
+        <td *matCellDef="let row" mat-cell>
+          <mat-checkbox (change)="$event ? selection.toggle(row) : null"
+                        (click)="$event.stopPropagation()"
+                        [checked]="selection.isSelected(row)">
+          </mat-checkbox>
+        </td>
+      </ng-container>
 
       <ng-container matColumnDef="key">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Key</th>
@@ -32,8 +57,5 @@
     </table>
 
   </div>
-
-  <mat-paginator [pageSizeOptions]="[20, 50, 100]" showFirstLastButtons>
-  </mat-paginator>
 
 </div>

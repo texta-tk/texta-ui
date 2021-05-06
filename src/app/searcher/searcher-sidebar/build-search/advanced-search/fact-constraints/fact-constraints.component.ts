@@ -83,7 +83,7 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
       // cant select when factname is null
       inputGroup.factTextInputFormControl.disable();
     } else { // set default values selected already when we have inputgroup
-      this.factValueSelected(inputGroup.factTextInputFormControl.value, inputGroup);
+      this.changeFactValue(inputGroup.factTextInputFormControl.value, inputGroup);
     }
 
     inputGroup.query.bool = {[this.factTextOperatorFormControl.value]: inputGroup.formQuery};
@@ -117,6 +117,9 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
       takeUntil(this.destroyed$),
       debounceTime(100),
       switchMap(value => {
+        if (inputGroup) {
+          this.changeFactValue(value, inputGroup);
+        }
         // todo fix in TS 3.7
         // tslint:disable-next-line:no-non-null-assertion
         if ((value || value === '' && inputGroup!.factTextFactNameFormControl.value) && this.currentProject && inputGroup) {
@@ -138,7 +141,7 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
     });
   }
 
-  factValueSelected(val: MatAutocompleteSelectedEvent | string, inputGroup: FactTextInputGroup): void {
+  changeFactValue(val: MatAutocompleteSelectedEvent | string, inputGroup: FactTextInputGroup): void {
     const factValue = (val instanceof MatAutocompleteSelectedEvent) ? val.option.value : val;
     if (factValue.length > 0) {
       inputGroup.formQuery.nested.inner_hits.name = `${FactConstraintsComponent.componentCount}_${inputGroup.factTextFactNameFormControl.value}_${factValue}`;

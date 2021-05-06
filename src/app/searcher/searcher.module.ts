@@ -30,6 +30,7 @@ import {EditSavedSearchDialogComponent} from './searcher-sidebar/saved-searches/
 import {SearcherComponentService} from './services/searcher-component.service';
 import {PlotlyViaWindowModule} from 'angular-plotly.js';
 import {DragDropModule} from '@angular/cdk/drag-drop';
+import { AddLexiconDialogComponent } from './aggregation-results/aggregation-result-table/add-lexicon-dialog/add-lexicon-dialog.component';
 @NgModule({
   declarations: [
     SearcherComponent,
@@ -57,6 +58,7 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
     AggregationResultFactsComponent,
     GraphSelectedPortalComponent,
     EditSavedSearchDialogComponent,
+    AddLexiconDialogComponent,
   ],
   imports: [
     SharedModule,

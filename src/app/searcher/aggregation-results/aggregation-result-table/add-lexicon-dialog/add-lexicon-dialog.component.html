@@ -1,0 +1,62 @@
+<h1 mat-dialog-title>Lexicon</h1>
+<div fxLayout="column" mat-dialog-content>
+  <div class="m-bot-10">
+    <mat-radio-group [(ngModel)]="method">
+      <mat-radio-button value="existing">Add to existing lexicon</mat-radio-button>
+      <mat-radio-button class="m-l-15" value="new">Create new lexicon</mat-radio-button>
+    </mat-radio-group>
+  </div>
+  <mat-form-field *ngIf="method === 'existing'">
+    <mat-label>Select Lexicon</mat-label>
+    <mat-select [(ngModel)]="selectedLexicon"
+                [disableOptionCentering]="true" panelClass="select-panel-reveal-input" required>
+      <mat-option>None</mat-option>
+      <mat-option *ngFor="let lex of lexicons" [value]="lex">
+        {{lex.description}}
+      </mat-option>
+    </mat-select>
+    <mat-error>This field is <strong>required</strong></mat-error>
+  </mat-form-field>
+  <mat-form-field *ngIf="method === 'new'">
+    <input #ctrl="ngModel" [(ngModel)]="newLexDesc" [errorStateMatcher]="matcher" autocomplete="off"
+           matInput placeholder="Description" required>
+    <mat-error *ngIf="ctrl?.hasError('required')">
+      Description is <strong>required</strong>
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Word type</mat-label>
+    <mat-select [(ngModel)]="type"
+                [disableOptionCentering]="true" panelClass="select-panel-reveal-input" required>
+      <mat-option value="positives_used">Positives used</mat-option>
+      <mat-option value="positives_unused">Positives unused</mat-option>
+      <mat-option value="negatives_used">Negatives used</mat-option>
+      <mat-option value="negatives_unused">Negatives unused</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="stretch-height max-width"
+                  floatLabel="always">
+    <mat-label>Enter words here</mat-label>
+    <textarea [(ngModel)]="lexWords" autofocus cdkAutosizeMaxRows="15" cdkAutosizeMinRows="3"
+              cdkTextareaAutosize
+              class="max-width"
+              matInput
+              placeholder="Words"
+    ></textarea>
+  </mat-form-field>
+
+  <div class="flex-col">
+    <div class="flex-row">
+      <div class="flex-item-left">
+        <button (click)="closeDialog()" class="flex-item-left" mat-button type="button">Close</button>
+      </div>
+      <div class="flex-item-right">
+        <button (click)="onSubmit()"
+                [disabled]="(method === 'new' && !newLexDesc) || method === 'existing' && !selectedLexicon"
+                data-cy="appEvaluatorEditDialogSubmit" mat-button type="submit">
+          Submit
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

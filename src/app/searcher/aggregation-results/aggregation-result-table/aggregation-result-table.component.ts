@@ -2,6 +2,9 @@ import {Component, Input, ViewChild} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
+import {SelectionModel} from '@angular/cdk/collections';
+import {MatDialog} from '@angular/material/dialog';
+import {AddLexiconDialogComponent} from './add-lexicon-dialog/add-lexicon-dialog.component';
 
 interface TableElement {
   doc_count: number;
@@ -17,11 +20,13 @@ interface TableElement {
 export class AggregationResultTableComponent {
   tableDataSource: MatTableDataSource<TableElement>;
   expandedElement: TableElement | null;
-  displayedColumns = ['key', 'doc_count'];
+  displayedColumns = ['select', 'key', 'doc_count'];
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  selection = new SelectionModel<TableElement>(true, []);
 
-  constructor() {
+  constructor(
+    public dialog: MatDialog) {
   }
 
   @Input()
@@ -36,4 +41,25 @@ export class AggregationResultTableComponent {
     }
   }
 
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected(): boolean {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.tableDataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterToggle(): void {
+    this.isAllSelected() ?
+      this.selection.clear() :
+      this.tableDataSource.data.forEach(row => this.selection.select(row));
+  }
+
+  openLexiconDialog(selected: TableElement[]): void {
+    this.dialog.open(AddLexiconDialogComponent, {
+      maxHeight: '90vh',
+      width: '800px',
+      data: selected
+    });
+  }
 }

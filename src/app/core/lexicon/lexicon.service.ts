@@ -55,7 +55,7 @@ export class LexiconService {
       `${this.apiUrl}/projects/${projectId}/lexicons/${lexiconId}/`,
       body
     ).pipe(
-      tap(e => this.logService.logStatus(e, 'createLexicon')),
-      catchError(this.logService.handleError<Lexicon>('createLexicon')));
+      tap(e => this.logService.logStatus(e, 'updateLexicon')),
+      catchError(this.logService.handleError<Lexicon>('updateLexicon')));
   }
 }
