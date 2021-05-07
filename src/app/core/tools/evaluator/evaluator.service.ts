@@ -23,12 +23,19 @@ export class EvaluatorService {
       catchError(this.logService.handleError<ResultsWrapper<Evaluator>>('getEvaluatorTasks')));
   }
 
-  editEvaluator(body: unknown, projectId: number, embeddingId: number): Observable<Evaluator | HttpErrorResponse> {
+  editEvaluator(body: unknown, projectId: number, evalId: number): Observable<Evaluator | HttpErrorResponse> {
     return this.http.patch<Evaluator>(
-      `${this.apiUrl}/projects/${projectId}/evaluators/${embeddingId}/`, body
+      `${this.apiUrl}/projects/${projectId}/evaluators/${evalId}/`, body
     ).pipe(
       tap(e => this.logService.logStatus(e, 'editEvaluator')),
       catchError(this.logService.handleError<Evaluator>('editEvaluator')));
+  }
+
+  retrainEvaluator(projectId: number, id: number): Observable<unknown> {
+    return this.http.post<unknown>(`${this.apiUrl}/projects/${projectId}/evaluators/${id}/reevaluate/`, {}
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'retrainEvaluator')),
+      catchError(this.logService.handleError<unknown>('retrainEvaluator')));
   }
 
   evaluatorIndividualResults(projectId: number, evaluatorId: number, body: unknown): Observable<unknown | HttpErrorResponse> {
