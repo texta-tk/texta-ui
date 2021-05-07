@@ -69,7 +69,7 @@ describe('FactConstraintsComponent', () => {
       inputGroup.factTextInputFormControl.setValue('Putin');
       tick(200);
       expect(inputGroup.filteredOptions.length).toBeGreaterThan(0);
-      component.factValueSelected(inputGroup.filteredOptions[0], inputGroup);
+      component.changeFactValue(inputGroup.filteredOptions[0], inputGroup);
       for (const query of innerNestedAccessor(inputGroup.formQuery)) {
         if (query.match.hasOwnProperty('texta_facts.fact')) {
           expect(query.match['texta_facts.fact']).toEqual('PER', 'expected fact name to be PER');
@@ -86,7 +86,7 @@ describe('FactConstraintsComponent', () => {
       inputGroup.factTextFactNameFormControl.setValue('PER');
       inputGroup.factTextInputFormControl.setValue('Putin');
       tick(200);
-      component.factValueSelected(inputGroup.filteredOptions[0], inputGroup);
+      component.changeFactValue(inputGroup.filteredOptions[0], inputGroup);
       const operators: ['must', 'must_not', 'should'] = ['must', 'must_not', 'should'];
       for (const operator of operators) {
         inputGroup.factTextOperatorFormControl.setValue(operator);
