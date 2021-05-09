@@ -50,6 +50,7 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
 
   updateAggregations(): void {
     if (this.isFormControlTypeOfFact()) {
+      this.aggregationType = 'terms';
       this.makeFactAggregation();
     } else {
       this.makeTextAggregation();

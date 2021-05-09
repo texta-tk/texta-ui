@@ -169,10 +169,25 @@ export class CreateEvaluatorDialogComponent implements OnInit, OnDestroy {
     this.query = query ? query : this.defaultQuery;
   }
 
+  getFactsForIndices(val: ProjectIndex[]): void {
+    if (val.length > 0) {
+      this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat()).subscribe(resp => {
+        if (resp && !(resp instanceof HttpErrorResponse)) {
+          this.projectFacts = resp;
+        } else {
+          this.logService.snackBarError(resp);
+        }
+      });
+    } else {
+      this.projectFacts = [];
+    }
+  }
+
   public indicesOpenedChange(opened: unknown): void {
     const indicesForm = this.evaluatorForm.get('indicesFormControl');
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && indicesForm?.value && !UtilityFunctions.arrayValuesEqual(indicesForm?.value, this.projectFields, (x => x.index))) {
+      this.getFactsForIndices(indicesForm?.value);
       this.projectFields = ProjectIndex.cleanProjectIndicesFields(indicesForm.value, ['text'], []);
     }
   }
