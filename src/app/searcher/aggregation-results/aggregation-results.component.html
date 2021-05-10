@@ -45,6 +45,11 @@
       [yLabel]="timeLineYLabel">
 
     </app-aggregation-results-chart>
+    <app-aggregation-results-map
+      *ngIf="aggregationData.geoData !== undefined && aggregationData.geoData.length > 0"
+      [aggregationData]="aggregationData">
+
+    </app-aggregation-results-map>
 
     <mat-tab-group *ngIf="aggregationData.treeData !== undefined && aggregationData.treeData.length > 0"
                    mat-stretch-tabs>

@@ -20,6 +20,11 @@ export interface AggregationData {
     tableData?: MatTableDataSource<any>,
     name: string
   }[];
+  geoData?: {
+    // tslint:disable-next-line:no-any
+    data?: { key: string, doc_count: number }[],
+    name: string,
+  }[];
   dateData?: { series: { value: number; name: string; extra?: { buckets: { key: string; doc_count: number }[] } }[], name: string }[];
   // only used when aggregating over texta_facts only
   textaFactsTableData?: {
@@ -105,11 +110,12 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
       treeData: [],
       tableData: [],
       dateData: [],
+      geoData: [],
       textaFactsTableData: [],
     };
     if (aggregation && aggregation.aggs) {
       for (const aggKey of Object.keys(aggregation.aggs)) {
-        if(aggregation.aggs[aggKey].hasOwnProperty(aggKey) && !aggregation.aggs[aggKey][aggKey].hasOwnProperty('buckets')){
+        if (aggregation.aggs[aggKey].hasOwnProperty(aggKey) && !aggregation.aggs[aggKey][aggKey].hasOwnProperty('buckets')) {
           aggregation.aggs[aggKey] = aggregation.aggs[aggKey][aggKey];
         }
         // first object is aggregation name either savedSearch description or the agg type
@@ -124,6 +130,10 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
         } else if (rootAggPropKeys.includes('agg_fact')) {
           rootAggObj = this.navNestedAggByKey(rootAggObj, 'agg_fact');
           this.populateAggData(rootAggObj, aggKey, (x => x.treeData), 'agg_fact', aggData);
+        } else if (rootAggPropKeys.includes('agg_centroid')) {
+          rootAggObj = this.navNestedAggByKey(rootAggObj, 'agg_centroid');
+          this.populateAggData(rootAggObj, aggKey, (x => x.geoData), 'agg_centroid', aggData);
+          console.log('agg_centroid');
         }
       }
       this.aggregationData = aggData;
@@ -190,9 +200,9 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   // aggData because we can have multiple aggs so we need to push instead of returning new object
   // @ts-ignore
   // tslint:disable-next-line:no-any max-line-length
-  populateAggData(rootAggObj, aggName, aggDataAccessor: (x: any) => any, aggregationType: 'agg_histo' | 'agg_fact' | 'agg_term', aggData: AggregationData): void {
+  populateAggData(rootAggObj, aggName, aggDataAccessor: (x: any) => any, aggregationType: 'agg_histo' | 'agg_fact' | 'agg_term' | 'agg_centroid', aggData: AggregationData): void {
     const formattedData = this.formatAggDataStructure(rootAggObj, rootAggObj,
-      ['agg_histo', 'agg_fact', 'agg_fact_val', 'agg_term', 'fact_val_reverse']);
+      ['agg_histo', 'agg_fact', 'agg_fact_val', 'agg_term', 'fact_val_reverse', 'agg_centroid']);
     const MAIN_AGG_NAME = 'Aggregation results';
     if (this.bucketAccessor(formattedData).length > 0) {
       if (formattedData.nested) {
@@ -228,6 +238,11 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
         aggDataAccessor(aggData).push({
           name: aggName === 'agg_histo' ? MAIN_AGG_NAME : aggName,
           series: this.formatDateData(this.bucketAccessor(formattedData))
+        });
+      } else if (aggregationType === 'agg_centroid') {
+        aggDataAccessor(aggData).push({
+          name: aggName === 'agg_centroid' ? MAIN_AGG_NAME : aggName,
+          data: this.bucketAccessor(formattedData)
         });
       }
     }
@@ -266,7 +281,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   // tslint:disable-next-line:no-any
   private convertHistoToRelativeFrequency(aggs: { agg: any, globalAgg: any }): void {
     for (const aggKey of Object.keys(aggs.agg.aggs)) {
-      if(aggs.agg.aggs[aggKey].hasOwnProperty(aggKey)  && !aggs.agg.aggs[aggKey][aggKey].hasOwnProperty('buckets')){
+      if (aggs.agg.aggs[aggKey].hasOwnProperty(aggKey) && !aggs.agg.aggs[aggKey][aggKey].hasOwnProperty('buckets')) {
         aggs.agg.aggs[aggKey] = aggs.agg.aggs[aggKey][aggKey];
       }
       if (aggs.agg.aggs[aggKey].hasOwnProperty('agg_histo')) {

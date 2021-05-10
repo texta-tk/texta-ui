@@ -20,7 +20,9 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "allowedCommonJsDependencies": ["linkify-it"],
+            "allowedCommonJsDependencies": [
+              "linkify-it"
+            ],
             "aot": true,
             "outputPath": "dist/TEXTA",
             "index": "src/index.html",
@@ -35,7 +37,10 @@
               "src/custom-theme.scss",
               "src/styles.scss"
             ],
-            "scripts": ["node_modules/plotly.js/dist/plotly-gl2d.min.js"],
+            "scripts": [
+              "node_modules/plotly.js/dist/plotly-gl2d.min.js",
+              "node_modules/plotly.js/dist/plotly-geo.min.js"
+            ],
             "webWorkerTsConfig": "tsconfig.worker.json"
           },
           "configurations": {

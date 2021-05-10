@@ -1,18 +1,21 @@
 <div class="wrapper" fxFlex fxLayout="column">
 
-  <div class="aggregation-form" fxFlex fxLayout="column" *ngFor="let aggregation of aggregationList; let i = index;">
+  <div *ngFor="let aggregation of aggregationList; let i = index;" class="aggregation-form" fxFlex fxLayout="column">
 
-    <div fxFlex fxLayoutAlign="end" *ngIf="i !== 0">
-      <button mat-icon-button aria-label="Close" (click)="removeAggregation(i)" class="mat-icon-button close-button">
+    <div *ngIf="i !== 0" fxFlex fxLayoutAlign="end">
+      <button (click)="removeAggregation(i)" aria-label="Close" class="mat-icon-button close-button" mat-icon-button>
         <mat-icon>close</mat-icon>
       </button>
     </div>
     <mat-form-field appearance="outline" class="max-width">
       <mat-label>Select Fields</mat-label>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true" data-cy="appSearcherSidebarAggregationsSelectField"
-                  [formControl]="aggregation.formControl">
-        <mat-option *ngFor="let fields of (fieldsFiltered | async)" [value]="fields" title="{{fieldIndexMap.get(fields.path)?.join('\n')}}"
-                    [disabled]="fields.type === 'date' && aggregation.formControl.value.type !== 'date' && dateAlreadySelected">
+      <mat-select [disableOptionCentering]="true" [formControl]="aggregation.formControl"
+                  data-cy="appSearcherSidebarAggregationsSelectField"
+                  panelClass="select-panel-reveal-input">
+        <mat-option *ngFor="let fields of (fieldsFiltered | async)"
+                    [disabled]="fields.type === 'date' && aggregation.formControl.value.type !== 'date' && dateAlreadySelected"
+                    [value]="fields"
+                    title="{{fieldIndexMap.get(fields.path)?.join('\n')}}">
           {{fields.path}}
         </mat-option>
       </mat-select>
@@ -20,36 +23,54 @@
 
     <ng-container *ngIf="fieldTypeTextOrFact(aggregation.formControl.value)">
       <app-text-aggregation
-        [isLastAgg]="(i+1) === aggregationList.length"
+        [aggregationObj]="aggregation"
         [fieldsFormControl]="aggregation.formControl"
-        [aggregationObj]="aggregation">
+        [isLastAgg]="(i+1) === aggregationList.length">
       </app-text-aggregation>
     </ng-container>
     <ng-container *ngIf="fieldTypeDate(aggregation.formControl.value)">
       <app-date-aggregation
-        [notSubAgg]="i === 0"
-        [fieldsFormControl]="aggregation.formControl"
-        [aggregationObj]="aggregation" (relativeFrequency)="onRelativeFrequency($event)">
+        (relativeFrequency)="onRelativeFrequency($event)"
+        [aggregationObj]="aggregation"
+        [fieldsFormControl]="aggregation.formControl" [notSubAgg]="i === 0">
       </app-date-aggregation>
     </ng-container>
+    <ng-container *ngIf="fieldTypeGeoShape(aggregation.formControl.value)">
+      <app-geo-shape-aggregation
+        [aggregationObj]="aggregation"
+        [fieldsFormControl]="aggregation.formControl"
+        [notSubAgg]="i === 0">
+      </app-geo-shape-aggregation>
+    </ng-container>
+    <ng-container *ngIf="fieldTypeGeoPoint(aggregation.formControl.value)">
+      <app-geo-point-aggregation
+        [aggregationObj]="aggregation"
+        [fieldsFormControl]="aggregation.formControl"
+        [notSubAgg]="i === 0">
+      </app-geo-point-aggregation>
+    </ng-container>
   </div>
-  <button class="flex-item-center" mat-icon-button aria-label="add sub aggregation"
+  <button (click)="addNewAggregation()"
+          [disabled]="!(aggregationList.length > 0 && aggregationList[0].formControl.value)"
+          aria-label="add sub aggregation"
+          class="flex-item-center"
           data-cy="appSearcherSidebarAggregationsAddNew"
-          (click)="addNewAggregation()"
-          [disabled]="!(aggregationList.length > 0 && aggregationList[0].formControl.value)">
+          mat-icon-button>
     <mat-icon>add</mat-icon>
   </button>
 
-  <mat-checkbox class="exclude-search-checkbox" [(ngModel)]="searchQueryIncluded"
+  <mat-checkbox [(ngModel)]="searchQueryIncluded" class="exclude-search-checkbox"
                 labelPosition="before">Apply current search to aggregations:
   </mat-checkbox>
 
-  <mat-checkbox class="exclude-search-checkbox" [(ngModel)]="onlySavedSearchAgg"
+  <mat-checkbox [(ngModel)]="onlySavedSearchAgg" class="exclude-search-checkbox"
                 labelPosition="before">Only show saved search aggregations:
   </mat-checkbox>
   <div class="max-width">
-    <button class="max-width" mat-stroked-button (click)="aggregate()" data-cy="appSearcherSidebarAggregationsSubmit"
-            [disabled]="!(aggregationList.length > 0 && aggregationList[0].formControl.value) || (searchService.getIsLoading() | async)">
+    <button (click)="aggregate()"
+            [disabled]="!(aggregationList.length > 0 && aggregationList[0].formControl.value) || (searchService.getIsLoading() | async)"
+            class="max-width" data-cy="appSearcherSidebarAggregationsSubmit"
+            mat-stroked-button>
       Aggregate
     </button>
   </div>

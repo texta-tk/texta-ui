@@ -68,7 +68,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
     });
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroy$)).subscribe(projectFields => {
       if (projectFields) {
-        this.projectFields = ProjectIndex.cleanProjectIndicesFields(projectFields, ['fact', 'text', 'date'], []);
+        this.projectFields = ProjectIndex.cleanProjectIndicesFields(projectFields, ['fact', 'text', 'date', 'geo_shape', 'geo_point'], []);
         this.projectFields = ProjectIndex.sortTextaFactsAsFirstItem(this.projectFields);
         this.fieldIndexMap = ProjectIndex.getFieldToIndexMap(projectFields);
         const distinct = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(x => x.fields).flat(), (x => x.path));
@@ -250,5 +250,13 @@ export class AggregationsComponent implements OnInit, OnDestroy {
       aggregation.formDestroy.complete();
     }
     this.aggregationList = [];
+  }
+
+  fieldTypeGeoShape(val: Field): boolean {
+    return (val && (val.type === 'geo_shape'));
+  }
+
+  fieldTypeGeoPoint(val: Field): boolean {
+    return (val && (val.type === 'geo_point'));
   }
 }

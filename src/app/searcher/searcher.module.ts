@@ -31,6 +31,9 @@ import {SearcherComponentService} from './services/searcher-component.service';
 import {PlotlyViaWindowModule} from 'angular-plotly.js';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import { AddLexiconDialogComponent } from './aggregation-results/aggregation-result-table/add-lexicon-dialog/add-lexicon-dialog.component';
+import { GeoShapeAggregationComponent } from './searcher-sidebar/aggregations/geo-shape-aggregation/geo-shape-aggregation.component';
+import { GeoPointAggregationComponent } from './searcher-sidebar/aggregations/geo-point-aggregation/geo-point-aggregation.component';
+import { AggregationResultsMapComponent } from './aggregation-results/aggregation-results-map/aggregation-results-map.component';
 @NgModule({
   declarations: [
     SearcherComponent,
@@ -59,6 +62,9 @@ import { AddLexiconDialogComponent } from './aggregation-results/aggregation-res
     GraphSelectedPortalComponent,
     EditSavedSearchDialogComponent,
     AddLexiconDialogComponent,
+    GeoShapeAggregationComponent,
+    GeoPointAggregationComponent,
+    AggregationResultsMapComponent,
   ],
   imports: [
     SharedModule,
