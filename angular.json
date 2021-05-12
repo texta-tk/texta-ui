@@ -39,7 +39,8 @@
             ],
             "scripts": [
               "node_modules/plotly.js/dist/plotly-gl2d.min.js",
-              "node_modules/plotly.js/dist/plotly-geo.min.js"
+              "node_modules/plotly.js/dist/plotly-geo.min.js",
+              "node_modules/plotly.js/dist/plotly-mapbox.min.js"
             ],
             "webWorkerTsConfig": "tsconfig.worker.json"
           },

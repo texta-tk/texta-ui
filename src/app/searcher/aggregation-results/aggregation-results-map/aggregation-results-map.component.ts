@@ -23,73 +23,57 @@ export class AggregationResultsMapComponent implements OnInit {
     if (this.layout?.hasOwnProperty('title')) {
       this.layout['title'] = val;
     }
+    this.revision += 1;
   }
 
   // tslint:disable-next-line:no-any
   @Input() set aggregationData(val: AggregationData) {
     console.log(val);
-    const latD: number[] = [];
-    const lonD: number[] = [];
+    const latD: (number | null)[] = [];
+    const lonD: (number | null)[] = [];
     const docCounts: number[] = [];
     if (val.geoData) {
       for (const element of val.geoData) {
         if (element.data && element.data.length > 0) {
           element.data.map(x => {
             const geoHashData = ngeoHash.decode_bbox(x.key);
-            latD.push(geoHashData[0]);
-            lonD.push(geoHashData[1]);
+            console.log(geoHashData);
+            lonD.push(...[geoHashData[1], geoHashData[3], geoHashData[3], geoHashData[1]]);
+            latD.push(...[geoHashData[2], geoHashData[2], geoHashData[0], geoHashData[0]]);
+            lonD.push(null);
+            latD.push(null);
             docCounts.push(x.doc_count);
           });
         }
       }
     }
+    console.log(latD);
+    console.log(lonD);
     this.data = [{
-      type: 'scattergeo',
-      mode: 'markers+text',
+      type: 'scattermapbox',
+      fill: 'toself',
+      mode: 'lines+markers',
       text: docCounts,
       lat: latD,
       lon: lonD,
-      marker: {
-        size: 7,
-        line: {
-          width: 1
-        }
-      },
-      name: 'Canadian cities',
-      textposition: [
-        'top right', 'top left', 'top center', 'bottom right', 'top right',
-        'top left', 'bottom right', 'bottom left', 'top right', 'top right'
-      ],
     }];
 
     this.layout = {
-      title: this.title || '',
-      font: {
-        family: 'Droid Serif, serif',
-        size: 6
+      mapbox: {
+        style: 'carto-positron',
+        center: {lon: -73, lat: 46},
+        zoom: 5
       },
-      titlefont: {
-        size: 16
-      },
-      geo: {
-        scope: 'world',
-        resolution: 110,
-        showrivers: true,
-        rivercolor: '#fff',
-        showlakes: true,
-        lakecolor: '#fff',
-        showland: true,
-        showcountries: true,
-        landcolor: '#EAEAAE',
-        countrycolor: '#d3d3d3',
-        countrywidth: 1.5,
-        subunitcolor: '#d3d3d3'
-      }
     };
 
+    this.revision += 1;
   }
 
   ngOnInit(): void {
   }
 
+  // tslint:disable-next-line:no-any
+  onClick($event: any): void {
+    console.log($event);
+  }
 }

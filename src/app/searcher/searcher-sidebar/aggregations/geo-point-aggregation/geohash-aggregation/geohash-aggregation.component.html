@@ -1,0 +1,8 @@
+<div fxLayout="column">
+  <mat-form-field appearance="outline">
+    <mat-label>Precision</mat-label>
+    <input matInput type="number" min="1" max="12" required [formControl]="precisionFormControl">
+    <mat-error>Must be a number between 1 and 12</mat-error>
+  </mat-form-field>
+
+</div>

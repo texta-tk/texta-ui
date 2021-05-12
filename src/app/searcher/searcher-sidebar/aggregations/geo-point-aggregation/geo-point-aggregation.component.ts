@@ -12,6 +12,7 @@ export class GeoPointAggregationComponent implements OnInit {
   @Input() aggregationObj: { aggregation: any };
   @Input() fieldsFormControl: FormControl;
   @Input() notSubAgg: boolean;
+  selectedType: string;
 
   destroy$: Subject<boolean> = new Subject();
 
@@ -38,4 +39,9 @@ export class GeoPointAggregationComponent implements OnInit {
     };
   }
 
+  setQuery($event: unknown): void {
+    if ($event) {
+      this.aggregationObj.aggregation = $event;
+    }
+  }
 }

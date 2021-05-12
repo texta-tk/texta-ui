@@ -1,1 +1,12 @@
-<p>geo-point-aggregation works!</p>
+<div fxLayout="column">
+  <mat-form-field appearance="outline" >
+    <mat-label>Aggregation type</mat-label>
+    <mat-select  [(ngModel)]="selectedType" >
+      <mat-option value="distances">Distances</mat-option>
+      <mat-option value="locations">Locations</mat-option>
+      <mat-option value="centroids">Centroids</mat-option>
+      <mat-option value="bounds">Bounds</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <app-geohash-aggregation *ngIf="selectedType === 'locations'" (queryChange)="setQuery($event)" [fieldPath]="this.fieldsFormControl.value.path"></app-geohash-aggregation>
+</div>

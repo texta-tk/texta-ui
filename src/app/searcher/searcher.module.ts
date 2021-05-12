@@ -34,6 +34,7 @@ import { AddLexiconDialogComponent } from './aggregation-results/aggregation-res
 import { GeoShapeAggregationComponent } from './searcher-sidebar/aggregations/geo-shape-aggregation/geo-shape-aggregation.component';
 import { GeoPointAggregationComponent } from './searcher-sidebar/aggregations/geo-point-aggregation/geo-point-aggregation.component';
 import { AggregationResultsMapComponent } from './aggregation-results/aggregation-results-map/aggregation-results-map.component';
+import { GeohashAggregationComponent } from './searcher-sidebar/aggregations/geo-point-aggregation/geohash-aggregation/geohash-aggregation.component';
 @NgModule({
   declarations: [
     SearcherComponent,
@@ -65,6 +66,7 @@ import { AggregationResultsMapComponent } from './aggregation-results/aggregatio
     GeoShapeAggregationComponent,
     GeoPointAggregationComponent,
     AggregationResultsMapComponent,
+    GeohashAggregationComponent,
   ],
   imports: [
     SharedModule,
