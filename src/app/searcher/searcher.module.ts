@@ -35,6 +35,9 @@ import { GeoShapeAggregationComponent } from './searcher-sidebar/aggregations/ge
 import { GeoPointAggregationComponent } from './searcher-sidebar/aggregations/geo-point-aggregation/geo-point-aggregation.component';
 import { AggregationResultsMapComponent } from './aggregation-results/aggregation-results-map/aggregation-results-map.component';
 import { GeohashAggregationComponent } from './searcher-sidebar/aggregations/geo-point-aggregation/geohash-aggregation/geohash-aggregation.component';
+import {LeafletModule} from "@asymmetrik/ngx-leaflet";
+import { GeoDistanceAggregationComponent } from './searcher-sidebar/aggregations/geo-point-aggregation/geo-distance-aggregation/geo-distance-aggregation.component';
+import { GeoCentroidAggregationComponent } from './searcher-sidebar/aggregations/geo-point-aggregation/geo-centroid-aggregation/geo-centroid-aggregation.component';
 @NgModule({
   declarations: [
     SearcherComponent,
@@ -67,12 +70,15 @@ import { GeohashAggregationComponent } from './searcher-sidebar/aggregations/geo
     GeoPointAggregationComponent,
     AggregationResultsMapComponent,
     GeohashAggregationComponent,
+    GeoDistanceAggregationComponent,
+    GeoCentroidAggregationComponent,
   ],
   imports: [
     SharedModule,
     PlotlyViaWindowModule,
     SearcherRoutingModule,
-    DragDropModule
+    DragDropModule,
+    LeafletModule
   ],
   exports: [
     HighlightComponent

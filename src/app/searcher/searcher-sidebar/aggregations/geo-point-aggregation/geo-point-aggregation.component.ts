@@ -20,23 +20,6 @@ export class GeoPointAggregationComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.aggregationObj.aggregation = {
-      agg_centroid: {
-        geohash_grid: {
-          field: 'Centroid',
-          precision: 6
-          /*          origin: 'POINT(-123.17754124324 49.1935788600694)',
-                    unit: 'km',
-                    distance_type: 'plane',
-                    ranges: [
-                      { to: 100000, key: 'first_ring' },
-                      { from: 100000, to: 300000, key: 'second_ring' },
-                      { from: 300000, key: 'third_ring' }
-                    ],
-                    keyed: true*/
-        }
-      }
-    };
   }
 
   setQuery($event: unknown): void {

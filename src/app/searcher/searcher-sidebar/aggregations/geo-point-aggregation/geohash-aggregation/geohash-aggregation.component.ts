@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {FormControl, Validators} from '@angular/forms';
 import {Subject} from 'rxjs';
-import {takeUntil} from 'rxjs/operators';
+import {startWith, takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-geohash-aggregation',
@@ -11,25 +11,33 @@ import {takeUntil} from 'rxjs/operators';
 export class GeohashAggregationComponent implements OnInit, OnDestroy {
   precisionFormControl = new FormControl(5, [Validators.min(1), Validators.max(12), Validators.required]);
   @Output() queryChange = new EventEmitter<unknown>();
-  @Input() fieldPath = '';
+
+  _fieldPath = '';
+
+  @Input() set fieldPath(val: string) {
+    if (val) {
+      this._fieldPath = val;
+      this.queryChange.emit(this.constructQuery(this.precisionFormControl.value, val));
+    }
+  }
   private destroy$ = new Subject();
 
   constructor() {
   }
 
   ngOnInit(): void {
-    this.precisionFormControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(x => {
+    this.precisionFormControl.valueChanges.pipe(startWith(this.precisionFormControl.value), takeUntil(this.destroy$)).subscribe(x => {
       if (x) {
-        this.queryChange.emit(this.constructQuery(x));
+        this.queryChange.emit(this.constructQuery(x, this._fieldPath));
       }
     });
   }
 
-  constructQuery(precisionN: number): unknown {
+  constructQuery(precisionN: number, fieldPath: string): unknown {
     return {
-      agg_centroid: {
+      agg_geohash: {
         geohash_grid: {
-          field: this.fieldPath,
+          field: fieldPath,
           precision: precisionN
         }
       }

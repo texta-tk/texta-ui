@@ -2,11 +2,13 @@
   <mat-form-field appearance="outline" >
     <mat-label>Aggregation type</mat-label>
     <mat-select  [(ngModel)]="selectedType" >
-      <mat-option value="distances">Distances</mat-option>
-      <mat-option value="locations">Locations</mat-option>
-      <mat-option value="centroids">Centroids</mat-option>
-      <mat-option value="bounds">Bounds</mat-option>
+      <mat-option value="distance">Distance</mat-option>
+      <mat-option value="location">Geohash</mat-option>
+      <mat-option value="centroid">Centroid</mat-option>
+      <mat-option value="bound">Bounds</mat-option>
     </mat-select>
   </mat-form-field>
-  <app-geohash-aggregation *ngIf="selectedType === 'locations'" (queryChange)="setQuery($event)" [fieldPath]="this.fieldsFormControl.value.path"></app-geohash-aggregation>
+  <app-geohash-aggregation *ngIf="selectedType === 'location'" (queryChange)="setQuery($event)" [fieldPath]="this.fieldsFormControl.value.path"></app-geohash-aggregation>
+  <app-geo-distance-aggregation *ngIf="selectedType === 'distance'" (queryChange)="setQuery($event)" [fieldPath]="this.fieldsFormControl.value.path"></app-geo-distance-aggregation>
+  <app-geo-centroid-aggregation *ngIf="selectedType === 'centroid'" (queryChange)="setQuery($event)" [fieldPath]="this.fieldsFormControl.value.path"></app-geo-centroid-aggregation>
 </div>

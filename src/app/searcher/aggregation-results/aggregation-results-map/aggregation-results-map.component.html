@@ -1,6 +1,8 @@
-<plotly-plot
-  [data]="data" [layout]="layout"
-  [style]="{position: 'relative', width: '100%', height: '100%'}" [useResizeHandler]="true"
-  [updateOnlyWithRevision]="true" [revision]="revision"
-  (plotlyClick)="onClick($event)"
-></plotly-plot>
+
+
+<div [style]="{position: 'relative', width: '100%', height: '100%'}"
+     leaflet
+     [leafletOptions]="options"
+     [leafletLayers]="leafletLayers"
+     [leafletLayersControl]="layersControl">
+</div>

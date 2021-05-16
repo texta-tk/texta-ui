@@ -6,6 +6,13 @@ import {MatTableDataSource} from '@angular/material/table';
 import {AggregationResultsDialogComponent} from './aggregation-results-dialog/aggregation-results-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 
+export interface AggregationDistance {
+  from: number;
+  to: number;
+  doc_count: number;
+  key: string;
+}
+
 export interface AggregationData {
 
   treeData?: {
@@ -22,7 +29,9 @@ export interface AggregationData {
   }[];
   geoData?: {
     // tslint:disable-next-line:no-any
-    data?: { key: string, doc_count: number }[],
+    agg_geohash?: { key: string, doc_count: number }[],
+    agg_distance?: AggregationDistance[]
+    agg_centroid?: { location: { lat: number, lon: number }, count: number },
     name: string,
   }[];
   dateData?: { series: { value: number; name: string; extra?: { buckets: { key: string; doc_count: number }[] } }[], name: string }[];
@@ -46,7 +55,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   aggregation: unknown;
   aggregationData: AggregationData;
   timeLineYLabel = 'number of hits';
-
+  MAIN_AGG_NAME = 'Aggregation results'; /*default name of aggregation when not using saved searches*/
   constructor(public searchService: SearcherComponentService, public dialog: MatDialog) {
   }
 
@@ -130,10 +139,20 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
         } else if (rootAggPropKeys.includes('agg_fact')) {
           rootAggObj = this.navNestedAggByKey(rootAggObj, 'agg_fact');
           this.populateAggData(rootAggObj, aggKey, (x => x.treeData), 'agg_fact', aggData);
-        } else if (rootAggPropKeys.includes('agg_centroid')) {
-          rootAggObj = this.navNestedAggByKey(rootAggObj, 'agg_centroid');
-          this.populateAggData(rootAggObj, aggKey, (x => x.geoData), 'agg_centroid', aggData);
-          console.log('agg_centroid');
+        } else if (rootAggPropKeys.includes('agg_geohash')) {
+          rootAggObj = this.navNestedAggByKey(rootAggObj, 'agg_geohash');
+          this.populateAggData(rootAggObj, aggKey, (x => x.geoData), 'agg_geohash', aggData);
+        } else if (rootAggPropKeys.includes('agg_distance')) {
+          rootAggObj = this.navNestedAggByKey(rootAggObj, 'agg_distance');
+          this.populateAggData(rootAggObj, aggKey, (x => x.geoData), 'agg_distance', aggData);
+        } else if (aggKey === 'agg_centroid' || rootAggPropKeys.includes('agg_centroid')) {
+          if(rootAggPropKeys.includes('agg_centroid')){
+            rootAggObj = this.navNestedAggByKey(rootAggObj, 'agg_centroid');
+          }
+          aggData?.geoData?.push({
+            name: aggKey === 'agg_centroid' ? this.MAIN_AGG_NAME : aggKey,
+            agg_centroid: rootAggObj,
+          });
         }
       }
       this.aggregationData = aggData;
@@ -200,30 +219,30 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   // aggData because we can have multiple aggs so we need to push instead of returning new object
   // @ts-ignore
   // tslint:disable-next-line:no-any max-line-length
-  populateAggData(rootAggObj, aggName, aggDataAccessor: (x: any) => any, aggregationType: 'agg_histo' | 'agg_fact' | 'agg_term' | 'agg_centroid', aggData: AggregationData): void {
+  populateAggData(rootAggObj, aggName, aggDataAccessor: (x: any) => any, aggregationType: 'agg_histo' | 'agg_fact' | 'agg_term' | 'agg_geohash' | 'agg_distance', aggData: AggregationData): void {
     const formattedData = this.formatAggDataStructure(rootAggObj, rootAggObj,
-      ['agg_histo', 'agg_fact', 'agg_fact_val', 'agg_term', 'fact_val_reverse', 'agg_centroid']);
-    const MAIN_AGG_NAME = 'Aggregation results';
+      ['agg_histo', 'agg_fact', 'agg_fact_val', 'agg_term', 'fact_val_reverse', 'agg_geohash', 'agg_distance']);
+
     if (this.bucketAccessor(formattedData).length > 0) {
       if (formattedData.nested) {
         // depth of 3 means this structure: agg -> sub-agg
         // tslint:disable-next-line:no-any
         if (aggregationType === 'agg_histo' && this.determineDepthOfObject(formattedData, (x: any) => x.buckets) === 3) {
           aggDataAccessor(aggData).push({
-            name: aggName === 'agg_histo' ? MAIN_AGG_NAME : aggName,
+            name: aggName === 'agg_histo' ? this.MAIN_AGG_NAME : aggName,
             series: this.formatDateDataExtraBucket(this.bucketAccessor(formattedData))
           });
         } else {
           if (aggregationType === 'agg_fact' && this.determineDepthOfObject(formattedData, (x: { buckets: unknown; }) => x.buckets) === 3) {
             // @ts-ignore
             aggData.textaFactsTableData.push({
-              name: aggName === aggregationType ? MAIN_AGG_NAME : aggName,
+              name: aggName === aggregationType ? this.MAIN_AGG_NAME : aggName,
               data: this.bucketAccessor(formattedData)
             });
           } else {
             // @ts-ignore
             aggData.treeData.push({
-              name: aggName === aggregationType ? MAIN_AGG_NAME : aggName,
+              name: aggName === aggregationType ? this.MAIN_AGG_NAME : aggName,
               histoBuckets: formattedData.histoBuckets ? formattedData.histoBuckets : [],
               treeData: this.bucketAccessor(formattedData)
             });
@@ -232,17 +251,24 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
       } else if (aggregationType === 'agg_term') {
         aggDataAccessor(aggData).push({
           tableData: new MatTableDataSource(this.bucketAccessor(formattedData)),
-          name: aggName === aggregationType ? MAIN_AGG_NAME : aggName
+          name: aggName === aggregationType ? this.MAIN_AGG_NAME : aggName
         });
       } else if (aggregationType === 'agg_histo') {
         aggDataAccessor(aggData).push({
-          name: aggName === 'agg_histo' ? MAIN_AGG_NAME : aggName,
+          name: aggName === 'agg_histo' ? this.MAIN_AGG_NAME : aggName,
           series: this.formatDateData(this.bucketAccessor(formattedData))
         });
-      } else if (aggregationType === 'agg_centroid') {
+      } else if (aggregationType === 'agg_geohash') {
         aggDataAccessor(aggData).push({
-          name: aggName === 'agg_centroid' ? MAIN_AGG_NAME : aggName,
-          data: this.bucketAccessor(formattedData)
+          name: aggName === 'agg_geohash' ? this.MAIN_AGG_NAME : aggName,
+          agg_geohash: this.bucketAccessor(formattedData),
+          type: aggregationType
+        });
+      } else if (aggregationType === 'agg_distance') {
+        aggDataAccessor(aggData).push({
+          name: aggName === 'agg_distance' ? this.MAIN_AGG_NAME : aggName,
+          agg_distance: this.bucketAccessor(formattedData),
+          type: aggregationType
         });
       }
     }
