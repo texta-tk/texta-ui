@@ -18,6 +18,7 @@ import {ProjectService} from '../core/projects/project.service';
 import {UserStore} from '../core/users/user.store';
 import {FormControl} from '@angular/forms';
 import {MatOption} from '@angular/material/core';
+import {KeyValue} from '@angular/common';
 
 @Component({
   selector: 'app-project',
@@ -30,7 +31,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
   destroyed$: Subject<boolean> = new Subject<boolean>();
   filteredUsers: Observable<UserProfile[]>;
   public projectUsers$: Observable<UserProfile[]>;
-  public projectCounts$: Observable<ProjectResourceCounts>;
+  // tslint:disable-next-line:no-any
+  public projectCounts$: Observable<any>; // strict template and async pipe with keyvalue has buggy types for some reason
   public tableData: MatTableDataSource<Project> = new MatTableDataSource<Project>([]);
   public displayedColumns = ['id', 'title', 'author_username', 'indices_count', 'resource_count', 'users_count'];
   public isLoadingResults = true;
@@ -48,6 +50,10 @@ export class ProjectComponent implements OnInit, OnDestroy {
     public dialog: MatDialog,
     public logService: LogService,
     private projectService: ProjectService) {
+  }
+
+  valueAscOrder = (a: KeyValue<string, number>, b: KeyValue<string, number>): number => {
+    return b.value > a.value ? 1 : (a.value > b.value ? -1 : 0);
   }
 
   ngOnInit(): void {
@@ -180,7 +186,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
   }
 
   getResourceCounts(element: Project): void {
-    this.projectCounts$ = this.projectService.getResourceCounts(element.id).pipe(filter(x => !(x instanceof HttpErrorResponse))) as Observable<ProjectResourceCounts>;
-
+    this.projectCounts$ = this.projectService.getResourceCounts(element.id).pipe(
+      filter(x => !(x instanceof HttpErrorResponse))) as Observable<ProjectResourceCounts>;
   }
 }

@@ -114,7 +114,7 @@
 <mat-menu #resourceMenu="matMenu">
   <ng-template matMenuContent>
     <ng-container *ngIf="projectCounts$ | async as counts">
-      <button *ngFor="let item of counts | keyvalue" mat-menu-item>{{ item.key.split('_').slice(1) | join:' ' | titlecase }}: {{item.value}}</button>
+      <button *ngFor="let item of counts | keyvalue: valueAscOrder" mat-menu-item>{{ item.key.split('_').slice(1) | join:' ' | titlecase }}: {{item.value}}</button>
     </ng-container>
   </ng-template>
 </mat-menu>
