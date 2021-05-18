@@ -7,6 +7,7 @@ export class Project {
   users: string[];
   indices: string[];
   author_username: string;
+  resource_count: number;
   resources: {
     embeddings: number[];
     embedding_clusters: number[];

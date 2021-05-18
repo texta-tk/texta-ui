@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Project} from '../shared/types/Project';
+import {Project, ProjectResourceCounts} from '../shared/types/Project';
 import {HttpErrorResponse} from '@angular/common/http';
 import {MatDialog} from '@angular/material/dialog';
 import {MatPaginator} from '@angular/material/paginator';
@@ -11,7 +11,7 @@ import {CreateProjectDialogComponent} from './create-project-dialog/create-proje
 import {ProjectStore} from '../core/projects/project.store';
 import {EditProjectDialogComponent} from './edit-project-dialog/edit-project-dialog.component';
 import {UserProfile} from '../shared/types/UserProfile';
-import {debounceTime, delay, map, mergeMap, startWith, takeUntil, toArray} from 'rxjs/operators';
+import {debounceTime, delay, filter, map, mergeMap, startWith, takeUntil, toArray} from 'rxjs/operators';
 import {UserService} from '../core/users/user.service';
 import {ConfirmDialogComponent} from '../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {ProjectService} from '../core/projects/project.service';
@@ -30,8 +30,9 @@ export class ProjectComponent implements OnInit, OnDestroy {
   destroyed$: Subject<boolean> = new Subject<boolean>();
   filteredUsers: Observable<UserProfile[]>;
   public projectUsers$: Observable<UserProfile[]>;
+  public projectCounts$: Observable<ProjectResourceCounts>;
   public tableData: MatTableDataSource<Project> = new MatTableDataSource<Project>([]);
-  public displayedColumns = ['id', 'title', 'author_username', 'indices_count', 'users_count'];
+  public displayedColumns = ['id', 'title', 'author_username', 'indices_count', 'resource_count', 'users_count'];
   public isLoadingResults = true;
   public currentUser: UserProfile;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
@@ -176,5 +177,10 @@ export class ProjectComponent implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  getResourceCounts(element: Project): void {
+    this.projectCounts$ = this.projectService.getResourceCounts(element.id).pipe(filter(x => !(x instanceof HttpErrorResponse))) as Observable<ProjectResourceCounts>;
+
   }
 }
