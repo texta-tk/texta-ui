@@ -64,6 +64,11 @@ const routes: Routes = [
     loadChildren: () => import('./models/bert-tagger/bert-tagger.module').then(m => m.BertTaggerModule)
   },
   {
+    path: 'search-query-taggers',
+    canActivate: [AuthGuard, ProjectGuard],
+    loadChildren: () => import('./models/search-query-tagger/search-query-tagger.module').then(m => m.SearchQueryTaggerModule)
+  },
+  {
     path: 'topic-analyzer',
     canActivate: [AuthGuard, ProjectGuard],
     data: {breadcrumb: 'clustering', tooltip: 'Topic analyzer list'},

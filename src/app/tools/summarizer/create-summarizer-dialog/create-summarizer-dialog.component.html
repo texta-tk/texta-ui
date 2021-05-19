@@ -46,14 +46,15 @@
     <mat-form-field>
       <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="ratioFormControl"
              matInput
-             max="1"
+             max="100"
              min="0" placeholder="Ratio" step="0.1" type="number">
       <mat-error *ngIf="summarizerForm.get('ratioFormControl')?.hasError('min')">
-        Ratio must be between <strong>0 and 1</strong>
+        Ratio must be between <strong>0 and 100</strong>
       </mat-error>
       <mat-error *ngIf="summarizerForm.get('ratioFormControl')?.hasError('max')">
-        Ratio must be between <strong>0 and 1</strong>
+        Ratio must be between <strong>0 and 100</strong>
       </mat-error>
+      <mat-hint>Min value 0.1, Max value 99.9 anything above 1.0 will be calculated as sentence count.</mat-hint>
     </mat-form-field>
   </form>
 </mat-dialog-content>

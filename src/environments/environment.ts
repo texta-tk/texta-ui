@@ -5,6 +5,7 @@
 export const environment = {
   apiHost: 'http://localhost',
   apiBasePath: '/api/v1',
+  apiBasePath2: '/api/v2',
   production: false,
   fileFieldReplace: 'texta_filepath',
 

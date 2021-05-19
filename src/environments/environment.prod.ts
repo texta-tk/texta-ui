@@ -1,6 +1,7 @@
 export const environment = {
   apiHost: 'TEXTA_API_URL_REPLACE',
   apiBasePath: '/api/v1',
+  apiBasePath2: '/api/v2',
   production: true,
   fileFieldReplace: 'TEXTA_HOSTED_FILE_FIELD_REPLACE',
   // For CF UAA authentication

@@ -25,7 +25,7 @@ export class CreateSummarizerDialogComponent implements OnInit, OnDestroy {
     indicesFormControl: new FormControl([], [Validators.required]),
     fieldsFormControl: new FormControl([], [Validators.required]),
     algorithmsFormControl: new FormControl([]),
-    ratioFormControl: new FormControl(0.2, [Validators.min(0), Validators.max(1)])
+    ratioFormControl: new FormControl(0.2, [Validators.min(0), Validators.max(100)])
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();

@@ -1,0 +1,107 @@
+<h1 mat-dialog-title>New Search Query Tagger Task</h1>
+<mat-dialog-content>
+  <form (ngSubmit)="onSubmit(searchTaggerForm.value)" [formGroup]="searchTaggerForm" class="flex-col"
+        id="searchTaggerForm">
+    <mat-form-field data-cy="appSearchTaggerCreateDialogDesc">
+      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
+             placeholder="Description" required>
+
+      <mat-error *ngIf="searchTaggerForm.get('descriptionFormControl')?.hasError('required')">
+        Description is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+
+    <mat-form-field data-cy="appSearchTaggerCreateDialogIndices">
+      <mat-label>Indices</mat-label>
+      <mat-select (openedChange)="indicesOpenedChange($event)" [disableOptionCentering]="true"
+                  formControlName="indicesFormControl" multiple panelClass="select-panel-reveal-input" required>
+        <mat-option *ngFor="let projectIndex of projectIndices" [value]="projectIndex">
+          {{projectIndex.index}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="searchTaggerForm.get('indicesFormControl')?.hasError('required')">
+        Select at least <strong>1 index</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Select Fields</mat-label>
+      <app-project-field-select [projectFields]="projectFields" [required]="true"
+                                formControlName="fieldsFormControl"></app-project-field-select>
+      <mat-error *ngIf="searchTaggerForm.get('fieldsFormControl')?.hasError('required')">
+        Field is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"></app-saved-search-autocomplete>
+    <div fxLayout="row">
+      <mat-form-field fxFlex>
+        <mat-label>Fact name</mat-label>
+        <mat-select (selectionChange)="factNameSelected($event, searchTaggerForm.get('factValueFormControl'))"
+                    [disableOptionCentering]="true"
+                    formControlName="factNameFormControl"
+                    panelClass="select-panel-reveal-input" required>
+          <mat-option *ngFor="let fact of projectFacts" [value]="fact" title="{{fact}}">
+            {{fact}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="searchTaggerForm.get('factNameFormControl')?.hasError('required')">
+          This field is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="m-l-15" fxFlex>
+        <input [matAutocomplete]="trueVal"
+               formControlName="factValueFormControl"
+               matInput
+               placeholder="Fact value"
+               type="text">
+        <mat-autocomplete #trueVal="matAutocomplete"
+                          panelWidth="auto">
+          <mat-option *ngFor="let option of factValueOptions" [disabled]="isLoadingOptions"
+                      [value]="option" title="{{option}}">
+            {{option}}
+          </mat-option>
+        </mat-autocomplete>
+
+        <mat-error *ngIf="searchTaggerForm.get('factValueFormControl')?.hasError('required')">
+          This field is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!--advanced -->
+    <mat-expansion-panel expanded="false">
+      <mat-expansion-panel-header>
+        <h3>Advanced settings</h3>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
+        <div fxLayout="row">
+          <mat-form-field class="advanced-setting" fxFlex>
+            <input formControlName="esTimeoutFormControl" matInput placeholder="Elasticsearch timeout"
+                   type="number">
+            <mat-hint>Elasticsearch scroll timeout in minutes.</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field class="advanced-setting m-l-15" fxFlex>
+            <input formControlName="bulkSizeFormControl" matInput placeholder="Scroll size"
+                   type="number">
+            <mat-hint>How many documents should be returned by one Elasticsearch scroll.</mat-hint>
+          </mat-form-field>
+        </div>
+      </ng-template>
+    </mat-expansion-panel>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <div class="flex-row max-width">
+    <div class="flex-item-left">
+      <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
+    </div>
+    <div class="flex-item-right">
+      <button [disabled]="!searchTaggerForm.valid" data-cy="appSearchTaggerCreateDialogSubmit" form="searchTaggerForm"
+              mat-button type="submit">
+        Create
+      </button>
+    </div>
+  </div>
+</mat-dialog-actions>
