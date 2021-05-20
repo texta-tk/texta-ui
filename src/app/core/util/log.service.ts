@@ -38,10 +38,19 @@ export class LogService {
       this.snackBar.open(`${error.error.non_field_errors[0]}`, 'Close', {
         duration: time,
       });
-    }else if (error.error.hasOwnProperty('error')) {
+    } else if (error.error.hasOwnProperty('error')) {
       this.snackBar.open(`${error.error.error}`, 'Close', {
         duration: time,
       });
+    } else if (error.error) {
+      for (const element in error.error) {
+        if (error.error.hasOwnProperty(element)) {
+          this.snackBar.open(`${element}: ${error.error[element][0]}`, 'Close', {
+            duration: time,
+          });
+          break;
+        }
+      }
     } else {
       this.snackBar.open(error.name + ': ' + error.status + ' ' + error.statusText, 'Close', {
         duration: time,
