@@ -139,10 +139,10 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
         } else if (rootAggPropKeys.includes('agg_fact')) {
           rootAggObj = this.navNestedAggByKey(rootAggObj, 'agg_fact');
           this.populateAggData(rootAggObj, aggKey, (x => x.treeData), 'agg_fact', aggData);
-        } else if (rootAggPropKeys.includes('agg_geohash')) {
+        } else if (rootAggPropKeys.includes('agg_geohash') || aggKey === 'agg_geohash') {
           rootAggObj = this.navNestedAggByKey(rootAggObj, 'agg_geohash');
           this.populateAggData(rootAggObj, aggKey, (x => x.geoData), 'agg_geohash', aggData);
-        } else if (rootAggPropKeys.includes('agg_distance')) {
+        } else if (rootAggPropKeys.includes('agg_distance') || aggKey === 'agg_distance') {
           rootAggObj = this.navNestedAggByKey(rootAggObj, 'agg_distance');
           this.populateAggData(rootAggObj, aggKey, (x => x.geoData), 'agg_distance', aggData);
         } else if (aggKey === 'agg_centroid' || rootAggPropKeys.includes('agg_centroid')) {

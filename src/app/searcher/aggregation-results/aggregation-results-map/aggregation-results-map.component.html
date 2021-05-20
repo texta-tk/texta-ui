@@ -1,8 +1,8 @@
 
 
-<div [style]="{position: 'relative', width: '100%', height: '100%'}"
+<div *ngIf="isReady" [style]="{position: 'relative', width: '100%', height: '100%'}"
      leaflet
      [leafletOptions]="options"
      [leafletLayers]="leafletLayers"
-     [leafletLayersControl]="layersControl">
+     (leafletMapReady)="onMapReady($event)">
 </div>

@@ -41,12 +41,15 @@
             "styles": [
               "src/custom-theme.scss",
               "src/styles.scss",
-              "./node_modules/leaflet/dist/leaflet.css"
+              "./node_modules/leaflet/dist/leaflet.css",
+              "./node_modules/leaflet-timedimension/dist/leaflet.timedimension.control.css",
+              "./node_modules/leaflet.control.layers.tree/L.Control.Layers.Tree.css"
             ],
             "scripts": [
               "node_modules/plotly.js/dist/plotly-gl2d.min.js",
               "node_modules/plotly.js/dist/plotly-geo.min.js",
-              "node_modules/plotly.js/dist/plotly-mapbox.min.js"
+              "node_modules/plotly.js/dist/plotly-mapbox.min.js",
+              "./node_modules/iso8601-js-period/iso8601.js"
             ],
             "webWorkerTsConfig": "tsconfig.worker.json"
           },
