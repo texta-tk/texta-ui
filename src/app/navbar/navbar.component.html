@@ -21,7 +21,7 @@
       </button>
     </a>
     <a [matMenuTriggerFor]="models"
-       [ngClass]="{'is-active': ['/tagger-groups', '/taggers', '/regex-taggers', '/regex-tagger-groups', '/embeddings', '/torch-taggers', '/bert-taggers', '/search-query-taggers'].includes(router.url)}"
+       [ngClass]="{'is-active': ['/tagger-groups', '/taggers', '/regex-taggers', '/regex-tagger-groups', '/embeddings', '/torch-taggers', '/bert-taggers', '/search-query-taggers','/search-fields-taggers'].includes(router.url)}"
        class="pointer">
       <button class="nav-button" data-cy="appNavbarModels" mat-button>
         <mat-icon class="margin-right">storage</mat-icon>
@@ -34,7 +34,8 @@
         projectResourceCounts.num_regex_tagger_groups +
         projectResourceCounts.num_bert_taggers +
         projectResourceCounts.num_embeddings +
-        projectResourceCounts.num_search_query_taggers}})
+        projectResourceCounts.num_search_query_taggers +
+        projectResourceCounts.num_search_fields_taggers}})
         </ng-container>
 
         <mat-icon>arrow_drop_down</mat-icon>
@@ -80,9 +81,9 @@
       <a [routerLink]="['search-query-taggers']" data-cy="appNavbarModelMenuSearchQueryTagger" mat-menu-item
          routerLinkActive="is-active-menu">Search Query Taggers <span
         *ngIf="projectResourceCounts?.num_search_query_taggers"> ({{projectResourceCounts.num_search_query_taggers}})</span></a>
-<!--       <a [routerLink]="['search-fields-taggers']" data-cy="appNavbarModelMenuSearchFieldsTagger" mat-menu-item
+      <a [routerLink]="['search-fields-taggers']" data-cy="appNavbarModelMenuSearchFieldsTagger" mat-menu-item
          routerLinkActive="is-active-menu">Search Fields Taggers <span
-        *ngIf="projectResourceCounts?.num_search_fields_taggers"> ({{projectResourceCounts.num_search_fields_taggers}})</span></a> -->
+        *ngIf="projectResourceCounts?.num_search_fields_taggers"> ({{projectResourceCounts.num_search_fields_taggers}})</span></a>
       <a [routerLink]="['bert-taggers']" data-cy="appNavbarModelMenuBertTaggers" mat-menu-item
          routerLinkActive="is-active-menu">Bert Taggers <span
         *ngIf="projectResourceCounts?.num_bert_taggers">({{projectResourceCounts.num_bert_taggers}})</span></a>
