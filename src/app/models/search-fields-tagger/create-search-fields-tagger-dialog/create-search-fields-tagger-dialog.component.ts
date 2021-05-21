@@ -45,7 +45,6 @@ export class CreateSearchFieldsTaggerDialogComponent implements OnInit, OnDestro
   destroyed$: Subject<boolean> = new Subject<boolean>();
   projectIndices: ProjectIndex[] = [];
   projectFields: ProjectIndex[];
-  projectFacts: ProjectFact[] = [];
 
   constructor(private dialogRef: MatDialogRef<CreateSearchFieldsTaggerDialogComponent>,
               private projectService: ProjectService,
@@ -63,11 +62,6 @@ export class CreateSearchFieldsTaggerDialogComponent implements OnInit, OnDestro
       }
     });
 
-    this.projectStore.getCurrentIndicesFacts().pipe(takeUntil(this.destroyed$)).subscribe(projectFacts => {
-      if (projectFacts) {
-        this.projectFacts = projectFacts;
-      }
-    });
     this.projectStore.getProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(projIndices => {
       if (projIndices) {
         this.projectIndices = projIndices;

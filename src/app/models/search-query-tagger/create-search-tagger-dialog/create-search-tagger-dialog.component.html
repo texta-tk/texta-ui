@@ -38,32 +38,18 @@
     <div fxLayout="row">
       <mat-form-field fxFlex>
         <mat-label>Fact name</mat-label>
-        <mat-select (selectionChange)="factNameSelected($event, searchTaggerForm.get('factValueFormControl'))"
-                    [disableOptionCentering]="true"
-                    formControlName="factNameFormControl"
-                    panelClass="select-panel-reveal-input" required>
-          <mat-option *ngFor="let fact of projectFacts" [value]="fact" title="{{fact}}">
-            {{fact}}
-          </mat-option>
-        </mat-select>
+        <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="factNameFormControl" matInput
+               required>
         <mat-error *ngIf="searchTaggerForm.get('factNameFormControl')?.hasError('required')">
           This field is <strong>required</strong>
         </mat-error>
       </mat-form-field>
       <mat-form-field class="m-l-15" fxFlex>
-        <input [matAutocomplete]="trueVal"
+        <input [errorStateMatcher]="matcher"
                formControlName="factValueFormControl"
-               matInput
-               placeholder="Fact value"
+               matInput placeholder="Fact value"
+               required
                type="text">
-        <mat-autocomplete #trueVal="matAutocomplete"
-                          panelWidth="auto">
-          <mat-option *ngFor="let option of factValueOptions" [disabled]="isLoadingOptions"
-                      [value]="option" title="{{option}}">
-            {{option}}
-          </mat-option>
-        </mat-autocomplete>
-
         <mat-error *ngIf="searchTaggerForm.get('factValueFormControl')?.hasError('required')">
           This field is <strong>required</strong>
         </mat-error>

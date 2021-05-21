@@ -37,14 +37,8 @@
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"></app-saved-search-autocomplete>
     <mat-form-field>
       <mat-label>Fact name</mat-label>
-      <mat-select
-        [disableOptionCentering]="true"
-        formControlName="factNameFormControl"
-        panelClass="select-panel-reveal-input" required>
-        <mat-option *ngFor="let fact of projectFacts" [value]="fact" title="{{fact}}">
-          {{fact}}
-        </mat-option>
-      </mat-select>
+      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="factNameFormControl" matInput
+             required>
       <mat-error *ngIf="searchFieldsTaggerForm.get('factNameFormControl')?.hasError('required')">
         This field is <strong>required</strong>
       </mat-error>

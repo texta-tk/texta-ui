@@ -39,7 +39,7 @@ export class CreateSearchTaggerDialogComponent implements OnInit, OnDestroy {
     indicesFormControl: new FormControl([], [Validators.required]),
     fieldsFormControl: new FormControl([], [Validators.required]),
     factNameFormControl: new FormControl('', [Validators.required]),
-    factValueFormControl: new FormControl({value: '', disabled: true}, [Validators.required]),
+    factValueFormControl: new FormControl('', [Validators.required]),
     bulkSizeFormControl: new FormControl(100, [Validators.required]),
     esTimeoutFormControl: new FormControl(10),
   });
@@ -51,7 +51,6 @@ export class CreateSearchTaggerDialogComponent implements OnInit, OnDestroy {
   projectIndices: ProjectIndex[] = [];
   projectFields: ProjectIndex[];
   factValueOptions: string[] = [];
-  projectFacts: ProjectFact[] = [];
 
   constructor(private dialogRef: MatDialogRef<CreateSearchTaggerDialogComponent>,
               private projectService: ProjectService,
@@ -68,11 +67,6 @@ export class CreateSearchTaggerDialogComponent implements OnInit, OnDestroy {
         this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
       }
     });
-    this.projectStore.getCurrentIndicesFacts().pipe(takeUntil(this.destroyed$)).subscribe(projectFacts => {
-      if (projectFacts) {
-        this.projectFacts = projectFacts;
-      }
-    });
     this.projectStore.getProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(projIndices => {
       if (projIndices) {
         this.projectIndices = projIndices;
@@ -81,24 +75,6 @@ export class CreateSearchTaggerDialogComponent implements OnInit, OnDestroy {
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(proj => {
       if (proj) {
         this.currentProject = proj;
-      }
-    });
-    this.searchTaggerForm.get('factValueFormControl')?.valueChanges.pipe(
-      takeUntil(this.destroyed$),
-      debounceTime(100),
-      switchMap(value => {
-        if (value || value === '' && this.currentProject?.id) {
-          this.factValueOptions = ['Loading...'];
-          this.isLoadingOptions = true;
-          return this.projectService.projectFactValueAutoComplete(this.currentProject.id,
-            this.searchTaggerForm.get('factNameFormControl')?.value, 10, value,
-            this.searchTaggerForm.get('indicesFormControl')?.value.map((x: ProjectIndex) => x.index));
-        }
-        return of(null);
-      })).subscribe(val => {
-      if (val && !(val instanceof HttpErrorResponse)) {
-        this.isLoadingOptions = false;
-        this.factValueOptions = val;
       }
     });
   }
@@ -134,13 +110,6 @@ export class CreateSearchTaggerDialogComponent implements OnInit, OnDestroy {
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && indicesForm?.value && !UtilityFunctions.arrayValuesEqual(indicesForm?.value, this.projectFields, (x => x.index))) {
       this.projectFields = ProjectIndex.cleanProjectIndicesFields(indicesForm.value, ['text'], []);
-    }
-  }
-
-  factNameSelected($event: MatSelectChange, factVal: AbstractControl | null): void {
-    if (factVal && $event) {
-      factVal.enable();
-      factVal.setValue('');
     }
   }
 
