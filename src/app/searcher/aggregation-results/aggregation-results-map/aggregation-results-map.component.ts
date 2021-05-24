@@ -80,7 +80,7 @@ export class AggregationResultsMapComponent implements OnInit {
       }
     }
     const overlaysTree = {
-      label: 'Layers',
+      label: 'Un/select all',
       selectAllCheckbox: 'Un/select all',
       children,
     };

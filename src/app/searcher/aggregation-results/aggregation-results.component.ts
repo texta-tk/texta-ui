@@ -64,7 +64,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     if (x && x.buckets) {
       return (x.buckets);
     }
-    return null;
+    return [];
   }
 
   formatDateData(buckets: { key_as_string: string, key: number, doc_count: number }[]): { value: number, name: string }[] {
@@ -130,7 +130,17 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
         // first object is aggregation name either savedSearch description or the agg type
         let rootAggObj = aggregation.aggs[aggKey];
         const rootAggPropKeys: string[] = Object.keys(rootAggObj);
-        if (rootAggPropKeys.includes('agg_term') || aggKey === 'agg_term') { // agg_term without filter has no depth
+        const geoAggKey = this.hasGeoBucket(rootAggObj);
+        if (rootAggPropKeys.includes('agg_geohash') || geoAggKey === 'agg_geohash') {
+          rootAggObj = this.navNestedAggByKey(rootAggObj, aggKey);
+          this.populateAggData(rootAggObj, aggKey, (x => x.geoData), 'agg_geohash', aggData);
+        } else if (rootAggPropKeys.includes('agg_distance') || geoAggKey === 'agg_distance') {
+          rootAggObj = this.navNestedAggByKey(rootAggObj, aggKey);
+          this.populateAggData(rootAggObj, aggKey, (x => x.geoData), 'agg_distance', aggData);
+        } else if (geoAggKey === 'agg_centroid' || rootAggPropKeys.includes('agg_centroid') || aggKey === 'agg_centroid') {
+          rootAggObj = this.navNestedAggByKey(rootAggObj, aggKey);
+          this.populateAggData(rootAggObj, aggKey, (x => x.geoData), 'agg_centroid', aggData);
+        } else if (rootAggPropKeys.includes('agg_term') || aggKey === 'agg_term') { // agg_term without filter has no depth
           rootAggObj = this.navNestedAggByKey(rootAggObj, 'agg_term');
           this.populateAggData(rootAggObj, aggKey, (x => x.tableData), 'agg_term', aggData);
         } else if (rootAggPropKeys.includes('agg_histo')) {
@@ -139,20 +149,6 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
         } else if (rootAggPropKeys.includes('agg_fact')) {
           rootAggObj = this.navNestedAggByKey(rootAggObj, 'agg_fact');
           this.populateAggData(rootAggObj, aggKey, (x => x.treeData), 'agg_fact', aggData);
-        } else if (rootAggPropKeys.includes('agg_geohash') || aggKey === 'agg_geohash') {
-          rootAggObj = this.navNestedAggByKey(rootAggObj, 'agg_geohash');
-          this.populateAggData(rootAggObj, aggKey, (x => x.geoData), 'agg_geohash', aggData);
-        } else if (rootAggPropKeys.includes('agg_distance') || aggKey === 'agg_distance') {
-          rootAggObj = this.navNestedAggByKey(rootAggObj, 'agg_distance');
-          this.populateAggData(rootAggObj, aggKey, (x => x.geoData), 'agg_distance', aggData);
-        } else if (aggKey === 'agg_centroid' || rootAggPropKeys.includes('agg_centroid')) {
-          if(rootAggPropKeys.includes('agg_centroid')){
-            rootAggObj = this.navNestedAggByKey(rootAggObj, 'agg_centroid');
-          }
-          aggData?.geoData?.push({
-            name: aggKey === 'agg_centroid' ? this.MAIN_AGG_NAME : aggKey,
-            agg_centroid: rootAggObj,
-          });
         }
       }
       this.aggregationData = aggData;
@@ -160,7 +156,6 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     }
   }
 
-  // gives us nested buckets->buckets->buckets, so i can build tree view
   // tslint:disable-next-line:no-any max-line-length
   formatAggDataStructure(rootAgg: { histoBuckets: { name: any; series: { value: number; name: string; }[]; }[]; nested: boolean; }, aggregation: any, aggKeys: string[]): any {
     for (const bucket of this.bucketAccessor(aggregation)) {
@@ -207,6 +202,8 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
 
   }
 
+  // gives us nested buckets->buckets->buckets, so i can build tree view
+
   // tslint:disable-next-line:no-any
   navNestedAggByKey(aggregation: any, aggregationKey: string): any {
     if (aggregation.hasOwnProperty(aggregationKey)) {
@@ -216,12 +213,10 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     return aggregation;
   }
 
-  // aggData because we can have multiple aggs so we need to push instead of returning new object
-  // @ts-ignore
   // tslint:disable-next-line:no-any max-line-length
-  populateAggData(rootAggObj, aggName, aggDataAccessor: (x: any) => any, aggregationType: 'agg_histo' | 'agg_fact' | 'agg_term' | 'agg_geohash' | 'agg_distance', aggData: AggregationData): void {
+  populateAggData(rootAggObj: any, aggName: string, aggDataAccessor: (x: any) => any, aggregationType: 'agg_histo' | 'agg_fact' | 'agg_term' | 'agg_geohash' | 'agg_distance' | 'agg_centroid', aggData: AggregationData): void {
     const formattedData = this.formatAggDataStructure(rootAggObj, rootAggObj,
-      ['agg_histo', 'agg_fact', 'agg_fact_val', 'agg_term', 'fact_val_reverse', 'agg_geohash', 'agg_distance']);
+      ['agg_histo', 'agg_fact', 'agg_fact_val', 'agg_term', 'fact_val_reverse', 'agg_geohash', 'agg_distance', 'agg_centroid']);
 
     if (this.bucketAccessor(formattedData).length > 0) {
       if (formattedData.nested) {
@@ -231,6 +226,24 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
           aggDataAccessor(aggData).push({
             name: aggName === 'agg_histo' ? this.MAIN_AGG_NAME : aggName,
             series: this.formatDateDataExtraBucket(this.bucketAccessor(formattedData))
+          });
+        } else if (aggregationType === 'agg_geohash') {
+          aggDataAccessor(aggData).push({
+            name: aggName === 'agg_geohash' ? this.MAIN_AGG_NAME : aggName,
+            agg_geohash: this.bucketAccessor(formattedData),
+            type: aggregationType
+          });
+        } else if (aggregationType === 'agg_distance') {
+          aggDataAccessor(aggData).push({
+            name: aggName === 'agg_distance' ? this.MAIN_AGG_NAME : aggName,
+            agg_distance: this.bucketAccessor(formattedData),
+            type: aggregationType
+          });
+        } else if (aggregationType === 'agg_centroid') {
+          aggDataAccessor(aggData).push({
+            name: aggName === 'agg_centroid' ? this.MAIN_AGG_NAME : aggName,
+            agg_centroid: this.bucketAccessor(formattedData),
+            type: aggregationType
           });
         } else {
           if (aggregationType === 'agg_fact' && this.determineDepthOfObject(formattedData, (x: { buckets: unknown; }) => x.buckets) === 3) {
@@ -270,9 +283,25 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
           agg_distance: this.bucketAccessor(formattedData),
           type: aggregationType
         });
+      } else if (aggregationType === 'agg_centroid') {
+        aggDataAccessor(aggData).push({
+          name: aggName === 'agg_centroid' ? this.MAIN_AGG_NAME : aggName,
+          agg_centroid: formattedData,
+          type: aggregationType
+        });
       }
+    } else if (aggregationType === 'agg_centroid') {
+      aggDataAccessor(aggData).push({
+        name: aggName === 'agg_centroid' ? this.MAIN_AGG_NAME : aggName,
+        agg_centroid: formattedData,
+        type: aggregationType
+      });
     }
+
   }
+
+  // aggData because we can have multiple aggs so we need to push instead of returning new object
+  // @ts-ignore
 
   // tslint:disable-next-line:no-any
   openUnifiedTimeline(buckets: any[]): void {
@@ -302,6 +331,43 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.complete();
+  }
+
+  // tslint:disable-next-line:no-any
+  hasGeoBucket(aggregation: any): string {
+    const aggKeys = ['agg_histo', 'agg_fact', 'agg_fact_val', 'agg_term', 'fact_val_reverse'];
+    const geoKeys = ['agg_centroid', 'agg_geohash'];
+    const rootAggPropKeys: string[] = Object.keys(aggregation);
+    if (!(rootAggPropKeys.find((x) => geoKeys.includes(x)))) {
+      let key = rootAggPropKeys.find((x) => aggKeys.includes(x));
+      while (key) {
+        if (key === 'fact_val_reverse') {
+          const keys = Object.keys(aggregation[key]);
+          aggregation = aggregation[key];
+          key = keys.find((x) => aggKeys.includes(x));
+          if (!key) {
+            key = keys.find((x) => geoKeys.includes(x));
+            return key || '';
+          }
+        } else {
+          const buckets = this.bucketAccessor(this.navNestedAggByKey(aggregation, key));
+          if (buckets && buckets.length > 0) {
+            aggregation = buckets[0];
+            const keys = Object.keys(aggregation);
+            key = keys.find((x) => aggKeys.includes(x));
+            if (!key) {
+              key = keys.find((x) => geoKeys.includes(x));
+              return key || '';
+            }
+          } else {
+            return '';
+          }
+        }
+      }
+      return '';
+    } else {
+      return '';
+    }
   }
 
   // tslint:disable-next-line:no-any
