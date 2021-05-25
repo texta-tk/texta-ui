@@ -83,6 +83,8 @@ Cypress:
 build:
   image: node:latest
   stage: build
+  only:
+  - master
   tags:
     - ci-test
   before_script:

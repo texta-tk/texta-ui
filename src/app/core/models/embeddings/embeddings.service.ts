@@ -7,13 +7,14 @@ import {LogService} from '../../util/log.service';
 import {environment} from '../../../../environments/environment';
 import {Embedding, EmbeddingOptions, EmbeddingPrediction} from '../../../shared/types/tasks/Embedding';
 import {ResultsWrapper} from '../../../shared/types/Generic';
+import {AppConfigService} from '../../util/app-config.service';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class EmbeddingsService {
-  apiUrl = environment.apiHost + environment.apiBasePath;
+  apiUrl = AppConfigService.settings.apiHost + AppConfigService.settings.apiBasePath;
 
   constructor(private http: HttpClient, private localStorageService: LocalStorageService,
               private logService: LogService) {

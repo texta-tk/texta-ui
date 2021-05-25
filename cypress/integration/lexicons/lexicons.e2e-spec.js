@@ -17,6 +17,7 @@ describe('lexicons should work', function () {
       cy.intercept('DELETE', '**/lexicons/**').as('deleteLexicons');
       cy.intercept('POST', '**/lexicons/**').as('postLexicons');
       cy.intercept('PATCH', '**/lexicons/**').as('patchLexicons');
+      cy.intercept('GET', '**/embeddings/**').as('getEmbeddings');
       cy.visit('/lexicons');
 
       cy.wait('@getProjectIndices');
@@ -30,25 +31,26 @@ describe('lexicons should work', function () {
       cy.wait('@postLexicons').then(created => {
         expect(created.response.statusCode).to.eq(201);
       });
-      cy.get('.element-row:first()').click() //pede
+      cy.get('.element-row:first()').click();
+      cy.wait('@getEmbeddings');
       cy.get('[data-cy=appLexiconEmbedding]').click();
       cy.get('.mat-option:first()').click();
       cy.get('[data-cy=appLexiconPositiveUsedWords]').type('pede');
       cy.intercept('POST', '**/embeddings/**').as('postEmbeddings');
       cy.get('[data-cy=appLexiconNewSuggestionsBtn]').click();
-      cy.wait('@postEmbeddings').then(intercepted=>{
+      cy.wait('@postEmbeddings').then(intercepted => {
         cy.wrap(intercepted).its('response.statusCode').should('eq', 200);
         cy.get('.suggestions > .flex-col > :nth-child(1)').click();
       });
       cy.get('[data-cy=appLexiconSaveBtn]').click();
-      cy.wait('@patchLexicons').then(intercepted=>{
+      cy.wait('@patchLexicons').then(intercepted => {
         cy.wrap(intercepted).its('response.statusCode').should('eq', 200);
       });
       cy.get('.breadcrumb > :nth-child(1)').click();
       cy.wait('@getLexicons');
       cy.get('[data-cy=appLexiconMenuDelete]:first()').click();
       cy.get('[type="submit"]').click();
-      cy.wait('@deleteLexicons').then(intercepted=>{
+      cy.wait('@deleteLexicons').then(intercepted => {
         cy.wrap(intercepted).its('response.statusCode').should('eq', 204);
       });
     });

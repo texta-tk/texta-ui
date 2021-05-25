@@ -63,7 +63,7 @@ import {ProjectGuardDialogComponent} from './components/dialogs/project-guard-di
 import {TextareaLexiconComponent} from './components/textarea-lexicon/textarea-lexicon.component';
 import {CombineArrayPipe} from './pipes/combine-array.pipe';
 import {ProjectFieldSelectComponent} from './components/project-field-select/project-field-select.component';
-import {ParseJsonPipe} from "./pipes/parse-json.pipe";
+import {ParseJsonPipe} from './pipes/parse-json.pipe';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,

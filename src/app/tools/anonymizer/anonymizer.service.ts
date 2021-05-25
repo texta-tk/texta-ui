@@ -6,13 +6,14 @@ import {Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
 import {ResultsWrapper} from '../../shared/types/Generic';
 import {Anonymizer} from './types/Anonymizer';
+import {AppConfigService} from '../../core/util/app-config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AnonymizerService {
 
-  apiUrl = environment.apiHost + environment.apiBasePath;
+  apiUrl = AppConfigService.settings.apiHost + AppConfigService.settings.apiBasePath;
 
   constructor(private http: HttpClient,
               private logService: LogService) {

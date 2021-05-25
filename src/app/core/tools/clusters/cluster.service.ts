@@ -8,12 +8,13 @@ import {Cluster, ClusterDetails, ClusterMoreLikeThis, ClusterView} from '../../.
 import {catchError, tap} from 'rxjs/operators';
 import {ClusterOptions} from '../../../shared/types/tasks/ClusterOptions';
 import {ResultsWrapper} from '../../../shared/types/Generic';
+import {AppConfigService} from '../../util/app-config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ClusterService {
-  apiUrl = environment.apiHost + environment.apiBasePath;
+  apiUrl = AppConfigService.settings.apiHost + AppConfigService.settings.apiBasePath;
 
   constructor(private http: HttpClient, private localStorageService: LocalStorageService,
               private logService: LogService) {

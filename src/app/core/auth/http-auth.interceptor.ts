@@ -15,6 +15,7 @@ import {LogService} from '../util/log.service';
 import { environment } from 'src/environments/environment';
 import { UserService } from '../users/user.service';
 import { RefreshTokenResp } from 'src/app/shared/types/UserAuth';
+import {AppConfigService} from '../util/app-config.service';
 
 
 @Injectable()
@@ -49,13 +50,13 @@ export class HttpAuthInterceptor implements HttpInterceptor {
 
     }
     if (error && error.status === 401) {
-      
+
       // If using UAA and the request got 401'd, make an attempt to refresh the token
       // and retry the request
       const refreshToken = this.localStorageService.getOAuthRefreshToken()
-      if (environment.useCloudFoundryUAA && refreshToken) {
+      if (AppConfigService.settings.useCloudFoundryUAA && refreshToken) {
         return this.userService.refreshUAAOAuthToken(refreshToken).pipe(flatMap(
-          (data: RefreshTokenResp) => { 
+          (data: RefreshTokenResp) => {
             this.localStorageService.setOAuthAccessToken(data.access_token);
             this.localStorageService.setOAuthRefreshToken(data.refresh_token);
             request = this.addBearerHeader(request);
@@ -82,10 +83,10 @@ export class HttpAuthInterceptor implements HttpInterceptor {
 
 
   addBearerHeader(request: HttpRequest<unknown>): HttpRequest<unknown> {
-    if (environment.useCloudFoundryUAA) {
+    if (AppConfigService.settings.useCloudFoundryUAA) {
       const accessToken = this.localStorageService.getOAuthAccessToken();
-      
-      // If the access token exists, use UAA 
+
+      // If the access token exists, use UAA
       if (accessToken) {
         request = request.clone({
           headers: request.headers.set('Authorization', 'Bearer ' + accessToken),
@@ -101,7 +102,7 @@ export class HttpAuthInterceptor implements HttpInterceptor {
   addCSRFToken(request: HttpRequest<unknown>): HttpRequest<unknown> {
     const token = this.localStorageService.getUser();
     const csrfToken = this.tokenExtractor.getToken() as string;
-    
+
     if (token) {
       request = request.clone({
         headers: request.headers.set('Authorization', 'Token ' + token.key),

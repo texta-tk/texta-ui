@@ -6,12 +6,13 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../util/log.service';
 import {environment} from '../../../environments/environment';
 import {Lexicon} from '../../shared/types/Lexicon';
+import {AppConfigService} from '../util/app-config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LexiconService {
-  apiUrl = environment.apiHost + environment.apiBasePath;
+  apiUrl = AppConfigService.settings.apiHost + AppConfigService.settings.apiBasePath;
 
   constructor(private http: HttpClient, private localStorageService: LocalStorageService,
               private logService: LogService) {
