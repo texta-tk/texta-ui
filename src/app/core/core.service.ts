@@ -8,13 +8,14 @@ import {catchError, tap} from 'rxjs/operators';
 import {Index} from '../shared/types/Index';
 import {ResultsWrapper} from '../shared/types/Generic';
 import {CoreVariables} from '../shared/types/CoreVariables';
+import {AppConfigService} from './util/app-config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CoreService {
 
-  apiUrl = environment.apiHost + environment.apiBasePath;
+  apiUrl = AppConfigService.settings.apiHost + AppConfigService.settings.apiBasePath;
 
   constructor(private http: HttpClient,
               private logService: LogService) {

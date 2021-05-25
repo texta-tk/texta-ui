@@ -7,12 +7,13 @@ import {Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
 import {UserProfile} from '../../shared/types/UserProfile';
 import {UserAuth, RefreshTokenResp} from '../../shared/types/UserAuth';
+import {AppConfigService} from '../util/app-config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  apiUrl = environment.apiHost + environment.apiBasePath;
+  apiUrl = AppConfigService.settings.apiHost + AppConfigService.settings.apiBasePath;
 
   constructor(private http: HttpClient, private localStorageService: LocalStorageService,
               private logService: LogService) {
@@ -93,7 +94,7 @@ export class UserService {
       tap(e => this.logService.logStatus(e, 'deleteUser')),
       catchError(this.logService.handleError<unknown>('deleteUser')));
   }
-  
+
   refreshUAAOAuthToken(refreshToken: string): Observable<RefreshTokenResp> {
     return this.http.post<RefreshTokenResp>(
       `${this.apiUrl}/uaa/refresh-token/`, {'refresh_token': refreshToken}).pipe(

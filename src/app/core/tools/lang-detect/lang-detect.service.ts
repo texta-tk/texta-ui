@@ -5,13 +5,13 @@ import {catchError, tap} from 'rxjs/operators';
 import {ResultsWrapper} from '../../../shared/types/Generic';
 import {LangDetect} from '../../../shared/types/tasks/LangDetect';
 import {LogService} from '../../util/log.service';
-import {environment} from '../../../../environments/environment';
+import {AppConfigService} from '../../util/app-config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LangDetectService {
-  apiUrl = environment.apiHost + environment.apiBasePath;
+  apiUrl = AppConfigService.settings.apiHost + AppConfigService.settings.apiBasePath;
 
   constructor(private http: HttpClient,
               private logService: LogService) {

@@ -9,6 +9,7 @@ import {Observable} from 'rxjs';
 import {SavedSearch} from '../../shared/types/SavedSearch';
 import {UtilityFunctions} from '../../shared/UtilityFunctions';
 import {SearchByQueryResponse} from '../../shared/types/Search';
+import {AppConfigService} from '../util/app-config.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,7 @@ import {SearchByQueryResponse} from '../../shared/types/Search';
 
 // { id: number, constraints: Constraint[], elasticQuery?: ElasticsearchQuery, description: string }[]
 export class SearcherService {
-  apiUrl = environment.apiHost + environment.apiBasePath;
+  apiUrl = AppConfigService.settings.apiHost + AppConfigService.settings.apiBasePath;
 
   constructor(private http: HttpClient, private localStorageService: LocalStorageService,
               private logService: LogService) {

@@ -3,12 +3,13 @@ import {Observable, of} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {environment} from '../../../environments/environment';
+import {AppConfigService} from './app-config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LogService {
-  isProduction = environment.production;
+  logging = AppConfigService.settings.logging;
 
   constructor(private snackBar: MatSnackBar) {
   }
@@ -24,7 +25,7 @@ export class LogService {
 
 
   public logStatus(val: unknown, msg: string): void {
-    if (!this.isProduction) {
+    if (this.logging) {
       console.warn(msg, val);
     }
   }

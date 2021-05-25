@@ -6,12 +6,13 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {Reindexer} from 'src/app/shared/types/tools/Elastic';
 import {catchError, tap} from 'rxjs/operators';
 import {ResultsWrapper} from '../../../shared/types/Generic';
+import {AppConfigService} from '../../util/app-config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReindexerService {
-  apiUrl = environment.apiHost + environment.apiBasePath;
+  apiUrl = AppConfigService.settings.apiHost + AppConfigService.settings.apiBasePath;
 
   constructor(private http: HttpClient,
               private logService: LogService) {

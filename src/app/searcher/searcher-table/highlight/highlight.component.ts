@@ -12,6 +12,7 @@ import * as LinkifyIt from 'linkify-it';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 import {HighlightSettings} from '../../../shared/SettingVars';
 import {environment} from '../../../../environments/environment';
+import {AppConfigService} from '../../../core/util/app-config.service';
 
 // tslint:disable:no-any
 export interface HighlightSpan {
@@ -71,7 +72,7 @@ export class HighlightComponent {
     ['EMAIL', {backgroundColor: '#9fffe0', textColor: 'black'}],
   ]);
   static linkify = new LinkifyIt();
-  static readonly HYPERLINKS_COL = environment.fileFieldReplace; // hosted_filepath
+  static readonly HYPERLINKS_COL = AppConfigService.settings.fileFieldReplace; // hosted_filepath
   highlightArray: HighlightObject[] = [];
   textHidden = true;
   listenerList: (() => any)[] = [];
@@ -134,7 +135,7 @@ export class HighlightComponent {
   static makeHyperlinksClickable(currentColumnData: unknown, colName: string): HighlightSpan[] {
     // Very quick check, that can give false positives.
     if (colName === HighlightComponent.HYPERLINKS_COL) {
-      currentColumnData = environment.apiHost + '/' + currentColumnData;
+      currentColumnData = `${AppConfigService.settings.apiHost}/${currentColumnData}`;
     }
     if (isNaN(Number(currentColumnData)) && HighlightComponent.linkify.pretest(currentColumnData as string)) {
       const highlightArray: HighlightSpan[] = [];
@@ -155,7 +156,7 @@ export class HighlightComponent {
     return [];
   }
 
-  static makeShowShortVersion(maxWordDistance: number, highlightObjects: HighlightObject[]): HighlightObject[] {
+  static makeShowShortVersion(maxWordDistance: number, highlightObjects: HighlightObject[], currentColumn: string): HighlightObject[] {
     const showShortVersionHighlightObjects: HighlightObject[] = [];
     let parentShortVersionSpan: HighlightObject | undefined;
     let colHasSearcherHighlight = false;
@@ -165,7 +166,7 @@ export class HighlightComponent {
         parentShortVersionSpan = {
           text: '',
           highlighted: false,
-          shortVersion: {spans: [highlightObject]}, isVisible: true,
+          shortVersion: {spans: [highlightObject]}, isVisible: false,
         };
       } else if (parentShortVersionSpan && HighlightComponent.highlightHasSearcherHighlight(highlightObject)) {
         parentShortVersionSpan.isVisible = false;
@@ -180,16 +181,12 @@ export class HighlightComponent {
       }
     }
     if (parentShortVersionSpan) {
-      parentShortVersionSpan.isVisible = !colHasSearcherHighlight;
       showShortVersionHighlightObjects.push(parentShortVersionSpan);
     }
 
-    if (colHasSearcherHighlight) {
-      showShortVersionHighlightObjects.forEach(x => x.shortVersion?.spans?.forEach(y => y.isVisible = false));
-      return HighlightComponent.cutShortVersionExtraText(showShortVersionHighlightObjects, maxWordDistance);
-    }
+    showShortVersionHighlightObjects.forEach(x => x.shortVersion?.spans?.forEach(y => y.isVisible = false));
+    return HighlightComponent.cutShortVersionExtraText(showShortVersionHighlightObjects, maxWordDistance) || [];
 
-    return showShortVersionHighlightObjects[0]?.shortVersion?.spans || [];
   }
 
   static cutShortVersionExtraText(highlights: HighlightObject[], maxWordDistance: number): HighlightObject[] {
@@ -412,8 +409,9 @@ export class HighlightComponent {
       ];
       const colors = HighlightComponent.generateColorsForFacts(highlightTerms);
       const highlights = this.makeHighLights(highlightConfig.data[highlightConfig.currentColumn], highlightTerms, colors);
-      if (highlightConfig.showShortVersion && highlightConfig.searcherHighlight) {
-        this.highlightArray = HighlightComponent.makeShowShortVersion(highlightConfig.showShortVersion, highlights);
+      if (highlightConfig.showShortVersion) {
+        this.highlightArray = HighlightComponent.makeShowShortVersion(highlightConfig.showShortVersion, highlights,
+          highlightConfig.data[highlightConfig.currentColumn]);
       } else {
         this.highlightArray = highlights;
       }

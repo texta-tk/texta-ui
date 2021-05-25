@@ -1,0 +1,15 @@
+{
+  "apiHost":"http://texta-rest",
+  "apiBasePath":"/api/v1",
+  "apiBasePath2":"/api/v2",
+  "logging":true,
+  "fileFieldReplace":"texta_filepath",
+  "useCloudFoundryUAA":true,
+  "uaaConf":{
+    "uaaURL":"http://texta-uaa:8080/uaa/oauth/authorize",
+    "redirect_uri":"http://texta-rest/api/v1/uaa/callback",
+    "client_id":"login",
+    "scope":"openid",
+    "response_type":"code"
+  }
+}

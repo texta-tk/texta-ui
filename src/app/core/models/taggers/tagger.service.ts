@@ -6,13 +6,14 @@ import {Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
 import {ListFeaturesResponse, Tagger} from '../../../shared/types/tasks/Tagger';
 import {TaggerOptions} from '../../../shared/types/tasks/TaggerOptions';
+import {AppConfigService} from '../../util/app-config.service';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class TaggerService {
-  apiUrl = environment.apiHost + environment.apiBasePath;
+  apiUrl = AppConfigService.settings.apiHost + AppConfigService.settings.apiBasePath;
 
   constructor(private http: HttpClient, private logService: LogService) {
   }

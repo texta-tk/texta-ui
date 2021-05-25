@@ -6,12 +6,13 @@ import {Observable} from 'rxjs';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {catchError, tap} from 'rxjs/operators';
 import {ResultsWrapper} from '../../../shared/types/Generic';
+import {AppConfigService} from '../../util/app-config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TorchTaggerService {
-  apiUrl = environment.apiHost + environment.apiBasePath;
+  apiUrl = AppConfigService.settings.apiHost + AppConfigService.settings.apiBasePath;
 
   constructor(private http: HttpClient, private logService: LogService) {
   }
@@ -83,7 +84,7 @@ export class TorchTaggerService {
       tap(e => this.logService.logStatus(e, 'applyToIndex')),
       catchError(this.logService.handleError('applyToIndex')));
   }
-  
+
   // tslint:disable-next-line:no-any
   applyToIndexOptions(projectId: number, taskId: number): Observable<any | HttpErrorResponse> {
     // tslint:disable-next-line:no-any

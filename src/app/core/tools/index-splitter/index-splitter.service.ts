@@ -2,16 +2,17 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
-import {IndexSplitter, IndexSplitterOptions} from "../../../shared/types/tasks/IndexSplitter";
-import {ResultsWrapper} from "../../../shared/types/Generic";
-import {LogService} from "../../util/log.service";
-import {environment} from "../../../../environments/environment";
+import {IndexSplitter, IndexSplitterOptions} from '../../../shared/types/tasks/IndexSplitter';
+import {ResultsWrapper} from '../../../shared/types/Generic';
+import {LogService} from '../../util/log.service';
+import {environment} from '../../../../environments/environment';
+import {AppConfigService} from '../../util/app-config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class IndexSplitterService {
-  apiUrl = environment.apiHost + environment.apiBasePath;
+  apiUrl = AppConfigService.settings.apiHost + AppConfigService.settings.apiBasePath;
 
   constructor(private http: HttpClient,
               private logService: LogService) {

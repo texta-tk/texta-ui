@@ -6,13 +6,14 @@ import {environment} from '../../../../../environments/environment';
 import {SearchQueryTagger} from '../../../../shared/types/tasks/SearchQueryTagger';
 import {ResultsWrapper} from '../../../../shared/types/Generic';
 import {LogService} from '../../../util/log.service';
+import {AppConfigService} from '../../../util/app-config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SearchTaggerService {
-  apiUrl2 = environment.apiHost + environment.apiBasePath2;
-  apiUrl = environment.apiHost + environment.apiBasePath;
+  apiUrl2 = AppConfigService.settings.apiHost + AppConfigService.settings.apiBasePath2;
+  apiUrl = AppConfigService.settings.apiHost + AppConfigService.settings.apiBasePath;
 
   constructor(private http: HttpClient,
               private logService: LogService) {

@@ -1,5 +1,5 @@
 import {BrowserModule} from '@angular/platform-browser';
-import {NgModule} from '@angular/core';
+import {APP_INITIALIZER, NgModule} from '@angular/core';
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -8,7 +8,11 @@ import {HTTP_INTERCEPTORS, HttpClientModule, HttpClientXsrfModule} from '@angula
 import {HttpAuthInterceptor} from './core/auth/http-auth.interceptor';
 import {NavbarComponent} from './navbar/navbar.component';
 import {ToolsModule} from './tools/tools.module';
+import {AppConfigService} from './core/util/app-config.service';
 
+export function initializeApp(appConfigService: AppConfigService): () => Promise<void> {
+  return () => appConfigService.load();
+}
 
 @NgModule({
   declarations: [
@@ -28,7 +32,8 @@ import {ToolsModule} from './tools/tools.module';
     AppRoutingModule,
   ],
   providers: [
-    {provide: HTTP_INTERCEPTORS, useClass: HttpAuthInterceptor, multi: true}
+    {provide: APP_INITIALIZER, useFactory: initializeApp, deps: [AppConfigService], multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: HttpAuthInterceptor, multi: true},
   ],
 
   bootstrap: [AppComponent]

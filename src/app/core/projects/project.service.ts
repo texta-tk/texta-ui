@@ -5,12 +5,13 @@ import {LogService} from '../util/log.service';
 import {Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
 import {Project, ProjectFact, ProjectIndex, ProjectResourceCounts} from '../../shared/types/Project';
+import {AppConfigService} from '../util/app-config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProjectService {
-  apiUrl = environment.apiHost + environment.apiBasePath;
+  apiUrl = AppConfigService.settings.apiHost + AppConfigService.settings.apiBasePath;
 
   constructor(private http: HttpClient,
               private logService: LogService) {

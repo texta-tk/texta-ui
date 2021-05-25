@@ -7,12 +7,13 @@ import {catchError, tap} from 'rxjs/operators';
 import {MLPOptions} from '../../../shared/types/tasks/MLPOptions';
 import {MLP} from '../../../shared/types/tasks/MLP';
 import {ResultsWrapper} from '../../../shared/types/Generic';
+import {AppConfigService} from '../../util/app-config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MLPService {
-  apiUrl = environment.apiHost + environment.apiBasePath;
+  apiUrl = AppConfigService.settings.apiHost + AppConfigService.settings.apiBasePath;
 
   constructor(private http: HttpClient,
               private logService: LogService) {
