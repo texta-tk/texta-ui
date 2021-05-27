@@ -131,13 +131,15 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
         let rootAggObj = aggregation.aggs[aggKey];
         const rootAggPropKeys: string[] = Object.keys(rootAggObj);
         const geoAggKey = this.hasGeoBucket(rootAggObj);
-        if (rootAggPropKeys.includes('agg_geohash') || geoAggKey === 'agg_geohash') {
-          rootAggObj = this.navNestedAggByKey(rootAggObj, aggKey);
+        if (geoAggKey === 'agg_geohash') {
+          const aggKeys = ['agg_histo', 'agg_fact', 'agg_fact_val', 'agg_term', 'fact_val_reverse', 'agg_geohash'];
+          const key = rootAggPropKeys.find((x) => aggKeys.includes(x)) || aggKey;
+          rootAggObj = this.navNestedAggByKey(rootAggObj, key);
           this.populateAggData(rootAggObj, aggKey, (x => x.geoData), 'agg_geohash', aggData);
-        } else if (rootAggPropKeys.includes('agg_distance') || geoAggKey === 'agg_distance') {
+        } else if (geoAggKey === 'agg_distance') {
           rootAggObj = this.navNestedAggByKey(rootAggObj, aggKey);
           this.populateAggData(rootAggObj, aggKey, (x => x.geoData), 'agg_distance', aggData);
-        } else if (geoAggKey === 'agg_centroid' || rootAggPropKeys.includes('agg_centroid') || aggKey === 'agg_centroid') {
+        } else if (geoAggKey === 'agg_centroid') {
           rootAggObj = this.navNestedAggByKey(rootAggObj, aggKey);
           this.populateAggData(rootAggObj, aggKey, (x => x.geoData), 'agg_centroid', aggData);
         } else if (rootAggPropKeys.includes('agg_term') || aggKey === 'agg_term') { // agg_term without filter has no depth
@@ -366,7 +368,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
       }
       return '';
     } else {
-      return '';
+      return rootAggPropKeys.find((x) => geoKeys.includes(x)) || '';
     }
   }
 
