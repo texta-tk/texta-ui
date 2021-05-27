@@ -37,6 +37,10 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
   fuzzinessFormControl = new FormControl();
   prefixLengthFormControl = new FormControl();
   lexicons: Lexicon[] = [];
+  operatorConverter: { [key: string]: string } = {
+    must: 'and',
+    should: 'or',
+  };
 
   constructor() {
 
@@ -81,6 +85,7 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
         query: '',
         fuzziness: this.fuzzinessFormControl.value,
         prefix_length: this.fuzzinessFormControl.value,
+        operator: this.operatorConverter[this.operatorFormControl.value] || 'and',
       };
       this.constraintQuery = {
         bool: {
@@ -131,6 +136,10 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
 
       this.operatorFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((value: string) => {
         this.constraintQuery.bool = {[value]: formQueries};
+        fuzzyMatchBlueprint.operator = this.operatorConverter[value] || 'and';
+        if (this.matchFormControl.value === 'match_fuzzy') {
+          this.buildMatchFuzzyQuery(formQueries, this.textAreaFormControl.value, this._textConstraint.fields.map(x => x.path), fuzzyMatchBlueprint);
+        }
         this.constraintChanged.emit(this.elasticSearchQuery);
       });
 
