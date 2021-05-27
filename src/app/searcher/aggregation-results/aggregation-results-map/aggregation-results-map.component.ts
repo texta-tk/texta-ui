@@ -26,10 +26,11 @@ export class AggregationResultsMapComponent implements OnInit {
     zoom: 5,
     center: L.latLng(46.879966, -121.726909),
     timeDimension: true,
+    timeDimensionControl: true,
 
   };
   leafletLayers: L.Layer[] = [];
-  leafletLayersControl: { [name: string]: Layer };
+  treeLayers: L.Control.Layers.TreeObject[];
   map: L.Map;
   isReady = false;
 
@@ -47,45 +48,77 @@ export class AggregationResultsMapComponent implements OnInit {
   @Input() set aggregationData(val: AggregationData) {
     this.isReady = false;
     this.changeDetectorRef.detectChanges();
-    const layersControlOverlays: { [name: string]: L.LayerGroup } = {};
+    const treeGroupLayers: L.Control.Layers.TreeObject[] = [];
     const layers: L.Layer[] = [];
     if (val.geoData) {
+      console.log(val.geoData);
       for (const element of val.geoData) {
-        let layerGroup = new L.LayerGroup();
+        let treeGroup: L.Control.Layers.TreeObject | undefined;
         if (element.agg_geohash && element.agg_geohash.length > 0) {
-          layerGroup = this.constructGeoHashLayers(element.agg_geohash, element.name);
+          let sss: L.Control.Layers.TreeObject;
+          sss = this.constructTree(element, {label: element.name, children: []});
+          treeGroup = sss;
         }
-        if (element.agg_distance && element.agg_distance.length > 0) {
-          layerGroup = this.constructDistanceLayers(element.agg_distance, element.name);
+        if (treeGroup) {
+          treeGroupLayers.push(treeGroup);
         }
-        if (element.agg_centroid) {
-          layerGroup = this.constructCentroidLayers(element.agg_centroid, element.name);
-        }
-        layers.push(layerGroup);
-        layersControlOverlays[element.name] = layerGroup;
+        /*        if (element.agg_distance && element.agg_distance.length > 0) {
+                  layerGroup = this.constructDistanceLayers(element.agg_distance, element.name);
+                }
+                if (element.agg_centroid) {
+                  layerGroup = this.constructCentroidLayers(element.agg_centroid, element.name);
+                }*/
       }
     }
-    this.leafletLayers = layers;
-    this.leafletLayersControl = layersControlOverlays;
+    this.treeLayers = treeGroupLayers;
     this.isReady = true;
     this.changeDetectorRef.detectChanges();
   }
 
   onMapReady(map: L.Map): void {
     this.map = map;
-    const children: L.Control.Layers.TreeObject[] = [];
-    for (const key in this.leafletLayersControl) {
-      if (this.leafletLayersControl.hasOwnProperty(key)) {
-        children.push({label: key, layer: this.leafletLayersControl[key]});
-      }
-    }
+    console.log(this.treeLayers);
     const overlaysTree = {
       label: 'Un/select all',
-      selectAllCheckbox: 'Un/select all',
-      children,
+      selectAllCheckbox: true,
+      children: this.treeLayers,
     };
     const treeLayer = L.control.layers.tree(undefined, overlaysTree);
     treeLayer.addTo(map);
+  }
+
+  constructTree(element: any, treeObject: L.Control.Layers.TreeObject): any {
+    debugger
+    const elementKeys = ['agg_histo', 'agg_fact', 'agg_fact_val', 'agg_term', 'fact_val_reverse', 'agg_geohash', 'agg_distance', 'agg_centroid'];
+    if (!element?.length) {
+      const keys = Object.keys(element);
+      const key = keys.find(d => elementKeys.includes(d));
+      if (key) {
+        this.constructTree(element[key], treeObject);
+      } else if (keys.includes('buckets')) {
+        this.constructTree(element.buckets, treeObject);
+      }
+    } else {
+      let hasGeoHashes = false;
+      for (const el of element) {
+        const keys = Object.keys(el);
+        const key = keys.find(d => elementKeys.includes(d));
+        if (key) {
+          if (treeObject.children) {
+            treeObject.children.push({label: el.key, children: []});
+            this.constructTree(el, treeObject.children[treeObject.children.length - 1]);
+          }
+        } else {
+          hasGeoHashes = true;
+          break;
+        }
+      }
+      if (treeObject.children && hasGeoHashes) {
+        delete treeObject.children;
+        treeObject.layer = this.constructGeoHashLayers(element, treeObject.label);
+      }
+    }
+    return treeObject;
   }
 
   style(doc: { key: string, doc_count: number }, maxDoc: number): { fillColor: string; color: string; fillOpacity: number; weight: number; opacity: number; dashArray: string } {
