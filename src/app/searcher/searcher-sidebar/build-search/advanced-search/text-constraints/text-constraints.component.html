@@ -2,8 +2,8 @@
   <div fxLayout="row" fxLayoutGap="5px">
     <mat-form-field fxFlex="20">
       <mat-label>Operator</mat-label>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
-                  [formControl]="operatorFormControl">
+      <mat-select [disableOptionCentering]="true" [formControl]="operatorFormControl"
+                  panelClass="select-panel-reveal-input">
         <mat-option value="must">and</mat-option>
         <mat-option value="should">or</mat-option>
         <mat-option value="must_not">not</mat-option>
@@ -12,19 +12,20 @@
     <!-- idk why, but auto doesnt work, this calc hack for some reason does -->
     <mat-form-field fxFlex="3 3 calc(1em + 20px)">
       <mat-label>Match</mat-label>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
-                  [formControl]="matchFormControl">
-        <mat-option value="phrase_prefix">Phrase prefix</mat-option>
+      <mat-select [disableOptionCentering]="true" [formControl]="matchFormControl"
+                  panelClass="select-panel-reveal-input">
+        <mat-option value="phrase_prefix">phrase prefix</mat-option>
         <mat-option value="best_fields">word</mat-option>
         <mat-option value="phrase">phrase</mat-option>
         <mat-option value="regexp">regex</mat-option>
         <mat-option value="fuzzy">fuzzy</mat-option>
+        <mat-option value="match_fuzzy">match fuzzy</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field fxFlex="20" *ngIf="matchFormControl.value !== 'fuzzy'">
+    <mat-form-field *ngIf="matchFormControl.value !== 'fuzzy' && matchFormControl.value !== 'match_fuzzy'" fxFlex="20">
       <mat-label>Slop</mat-label>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
-                  [formControl]="slopFormControl">
+      <mat-select [disableOptionCentering]="true" [formControl]="slopFormControl"
+                  panelClass="select-panel-reveal-input">
         <mat-option value="0">0</mat-option>
         <mat-option value="1">1</mat-option>
         <mat-option value="2">2</mat-option>
@@ -33,29 +34,29 @@
         <mat-option value="5">5</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field fxFlex="20" *ngIf="matchFormControl.value === 'fuzzy'">
+    <mat-form-field *ngIf="matchFormControl.value === 'fuzzy' || matchFormControl.value === 'match_fuzzy'" fxFlex="20">
       <mat-label>Fuzziness</mat-label>
-      <input type="number" min="0" [formControl]="fuzzinessFormControl" matInput>
+      <input [formControl]="fuzzinessFormControl" matInput min="0" type="number">
     </mat-form-field>
-    <mat-form-field fxFlex="20" *ngIf="matchFormControl.value === 'fuzzy'">
+    <mat-form-field *ngIf="matchFormControl.value === 'fuzzy' || matchFormControl.value === 'match_fuzzy'" fxFlex="20">
       <mat-label>Prefix length</mat-label>
-      <input type="number" min="0" [formControl]="prefixLengthFormControl" matInput>
+      <input [formControl]="prefixLengthFormControl" matInput min="0" type="number">
     </mat-form-field>
   </div>
   <div fxLayout="column">
-    <mat-form-field floatLabel="never" class="max-width">
-  <textarea matInput class="max-width"
-            [formControl]="textAreaFormControl"
+    <mat-form-field class="max-width" floatLabel="never">
+  <textarea [formControl]="textAreaFormControl" class="max-width"
+            matInput
             placeholder="Type here"></textarea>
     </mat-form-field>
-    <button mat-stroked-button [matMenuTriggerFor]="menu" *ngIf="lexicons.length > 0">Add lexicon</button>
+    <button *ngIf="lexicons.length > 0" [matMenuTriggerFor]="menu" mat-stroked-button>Add lexicon</button>
     <mat-menu #menu="matMenu">
       <ng-container *ngFor="let lexicon of lexicons">
-        <button mat-menu-item [matMenuTriggerFor]="lexiconDetailed" (click)="addLexicon(lexicon)">
+        <button (click)="addLexicon(lexicon)" [matMenuTriggerFor]="lexiconDetailed" mat-menu-item>
           {{ lexicon.description }}
         </button>
         <mat-menu #lexiconDetailed="matMenu">
-          <div mat-menu-item disabled *ngFor="let phrase of lexicon.positives_used">{{ phrase }}</div>
+          <div *ngFor="let phrase of lexicon.positives_used" disabled mat-menu-item>{{ phrase }}</div>
         </mat-menu>
       </ng-container>
     </mat-menu>
