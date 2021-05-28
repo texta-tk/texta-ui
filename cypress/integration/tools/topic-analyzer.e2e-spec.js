@@ -82,7 +82,7 @@ describe('Topic Analyzer should work', function () {
     cy.get('[data-cy=appTagClusterDocPath]').type('comment_content');
     cy.get('[data-cy=appTagClusterSubmit]').click();
     cy.wait('@postClustering').its('response.body').should('deep.equal', {
-      message: 'Successfully added fact test to the documents!'
+      message: 'Successfully started adding fact test to the documents! This might take a bit depending on the clusters size'
     });
     cy.get('.mat-header-cell.mat-column-select').click();
     cy.get('[data-cy=appClusterDocumentsDeleteBtn]').click();
