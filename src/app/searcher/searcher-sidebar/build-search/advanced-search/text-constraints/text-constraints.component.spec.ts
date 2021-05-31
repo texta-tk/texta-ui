@@ -66,10 +66,9 @@ describe('TextConstraintsComponent', () => {
     query = constraintQueryAccessor(component.constraintQuery, 0, 'must', 'multi_match');
     expect(query.type).toBe('phrase');
 
-
     component.matchFormControl.setValue('regexp');
-    query = constraintQueryAccessor(component.constraintQuery, 0, 'must', 'multi_match');
-    expect(query.type).toBe('regexp');
+    query = constraintQueryAccessor(component.constraintQuery, 0, 'must', 'regexp');
+    expect(query.test).toBe('test');
   });
 
   it('should generate correct query when changing operator', () => {
