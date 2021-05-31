@@ -3,7 +3,7 @@ import {AggregationData, AggregationDistance} from '../aggregation-results.compo
 import * as ngeoHash from 'ngeohash';
 
 import * as L from 'leaflet';
-import {Layer} from 'leaflet';
+import {GeoJSON, Layer, LayerGroup} from 'leaflet';
 import '../../../../../node_modules/leaflet-timedimension/dist/leaflet.timedimension.src.js';
 import '../../../../../node_modules/leaflet.control.layers.tree/L.Control.Layers.Tree.js';
 
@@ -31,6 +31,7 @@ export class AggregationResultsMapComponent implements OnInit {
   };
   leafletLayers: L.Layer[] = [];
   treeLayers: L.Control.Layers.TreeObject[];
+  geoJson: L.GeoJSON = new GeoJSON();
   map: L.Map;
   isReady = false;
 
@@ -47,6 +48,7 @@ export class AggregationResultsMapComponent implements OnInit {
   // tslint:disable-next-line:no-any
   @Input() set aggregationData(val: AggregationData) {
     this.isReady = false;
+    this.leafletLayers = [];
     this.changeDetectorRef.detectChanges();
     const treeGroupLayers: L.Control.Layers.TreeObject[] = [];
     const layers: L.Layer[] = [];
@@ -70,6 +72,8 @@ export class AggregationResultsMapComponent implements OnInit {
                 }*/
       }
     }
+    console.log(treeGroupLayers);
+
     this.treeLayers = treeGroupLayers;
     this.isReady = true;
     this.changeDetectorRef.detectChanges();
@@ -77,36 +81,47 @@ export class AggregationResultsMapComponent implements OnInit {
 
   onMapReady(map: L.Map): void {
     this.map = map;
-    console.log(this.treeLayers);
+    const geoJsonTimeLayer = L.timeDimension.layer.geoJson(this.treeLayers[0].layer, {updateDimensions: true});
+    geoJsonTimeLayer.addTo(map);
     const overlaysTree = {
       label: 'Un/select all',
       selectAllCheckbox: true,
       children: this.treeLayers,
     };
+    map.on('baselayerchange', (x => {
+      console.log(x);
+    }));
+    console.log(this.geoJson);
     const treeLayer = L.control.layers.tree(undefined, overlaysTree);
     treeLayer.addTo(map);
+    this.updateTimeline(this.leafletLayers);
   }
 
-  constructTree(element: any, treeObject: L.Control.Layers.TreeObject): any {
+  // tslint:disable-next-line:no-any
+  constructTree(element: any, treeObject: L.Control.Layers.TreeObject, time?: number): any {
     debugger
     const elementKeys = ['agg_histo', 'agg_fact', 'agg_fact_val', 'agg_term', 'fact_val_reverse', 'agg_geohash', 'agg_distance', 'agg_centroid'];
     if (!element?.length) {
       const keys = Object.keys(element);
       const key = keys.find(d => elementKeys.includes(d));
       if (key) {
-        this.constructTree(element[key], treeObject);
+        this.constructTree(element[key], treeObject, time);
       } else if (keys.includes('buckets')) {
-        this.constructTree(element.buckets, treeObject);
+        this.constructTree(element.buckets, treeObject, time);
       }
     } else {
       let hasGeoHashes = false;
       for (const el of element) {
+        if (el?.key_as_string) {
+          this.constructTree(el, treeObject, el.key);
+          continue;
+        }
         const keys = Object.keys(el);
         const key = keys.find(d => elementKeys.includes(d));
         if (key) {
           if (treeObject.children) {
             treeObject.children.push({label: el.key, children: []});
-            this.constructTree(el, treeObject.children[treeObject.children.length - 1]);
+            this.constructTree(el, treeObject.children[treeObject.children.length - 1], time);
           }
         } else {
           hasGeoHashes = true;
@@ -115,7 +130,13 @@ export class AggregationResultsMapComponent implements OnInit {
       }
       if (treeObject.children && hasGeoHashes) {
         delete treeObject.children;
-        treeObject.layer = this.constructGeoHashLayers(element, treeObject.label);
+        treeObject.layer = this.constructGeoHashLayers(element, treeObject.label, time);
+      } else if (treeObject.layer && hasGeoHashes) {
+        const layerGrp: L.LayerGroup = treeObject.layer as L.LayerGroup;
+        const lry = this.constructGeoHashLayers(element, treeObject.label, time);
+        lry.eachLayer(x => {
+          layerGrp.addLayer(x);
+        });
       }
     }
     return treeObject;
@@ -160,7 +181,7 @@ export class AggregationResultsMapComponent implements OnInit {
     return layerGroup;
   }
 
-  constructGeoHashLayers(element: { key: string, doc_count: number }[], elementName: string): L.LayerGroup {
+  constructGeoHashLayers(element: { key: string, doc_count: number }[], elementName: string, time?: number): L.LayerGroup {
     const layerGroup = new L.LayerGroup();
     const docCounts = element.flatMap(y => [y.doc_count]);
     const maxDocCount = Math.max(...docCounts);
@@ -169,17 +190,26 @@ export class AggregationResultsMapComponent implements OnInit {
       const poly = L.polygon([[geoHashData[2], geoHashData[1]], [geoHashData[2], geoHashData[3]], [geoHashData[0], geoHashData[3]], [geoHashData[0], geoHashData[1]]]);
       poly.setStyle(this.style(x, maxDocCount));
       poly.bindTooltip(`<h4 style="margin: 0;">${elementName}</h4>Document count: ${x.doc_count}`);
-      layerGroup.addLayer(poly);
+      if (time) {
+        const geoJson = poly.toGeoJSON();
+        geoJson.properties = {time};
+        const fff = L.geoJSON(geoJson);
+        fff.setStyle(this.style(x, maxDocCount));
+        fff.bindTooltip(`<h4 style="margin: 0;">${elementName}</h4>Document count: ${x.doc_count}`);
+        // @ts-ignore
+        fff.feature = fff.getLayers()[0].feature;
+        layerGroup.addLayer(fff);
+        this.geoJson.addLayer(fff);
+      } else {
+        poly.setStyle(this.style(x, maxDocCount));
+        poly.bindTooltip(`<h4 style="margin: 0;">${elementName}</h4>Document count: ${x.doc_count}`);
+        layerGroup.addLayer(poly);
+      }
     });
     return layerGroup;
   }
 
   ngOnInit(): void {
-  }
-
-  // tslint:disable-next-line:no-any
-  onClick($event: any): void {
-    console.log($event);
   }
 
 
@@ -195,5 +225,9 @@ export class AggregationResultsMapComponent implements OnInit {
     });
     layerGroup.addLayer(mapMarker);
     return layerGroup;
+  }
+
+  private updateTimeline(leafletLayers: Layer[]): void {
+    console.log(leafletLayers);
   }
 }

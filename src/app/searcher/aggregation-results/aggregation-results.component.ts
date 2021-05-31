@@ -163,7 +163,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     for (const bucket of this.bucketAccessor(aggregation)) {
       for (const key of aggKeys) {
         const innerBuckets = this.navNestedAggByKey(bucket, key);
-        if (this.bucketAccessor(innerBuckets)) {
+        if (innerBuckets.hasOwnProperty('buckets')) {
           if (bucket.hasOwnProperty('agg_histo') && key === 'agg_histo') {
             if (!rootAgg.histoBuckets) {
               rootAgg.histoBuckets = [];
@@ -179,7 +179,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
         } else if (innerBuckets !== bucket && key === 'fact_val_reverse') {
           for (const innerBucketKey of aggKeys) {
             const nestedContent = this.navNestedAggByKey(innerBuckets, innerBucketKey);
-            if (this.bucketAccessor(nestedContent)) {
+            if (nestedContent.hasOwnProperty('buckets')) {
               if (innerBuckets.hasOwnProperty('agg_histo') && innerBucketKey === 'agg_histo') {
                 if (!rootAgg.histoBuckets) {
                   rootAgg.histoBuckets = [];
@@ -217,6 +217,8 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
 
   // tslint:disable-next-line:no-any max-line-length
   populateAggData(rootAggObj: any, aggName: string, aggDataAccessor: (x: any) => any, aggregationType: 'agg_histo' | 'agg_fact' | 'agg_term' | 'agg_geohash' | 'agg_distance' | 'agg_centroid', aggData: AggregationData): void {
+
+    debugger
     const formattedData = this.formatAggDataStructure(rootAggObj, rootAggObj,
       ['agg_histo', 'agg_fact', 'agg_fact_val', 'agg_term', 'fact_val_reverse', 'agg_geohash', 'agg_distance', 'agg_centroid']);
 
