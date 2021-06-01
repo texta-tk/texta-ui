@@ -183,6 +183,7 @@ export class HighlightComponent {
     if (parentShortVersionSpan) {
       showShortVersionHighlightObjects.push(parentShortVersionSpan);
     }
+    // no highlights, only show first x words
     if (!colHasSearcherHighlight && parentShortVersionSpan?.shortVersion?.spans) {
       let wordCount = 0;
       for (let i = 0; i < parentShortVersionSpan.shortVersion.spans.length; i++) {
