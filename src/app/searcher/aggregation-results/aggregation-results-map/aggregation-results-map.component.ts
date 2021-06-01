@@ -3,7 +3,7 @@ import {AggregationData, AggregationDistance} from '../aggregation-results.compo
 import * as ngeoHash from 'ngeohash';
 
 import * as L from 'leaflet';
-import {GeoJSON, Layer, LayerGroup} from 'leaflet';
+import {Layer, LayerGroup} from 'leaflet';
 import '../../../../../node_modules/leaflet-timedimension/dist/leaflet.timedimension.src.js';
 import '../../../../../node_modules/leaflet.control.layers.tree/L.Control.Layers.Tree.js';
 
@@ -27,11 +27,19 @@ export class AggregationResultsMapComponent implements OnInit {
     center: L.latLng(46.879966, -121.726909),
     timeDimension: true,
     timeDimensionControl: true,
+    timeDimensionControlOptions: {
+      timeSliderDragUpdate: true,
+      loopButton: true,
+      playerOptions: {
+        transitionTime: 1000,
+        loop: true
+      }
+    }
 
   };
   leafletLayers: L.Layer[] = [];
   treeLayers: L.Control.Layers.TreeObject[];
-  geoJson: L.GeoJSON = new GeoJSON();
+  geoJson: L.GeoJSON = new L.GeoJSON();
   map: L.Map;
   isReady = false;
 
@@ -81,8 +89,13 @@ export class AggregationResultsMapComponent implements OnInit {
 
   onMapReady(map: L.Map): void {
     this.map = map;
-    const geoJsonTimeLayer = L.timeDimension.layer.geoJson(this.treeLayers[0].layer, {updateDimensions: true});
+    const geoJsonTimeLayer = L.timeDimension.layer.cTreeTimeDimension(this.treeLayers[0].layer, {
+      updateDimensions: true,
+      duration: 'PT22H',
+      updateTimeDimensionMode: 'replace',
+    });
     geoJsonTimeLayer.addTo(map);
+    this.treeLayers[0].layer = geoJsonTimeLayer;
     const overlaysTree = {
       label: 'Un/select all',
       selectAllCheckbox: true,
@@ -92,6 +105,7 @@ export class AggregationResultsMapComponent implements OnInit {
       console.log(x);
     }));
     console.log(this.geoJson);
+    this.leafletLayers = [geoJsonTimeLayer];
     const treeLayer = L.control.layers.tree(undefined, overlaysTree);
     treeLayer.addTo(map);
     this.updateTimeline(this.leafletLayers);
@@ -99,7 +113,7 @@ export class AggregationResultsMapComponent implements OnInit {
 
   // tslint:disable-next-line:no-any
   constructTree(element: any, treeObject: L.Control.Layers.TreeObject, time?: number): any {
-    debugger
+    debugger;
     const elementKeys = ['agg_histo', 'agg_fact', 'agg_fact_val', 'agg_term', 'fact_val_reverse', 'agg_geohash', 'agg_distance', 'agg_centroid'];
     if (!element?.length) {
       const keys = Object.keys(element);
@@ -143,11 +157,10 @@ export class AggregationResultsMapComponent implements OnInit {
   }
 
   style(doc: { key: string, doc_count: number }, maxDoc: number): { fillColor: string; color: string; fillOpacity: number; weight: number; opacity: number; dashArray: string } {
-
     return {
       fillColor: this.getColor(doc.doc_count, maxDoc),
       weight: 2,
-      opacity: 1,
+      opacity: 0.5,
       color: 'black',
       dashArray: '3',
       fillOpacity: 0.5
@@ -231,3 +244,204 @@ export class AggregationResultsMapComponent implements OnInit {
     console.log(leafletLayers);
   }
 }
+
+L.TimeDimension.Layer.CTreeTimeDimension = L.TimeDimension.Layer.GeoJson.extend({
+
+  // tslint:disable-next-line:typedef no-any
+  initialize(layer: any, options: any) {
+    L.TimeDimension.Layer.prototype.initialize.call(this, layer, options);
+    this._updateTimeDimension = this.options.updateTimeDimension || false;
+    this._updateTimeDimensionMode = this.options.updateTimeDimensionMode || 'extremes'; // 'union', 'replace' or extremes
+    this._duration = this.options.duration || null;
+    this._addlastPoint = this.options.addlastPoint || false;
+    this._waitForReady = this.options.waitForReady || false;
+    this._defaultTime = 0;
+    this._availableTimes = [];
+    this._loaded = false;
+    if (this._baseLayer.getLayers().length === 0) {
+      if (this._waitForReady) {
+        this._baseLayer.on('ready', this._onReadyBaseLayer, this);
+      } else {
+        this._loaded = true;
+      }
+    } else {
+      this._loaded = true;
+      this._setAvailableTimes();
+    }
+    // reload available times if data is added to the base layer
+    this._baseLayer.on('layeradd', (() => {
+      if (this._loaded) {
+        this._setAvailableTimes();
+      }
+    }));
+  },
+
+  // tslint:disable-next-line:typedef no-any
+  onAdd(map: any) {
+    L.TimeDimension.Layer.prototype.onAdd.call(this, map);
+    if (this._loaded) {
+      this._setAvailableTimes();
+    }
+  },
+
+  // tslint:disable-next-line:no-any typedef
+  eachLayer(method: { call: (arg0: any, arg1: any) => void; }, context: any) {
+    if (this._currentLayer) {
+      method.call(context, this._currentLayer);
+    }
+    return L.TimeDimension.Layer.prototype.eachLayer.call(this, method, context);
+  },
+
+  // tslint:disable-next-line:typedef no-any
+  isReady(time: any) {
+    return this._loaded;
+  },
+
+  _update(): void {
+    if (!this._map) {
+      return;
+    }
+    if (!this._loaded) {
+      return;
+    }
+
+    const time = this._timeDimension.getCurrentTime();
+
+    const maxTime = this._timeDimension.getCurrentTime();
+    let minTime = 0;
+    if (this._duration) {
+      const date = new Date(maxTime);
+      L.TimeDimension.Util.subtractTimeDuration(date, this._duration, true);
+      minTime = date.getTime();
+    }
+
+    // new coordinates:
+    // @ts-ignore
+    const layer = L.geoJSON(null, this._baseLayer.options);
+    const layers = this._baseLayer.getLayers();
+    for (let i = 0, l = layers.length; i < l; i++) {
+      const feature = this._getFeatureBetweenDates(layers[i].feature, minTime, maxTime);
+      if (feature) {
+        layer.addLayer(layers[i]);
+      }
+    }
+
+    if (this._currentLayer) {
+      console.log(this._map);
+      debugger
+      this._map.removeLayer(this._currentLayer);
+    }
+    if (layer.getLayers().length) {
+      layer.addTo(this._map);
+      console.log(this._map);
+      this._currentLayer = layer;
+    }
+  },
+
+  // tslint:disable-next-line:typedef
+  _setAvailableTimes() {
+    const times = [];
+    const layers = this._baseLayer.getLayers();
+    for (let i = 0, l = layers.length; i < l; i++) {
+      if (layers[i].feature) {
+        const featureTimes = this._getFeatureTimes(layers[i].feature);
+        for (let j = 0, m = featureTimes.length; j < m; j++) {
+          times.push(featureTimes[j]);
+        }
+      }
+    }
+    this._availableTimes = L.TimeDimension.Util.sort_and_deduplicate(times);
+    if (this._timeDimension && (this._updateTimeDimension || this._timeDimension.getAvailableTimes().length === 0)) {
+      this._timeDimension.setAvailableTimes(this._availableTimes, this._updateTimeDimensionMode);
+    }
+  },
+
+  // tslint:disable-next-line:typedef no-any max-line-length
+  _getFeatureTimes(feature: { featureTimes: string | any[]; properties: { hasOwnProperty: (arg0: string) => any; coordTimes: any; times: any; linestringTimestamps: any; time: any; }; }) {
+    if (!feature.featureTimes) {
+      if (!feature.properties) {
+        feature.featureTimes = [];
+      } else if (feature.properties.hasOwnProperty('coordTimes')) {
+        feature.featureTimes = feature.properties.coordTimes;
+      } else if (feature.properties.hasOwnProperty('times')) {
+        feature.featureTimes = feature.properties.times;
+      } else if (feature.properties.hasOwnProperty('linestringTimestamps')) {
+        feature.featureTimes = feature.properties.linestringTimestamps;
+      } else if (feature.properties.hasOwnProperty('time')) {
+        feature.featureTimes = [feature.properties.time];
+      } else {
+        feature.featureTimes = [];
+      }
+      // String dates to ms
+      for (let i = 0, l = feature.featureTimes.length; i < l; i++) {
+        let time = feature.featureTimes[i];
+        if (typeof time === 'string' || time instanceof String) {
+          time = Date.parse(time.trim());
+          // @ts-ignore
+          feature.featureTimes[i] = time;
+        }
+      }
+    }
+    return feature.featureTimes;
+  },
+
+  // tslint:disable-next-line:typedef no-any
+  _getFeatureBetweenDates(feature: { geometry: { coordinates: any[]; type: any; }; properties: any; }, minTime: number, maxTime: number) {
+    const featureTimes = this._getFeatureTimes(feature);
+    if (featureTimes.length === 0) {
+      return feature;
+    }
+
+    let indexMin = null;
+    let indexMax = null;
+    const l = featureTimes.length;
+
+    if (featureTimes[0] > maxTime || featureTimes[l - 1] < minTime) {
+      return null;
+    }
+
+    if (featureTimes[l - 1] > minTime) {
+      for (let i = 0; i < l; i++) {
+        if (indexMin === null && featureTimes[i] > minTime) {
+          // set index_min the first time that current time is greater the minTime
+          indexMin = i;
+        }
+        if (featureTimes[i] > maxTime) {
+          indexMax = i;
+          break;
+        }
+      }
+    }
+    if (indexMin === null) {
+      indexMin = 0;
+    }
+    if (indexMax === null) {
+      indexMax = l;
+    }
+    let newCoordinates = [];
+    if (feature.geometry.coordinates[0].length) {
+      newCoordinates = feature.geometry.coordinates.slice(indexMin, indexMax);
+    } else {
+      newCoordinates = feature.geometry.coordinates;
+    }
+    return {
+      type: 'Feature',
+      properties: feature.properties,
+      geometry: {
+        type: feature.geometry.type,
+        coordinates: newCoordinates
+      }
+    };
+  },
+
+  _onReadyBaseLayer(): void {
+    this._loaded = true;
+    this._setAvailableTimes();
+    this._update();
+  },
+});
+
+// tslint:disable-next-line:only-arrow-functions typedef no-any
+L.timeDimension.layer.cTreeTimeDimension = function (layer: any, options: any) {
+  return new L.TimeDimension.Layer.CTreeTimeDimension(layer, options);
+};
