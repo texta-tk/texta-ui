@@ -183,8 +183,35 @@ export class HighlightComponent {
     if (parentShortVersionSpan) {
       showShortVersionHighlightObjects.push(parentShortVersionSpan);
     }
+    if (!colHasSearcherHighlight && parentShortVersionSpan?.shortVersion?.spans) {
+      let wordCount = 0;
+      for (let i = 0; i < parentShortVersionSpan.shortVersion.spans.length; i++) {
+        if (wordCount === maxWordDistance) {
+          parentShortVersionSpan.shortVersion.spans.splice(i, 0, {
+            text: ' ...',
+            fullText: ' ...',
+            highlighted: false,
+            isVisible: true
+          });
+          break;
+        }
+        parentShortVersionSpan.shortVersion.spans[i].isVisible = true;
+        parentShortVersionSpan.shortVersion.spans[i].shortText = parentShortVersionSpan.shortVersion.spans[i].text;
+        // lastspan
+        wordCount += HighlightComponent.setSpanShortVersion(parentShortVersionSpan.shortVersion.spans[i], 'start', maxWordDistance - wordCount, RegExp(/\w/));
+        if (parentShortVersionSpan.shortVersion.spans.length === 1 && wordCount === maxWordDistance) {
+          parentShortVersionSpan.shortVersion.spans.splice(1, 0, {
+            text: ' ...',
+            fullText: ' ...',
+            highlighted: false,
+            isVisible: true
+          });
+          break;
+        }
+      }
+      return [parentShortVersionSpan];
+    }
 
-    showShortVersionHighlightObjects.forEach(x => x.shortVersion?.spans?.forEach(y => y.isVisible = false));
     return HighlightComponent.cutShortVersionExtraText(showShortVersionHighlightObjects, maxWordDistance) || [];
 
   }
@@ -877,6 +904,7 @@ export class HighlightComponent {
       const a = this.renderer2.createElement('a');
       const t = this.renderer2.createText(highlight.text);
       this.renderer2.setProperty(a, 'target', '_blank');
+      this.renderer2.setProperty(a, 'href', highlight.text);
       this.renderer2.appendChild(a, t);
       this.renderer2.appendChild(wrapper, a);
     } else if (highlight.nested) {

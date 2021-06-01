@@ -164,6 +164,7 @@ export interface ProjectState {
     selectedFields: string[];
     sidePanelsState: {buildSearch: boolean, savedSearch: boolean, aggregations: boolean}
     searcherType: 1 | 2;
+    showShortVersion: boolean;
   };
   models: {
     tagger: { itemsPerPage: number; }

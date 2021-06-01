@@ -56,6 +56,11 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
         } else {
           this.searcherType = 1;
         }
+        if (state?.searcher?.showShortVersion) {
+          this.showShortVersion = state.searcher.showShortVersion;
+        } else {
+          this.showShortVersion = false;
+        }
         this.changeDetectorRef.markForCheck();
       }
     });
@@ -102,5 +107,13 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroyed$.next(true);
     this.destroyed$.complete();
+  }
+
+  showShortVersionChange($event: boolean): void {
+    const state = this.localStorageService.getProjectState(this.currentProject);
+    if (state?.searcher) {
+      state.searcher.showShortVersion = $event;
+      this.localStorageService.updateProjectState(this.currentProject, state);
+    }
   }
 }

@@ -23,7 +23,7 @@
     </mat-expansion-panel-header>
 
     <div class="search-options" fxLayout="column">
-      <mat-checkbox [(ngModel)]=highlightTextaFacts data-cy="appSearcherSidebarBuildSearchHighlightFacts"
+      <mat-checkbox [(ngModel)]="highlightTextaFacts" data-cy="appSearcherSidebarBuildSearchHighlightFacts"
                     labelPosition="before">Highlight facts:
       </mat-checkbox>
       <mat-checkbox *ngIf="highlightTextaFacts" [(ngModel)]=highlightMatching
@@ -31,10 +31,10 @@
         highlight
         matching facts:
       </mat-checkbox>
-      <mat-checkbox [(ngModel)]=highlightSearcherMatches data-cy="appSearcherSidebarBuildSearchHighlightSearcher"
+      <mat-checkbox [(ngModel)]="highlightSearcherMatches" data-cy="appSearcherSidebarBuildSearchHighlightSearcher"
                     labelPosition="before">Highlight searcher matches:
       </mat-checkbox>
-      <mat-checkbox [(ngModel)]=showShortVersion data-cy="appSearcherSidebarBuildSearchShowShortVersion"
+      <mat-checkbox [(ngModel)]="showShortVersion" (ngModelChange)="showShortVersionChange($event)" data-cy="appSearcherSidebarBuildSearchShowShortVersion"
                     labelPosition="before">
         Show short version:
       </mat-checkbox>
