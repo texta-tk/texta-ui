@@ -43,7 +43,7 @@ export class LogService {
       this.snackBar.open(`${error.error.error}`, 'Close', {
         duration: time,
       });
-    } else if (error.error) {
+    } else if (error.error && typeof error.error === 'object') {
       for (const element in error.error) {
         if (error.error.hasOwnProperty(element)) {
           this.snackBar.open(`${element}: ${error.error[element][0]}`, 'Close', {

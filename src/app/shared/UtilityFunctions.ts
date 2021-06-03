@@ -6,7 +6,23 @@ import {
   TextConstraint
 } from '../searcher/searcher-sidebar/build-search/Constraints';
 
+export interface LegibleColor {
+  backgroundColor: string;
+  textColor: string;
+}
+
 export class UtilityFunctions {
+  static colors: Map<string, LegibleColor> = new Map<string, LegibleColor>([
+    ['ORG', {backgroundColor: '#9FC2BA', textColor: 'black'}],
+    ['PER', {backgroundColor: '#DDB0A0', textColor: 'black'}],
+    ['GPE', {backgroundColor: '#ffb2ff', textColor: 'black'}],
+    ['LOC', {backgroundColor: '#CABD80', textColor: 'black'}],
+    ['ADDR', {backgroundColor: '#8f9bff', textColor: 'black'}],
+    ['COMPANY', {backgroundColor: '#75a7ff', textColor: 'black'}],
+    ['PHO', {backgroundColor: '#ff867f', textColor: 'black'}],
+    ['EMAIL', {backgroundColor: '#9fffe0', textColor: 'black'}],
+  ]);
+
   static typeGuard<T>(o: unknown, className: new(...args: unknown[]) => T): o is T {
     return o instanceof className;
   }
@@ -112,5 +128,17 @@ export class UtilityFunctions {
     }
     return outPutJson;
 
+  }
+
+  static generateColorsForFacts(facts: { fact: string; str_val?: string }[]): Map<string, LegibleColor> {
+    facts.forEach(fact => {
+      if (!UtilityFunctions.colors.has(fact.fact)) {
+        // tslint:disable-next-line:no-bitwise
+        UtilityFunctions.colors.set(fact.fact, {backgroundColor: `hsla(${~~(360 * Math.random())},70%,70%,0.8)`,
+          textColor: 'black'
+        });
+      }
+    });
+    return UtilityFunctions.colors;
   }
 }

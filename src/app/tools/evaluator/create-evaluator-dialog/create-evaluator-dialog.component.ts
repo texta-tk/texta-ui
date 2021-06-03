@@ -170,6 +170,8 @@ export class CreateEvaluatorDialogComponent implements OnInit, OnDestroy {
   }
 
   getFactsForIndices(val: ProjectIndex[]): void {
+    this.trueFactValueOptions = [];
+    this.predictedFactValueOptions = [];
     if (val.length > 0) {
       this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat()).subscribe(resp => {
         if (resp && !(resp instanceof HttpErrorResponse)) {

@@ -11,8 +11,8 @@ import {
 import {
   GenericHighlighterComponent,
   HighlightSpan,
-  LegibleColor
 } from '../generic-highlighter/generic-highlighter.component';
+import {LegibleColor, UtilityFunctions} from '../../UtilityFunctions';
 
 @Component({
   selector: 'app-texta-facts-chips',
@@ -49,7 +49,7 @@ export class TextaFactsChipsComponent implements OnInit {
 
   buildChipList(facts: { fact: string, str_val: string }[], doneCallback: () => void): void {
     setTimeout(() => {
-      const colors = GenericHighlighterComponent.generateColorsForFacts(facts);
+      const colors = UtilityFunctions.generateColorsForFacts(facts);
       facts.forEach(val => {
         const obj = this.factList.find(x => x.factName === val.fact);
         if (obj && obj.factValues) {
