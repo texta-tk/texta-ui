@@ -19,15 +19,20 @@ export class TagClusterDialogComponent implements OnInit {
     docPathFormControl: new FormControl('', [Validators.required]),
   });
 
+  docPaths: string[];
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
 
   constructor(private clusterService: ClusterService, private logService: LogService,
               private dialogRef: MatDialogRef<TagClusterDialogComponent>,
               public dialog: MatDialog,
-              @Inject(MAT_DIALOG_DATA) public data: { clusterId: number, clusteringId: number, projectId: number; }) {
+              @Inject(MAT_DIALOG_DATA) public data: { clusterId: number, clusteringId: number, projectId: number; columns: string[] }) {
+
   }
 
   ngOnInit(): void {
+    if (this.data.columns) {
+      this.docPaths = this.data.columns;
+    }
   }
 
   onSubmit(formData: { nameFormControl: string; strValFormControl: string; docPathFormControl: string; }): void {

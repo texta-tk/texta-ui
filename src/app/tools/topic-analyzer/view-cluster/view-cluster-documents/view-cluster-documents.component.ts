@@ -21,7 +21,7 @@ import {Observable, of, Subject} from 'rxjs';
 import {LogService} from '../../../../core/util/log.service';
 import {ConfirmDialogComponent} from '../../../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {SelectionModel} from '@angular/cdk/collections';
-import {Project} from '../../../../shared/types/Project';
+import {Project, ProjectIndex} from '../../../../shared/types/Project';
 import {SimilarClusterDialogComponent} from './similar-cluster-dialog/similar-cluster-dialog.component';
 import {TagClusterDialogComponent} from './tag-cluster-dialog/tag-cluster-dialog.component';
 import {LocalStorageService} from '../../../../core/util/local-storage.service';
@@ -75,9 +75,10 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
     })).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse) && resp.documents.length > 0) {
         this.significantWords = resp.significant_words;
-        this.infiniteColumns = Object.getOwnPropertyNames(resp.documents[0].content);
+        const cols = Object.getOwnPropertyNames(resp.documents[0].content);
+        cols.push(cols.splice(cols.indexOf('texta_facts'), 1)[0]);
+        this.infiniteColumns = cols;
         if (this.displayedColumns.length === 0 && this.currentProject && this.clusteringId) {
-          this.infiniteColumns = this.infiniteColumns.filter(e => e !== 'texta_facts');
           this.filterColumns = ['select', ...this.infiniteColumns];
 
           const state = this.localStorageService.getProjectState(this.currentProject);
@@ -116,6 +117,7 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
         this.isLoadingResults = false;
         if (resp instanceof HttpErrorResponse) {
           this.logService.snackBarError(resp, 2000);
+          this.router.navigate(['../../'], {relativeTo: this.route});
         }
         this.changeDetectorRef.markForCheck();
       }
@@ -222,6 +224,7 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
           clusterId: this.clusterId,
           clusteringId: this.clusteringId,
           projectId: this.currentProject.id,
+          columns: this.infiniteColumns,
         },
         width: '600px'
       });

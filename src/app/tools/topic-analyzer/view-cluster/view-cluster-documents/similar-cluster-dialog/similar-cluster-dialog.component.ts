@@ -57,7 +57,9 @@ export class SimilarClusterDialogComponent implements OnInit, AfterViewInit, OnD
       return of(null);
     })).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.infiniteColumns = Object.getOwnPropertyNames(resp[0]._source);
+        const cols = Object.getOwnPropertyNames(resp[0]._source);
+        cols.push(cols.splice(cols.indexOf('texta_facts'), 1)[0]);
+        this.infiniteColumns = cols;
         if (this.displayedColumns.length === 0) {
           this.displayedColumns = ['select', ...this.infiniteColumns];
           this.filterColumns = [...this.displayedColumns];

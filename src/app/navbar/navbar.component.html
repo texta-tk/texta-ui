@@ -56,7 +56,8 @@
         projectResourceCounts.num_clusterings +
         projectResourceCounts.num_evaluators +
         projectResourceCounts.num_summarizers +
-        projectResourceCounts.num_lang_detectors}})
+        projectResourceCounts.num_lang_detectors +
+        projectResourceCounts.num_snowball_stemmers}})
         </ng-container>
         <mat-icon>arrow_drop_down</mat-icon>
       </button>
@@ -128,7 +129,8 @@
         *ngIf="projectResourceCounts?.num_lang_detectors">({{projectResourceCounts.num_lang_detectors}})</span>
       </a>
       <a [routerLink]="['/snowball-stemmer']" mat-menu-item
-         routerLinkActive="is-active-menu">Snowball Stemmer
+         routerLinkActive="is-active-menu">Snowball Stemmer <span
+        *ngIf="projectResourceCounts?.num_snowball_stemmers">({{projectResourceCounts.num_snowball_stemmers}})</span>
       </a>
     </mat-menu>
 

@@ -1,3 +1,11 @@
+:host{
+  display: flex;
+  flex-wrap: wrap;
+  min-width: 300px;
+  span{
+    display: flex;
+  }
+}
 span {
   padding: 4px 12px;
   border-radius: 16px;

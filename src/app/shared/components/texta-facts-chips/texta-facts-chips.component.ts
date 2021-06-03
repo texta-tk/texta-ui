@@ -1,10 +1,18 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, NgZone, OnInit} from '@angular/core';
-import {HighlightComponent, HighlightSpan, LegibleColor} from '../highlight/highlight.component';
-import {SearcherComponentService} from '../../services/searcher-component.service';
-import {SavedSearch} from '../../../shared/types/SavedSearch';
-import {take} from 'rxjs/operators';
-import {UtilityFunctions} from '../../../shared/UtilityFunctions';
-import {FactConstraint, FactTextInputGroup} from '../../searcher-sidebar/build-search/Constraints';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Input,
+  NgZone,
+  OnInit,
+  Output,
+  EventEmitter
+} from '@angular/core';
+import {
+  GenericHighlighterComponent,
+  HighlightSpan,
+  LegibleColor
+} from '../generic-highlighter/generic-highlighter.component';
 
 @Component({
   selector: 'app-texta-facts-chips',
@@ -15,8 +23,10 @@ import {FactConstraint, FactTextInputGroup} from '../../searcher-sidebar/build-s
 export class TextaFactsChipsComponent implements OnInit {
   readonly NUMBER_OF_CHIPS_TO_DISPLAY = 25;
   factList: { factName: string, showing: boolean, factValues: { key: string, count: number }[], color: LegibleColor }[] = [];
+  @Output() factValueClick = new EventEmitter<{ factName: string, factValue: string }>();
+  @Output() factNameClick = new EventEmitter<string>();
 
-  constructor(public searchService: SearcherComponentService, private changeDetectorRef: ChangeDetectorRef,
+  constructor(private changeDetectorRef: ChangeDetectorRef,
               private ngZone: NgZone) {
   }
 
@@ -29,17 +39,17 @@ export class TextaFactsChipsComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  buildFactValSearch(fact: string, factValue: string): void {
-    this.searchService.createConstraintFromFact(fact, factValue);
+  buildFactValSearch(factName: string, factValue: string): void {
+    this.factValueClick.emit({factName, factValue});
   }
 
   buildFactNameSearch(fact: string): void {
-    this.searchService.buildFactNameSearch(fact);
+    this.factNameClick.emit(fact);
   }
 
   buildChipList(facts: { fact: string, str_val: string }[], doneCallback: () => void): void {
     setTimeout(() => {
-      const colors = HighlightComponent.generateColorsForFacts(facts);
+      const colors = GenericHighlighterComponent.generateColorsForFacts(facts);
       facts.forEach(val => {
         const obj = this.factList.find(x => x.factName === val.fact);
         if (obj && obj.factValues) {

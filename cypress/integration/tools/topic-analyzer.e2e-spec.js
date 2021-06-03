@@ -61,8 +61,7 @@ describe('Topic Analyzer should work', function () {
       })
     });
     cy.wait(500);
-    cy.get('.cdk-column-Modify:nth(1)').click();
-    cy.get('[data-cy=appClusteringMenuViewClusters]').click();
+    cy.get('[data-cy=appClusteringViewClustersButton]').click();
     cy.get('.cdk-column-significant_words:nth(1)').click();
     cy.get('.cdk-column-comment_content').should('be.visible');
     cy.get('[data-cy=appClusterDocumentsMLTBtn]').click();
@@ -79,7 +78,15 @@ describe('Topic Analyzer should work', function () {
     cy.get('[data-cy=appClusterDocumentsTagBtn]').click();
     cy.get('[data-cy=appTagClusterFactName]').type('test');
     cy.get('[data-cy=appTagClusterStrVal]').type('test');
-    cy.get('[data-cy=appTagClusterDocPath]').type('comment_content');
+    cy.get('[data-cy=appTagClusterDocPath]').click().then((docPaths => {
+      cy.wrap(docPaths).should('have.class', 'mat-focused');
+      cy.closeCurrentCdkOverlay();
+      cy.matFormFieldShouldHaveError(docPaths, 'required');
+      cy.wrap(docPaths).click();
+      cy.get('.mat-option-text').contains('comment_content').click();
+      cy.closeCurrentCdkOverlay();
+      cy.wrap(docPaths).find('mat-error').should('have.length', 0)
+    }));
     cy.get('[data-cy=appTagClusterSubmit]').click();
     cy.wait('@postClustering').its('response.body').should('deep.equal', {
       message: 'Successfully started adding fact test to the documents! This might take a bit depending on the clusters size'

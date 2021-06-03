@@ -35,6 +35,7 @@ export class ProjectResourceCounts {
   num_lang_detectors = 0;
   num_search_fields_taggers = 0;
   num_search_query_taggers = 0;
+  num_snowball_stemmers = 0;
 }
 
 export interface ProjectFact {

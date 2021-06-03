@@ -1,9 +1,5 @@
 <mat-form-field class="max-width">
-  <textarea [(ngModel)]="stopwords"
-            matInput
-            cdkTextareaAutosize
-            cdkAutosizeMinRows="1"
-            cdkAutosizeMaxRows="10" placeholder="Stop words"></textarea>
+  <app-textarea-lexicon [(ngModel)]="stopwords" placeholder="Stopwords (newline separated)"></app-textarea-lexicon>
 </mat-form-field>
 <div class="flex-col">
   <div class="flex-row">

@@ -4,7 +4,7 @@ import {UtilityFunctions} from '../../UtilityFunctions';
 import {HighlightSettings} from '../../SettingVars';
 
 // tslint:disable:no-any
-interface HighlightSpan {
+export interface HighlightSpan {
   doc_path: string;
   fact: string;
   spans: string | number[];
@@ -25,7 +25,7 @@ interface HighlightConfig<T extends HighlightSpan> {
   data: any;
 }
 
-interface LegibleColor {
+export interface LegibleColor {
   backgroundColor: string;
   textColor: string;
 }

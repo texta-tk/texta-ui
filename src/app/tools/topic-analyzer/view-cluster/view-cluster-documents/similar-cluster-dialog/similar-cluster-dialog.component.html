@@ -1,11 +1,11 @@
-<div fxLayout="column" class="wrapper mat-elevation-z8 max-height">
+<div class="wrapper mat-elevation-z8 max-height" fxLayout="column">
   <div class="table-paginator-row">
     <div class="loading-bar">
       <mat-progress-bar *ngIf="isLoadingResults" mode="indeterminate"></mat-progress-bar>
     </div>
     <div class="paginator-row">
       <button (click)="addAllSelected()" [disabled]="selectedRows.selected.length < 1"
-              color="primary"  data-cy="appClusterSimilarTableAddToCluster"
+              color="primary" data-cy="appClusterSimilarTableAddToCluster"
               mat-icon-button matTooltip="Add selected documents to cluster">
         <mat-icon>add</mat-icon>
       </button>
@@ -35,7 +35,7 @@
       </mat-paginator>
     </div>
   </div>
-  <div class="table-container overflow-auto" [appScrollTop]="tableData">
+  <div [appScrollTop]="tableData" class="table-container overflow-auto">
     <table [dataSource]="tableData" class="readable-table" mat-table
            matSort>
       <ng-container matColumnDef="select">
@@ -44,7 +44,7 @@
                         [indeterminate]="selectedRows.hasValue() && !isAllSelected()">
           </mat-checkbox>
         </th>
-        <td *matCellDef="let row" mat-cell (click)="$event ? selectedRows.toggle(row) : null;">
+        <td (click)="$event ? selectedRows.toggle(row) : null;" *matCellDef="let row" mat-cell>
           <mat-checkbox (change)="$event ? selectedRows.toggle(row) : null" (click)="$event.stopPropagation()"
                         [checked]="selectedRows.isSelected(row)">
           </mat-checkbox>
@@ -53,6 +53,14 @@
       <ng-container *ngFor="let column of infiniteColumns" [matColumnDef]="column">
         <th *matHeaderCellDef class="table-row" mat-header-cell mat-sort-header>{{column}}</th>
         <td *matCellDef="let row" mat-cell>
+          <ng-container *ngIf="(row._source[column] | isObject)"><!--pure pipe does memoization for us-->
+            <ng-container *ngIf="column === 'texta_facts'">
+              <app-texta-facts-chips [facts]="row._source[column]" style="min-width: 200px"></app-texta-facts-chips>
+            </ng-container>
+            <pre *ngIf="column !== 'texta_facts'">
+                 {{row._source[column] | json}}
+              </pre>
+          </ng-container>
           <ng-container *ngIf="!(row._source[column] | isObject)">
             <app-generic-highlighter #el (click)="el.toggleTextLimit()" [highlightConfig]="{
                           currentColumn: column,
@@ -62,8 +70,8 @@
                           charLimit: charLimit,
                           highlightHyperlinks: false,
                           data: row._source}"
-                           [ngClass]="{'pointer': row._source[column] && row._source[column].length > charLimit}"
-                           class="pointer">
+                                     [ngClass]="{'pointer': row._source[column] && row._source[column].length > charLimit}"
+                                     class="pointer">
             </app-generic-highlighter>
           </ng-container>
         </td>

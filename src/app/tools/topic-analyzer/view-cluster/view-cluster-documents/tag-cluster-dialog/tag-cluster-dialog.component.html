@@ -16,8 +16,13 @@
       </mat-error>
     </mat-form-field>
     <mat-form-field data-cy="appTagClusterDocPath">
-      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="docPathFormControl" matInput
-             placeholder="Doc path" required>
+      <mat-label>Doc path</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="docPathFormControl"
+                  panelClass="select-panel-reveal-input" required>
+        <mat-option *ngFor="let item of docPaths" [value]="item">
+          {{item}}
+        </mat-option>
+      </mat-select>
       <mat-error *ngIf="tagForm.get('docPathFormControl')?.hasError('required')">
         Doc path is <strong>required</strong>
       </mat-error>
@@ -29,7 +34,7 @@
           <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
         </div>
         <div class="flex-item-right">
-          <button [disabled]="!tagForm.valid" mat-button type="submit" data-cy="appTagClusterSubmit">Tag</button>
+          <button [disabled]="!tagForm.valid" data-cy="appTagClusterSubmit" mat-button type="submit">Tag</button>
         </div>
       </div>
 

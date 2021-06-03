@@ -67,7 +67,9 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
           this.projectFields = projField;
           // combine all fields of all indexes into one unique array to make columns
           // @ts-ignore
-          this.displayedColumns = [...new Set([].concat.apply([], (projField.map(x => x.fields.map(y => y.path)))))];
+          const cols: string[] = [...new Set([].concat.apply([], (projField.map(x => x.fields.map(y => y.path)))))];
+          cols.push(cols.splice(cols.indexOf('texta_facts'), 1)[0]);
+          this.displayedColumns = cols;
           this.setColumnsToDisplay();
           // project changed reset table
           this.tableData.data = [];
@@ -235,6 +237,14 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
 
   trackByTableData(index: number, val: { doc: unknown; }): unknown {
     return val.doc;
+  }
+
+  buildFactNameSearch(fact: string): void {
+    this.searchService.buildFactNameSearch(fact);
+  }
+
+  buildFactValSearch(data: { factName: string, factValue: string }): void {
+    this.searchService.createConstraintFromFact(data.factName, data.factValue);
   }
 
   private setColumnsToDisplay(): void {
