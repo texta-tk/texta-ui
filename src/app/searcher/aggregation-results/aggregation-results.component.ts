@@ -131,6 +131,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
         let rootAggObj = aggregation.aggs[aggKey];
         const rootAggPropKeys: string[] = Object.keys(rootAggObj);
         const geoAggKey = this.hasGeoBucket(rootAggObj);
+        debugger
         if (geoAggKey === 'agg_geohash') {
           const aggKeys = ['agg_histo', 'agg_fact', 'agg_fact_val', 'agg_term', 'fact_val_reverse', 'agg_geohash'];
           const key = rootAggPropKeys.find((x) => aggKeys.includes(x)) || aggKey;

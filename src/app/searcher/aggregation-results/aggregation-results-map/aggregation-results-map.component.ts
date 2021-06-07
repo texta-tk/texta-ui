@@ -63,11 +63,22 @@ export class AggregationResultsMapComponent implements OnInit {
     const layers: L.Layer[] = [];
     if (val.geoData) {
       for (const element of val.geoData) {
+        debugger
         let treeGroup: L.Control.Layers.TreeObject | undefined;
         if (element.agg_geohash && element.agg_geohash.length > 0) {
-          let sss: L.Control.Layers.TreeObject;
-          sss = this.constructTree(element, {label: element.name, children: []});
-          treeGroup = sss;
+          treeGroup = this.constructTree(element, {label: element.name, children: []}, this.constructGeoHashLayers);
+        }
+        if (element.agg_distance && element.agg_distance.length > 0) {
+          treeGroup = this.constructTree(element.agg_distance, {
+            label: element.name,
+            children: []
+          }, this.constructDistanceLayers);
+        }
+        if (element.agg_centroid) {
+          treeGroup = this.constructTree(element.agg_centroid, {
+            label: element.name,
+            children: []
+          }, this.constructCentroidLayers);
         }
         if (treeGroup) {
           treeGroupLayers.push(treeGroup);
@@ -104,6 +115,7 @@ export class AggregationResultsMapComponent implements OnInit {
   }
 
   convertTreeLayersToTimeDimension(objects: L.Control.Layers.TreeObject[]): void {
+    debugger
     for (const treeElLayer of objects) {
       if (treeElLayer.layer) {
         treeElLayer.layer = L.timeDimension.layer.cTreeTimeDimension(treeElLayer.layer, {
@@ -120,15 +132,18 @@ export class AggregationResultsMapComponent implements OnInit {
   }
 
   // tslint:disable-next-line:no-any
-  constructTree(element: any, treeObject: L.Control.Layers.TreeObject, time?: number): any {
+  constructTree(element: any, treeObject: L.Control.Layers.TreeObject, layerFunction: (el: any, label: string, time?: number) => L.LayerGroup, time?: number): any {
     const elementKeys = ['agg_histo', 'agg_fact', 'agg_fact_val', 'agg_term', 'fact_val_reverse', 'agg_geohash', 'agg_distance', 'agg_centroid'];
     if (!element?.length) {
       const keys = Object.keys(element);
       const key = keys.find(d => elementKeys.includes(d));
       if (key) {
-        this.constructTree(element[key], treeObject, time);
+        this.constructTree(element[key], treeObject, layerFunction, time);
       } else if (keys.includes('buckets')) {
-        this.constructTree(element.buckets, treeObject, time);
+        this.constructTree(element.buckets, treeObject, layerFunction, time);
+      } else if (keys.includes('location')) {
+        delete treeObject.children;
+        treeObject.layer = layerFunction(element, treeObject.label, time);
       }
     } else {
       let hasGeoHashes = false;
@@ -144,16 +159,12 @@ export class AggregationResultsMapComponent implements OnInit {
           if (treeObject.children) {
             const existingLabel = treeObject.children.find(x => x.label === el.key);
             if (existingLabel) {
-              if (existingLabel.children) {
-                this.constructTree(el, existingLabel.children[existingLabel.children?.length - 1], time);
-              } else {
-                this.constructTree(el, existingLabel, time);
-              }
+              this.constructTree(el, existingLabel, layerFunction, time);
             } else {
               treeObject.selectAllCheckbox = true;
               treeObject.collapsed = true;
               treeObject.children.push({label: el.key, children: []});
-              this.constructTree(el, treeObject.children[treeObject.children.length - 1], time);
+              this.constructTree(el, treeObject.children[treeObject.children.length - 1], layerFunction, time);
             }
 
           }
@@ -164,10 +175,10 @@ export class AggregationResultsMapComponent implements OnInit {
       }
       if (treeObject.children && hasGeoHashes) {
         delete treeObject.children;
-        treeObject.layer = this.constructGeoHashLayers(element, treeObject.label, time);
+        treeObject.layer = layerFunction(element, treeObject.label, time);
       } else if (treeObject.layer && hasGeoHashes) {
         const layerGrp: L.LayerGroup = treeObject.layer as L.LayerGroup;
-        const lry = this.constructGeoHashLayers(element, treeObject.label, time);
+        const lry = layerFunction(element, treeObject.label, time);
         lry.eachLayer(x => {
           layerGrp.addLayer(x);
         });
@@ -196,7 +207,7 @@ export class AggregationResultsMapComponent implements OnInit {
             '#ffffcc';
   }
 
-  constructDistanceLayers(element: AggregationDistance[], elementName: string): L.LayerGroup {
+  constructDistanceLayers(element: AggregationDistance[], elementName: string, time?: number): L.LayerGroup {
     const layerGroup = new L.LayerGroup();
     const docCounts = element.flatMap(y => [y.doc_count]);
     const maxDocCount = Math.max(...docCounts);
@@ -246,7 +257,7 @@ export class AggregationResultsMapComponent implements OnInit {
   }
 
 
-  private constructCentroidLayers(element: { location: { lat: number; lon: number }; count: number }, elementName: string): L.LayerGroup {
+  private constructCentroidLayers(element: { location: { lat: number; lon: number }; count: number }, elementName: string, time?: number): L.LayerGroup {
     const layerGroup = new L.LayerGroup();
     const mapMarker = L.marker([element.location.lat, element.location.lon], {
       title: `${elementName}\nDocument count: ${element.count}`, icon: L.icon({
@@ -256,7 +267,18 @@ export class AggregationResultsMapComponent implements OnInit {
         shadowUrl: 'assets/marker-shadow.png'
       })
     });
-    layerGroup.addLayer(mapMarker);
+    if (time) {
+      debugger
+      const geoJson = mapMarker.toGeoJSON();
+      geoJson.properties = {time};
+      const fff = L.geoJSON(geoJson);
+      // @ts-ignore
+      mapMarker.feature = {time};
+      layerGroup.addLayer(mapMarker);
+      this.geoJson.addLayer(mapMarker);
+    } else {
+      layerGroup.addLayer(mapMarker);
+    }
     return layerGroup;
   }
 
@@ -321,7 +343,7 @@ L.TimeDimension.Layer.CTreeTimeDimension = L.TimeDimension.Layer.GeoJson.extend(
     if (!this._loaded) {
       return;
     }
-
+    debugger
     const time = this._timeDimension.getCurrentTime();
 
     const maxTime = this._timeDimension.getCurrentTime();
@@ -355,6 +377,7 @@ L.TimeDimension.Layer.CTreeTimeDimension = L.TimeDimension.Layer.GeoJson.extend(
   // tslint:disable-next-line:typedef
   _setAvailableTimes() {
     const times = [];
+    debugger
     const layers = this._baseLayer.getLayers();
     for (let i = 0, l = layers.length; i < l; i++) {
       if (layers[i].feature) {
