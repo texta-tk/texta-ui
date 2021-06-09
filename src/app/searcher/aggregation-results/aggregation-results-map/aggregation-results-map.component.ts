@@ -97,6 +97,26 @@ export class AggregationResultsMapComponent implements OnInit {
     this.changeDetectorRef.detectChanges();
   }
 
+  static style(doc: { key: string, doc_count: number }, maxDoc: number): { fillColor: string; color: string; fillOpacity: number; weight: number; opacity: number; dashArray: string } {
+    return {
+      fillColor: this.getColor(doc.doc_count, maxDoc),
+      weight: 2,
+      opacity: 0.5,
+      color: 'black',
+      dashArray: '3',
+      fillOpacity: 0.5
+    };
+  }
+
+  static getColor(d: number, maxDoc: number): string {
+    const percentage = (d / maxDoc) * 100;
+    return percentage > 90 ? '#006837' :
+      percentage > 60 ? '#31a354' :
+        percentage > 30 ? '#78c679' :
+          percentage > 10 ? '#c2e699' :
+            '#ffffcc';
+  }
+
   onMapReady(map: L.Map): void {
     this.map = map;
     if (this.hasTimeAgg) {
@@ -142,15 +162,23 @@ export class AggregationResultsMapComponent implements OnInit {
       } else if (keys.includes('buckets')) {
         this.constructTree(element.buckets, treeObject, layerFunction, time);
       } else if (keys.includes('location')) {
-        delete treeObject.children;
-        treeObject.layer = layerFunction(element, treeObject.label, time);
+        if (treeObject.children) {
+          delete treeObject.children;
+          treeObject.layer = layerFunction(element, treeObject.label, time);
+        } else if (treeObject.layer) {
+          const layerGrp: L.LayerGroup = treeObject.layer as L.LayerGroup;
+          const lry = layerFunction(element, treeObject.label, time);
+          lry.eachLayer(x => {
+            layerGrp.addLayer(x);
+          });
+        }
       }
     } else {
       let hasGeoHashes = false;
       for (const el of element) {
         if (el?.key_as_string) {
           this.hasTimeAgg = true;
-          this.constructTree(el, treeObject, el.key);
+          this.constructTree(el, treeObject, layerFunction, el.key);
           continue;
         }
         const keys = Object.keys(el);
@@ -187,26 +215,6 @@ export class AggregationResultsMapComponent implements OnInit {
     return treeObject;
   }
 
-  style(doc: { key: string, doc_count: number }, maxDoc: number): { fillColor: string; color: string; fillOpacity: number; weight: number; opacity: number; dashArray: string } {
-    return {
-      fillColor: this.getColor(doc.doc_count, maxDoc),
-      weight: 2,
-      opacity: 0.5,
-      color: 'black',
-      dashArray: '3',
-      fillOpacity: 0.5
-    };
-  }
-
-  getColor(d: number, maxDoc: number): string {
-    const percentage = (d / maxDoc) * 100;
-    return percentage > 90 ? '#006837' :
-      percentage > 60 ? '#31a354' :
-        percentage > 30 ? '#78c679' :
-          percentage > 10 ? '#c2e699' :
-            '#ffffcc';
-  }
-
   constructDistanceLayers(element: AggregationDistance[], elementName: string, time?: number): L.LayerGroup {
     const layerGroup = new L.LayerGroup();
     const docCounts = element.flatMap(y => [y.doc_count]);
@@ -217,7 +225,7 @@ export class AggregationResultsMapComponent implements OnInit {
       if (allMatches) {
         const latLngTpl: L.LatLngTuple = [Number(allMatches[2]), Number(allMatches[1])];
         const poly = L.circle(latLngTpl, {radius: x.to - x.from});
-        poly.setStyle(this.style(x, maxDocCount));
+        poly.setStyle(AggregationResultsMapComponent.style(x, maxDocCount));
         poly.bindTooltip(`<h4 style="margin: 0;">${elementName}</h4>Document count: ${x.doc_count}`);
         layerGroup.addLayer(poly);
       }
@@ -232,20 +240,17 @@ export class AggregationResultsMapComponent implements OnInit {
     element.map(x => {
       const geoHashData = ngeoHash.decode_bbox(x.key);
       const poly = L.polygon([[geoHashData[2], geoHashData[1]], [geoHashData[2], geoHashData[3]], [geoHashData[0], geoHashData[3]], [geoHashData[0], geoHashData[1]]]);
-      poly.setStyle(this.style(x, maxDocCount));
-      poly.bindTooltip(`<h4 style="margin: 0;">${elementName}</h4>Document count: ${x.doc_count}`);
       if (time) {
         const geoJson = poly.toGeoJSON();
         geoJson.properties = {time};
         const fff = L.geoJSON(geoJson);
-        fff.setStyle(this.style(x, maxDocCount));
+        fff.setStyle(AggregationResultsMapComponent.style(x, maxDocCount));
         fff.bindTooltip(`<h4 style="margin: 0;">${elementName}</h4>Document count: ${x.doc_count}`);
         // @ts-ignore
         fff.feature = fff.getLayers()[0].feature;
         layerGroup.addLayer(fff);
-        this.geoJson.addLayer(fff);
       } else {
-        poly.setStyle(this.style(x, maxDocCount));
+        poly.setStyle(AggregationResultsMapComponent.style(x, maxDocCount));
         poly.bindTooltip(`<h4 style="margin: 0;">${elementName}</h4>Document count: ${x.doc_count}`);
         layerGroup.addLayer(poly);
       }
@@ -268,14 +273,12 @@ export class AggregationResultsMapComponent implements OnInit {
       })
     });
     if (time) {
-      debugger
       const geoJson = mapMarker.toGeoJSON();
       geoJson.properties = {time};
       const fff = L.geoJSON(geoJson);
       // @ts-ignore
-      mapMarker.feature = {time};
+      mapMarker.feature = fff.getLayers()[0].feature;
       layerGroup.addLayer(mapMarker);
-      this.geoJson.addLayer(mapMarker);
     } else {
       layerGroup.addLayer(mapMarker);
     }

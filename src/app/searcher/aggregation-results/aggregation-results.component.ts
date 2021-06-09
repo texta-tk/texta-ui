@@ -368,6 +368,9 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
           }
         }
       }
+      if (rootAggPropKeys.includes('location')) {
+        return 'agg_centroid';
+      }
       return '';
     } else {
       return rootAggPropKeys.find((x) => geoKeys.includes(x)) || '';
