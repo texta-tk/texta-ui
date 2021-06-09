@@ -4,7 +4,6 @@ import {Project} from '../../shared/types/Project';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
 import {MatPaginator} from '@angular/material/paginator';
-import {UserService} from '../../core/users/user.service';
 import {LogService} from '../../core/util/log.service';
 import {MatDialog} from '@angular/material/dialog';
 import {debounceTime, distinctUntilChanged, takeUntil} from 'rxjs/operators';
@@ -13,7 +12,10 @@ import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-di
 import {Index} from '../../shared/types/Index';
 import {CoreService} from '../../core/core.service';
 import {SelectionModel} from '@angular/cdk/collections';
-import {ConfirmDeleteDialogComponent} from "./confirm-delete-dialog/confirm-delete-dialog.component";
+import {ConfirmDeleteDialogComponent} from './confirm-delete-dialog/confirm-delete-dialog.component';
+import {MatButtonToggleChange} from '@angular/material/button-toggle';
+import {EditDialogComponent} from './edit-dialog/edit-dialog.component';
+import {FormControl} from "@angular/forms";
 
 
 @Component({
@@ -26,43 +28,58 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
   projects: Project[];
   public tableData: MatTableDataSource<Index> = new MatTableDataSource<Index>([]);
 
-  public displayedColumns = ['select', 'id', 'is_open', 'facts', 'name', 'size', 'doc_count', 'delete'];
+  public displayedColumns = ['select', 'id', 'is_open', 'has_validated_facts', 'added_by', 'name', 'size', 'doc_count', 'created_at', 'actions'];
+  public simplifiedTableColumns = ['select', 'id', 'is_open', 'has_validated_facts', 'added_by', 'name', 'size', 'doc_count', 'created_at', 'actions'];
+  public informativeTableColumns = ['select', 'id', 'is_open', 'test', 'has_validated_facts', 'description', 'added_by', 'source', 'client', 'domain', 'name', 'size', 'doc_count', 'created_at', 'actions'];
   public isLoadingResults = true;
-
+  public columnStyle: 'simplified' | 'informative' = 'simplified';
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  tableFilterManager: TableFilterManager;
+  addedByFilter = new FormControl();
+  nameFilter = new FormControl();
+  domainFilter = new FormControl();
+
   resultsLength: number;
   filterTerm$ = new Subject<string>();
   selectedRows = new SelectionModel<Index>(true, []);
 
-  constructor(private userService: UserService,
-              private logService: LogService,
+  constructor(private logService: LogService,
               public dialog: MatDialog,
               private coreService: CoreService) {
   }
 
   ngOnInit(): void {
-    this.filterTerm$.pipe(debounceTime(500), distinctUntilChanged(), takeUntil(this.destroyed$)).subscribe(x => {
-      this.tableData.filter = x.trim().toLowerCase();
-      if (this.tableData.paginator) {
-        this.tableData.paginator.firstPage();
-      }
-      this.selectedRows.clear();
-    });
+    this.tableFilterManager = new TableFilterManager();
+    this.tableFilterManager.addFilter(new TableFilter('added_by', '', this.addedByFilter));
+    this.tableFilterManager.addFilter(new TableFilter('name', '', this.nameFilter));
+    this.tableFilterManager.addFilter(new TableFilter('domain', '', this.domainFilter));
   }
 
   ngAfterViewInit(): void {
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
-    this.tableData.filterPredicate = this.customFilterPredicate();
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
     this.coreService.getElasticIndices().subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.resultsLength = resp.length;
         this.tableData.data = resp;
+        this.setUpColumnFilters();
         this.isLoadingResults = false;
       }
     });
+  }
+
+  setUpColumnFilters(): void {
+    for (const tableFilter of this.tableFilterManager.getFilterList()) {
+      if (tableFilter.filterControl) {
+        tableFilter.filterControl.valueChanges.pipe(debounceTime(400)).subscribe((filterValue) => {
+          this.tableFilterManager.getFilterPropertyObject()[tableFilter.filterPropertyName] = filterValue;
+          this.tableData.filter = JSON.stringify(this.tableFilterManager.getFilterPropertyObject());
+        });
+      }
+    }
+    this.tableData.filterPredicate = this.customFilterPredicate();
   }
 
   addFactMapping(row: Index): void {
@@ -108,17 +125,31 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
     return item.id;
   }
 
-  applyFilter(event: Event): void {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.filterTerm$.next(filterValue);
-  }
 
   customFilterPredicate(): (data: Index, filter: string) => boolean {
     return (data: Index, filter: string) => {
-      if (data.name) {
-        return data.name.trim().toLowerCase().indexOf(filter.trim().toLowerCase()) !== -1;
+      const searchString = JSON.parse(filter);
+      // tablefilters have priority, filter out based on those values first
+      for (const key of Object.keys(searchString)) {
+        // @ts-ignore
+        if (data[key]) {
+          // @ts-ignore
+          const search = data[key].trim().toLowerCase().indexOf(searchString[key].trim().toLowerCase()) !== -1;
+          if (search) {
+            console.log(search);
+          }
+          if (!search) {
+            return false;
+          }
+        } else { // @ts-ignore
+          if (searchString[key] && !data[key]) {
+                    return false;
+                  }
+        }
       }
+      // if no global search then done
       return true;
+
     };
   }
 
@@ -142,7 +173,7 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
         data: {
           confirmText: 'Delete',
           mainText: `Delete the following indices`,
-          indices:  this.selectedRows.selected
+          indices: this.selectedRows.selected
         },
         maxHeight: '90vh'
       });
@@ -175,4 +206,51 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.destroyed$.complete();
   }
 
+  changeTableStyle($event: MatButtonToggleChange): void {
+    if ($event.value === 'simplified') {
+      this.displayedColumns = this.simplifiedTableColumns;
+    } else if ($event.value === 'informative') {
+      this.displayedColumns = this.informativeTableColumns;
+    }
+  }
+
+  editIndex(element: Index): void {
+    this.dialog.open(EditDialogComponent, {
+      maxHeight: '90vh',
+      width: '800px',
+      disableClose: true,
+      data: element,
+    });
+  }
+
 }
+
+export class TableFilter {
+
+  constructor(public filterPropertyName: string, public filterCurrentValue: string, public filterControl?: FormControl) {
+
+  }
+}
+
+export class TableFilterManager {
+  private filterList: TableFilter[] = [];
+  private filterPropertyObject: { [key: string]: string } = {};
+
+  constructor() {
+
+  }
+
+  addFilter(filter: TableFilter): void {
+    this.filterList.push(filter);
+    this.filterPropertyObject[filter.filterPropertyName] = filter.filterCurrentValue;
+  }
+
+  getFilterPropertyObject(): { [key: string]: string } {
+    return this.filterPropertyObject;
+  }
+
+  getFilterList(): TableFilter[] {
+    return this.filterList;
+  }
+}
+

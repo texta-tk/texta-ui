@@ -137,7 +137,7 @@ export class CreateClusteringDialogComponent implements OnInit, OnDestroy {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.dialogRef.close(resp);
       } else if (resp instanceof HttpErrorResponse) {
-        this.dialogRef.close(resp);
+        this.logService.snackBarError(resp);
       }
     });
   }

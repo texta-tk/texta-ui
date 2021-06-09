@@ -64,7 +64,8 @@ import {TextareaLexiconComponent} from './components/textarea-lexicon/textarea-l
 import {CombineArrayPipe} from './pipes/combine-array.pipe';
 import {ProjectFieldSelectComponent} from './components/project-field-select/project-field-select.component';
 import {ParseJsonPipe} from './pipes/parse-json.pipe';
-import {TextaFactsChipsComponent} from "./components/texta-facts-chips/texta-facts-chips.component";
+import {TextaFactsChipsComponent} from './components/texta-facts-chips/texta-facts-chips.component';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
@@ -110,6 +111,7 @@ import {TextaFactsChipsComponent} from "./components/texta-facts-chips/texta-fac
     MatDialogModule,
     MatButtonModule,
     MatCardModule,
+    MatButtonToggleModule,
     MatSidenavModule,
     MatListModule,
     MatMenuModule,
@@ -139,6 +141,7 @@ import {TextaFactsChipsComponent} from "./components/texta-facts-chips/texta-fac
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
+    MatButtonToggleModule,
     FlexLayoutModule,
     ScrollingModule,
     MatFormFieldModule,

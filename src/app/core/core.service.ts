@@ -50,7 +50,11 @@ export class CoreService {
       tap(e => this.logService.logStatus(e, 'getElasticIndices')),
       catchError(this.logService.handleError<Index[]>('getElasticIndices')));
   }
-
+  getElasticIndicesOptions(): Observable<unknown | HttpErrorResponse> {
+    return this.http.options<Index[]>(`${this.apiUrl}/index/`).pipe(
+      tap(e => this.logService.logStatus(e, 'getElasticIndicesOptions')),
+      catchError(this.logService.handleError<Index[]>('getElasticIndicesOptions')));
+  }
   deleteElasticIndex(indexId: number): Observable<ResultsWrapper<Index> | HttpErrorResponse> {
     return this.http.delete<ResultsWrapper<Index>>(`${this.apiUrl}/index/${indexId}/`).pipe(
       tap(e => this.logService.logStatus(e, 'deleteElasticIndex')),
@@ -60,6 +64,15 @@ export class CoreService {
   toggleElasticIndexOpenState(index: Index): Observable<{ message: string } | HttpErrorResponse> {
     const endpoint = index.is_open ? 'close_index' : 'open_index';
     return this.http.patch<{ message: string }>(`${this.apiUrl}/index/${index.id}/${endpoint}/`, {}).pipe(
+      tap(e => this.logService.logStatus(e, 'toggleElasticIndexOpenState')),
+      catchError(this.logService.handleError<{ message: string }>('toggleElasticIndexOpenState')));
+  }
+
+  editElasticIndex(index: Partial<Index>): Observable<{ message: string } | HttpErrorResponse> {
+    if(index.domain === ''){
+      delete index.domain;
+    }
+    return this.http.patch<{ message: string }>(`${this.apiUrl}/index/${index.id}/`, index).pipe(
       tap(e => this.logService.logStatus(e, 'editElasticIndex')),
       catchError(this.logService.handleError<{ message: string }>('editElasticIndex')));
   }

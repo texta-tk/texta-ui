@@ -3,7 +3,8 @@
     <app-project></app-project>
   </div>
   <div class="health-wrapper" fxFlex="40%">
-    <mat-progress-spinner style="margin: auto; margin-top: 20%" mode="indeterminate" *ngIf="isLoading"></mat-progress-spinner>
+    <mat-progress-spinner *ngIf="isLoading" mode="indeterminate"
+                          style="margin: auto; margin-top: 20%"></mat-progress-spinner>
     <div *ngIf="health?.services" data-cy="appHomeHealth">
       <mat-card class="service-status-card center-margin" fxLayout="row wrap" fxLayoutGap="5px">
         <mat-chip-list class="center-margin chip-list-space-evenly" disabled>
@@ -13,6 +14,9 @@
             Redis {{health.services.redis.alive ? 'ONLINE' : 'OFFLINE'}}  </mat-chip>
           <mat-chip color="primary" selected> API {{health.toolkit.version}}  </mat-chip>
           <mat-chip color="primary" selected> GUI {{frontVersion}}  </mat-chip>
+          <mat-chip color="primary" selected
+                    title="Available languages: {{'\n'+health.toolkit.available_langs.join('\n')}}"> Languages: {{health.toolkit.available_langs.length}}
+          </mat-chip>
         </mat-chip-list>
       </mat-card>
 
@@ -87,7 +91,8 @@
         </div>
       </mat-card>
 
-      <mat-card class="usage-card center-margin" fxLayout="row wrap" style="max-height: 350px; overflow: auto;" *ngIf="health.host.gpu.devices.length > 0">
+      <mat-card *ngIf="health.host.gpu.devices.length > 0" class="usage-card center-margin" fxLayout="row wrap"
+                style="max-height: 350px; overflow: auto;">
         <table class="simple-table">
           <tr>
             <th>Graphics card</th>

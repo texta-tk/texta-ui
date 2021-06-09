@@ -129,6 +129,7 @@ export interface Health {
   toolkit: {
     active_tasks: number;
     version: string;
+    available_langs: string[];
   };
   services: {
     elastic: {
