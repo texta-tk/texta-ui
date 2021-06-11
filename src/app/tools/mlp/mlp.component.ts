@@ -116,7 +116,7 @@ export class MLPComponent implements OnInit, OnDestroy, AfterViewInit {
 
   openCreateDialog(): void {
     const dialogRef = this.dialog.open(MLPCreateIndexDialogComponent, {
-      maxHeight: '650px',
+      maxHeight: '90vh',
       width: '700px',
       disableClose: true
     });

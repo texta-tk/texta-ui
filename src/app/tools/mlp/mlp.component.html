@@ -88,7 +88,7 @@
       <ng-container matColumnDef="expandedDetail">
         <td *matCellDef="let element" [attr.colspan]="displayedColumns.length" mat-cell>
           <div *ngIf="element == expandedElement" [@detailExpand] class="element-detail">
-            <div class="flex-col m-l-r-5" fxFlex="50">
+            <div class="flex-col m-l-r-5" fxFlex>
               <table class="simple-table">
                 <tr>
                   <th class="mat-body-strong">Resource id</th>
@@ -124,7 +124,28 @@
                 </tr>
               </table>
             </div>
-            <div class="flex-col m-l-r-5" fxFlex="50">
+
+            <div class="flex-col m-l-r-5" fxFlex>
+              <table class="simple-table">
+                <tr>
+                  <th class="mat-body-strong">Scroll size</th>
+                  <td>{{element.es_scroll_size}}</td>
+                </tr>
+                <tr>
+                  <th class="mat-body-strong">Elasticsearch timeout</th>
+                  <td>{{element.es_timeout}}</td>
+                </tr>
+                <tr>
+                  <th class="mat-body-strong">Analyzers</th>
+                  <td>{{element.analyzers.join(', ')}}</td>
+                </tr>
+                <tr>
+                  <th class="mat-body-strong">Indices</th>
+                  <td>{{element.indices | getPropertyList: indicesAccessor | join: ', '}}</td>
+                </tr>
+              </table>
+            </div>
+            <div class="flex-col m-l-r-5" fxFlex>
               <table class="simple-table">
                 <tr>
                   <th class="mat-body-strong">Fields</th>
@@ -140,7 +161,8 @@
 
 
       <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
-      <tr (click)="expandedElement = expandedElement === element ? null : element" *matRowDef="let element; columns: displayedColumns;"
+      <tr (click)="expandedElement = expandedElement === element ? null : element"
+          *matRowDef="let element; columns: displayedColumns;"
           [class.expanded-row]="expandedElement === element"
           class="element-row"
           mat-row></tr>
