@@ -36,7 +36,7 @@ Cypress.Commands.add('createTestProject', () => {
     method: 'POST', url: `${Cypress.env('api_host')}${Cypress.env('api_basePath')}/projects/`,
     body: {
       "indices_write": ["texta_test_index"],
-      "users": ["admin"],
+      "users_write": ["admin"],
       "title": "integration_test_project"
     },
     headers: {'Authorization': 'Token ' + JSON.parse(localStorage.getItem('user')).key}
