@@ -1,13 +1,17 @@
 // tslint:disable:variable-name
+import {UserProfile} from './UserProfile';
+import {Index} from './Index';
+
 export class Project {
   url = '';
   id: number;
   title = '';
   owner: number;
-  users: string[];
-  indices: string[];
+  users: UserProfile[];
+  indices: Index[];
   author_username: string;
   resource_count: number;
+  administrators: UserProfile[];
   resources: {
     embeddings: number[];
     embedding_clusters: number[];

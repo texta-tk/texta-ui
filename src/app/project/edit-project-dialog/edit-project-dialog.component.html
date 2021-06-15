@@ -1,43 +1,56 @@
 <h1 mat-dialog-title>Edit</h1>
-<form class="flex-col" [formGroup]="projectForm" (ngSubmit)="onSubmit(projectForm.value)">
-  <div class="dialog-content-wrapper" mat-dialog-content>
+<div mat-dialog-content>
+  <form (ngSubmit)="onSubmit(projectForm.value)" [formGroup]="projectForm" class="flex-col" id="projectFormId">
+
     <mat-form-field class="max-width" data-cy="appProjectEditDialogTitle">
-      <input matInput placeholder="Title" autocomplete="off" formControlName="titleFormControl" required>
+      <input autocomplete="off" formControlName="titleFormControl" matInput placeholder="Title" required>
       <mat-error *ngIf="projectForm.get('titleFormControl')?.hasError('required')">
         Title is <strong>required</strong>
       </mat-error>
     </mat-form-field>
-    <mat-form-field class="max-width" data-cy="appProjectEditDialogIndices">
-      <mat-select formControlName="indicesFormControl" placeholder="Select Indices" multiple>
+    <mat-form-field *ngIf="currentUser?.is_superuser || hasIndexPermissions" class="max-width"
+                    data-cy="appProjectEditDialogIndices">
+      <mat-select [compareWith]="idCompare" formControlName="indicesFormControl" multiple placeholder="Indices">
         <mat-option>
-        <ngx-mat-select-search [formControl]="indicesFilterFormControl" placeholderLabel="Search" noEntriesFoundLabel="No entries"
-                               #multiSelect></ngx-mat-select-search></mat-option>
+          <ngx-mat-select-search [formControl]="indicesFilterFormControl"
+                                 noEntriesFoundLabel="No entries" #multiSelect
+                                 placeholderLabel="Search"></ngx-mat-select-search>
+        </mat-option>
         <mat-option *ngFor="let item of (filteredIndices | async)" [value]="item">
-          {{item}}
+          {{item.name}}
         </mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field class="max-width">
-      <mat-label>Select Users</mat-label>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
-                  formControlName="usersFormControl" required multiple>
-        <mat-option *ngFor="let item of users" [value]="item.url">
+      <mat-label>Users</mat-label>
+      <mat-select [compareWith]="idCompare" [disableOptionCentering]="true" formControlName="usersFormControl"
+                  multiple panelClass="select-panel-reveal-input">
+        <mat-option *ngFor="let item of users" [value]="item">
           {{item.username}}
         </mat-option>
       </mat-select>
-      <mat-error *ngIf="projectForm.get('usersFormControl')?.hasError('required')">
-        Select at least 1 user
-      </mat-error>
     </mat-form-field>
-  </div>
 
-  <div mat-dialog-actions class="flex-col submit-button-row">
-    <div class="flex-row">
-      <div class="flex-item-right max-width">
-        <button mat-stroked-button class="max-width" type="submit"
-                [disabled]="!projectForm.valid">Save changes
-        </button>
-      </div>
+    <mat-form-field>
+      <mat-label>Administrators</mat-label>
+      <mat-select [compareWith]="idCompare" [disableOptionCentering]="true" formControlName="administratorsFormControl"
+                  multiple panelClass="select-panel-reveal-input">
+        <mat-option *ngFor="let item of users" [value]="item">
+          {{item.username}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+</div>
+<div class="flex-col max-width" mat-dialog-actions>
+  <div class="flex-row max-width">
+    <div class="flex-item-left">
+      <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
+    </div>
+    <div class="flex-item-right">
+      <button [disabled]="!projectForm.valid || isLoading" class="max-width" form="projectFormId" mat-stroked-button
+              type="submit">Save changes
+      </button>
     </div>
   </div>
-</form>
+</div>

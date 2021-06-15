@@ -27,10 +27,10 @@ export class CoreService {
       catchError(this.logService.handleError<Health>('getHealth')));
   }
 
-  getIndices(): Observable<string[] | HttpErrorResponse> {
-    return this.http.get<string[]>(`${this.apiUrl}/get_indices/`).pipe(
+  getIndices(): Observable<{id: number, name: string}[] | HttpErrorResponse> {
+    return this.http.get<{id: number, name: string}[]>(`${this.apiUrl}/get_indices/`).pipe(
       tap(e => this.logService.logStatus(e, 'get Indices')),
-      catchError(this.logService.handleError<string[]>('getIndices')));
+      catchError(this.logService.handleError<{id: number, name: string}[]>('getIndices')));
   }
 
   getSnowballLanguages(): Observable<string[] | HttpErrorResponse> {

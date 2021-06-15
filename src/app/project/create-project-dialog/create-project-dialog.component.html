@@ -9,28 +9,48 @@
         Title is <strong>required</strong>
       </mat-error>
     </mat-form-field>
-    <mat-form-field data-cy="appProjectCreateDialogUsers">
-      <mat-label>Select Users</mat-label>
-      <mat-select [disableOptionCentering]="true" formControlName="usersFormControl"
-                  multiple panelClass="select-panel-reveal-input" required>
-        <mat-option *ngFor="let item of users" [value]="item.url">
-          {{item.username}}
-        </mat-option>
-      </mat-select>
-      <mat-error *ngIf="projectForm.get('usersFormControl')?.hasError('required')">
-        User is <strong>required</strong>
-      </mat-error>
-    </mat-form-field>
-    <mat-form-field data-cy="appProjectCreateDialogIndices">
-      <mat-select [multiple]="true" formControlName="indicesFormControl" placeholder="Select Indices">
+
+    <mat-form-field *ngIf="currentUser?.is_superuser" data-cy="appProjectCreateDialogIndices">
+      <mat-select [multiple]="true" formControlName="indicesFormControl" placeholder="Indices">
         <mat-option>
           <ngx-mat-select-search [formControl]="indicesFilterFormControl" noEntriesFoundLabel="No entries"
                                  placeholderLabel="Search"></ngx-mat-select-search>
         </mat-option>
-        <mat-option *ngFor="let item of (filteredIndices | async)" [value]="item">
-          {{item}}
+        <mat-option *ngFor="let item of (filteredIndices | async)" [value]="item.name">
+          {{item.name}}
         </mat-option>
       </mat-select>
+    </mat-form-field>
+    <mat-form-field *ngIf="currentUser?.is_superuser" data-cy="appProjectCreateDialogUsers">
+      <mat-label>Users</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="usersFormControl"
+                  multiple panelClass="select-panel-reveal-input">
+        <mat-option *ngFor="let item of users" [value]="item.username">
+          {{item.username}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field *ngIf="currentUser?.is_superuser" data-cy="appProjectCreateDialogAdministrators">
+      <mat-label>Administrators</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="administratorsFormControl"
+                  multiple panelClass="select-panel-reveal-input">
+        <mat-option *ngFor="let item of users" [value]="item.username">
+          {{item.username}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field *ngIf="!currentUser?.is_superuser" class="max-width" floatLabel="never">
+      <textarea class="max-width" formControlName="usersFormControl"
+                matInput
+                placeholder="Users">
+      </textarea>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="!currentUser?.is_superuser" class="max-width" floatLabel="never">
+      <textarea class="max-width" formControlName="administratorsFormControl"
+                matInput
+                placeholder="Administrators">
+      </textarea>
     </mat-form-field>
 
     <div class="flex-col">

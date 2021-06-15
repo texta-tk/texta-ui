@@ -35,7 +35,7 @@ export class UtilityFunctions {
   * check if each array element exists in both arrays for each element
   * */
   static arrayValuesEqual<T>(arr1: T[], arr2: T[], accessor?: (x: T) => unknown): boolean {
-    if (arr1.length === arr2.length) {
+    if (arr1?.length === arr2?.length) {
       if (accessor) {
         return arr1.every(x => arr2.find(y => accessor(y) === accessor(x)));
       } else {

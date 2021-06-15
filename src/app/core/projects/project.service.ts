@@ -37,8 +37,62 @@ export class ProjectService {
       `${this.apiUrl}/projects/${projectId}/`,
       body
     ).pipe(
-      tap(e => this.logService.logStatus(e, 'createProject')),
-      catchError(this.logService.handleError<Project>('createProject')));
+      tap(e => this.logService.logStatus(e, 'editProject')),
+      catchError(this.logService.handleError<Project>('editProject')));
+  }
+
+  addUsersToProject(users: number[], projectId: number): Observable<{ message: string } | HttpErrorResponse> {
+    return this.http.post<{ message: string }>(
+      `${this.apiUrl}/projects/${projectId}/add_users/`,
+      {users}
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'addUsersToProject')),
+      catchError(this.logService.handleError<{ message: string }>('addUsersToProject')));
+  }
+
+  addAdminsToProject(users: number[], projectId: number): Observable<{ message: string } | HttpErrorResponse> {
+    return this.http.post<{ message: string }>(
+      `${this.apiUrl}/projects/${projectId}/add_project_admins/`,
+      {project_admins: users}
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'addAdminsToProject')),
+      catchError(this.logService.handleError<{ message: string }>('addAdminsToProject')));
+  }
+
+  addIndicesToProject(indices: number[], projectId: number): Observable<{ message: string } | HttpErrorResponse> {
+    return this.http.post<{ message: string }>(
+      `${this.apiUrl}/projects/${projectId}/add_indices/`,
+      {indices}
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'addIndicesToProject')),
+      catchError(this.logService.handleError<{ message: string }>('addIndicesToProject')));
+  }
+
+  deleteIndicesFromProject(indices: number[], projectId: number): Observable<{ message: string } | HttpErrorResponse> {
+    return this.http.post<{ message: string }>(
+      `${this.apiUrl}/projects/${projectId}/remove_indices/`,
+      {indices}
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'deleteIndicesFromProject')),
+      catchError(this.logService.handleError<{ message: string }>('deleteIndicesFromProject')));
+  }
+
+  deleteAdminsFromProject(users: number[], projectId: number): Observable<{ message: string } | HttpErrorResponse> {
+    return this.http.post<{ message: string }>(
+      `${this.apiUrl}/projects/${projectId}/remove_project_admins/`,
+      {project_admins: users}
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'deleteAdminsFromProject')),
+      catchError(this.logService.handleError<{ message: string }>('deleteAdminsFromProject')));
+  }
+
+  deleteUsersFromProject(users: number[], projectId: number): Observable<{ message: string } | HttpErrorResponse> {
+    return this.http.post<{ message: string }>(
+      `${this.apiUrl}/projects/${projectId}/remove_users/`,
+      {users}
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'deleteUsersFromProject')),
+      catchError(this.logService.handleError<{ message: string }>('deleteUsersFromProject')));
   }
 
   exportSearch(projId: number, query: unknown, indices: string[]): Observable<string | HttpErrorResponse> {

@@ -5,7 +5,7 @@
       <mat-progress-bar *ngIf="isLoadingResults" mode="indeterminate"></mat-progress-bar>
     </div>
     <div class="paginator-row">
-      <button (click)="openCreateDialog()" *ngIf="currentUser?.is_superuser"
+      <button (click)="openCreateDialog()"
               class="paginator-margin-left"
               color="primary"
               data-cy="appProjectCreateProject"
@@ -57,7 +57,8 @@
           <span class="indices-column-header">Indices</span>
         </th>
         <td *matCellDef="let element" mat-cell>
-          <button [matMenuTriggerData]="{element: element}" [matMenuTriggerFor]="indicesMenu" mat-stroked-button>
+          <button [disabled]="element.indices.length === 0" [matMenuTriggerData]="{element: element}"
+                  [matMenuTriggerFor]="indicesMenu" mat-stroked-button>
             {{ element.indices.length }}
           </button>
         </td>
@@ -65,7 +66,8 @@
       <ng-container matColumnDef="resource_count">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Resources</th>
         <td *matCellDef="let element" mat-cell>
-          <button (click)="getResourceCounts(element)" [matMenuTriggerData]="{element: element}" [matMenuTriggerFor]="resourceMenu"
+          <button (click)="getResourceCounts(element)" [disabled]="element.resource_count === 0"
+                  [matMenuTriggerData]="{element: element}" [matMenuTriggerFor]="resourceMenu"
                   mat-stroked-button>
             {{element.resource_count}}
           </button>
@@ -76,10 +78,10 @@
         <td *matCellDef="let element" mat-cell>
 
           <button
-            (click)="selectUserElement(element.users)"
+            [disabled]="element.users.length === 0"
+            [matMenuTriggerData]="{element: element}"
             [matMenuTriggerFor]="userMenu"
-            mat-stroked-button
-          >
+            mat-stroked-button>
             {{ element.users.length }}
           </button>
         </td>
@@ -107,20 +109,21 @@
 <mat-menu #indicesMenu="matMenu">
   <ng-template let-element="element" matMenuContent>
     <ng-template [ngForOf]="element.indices" let-indice ngFor>
-      <button mat-menu-item>{{ indice }}</button>
+      <button mat-menu-item>{{ indice.name }}</button>
     </ng-template>
   </ng-template>
 </mat-menu>
 <mat-menu #resourceMenu="matMenu">
   <ng-template matMenuContent>
     <ng-container *ngIf="projectCounts$ | async as counts">
-      <button *ngFor="let item of counts | keyvalue: valueAscOrder" mat-menu-item>{{ item.key.split('_').slice(1) | join:' ' | titlecase }}: {{item.value}}</button>
+      <button *ngFor="let item of counts | keyvalue: valueAscOrder"
+              mat-menu-item>{{ item.key.split('_').slice(1) | join:' ' | titlecase }}: {{item.value}}</button>
     </ng-container>
   </ng-template>
 </mat-menu>
 <mat-menu #userMenu="matMenu">
-  <ng-template matMenuContent>
-    <ng-container *ngFor="let user of projectUsers$ | async">
+  <ng-template let-element="element" matMenuContent>
+    <ng-container *ngFor="let user of element.users">
       <button *ngIf="user.username" [matMenuTriggerFor]="userDetailed" mat-menu-item>
         {{ user.username }}
       </button>
@@ -141,11 +144,15 @@
       </mat-icon>
       Use
     </button>
-    <button (click)="edit(element)" mat-menu-item>
+    <button (click)="edit(element)"
+            *ngIf="(element.administrators | getPropertyList: urlAccessor).includes(currentUser.url) || currentUser.is_superuser || element.author_username === currentUser.username"
+            mat-menu-item>
       <mat-icon aria-label="Edit Project">edit</mat-icon>
       Edit
     </button>
-    <button (click)="onDelete(element)" mat-menu-item>
+    <button (click)="onDelete(element)"
+            *ngIf="(element.administrators | getPropertyList: urlAccessor).includes(currentUser.url) || currentUser.is_superuser || element.author_username === currentUser.username"
+            mat-menu-item>
       <mat-icon>delete</mat-icon>
       Delete
     </button>
