@@ -35,7 +35,7 @@ Cypress.Commands.add('createTestProject', () => {
   cy.request({
     method: 'POST', url: `${Cypress.env('api_host')}${Cypress.env('api_basePath')}/projects/`,
     body: {
-      "indices": ["texta_test_index"],
+      "indices_write": ["texta_test_index"],
       "users": ["admin"],
       "title": "integration_test_project"
     },
