@@ -53,6 +53,7 @@ describe('embeddings should work', function () {
     cy.importTestEmbedding(this.projectId).then(x => {
       initEmbeddingsPage();
       // phrase
+      cy.wait(500); // fix flakiness
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
       cy.get('[data-cy=appEmbeddingMenuPhrase]').should('be.visible').click();
       cy.get('app-phrase-dialog input:first()').should('be.visible').click()
