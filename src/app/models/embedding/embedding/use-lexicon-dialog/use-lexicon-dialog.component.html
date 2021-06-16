@@ -1,0 +1,40 @@
+<h1 mat-dialog-title>Choose lexicon</h1>
+<div fxLayout="column" mat-dialog-content>
+  <div class="m-bot-10">
+    <mat-radio-group [(ngModel)]="method">
+      <mat-radio-button value="existing">Existing lexicon</mat-radio-button>
+      <mat-radio-button class="m-l-15" value="new">New lexicon</mat-radio-button>
+    </mat-radio-group>
+  </div>
+  <mat-form-field *ngIf="method === 'existing'">
+    <mat-label>Select Lexicon</mat-label>
+    <mat-select [(ngModel)]="selectedLexicon"
+                [disableOptionCentering]="true" panelClass="select-panel-reveal-input" required>
+      <mat-option *ngFor="let lex of lexicons" [value]="lex">
+        {{lex.description}}
+      </mat-option>
+    </mat-select>
+    <mat-error>This field is <strong>required</strong></mat-error>
+  </mat-form-field>
+  <mat-form-field *ngIf="method === 'new'">
+    <input #ctrl="ngModel" [(ngModel)]="newLexDesc" [errorStateMatcher]="matcher" autocomplete="off"
+           matInput placeholder="Description" required>
+    <mat-error *ngIf="ctrl?.hasError('required')">
+      Description is <strong>required</strong>
+    </mat-error>
+  </mat-form-field>
+  <div class="flex-col">
+    <div class="flex-row">
+      <div class="flex-item-left">
+        <button (click)="closeDialog()" class="flex-item-left" mat-button type="button">Close</button>
+      </div>
+      <div class="flex-item-right">
+        <button (click)="onSubmit()"
+                [disabled]="(method === 'new' && !newLexDesc) || method === 'existing' && !selectedLexicon"
+                data-cy="appEvaluatorEditDialogSubmit" mat-button type="submit">
+          Open
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
