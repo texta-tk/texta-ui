@@ -226,7 +226,9 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
           projectId: this.currentProject.id,
           columns: this.infiniteColumns,
         },
-        width: '600px'
+        width: '600px',
+        autoFocus: false,
+        disableClose: true,
       });
     }
   }

@@ -27,6 +27,14 @@ export class ClusterService {
       catchError(this.logService.handleError<ResultsWrapper<Cluster>>('getClusters')));
   }
 
+  getCluster(projectId: number, clusteringId: number): Observable<Cluster | HttpErrorResponse> {
+    return this.http.get<Cluster>(
+      `${this.apiUrl}/projects/${projectId}/clustering/${clusteringId}`).pipe(
+      tap(e => this.logService.logStatus(e, 'getCluster')),
+      catchError(this.logService.handleError<Cluster>('getCluster')));
+  }
+
+
   retrainCluster(projectId: number, clusterId: number): Observable<unknown> {
     return this.http.post<unknown>(`${this.apiUrl}/projects/${projectId}/clustering/${clusterId}/retrain/`, {}
     ).pipe(

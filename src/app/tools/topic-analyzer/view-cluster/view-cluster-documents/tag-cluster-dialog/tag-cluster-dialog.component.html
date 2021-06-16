@@ -2,19 +2,42 @@
 <div mat-dialog-content>
   <form (ngSubmit)="onSubmit(tagForm.value)" [formGroup]="tagForm" class="flex-col">
     <mat-form-field data-cy="appTagClusterFactName">
-      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="nameFormControl" matInput
-             placeholder="Fact name" required>
+      <input [matAutocomplete]="autoName" aria-label="Fact name"
+             formControlName="nameFormControl"
+             matInput
+             placeholder="Fact name"
+             required
+             type="text">
+      <mat-autocomplete #autoName="matAutocomplete"
+                        panelWidth="auto">
+        <mat-option *ngFor="let option of projectFacts"
+                    [value]="option">
+          {{option}}
+        </mat-option>
+      </mat-autocomplete>
       <mat-error *ngIf="tagForm.get('nameFormControl')?.hasError('required')">
         Fact name is <strong>required</strong>
       </mat-error>
     </mat-form-field>
-    <mat-form-field data-cy="appTagClusterStrVal">
-      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="strValFormControl" matInput
-             placeholder="Str val" required>
+    <mat-form-field data-cy="appTagClusterStrVal" fxFlex="36">
+      <input [matAutocomplete]="auto" aria-label="Fact value"
+             formControlName="strValFormControl"
+             matInput
+             placeholder="Str val"
+             required
+             type="text">
+      <mat-autocomplete #auto="matAutocomplete"
+                        panelWidth="auto">
+        <mat-option *ngFor="let option of factValOptions" [disabled]="isLoading"
+                    [value]="option">
+          {{option}}
+        </mat-option>
+      </mat-autocomplete>
       <mat-error *ngIf="tagForm.get('strValFormControl')?.hasError('required')">
-        Fact name is <strong>required</strong>
+        Fact value is <strong>required</strong>
       </mat-error>
     </mat-form-field>
+
     <mat-form-field data-cy="appTagClusterDocPath">
       <mat-label>Doc path</mat-label>
       <mat-select [disableOptionCentering]="true" formControlName="docPathFormControl"

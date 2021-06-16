@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Observable, of} from 'rxjs';
-import {HttpErrorResponse} from '@angular/common/http';
+import {HttpErrorResponse, HttpEventType} from '@angular/common/http';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {environment} from '../../../environments/environment';
 import {AppConfigService} from './app-config.service';
@@ -43,7 +43,7 @@ export class LogService {
       this.snackBar.open(`${error.error.error}`, 'Close', {
         duration: time,
       });
-    } else if (error.error && typeof error.error === 'object') {
+    } else if (error.error && typeof error.error === 'object' && !('type' in error.error)) {
       for (const element in error.error) {
         if (error.error.hasOwnProperty(element)) {
           this.snackBar.open(`${element}: ${error.error[element][0]}`, 'Close', {
