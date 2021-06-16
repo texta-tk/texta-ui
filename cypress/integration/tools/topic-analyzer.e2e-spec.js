@@ -76,8 +76,11 @@ describe('Topic Analyzer should work', function () {
     cy.closeCurrentCdkOverlay();
     cy.wait('@getClusters');
     cy.get('[data-cy=appClusterDocumentsTagBtn]').click();
+    cy.wait(1000);
     cy.get('[data-cy=appTagClusterFactName]').type('test');
+    cy.closeCurrentCdkOverlay();
     cy.get('[data-cy=appTagClusterStrVal]').type('test');
+    cy.closeCurrentCdkOverlay();
     cy.get('[data-cy=appTagClusterDocPath]').click().then((docPaths => {
       cy.wrap(docPaths).should('have.class', 'mat-focused');
       cy.closeCurrentCdkOverlay();
