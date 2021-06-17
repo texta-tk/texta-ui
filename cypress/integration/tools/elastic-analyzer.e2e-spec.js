@@ -47,7 +47,7 @@ describe('Elastic Analyzer should work', function () {
       cy.closeCurrentCdkOverlay();
       cy.matFormFieldShouldHaveError(analyzers, 'required');
       cy.wrap(analyzers).click();
-      cy.get('.mat-option-text:nth(2)').should('be.visible').click();
+      cy.get('.mat-option-text:nth(1)').should('be.visible').click();
       cy.closeCurrentCdkOverlay();
       cy.wrap(analyzers).find('mat-error').should('have.length', 0);
     }));
