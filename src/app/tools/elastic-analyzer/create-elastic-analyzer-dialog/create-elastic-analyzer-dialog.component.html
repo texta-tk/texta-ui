@@ -1,18 +1,18 @@
-<h1 mat-dialog-title>Apply Snowball Stemmer to Index</h1>
+<h1 mat-dialog-title>Apply Elastic Analyzer to Index</h1>
 <mat-dialog-content>
-  <form (ngSubmit)="onSubmit(snowballStemmerForm.value)" [formGroup]="snowballStemmerForm" class="flex-col"
-        id="SnowballStemmer">
-    <mat-form-field data-cy="appSnowballStemmerCreateDialogDesc">
+  <form (ngSubmit)="onSubmit(elasticAnalyzerForm.value)" [formGroup]="elasticAnalyzerForm" class="flex-col"
+        id="ElasticAnalyzer">
+    <mat-form-field data-cy="appElasticAnalyzerCreateDialogDesc">
       <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
              placeholder="Description" required>
 
-      <mat-error *ngIf="snowballStemmerForm.get('descriptionFormControl')?.hasError('required')">
+      <mat-error *ngIf="elasticAnalyzerForm.get('descriptionFormControl')?.hasError('required')">
         Description is <strong>required</strong>
       </mat-error>
     </mat-form-field>
 
 
-    <mat-form-field data-cy="appSnowballStemmerCreateDialogIndices">
+    <mat-form-field data-cy="appElasticAnalyzerCreateDialogIndices">
       <mat-label>Indices</mat-label>
       <mat-select (openedChange)="indicesOpenedChange($event)" [disableOptionCentering]="true"
                   formControlName="indicesFormControl" multiple panelClass="select-panel-reveal-input" required>
@@ -20,25 +20,53 @@
           {{projectIndex.index}}
         </mat-option>
       </mat-select>
-      <mat-error *ngIf="snowballStemmerForm.get('indicesFormControl')?.hasError('required')">
+      <mat-error *ngIf="elasticAnalyzerForm.get('indicesFormControl')?.hasError('required')">
         Select at least <strong>1 index</strong>
       </mat-error>
     </mat-form-field>
 
-    <mat-form-field data-cy="appSnowballStemmerCreateDialogFields">
+    <mat-form-field data-cy="appElasticAnalyzerCreateDialogFields">
       <mat-label>Select Fields</mat-label>
       <app-project-field-select [projectFields]="projectFields" [required]="true"
                                 formControlName="fieldsFormControl"></app-project-field-select>
-      <mat-error *ngIf="snowballStemmerForm.get('fieldsFormControl')?.hasError('required')">
+      <mat-error *ngIf="elasticAnalyzerForm.get('fieldsFormControl')?.hasError('required')">
         Field is <strong>required</strong>
       </mat-error>
     </mat-form-field>
 
-    <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"
-                                   data-cy="appSnowBallStemmerCreateDialogQuery">
+    <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)">
     </app-saved-search-autocomplete>
+    <mat-form-field data-cy="appElasticAnalyzerCreateDialogAnalyzers">
+      <mat-label>Analyzer</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="analyzersFormControl"
+                  panelClass="select-panel-reveal-input" required multiple>
+        <ng-container *ngIf="analyzers">
+          <mat-option *ngFor="let item of analyzers" [value]="item.value">
+            {{item.display_name ? item.display_name : 'None'}}
+          </mat-option>
+        </ng-container>
+      </mat-select>
 
-    <mat-form-field data-cy="appSnowballStemmerCreateDialogLanguages">
+      <mat-error *ngIf="elasticAnalyzerForm.get('analyzersFormControl')?.hasError('required')">
+        Analyzer is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field >
+      <mat-label>Tokenizer</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="tokenizerFormControl"
+                  panelClass="select-panel-reveal-input">
+        <ng-container *ngIf="analyzers">
+          <mat-option>None</mat-option>
+          <mat-option *ngFor="let item of tokenizers" [value]="item.value">
+            {{item.display_name ? item.display_name : 'None'}}
+          </mat-option>
+        </ng-container>
+      </mat-select>
+    </mat-form-field>
+
+
+    <mat-form-field data-cy="appElasticAnalyzerCreateDialogLanguages">
       <mat-label>Stemmer language</mat-label>
       <mat-select [disableOptionCentering]="true" formControlName="languageFormControl"
                   panelClass="select-panel-reveal-input" required>
@@ -49,14 +77,19 @@
         </ng-container>
       </mat-select>
 
-      <mat-error *ngIf="snowballStemmerForm.get('languageFormControl')?.hasError('required')">
+      <mat-error *ngIf="elasticAnalyzerForm.get('languageFormControl')?.hasError('required')">
         Please choose a Stemmer Language or turn on Detect Language!
       </mat-error>
     </mat-form-field>
 
     <mat-checkbox class="m-bot-10" formControlName="detectLangFormControl"
-                  matTooltip="Whether to detect the language for the stemming on the fly."
+                  matTooltip="Whether to automatically detect the language from the fields for stemming purposes."
                   matTooltipPosition="left">Detect language
+    </mat-checkbox>
+
+    <mat-checkbox class="m-bot-10" formControlName="stripHtmlFormControl"
+                  matTooltip="Whether to strip HTML from the text."
+                  matTooltipPosition="left">Strip HTML
     </mat-checkbox>
 
     <!--advanced -->
@@ -89,8 +122,8 @@
       <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
     </div>
     <div class="flex-item-right">
-      <button [disabled]="!snowballStemmerForm.valid" data-cy="appSnowballStemmerCreateDialogSubmit"
-              form="SnowballStemmer" mat-button type="submit">
+      <button [disabled]="!elasticAnalyzerForm.valid" data-cy="appElasticAnalyzerCreateDialogSubmit"
+              form="ElasticAnalyzer" mat-button type="submit">
         Create
       </button>
     </div>

@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { SnowballStemmerService } from './snowball-stemmer.service';
+import { ElasticAnalyzerService } from './elastic-analyzer.service';
 import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {SharedModule} from '../../../shared/shared.module';
 
 describe('SnowballStemmerService', () => {
-  let service: SnowballStemmerService;
+  let service: ElasticAnalyzerService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({imports: [
@@ -14,7 +14,7 @@ describe('SnowballStemmerService', () => {
         SharedModule,
         HttpClientTestingModule
       ]});
-    service = TestBed.inject(SnowballStemmerService);
+    service = TestBed.inject(ElasticAnalyzerService);
   });
 
   it('should be created', () => {

@@ -80,9 +80,9 @@ const routes: Routes = [
     loadChildren: () => import('./tools/topic-analyzer/topic-analyzer.module').then(m => m.TopicAnalyzerModule)
   },
   {
-    path: 'snowball-stemmer',
+    path: 'elastic-analyzer',
     canActivate: [AuthGuard, ProjectGuard],
-    loadChildren: () => import('./tools/snowball-stemmer/snowball-stemmer.module').then(m => m.SnowballStemmerModule)
+    loadChildren: () => import('./tools/elastic-analyzer/elastic-analyzer.module').then(m => m.ElasticAnalyzerModule)
   },
   {
     path: 'index-splitter',

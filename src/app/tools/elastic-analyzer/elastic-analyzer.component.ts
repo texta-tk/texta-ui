@@ -7,30 +7,30 @@ import {MatTableDataSource} from '@angular/material/table';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatSort} from '@angular/material/sort';
 import {MatPaginator} from '@angular/material/paginator';
-import {CreateSnowballStemmerDialogComponent} from './create-snowball-stemmer-dialog/create-snowball-stemmer-dialog.component';
+import {CreateElasticAnalyzerDialogComponent} from './create-elastic-analyzer-dialog/create-elastic-analyzer-dialog.component';
 import {Project} from '../../shared/types/Project';
-import {SnowballStemmer} from '../../shared/types/tasks/SnowballStemmer';
+import {ElasticAnalyzer} from '../../shared/types/tasks/ElasticAnalyzer';
 import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {expandRowAnimation} from '../../shared/animations';
 import {ProjectStore} from '../../core/projects/project.store';
 import {LogService} from '../../core/util/log.service';
-import {SnowballStemmerService} from '../../core/tools/snowball-stemmer/snowball-stemmer.service';
+import {ElasticAnalyzerService} from '../../core/tools/snowball-stemmer/elastic-analyzer.service';
 import {QueryDialogComponent} from '../../shared/components/dialogs/query-dialog/query-dialog.component';
 import {Index} from '../../shared/types/Index';
 
 @Component({
-  selector: 'app-snowball-stemmer',
-  templateUrl: './snowball-stemmer.component.html',
-  styleUrls: ['./snowball-stemmer.component.scss'],
+  selector: 'app-elastic-analyzer',
+  templateUrl: './elastic-analyzer.component.html',
+  styleUrls: ['./elastic-analyzer.component.scss'],
   animations: [
     expandRowAnimation
   ]
 })
-export class SnowballStemmerComponent implements OnInit, OnDestroy, AfterViewInit {
-  expandedElement: SnowballStemmer | null;
-  public tableData: MatTableDataSource<SnowballStemmer> = new MatTableDataSource();
-  selectedRows = new SelectionModel<SnowballStemmer>(true, []);
-  public displayedColumns = ['select', 'id', 'description', 'author__username', 'query', 'language', 'detect_lang', 'task__time_started', 'task__time_completed', 'task__status'];
+export class ElasticAnalyzerComponent implements OnInit, OnDestroy, AfterViewInit {
+  expandedElement: ElasticAnalyzer | null;
+  public tableData: MatTableDataSource<ElasticAnalyzer> = new MatTableDataSource();
+  selectedRows = new SelectionModel<ElasticAnalyzer>(true, []);
+  public displayedColumns = ['select', 'id', 'description', 'author__username', 'query', 'language', 'detect_lang', 'strip_html', 'task__time_started', 'task__time_completed', 'task__status'];
   public isLoadingResults = true;
 
   @ViewChild(MatSort) sort: MatSort;
@@ -40,7 +40,7 @@ export class SnowballStemmerComponent implements OnInit, OnDestroy, AfterViewIni
   currentProject: Project;
 
   constructor(private projectStore: ProjectStore,
-              private snowballStemmerService: SnowballStemmerService,
+              private elasticAnalyzerService: ElasticAnalyzerService,
               public dialog: MatDialog,
               private logService: LogService) {
   }
@@ -76,7 +76,7 @@ export class SnowballStemmerComponent implements OnInit, OnDestroy, AfterViewIni
         switchMap(proj => {
           if (proj) {
             const sortDirection = this.sort.direction === 'desc' ? '-' : '';
-            return this.snowballStemmerService.getSnowballStemmerTasks(
+            return this.elasticAnalyzerService.getElasticAnalyzerTasks(
               this.currentProject.id,
               // Add 1 to to index because Material paginator starts from 0 and DRF paginator from 1
               `ordering=${sortDirection}${this.sort.active}&page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`);
@@ -94,7 +94,7 @@ export class SnowballStemmerComponent implements OnInit, OnDestroy, AfterViewIni
   }
 
   openCreateDialog(): void {
-    const dialogRef = this.dialog.open(CreateSnowballStemmerDialogComponent, {
+    const dialogRef = this.dialog.open(CreateElasticAnalyzerDialogComponent, {
       maxHeight: '90vh',
       width: '700px',
       disableClose: true,
@@ -127,7 +127,7 @@ export class SnowballStemmerComponent implements OnInit, OnDestroy, AfterViewIni
   masterToggle(): void {
     this.isAllSelected() ?
       this.selectedRows.clear() :
-      (this.tableData.data as SnowballStemmer[]).forEach(row => this.selectedRows.select(row));
+      (this.tableData.data as ElasticAnalyzer[]).forEach(row => this.selectedRows.select(row));
   }
 
 
@@ -143,10 +143,10 @@ export class SnowballStemmerComponent implements OnInit, OnDestroy, AfterViewIni
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
 
-          const idsToDelete = this.selectedRows.selected.map((snowballStemmer: SnowballStemmer) => snowballStemmer.id);
+          const idsToDelete = this.selectedRows.selected.map((elasticAnalyzer: ElasticAnalyzer) => elasticAnalyzer.id);
           const body = {ids: idsToDelete};
 
-          this.snowballStemmerService.bulkDeleteSnowballStemmerTasks(this.currentProject.id, body).subscribe(() => {
+          this.elasticAnalyzerService.bulkDeleteElasticAnalyzerTasks(this.currentProject.id, body).subscribe(() => {
             this.logService.snackBarMessage(`Deleted ${this.selectedRows.selected.length} Tasks.`, 2000);
             this.removeSelectedRows();
           });
@@ -156,8 +156,8 @@ export class SnowballStemmerComponent implements OnInit, OnDestroy, AfterViewIni
   }
 
   removeSelectedRows(): void {
-    this.selectedRows.selected.forEach((selected: SnowballStemmer) => {
-      const index: number = (this.tableData.data as SnowballStemmer[]).findIndex(snowballStemmer => snowballStemmer.id === selected.id);
+    this.selectedRows.selected.forEach((selected: ElasticAnalyzer) => {
+      const index: number = (this.tableData.data as ElasticAnalyzer[]).findIndex(elasticAnalyzer => elasticAnalyzer.id === selected.id);
       this.tableData.data.splice(index, 1);
       this.tableData.data = [...this.tableData.data];
     });

@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CreateSnowballStemmerDialogComponent } from './create-snowball-stemmer-dialog.component';
+import { CreateElasticAnalyzerDialogComponent } from './create-elastic-analyzer-dialog.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -8,8 +8,8 @@ import {MatDialogRef} from '@angular/material/dialog';
 import {SharedModule} from '../../../shared/shared.module';
 
 describe('CreateSnowballStemmerDialogComponent', () => {
-  let component: CreateSnowballStemmerDialogComponent;
-  let fixture: ComponentFixture<CreateSnowballStemmerDialogComponent>;
+  let component: CreateElasticAnalyzerDialogComponent;
+  let fixture: ComponentFixture<CreateElasticAnalyzerDialogComponent>;
   const mockDialogRef = {
     close: jasmine.createSpy('close')
   };
@@ -23,13 +23,13 @@ describe('CreateSnowballStemmerDialogComponent', () => {
           provide: MatDialogRef,
           useValue: mockDialogRef
         }],
-      declarations: [ CreateSnowballStemmerDialogComponent ]
+      declarations: [ CreateElasticAnalyzerDialogComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CreateSnowballStemmerDialogComponent);
+    fixture = TestBed.createComponent(CreateElasticAnalyzerDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

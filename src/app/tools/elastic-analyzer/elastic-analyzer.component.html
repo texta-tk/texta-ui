@@ -5,11 +5,11 @@
     </div>
     <div class="paginator-row">
       <button (click)="openCreateDialog()" class="paginator-margin-left"
-              color="primary" data-cy="appSnowballStemmerCreateBtn" mat-raised-button>
+              color="primary" data-cy="appElasticAnalyzerCreateBtn" mat-raised-button>
         CREATE
       </button>
       <button (click)="onDeleteAllSelected()" [disabled]="selectedRows.selected.length < 1" class="new-resource-btn"
-              color="warn" data-cy="appSnowballStemmerDeleteBtn"
+              color="warn" data-cy="appElasticAnalyzerDeleteBtn"
               mat-icon-button matTooltip="Delete selected">
         <mat-icon>delete</mat-icon>
       </button>
@@ -49,6 +49,10 @@
       <ng-container matColumnDef="detect_lang">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Detect language</th>
         <td *matCellDef="let element" mat-cell> {{element.detect_lang}}</td>
+      </ng-container>
+      <ng-container matColumnDef="strip_html">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Strip HTML</th>
+        <td *matCellDef="let element" mat-cell> {{element.strip_html}}</td>
       </ng-container>
       <ng-container matColumnDef="query">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Query</th>
@@ -141,6 +145,14 @@
                 <tr>
                   <th class="mat-body-strong">Elasticsearch timeout</th>
                   <td>{{element.es_timeout}}</td>
+                </tr>
+                <tr>
+                  <th class="mat-body-strong">Analyzers</th>
+                  <td>{{element.analyzers | join:','}}</td>
+                </tr>
+                <tr>
+                  <th class="mat-body-strong">Tokenizer</th>
+                  <td>{{element.tokenizer}}</td>
                 </tr>
               </table>
             </div>

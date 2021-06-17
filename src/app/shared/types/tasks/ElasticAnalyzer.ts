@@ -18,7 +18,7 @@ interface Task {
   num_processed: number;
 }
 
-export interface SnowballStemmer {
+export interface ElasticAnalyzer {
   id: number;
   url: string;
   indices: Index[];
@@ -46,6 +46,15 @@ interface AuthorUsername {
   required: boolean;
   read_only: boolean;
   label: string;
+}
+
+interface StripHtml {
+  type: string;
+  required: boolean;
+  read_only: boolean;
+  label: string;
+  help_text: string;
+  default: boolean;
 }
 
 interface Id2 {
@@ -179,13 +188,26 @@ interface Choice2 {
   display_name: string;
 }
 
+interface Analyzers {
+  type: string;
+  required: boolean;
+  read_only: boolean;
+  label: string;
+  choices: Choice2[];
+}
+
+interface Choice3 {
+  value: string;
+  display_name: string;
+}
+
 interface StemmerLang {
   type: string;
   required: boolean;
   read_only: boolean;
   label: string;
   help_text: string;
-  choices: Choice2[];
+  choices: Choice3[];
 }
 
 interface Child2 {
@@ -201,6 +223,21 @@ interface Fields {
   label: string;
   help_text: string;
   child: Child2;
+}
+
+interface Choice4 {
+  value: string;
+  display_name: string;
+}
+
+interface Tokenizer {
+  type: string;
+  required: boolean;
+  read_only: boolean;
+  label: string;
+  help_text: string;
+  default: string;
+  choices: Choice4[];
 }
 
 interface EsTimeout {
@@ -239,6 +276,7 @@ interface Description2 {
   required: boolean;
   read_only: boolean;
   label: string;
+  max_length: number;
 }
 
 interface Id3 {
@@ -350,9 +388,12 @@ interface POST {
   id: Id;
   url: Url;
   author_username: AuthorUsername;
+  strip_html: StripHtml;
   indices: Indices;
+  analyzers: Analyzers;
   stemmer_lang: StemmerLang;
   fields: Fields;
+  tokenizer: Tokenizer;
   es_timeout: EsTimeout;
   bulk_size: BulkSize;
   detect_lang: DetectLang;
@@ -365,12 +406,10 @@ interface Actions {
   POST: POST;
 }
 
-export interface SnowballStemmerOptions {
+export interface ElasticAnalyzerOptions {
   name: string;
   description: string;
   renders: string[];
   parses: string[];
   actions: Actions;
 }
-
-

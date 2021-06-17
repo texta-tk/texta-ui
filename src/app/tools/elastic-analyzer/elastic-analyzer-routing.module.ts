@@ -1,13 +1,13 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {SnowballStemmerComponent} from './snowball-stemmer.component';
+import {ElasticAnalyzerComponent} from './elastic-analyzer.component';
 import {AuthGuard} from '../../core/auth/auth.guard';
 
 const routes: Routes = [
   {
     path: '',
     canActivate: [AuthGuard],
-    component: SnowballStemmerComponent,
+    component: ElasticAnalyzerComponent,
   },
 ];
 
@@ -16,5 +16,5 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 
-export class SnowballStemmerRoutingModule {
+export class ElasticAnalyzerRoutingModule {
 }
