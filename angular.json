@@ -61,7 +61,7 @@
                 {
                   "input": "src/configurations/prod",
                   "output": "assets/config",
-                  "glob": "*.json"
+                  "glob": "*.json.example"
                 }
               ],
               "optimization": true,
