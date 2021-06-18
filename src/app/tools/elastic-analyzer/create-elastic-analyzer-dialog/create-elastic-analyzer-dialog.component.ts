@@ -41,7 +41,7 @@ export class CreateElasticAnalyzerDialogComponent implements OnInit, OnDestroy {
     fieldsFormControl: new FormControl([], [Validators.required]),
     languageFormControl: new FormControl('', [Validators.required]),
     analyzersFormControl: new FormControl([], [Validators.required]),
-    tokenizerFormControl: new FormControl([]),
+    tokenizerFormControl: new FormControl(),
     detectLangFormControl: new FormControl(''),
     stripHtmlFormControl: new FormControl(false),
     esTimeoutFormControl: new FormControl(25),
