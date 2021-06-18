@@ -2,8 +2,8 @@ services:
     - name: docker.texta.ee/texta/texta-rest/test:latest
       alias: texta-rest
     - name: redis:latest
-    - name: postgres:11
-      alias: texta-postgres
+    - name: mariadb:10.3.28
+      alias: texta-mariadb
     - name: docker.texta.ee/texta/texta-uaa:latest
       alias: texta-uaa
     - name: docker.elastic.co/elasticsearch/elasticsearch-oss:7.10.2
@@ -12,15 +12,19 @@ services:
 
 
 variables:
-    DJANGO_DATABASE_ENGINE: "django.db.backends.postgresql"
+    DJANGO_DATABASE_ENGINE: "django.db.backends.mysql"
     DJANGO_DATABASE_NAME: docker
     DJANGO_DATABASE_USER: docker
     DJANGO_DATABASE_PASSWORD: docker
-    DJANGO_DATABASE_HOST: texta-postgres
-    DJANGO_DATABASE_PORT: 5432
-    POSTGRES_DATABASE: docker
-    POSTGRES_USER: docker
-    POSTGRES_PASSWORD: docker
+    DJANGO_DATABASE_HOST: texta-mariadb
+    DJANGO_DATABASE_PORT: 3306
+    MYSQL_ROOT_USER: docker
+    MYSQL_ROOT_PASSWORD: docker
+    MYSQL_PORT: 3306
+    MYSQL_ROOT_HOST: '%'
+    MYSQL_DATABASE: docker
+    MYSQL_USER: docker
+    MYSQL_PASSWORD: docker
     TEXTA_ES_URL: http://texta-elastic:9200
     TEXTA_MLP_URL: http://mlp-dev.texta.ee:5000
     TEXTA_REDIS_URL: redis://redis:6379/0
