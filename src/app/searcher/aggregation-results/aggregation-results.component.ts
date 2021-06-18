@@ -20,7 +20,7 @@ export interface AggregationData {
     tableData?: MatTableDataSource<any>,
     name: string
   }[];
-  dateData?: { series: { value: number; name: string; extra?: { buckets: { key: string; doc_count: number }[] } }[], name: string }[];
+  dateData?: { series: { value: number; name: string; epoch: number; extra?: { buckets: { key: string; doc_count: number }[] } }[], name: string }[];
   // only used when aggregating over texta_facts only
   textaFactsTableData?: {
     // tslint:disable-next-line:no-any
@@ -53,12 +53,13 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     return null;
   }
 
-  formatDateData(buckets: { key_as_string: string, key: number, doc_count: number }[]): { value: number, name: string }[] {
-    const dateData: { value: number, name: string }[] = [];
+  formatDateData(buckets: { key_as_string: string, key: number, doc_count: number }[]): { value: number, name: string; epoch: number; }[] {
+    const dateData: { value: number, name: string; epoch: number; }[] = [];
     for (const element of buckets) {
       dateData.push({
         value: element.doc_count,
-        name: new Date(element.key).toLocaleString()
+        name: new Date(element.key).toISOString(),
+        epoch: element.key,
       });
     }
     return dateData;
@@ -67,13 +68,14 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   formatDateDataExtraBucket(buckets: {
     key_as_string: string, key: number, doc_count: number,
     buckets: unknown
-  }[]): { value: number, name: Date }[] {
+  }[]): { value: number, name: Date; epoch: number; }[] {
     // tslint:disable-next-line:no-any
     const dateData: any[] = [];
     for (const element of buckets) {
       dateData.push({
         value: element.doc_count,
-        name: new Date(element.key).toLocaleString(),
+        name: new Date(element.key).toISOString(),
+        epoch: element.key,
         extra: {buckets: element.buckets}
       });
     }
@@ -109,7 +111,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     };
     if (aggregation && aggregation.aggs) {
       for (const aggKey of Object.keys(aggregation.aggs)) {
-        if(aggregation.aggs[aggKey].hasOwnProperty(aggKey) && !aggregation.aggs[aggKey][aggKey].hasOwnProperty('buckets')){
+        if (aggregation.aggs[aggKey].hasOwnProperty(aggKey) && !aggregation.aggs[aggKey][aggKey].hasOwnProperty('buckets')) {
           aggregation.aggs[aggKey] = aggregation.aggs[aggKey][aggKey];
         }
         // first object is aggregation name either savedSearch description or the agg type
@@ -266,7 +268,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   // tslint:disable-next-line:no-any
   private convertHistoToRelativeFrequency(aggs: { agg: any, globalAgg: any }): void {
     for (const aggKey of Object.keys(aggs.agg.aggs)) {
-      if(aggs.agg.aggs[aggKey].hasOwnProperty(aggKey)  && !aggs.agg.aggs[aggKey][aggKey].hasOwnProperty('buckets')){
+      if (aggs.agg.aggs[aggKey].hasOwnProperty(aggKey) && !aggs.agg.aggs[aggKey][aggKey].hasOwnProperty('buckets')) {
         aggs.agg.aggs[aggKey] = aggs.agg.aggs[aggKey][aggKey];
       }
       if (aggs.agg.aggs[aggKey].hasOwnProperty('agg_histo')) {
