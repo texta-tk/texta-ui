@@ -40,9 +40,8 @@
     </div>
   </div>
   <div [appScrollTop]="tableData" class="table-container overflow-auto">
-
     <table [dataSource]="tableData" [trackBy]="trackById"
-           mat-table matSort matSortActive="id" matSortDirection="asc">
+           mat-table matSort matSortActive="created_at" matSortDirection="desc">
       <ng-container matColumnDef="select">
         <th *matHeaderCellDef mat-header-cell>
           <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selectedRows.hasValue() && isAllSelected()"

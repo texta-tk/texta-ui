@@ -38,13 +38,20 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
 
   @Input() set yLabel(val: string) {
     this.title = val;
-    this.graph.layout['yaxis'] = {title: {text: this.title}};
+    if (val === 'frequency') {
+      this.graph.layout['yaxis'] = {title: {text: this.title}, tickformat: ',.0%'};
+    } else {
+      this.graph.layout['yaxis'] = {title: {text: this.title}};
+    }
   }
 
   // tslint:disable-next-line:no-any
-  @Input() set aggregationData(val: { series: {
+  @Input() set aggregationData(val: {
+    series: {
       epoch: number;
-      name: string; value: number }[]; name: string }[] | AggregationData) {
+      name: string; value: number
+    }[]; name: string
+  }[] | AggregationData) {
     this.graph = {
       data: [],
       layout: {
@@ -53,8 +60,8 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
           namelength: 25,
         },
         hoverdistance: -1,
+        yaxis: this.graph?.layout['yaxis'] || {title: {text: this.title}},
         xaxis: {type: 'date'},
-        yaxis: {title: {text: this.title}},
         legend: {
           orientation: 'h',
           xanchor: 'center',

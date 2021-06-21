@@ -35,6 +35,7 @@ export class CreateEmbeddingDialogComponent implements OnInit {
   });
   defaultQuery = '{"query": {"match_all": {}}}';
   query = this.defaultQuery;
+  isLoading = false;
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   projectFields: ProjectIndex[];
   destroyed$ = new Subject<boolean>();
@@ -97,6 +98,7 @@ export class CreateEmbeddingDialogComponent implements OnInit {
     fieldsFormControl: string[]; descriptionFormControl: string;
     indicesFormControl: ProjectIndex[]; dimensionsFormControl: number; frequencyFormControl: number; usePhraserFormControl: boolean; embeddingTypeFormControl: { value: string, display_name: string }
   }): void {
+    this.isLoading = true;
     const body = {
       description: formData.descriptionFormControl,
       fields: formData.fieldsFormControl,
@@ -114,6 +116,7 @@ export class CreateEmbeddingDialogComponent implements OnInit {
       }
       return of(null);
     })).subscribe(resp => {
+      this.isLoading = false;
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.dialogRef.close(resp);
       } else if (resp instanceof HttpErrorResponse) {

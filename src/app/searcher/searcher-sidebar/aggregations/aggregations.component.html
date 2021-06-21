@@ -20,9 +20,9 @@
 
     <ng-container *ngIf="fieldTypeTextOrFact(aggregation.formControl.value)">
       <app-text-aggregation
-        [isLastAgg]="(i+1) === aggregationList.length"
         [fieldsFormControl]="aggregation.formControl"
-        [aggregationObj]="aggregation">
+        [aggregationObj]="aggregation"
+        [isLastAgg]="(i+1) === aggregationList.length">
       </app-text-aggregation>
     </ng-container>
     <ng-container *ngIf="fieldTypeDate(aggregation.formControl.value)">
