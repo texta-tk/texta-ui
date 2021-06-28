@@ -25,7 +25,7 @@
       </mat-error>
     </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field data-cy="appSearchTaggerCreateDialogFields">
       <mat-label>Select Fields</mat-label>
       <app-project-field-select [projectFields]="projectFields" [required]="true"
                                 formControlName="fieldsFormControl"></app-project-field-select>
@@ -36,7 +36,7 @@
 
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"></app-saved-search-autocomplete>
     <div fxLayout="row">
-      <mat-form-field fxFlex>
+      <mat-form-field fxFlex data-cy="appSearchTaggerCreateDialogFactName">
         <mat-label>Fact name</mat-label>
         <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="factNameFormControl" matInput
                required>
@@ -44,7 +44,7 @@
           This field is <strong>required</strong>
         </mat-error>
       </mat-form-field>
-      <mat-form-field class="m-l-15" fxFlex>
+      <mat-form-field class="m-l-15" fxFlex data-cy="appSearchTaggerCreateDialogFactVal">
         <input [errorStateMatcher]="matcher"
                formControlName="factValueFormControl"
                matInput placeholder="Fact value"

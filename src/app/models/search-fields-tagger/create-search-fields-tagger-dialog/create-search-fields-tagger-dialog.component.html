@@ -25,7 +25,7 @@
       </mat-error>
     </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field  data-cy="appSearchFieldsTaggerCreateDialogFields">
       <mat-label>Select Fields</mat-label>
       <app-project-field-select [projectFields]="projectFields" [required]="true"
                                 formControlName="fieldsFormControl"></app-project-field-select>
@@ -35,7 +35,7 @@
     </mat-form-field>
 
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"></app-saved-search-autocomplete>
-    <mat-form-field>
+    <mat-form-field  data-cy="appSearchFieldsTaggerCreateDialogFactName">
       <mat-label>Fact name</mat-label>
       <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="factNameFormControl" matInput
              required>

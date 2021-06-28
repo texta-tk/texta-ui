@@ -88,7 +88,7 @@
           <mat-progress-bar *ngIf="element.task && element.task.step === 'training' && element.task.status !== 'failed'"
                             [value]="element.task.progress" mode="indeterminate">
           </mat-progress-bar>
-          <mat-hint *ngIf="element.task">{{element.task.status}} {{element.task.step}}</mat-hint>
+          <mat-hint *ngIf="element.task">{{element.task.step ? element.task.step : element.task.status}}</mat-hint>
         </td>
       </ng-container>
 
