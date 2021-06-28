@@ -40,6 +40,7 @@
     <mat-label>Select fact</mat-label>
     <mat-select (openedChange)="openedChange($event)" [(ngModel)]="selectedFacts" [ngModelOptions]="{standalone: true}"
                 multiple>
+      <app-mat-option-select-all></app-mat-option-select-all>
       <mat-option *ngFor="let item of ngxChartData" [value]="item">{{item.key}}</mat-option>
     </mat-select>
   </mat-form-field>

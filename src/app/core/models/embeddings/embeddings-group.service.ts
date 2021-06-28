@@ -5,12 +5,13 @@ import {catchError, tap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {LogService} from '../../util/log.service';
 import {EmbeddingCluster} from '../../../shared/types/tasks/Embedding';
+import {AppConfigService} from '../../util/app-config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EmbeddingsGroupService {
-  apiUrl = environment.apiHost + environment.apiBasePath;
+  apiUrl = AppConfigService.settings.apiHost + AppConfigService.settings.apiBasePath;
   apiEndpoint = 'embedding_clusters';
 
   constructor(private http: HttpClient,

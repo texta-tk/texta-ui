@@ -64,10 +64,25 @@ const routes: Routes = [
     loadChildren: () => import('./models/bert-tagger/bert-tagger.module').then(m => m.BertTaggerModule)
   },
   {
+    path: 'search-query-taggers',
+    canActivate: [AuthGuard, ProjectGuard],
+    loadChildren: () => import('./models/search-query-tagger/search-query-tagger.module').then(m => m.SearchQueryTaggerModule)
+  },
+  {
+    path: 'search-fields-taggers',
+    canActivate: [AuthGuard, ProjectGuard],
+    loadChildren: () => import('./models/search-fields-tagger/search-fields-tagger.module').then(m => m.SearchFieldsTaggerModule)
+  },
+  {
     path: 'topic-analyzer',
     canActivate: [AuthGuard, ProjectGuard],
     data: {breadcrumb: 'clustering', tooltip: 'Topic analyzer list'},
     loadChildren: () => import('./tools/topic-analyzer/topic-analyzer.module').then(m => m.TopicAnalyzerModule)
+  },
+  {
+    path: 'elastic-analyzer',
+    canActivate: [AuthGuard, ProjectGuard],
+    loadChildren: () => import('./tools/elastic-analyzer/elastic-analyzer.module').then(m => m.ElasticAnalyzerModule)
   },
   {
     path: 'index-splitter',

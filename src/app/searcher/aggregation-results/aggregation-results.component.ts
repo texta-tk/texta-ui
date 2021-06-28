@@ -34,7 +34,7 @@ export interface AggregationData {
     agg_centroid?: { location: { lat: number, lon: number }, count: number },
     name: string,
   }[];
-  dateData?: { series: { value: number; name: string; extra?: { buckets: { key: string; doc_count: number }[] } }[], name: string }[];
+  dateData?: { series: { value: number; name: string; epoch: number; extra?: { buckets: { key: string; doc_count: number }[] } }[], name: string }[];
   // only used when aggregating over texta_facts only
   textaFactsTableData?: {
     // tslint:disable-next-line:no-any
@@ -67,12 +67,13 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     return [];
   }
 
-  formatDateData(buckets: { key_as_string: string, key: number, doc_count: number }[]): { value: number, name: string }[] {
-    const dateData: { value: number, name: string }[] = [];
+  formatDateData(buckets: { key_as_string: string, key: number, doc_count: number }[]): { value: number, name: string; epoch: number; }[] {
+    const dateData: { value: number, name: string; epoch: number; }[] = [];
     for (const element of buckets) {
       dateData.push({
         value: element.doc_count,
-        name: new Date(element.key).toLocaleString()
+        name: new Date(element.key).toISOString(),
+        epoch: element.key,
       });
     }
     return dateData;
@@ -81,13 +82,14 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   formatDateDataExtraBucket(buckets: {
     key_as_string: string, key: number, doc_count: number,
     buckets: unknown
-  }[]): { value: number, name: Date }[] {
+  }[]): { value: number, name: Date; epoch: number; }[] {
     // tslint:disable-next-line:no-any
     const dateData: any[] = [];
     for (const element of buckets) {
       dateData.push({
         value: element.doc_count,
-        name: new Date(element.key).toLocaleString(),
+        name: new Date(element.key).toISOString(),
+        epoch: element.key,
         extra: {buckets: element.buckets}
       });
     }
@@ -388,7 +390,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
         const rawBucket = this.bucketAccessor(this.navNestedAggByKey(aggs.agg.aggs[aggKey], 'agg_histo'));
         const globalBucket = this.bucketAccessor(this.navNestedAggByKey(aggs.globalAgg.aggs, 'agg_histo'));
         for (let i = 0; i < rawBucket.length; i++) {
-          rawBucket[i].doc_count = rawBucket[i].doc_count > 0 ? rawBucket[i].doc_count / globalBucket[i].doc_count * 100 : 0;
+          rawBucket[i].doc_count = rawBucket[i].doc_count > 0 ? rawBucket[i].doc_count / globalBucket[i].doc_count : 0;
         }
       }
     }

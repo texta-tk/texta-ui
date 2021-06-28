@@ -2,6 +2,7 @@ import {Component, Input} from '@angular/core';
 import {SearcherComponentService} from '../../services/searcher-component.service';
 import {HighlightComponent} from '../../searcher-table/highlight/highlight.component';
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
+import {UtilityFunctions} from "../../../shared/UtilityFunctions";
 
 interface BarChartData {
   name: string;
@@ -46,7 +47,7 @@ export class AggregationResultFactsComponent {
   set data(value: { key: string, buckets: { key: string; fact_val_reverse: { doc_count: number; }; doc_count: number; }[] }[]) {
     if (value && value.length > 0) {
       this.dataSource = value;
-      const COLORS = HighlightComponent.generateColorsForFacts(value.flatMap(x => [{fact: x.key}]));
+      const COLORS = UtilityFunctions.generateColorsForFacts(value.flatMap(x => [{fact: x.key}]));
       for (const item of value) {
         this.ngxChartData.push({
           key: item.key,

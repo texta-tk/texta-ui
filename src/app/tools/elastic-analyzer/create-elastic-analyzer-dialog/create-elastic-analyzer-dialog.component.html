@@ -1,0 +1,131 @@
+<h1 mat-dialog-title>Apply Elastic Analyzer to Index</h1>
+<mat-dialog-content>
+  <form (ngSubmit)="onSubmit(elasticAnalyzerForm.value)" [formGroup]="elasticAnalyzerForm" class="flex-col"
+        id="ElasticAnalyzer">
+    <mat-form-field data-cy="appElasticAnalyzerCreateDialogDesc">
+      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
+             placeholder="Description" required>
+
+      <mat-error *ngIf="elasticAnalyzerForm.get('descriptionFormControl')?.hasError('required')">
+        Description is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+
+    <mat-form-field data-cy="appElasticAnalyzerCreateDialogIndices">
+      <mat-label>Indices</mat-label>
+      <mat-select (openedChange)="indicesOpenedChange($event)" [disableOptionCentering]="true"
+                  formControlName="indicesFormControl" multiple panelClass="select-panel-reveal-input" required>
+        <mat-option *ngFor="let projectIndex of projectIndices" [value]="projectIndex">
+          {{projectIndex.index}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="elasticAnalyzerForm.get('indicesFormControl')?.hasError('required')">
+        Select at least <strong>1 index</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field data-cy="appElasticAnalyzerCreateDialogFields">
+      <mat-label>Select Fields</mat-label>
+      <app-project-field-select [projectFields]="projectFields" [required]="true"
+                                formControlName="fieldsFormControl"></app-project-field-select>
+      <mat-error *ngIf="elasticAnalyzerForm.get('fieldsFormControl')?.hasError('required')">
+        Field is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)">
+    </app-saved-search-autocomplete>
+    <mat-form-field data-cy="appElasticAnalyzerCreateDialogAnalyzers">
+      <mat-label>Analyzer</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="analyzersFormControl"
+                  panelClass="select-panel-reveal-input" required multiple>
+        <ng-container *ngIf="analyzers">
+          <mat-option *ngFor="let item of analyzers" [value]="item.value">
+            {{item.display_name ? item.display_name : 'None'}}
+          </mat-option>
+        </ng-container>
+      </mat-select>
+
+      <mat-error *ngIf="elasticAnalyzerForm.get('analyzersFormControl')?.hasError('required')">
+        Analyzer is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field >
+      <mat-label>Tokenizer</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="tokenizerFormControl"
+                  panelClass="select-panel-reveal-input">
+        <ng-container *ngIf="analyzers">
+          <mat-option>None</mat-option>
+          <mat-option *ngFor="let item of tokenizers" [value]="item.value">
+            {{item.display_name ? item.display_name : 'None'}}
+          </mat-option>
+        </ng-container>
+      </mat-select>
+    </mat-form-field>
+
+
+    <mat-form-field data-cy="appElasticAnalyzerCreateDialogLanguages">
+      <mat-label>Stemmer language</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="languageFormControl"
+                  panelClass="select-panel-reveal-input" required>
+        <ng-container *ngIf="stemmerLangs">
+          <mat-option *ngFor="let item of stemmerLangs" [value]="item.value">
+            {{item.display_name ? item.display_name : 'None'}}
+          </mat-option>
+        </ng-container>
+      </mat-select>
+
+      <mat-error *ngIf="elasticAnalyzerForm.get('languageFormControl')?.hasError('required')">
+        Please choose a Stemmer Language or turn on Detect Language!
+      </mat-error>
+    </mat-form-field>
+
+    <mat-checkbox class="m-bot-10" formControlName="detectLangFormControl"
+                  matTooltip="Whether to automatically detect the language from the fields for stemming purposes."
+                  matTooltipPosition="left">Detect language
+    </mat-checkbox>
+
+    <mat-checkbox class="m-bot-10" formControlName="stripHtmlFormControl"
+                  matTooltip="Whether to strip HTML from the text."
+                  matTooltipPosition="left">Strip HTML
+    </mat-checkbox>
+
+    <!--advanced -->
+    <mat-expansion-panel expanded="false">
+      <mat-expansion-panel-header>
+        <h3>Advanced settings</h3>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
+        <div fxLayout="row">
+          <mat-form-field class="advanced-setting" fxFlex>
+            <input formControlName="esTimeoutFormControl" matInput placeholder="Elasticsearch timeout"
+                   type="number">
+            <mat-hint>Elasticsearch scroll timeout in minutes.</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field class="advanced-setting m-l-15" fxFlex>
+            <input formControlName="bulkSizeFormControl" matInput placeholder="Bulk size"
+                   type="number">
+            <mat-hint>How many documents should be returned by Elasticsearch with each request.</mat-hint>
+          </mat-form-field>
+        </div>
+      </ng-template>
+    </mat-expansion-panel>
+
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <div class="flex-row max-width">
+    <div class="flex-item-left">
+      <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
+    </div>
+    <div class="flex-item-right">
+      <button [disabled]="!elasticAnalyzerForm.valid" data-cy="appElasticAnalyzerCreateDialogSubmit"
+              form="ElasticAnalyzer" mat-button type="submit">
+        Create
+      </button>
+    </div>
+  </div>
+</mat-dialog-actions>

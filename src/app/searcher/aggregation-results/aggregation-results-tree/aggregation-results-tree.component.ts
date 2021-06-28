@@ -51,13 +51,14 @@ export class AggregationResultsTreeComponent implements OnDestroy {
     }
   }
 
-  formatDateData(buckets: { key_as_string: string, key: number, doc_count: number }[]): { value: number, name: string }[] {
+  formatDateData(buckets: { key_as_string: string, key: number, doc_count: number }[]): { value: number, name: string; epoch: number }[] {
     // tslint:disable-next-line:no-any
-    const dateData: { value: number, name: string }[] = [];
+    const dateData: { value: number, name: string; epoch: number }[] = [];
     for (const element of buckets) {
       dateData.push({
         value: element.doc_count,
-        name: element.key_as_string
+        name: element.key_as_string,
+        epoch: element.key,
       });
     }
     return dateData;

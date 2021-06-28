@@ -2,17 +2,18 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
 import {of, Subject} from 'rxjs';
 import {ErrorStateMatcher} from '@angular/material/core';
-import {mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {debounceTime, mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
+import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
-import {Field, Project, ProjectIndex} from '../../../shared/types/Project';
+import {Field, Project, ProjectFact, ProjectIndex} from '../../../shared/types/Project';
 import {ProjectService} from '../../../core/projects/project.service';
 import {IndexSplitterService} from '../../../core/tools/index-splitter/index-splitter.service';
 import {LogService} from '../../../core/util/log.service';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 import {IndexSplitterOptions} from '../../../shared/types/tasks/IndexSplitter';
+import {MatSelectChange} from "@angular/material/select";
 
 interface OnSubmitParams {
   descriptionFormControl: string;
@@ -47,7 +48,7 @@ export class CreateIndexSplitterDialogComponent implements OnInit, OnDestroy {
     testIndexFormControl: new FormControl('', [Validators.required]),
     testSizeIndexFormControl: new FormControl(20, [Validators.required]),
     factFormControl: new FormControl(''),
-    strValFormControl: new FormControl(''),
+    strValFormControl: new FormControl({value: '', disabled: true}),
     distributionFormControl: new FormControl(''),
     customDistributionFormControl: new FormControl(''),
   });
@@ -58,7 +59,10 @@ export class CreateIndexSplitterDialogComponent implements OnInit, OnDestroy {
   fieldsUnique: Field[] = [];
   projectIndices: ProjectIndex[] = [];
   projectFields: ProjectIndex[];
+  projectFacts: string[] = [];
   indexSplitterOptions: IndexSplitterOptions;
+  isLoadingOptions = false;
+  factValOptions: string[] = [];
 
   constructor(private dialogRef: MatDialogRef<CreateIndexSplitterDialogComponent>,
               private projectService: ProjectService,
@@ -68,19 +72,6 @@ export class CreateIndexSplitterDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(currentProjIndices => {
-      if (currentProjIndices) {
-        const indicesForm = this.indexSplitterForm.get('indicesFormControl');
-        indicesForm?.setValue(currentProjIndices);
-        this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
-      }
-    });
-
-    this.projectStore.getProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(projIndices => {
-      if (projIndices) {
-        this.projectIndices = projIndices;
-      }
-    });
     this.projectStore.getCurrentProject().pipe(take(1), switchMap(proj => {
       if (proj) {
         this.currentProject = proj;
@@ -98,6 +89,46 @@ export class CreateIndexSplitterDialogComponent implements OnInit, OnDestroy {
         this.logService.snackBarError(resp);
       }
     });
+
+    this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(currentProjIndices => {
+      if (currentProjIndices) {
+        const indicesForm = this.indexSplitterForm.get('indicesFormControl');
+        indicesForm?.setValue(currentProjIndices);
+        this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
+      }
+    });
+
+    this.projectStore.getProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(projIndices => {
+      if (projIndices) {
+        this.projectIndices = projIndices;
+      }
+    });
+
+    this.projectStore.getCurrentIndicesFacts().pipe(takeUntil(this.destroyed$)).subscribe(projectFacts => {
+      if (projectFacts) {
+        this.projectFacts = projectFacts;
+      }
+    });
+
+    this.indexSplitterForm.get('strValFormControl')?.valueChanges.pipe(
+      takeUntil(this.destroyed$),
+      debounceTime(100),
+      switchMap(value => {
+        if (value || value === '' && this.currentProject.id) {
+          this.factValOptions = ['Loading...'];
+          this.isLoadingOptions = true;
+          return this.projectService.projectFactValueAutoComplete(this.currentProject.id,
+            this.indexSplitterForm.get('factFormControl')?.value, 10, value,
+            this.indexSplitterForm.get('indicesFormControl')?.value.map((x: ProjectIndex) => x.index));
+        }
+        return of(null);
+      })).subscribe(val => {
+      if (val && !(val instanceof HttpErrorResponse)) {
+        this.isLoadingOptions = false;
+        this.factValOptions = val;
+      }
+    });
+
   }
 
   onSubmit(formData: OnSubmitParams): void {
@@ -137,10 +168,26 @@ export class CreateIndexSplitterDialogComponent implements OnInit, OnDestroy {
   }
 
 
+  getFactsForIndices(val: ProjectIndex[]): void {
+    this.factValOptions = [];
+    if (val.length > 0 && this.currentProject.id) {
+      this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat()).subscribe(resp => {
+        if (resp && !(resp instanceof HttpErrorResponse)) {
+          this.projectFacts = resp;
+        } else {
+          this.logService.snackBarError(resp);
+        }
+      });
+    } else {
+      this.projectFacts = [];
+    }
+  }
+
   public indicesOpenedChange(opened: unknown): void {
     const indicesForm = this.indexSplitterForm.get('indicesFormControl');
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && indicesForm?.value && !UtilityFunctions.arrayValuesEqual(indicesForm?.value, this.projectFields, (x => x.index))) {
+      this.getFactsForIndices(indicesForm?.value);
       this.projectFields = ProjectIndex.cleanProjectIndicesFields(indicesForm.value, ['text'], []);
     }
   }
@@ -150,4 +197,10 @@ export class CreateIndexSplitterDialogComponent implements OnInit, OnDestroy {
     this.destroyed$.complete();
   }
 
+  factNameSelected($event: MatSelectChange, trueFactVal: AbstractControl | null): void {
+    if (trueFactVal && $event) {
+      trueFactVal.enable();
+      trueFactVal.setValue('');
+    }
+  }
 }

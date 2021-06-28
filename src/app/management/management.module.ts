@@ -6,10 +6,11 @@ import {ManagementRoutingModule} from './management-routing.module';
 import { IndicesComponent } from './indices/indices.component';
 import { CoreVariablesComponent } from './core-variables/core-variables.component';
 import { ConfirmDeleteDialogComponent } from './indices/confirm-delete-dialog/confirm-delete-dialog.component';
+import { EditDialogComponent } from './indices/edit-dialog/edit-dialog.component';
 
 
 @NgModule({
-  declarations: [ManagementComponent, UsersComponent, IndicesComponent, CoreVariablesComponent, ConfirmDeleteDialogComponent],
+  declarations: [ManagementComponent, UsersComponent, IndicesComponent, CoreVariablesComponent, ConfirmDeleteDialogComponent, EditDialogComponent],
   imports: [
     SharedModule,
     ManagementRoutingModule,

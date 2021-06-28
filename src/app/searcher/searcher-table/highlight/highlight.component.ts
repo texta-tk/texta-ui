@@ -9,9 +9,10 @@ import {
 } from '@angular/core';
 import {FactConstraint} from '../../searcher-sidebar/build-search/Constraints';
 import * as LinkifyIt from 'linkify-it';
-import {UtilityFunctions} from '../../../shared/UtilityFunctions';
+import {LegibleColor, UtilityFunctions} from '../../../shared/UtilityFunctions';
 import {HighlightSettings} from '../../../shared/SettingVars';
 import {environment} from '../../../../environments/environment';
+import {AppConfigService} from '../../../core/util/app-config.service';
 
 // tslint:disable:no-any
 export interface HighlightSpan {
@@ -34,10 +35,6 @@ export interface HighlightConfig {
   data: any;
 }
 
-export interface LegibleColor {
-  backgroundColor: string;
-  textColor: string;
-}
 
 interface HighlightObject {
   text: string;
@@ -60,18 +57,8 @@ interface HighlightObject {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HighlightComponent {
-  static colors: Map<string, LegibleColor> = new Map<string, LegibleColor>([
-    ['ORG', {backgroundColor: '#9FC2BA', textColor: 'black'}],
-    ['PER', {backgroundColor: '#DDB0A0', textColor: 'black'}],
-    ['GPE', {backgroundColor: '#ffb2ff', textColor: 'black'}],
-    ['LOC', {backgroundColor: '#CABD80', textColor: 'black'}],
-    ['ADDR', {backgroundColor: '#8f9bff', textColor: 'black'}],
-    ['COMPANY', {backgroundColor: '#75a7ff', textColor: 'black'}],
-    ['PHO', {backgroundColor: '#ff867f', textColor: 'black'}],
-    ['EMAIL', {backgroundColor: '#9fffe0', textColor: 'black'}],
-  ]);
   static linkify = new LinkifyIt();
-  static readonly HYPERLINKS_COL = environment.fileFieldReplace; // hosted_filepath
+  static readonly HYPERLINKS_COL = AppConfigService.settings.fileFieldReplace; // hosted_filepath
   highlightArray: HighlightObject[] = [];
   textHidden = true;
   listenerList: (() => any)[] = [];
@@ -91,15 +78,15 @@ export class HighlightComponent {
 
   static generateColorsForFacts(facts: { fact: string }[]): Map<string, LegibleColor> {
     facts.forEach(fact => {
-      if (!HighlightComponent.colors.has(fact.fact)) {
+      if (!UtilityFunctions.colors.has(fact.fact)) {
         // tslint:disable-next-line:no-bitwise
-        HighlightComponent.colors.set(fact.fact, {
+        UtilityFunctions.colors.set(fact.fact, {
           backgroundColor: `hsla(${~~(360 * Math.random())},70%,70%,0.8)`,
           textColor: 'black'
         });
       }
     });
-    return HighlightComponent.colors;
+    return UtilityFunctions.colors;
   }
 
   // convert searcher highlight into mlp fact format
@@ -134,7 +121,7 @@ export class HighlightComponent {
   static makeHyperlinksClickable(currentColumnData: unknown, colName: string): HighlightSpan[] {
     // Very quick check, that can give false positives.
     if (colName === HighlightComponent.HYPERLINKS_COL) {
-      currentColumnData = environment.apiHost + '/' + currentColumnData;
+      currentColumnData = `${AppConfigService.settings.apiHost}/${currentColumnData}`;
     }
     if (isNaN(Number(currentColumnData)) && HighlightComponent.linkify.pretest(currentColumnData as string)) {
       const highlightArray: HighlightSpan[] = [];
@@ -155,7 +142,7 @@ export class HighlightComponent {
     return [];
   }
 
-  static makeShowShortVersion(maxWordDistance: number, highlightObjects: HighlightObject[]): HighlightObject[] {
+  static makeShowShortVersion(maxWordDistance: number, highlightObjects: HighlightObject[], currentColumn: string): HighlightObject[] {
     const showShortVersionHighlightObjects: HighlightObject[] = [];
     let parentShortVersionSpan: HighlightObject | undefined;
     let colHasSearcherHighlight = false;
@@ -165,7 +152,7 @@ export class HighlightComponent {
         parentShortVersionSpan = {
           text: '',
           highlighted: false,
-          shortVersion: {spans: [highlightObject]}, isVisible: true,
+          shortVersion: {spans: [highlightObject]}, isVisible: false,
         };
       } else if (parentShortVersionSpan && HighlightComponent.highlightHasSearcherHighlight(highlightObject)) {
         parentShortVersionSpan.isVisible = false;
@@ -180,16 +167,40 @@ export class HighlightComponent {
       }
     }
     if (parentShortVersionSpan) {
-      parentShortVersionSpan.isVisible = !colHasSearcherHighlight;
       showShortVersionHighlightObjects.push(parentShortVersionSpan);
     }
-
-    if (colHasSearcherHighlight) {
-      showShortVersionHighlightObjects.forEach(x => x.shortVersion?.spans?.forEach(y => y.isVisible = false));
-      return HighlightComponent.cutShortVersionExtraText(showShortVersionHighlightObjects, maxWordDistance);
+    // no highlights, only show first x words
+    if (!colHasSearcherHighlight && parentShortVersionSpan?.shortVersion?.spans) {
+      let wordCount = 0;
+      for (let i = 0; i < parentShortVersionSpan.shortVersion.spans.length; i++) {
+        if (wordCount === maxWordDistance) {
+          parentShortVersionSpan.shortVersion.spans.splice(i, 0, {
+            text: ' ...',
+            fullText: ' ...',
+            highlighted: false,
+            isVisible: true
+          });
+          break;
+        }
+        parentShortVersionSpan.shortVersion.spans[i].isVisible = true;
+        parentShortVersionSpan.shortVersion.spans[i].shortText = parentShortVersionSpan.shortVersion.spans[i].text;
+        // lastspan
+        wordCount += HighlightComponent.setSpanShortVersion(parentShortVersionSpan.shortVersion.spans[i], 'start', maxWordDistance - wordCount, RegExp(/\w/));
+        if (parentShortVersionSpan.shortVersion.spans.length === 1 && wordCount === maxWordDistance) {
+          parentShortVersionSpan.shortVersion.spans.splice(1, 0, {
+            text: ' ...',
+            fullText: ' ...',
+            highlighted: false,
+            isVisible: true
+          });
+          break;
+        }
+      }
+      return [parentShortVersionSpan];
     }
 
-    return showShortVersionHighlightObjects[0]?.shortVersion?.spans || [];
+    return HighlightComponent.cutShortVersionExtraText(showShortVersionHighlightObjects, maxWordDistance) || [];
+
   }
 
   static cutShortVersionExtraText(highlights: HighlightObject[], maxWordDistance: number): HighlightObject[] {
@@ -412,8 +423,9 @@ export class HighlightComponent {
       ];
       const colors = HighlightComponent.generateColorsForFacts(highlightTerms);
       const highlights = this.makeHighLights(highlightConfig.data[highlightConfig.currentColumn], highlightTerms, colors);
-      if (highlightConfig.showShortVersion && highlightConfig.searcherHighlight) {
-        this.highlightArray = HighlightComponent.makeShowShortVersion(highlightConfig.showShortVersion, highlights);
+      if (highlightConfig.showShortVersion) {
+        this.highlightArray = HighlightComponent.makeShowShortVersion(highlightConfig.showShortVersion, highlights,
+          highlightConfig.data[highlightConfig.currentColumn]);
       } else {
         this.highlightArray = highlights;
       }
@@ -879,6 +891,7 @@ export class HighlightComponent {
       const a = this.renderer2.createElement('a');
       const t = this.renderer2.createText(highlight.text);
       this.renderer2.setProperty(a, 'target', '_blank');
+      this.renderer2.setProperty(a, 'href', highlight.text);
       this.renderer2.appendChild(a, t);
       this.renderer2.appendChild(wrapper, a);
     } else if (highlight.nested) {

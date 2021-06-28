@@ -6,12 +6,13 @@ import {Observable} from 'rxjs';
 import {TaggerGroup, LightTagger} from '../../../shared/types/tasks/Tagger';
 import {LocalStorageService} from '../../util/local-storage.service';
 import {LogService} from '../../util/log.service';
+import {AppConfigService} from '../../util/app-config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TaggerGroupService {
-  apiUrl = environment.apiHost + environment.apiBasePath;
+  apiUrl = AppConfigService.settings.apiHost + AppConfigService.settings.apiBasePath;
   apiEndpoint = 'tagger_groups';
 
   constructor(private http: HttpClient, private localStorageService: LocalStorageService,

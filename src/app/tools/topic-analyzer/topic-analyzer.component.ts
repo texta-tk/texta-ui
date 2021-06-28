@@ -32,8 +32,8 @@ export class TopicAnalyzerComponent implements OnInit, OnDestroy, AfterViewInit 
   expandedElement: Cluster | null;
   public tableData: MatTableDataSource<Cluster> = new MatTableDataSource();
   selectedRows = new SelectionModel<Cluster>(true, []);
-  public displayedColumns = ['select', 'id', 'description', 'fields', 'query', 'num_cluster', 'use_lsi', 'task__time_started',
-    'task__time_completed', 'task__status', 'Modify'];
+  public displayedColumns = ['select', 'id', 'description', 'author__username', 'fields', 'query', 'num_cluster', 'use_lsi', 'task__time_started',
+    'task__time_completed', 'task__status', 'view_cluster', 'Modify'];
   public isLoadingResults = true;
 
   @ViewChild(MatSort) sort: MatSort;
@@ -101,7 +101,7 @@ export class TopicAnalyzerComponent implements OnInit, OnDestroy, AfterViewInit 
   editStopwordsDialog(element: Cluster): void {
     const dialogRef = this.dialog.open(EditStopwordsDialogComponent, {
       data: {cluster: element, currentProjectId: this.currentProject.id},
-      maxHeight: '665px',
+      maxHeight: '90vh',
       width: '700px',
     });
   }

@@ -64,14 +64,16 @@ export class NavbarComponent implements OnInit, OnDestroy {
       this.changeDetectorRef.markForCheck();
     });
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe((indices: ProjectIndex[] | null) => {
-      if (indices && indices.filter(x => this.currentProject.indices.includes(x.index))) {
+      if (indices && indices.filter(x => this.currentProject.indices.find(y => y.name === x.index))) {
         this.projectFieldsControl.setValue(indices);
+      } else {
+        this.projectFieldsControl.setValue([]);
       }
     });
 
     this.projectStore.getProjects().pipe(takeUntil(this.destroyed$)).subscribe(projects => {
       if (projects && projects.length > 0) {
-        this.projects = projects.filter(x => x.users.includes(this.user.url)).sort((a, b) => {
+        this.projects = projects.filter(x => x.users.find(y => y.url === this.user.url)).sort((a, b) => {
           if (a.id > b.id) {
             return -1;
           }
@@ -80,10 +82,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
       } else {
         this.projects = [];
       }
+      this.changeDetectorRef.markForCheck();
     });
     this.projectStore.getProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe((x) => {
       if (x) {
         this.projectFields = x;
+      } else {
+        this.projectFields = [];
       }
     });
   }

@@ -19,6 +19,7 @@ import {ConfirmDialogComponent} from 'src/app/shared/components/dialogs/confirm-
 import {expandRowAnimation} from '../../../shared/animations';
 import {EditEmbeddingDialogComponent} from './edit-embedding-dialog/edit-embedding-dialog.component';
 import {Index} from '../../../shared/types/Index';
+import {UseLexiconDialogComponent} from "./use-lexicon-dialog/use-lexicon-dialog.component";
 
 @Component({
   selector: 'app-embedding',
@@ -263,5 +264,13 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
         this.inputFilterQuery += `&${field}=${this.filteringValues[field]}`;
       }
     }
+  }
+
+  useWithLexicon(element: Embedding): void {
+    this.dialog.open(UseLexiconDialogComponent, {
+      data: {embedding: element},
+      maxHeight: '90vh',
+      width: '700px',
+    });
   }
 }

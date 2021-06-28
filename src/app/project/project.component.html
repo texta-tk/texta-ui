@@ -1,23 +1,23 @@
-<div fxFlex fxLayout="column" class="max-height">
+<div class="max-height" fxFlex fxLayout="column">
 
   <div class="table-paginator-row">
     <div class="loading-bar">
-      <mat-progress-bar mode="indeterminate" *ngIf="isLoadingResults"></mat-progress-bar>
+      <mat-progress-bar *ngIf="isLoadingResults" mode="indeterminate"></mat-progress-bar>
     </div>
     <div class="paginator-row">
-      <button *ngIf="currentUser?.is_superuser" data-cy="appProjectCreateProject"
+      <button (click)="openCreateDialog()"
               class="paginator-margin-left"
-              mat-raised-button
               color="primary"
-              (click)="openCreateDialog()">
+              data-cy="appProjectCreateProject"
+              mat-raised-button>
         CREATE
       </button>
       <mat-form-field class="m-l-15 author">
-        <input matInput
-               placeholder="Filter by author"
-               aria-label="Filter by author"
+        <input [formControl]="authorFilterControl"
                [matAutocomplete]="auto"
-               [formControl]="authorFilterControl">
+               aria-label="Filter by author"
+               matInput
+               placeholder="Filter by author">
         <mat-icon matSuffix>search</mat-icon>
         <mat-autocomplete #auto="matAutocomplete" (optionSelected)="applyFilter($event.option)">
           <mat-option *ngFor="let user of filteredUsers | async" [value]="user.username">
@@ -26,10 +26,10 @@
         </mat-autocomplete>
       </mat-form-field>
       <mat-form-field class="m-l-15 title">
-        <input matInput
-               placeholder="Filter by title"
+        <input [formControl]="titleFilterControl"
                aria-label="Filter by title"
-               [formControl]="titleFilterControl">
+               matInput
+               placeholder="Filter by title">
         <mat-icon matSuffix>search</mat-icon>
       </mat-form-field>
       <mat-paginator [pageSizeOptions]="[25, 50, 100]" hidePageSize="true" showFirstLastButtons>
@@ -37,50 +37,61 @@
     </div>
   </div>
 
-  <div class="table-container overflow-auto" [appScrollTop]="tableData">
-    <table mat-table [dataSource]="tableData" matSort
-           matSortActive="id" matSortDisableClear matSortDirection="desc" [trackBy]="trackById">
+  <div [appScrollTop]="tableData" class="table-container overflow-auto">
+    <table [dataSource]="tableData" [trackBy]="trackById" mat-table
+           matSort matSortActive="id" matSortDirection="desc" matSortDisableClear>
       <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
-        <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Id</th>
+        <td *matCellDef="let element" mat-cell>{{ element.id }}</td>
       </ng-container>
       <ng-container matColumnDef="author_username">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Author</th>
-        <td mat-cell *matCellDef="let element">{{ element.author_username }}</td>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Author</th>
+        <td *matCellDef="let element" mat-cell>{{ element.author_username }}</td>
       </ng-container>
       <ng-container matColumnDef="title">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Title</th>
-        <td mat-cell *matCellDef="let element">{{ element.title }}</td>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Title</th>
+        <td *matCellDef="let element" mat-cell>{{ element.title }}</td>
       </ng-container>
       <ng-container matColumnDef="indices_count">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>
           <span class="indices-column-header">Indices</span>
         </th>
-        <td mat-cell *matCellDef="let element">
-          <button mat-stroked-button [matMenuTriggerFor]="indicesMenu" [matMenuTriggerData]="{element: element}">
+        <td *matCellDef="let element" mat-cell>
+          <button [disabled]="element.indices.length === 0" [matMenuTriggerData]="{element: element}"
+                  [matMenuTriggerFor]="indicesMenu" mat-stroked-button>
             {{ element.indices.length }}
           </button>
         </td>
       </ng-container>
+      <ng-container matColumnDef="resource_count">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Resources</th>
+        <td *matCellDef="let element" mat-cell>
+          <button (click)="getResourceCounts(element)" [disabled]="element.resource_count === 0"
+                  [matMenuTriggerData]="{element: element}" [matMenuTriggerFor]="resourceMenu"
+                  mat-stroked-button>
+            {{element.resource_count}}
+          </button>
+        </td>
+      </ng-container>
       <ng-container matColumnDef="users_count">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Users</th>
-        <td mat-cell *matCellDef="let element">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Users</th>
+        <td *matCellDef="let element" mat-cell>
 
           <button
-            mat-stroked-button
+            [disabled]="element.users.length === 0"
+            [matMenuTriggerData]="{element: element}"
             [matMenuTriggerFor]="userMenu"
-            (click)="selectUserElement(element.users)"
-          >
+            mat-stroked-button>
             {{ element.users.length }}
           </button>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="Modify">
-        <th mat-header-cell class="center-header-cell" *matHeaderCellDef>Actions</th>
-        <td mat-cell *matCellDef="let element; let i = index" (click)="$event.stopPropagation();">
-          <button mat-icon-button color="primary" [matMenuTriggerFor]="editMenu"
-                  [matMenuTriggerData]="{element: element}">
+        <th *matHeaderCellDef class="center-header-cell" mat-header-cell>Actions</th>
+        <td (click)="$event.stopPropagation();" *matCellDef="let element; let i = index" mat-cell>
+          <button [matMenuTriggerData]="{element: element}" [matMenuTriggerFor]="editMenu" color="primary"
+                  mat-icon-button>
             <mat-icon aria-label="Edit Options">more_vert</mat-icon>
           </button>
 
@@ -88,24 +99,32 @@
         </td>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
+      <tr *matRowDef="let row; columns: displayedColumns" mat-row></tr>
     </table>
   </div>
 
 
 </div>
 <mat-menu #indicesMenu="matMenu">
-  <ng-template matMenuContent let-element="element">
-    <ng-template ngFor let-indice [ngForOf]="element.indices">
-      <button mat-menu-item>{{ indice }}</button>
+  <ng-template let-element="element" matMenuContent>
+    <ng-template [ngForOf]="element.indices" let-indice ngFor>
+      <button mat-menu-item>{{ indice.name }}</button>
     </ng-template>
   </ng-template>
 </mat-menu>
-<mat-menu #userMenu="matMenu">
+<mat-menu #resourceMenu="matMenu">
   <ng-template matMenuContent>
-    <ng-container *ngFor="let user of projectUsers$ | async">
-      <button mat-menu-item [matMenuTriggerFor]="userDetailed" *ngIf="user.username">
+    <ng-container *ngIf="projectCounts$ | async as counts">
+      <button *ngFor="let item of counts | keyvalue: valueAscOrder"
+              mat-menu-item>{{ item.key.split('_').slice(1) | join:' ' | titlecase }}: {{item.value}}</button>
+    </ng-container>
+  </ng-template>
+</mat-menu>
+<mat-menu #userMenu="matMenu">
+  <ng-template let-element="element" matMenuContent>
+    <ng-container *ngFor="let user of element.users">
+      <button *ngIf="user.username" [matMenuTriggerFor]="userDetailed" mat-menu-item>
         {{ user.username }}
       </button>
       <mat-menu #userDetailed="matMenu">
@@ -119,17 +138,21 @@
   </ng-template>
 </mat-menu>
 <mat-menu #editMenu="matMenu">
-  <ng-template matMenuContent let-element="element">
+  <ng-template let-element="element" matMenuContent>
     <button (click)="selectProject(element)" mat-menu-item>
       <mat-icon aria-label="Activate Project">touch_app
       </mat-icon>
       Use
     </button>
-    <button (click)="edit(element)" mat-menu-item>
+    <button (click)="edit(element)"
+            *ngIf="(element.administrators | getPropertyList: urlAccessor).includes(currentUser.url) || currentUser.is_superuser || element.author_username === currentUser.username"
+            mat-menu-item>
       <mat-icon aria-label="Edit Project">edit</mat-icon>
       Edit
     </button>
-    <button mat-menu-item (click)="onDelete(element)">
+    <button (click)="onDelete(element)"
+            *ngIf="(element.administrators | getPropertyList: urlAccessor).includes(currentUser.url) || currentUser.is_superuser || element.author_username === currentUser.username"
+            mat-menu-item>
       <mat-icon>delete</mat-icon>
       Delete
     </button>

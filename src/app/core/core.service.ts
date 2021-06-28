@@ -8,13 +8,14 @@ import {catchError, tap} from 'rxjs/operators';
 import {Index} from '../shared/types/Index';
 import {ResultsWrapper} from '../shared/types/Generic';
 import {CoreVariables} from '../shared/types/CoreVariables';
+import {AppConfigService} from './util/app-config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CoreService {
 
-  apiUrl = environment.apiHost + environment.apiBasePath;
+  apiUrl = AppConfigService.settings.apiHost + AppConfigService.settings.apiBasePath;
 
   constructor(private http: HttpClient,
               private logService: LogService) {
@@ -26,10 +27,10 @@ export class CoreService {
       catchError(this.logService.handleError<Health>('getHealth')));
   }
 
-  getIndices(): Observable<string[] | HttpErrorResponse> {
-    return this.http.get<string[]>(`${this.apiUrl}/get_indices/`).pipe(
+  getIndices(): Observable<{id: number, name: string}[] | HttpErrorResponse> {
+    return this.http.get<{id: number, name: string}[]>(`${this.apiUrl}/get_indices/`).pipe(
       tap(e => this.logService.logStatus(e, 'get Indices')),
-      catchError(this.logService.handleError<string[]>('getIndices')));
+      catchError(this.logService.handleError<{id: number, name: string}[]>('getIndices')));
   }
 
   getSnowballLanguages(): Observable<string[] | HttpErrorResponse> {
@@ -49,7 +50,11 @@ export class CoreService {
       tap(e => this.logService.logStatus(e, 'getElasticIndices')),
       catchError(this.logService.handleError<Index[]>('getElasticIndices')));
   }
-
+  getElasticIndicesOptions(): Observable<unknown | HttpErrorResponse> {
+    return this.http.options<Index[]>(`${this.apiUrl}/index/`).pipe(
+      tap(e => this.logService.logStatus(e, 'getElasticIndicesOptions')),
+      catchError(this.logService.handleError<Index[]>('getElasticIndicesOptions')));
+  }
   deleteElasticIndex(indexId: number): Observable<ResultsWrapper<Index> | HttpErrorResponse> {
     return this.http.delete<ResultsWrapper<Index>>(`${this.apiUrl}/index/${indexId}/`).pipe(
       tap(e => this.logService.logStatus(e, 'deleteElasticIndex')),
@@ -59,6 +64,15 @@ export class CoreService {
   toggleElasticIndexOpenState(index: Index): Observable<{ message: string } | HttpErrorResponse> {
     const endpoint = index.is_open ? 'close_index' : 'open_index';
     return this.http.patch<{ message: string }>(`${this.apiUrl}/index/${index.id}/${endpoint}/`, {}).pipe(
+      tap(e => this.logService.logStatus(e, 'toggleElasticIndexOpenState')),
+      catchError(this.logService.handleError<{ message: string }>('toggleElasticIndexOpenState')));
+  }
+
+  editElasticIndex(index: Partial<Index>): Observable<{ message: string } | HttpErrorResponse> {
+    if(index.domain === ''){
+      delete index.domain;
+    }
+    return this.http.patch<{ message: string }>(`${this.apiUrl}/index/${index.id}/`, index).pipe(
       tap(e => this.logService.logStatus(e, 'editElasticIndex')),
       catchError(this.logService.handleError<{ message: string }>('editElasticIndex')));
   }

@@ -19,7 +19,7 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {EditRegexTaggerDialogComponent} from './edit-regex-tagger-dialog/edit-regex-tagger-dialog.component';
 import {TagTextDialogComponent} from './tag-text-dialog/tag-text-dialog.component';
 import {TagRandomDocComponent} from './tag-random-doc/tag-random-doc.component';
-import { ApplyToIndexDialogComponent } from './apply-to-index-dialog/apply-to-index-dialog.component';
+import {ApplyToIndexDialogComponent} from './apply-to-index-dialog/apply-to-index-dialog.component';
 
 @Component({
   selector: 'app-regex-tagger',
@@ -31,7 +31,7 @@ import { ApplyToIndexDialogComponent } from './apply-to-index-dialog/apply-to-in
 })
 export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   public displayedColumns = ['select', 'id', 'description', 'operator', 'matchType', 'requiredWords', 'phraseSlop',
-    'counterSlop', 'nAllowedEdits', 'fuzzy', 'ignoreCase', 'ignorePunctuation', 'actions'];
+    'counterSlop', 'nAllowedEdits', 'fuzzy', 'ignoreCase', 'ignorePunctuation', 'task__status', 'actions'];
   public isLoadingResults = true;
   public tableData: MatTableDataSource<RegexTagger> = new MatTableDataSource();
 
@@ -210,7 +210,7 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  onDelete(cluster: RegexTagger, index: number): void {
+  onDelete(regexTagger: RegexTagger, index: number): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {confirmText: 'Delete', mainText: 'Are you sure you want to delete this regex tagger?'}
     });
@@ -218,9 +218,9 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
 
-        const body = {ids: [index]};
+        const body = {ids: [regexTagger.id]};
         this.regexTaggerService.bulkDeleteRegexTaggers(this.currentProject.id, body).subscribe(() => {
-          this.logService.snackBarMessage(`Deleted regex tagger ${cluster.description}`, 2000);
+          this.logService.snackBarMessage(`Deleted regex tagger ${regexTagger.description}`, 2000);
           this.tableData.data.splice(index, 1);
           this.tableData.data = [...this.tableData.data];
         });
@@ -246,6 +246,8 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
       data: tagger,
       maxHeight: '90vh',
       width: '700px',
+    }).afterClosed().subscribe(x => {
+      this.updateTable.next(true);
     });
   }
 

@@ -67,7 +67,9 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
           this.projectFields = projField;
           // combine all fields of all indexes into one unique array to make columns
           // @ts-ignore
-          this.displayedColumns = [...new Set([].concat.apply([], (projField.map(x => x.fields.map(y => y.path)))))];
+          const cols: string[] = [...new Set([].concat.apply([], (projField.map(x => x.fields.map(y => y.path)))))];
+          cols.push(cols.splice(cols.indexOf('texta_facts'), 1)[0]);
+          this.displayedColumns = cols;
           this.setColumnsToDisplay();
           // project changed reset table
           this.tableData.data = [];
@@ -89,7 +91,30 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     this.searchService.getSearch().pipe(takeUntil(this.destroy$)).subscribe(resp => {
       if (resp && resp.searchOptions) {
         this.searchOptions = resp.searchOptions;
-        this.setColumnsToDisplay();
+        if (this.searchOptions.onlyShowMatchingColumns) {
+          const highlights = resp.searchContent.results.map(x => x.highlight).flat();
+          const columnsToHighlight: string[] = [];
+          highlights.forEach(x => {
+            // tslint:disable-next-line:no-any
+            for (const col in x as any) {
+              // tslint:disable-next-line:no-any
+              if ((x as any).hasOwnProperty(col)) {
+                columnsToHighlight.push(col);
+              }
+            }
+          });
+          if (columnsToHighlight.length > 0) {
+            // @ts-ignore
+            this.columnsToDisplay = [...new Set([].concat.apply([], columnsToHighlight))] as string[];
+            this.columnFormControl.setValue(this.columnsToDisplay);
+          } else {
+            this.setColumnsToDisplay();
+          }
+        } else {
+          // filter out table columns by index, unique array(table columns have to be unique)
+          this.setColumnsToDisplay();
+        }
+
         this.totalCountLength = typeof resp.searchContent.count !== 'number' ? resp.searchContent.count.value : resp.searchContent.count;
         this.paginatorLength = this.totalCountLength > 10000 ? 10000 : this.totalCountLength;
         this.tableData.data = resp.searchContent.results;
@@ -212,6 +237,14 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
 
   trackByTableData(index: number, val: { doc: unknown; }): unknown {
     return val.doc;
+  }
+
+  buildFactNameSearch(fact: string): void {
+    this.searchService.buildFactNameSearch(fact);
+  }
+
+  buildFactValSearch(data: { factName: string, factValue: string }): void {
+    this.searchService.createConstraintFromFact(data.factName, data.factValue);
   }
 
   private setColumnsToDisplay(): void {

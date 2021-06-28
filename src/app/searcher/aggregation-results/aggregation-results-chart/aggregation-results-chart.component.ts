@@ -38,11 +38,20 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
 
   @Input() set yLabel(val: string) {
     this.title = val;
-    this.graph.layout['yaxis'] = {title: {text: this.title}};
+    if (val === 'frequency') {
+      this.graph.layout['yaxis'] = {title: {text: this.title}, tickformat: ',.0%'};
+    } else {
+      this.graph.layout['yaxis'] = {title: {text: this.title}};
+    }
   }
 
   // tslint:disable-next-line:no-any
-  @Input() set aggregationData(val: { series: { name: string; value: number }[]; name: string }[] | AggregationData) {
+  @Input() set aggregationData(val: {
+    series: {
+      epoch: number;
+      name: string; value: number
+    }[]; name: string
+  }[] | AggregationData) {
     this.graph = {
       data: [],
       layout: {
@@ -51,8 +60,8 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
           namelength: 25,
         },
         hoverdistance: -1,
+        yaxis: this.graph?.layout['yaxis'] || {title: {text: this.title}},
         xaxis: {type: 'date'},
-        yaxis: {title: {text: this.title}},
         legend: {
           orientation: 'h',
           xanchor: 'center',
@@ -68,7 +77,7 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
           const mode = el.series.length > 100 ? 'lines+points' : 'lines+points+markers';
           if (series[0].extra) { // date->term structure plots, saved searches
             this.graph.data.push({
-              x: series.map(x => new Date(x.name)),
+              x: series.map(x => new Date(x.epoch)),
               y: series.map(x => x.value),
               hovertext: series.map(x => x?.extra?.buckets.map(y => `${y.key.slice(0, 30)}:<b>${y.doc_count}</b><br>`).join('')),
               type: 'scattergl',
@@ -78,7 +87,7 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
             });
           } else {
             this.graph.data.push({ // regular plots, no nesting, saved searches
-              x: series.map(x => new Date(x.name)),
+              x: series.map(x => new Date(x.epoch)),
               y: series.map(x => x.value),
               type: 'scattergl',
               mode,
@@ -95,7 +104,7 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
         const mode = el.series.length > 100 ? 'lines+points' : 'lines+points+markers';
         const series = el.series;
         this.graph.data.push({
-          x: series.map(x => new Date(x.name)),
+          x: series.map(x => new Date(x.epoch)),
           y: series.map(x => x.value),
           type: 'scattergl',
           mode,

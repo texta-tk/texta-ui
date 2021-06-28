@@ -1,0 +1,27 @@
+
+
+:host {
+  overflow: hidden;
+}
+
+.mat-column-fields {
+  max-width: 450px;
+}
+
+.mat-column-task__status {
+  max-width: 160px;
+}
+
+tr.element-row:not(.expanded-row):hover {
+  background: #eeeeee;
+}
+
+tr.element-row:not(.expanded-row):active {
+  background: #efefef;
+}
+
+.element-detail {
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+}

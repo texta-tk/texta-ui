@@ -7,9 +7,6 @@ import {of, Subject, Subscription} from 'rxjs';
 import * as projectPackage from '../../../package.json';
 import {CoreService} from '../core/core.service';
 import {switchMap, takeUntil} from 'rxjs/operators';
-import {PlotlyComponent} from "angular-plotly.js";
-import {Plotly} from "angular-plotly.js/lib/plotly.interface";
-import Layout = Plotly.Layout;
 
 
 @Component({

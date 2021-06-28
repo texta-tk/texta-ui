@@ -26,7 +26,8 @@
 
     <mat-form-field>
       <mat-label>Select Fields</mat-label>
-      <app-project-field-select formControlName="fieldsFormControl"  [projectFields]="projectFields" ></app-project-field-select>
+      <app-project-field-select [projectFields]="projectFields"
+                                formControlName="fieldsFormControl"></app-project-field-select>
     </mat-form-field>
 
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"
@@ -63,17 +64,38 @@
         with "equal" or "custom" distribution
       </mat-hint>
     </mat-form-field>
-    <mat-form-field class="m-bot-10">
-      <input autocomplete="off" formControlName="factFormControl" matInput
-             placeholder="Fact">
-      <mat-hint>Name of the fact on which the test index distribution will base</mat-hint>
-    </mat-form-field>
-    <mat-form-field class="m-bot-10">
-      <input autocomplete="off" formControlName="strValFormControl" matInput
-             placeholder="Str val">
-      <mat-hint>Name of the fact value on which the test index distribution will base</mat-hint>
-    </mat-form-field>
-    <mat-form-field>
+    <div fxLayout="row" class="m-bot-10">
+      <mat-form-field fxFlex>
+        <mat-label>Fact name</mat-label>
+        <mat-select (selectionChange)="factNameSelected($event, indexSplitterForm.get('strValFormControl'))"
+                    [disableOptionCentering]="true"
+                    formControlName="factFormControl"
+                    panelClass="select-panel-reveal-input">
+          <mat-option *ngFor="let fact of projectFacts" [value]="fact" title="{{fact}}">
+            {{fact}}
+          </mat-option>
+        </mat-select>
+        <mat-hint>Name of the fact on which the test index distribution will base</mat-hint>
+      </mat-form-field>
+      <mat-form-field class="m-l-15" fxFlex>
+        <input [matAutocomplete]="trueVal"
+               formControlName="strValFormControl"
+               matInput
+               placeholder="Fact value"
+               type="text">
+        <mat-autocomplete #trueVal="matAutocomplete"
+                          panelWidth="auto">
+          <mat-option *ngFor="let option of factValOptions" [disabled]="isLoadingOptions"
+                      [value]="option" title="{{option}}">
+            {{option}}
+          </mat-option>
+        </mat-autocomplete>
+
+        <mat-hint>Name of the fact value on which the test index distribution will base</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field class="m-top-10">
       <mat-label>Distribution</mat-label>
       <mat-select [disableOptionCentering]="true" formControlName="distributionFormControl"
                   panelClass="select-panel-reveal-input">

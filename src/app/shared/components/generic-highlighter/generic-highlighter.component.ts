@@ -1,10 +1,10 @@
 import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import * as LinkifyIt from 'linkify-it';
-import {UtilityFunctions} from '../../UtilityFunctions';
+import {LegibleColor, UtilityFunctions} from '../../UtilityFunctions';
 import {HighlightSettings} from '../../SettingVars';
 
 // tslint:disable:no-any
-interface HighlightSpan {
+export interface HighlightSpan {
   doc_path: string;
   fact: string;
   spans: string | number[];
@@ -25,11 +25,6 @@ interface HighlightConfig<T extends HighlightSpan> {
   data: any;
 }
 
-interface LegibleColor {
-  backgroundColor: string;
-  textColor: string;
-}
-
 interface HighlightObject<T extends HighlightSpan> {
   text: string;
   highlighted: boolean;
@@ -45,16 +40,6 @@ interface HighlightObject<T extends HighlightSpan> {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GenericHighlighterComponent<T extends HighlightSpan> {
-  static colors: Map<string, LegibleColor> = new Map<string, LegibleColor>([
-    ['ORG', {backgroundColor: '#9FC2BA', textColor: 'black'}],
-    ['PER', {backgroundColor: '#DDB0A0', textColor: 'black'}],
-    ['GPE', {backgroundColor: '#ffb2ff', textColor: 'black'}],
-    ['LOC', {backgroundColor: '#CABD80', textColor: 'black'}],
-    ['ADDR', {backgroundColor: '#8f9bff', textColor: 'black'}],
-    ['COMPANY', {backgroundColor: '#75a7ff', textColor: 'black'}],
-    ['PHO', {backgroundColor: '#ff867f', textColor: 'black'}],
-    ['EMAIL', {backgroundColor: '#9fffe0', textColor: 'black'}],
-  ]);
   static linkify = new LinkifyIt();
   highlightArray: HighlightObject<T>[] = [];
   isTextLimited: boolean;
@@ -91,15 +76,15 @@ export class GenericHighlighterComponent<T extends HighlightSpan> {
 
   static generateColorsForFacts(facts: { fact: string }[]): Map<string, LegibleColor> {
     facts.forEach(fact => {
-      if (!GenericHighlighterComponent.colors.has(fact.fact)) {
-        GenericHighlighterComponent.colors.set(fact.fact, {
+      if (!UtilityFunctions.colors.has(fact.fact)) {
+        UtilityFunctions.colors.set(fact.fact, {
           // tslint:disable-next-line:no-bitwise
           backgroundColor: `hsla(${~~(360 * Math.random())},70%,70%,0.8)`,
           textColor: 'black'
         });
       }
     });
-    return GenericHighlighterComponent.colors;
+    return UtilityFunctions.colors;
   }
 
   // convert searcher highlight into mlp fact format

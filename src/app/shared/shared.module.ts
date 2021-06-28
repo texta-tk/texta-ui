@@ -64,6 +64,8 @@ import {TextareaLexiconComponent} from './components/textarea-lexicon/textarea-l
 import {CombineArrayPipe} from './pipes/combine-array.pipe';
 import {ProjectFieldSelectComponent} from './components/project-field-select/project-field-select.component';
 import {ParseJsonPipe} from './pipes/parse-json.pipe';
+import {TextaFactsChipsComponent} from './components/texta-facts-chips/texta-facts-chips.component';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
@@ -90,6 +92,7 @@ import {ParseJsonPipe} from './pipes/parse-json.pipe';
     CombineArrayPipe,
     ParseJsonPipe,
     ProjectFieldSelectComponent,
+    TextaFactsChipsComponent,
   ],
   imports: [
     RouterModule,
@@ -108,6 +111,7 @@ import {ParseJsonPipe} from './pipes/parse-json.pipe';
     MatDialogModule,
     MatButtonModule,
     MatCardModule,
+    MatButtonToggleModule,
     MatSidenavModule,
     MatListModule,
     MatMenuModule,
@@ -137,6 +141,7 @@ import {ParseJsonPipe} from './pipes/parse-json.pipe';
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
+    MatButtonToggleModule,
     FlexLayoutModule,
     ScrollingModule,
     MatFormFieldModule,
@@ -192,6 +197,7 @@ import {ParseJsonPipe} from './pipes/parse-json.pipe';
     ProjectFieldSelectComponent,
     CombineArrayPipe,
     ParseJsonPipe,
+    TextaFactsChipsComponent,
   ]
 })
 export class SharedModule {

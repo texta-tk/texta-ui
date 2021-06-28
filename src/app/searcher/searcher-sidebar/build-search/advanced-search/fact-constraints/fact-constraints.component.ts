@@ -8,6 +8,7 @@ import {ProjectService} from '../../../../../core/projects/project.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import {UtilityFunctions} from '../../../../../shared/UtilityFunctions';
+import {ProjectStore} from "../../../../../core/projects/project.store";
 
 
 @Component({
@@ -19,7 +20,7 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
   // inner hits name counter
   static componentCount = 0;
   @Input() elasticSearchQuery: ElasticsearchQuery;
-  @Input() projectFacts: ProjectFact[] = [];
+  projectFacts: string[] = ['Loading...'];
   @Input() currentProject: Project;
   @Input() indices: string[];
   @Output() constraintChanged = new EventEmitter<ElasticsearchQuery>(); // search as you type, emit changes
@@ -51,7 +52,7 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
     bool: {}
   };
 
-  constructor(private projectService: ProjectService, private changeDetectorRef: ChangeDetectorRef) {
+  constructor(private projectService: ProjectService, private projectStore: ProjectStore, private changeDetectorRef: ChangeDetectorRef) {
     FactConstraintsComponent.componentCount += 1;
   }
 
@@ -166,6 +167,13 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
+
+    this.projectStore.getCurrentIndicesFacts().pipe(takeUntil(this.destroyed$)).subscribe(projectFacts => {
+      if (projectFacts) {
+        this.projectFacts = projectFacts;
+      }
+    });
+
     if (this._factConstraint) {
       const formQueries: unknown[] = [];
       this.factNameQuery.bool = {[this.factNameOperatorFormControl.value]: formQueries};

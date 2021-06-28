@@ -73,7 +73,7 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
   fieldsUnique: Field[] = [];
   projectIndices: ProjectIndex[] = [];
   projectFields: ProjectIndex[];
-  projectFacts: ProjectFact[];
+  projectFacts: string[];
   bertModels: string[] = [];
 
   constructor(private dialogRef: MatDialogRef<CreateBertTaggerDialogComponent>,
@@ -171,7 +171,6 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
       batch_size: formData.batchSizeFormControl,
       split_ratio: formData.splitRatioFormControl,
       negative_multiplier: formData.negativeMultiplierFormControl,
-
       ...formData.sentenceShuffleFormControl ? {use_sentence_shuffle: formData.sentenceShuffleFormControl} : {},
       ...formData.balanceFormControl ? {balance: formData.balanceFormControl} : {},
       ...formData.maxBalanceFormControl ? {balance_to_max_limit: formData.maxBalanceFormControl} : {},

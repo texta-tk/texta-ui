@@ -7,6 +7,11 @@ table {
   overflow: hidden;
 }
 
+.mat-column-task__status {
+  padding-right: 10px;
+  max-width: 160px;
+}
+
 .mat-cell {
   word-break: break-word;
 }

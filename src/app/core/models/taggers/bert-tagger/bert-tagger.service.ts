@@ -6,12 +6,13 @@ import {environment} from '../../../../../environments/environment';
 import {LogService} from '../../../util/log.service';
 import {ResultsWrapper} from '../../../../shared/types/Generic';
 import {BertTagger} from '../../../../shared/types/tasks/BertTagger';
+import {AppConfigService} from '../../../util/app-config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BertTaggerService {
-  apiUrl = environment.apiHost + environment.apiBasePath;
+  apiUrl = AppConfigService.settings.apiHost + AppConfigService.settings.apiBasePath;
 
   constructor(private http: HttpClient,
               private logService: LogService) {

@@ -23,8 +23,8 @@
 
     <ng-container *ngIf="fieldTypeTextOrFact(aggregation.formControl.value)">
       <app-text-aggregation
-        [aggregationObj]="aggregation"
         [fieldsFormControl]="aggregation.formControl"
+        [aggregationObj]="aggregation"
         [isLastAgg]="(i+1) === aggregationList.length">
       </app-text-aggregation>
     </ng-container>

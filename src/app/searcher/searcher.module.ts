@@ -22,7 +22,6 @@ import {DatePipe} from '@angular/common';
 import {AggregationResultsChartComponent} from './aggregation-results/aggregation-results-chart/aggregation-results-chart.component';
 import {SimpleSearchComponent} from './searcher-sidebar/build-search/simple-search/simple-search.component';
 import {AdvancedSearchComponent} from './searcher-sidebar/build-search/advanced-search/advanced-search.component';
-import {TextaFactsChipsComponent} from './searcher-table/texta-facts-chips/texta-facts-chips.component';
 import {NumberConstraintsComponent} from './searcher-sidebar/build-search/advanced-search/number-constraints/number-constraints.component';
 import {AggregationResultFactsComponent} from './aggregation-results/aggregation-result-facts/aggregation-result-facts.component';
 import {GraphSelectedPortalComponent} from './aggregation-results/aggregation-results-chart/graph-selected-portal/graph-selected-portal.component';
@@ -60,7 +59,6 @@ import { GeoCentroidAggregationComponent } from './searcher-sidebar/aggregations
     AggregationResultsChartComponent,
     SimpleSearchComponent,
     AdvancedSearchComponent,
-    TextaFactsChipsComponent,
     NumberConstraintsComponent,
     AggregationResultFactsComponent,
     GraphSelectedPortalComponent,

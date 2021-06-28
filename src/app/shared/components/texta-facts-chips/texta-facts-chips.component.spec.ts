@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TextaFactsChipsComponent } from './texta-facts-chips.component';
-import {SearcherComponentService} from '../../services/searcher-component.service';
-import {SearchServiceSpy} from '../../services/searcher-component.service.spec';
+import {SearcherComponentService} from '../../../searcher/services/searcher-component.service';
+import {SearchServiceSpy} from '../../../searcher/services/searcher-component.service.spec';
 
 describe('TextaFactsChipsComponent', () => {
   let component: TextaFactsChipsComponent;

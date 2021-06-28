@@ -11,12 +11,13 @@ import {
   RegexTaggerTagRandomDocResult,
   RegexTaggerTagTextResult
 } from '../../../shared/types/tasks/RegexTaggerGroup';
+import {AppConfigService} from '../../util/app-config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RegexTaggerService {
-  apiUrl = environment.apiHost + environment.apiBasePath;
+  apiUrl = AppConfigService.settings.apiHost + AppConfigService.settings.apiBasePath;
 
   constructor(private http: HttpClient, private logService: LogService) {
   }

@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import { ErrorStateMatcher } from '@angular/material/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import {ErrorStateMatcher} from '@angular/material/core';
+import {MatDialogRef} from '@angular/material/dialog';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {LiveErrorStateMatcher} from '../../shared/CustomerErrorStateMatchers';
 import {ProjectService} from '../../core/projects/project.service';
@@ -10,10 +10,17 @@ import {Project} from '../../shared/types/Project';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LogService} from 'src/app/core/util/log.service';
 import {UserStore} from '../../core/users/user.store';
-import {Subject} from 'rxjs';
-import {takeUntil} from 'rxjs/operators';
+import {of, Subject} from 'rxjs';
+import {switchMap, take, takeUntil} from 'rxjs/operators';
 import {UtilityFunctions} from '../../shared/UtilityFunctions';
 import {CoreService} from '../../core/core.service';
+
+interface OnSubmitParams {
+  indicesFormControl: number[];
+  usersFormControl: string[] | string;
+  titleFormControl: string;
+  administratorsFormControl: string[] | string;
+}
 
 @Component({
   selector: 'app-create-embedding-dialog',
@@ -26,15 +33,17 @@ export class CreateProjectDialogComponent implements OnInit, OnDestroy {
     titleFormControl: new FormControl('', [
       Validators.required,
     ]),
-    usersFormControl: new FormControl([], [Validators.required]),
-    indicesFormControl: new FormControl([]),
+    usersFormControl: new FormControl(),
+    administratorsFormControl: new FormControl(),
+    indicesFormControl: new FormControl(),
   });
 
-  public filteredIndices: Subject<string[]> = new Subject<string[]>();
+  public filteredIndices: Subject<{ id: number, name: string }[]> = new Subject();
   indicesFilterFormControl = new FormControl();
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   users: UserProfile[];
-  indices: string[] = [];
+  currentUser: UserProfile;
+  indices: { id: number, name: string }[] = [];
 
   destroyed$: Subject<boolean> = new Subject<boolean>();
 
@@ -52,15 +61,25 @@ export class CreateProjectDialogComponent implements OnInit, OnDestroy {
         this.users = UtilityFunctions.sortByStringProperty(resp, (x => x.username));
       }
     });
-    this.coreService.getIndices().subscribe((resp: string[] | HttpErrorResponse) => {
+
+    this.userStore.getCurrentUser().pipe(take(1), switchMap(resp => {
+      if (resp) {
+        this.currentUser = resp;
+        if (resp.is_superuser) {
+          return this.coreService.getIndices();
+        } else {
+          this.projectForm.get('indicesFormControl')?.disable();
+        }
+      }
+      return of(null);
+    })).subscribe(resp => {
       if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
-      } else {
-        this.indices = resp.sort();
+      } else if (resp) {
+        this.indices = resp.sort((a, b) => (a.name > b.name) ? 1 : -1);
         this.filteredIndices.next(this.indices.slice());
       }
     });
-
     this.indicesFilterFormControl.valueChanges
       .pipe(takeUntil(this.destroyed$))
       .subscribe(() => {
@@ -68,12 +87,23 @@ export class CreateProjectDialogComponent implements OnInit, OnDestroy {
       });
   }
 
-  onSubmit(formData: { indicesFormControl: unknown; usersFormControl: unknown; titleFormControl: unknown; }): void {
-    const body = {
-      indices: formData.indicesFormControl,
-      users: formData.usersFormControl,
-      title: formData.titleFormControl
-    };
+  onSubmit(formData: OnSubmitParams): void {
+    let body;
+    if (this.currentUser.is_superuser) {
+      body = {
+        indices_write: formData.indicesFormControl || [],
+        users_write: formData.usersFormControl || [],
+        title: formData.titleFormControl,
+        administrators_write: formData.administratorsFormControl || []
+      };
+    } else {
+      body = {
+        indices_write: formData.indicesFormControl || [],
+        users_write: this.newLineStringToList(formData.usersFormControl as string) || [],
+        title: formData.titleFormControl,
+        administrators_write: this.newLineStringToList(formData.administratorsFormControl as string) || []
+      };
+    }
     this.projectService.createProject(body).subscribe((resp: Project | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.dialogRef.close(resp);
@@ -81,6 +111,12 @@ export class CreateProjectDialogComponent implements OnInit, OnDestroy {
         this.dialogRef.close(resp);
       }
     });
+  }
+
+  newLineStringToList(stringWithNewLines: string): string[] {
+    const stringList = stringWithNewLines.split('\n');
+    // filter out empty values
+    return stringList.filter(x => x !== '');
   }
 
   closeDialog(): void {
@@ -99,9 +135,8 @@ export class CreateProjectDialogComponent implements OnInit, OnDestroy {
     } else {
       search = search.toLowerCase();
     }
-    // filter the banks
     this.filteredIndices.next(
-      this.indices.filter(index => index.toLowerCase().indexOf(search) > -1)
+      this.indices.filter(index => index.name.toLowerCase().indexOf(search) > -1)
     );
   }
 

@@ -29,6 +29,8 @@ export class MLPCreateIndexDialogComponent implements OnInit, OnDestroy {
     indicesFormControl: new FormControl([], [Validators.required]),
     fieldsFormControl: new FormControl([], [Validators.required]),
     analyzersFormControl: new FormControl([], [Validators.required]),
+    esTimeoutFormControl: new FormControl(30),
+    esScrollSizeFormControl: new FormControl(100),
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
@@ -78,7 +80,7 @@ export class MLPCreateIndexDialogComponent implements OnInit, OnDestroy {
 
   onSubmit(formData: {
     descriptionFormControl: string;
-    indicesFormControl: ProjectIndex[]; fieldsFormControl: string[]; analyzersFormControl: string[];
+    indicesFormControl: ProjectIndex[]; fieldsFormControl: string[]; analyzersFormControl: string[]; esTimeoutFormControl: number; esScrollSizeFormControl: number;
   }): void {
     const body = {
       description: formData.descriptionFormControl,
@@ -86,6 +88,8 @@ export class MLPCreateIndexDialogComponent implements OnInit, OnDestroy {
       fields: formData.fieldsFormControl,
       analyzers: formData.analyzersFormControl,
       ...this.query ? {query: this.query} : {},
+      es_timeout: formData.esTimeoutFormControl,
+      es_scroll_size: formData.esScrollSizeFormControl,
     };
 
     this.mlpService.createMLPTask(this.currentProject.id, body).subscribe((resp: MLP | HttpErrorResponse) => {

@@ -1,14 +1,15 @@
 import {Injectable} from '@angular/core';
 import {Observable, of} from 'rxjs';
-import {HttpErrorResponse} from '@angular/common/http';
+import {HttpErrorResponse, HttpEventType} from '@angular/common/http';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {environment} from '../../../environments/environment';
+import {AppConfigService} from './app-config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LogService {
-  isProduction = environment.production;
+  logging = AppConfigService.settings.logging;
 
   constructor(private snackBar: MatSnackBar) {
   }
@@ -24,7 +25,7 @@ export class LogService {
 
 
   public logStatus(val: unknown, msg: string): void {
-    if (!this.isProduction) {
+    if (this.logging) {
       console.warn(msg, val);
     }
   }
@@ -38,10 +39,19 @@ export class LogService {
       this.snackBar.open(`${error.error.non_field_errors[0]}`, 'Close', {
         duration: time,
       });
-    }else if (error.error.hasOwnProperty('error')) {
+    } else if (error.error.hasOwnProperty('error')) {
       this.snackBar.open(`${error.error.error}`, 'Close', {
         duration: time,
       });
+    } else if (error.error && typeof error.error === 'object' && !('type' in error.error)) {
+      for (const element in error.error) {
+        if (error.error.hasOwnProperty(element)) {
+          this.snackBar.open(`${element}: ${error.error[element][0]}`, 'Close', {
+            duration: time,
+          });
+          break;
+        }
+      }
     } else {
       this.snackBar.open(error.name + ': ' + error.status + ' ' + error.statusText, 'Close', {
         duration: time,

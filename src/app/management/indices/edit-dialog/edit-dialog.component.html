@@ -1,0 +1,42 @@
+<h1 mat-dialog-title>Edit Index: {{this.tableData.name}}</h1>
+<div mat-dialog-content>
+  <mat-form-field class="max-width">
+    <input #ctrl="ngModel" [(ngModel)]="this.tableData.description" [errorStateMatcher]="matcher"
+           autocomplete="off" matInput placeholder="Description">
+  </mat-form-field>
+  <mat-form-field class="max-width">
+    <input #ctrl="ngModel" [(ngModel)]="this.tableData.source" [errorStateMatcher]="matcher"
+           autocomplete="off" matInput placeholder="Source">
+  </mat-form-field>
+  <mat-form-field class="max-width">
+    <mat-label>Domain</mat-label>
+    <mat-select [(ngModel)]="this.tableData.domain" [disableOptionCentering]="true"
+                panelClass="select-panel-reveal-input">
+      <mat-option *ngFor="let item of domains" [value]="item.value">
+        {{item.display_name}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field class="max-width">
+    <input #ctrl="ngModel" [(ngModel)]="this.tableData.client" [errorStateMatcher]="matcher"
+           autocomplete="off" matInput placeholder="Client">
+  </mat-form-field>
+  <mat-form-field class="max-width">
+    <input #ctrl="ngModel" [(ngModel)]="this.tableData.added_by" [errorStateMatcher]="matcher"
+           autocomplete="off" matInput placeholder="Added by">
+  </mat-form-field>
+  <mat-checkbox [(ngModel)]="this.tableData.test"
+                matTooltipPosition="left"
+                style="margin-bottom: 1em">Is the index a test index?
+  </mat-checkbox>
+  <div class="flex-col">
+    <div class="flex-row">
+      <div class="flex-item-left">
+        <button (click)="closeDialog()" class="flex-item-left" mat-button type="button">Close</button>
+      </div>
+      <div class="flex-item-right">
+        <button (click)="onSubmit()" data-cy="appEvaluatorEditDialogSubmit" mat-button type="submit">Edit</button>
+      </div>
+    </div>
+  </div>
+</div>

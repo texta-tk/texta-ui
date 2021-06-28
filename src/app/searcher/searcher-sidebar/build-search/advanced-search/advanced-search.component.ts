@@ -56,7 +56,6 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
   selectedIndices: string[];
   fieldsUnique: Field[] = [];
   public fieldsFiltered: BehaviorSubject<Field[]> = new BehaviorSubject<Field[]>([]);
-  projectFacts: ProjectFact[] = [];
   destroy$: Subject<boolean> = new Subject();
   lexicons: Lexicon[] = [];
   searchQueue$: Subject<void> = new Subject<void>();
@@ -83,11 +82,6 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     })).subscribe(resp => {
       if (!(resp instanceof HttpErrorResponse) && resp) {
         this.lexicons = resp.results;
-      }
-    });
-    this.projectStore.getCurrentIndicesFacts().pipe(takeUntil(this.destroy$)).subscribe(projectFacts => {
-      if (projectFacts) {
-        this.projectFacts = projectFacts;
       }
     });
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroy$)).subscribe(projectFields => {

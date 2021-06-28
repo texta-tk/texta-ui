@@ -63,7 +63,7 @@
           <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
         </div>
         <div class="flex-item-right">
-          <button [disabled]="!embeddingForm.valid" data-cy="appEmbeddingCreateDialogSubmit" mat-button type="submit">
+          <button [disabled]="!embeddingForm.valid || isLoading" data-cy="appEmbeddingCreateDialogSubmit" mat-button type="submit">
             Create
           </button>
         </div>

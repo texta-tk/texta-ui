@@ -107,6 +107,7 @@ export class IndexSplitterComponent implements OnInit, OnDestroy, AfterViewInit 
     const dialogRef = this.dialog.open(CreateIndexSplitterDialogComponent, {
       maxHeight: '90vh',
       width: '700px',
+      disableClose: true,
     });
     dialogRef.afterClosed().subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {

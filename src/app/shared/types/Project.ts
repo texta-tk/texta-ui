@@ -1,12 +1,17 @@
 // tslint:disable:variable-name
+import {UserProfile} from './UserProfile';
+import {Index} from './Index';
+
 export class Project {
   url = '';
   id: number;
   title = '';
   owner: number;
-  users: string[];
-  indices: string[];
+  users: UserProfile[];
+  indices: Index[];
   author_username: string;
+  resource_count: number;
+  administrators: UserProfile[];
   resources: {
     embeddings: number[];
     embedding_clusters: number[];
@@ -32,6 +37,9 @@ export class ProjectResourceCounts {
   num_evaluators = 0;
   num_summarizers = 0;
   num_lang_detectors = 0;
+  num_search_fields_taggers = 0;
+  num_search_query_taggers = 0;
+  num_elastic_analyzers = 0;
 }
 
 export interface ProjectFact {
@@ -125,6 +133,7 @@ export interface Health {
   toolkit: {
     active_tasks: number;
     version: string;
+    available_langs: string[];
   };
   services: {
     elastic: {
@@ -161,6 +170,7 @@ export interface ProjectState {
     selectedFields: string[];
     sidePanelsState: {buildSearch: boolean, savedSearch: boolean, aggregations: boolean}
     searcherType: 1 | 2;
+    showShortVersion: boolean;
   };
   models: {
     tagger: { itemsPerPage: number; }

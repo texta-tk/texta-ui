@@ -5,23 +5,43 @@
     </div>
 
     <div class="paginator-row">
-      <mat-form-field class="m-l-15">
-        <mat-icon matSuffix>search</mat-icon>
-        <input (keyup)="applyFilter($event)" matInput placeholder="Filter index name">
-      </mat-form-field>
+
       <button (click)="onDeleteAllSelected()" [disabled]="selectedRows.selected.length < 1" class="new-resource-btn"
-              color="warn" data-cy="appIndicesDeleteBtn"
+              color="warn" data-cy="appIndicesDeleteBtn" style="margin-left: 12px"
               mat-icon-button matTooltip="Delete selected">
         <mat-icon>delete</mat-icon>
       </button>
+      <mat-form-field class="m-l-15">
+        <mat-icon matSuffix>search</mat-icon>
+        <input [formControl]="nameFilter" matInput placeholder="Filter index name">
+      </mat-form-field>
+      <mat-form-field class="m-l-15">
+        <mat-icon matSuffix>search</mat-icon>
+        <input [formControl]="addedByFilter" matInput placeholder="Filter added by">
+      </mat-form-field>
+      <mat-form-field class="m-l-15">
+        <mat-icon matSuffix>search</mat-icon>
+        <input [formControl]="domainFilter" matInput placeholder="Filter domain">
+      </mat-form-field>
+      <div class="m-l-15">
+        <mat-button-toggle-group (change)="changeTableStyle($event)" [(ngModel)]="columnStyle"
+                                 matTooltip="Table columns display mode"
+                                 style="height: 40px; align-items: center;">
+          <mat-button-toggle aria-label="Simplified columns" value="simplified">
+            Simplified
+          </mat-button-toggle>
+          <mat-button-toggle aria-label="Informative columns" value="informative">
+            Informative
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
       <mat-paginator [length]="resultsLength" [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
       </mat-paginator>
     </div>
   </div>
   <div [appScrollTop]="tableData" class="table-container overflow-auto">
-
     <table [dataSource]="tableData" [trackBy]="trackById"
-           mat-table matSort matSortActive="id" matSortDirection="asc" matSortDisableClear>
+           mat-table matSort matSortActive="created_at" matSortDirection="desc">
       <ng-container matColumnDef="select">
         <th *matHeaderCellDef mat-header-cell>
           <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selectedRows.hasValue() && isAllSelected()"
@@ -44,7 +64,7 @@
           <mat-checkbox (click)="toggleIndexState(element)" [(ngModel)]="element.is_open"></mat-checkbox>
         </td>
       </ng-container>
-      <ng-container matColumnDef="facts">
+      <ng-container matColumnDef="has_validated_facts">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Fact mapping</th>
         <td *matCellDef="let element" mat-cell>
           <mat-checkbox (click)="addFactMapping(element)" [(ngModel)]="element.has_validated_facts"
@@ -52,9 +72,36 @@
                         [matTooltip]="element.has_validated_facts ? '' : 'Click to add fact mapping'"></mat-checkbox>
         </td>
       </ng-container>
+      <ng-container matColumnDef="test">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Test</th>
+        <td *matCellDef="let element" mat-cell>
+          <mat-checkbox [(ngModel)]="element.test" disabled></mat-checkbox>
+        </td>
+      </ng-container>
       <ng-container matColumnDef="name">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Name</th>
         <td *matCellDef="let element" mat-cell>{{ element.name }}</td>
+      </ng-container>
+      <ng-container matColumnDef="description">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Description</th>
+        <td *matCellDef="let element" mat-cell>{{ element.description }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="source">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Source</th>
+        <td *matCellDef="let element" mat-cell>{{ element.source }}</td>
+      </ng-container>
+      <ng-container matColumnDef="client">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Client</th>
+        <td *matCellDef="let element" mat-cell>{{ element.client }}</td>
+      </ng-container>
+      <ng-container matColumnDef="domain">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Domain</th>
+        <td *matCellDef="let element" mat-cell>{{ element.domain }}</td>
+      </ng-container>
+      <ng-container matColumnDef="added_by">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Added by</th>
+        <td *matCellDef="let element" mat-cell>{{ element.added_by}}</td>
       </ng-container>
       <ng-container matColumnDef="size">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Size</th>
@@ -64,13 +111,19 @@
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Document count</th>
         <td *matCellDef="let element" mat-cell>{{ element.doc_count }}</td>
       </ng-container>
-      <ng-container matColumnDef="delete">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header>Delete</th>
-        <td *matCellDef="let element" mat-cell>
-          <button (click)="deleteIndex(element)" class="new-resource-btn" color="warn" mat-icon-button
-                  matTooltip="Delete index">
-            <mat-icon>cancel</mat-icon>
+      <ng-container matColumnDef="created_at">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>Created at</th>
+        <td *matCellDef="let element" mat-cell>{{ element.created_at | date: 'y-M-d H:mm:ss' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="actions">
+        <th *matHeaderCellDef class="center-header-cell" mat-header-cell>Actions</th>
+        <td (click)="$event.stopPropagation();" *matCellDef="let element; let i = dataIndex" mat-cell>
+
+          <button [matMenuTriggerData]="{element: element, i:i}" [matMenuTriggerFor]="actionsMenu" color="primary"
+                  mat-icon-button>
+            <mat-icon aria-label="Actions">more_vert</mat-icon>
           </button>
+
         </td>
       </ng-container>
       <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
@@ -79,3 +132,15 @@
   </div>
 
 </div>
+
+<mat-menu #actionsMenu="matMenu">
+  <ng-template let-element="element" let-i="i" matMenuContent>
+    <button (click)="editIndex(element)" data-cy="appManagementIndexMenuEdit" mat-menu-item>
+      Edit
+    </button>
+    <mat-divider></mat-divider>
+    <button (click)="deleteIndex(element)" data-cy="appManagementIndexMenuDelete" mat-menu-item>
+      Delete
+    </button>
+  </ng-template>
+</mat-menu>

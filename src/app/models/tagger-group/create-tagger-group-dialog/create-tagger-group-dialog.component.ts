@@ -56,7 +56,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
   taggerOptions: TaggerOptions = TaggerOptions.createEmpty();
   embeddings: Embedding[];
   projectFields: ProjectIndex[];
-  projectFacts: ProjectFact[];
+  projectFacts: string[];
   currentProject: Project;
   destroyed$ = new Subject<boolean>();
   fieldsUnique: Field[] = [];

@@ -1,4 +1,4 @@
-<div fxLayout="column" class="wrapper max-height">
+<div class="wrapper max-height" fxLayout="column">
   <div class="table-paginator-row">
     <div class="loading-bar">
       <mat-progress-bar *ngIf="isLoadingResults" mode="indeterminate"></mat-progress-bar>
@@ -13,12 +13,12 @@
               mat-icon-button matTooltip="Delete selected">
         <mat-icon>delete</mat-icon>
       </button>
-      <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons [length]="resultsLength">
+      <mat-paginator [length]="resultsLength" [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
       </mat-paginator>
     </div>
   </div>
 
-  <div class="table-container overflow-auto" [appScrollTop]="tableData">
+  <div [appScrollTop]="tableData" class="table-container overflow-auto">
     <table [dataSource]="tableData" mat-table
            matSort matSortDirection="asc" matSortDisableClear
            multiTemplateDataRows>
@@ -42,6 +42,25 @@
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Description</th>
         <td *matCellDef="let element" mat-cell> {{element.description}}</td>
       </ng-container>
+      <ng-container matColumnDef="author__username">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Author</th>
+        <td *matCellDef="let element" mat-cell> {{element.author_username}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="view_cluster">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header style="width: 90px;"> View Clusters</th>
+        <td *matCellDef="let element" mat-cell>
+          <div
+            style="justify-content: center; display: flex">
+            <button [disabled]="!element.task || element.task.status !== 'completed'" [routerLink]="[element.id]"
+                    color="primary" data-cy="appClusteringViewClustersButton"
+                    mat-stroked-button>
+              View
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
       <ng-container matColumnDef="task__time_started">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Time started</th>
         <td *matCellDef="let element" mat-cell><span
@@ -142,6 +161,10 @@
                   <td>{{element.clustering_algorithm}}</td>
                 </tr>
                 <tr>
+                  <th class="mat-body-strong">Embedding</th>
+                  <td>{{element.embedding}}</td>
+                </tr>
+                <tr>
                   <th class="mat-body-strong">Vectorizer</th>
                   <td>{{element.vectorizer}}</td>
                 </tr>
@@ -205,12 +228,13 @@
       </ng-container>
 
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-      <tr mat-row *matRowDef="let element; columns: displayedColumns;"
-          class="element-row"
+      <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
+      <tr (click)="expandedElement = expandedElement === element ? null : element"
+          *matRowDef="let element; columns: displayedColumns;"
           [class.expanded-row]="expandedElement === element"
-          (click)="expandedElement = expandedElement === element ? null : element"></tr>
-      <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
+          class="element-row"
+          mat-row></tr>
+      <tr *matRowDef="let row; columns: ['expandedDetail']" class="detail-row" mat-row></tr>
 
     </table>
 
@@ -220,13 +244,7 @@
 </div>
 <mat-menu #editMenu="matMenu">
   <ng-template let-element="element" let-i="i" matMenuContent>
-    <div *ngIf="element.task && element.task.status === 'completed'">
-      <button [routerLink]="[element.id]" data-cy="appClusteringMenuViewClusters"
-              mat-menu-item>
-        View clusters
-      </button>
-    </div>
-    <button mat-menu-item (click)="editStopwordsDialog(element)" data-cy="appClusteringMenuStopWords">
+    <button (click)="editStopwordsDialog(element)" data-cy="appClusteringMenuStopWords" mat-menu-item>
       Stop words
     </button>
     <button (click)="retrainCluster(element)" data-cy="appClusteringMenuRetrain" mat-menu-item>

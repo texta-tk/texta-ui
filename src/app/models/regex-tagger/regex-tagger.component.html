@@ -92,7 +92,18 @@
                         [(ngModel)]="element.return_fuzzy_match"></mat-checkbox>
         </td>
       </ng-container>
-
+      <ng-container matColumnDef="task__status">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Task</th>
+        <td *matCellDef="let element" mat-cell>
+          <mat-progress-bar *ngIf="element.task && element.task.step !== 'training'" [value]="element.task.progress"
+                            mode="determinate">
+          </mat-progress-bar>
+          <mat-progress-bar *ngIf="element.task && element.task.step === 'training' && element.task.status !== 'failed'"
+                            [value]="element.task.progress" mode="indeterminate">
+          </mat-progress-bar>
+          <mat-hint *ngIf="element.task">{{element.task.step ? element.task.step : element.task.status}}</mat-hint>
+        </td>
+      </ng-container>
 
       <ng-container matColumnDef="actions">
         <th *matHeaderCellDef class="center-header-cell" mat-header-cell>Actions</th>
