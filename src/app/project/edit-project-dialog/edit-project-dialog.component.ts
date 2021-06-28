@@ -34,6 +34,7 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
   indices: { id: number, name: string }[] = [];
   users: UserProfile[] = [];
   selectedUsers: UserProfile[] = [];
+  currentProject: Project;
   projectForm = new FormGroup({
     titleFormControl: new FormControl('', [
       Validators.required,
@@ -90,6 +91,11 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(proj => {
+      if (proj) {
+        this.currentProject = proj;
+      }
+    });
     this.initialProjectState = {...this.data};
     this.initForm();
     this.userStore.getCurrentUser().pipe(take(1), switchMap(resp => {
@@ -175,7 +181,7 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
           }
         }
         if (!errors) {
-          this.projectStore.refreshProjects();
+          this.projectStore.refreshProjects(this.currentProject.id === this.data.id);
           this.dialogRef.close(true);
         }
       }

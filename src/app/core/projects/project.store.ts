@@ -62,10 +62,13 @@ export class ProjectStore {
     this.loadProjectFieldsAndFacts();
   }
 
-  refreshProjects(): void {
+  refreshProjects(refreshSelection?: boolean): void {
     this.projectService.getProjects().subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.projects$.next(resp);
+        if (refreshSelection) {
+          this.getLocalStorageProjectSelection(resp);
+        }
       } else {
         this.logService.snackBarError(resp, 5000);
       }
