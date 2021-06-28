@@ -40,6 +40,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   public authorFilterControl = new FormControl();
   public titleFilterControl = new FormControl();
+  private currentProject: Project;
 
   constructor(
     private projectStore: ProjectStore,
@@ -105,6 +106,11 @@ export class ProjectComponent implements OnInit, OnDestroy {
         this.currentUser = user;
       }
     });
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(proj => {
+      if (proj) {
+        this.currentProject = proj;
+      }
+    })
   }
 
   ngOnDestroy(): void {
@@ -159,6 +165,10 @@ export class ProjectComponent implements OnInit, OnDestroy {
           if (resp instanceof HttpErrorResponse) {
             this.logService.snackBarError(resp, 4000);
           } else {
+            // deleted our currently active project
+            if (project.id === this.currentProject?.id) {
+              this.projectStore.setCurrentProject(null);
+            }
             this.projectStore.refreshProjects(); // we also need to keep the navbar project select in sync not just table
             this.logService.snackBarMessage(`Deleted project ${project.title}`, 3000);
           }

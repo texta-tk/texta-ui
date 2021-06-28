@@ -59,7 +59,7 @@ export class CreateIndexSplitterDialogComponent implements OnInit, OnDestroy {
   fieldsUnique: Field[] = [];
   projectIndices: ProjectIndex[] = [];
   projectFields: ProjectIndex[];
-  projectFacts: ProjectFact[] = [];
+  projectFacts: string[] = [];
   indexSplitterOptions: IndexSplitterOptions;
   isLoadingOptions = false;
   factValOptions: string[] = [];

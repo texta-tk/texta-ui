@@ -73,7 +73,7 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
   fieldsUnique: Field[] = [];
   projectIndices: ProjectIndex[] = [];
   projectFields: ProjectIndex[];
-  projectFacts: ProjectFact[];
+  projectFacts: string[];
   bertModels: string[] = [];
 
   constructor(private dialogRef: MatDialogRef<CreateBertTaggerDialogComponent>,

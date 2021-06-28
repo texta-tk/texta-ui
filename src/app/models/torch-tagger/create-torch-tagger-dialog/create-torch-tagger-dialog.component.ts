@@ -63,7 +63,7 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy, Afte
   torchTaggerOptions: any;
   embeddings: Embedding[] = [];
   projectFields: ProjectIndex[];
-  projectFacts: ProjectFact[];
+  projectFacts: string[];
   destroyed$ = new Subject<boolean>();
   fieldsUnique: Field[] = [];
   currentProject: Project;

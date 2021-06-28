@@ -34,7 +34,7 @@ export class TagClusterDialogComponent implements OnInit, OnDestroy, AfterViewIn
   destroyed$: Subject<boolean> = new Subject<boolean>();
   currentProject: Project;
   indices: Index[] = [];
-  projectFacts: ProjectFact[] = [];
+  projectFacts: string[] = [];
 
   constructor(private clusterService: ClusterService, private logService: LogService,
               private dialogRef: MatDialogRef<TagClusterDialogComponent>,
@@ -58,7 +58,6 @@ export class TagClusterDialogComponent implements OnInit, OnDestroy, AfterViewIn
 
     this.projectStore.getCurrentIndicesFacts().pipe(takeUntil(this.destroyed$)).subscribe(projectFacts => {
       if (projectFacts) {
-        console.log(projectFacts);
         this.projectFacts = projectFacts;
       }
     });

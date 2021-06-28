@@ -66,7 +66,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe((indices: ProjectIndex[] | null) => {
       if (indices && indices.filter(x => this.currentProject.indices.find(y => y.name === x.index))) {
         this.projectFieldsControl.setValue(indices);
-      }else{
+      } else {
         this.projectFieldsControl.setValue([]);
       }
     });
@@ -82,10 +82,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
       } else {
         this.projects = [];
       }
+      this.changeDetectorRef.markForCheck();
     });
     this.projectStore.getProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe((x) => {
       if (x) {
         this.projectFields = x;
+      } else {
+        this.projectFields = [];
       }
     });
   }

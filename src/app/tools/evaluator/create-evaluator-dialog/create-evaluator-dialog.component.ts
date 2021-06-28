@@ -55,7 +55,7 @@ export class CreateEvaluatorDialogComponent implements OnInit, OnDestroy {
   destroyed$: Subject<boolean> = new Subject<boolean>();
   projectIndices: ProjectIndex[] = [];
   projectFields: ProjectIndex[];
-  projectFacts: ProjectFact[] = [];
+  projectFacts: string[] = [];
   isLoadingOptions = false;
   trueFactValueOptions: string[] = [];
   predictedFactValueOptions: string[] = [];
