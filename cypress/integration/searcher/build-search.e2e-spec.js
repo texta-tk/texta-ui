@@ -107,7 +107,7 @@ describe('searching and search related activities should be working correctly', 
     cy.get('[data-cy=appSearcherSideBarBuildSearchConstraintSelect]').click();
     cy.get('mat-option').contains('texta_facts[fact_name]').scrollIntoView().click();
     cy.closeCurrentCdkOverlay();
-
+    cy.wait(1000);
     cy.get('[data-cy=appSearcherSideBarBuildSearchFactNameOperator]').click();
     cy.get('mat-option').contains('not').click();
     cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
