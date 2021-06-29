@@ -21,7 +21,7 @@ import {Index} from '../../../../../shared/types/Index';
   templateUrl: './tag-cluster-dialog.component.html',
   styleUrls: ['./tag-cluster-dialog.component.scss']
 })
-export class TagClusterDialogComponent implements OnInit, OnDestroy, AfterViewInit {
+export class TagClusterDialogComponent implements OnInit, OnDestroy {
   tagForm = new FormGroup({
     nameFormControl: new FormControl('', [Validators.required]),
     strValFormControl: new FormControl({value: '', disabled: true}, [Validators.required]),
@@ -50,15 +50,27 @@ export class TagClusterDialogComponent implements OnInit, OnDestroy, AfterViewIn
     if (this.data.columns) {
       this.docPaths = this.data.columns;
     }
-    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(proj => {
+
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), switchMap(proj => {
       if (proj) {
         this.currentProject = proj;
+        return this.clusterService.getCluster(this.currentProject.id, (+this.data.clusteringId) || 0);
+      } else {
+        return of(null);
       }
-    });
-
-    this.projectStore.getCurrentIndicesFacts().pipe(takeUntil(this.destroyed$)).subscribe(projectFacts => {
-      if (projectFacts) {
-        this.projectFacts = projectFacts;
+    })).pipe(switchMap(cluster => {
+      if (this.currentProject?.id && !(cluster instanceof HttpErrorResponse) && cluster) {
+        this.indices = cluster.indices;
+        this.projectFacts = ['Loading...'];
+        return this.projectService.getProjectFacts(this.currentProject.id, cluster.indices.map(x => [{name: x.name}]).flat());
+      } else {
+        return of(null);
+      }
+    })).subscribe(resp => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.projectFacts = resp;
+      } else if (resp) {
+        this.logService.snackBarError(resp, 4000);
       }
     });
 
@@ -122,16 +134,4 @@ export class TagClusterDialogComponent implements OnInit, OnDestroy, AfterViewIn
     this.destroyed$.complete();
   }
 
-  ngAfterViewInit(): void {
-    const clusteringId = this.route.snapshot.paramMap.get('clusteringId');
-    if (clusteringId) {
-      this.clusterService.getCluster(this.currentProject.id, +clusteringId).subscribe(resp => {
-        if (resp && !(resp instanceof HttpErrorResponse)) {
-          this.indices = resp.indices;
-        } else if (resp) {
-          this.logService.snackBarError(resp);
-        }
-      });
-    }
-  }
 }

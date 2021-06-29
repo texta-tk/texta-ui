@@ -90,13 +90,6 @@ export class CreateIndexSplitterDialogComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(currentProjIndices => {
-      if (currentProjIndices) {
-        const indicesForm = this.indexSplitterForm.get('indicesFormControl');
-        indicesForm?.setValue(currentProjIndices);
-        this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
-      }
-    });
 
     this.projectStore.getProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(projIndices => {
       if (projIndices) {
@@ -104,9 +97,21 @@ export class CreateIndexSplitterDialogComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.projectStore.getCurrentIndicesFacts().pipe(takeUntil(this.destroyed$)).subscribe(projectFacts => {
-      if (projectFacts) {
-        this.projectFacts = projectFacts;
+    this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$), switchMap(currentProjIndices => {
+      if (this.currentProject?.id && currentProjIndices) {
+        this.projectFacts = ['Loading...'];
+        const indicesForm = this.indexSplitterForm.get('indicesFormControl');
+        indicesForm?.setValue(currentProjIndices);
+        this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
+        return this.projectService.getProjectFacts(this.currentProject.id, currentProjIndices.map(x => [{name: x.index}]).flat());
+      } else {
+        return of(null);
+      }
+    })).subscribe(resp => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.projectFacts = resp;
+      } else if (resp) {
+        this.logService.snackBarError(resp, 4000);
       }
     });
 
@@ -171,6 +176,7 @@ export class CreateIndexSplitterDialogComponent implements OnInit, OnDestroy {
   getFactsForIndices(val: ProjectIndex[]): void {
     this.factValOptions = [];
     if (val.length > 0 && this.currentProject.id) {
+      this.projectFacts = ['Loading...'];
       this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat()).subscribe(resp => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
           this.projectFacts = resp;

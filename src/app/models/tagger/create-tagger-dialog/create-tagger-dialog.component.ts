@@ -109,14 +109,6 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initFormControlListeners();
 
-    this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(currentProjIndices => {
-      if (currentProjIndices) {
-        const indicesForm = this.taggerForm.get('indicesFormControl');
-        indicesForm?.setValue(currentProjIndices);
-        this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
-      }
-    });
-
     this.projectStore.getProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(projIndices => {
       if (projIndices) {
         this.projectIndices = projIndices;
@@ -153,11 +145,28 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.projectStore.getCurrentIndicesFacts().pipe(take(1)).subscribe(x => this.projectFacts = x ? x : []);
+    this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$), switchMap(currentProjIndices => {
+      if (this.currentProject?.id && currentProjIndices) {
+        const indicesForm = this.taggerForm.get('indicesFormControl');
+        indicesForm?.setValue(currentProjIndices);
+        this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
+        this.projectFacts = ['Loading...'];
+        return this.projectService.getProjectFacts(this.currentProject.id, currentProjIndices.map(x => [{name: x.index}]).flat());
+      } else {
+        return of(null);
+      }
+    })).subscribe(resp => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.projectFacts = resp;
+      } else if (resp) {
+        this.logService.snackBarError(resp, 4000);
+      }
+    });
   }
 
   getFactsForIndices(val: ProjectIndex[]): void {
     if (val.length > 0) {
+      this.projectFacts = ['Loading...'];
       this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat()).subscribe(resp => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
           this.projectFacts = resp;

@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
 import {forkJoin, merge, of, Subject} from 'rxjs';
 import {ErrorStateMatcher} from '@angular/material/core';
-import {mergeMap, take, takeUntil} from 'rxjs/operators';
+import {mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
@@ -112,14 +112,6 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initFormControlListeners();
 
-    this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(currentProjIndices => {
-      if (currentProjIndices) {
-        const indicesForm = this.bertTaggerForm.get('indicesFormControl');
-        indicesForm?.setValue(currentProjIndices);
-        this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
-      }
-    });
-
     this.projectStore.getProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(projIndices => {
       if (projIndices) {
         this.projectIndices = projIndices;
@@ -148,7 +140,23 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.projectStore.getCurrentIndicesFacts().pipe(take(1)).subscribe(x => this.projectFacts = x ? x : []);
+    this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$), switchMap(currentProjIndices => {
+      if (this.currentProject?.id && currentProjIndices) {
+        const indicesForm = this.bertTaggerForm.get('indicesFormControl');
+        indicesForm?.setValue(currentProjIndices);
+        this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
+        this.projectFacts = ['Loading...'];
+        return this.projectService.getProjectFacts(this.currentProject.id, currentProjIndices.map(x => [{name: x.index}]).flat());
+      } else {
+        return of(null);
+      }
+    })).subscribe(resp => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.projectFacts = resp;
+      } else if (resp) {
+        this.logService.snackBarError(resp, 4000);
+      }
+    });
   }
 
   onQueryChanged(query: string): void {
@@ -198,6 +206,7 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
 
   getFactsForIndices(val: ProjectIndex[]): void {
     if (val.length > 0) {
+      this.projectFacts = ['Loading...'];
       this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat()).subscribe(resp => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
           this.projectFacts = resp;

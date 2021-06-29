@@ -15,6 +15,7 @@ import {TorchTagger} from 'src/app/shared/types/tasks/TorchTagger';
 import {EmbeddingsService} from 'src/app/core/models/embeddings/embeddings.service';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 import {MatSelect} from '@angular/material/select';
+import {LogService} from "../../../core/util/log.service";
 
 interface OnSubmitParams {
   formData: {
@@ -38,7 +39,7 @@ interface OnSubmitParams {
   templateUrl: './create-torch-tagger-dialog.component.html',
   styleUrls: ['./create-torch-tagger-dialog.component.scss']
 })
-export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy, AfterViewInit {
+export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
   readonly defaultQuery = '{"query": {"match_all": {}}}';
   query = this.defaultQuery;
 
@@ -73,6 +74,7 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy, Afte
   constructor(private dialogRef: MatDialogRef<CreateTorchTaggerDialogComponent>,
               private torchTaggerService: TorchTaggerService,
               private projectService: ProjectService,
+              private logService: LogService,
               private embeddingService: EmbeddingsService,
               private projectStore: ProjectStore) {
   }
@@ -134,40 +136,50 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy, Afte
       }
     });
 
-    this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(x => {
-      if (x) {
+    this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$), switchMap(currentProjIndices => {
+      if (this.currentProject?.id && currentProjIndices) {
         const indicesForm = this.torchTaggerForm.get('indicesFormControl');
-        indicesForm?.setValue(x);
-        this.projectFields = ProjectIndex.cleanProjectIndicesFields(x, ['text'], []);
+        indicesForm?.setValue(currentProjIndices);
+        this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
+        this.projectFacts = ['Loading...'];
+        return this.projectService.getProjectFacts(this.currentProject.id, currentProjIndices.map(x => [{name: x.index}]).flat());
+      } else {
+        return of(null);
       }
-    });
-
-    this.projectStore.getCurrentIndicesFacts().pipe(take(1)).subscribe(x => this.projectFacts = x ? x : []);
-  }
-
-  ngAfterViewInit(): void {
-    this.indicesSelect.openedChange.pipe(takeUntil(this.destroyed$), switchMap(opened => {
-      if (!opened && this.indicesSelect.value) {
-        return this.projectService.getProjectFacts(this.currentProject.id,
-          this.indicesSelect.value.map((x: ProjectIndex) => [{name: x.index}]).flat());
-      }
-      return of(null);
     })).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.projectFacts = resp;
+      } else if (resp) {
+        this.logService.snackBarError(resp, 4000);
       }
     });
+
   }
 
   onQueryChanged(query: string): void {
     this.query = query ? query : this.defaultQuery;
   }
 
+  getFactsForIndices(val: ProjectIndex[]): void {
+    if (val.length > 0 && this.currentProject.id) {
+      this.projectFacts = ['Loading...'];
+      this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat()).subscribe(resp => {
+        if (resp && !(resp instanceof HttpErrorResponse)) {
+          this.projectFacts = resp;
+        } else {
+          this.logService.snackBarError(resp);
+        }
+      });
+    } else {
+      this.projectFacts = [];
+    }
+  }
 
   public indicesOpenedChange(opened: unknown): void {
     const indicesForm = this.torchTaggerForm.get('indicesFormControl');
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && indicesForm?.value && !UtilityFunctions.arrayValuesEqual(indicesForm?.value, this.projectFields, (x => x.index))) {
+      this.getFactsForIndices(indicesForm?.value);
       this.projectFields = ProjectIndex.cleanProjectIndicesFields(indicesForm.value, ['text'], []);
     }
   }

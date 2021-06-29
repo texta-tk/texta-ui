@@ -70,18 +70,7 @@ export class CreateEvaluatorDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(currentProjIndices => {
-      if (currentProjIndices) {
-        const indicesForm = this.evaluatorForm.get('indicesFormControl');
-        indicesForm?.setValue(currentProjIndices);
-        this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
-      }
-    });
-    this.projectStore.getCurrentIndicesFacts().pipe(takeUntil(this.destroyed$)).subscribe(projectFacts => {
-      if (projectFacts) {
-        this.projectFacts = projectFacts;
-      }
-    });
+
     this.projectStore.getProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(projIndices => {
       if (projIndices) {
         this.projectIndices = projIndices;
@@ -101,6 +90,24 @@ export class CreateEvaluatorDialogComponent implements OnInit, OnDestroy {
         this.logService.snackBarError(resp);
       }
     });
+    this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$), switchMap(currentProjIndices => {
+      if (this.currentProject?.id && currentProjIndices) {
+        const indicesForm = this.evaluatorForm.get('indicesFormControl');
+        indicesForm?.setValue(currentProjIndices);
+        this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
+        this.projectFacts = ['Loading...'];
+        return this.projectService.getProjectFacts(this.currentProject.id, currentProjIndices.map(x => [{name: x.index}]).flat());
+      } else {
+        return of(null);
+      }
+    })).subscribe(resp => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.projectFacts = resp;
+      } else if (resp) {
+        this.logService.snackBarError(resp, 4000);
+      }
+    });
+
     this.evaluatorForm.get('trueFactValueFormControl')?.valueChanges.pipe(
       takeUntil(this.destroyed$),
       debounceTime(100),
@@ -173,6 +180,7 @@ export class CreateEvaluatorDialogComponent implements OnInit, OnDestroy {
     this.trueFactValueOptions = [];
     this.predictedFactValueOptions = [];
     if (val.length > 0) {
+      this.projectFacts = ['Loading...'];
       this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat()).subscribe(resp => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
           this.projectFacts = resp;

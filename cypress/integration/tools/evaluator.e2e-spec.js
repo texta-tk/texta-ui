@@ -36,7 +36,7 @@ describe('Evaluator should work', function () {
       cy.closeCurrentCdkOverlay();
       cy.matFormFieldShouldHaveError(fields, 'required');
       cy.wrap(fields).click();
-      cy.get('.mat-option-text:first()').should('be.visible').click();
+      cy.get('.mat-option-text').contains('TEEMA').should('be.visible').click();
       cy.closeCurrentCdkOverlay();
       cy.wrap(fields).find('mat-error').should('have.length', 0)
     }));
@@ -46,7 +46,7 @@ describe('Evaluator should work', function () {
       cy.closeCurrentCdkOverlay();
       cy.matFormFieldShouldHaveError(fields, 'required');
       cy.wrap(fields).click();
-      cy.get('.mat-option-text:first()').should('be.visible').click();
+      cy.get('.mat-option-text').contains('TEEMA').should('be.visible').click();
       cy.closeCurrentCdkOverlay();
       cy.wrap(fields).find('mat-error').should('have.length', 0)
     }));

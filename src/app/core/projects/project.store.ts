@@ -20,11 +20,9 @@ export class ProjectStore {
   private selectedProject$: BehaviorSubject<Project | null> = new BehaviorSubject<Project | null>(null);
   private projectIndices$: BehaviorSubject<ProjectIndex[] | null> = new BehaviorSubject<ProjectIndex[] | null>(null);
   private selectedProjectIndices$: BehaviorSubject<ProjectIndex[] | null> = new BehaviorSubject<ProjectIndex[] | null>(null);
-  private currentIndicesFacts$: BehaviorSubject<string[] | null> = new BehaviorSubject<string[] | null>(null);
   private selectedProjectResourceCounts$: BehaviorSubject<ProjectResourceCounts> = new BehaviorSubject(new ProjectResourceCounts());
   // tslint:disable-next-line:variable-name
   private _selectedProject: Project | null;
-  private currentIndicesFactsQueue$: Subject<boolean> = new Subject();
 
   constructor(private projectService: ProjectService,
               private logService: LogService,
@@ -41,21 +39,6 @@ export class ProjectStore {
         this.getLocalStorageProjectSelection(resp);
       } else if (resp) {
         this.logService.snackBarError(resp, 5000);
-      }
-    });
-
-    this.currentIndicesFactsQueue$.pipe(switchMap(resp => {
-      const projectIndices = this.projectIndices$.value;
-      if (this._selectedProject && projectIndices) {
-        return this.projectService.getProjectFacts(this._selectedProject.id, projectIndices.map(x => [{name: x.index}]).flat());
-      } else {
-        return of(null);
-      }
-    })).subscribe(resp => {
-      if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.currentIndicesFacts$.next(resp);
-      } else if (resp) {
-        this.logService.snackBarError(resp);
       }
     });
 
@@ -106,16 +89,9 @@ export class ProjectStore {
   }
 
   setSelectedProjectIndices(projectIndices: ProjectIndex[]): void {
-    this.currentIndicesFacts$.next(null);
     this.selectedProjectIndices$.next(projectIndices);
   }
 
-  getCurrentIndicesFacts(): Observable<string[] | null> {
-    if (this.currentIndicesFacts$.value === null) {
-      this.currentIndicesFactsQueue$.next(true);
-    }
-    return this.currentIndicesFacts$.asObservable();
-  }
 
   getCurrentProject(): Observable<Project | null> {
     return this.selectedProject$.asObservable();
@@ -162,7 +138,6 @@ export class ProjectStore {
     this.getCurrentProject().pipe(skip(1), switchMap(project => {
       this._selectedProject = project;
       this.localStorageService.setCurrentlySelectedProject(project);
-      this.currentIndicesFacts$.next(null);
       this.projectIndices$.next(null); // null old project properties until we get new ones
       this.selectedProjectIndices$.next(null);
       this.refreshSelectedProjectResourceCounts();
