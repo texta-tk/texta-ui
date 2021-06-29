@@ -305,6 +305,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
         data: {taggerId: tagger.id, currentProjectId: this.currentProject.id},
         maxHeight: '665px',
         width: '700px',
+        autoFocus: false
       });
     }
   }

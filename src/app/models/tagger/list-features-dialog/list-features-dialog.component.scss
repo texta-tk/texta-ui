@@ -1,3 +1,8 @@
 .results-wrapper {
-    height: 500px;
+  height: 500px;
+  padding-right: 0px;
+}
+
+:host ::ng-deep .mat-list-item-content {
+  padding-left: 0 !important;
 }

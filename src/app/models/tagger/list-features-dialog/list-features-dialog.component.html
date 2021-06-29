@@ -1,6 +1,11 @@
 <ng-container>
   <div fxLayout="row" style="align-items: baseline">
     <h1 fxFlex mat-dialog-title>Showing {{size}} features out of {{result ? result.total_features : '...' }}</h1>
+    <button [disabled]="!selectedOptions || selectedOptions.length === 0 || isLoading" color="primary" mat-raised-button
+            matTooltip="Add selected list items as stopwords"
+            (click)="addStopWords(this.selectedOptions)"
+            style="margin-right: 2em">Add to stopwords
+    </button>
     <mat-form-field fxFlex="10">
       <input [(ngModel)]="size" matInput placeholder="size" type="number">
     </mat-form-field>
@@ -14,13 +19,11 @@
     <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
   </div>
   <mat-dialog-content *ngIf="result" class="results-wrapper">
-    <div *ngFor="let feature of result.features" class="m-top-10">
-      <span class="mat-body-strong">Feature:</span> {{feature.feature}}
-      <br>
-      <span class="mat-body-strong">Coefficient: </span>{{feature.coefficient}}
-      <br>
-      <br>
-      <mat-divider></mat-divider>
-    </div>
+    <mat-selection-list [(ngModel)]="selectedOptions">
+      <mat-list-option *ngFor="let  feature of result.features" [value]="feature.feature">
+        <div matLine><span class="mat-body-strong">Feature: </span>{{feature.feature}}</div>
+        <div matLine><span class="mat-body-strong">Coefficient: </span>{{feature.coefficient}}</div>
+      </mat-list-option>
+    </mat-selection-list>
   </mat-dialog-content>
 </ng-container>
