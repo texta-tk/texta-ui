@@ -57,7 +57,7 @@ describe('Evaluator should work', function () {
     });
 
     cy.get('.mat-header-row > .cdk-column-description').should('be.visible').then(bb => {
-      cy.wrap([0, 0, 0, 0, 0, 0, 0, 0]).each(y => { // hack to wait for task to complete
+      cy.wrap([0, 0, 0, 0]).each(y => { // hack to wait for task to complete
         cy.wrap(bb).click();
         return cy.wait('@getEvaluators').then((x) => {
           if (x?.response?.body?.results[0]?.task?.status === 'completed') {
@@ -68,6 +68,7 @@ describe('Evaluator should work', function () {
         });
       })
     });
+    cy.wait(2000);
     //FilteredAverage
     cy.get('.cdk-column-Modify:nth(1)').click();
     cy.get('[data-cy=appEvaluatorMenuFilteredAverage]').click();
