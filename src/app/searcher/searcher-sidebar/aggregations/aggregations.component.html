@@ -1,6 +1,6 @@
 <div class="wrapper" fxFlex fxLayout="column">
 
-  <div class="aggregation-form" fxFlex fxLayout="column" *ngFor="let aggregation of aggregationList; let i = index;">
+  <div class="aggregation-form flex-col"  *ngFor="let aggregation of aggregationList; let i = index;">
 
     <div fxFlex fxLayoutAlign="end" *ngIf="i !== 0">
       <button mat-icon-button aria-label="Close" (click)="removeAggregation(i)" class="mat-icon-button close-button">
