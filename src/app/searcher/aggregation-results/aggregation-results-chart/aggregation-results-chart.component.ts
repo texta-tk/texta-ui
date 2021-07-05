@@ -13,8 +13,6 @@ import {Platform} from '@angular/cdk/platform';
 import {SearcherComponentService} from '../../services/searcher-component.service';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
-import {Plotly} from 'angular-plotly.js/lib/plotly.interface';
-import Layout = Plotly.Layout;
 import {PlotlyComponent} from 'angular-plotly.js';
 import {Component, Injector, Input, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 
@@ -24,7 +22,8 @@ import {Component, Injector, Input, NgZone, OnDestroy, OnInit, ViewChild} from '
   styleUrls: ['./aggregation-results-chart.component.scss']
 })
 export class AggregationResultsChartComponent implements OnInit, OnDestroy {
-  public graph: { data: unknown[], layout: Layout };
+  // tslint:disable-next-line:no-any
+  public graph: { data: unknown[], layout: any };
   revision = 0;
   @ViewChild(PlotlyComponent) plotly: PlotlyComponent;
   overlayRef: OverlayRef;

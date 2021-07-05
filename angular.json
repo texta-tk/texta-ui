@@ -42,7 +42,7 @@
               "src/styles.scss"
             ],
             "scripts": [
-              "node_modules/plotly.js-dist/plotly.js"
+              "node_modules/plotly.js/dist/plotly-gl2d.min.js"
             ],
             "webWorkerTsConfig": "tsconfig.worker.json",
             "vendorChunk": true,
@@ -71,7 +71,7 @@
               ],
               "optimization": true,
               "outputHashing": "all",
-              "sourceMap": false,
+              "sourceMap": true,
               "namedChunks": false,
               "extractLicenses": true,
               "vendorChunk": false,
