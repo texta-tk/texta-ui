@@ -85,7 +85,7 @@ Cypress:
     expire_in: 1 day
 
 build:
-  image: node:latest
+  image: node:14.15-stretch
   stage: build
   only:
   - master
