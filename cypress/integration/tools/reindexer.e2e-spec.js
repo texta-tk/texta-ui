@@ -16,9 +16,6 @@ describe('reindexer should work', function () {
     cy.intercept('GET', '**/reindexer/**').as('getIndices');
     cy.visit('/reindexer');
     cy.wait('@getIndices');
-    cy.get('[data-cy=appNavbarProjectSelect]').click();
-    cy.get('mat-option').contains('integration_test_project').click();
-    cy.wait('@getIndices');
   }
 
   it('should be able to create a new reindexer task', function () {
