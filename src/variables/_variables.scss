@@ -1,20 +1,20 @@
+@use '~@angular/material' as mat;
 @use "sass:map";
-@use '~@angular/material/theming';
 
 // Define the default theme (same as the example above).
-$texta-primary: theming.mat-palette(theming.$mat-indigo);
-$texta-accent:  theming.mat-palette(theming.$mat-pink, A200, A100, A400);
-$texta-warn:    theming.mat-palette(theming.$mat-red);
+$texta-primary: mat.define-palette(mat.$indigo-palette);
+$texta-accent:  mat.define-palette(mat.$pink-palette, A200, A100, A400);
+$texta-warn:    mat.define-palette(mat.$red-palette);
 
-$texta-theme:   theming.mat-light-theme($texta-primary, $texta-accent);
+$texta-theme:   mat.define-light-theme($texta-primary, $texta-accent);
 
 
 
 $navbar-height: 56px;
 
-$primary: theming.mat-color($texta-primary);
-$accent: theming.mat-color($texta-accent);
-$warn: theming.mat-color($texta-warn);
+$primary: mat.get-color-from-palette($texta-primary);
+$accent: mat.get-color-from-palette($texta-accent);
+$warn: mat.get-color-from-palette($texta-warn);
 
 $foreground: map.get($texta-theme, foreground);
 $background: map.get($texta-theme, background);

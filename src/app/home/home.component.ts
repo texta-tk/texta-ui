@@ -4,7 +4,7 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {UserStore} from '../core/users/user.store';
 import {UserProfile} from '../shared/types/UserProfile';
 import {of, Subject, Subscription} from 'rxjs';
-import * as projectPackage from '../../../package.json';
+import projectPackage from '../../../package.json';
 import {CoreService} from '../core/core.service';
 import {switchMap, takeUntil} from 'rxjs/operators';
 

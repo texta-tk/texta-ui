@@ -17,8 +17,6 @@ describe('taggers should work', function () {
     cy.wait('@getUser');
     cy.wait('@getProjectIndices');
     cy.wait('@getTaggers');
-    cy.get('[data-cy=appNavbarProjectSelect]').click();
-    cy.get('mat-option').contains('integration_test_project').click();
   }
 
   it('extra_actions should work', function () {
@@ -26,7 +24,6 @@ describe('taggers should work', function () {
     cy.importTestTagger(this.projectId).then(x => {
       cy.intercept('GET', '**/taggers/**').as('getTaggers');
       initTaggersPage();
-      cy.wait('@getTaggers');
       cy.wait(100);
 
       cy.intercept('POST', '**/taggers/**').as('postTagger');

@@ -20,8 +20,6 @@ describe('Topic Analyzer should work', function () {
     cy.visit('/topic-analyzer');
     cy.wait('@getClustering');
     cy.wait('@getProjectIndices');
-    cy.get('[data-cy=appNavbarProjectSelect]').click();
-    cy.get('mat-option').contains('integration_test_project').click();
   }
 
   it('Topic Analyzer should work', function () {

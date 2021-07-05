@@ -1,4 +1,13 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  Output,
+  TrackByFunction,
+  ViewChild
+} from '@angular/core';
 import {SearcherComponentService} from '../services/searcher-component.service';
 import {Search, SearchOptions} from '../../shared/types/Search';
 import {MatPaginator, MatPaginatorIntl, PageEvent} from '@angular/material/paginator';
@@ -235,9 +244,8 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     }
   }
 
-  trackByTableData(index: number, val: { doc: unknown; }): unknown {
-    return val.doc;
-  }
+  // tslint:disable-next-line:no-any
+  trackByTableData: TrackByFunction<any> = (index: number, item: any) => item.doc;
 
   buildFactNameSearch(fact: string): void {
     this.searchService.buildFactNameSearch(fact);

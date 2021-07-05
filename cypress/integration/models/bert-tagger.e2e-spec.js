@@ -16,10 +16,8 @@ describe('bert-taggers should work', function () {
 
   function initPage() {
     cy.visit('/bert-taggers');
-    cy.wait('@getbertTaggers');
     cy.wait('@getProjectIndices');
-    cy.get('[data-cy=appNavbarProjectSelect]').click();
-    cy.get('mat-option').contains('integration_test_project').click();
+    cy.wait('@getbertTaggers');
   }
 
   function tagRandomDoc() {
@@ -55,7 +53,6 @@ describe('bert-taggers should work', function () {
   it('should be able to create a new bert-tagger', function () {
     // create clustering
     initPage();
-    cy.wait('@getbertTaggers');
     cy.get('[data-cy=appBertTaggerCreateBtn]').click();
     cy.wait('@getbertTaggers');
     cy.get('[data-cy=appBertTaggerCreateDialogDesc]').then((desc => {

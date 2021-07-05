@@ -18,9 +18,6 @@ describe('regex-tagger-group should work', function () {
     cy.visit('/regex-tagger-groups');
     cy.wait('@getRegexTaggers');
     cy.wait('@getProjectIndices');
-    cy.get('[data-cy=appNavbarProjectSelect]').click();
-    cy.get('mat-option').contains('integration_test_project').click();
-    cy.wait('@getRegexTaggers');
   }
 
   function multiTagTest() {
