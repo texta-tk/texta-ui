@@ -1,13 +1,8 @@
 @import "../../../variables/variables";
 
-.container {
-  height: calc(100vh - #{$navbar-height} - 69px);
-  margin-top: 20px;
-
-  mat-card {
-    margin: auto auto;
-    max-width: 550px;
-    max-height: 550px;
-    padding: 20px;
-  }
+mat-card {
+  width: 550px;
+  height: 500px;
+  padding: 20px;
+  margin: 20px auto;
 }

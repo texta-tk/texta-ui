@@ -15,7 +15,8 @@
           <mat-chip color="primary" selected> API {{health.toolkit.version}}  </mat-chip>
           <mat-chip color="primary" selected> GUI {{frontVersion}}  </mat-chip>
           <mat-chip color="primary" selected
-                    title="Available languages: {{'\n'+health.toolkit.available_langs.join('\n')}}"> Languages: {{health.toolkit.available_langs.length}}
+                    title="Available languages: {{'\n'+health.toolkit.available_langs.join('\n')}}">
+            Languages: {{health.toolkit.available_langs.length}}
           </mat-chip>
         </mat-chip-list>
       </mat-card>
@@ -83,20 +84,47 @@
                 class="count-text center-text block">  {{health.host.cpu.count}} </span>
           <span class="mat-hint center-text block">CPUs</span>
         </div>
-
-        <div fxFlex>
-          <span [ngClass]="health.toolkit.active_tasks > 0 ? 'accent-text' : 'primary-text'"
-                class="count-text center-text block">  {{health.toolkit.active_tasks}} </span>
-          <span class="mat-hint center-text block">Active Tasks</span>
-        </div>
       </mat-card>
+
+
+      <mat-card class="usage-card center-margin" fxLayout="row wrap"
+                style="max-height: 350px; overflow: auto;">
+        <table class="simple-table">
+          <tr>
+            <th>Celery Task Type</th>
+            <th>Active</th>
+            <th>Scheduled</th>
+            <th>Reserved</th>
+          </tr>
+
+          <tr>
+            <td>MLP Queue</td>
+            <td>{{celeryInfo?.mlp_queue?.active || celeryInfo ? 0 : 'Loading...'}}</td>
+            <td>{{celeryInfo?.mlp_queue?.scheduled || celeryInfo ? 0 : 'Loading...' }}</td>
+            <td>{{celeryInfo?.mlp_queue?.reserved || celeryInfo ? 0 : 'Loading...'}}</td>
+          </tr>
+          <tr>
+            <td>Short Term</td>
+            <td>{{celeryInfo?.short_term_tasks?.active || celeryInfo ? 0 : 'Loading...'}}</td>
+            <td>{{celeryInfo?.short_term_tasks?.scheduled || celeryInfo ? 0 : 'Loading...' }}</td>
+            <td>{{celeryInfo?.short_term_tasks?.reserved || celeryInfo ? 0 : 'Loading...'}}</td>
+          </tr>
+          <tr>
+            <td>Long Term</td>
+            <td>{{celeryInfo?.long_term_tasks?.active || celeryInfo ? 0 : 'Loading...' }}</td>
+            <td>{{celeryInfo?.long_term_tasks?.scheduled || celeryInfo ? 0 : 'Loading...' }}</td>
+            <td>{{celeryInfo?.long_term_tasks?.reserved || celeryInfo ? 0 : 'Loading...'}}</td>
+          </tr>
+        </table>
+      </mat-card>
+
 
       <mat-card *ngIf="health.host.gpu.devices.length > 0" class="usage-card center-margin" fxLayout="row wrap"
                 style="max-height: 350px; overflow: auto;">
         <table class="simple-table">
           <tr>
-            <th>Graphics card</th>
-            <th>Memory usage</th>
+            <th>Graphics Card</th>
+            <th>Memory Usage</th>
             <th>Total Memory</th>
           </tr>
 
@@ -114,9 +142,9 @@
       <mat-card class="usage-card center-margin" fxLayout="row wrap" style="max-height: 350px; overflow: auto;">
         <table class="simple-table">
           <tr>
-            <th>Elasticsearch node</th>
-            <th>Disk usage</th>
-            <th>Disk size</th>
+            <th>Elasticsearch Node</th>
+            <th>Disk Usage</th>
+            <th>Disk Size</th>
           </tr>
 
           <tr *ngFor="let item of health.services.elastic.disk; let i =index">

@@ -60,7 +60,7 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
-    this.coreService.getElasticIndices().subscribe(resp => {
+    this.coreService.getElasticIndices().pipe(takeUntil(this.destroyed$)).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.resultsLength = resp.length;
         this.tableData.data = resp;

@@ -9,6 +9,7 @@ import {Index} from '../shared/types/Index';
 import {ResultsWrapper} from '../shared/types/Generic';
 import {CoreVariables} from '../shared/types/CoreVariables';
 import {AppConfigService} from './util/app-config.service';
+import {CeleryCountTasks, CeleryStatus} from "../shared/types/Celery";
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,7 @@ import {AppConfigService} from './util/app-config.service';
 export class CoreService {
 
   apiUrl = AppConfigService.settings.apiHost + AppConfigService.settings.apiBasePath;
+  apiUrl2 = AppConfigService.settings.apiHost + AppConfigService.settings.apiBasePath2;
 
   constructor(private http: HttpClient,
               private logService: LogService) {
@@ -27,10 +29,10 @@ export class CoreService {
       catchError(this.logService.handleError<Health>('getHealth')));
   }
 
-  getIndices(): Observable<{id: number, name: string}[] | HttpErrorResponse> {
-    return this.http.get<{id: number, name: string}[]>(`${this.apiUrl}/get_indices/`).pipe(
+  getIndices(): Observable<{ id: number, name: string }[] | HttpErrorResponse> {
+    return this.http.get<{ id: number, name: string }[]>(`${this.apiUrl}/get_indices/`).pipe(
       tap(e => this.logService.logStatus(e, 'get Indices')),
-      catchError(this.logService.handleError<{id: number, name: string}[]>('getIndices')));
+      catchError(this.logService.handleError<{ id: number, name: string }[]>('getIndices')));
   }
 
   getSnowballLanguages(): Observable<string[] | HttpErrorResponse> {
@@ -50,11 +52,13 @@ export class CoreService {
       tap(e => this.logService.logStatus(e, 'getElasticIndices')),
       catchError(this.logService.handleError<Index[]>('getElasticIndices')));
   }
+
   getElasticIndicesOptions(): Observable<unknown | HttpErrorResponse> {
     return this.http.options<Index[]>(`${this.apiUrl}/index/`).pipe(
       tap(e => this.logService.logStatus(e, 'getElasticIndicesOptions')),
       catchError(this.logService.handleError<Index[]>('getElasticIndicesOptions')));
   }
+
   deleteElasticIndex(indexId: number): Observable<ResultsWrapper<Index> | HttpErrorResponse> {
     return this.http.delete<ResultsWrapper<Index>>(`${this.apiUrl}/index/${indexId}/`).pipe(
       tap(e => this.logService.logStatus(e, 'deleteElasticIndex')),
@@ -69,7 +73,7 @@ export class CoreService {
   }
 
   editElasticIndex(index: Partial<Index>): Observable<{ message: string } | HttpErrorResponse> {
-    if(index.domain === ''){
+    if (index.domain === '') {
       delete index.domain;
     }
     return this.http.patch<{ message: string }>(`${this.apiUrl}/index/${index.id}/`, index).pipe(
@@ -94,4 +98,24 @@ export class CoreService {
       tap(e => this.logService.logStatus(e, 'patchCoreVariables')),
       catchError(this.logService.handleError<{ message: string }>('patchCoreVariables')));
   }
+
+  purgeCeleryTasks(): Observable<{ detail: string } | HttpErrorResponse> {
+    return this.http.post<{ detail: string }>(`${this.apiUrl2}/celery/queue/purge_tasks/`, {}).pipe(
+      tap(e => this.logService.logStatus(e, 'purgeCeleryTasks')),
+      catchError(this.logService.handleError<{ detail: string }>('purgeCeleryTasks')));
+  }
+
+  // tslint:disable-next-line:no-any
+  getCeleryQueueStats(): Observable<CeleryStatus | HttpErrorResponse> {
+    return this.http.post<CeleryStatus>(`${this.apiUrl2}/celery/queue/stats/`, {}).pipe(
+      tap(e => this.logService.logStatus(e, 'getCeleryQueueStats')),
+      catchError(this.logService.handleError<CeleryStatus>('getCeleryQueueStats')));
+  }
+
+  getCeleryTaskInfo(): Observable<CeleryCountTasks | HttpErrorResponse> {
+    return this.http.post<CeleryCountTasks>(`${this.apiUrl2}/celery/queue/count_tasks/`, {}).pipe(
+      tap(e => this.logService.logStatus(e, 'getCeleryTaskInfo')),
+      catchError(this.logService.handleError<CeleryCountTasks>('getCeleryTaskInfo')));
+  }
+
 }
