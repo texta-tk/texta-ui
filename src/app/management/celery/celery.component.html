@@ -1,0 +1,46 @@
+<mat-progress-bar *ngIf="!celeryStatus" mode="indeterminate"></mat-progress-bar>
+<button (click)="purgeTasks(); purgeLoading = true" [disabled]="purgeLoading" color="warn" mat-raised-button
+        style="margin: 10px">Purge Tasks
+</button>
+<div class="wrapper max-height" fxLayout="column">
+  <div *ngIf="celeryStatus" fxLayout="column" style="padding: 10px">
+    <h3>Active</h3>
+    <ng-container *ngFor="let item of celeryStatus.active | keyvalue">
+      <h4 *ngIf="celeryStatus.active[item.key][0]" style="margin: 0;">{{item.key}}</h4>
+      <table class="simple-table" style="margin-bottom: 20px">
+        <tr>
+          <th *ngFor="let cols of celeryStatus.active[item.key][0] | keyvalue">{{cols.key}}</th>
+        </tr>
+        <tr *ngFor="let iterable of celeryStatus.active[item.key]">
+          <td *ngFor="let rows of iterable | keyvalue">
+            <ng-container *ngIf="(rows.value | isObject)"><!--pure pipe does memoization for us-->
+              <pre style="white-space: pre">{{rows.value  | json}}</pre>
+            </ng-container>
+            <ng-container *ngIf="!(rows.value | isObject)">
+              {{rows.value}}
+            </ng-container>
+          </td>
+        </tr>
+      </table>
+    </ng-container>
+    <h3>Reserved</h3>
+    <ng-container *ngFor="let item of celeryStatus.reserved | keyvalue">
+      <h4 *ngIf="celeryStatus.reserved[item.key][0]" style="margin: 0;">{{item.key}}</h4>
+      <table class="simple-table" style="margin-bottom: 20px">
+        <tr>
+          <th *ngFor="let cols of celeryStatus.reserved[item.key][0] | keyvalue">{{cols.key}}</th>
+        </tr>
+        <tr *ngFor="let iterable of celeryStatus.reserved[item.key]">
+          <td *ngFor="let rows of iterable | keyvalue">
+            <ng-container *ngIf="(rows.value | isObject)"><!--pure pipe does memoization for us-->
+              <pre style="white-space: pre">{{rows.value  | json}}</pre>
+            </ng-container>
+            <ng-container *ngIf="!(rows.value | isObject)">
+              {{rows.value}}
+            </ng-container>
+          </td>
+        </tr>
+      </table>
+    </ng-container>
+  </div>
+</div>
