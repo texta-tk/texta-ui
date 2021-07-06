@@ -98,6 +98,7 @@ build:
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
     - npm install -g @angular/cli
     - npm ci
+    - apt-get install jq -y
   script:
     - ng build --prod
     - mkdir release
