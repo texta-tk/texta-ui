@@ -12,6 +12,7 @@ import {BertTaggerService} from '../../../core/models/taggers/bert-tagger/bert-t
 import {LogService} from '../../../core/util/log.service';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
+import {BertTagger} from '../../../shared/types/tasks/BertTagger';
 
 interface OnSubmitParams {
   descriptionFormControl: string;
@@ -32,6 +33,7 @@ interface OnSubmitParams {
   sentenceShuffleFormControl: boolean;
   maxBalanceFormControl: boolean;
   posLabelFormControl: string;
+  checkPointModelFormControl: number;
 }
 
 @Component({
@@ -67,6 +69,7 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
     batchSizeFormControl: new FormControl(32, [Validators.required]),
     splitRatioFormControl: new FormControl(0.8, [Validators.required]),
     posLabelFormControl: new FormControl(''),
+    checkPointModelFormControl: new FormControl(),
 
   });
 
@@ -78,6 +81,7 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
   projectFields: ProjectIndex[];
   projectFacts: { name: string, values: string[] }[];
   bertModels: string[] = [];
+  trainedModels: BertTagger[] = [];
 
   constructor(private dialogRef: MatDialogRef<CreateBertTaggerDialogComponent>,
               private projectService: ProjectService,
@@ -126,7 +130,8 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
         this.currentProject = currentProject;
         return forkJoin({
           options: this.bertTaggerService.getBertTaggerOptions(currentProject.id),
-          models: this.bertTaggerService.getAvailableBertModels(currentProject.id)
+          models: this.bertTaggerService.getAvailableBertModels(currentProject.id),
+          trainedModels: this.bertTaggerService.getBertTaggerTasks(currentProject.id)
         });
       } else {
         return of(null);
@@ -140,6 +145,9 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
         if (this.bertModels.includes('bert-base-multilingual-cased')) {
           this.bertTaggerForm.get('bertModelFormControl')?.setValue('bert-base-multilingual-cased');
         }
+      }
+      if (resp?.trainedModels && !(resp.trainedModels instanceof HttpErrorResponse)) {
+        this.trainedModels = resp.trainedModels.results;
       }
     });
 
@@ -175,7 +183,7 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
       num_epochs: formData.numEpochsFormControl,
       ...formData.factNameFormControl ? {fact_name: formData.factNameFormControl.name} : {},
       indices: formData.indicesFormControl.map((x: ProjectIndex) => [{name: x.index}]).flat(),
-      bert_model: formData.bertModelFormControl,
+      ...(formData.bertModelFormControl && !formData.checkPointModelFormControl) ? {bert_model: formData.bertModelFormControl} : {},
       learning_rate: formData.learningRateFormControl,
       eps: formData.epsFormControl,
       max_length: formData.maxLengthFormControl,
@@ -187,6 +195,7 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
       ...formData.maxBalanceFormControl ? {balance_to_max_limit: formData.maxBalanceFormControl} : {},
       ...(formData.posLabelFormControl && formData.factNameFormControl.values.length === 2) ?
         {pos_label: formData.posLabelFormControl} : {},
+      ...formData.checkPointModelFormControl ? {checkpoint_model: formData.checkPointModelFormControl} : {},
       ...this.query ? {query: this.query} : {},
     };
     this.bertTaggerService.createBertTaggerTask(this.currentProject.id, body).subscribe(resp => {

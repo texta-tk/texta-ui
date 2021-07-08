@@ -26,7 +26,8 @@
 
     <mat-form-field data-cy="appBertTaggerCreateDialogFields">
       <mat-label>Select Fields</mat-label>
-      <app-project-field-select formControlName="fieldsFormControl" [required]="true" [projectFields]="projectFields" ></app-project-field-select>
+      <app-project-field-select [projectFields]="projectFields" [required]="true"
+                                formControlName="fieldsFormControl"></app-project-field-select>
 
       <mat-error *ngIf="bertTaggerForm.get('fieldsFormControl')?.hasError('required')">
         Field is <strong>required</strong>
@@ -48,7 +49,7 @@
                     matTooltip="Balance sample sizes of different classes. Only applicable for multiclass taggers."
                     matTooltipPosition="left">Balance
       </mat-checkbox>
-      <mat-checkbox formControlName="sentenceShuffleFormControl" class="m-l-15"
+      <mat-checkbox class="m-l-15" formControlName="sentenceShuffleFormControl"
                     matTooltip="Shuffle sentences in added examples. NB! Only applicable for multiclass taggers with balance enabled."
                     matTooltipPosition="left">Use sentence shuffle
       </mat-checkbox>
@@ -58,12 +59,14 @@
       </mat-checkbox>
     </div>
 
-    <mat-form-field style="margin-top: 10px;" *ngIf="this.bertTaggerForm.get('factNameFormControl')?.value?.values.length === 2">
+    <mat-form-field *ngIf="this.bertTaggerForm.get('factNameFormControl')?.value?.values.length === 2"
+                    style="margin-top: 10px;">
       <mat-label>Positive label</mat-label>
       <mat-select [disableOptionCentering]="true"
                   formControlName="posLabelFormControl" panelClass="select-panel-reveal-input">
         <mat-option>None</mat-option>
-        <mat-option *ngFor="let factVal of this.bertTaggerForm.get('factNameFormControl')?.value?.values" [value]="factVal">
+        <mat-option *ngFor="let factVal of this.bertTaggerForm.get('factNameFormControl')?.value?.values"
+                    [value]="factVal">
           {{factVal}}
         </mat-option>
       </mat-select>
@@ -71,10 +74,20 @@
 
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"
                                    data-cy="appBertTaggerCreateDialogQuery"></app-saved-search-autocomplete>
-
+    <mat-form-field>
+      <mat-label>Checkpoint model</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="checkPointModelFormControl"
+                  panelClass="select-panel-reveal-input">
+        <mat-option>None</mat-option>
+        <mat-option *ngFor="let model of trainedModels" [value]="model.id">
+          {{model.id}}: {{model.description}}
+        </mat-option>
+      </mat-select>
+      <mat-hint>Fine-tune previously trained BERT model.</mat-hint>
+    </mat-form-field>
     <mat-form-field>
       <mat-label>Bert model</mat-label>
-      <mat-select [disableOptionCentering]="true" formControlName="bertModelFormControl"
+      <mat-select [disabled]="!!bertTaggerForm.get('checkPointModelFormControl')?.value" [disableOptionCentering]="true" formControlName="bertModelFormControl"
                   panelClass="select-panel-reveal-input">
         <mat-option *ngFor="let model of bertModels" [value]="model">
           {{model}}
@@ -111,35 +124,35 @@
         <h3>Advanced settings</h3>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
-          <mat-form-field class="advanced-setting">
-            <input formControlName="numEpochsFormControl" matInput placeholder="Number of training epochs."
-                   type="number">
-          </mat-form-field>
+        <mat-form-field class="advanced-setting">
+          <input formControlName="numEpochsFormControl" matInput placeholder="Number of training epochs."
+                 type="number">
+        </mat-form-field>
 
-          <mat-form-field class="advanced-setting">
-            <input formControlName="learningRateFormControl" matInput placeholder="Learning rate"
-                   type="number">
-          </mat-form-field>
+        <mat-form-field class="advanced-setting">
+          <input formControlName="learningRateFormControl" matInput placeholder="Learning rate"
+                 type="number">
+        </mat-form-field>
 
-          <mat-form-field class="advanced-setting m-bot-10">
-            <input formControlName="epsFormControl"
-                   matInput placeholder="Eps" type="number">
-            <mat-hint>Term added to the denominator to improve numerical stability</mat-hint>
-          </mat-form-field>
+        <mat-form-field class="advanced-setting m-bot-10">
+          <input formControlName="epsFormControl"
+                 matInput placeholder="Eps" type="number">
+          <mat-hint>Term added to the denominator to improve numerical stability</mat-hint>
+        </mat-form-field>
 
-          <mat-form-field class="advanced-setting m-bot-10">
-            <input formControlName="batchSizeFormControl" matInput
-                   placeholder="Batch size"
-                   type="number">
-            <mat-hint>Batch size used for training. NB! Autoscaled based on max length if too large</mat-hint>
-          </mat-form-field>
+        <mat-form-field class="advanced-setting m-bot-10">
+          <input formControlName="batchSizeFormControl" matInput
+                 placeholder="Batch size"
+                 type="number">
+          <mat-hint>Batch size used for training. NB! Autoscaled based on max length if too large</mat-hint>
+        </mat-form-field>
 
-          <mat-form-field class="advanced-setting m-bot-10">
-            <input formControlName="splitRatioFormControl" matInput
-                   placeholder="Split ratio"
-                   type="number">
-            <mat-hint>Proportion of documents used for training; others are used for validation</mat-hint>
-          </mat-form-field>
+        <mat-form-field class="advanced-setting m-bot-10">
+          <input formControlName="splitRatioFormControl" matInput
+                 placeholder="Split ratio"
+                 type="number">
+          <mat-hint>Proportion of documents used for training; others are used for validation</mat-hint>
+        </mat-form-field>
       </ng-template>
     </mat-expansion-panel>
   </form>
