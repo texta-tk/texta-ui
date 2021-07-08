@@ -24,15 +24,7 @@
     </mat-form-field>
     <mat-form-field *ngIf="matchFormControl.value !== 'fuzzy' && matchFormControl.value !== 'match_fuzzy'" fxFlex="20">
       <mat-label>Slop</mat-label>
-      <mat-select [disableOptionCentering]="true" [formControl]="slopFormControl"
-                  panelClass="select-panel-reveal-input">
-        <mat-option value="0">0</mat-option>
-        <mat-option value="1">1</mat-option>
-        <mat-option value="2">2</mat-option>
-        <mat-option value="3">3</mat-option>
-        <mat-option value="4">4</mat-option>
-        <mat-option value="5">5</mat-option>
-      </mat-select>
+      <input [formControl]="slopFormControl" matInput min="0" type="number">
     </mat-form-field>
     <mat-form-field *ngIf="matchFormControl.value === 'fuzzy' || matchFormControl.value === 'match_fuzzy'" fxFlex="20">
       <mat-label>Fuzziness</mat-label>

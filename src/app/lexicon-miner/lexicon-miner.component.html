@@ -71,7 +71,7 @@
       </ng-container>
       <ng-container matColumnDef="delete">
         <th *matHeaderCellDef class="center-header-cell" mat-header-cell>Actions</th>
-        <td (click)="$event.stopPropagation();" *matCellDef="let element; let i = dataIndex" mat-cell>
+        <td (click)="$event.stopPropagation();" *matCellDef="let element; let i = index" mat-cell>
           <button (click)="onDelete(element, i)" data-cy="appLexiconMenuDelete" color="warn" mat-icon-button
                   matTooltip="Delete lexicon">
             <mat-icon>cancel</mat-icon>
