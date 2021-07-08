@@ -39,7 +39,7 @@
                   panelClass="select-panel-reveal-input">
         <mat-option>None</mat-option>
         <mat-option *ngFor="let fact of projectFacts" [value]="fact">
-          {{fact}}
+          {{fact.name}}
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -57,6 +57,18 @@
                     matTooltipPosition="left">Balance to max limit
       </mat-checkbox>
     </div>
+
+    <mat-form-field style="margin-top: 10px;" *ngIf="this.bertTaggerForm.get('factNameFormControl')?.value?.values.length === 2">
+      <mat-label>Positive label</mat-label>
+      <mat-select [disableOptionCentering]="true"
+                  formControlName="posLabelFormControl" panelClass="select-panel-reveal-input">
+        <mat-option>None</mat-option>
+        <mat-option *ngFor="let factVal of this.bertTaggerForm.get('factNameFormControl')?.value?.values" [value]="factVal">
+          {{factVal}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"
                                    data-cy="appBertTaggerCreateDialogQuery"></app-saved-search-autocomplete>
 

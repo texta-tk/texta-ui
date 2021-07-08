@@ -12,11 +12,32 @@ import {mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
 import {merge, of, Subject} from 'rxjs';
 import {TaggerOptions} from '../../../shared/types/tasks/TaggerOptions';
 import {LogService} from '../../../core/util/log.service';
-import {Embedding} from '../../../shared/types/tasks/Embedding';
+import {Choice, Embedding} from '../../../shared/types/tasks/Embedding';
 import {EmbeddingsService} from '../../../core/models/embeddings/embeddings.service';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 import {ResultsWrapper} from '../../../shared/types/Generic';
 import {CoreService} from '../../../core/core.service';
+
+interface OnSubmitParams {
+  descriptionFormControl: string;
+  indicesFormControl: ProjectIndex[];
+  fieldsFormControl: string[];
+  embeddingFormControl: Embedding;
+  vectorizerFormControl: Choice;
+  classifierFormControl: Choice;
+  stopWordsFormControl: string;
+  sampleSizeFormControl: number;
+  snowballFormControl: string;
+  scoringFormControl: Choice;
+  factNameFormControl: { name: string; values: string[] };
+  ignoreNumbersFormControl: boolean;
+  negativeMultiplierFormControl: number;
+  detectLangFormControl: boolean;
+  balanceFormControl: boolean;
+  maxBalanceFormControl: boolean;
+  posLabelFormControl: string;
+  minSampleSizeFormControl: number;
+}
 
 @Component({
   selector: 'app-create-tagger-dialog',
@@ -42,10 +63,12 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
     classifierFormControl: new FormControl([Validators.required]),
     sampleSizeFormControl: new FormControl(10000, [Validators.required]),
     negativeMultiplierFormControl: new FormControl(1.0, [Validators.required]),
+    minSampleSizeFormControl: new FormControl(50),
     ignoreNumbersFormControl: new FormControl(true),
     detectLangFormControl: new FormControl(false),
     balanceFormControl: new FormControl({value: false, disabled: true}),
     maxBalanceFormControl: new FormControl({value: false, disabled: true}),
+    posLabelFormControl: new FormControl(''),
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
@@ -56,7 +79,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
   currentProject: Project;
   destroyed$ = new Subject<boolean>();
   projectIndices: ProjectIndex[] = [];
-  projectFacts: string[];
+  projectFacts: { name: string, values: string[] }[];
   snowballLanguages: string[] = [];
 
   constructor(private dialogRef: MatDialogRef<CreateTaggerDialogComponent>,
@@ -150,8 +173,8 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
         const indicesForm = this.taggerForm.get('indicesFormControl');
         indicesForm?.setValue(currentProjIndices);
         this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
-        this.projectFacts = ['Loading...'];
-        return this.projectService.getProjectFacts(this.currentProject.id, currentProjIndices.map(x => [{name: x.index}]).flat());
+        this.projectFacts = [{name: 'Loading...', values: []}];
+        return this.projectService.getProjectFacts(this.currentProject.id, currentProjIndices.map(x => [{name: x.index}]).flat(), true);
       } else {
         return of(null);
       }
@@ -166,8 +189,8 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
 
   getFactsForIndices(val: ProjectIndex[]): void {
     if (val.length > 0) {
-      this.projectFacts = ['Loading...'];
-      this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat()).subscribe(resp => {
+      this.projectFacts = [{name: 'Loading...', values: []}];
+      this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat(), true).subscribe(resp => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
           this.projectFacts = resp;
         } else {
@@ -197,25 +220,27 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
     this.query = query ? query : this.defaultQuery;
   }
 
-  // tslint:disable-next-line:no-any
-  onSubmit(formData: any): void {
+  onSubmit(formData: OnSubmitParams): void {
     const body = {
       description: formData.descriptionFormControl,
-      indices: formData.indicesFormControl.map((x: ProjectIndex) => [{name: x.index}]).flat(),
+      indices: formData.indicesFormControl.map(x => [{name: x.index}]).flat(),
       fields: formData.fieldsFormControl,
-      embedding: (formData.embeddingFormControl as Embedding) ? (formData.embeddingFormControl as Embedding).id : null,
+      embedding: formData.embeddingFormControl ? formData.embeddingFormControl.id : null,
       vectorizer: formData.vectorizerFormControl.value,
       classifier: formData.classifierFormControl.value,
       stop_words: formData.stopWordsFormControl.split('\n').filter((x: string) => !!x),
       maximum_sample_size: formData.sampleSizeFormControl,
       ...formData.snowballFormControl ? {snowball_language: formData.snowballFormControl} : {},
       scoring_function: formData.scoringFormControl.value,
-      ...formData.factNameFormControl ? {fact_name: formData.factNameFormControl} : {},
+      ...formData.factNameFormControl ? {fact_name: formData.factNameFormControl.name} : {},
       ignore_numbers: formData.ignoreNumbersFormControl,
+      minimum_sample_size: formData.minSampleSizeFormControl,
       negative_multiplier: formData.negativeMultiplierFormControl,
       ...formData.detectLangFormControl ? {detect_lang: formData.detectLangFormControl} : {},
       ...formData.balanceFormControl ? {balance: formData.balanceFormControl} : {},
       ...formData.maxBalanceFormControl ? {balance_to_max_limit: formData.maxBalanceFormControl} : {},
+      ...(formData.posLabelFormControl && formData.factNameFormControl.values.length === 2) ?
+        {pos_label: formData.posLabelFormControl} : {},
       ...this.query ? {query: this.query} : {},
     };
     this.projectStore.getCurrentProject().pipe(take(1), mergeMap(currentProject => {
@@ -252,4 +277,5 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
     this.destroyed$.next(true);
     this.destroyed$.complete();
   }
+
 }

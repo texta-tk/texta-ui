@@ -167,8 +167,6 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
         this.tableData.data = [...this.tableData.data, resp];
         this.logService.snackBarMessage(`Created TorchTagger ${resp.description}`, 2000);
         this.projectStore.refreshSelectedProjectResourceCounts();
-      } else if (resp instanceof HttpErrorResponse) {
-        this.logService.snackBarError(resp, 5000);
       }
     });
   }

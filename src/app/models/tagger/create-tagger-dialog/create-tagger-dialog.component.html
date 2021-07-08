@@ -32,11 +32,11 @@
 
     <mat-form-field>
       <mat-label>Fact name</mat-label>
-      <mat-select [disableOptionCentering]="true" formControlName="factNameFormControl"
-                  panelClass="select-panel-reveal-input">
+      <mat-select [disableOptionCentering]="true"
+                  formControlName="factNameFormControl" panelClass="select-panel-reveal-input">
         <mat-option>None</mat-option>
         <mat-option *ngFor="let fact of projectFacts" [value]="fact">
-          {{fact}}
+          {{fact.name}}
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -50,6 +50,16 @@
                     matTooltipPosition="left">Balance to max limit
       </mat-checkbox>
     </div>
+    <mat-form-field style="margin-top: 10px;" *ngIf="this.taggerForm.get('factNameFormControl')?.value?.values.length === 2">
+      <mat-label>Positive label</mat-label>
+      <mat-select [disableOptionCentering]="true"
+                  formControlName="posLabelFormControl" panelClass="select-panel-reveal-input">
+        <mat-option>None</mat-option>
+        <mat-option *ngFor="let factVal of this.taggerForm.get('factNameFormControl')?.value?.values" [value]="factVal">
+          {{factVal}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"
                                    data-cy="appTaggerCreateDialogQuery"></app-saved-search-autocomplete>
     <mat-form-field>
@@ -81,7 +91,7 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-checkbox formControlName="detectLangFormControl" class="m-bot-10"
+    <mat-checkbox class="m-bot-10" formControlName="detectLangFormControl"
                   matTooltip="Whether to detect the language for the stemmer from the document itself. Disabled when using snowball language"
                   matTooltipPosition="left">Detect language
     </mat-checkbox>
@@ -124,6 +134,11 @@
     <mat-form-field data-cy="appTaggerCreateDialogSampleSize">
       <input formControlName="sampleSizeFormControl" matInput pattern="[1-9]\d*" placeholder="Maximum sample size"
              step="1000"
+             type="number">
+    </mat-form-field>
+    <mat-form-field>
+      <input formControlName="minSampleSizeFormControl" matInput pattern="[1-9]\d*" placeholder="Minimum sample size"
+             step="10"
              type="number">
     </mat-form-field>
     <mat-form-field>

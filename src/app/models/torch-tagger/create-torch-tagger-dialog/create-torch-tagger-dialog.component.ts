@@ -15,7 +15,7 @@ import {TorchTagger} from 'src/app/shared/types/tasks/TorchTagger';
 import {EmbeddingsService} from 'src/app/core/models/embeddings/embeddings.service';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 import {MatSelect} from '@angular/material/select';
-import {LogService} from "../../../core/util/log.service";
+import {LogService} from '../../../core/util/log.service';
 
 interface OnSubmitParams {
   formData: {
@@ -27,10 +27,11 @@ interface OnSubmitParams {
     minSampleSizeFormControl: number;
     numEpochsFormControl: number;
     modelArchitectureFormControl: string;
-    factNameFormControl: string
+    factNameFormControl: { name: string, values: string[] };
     balanceFormControl: boolean;
     sentenceShuffleFormControl: boolean;
     maxBalanceFormControl: boolean;
+    posLabelFormControl: string;
   };
 }
 
@@ -53,6 +54,7 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
     factNameFormControl: new FormControl(),
     modelArchitectureFormControl: new FormControl('', [Validators.required]),
     numEpochsFormControl: new FormControl(5, [Validators.required]),
+    posLabelFormControl: new FormControl(''),
 
     balanceFormControl: new FormControl({value: false, disabled: true}),
     sentenceShuffleFormControl: new FormControl({value: false, disabled: true}),
@@ -64,7 +66,7 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
   torchTaggerOptions: any;
   embeddings: Embedding[] = [];
   projectFields: ProjectIndex[];
-  projectFacts: string[];
+  projectFacts: { name: string, values: string[] }[];
   destroyed$ = new Subject<boolean>();
   fieldsUnique: Field[] = [];
   currentProject: Project;
@@ -141,8 +143,8 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
         const indicesForm = this.torchTaggerForm.get('indicesFormControl');
         indicesForm?.setValue(currentProjIndices);
         this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
-        this.projectFacts = ['Loading...'];
-        return this.projectService.getProjectFacts(this.currentProject.id, currentProjIndices.map(x => [{name: x.index}]).flat());
+        this.projectFacts = [{name: 'Loading...', values: []}];
+        return this.projectService.getProjectFacts(this.currentProject.id, currentProjIndices.map(x => [{name: x.index}]).flat(), true);
       } else {
         return of(null);
       }
@@ -162,8 +164,8 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
 
   getFactsForIndices(val: ProjectIndex[]): void {
     if (val.length > 0 && this.currentProject.id) {
-      this.projectFacts = ['Loading...'];
-      this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat()).subscribe(resp => {
+      this.projectFacts = [{name: 'Loading...', values: []}];
+      this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat(), true).subscribe(resp => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
           this.projectFacts = resp;
         } else {
@@ -196,16 +198,18 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
         num_epochs: formData.numEpochsFormControl,
         model_architecture: formData.modelArchitectureFormControl,
         ...this.query ? {query: this.query} : {},
-        ...formData.factNameFormControl ? {fact_name: formData.factNameFormControl} : {},
+        ...formData.factNameFormControl ? {fact_name: formData.factNameFormControl.name} : {},
         ...formData.sentenceShuffleFormControl ? {use_sentence_shuffle: formData.sentenceShuffleFormControl} : {},
         ...formData.balanceFormControl ? {balance: formData.balanceFormControl} : {},
         ...formData.maxBalanceFormControl ? {balance_to_max_limit: formData.maxBalanceFormControl} : {},
+        ...(formData.posLabelFormControl && formData.factNameFormControl.values.length === 2) ?
+          {pos_label: formData.posLabelFormControl} : {},
       };
       this.torchTaggerService.createTorchTagger(this.currentProject.id, body).subscribe((resp: TorchTagger | HttpErrorResponse) => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
           this.dialogRef.close(resp);
         } else if (resp instanceof HttpErrorResponse) {
-          this.dialogRef.close(resp);
+          this.logService.snackBarError(resp);
         }
       });
     }

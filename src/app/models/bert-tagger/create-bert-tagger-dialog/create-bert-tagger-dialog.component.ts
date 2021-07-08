@@ -17,7 +17,7 @@ interface OnSubmitParams {
   descriptionFormControl: string;
   indicesFormControl: ProjectIndex[];
   fieldsFormControl: Field[];
-  factNameFormControl: string;
+  factNameFormControl: { name: string, values: string[] };
   sampleSizeFormControl: number;
   minSampleSizeFormControl: number;
   negativeMultiplierFormControl: number;
@@ -31,6 +31,7 @@ interface OnSubmitParams {
   balanceFormControl: boolean;
   sentenceShuffleFormControl: boolean;
   maxBalanceFormControl: boolean;
+  posLabelFormControl: string;
 }
 
 @Component({
@@ -65,6 +66,8 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
     epsFormControl: new FormControl(1e-8, [Validators.required]),
     batchSizeFormControl: new FormControl(32, [Validators.required]),
     splitRatioFormControl: new FormControl(0.8, [Validators.required]),
+    posLabelFormControl: new FormControl(''),
+
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
@@ -73,7 +76,7 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
   fieldsUnique: Field[] = [];
   projectIndices: ProjectIndex[] = [];
   projectFields: ProjectIndex[];
-  projectFacts: string[];
+  projectFacts: { name: string, values: string[] }[];
   bertModels: string[] = [];
 
   constructor(private dialogRef: MatDialogRef<CreateBertTaggerDialogComponent>,
@@ -145,8 +148,8 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
         const indicesForm = this.bertTaggerForm.get('indicesFormControl');
         indicesForm?.setValue(currentProjIndices);
         this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
-        this.projectFacts = ['Loading...'];
-        return this.projectService.getProjectFacts(this.currentProject.id, currentProjIndices.map(x => [{name: x.index}]).flat());
+        this.projectFacts = [{name: 'Loading...', values: []}];
+        return this.projectService.getProjectFacts(this.currentProject.id, currentProjIndices.map(x => [{name: x.index}]).flat(), true);
       } else {
         return of(null);
       }
@@ -170,7 +173,7 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
       maximum_sample_size: formData.sampleSizeFormControl,
       minimum_sample_size: formData.minSampleSizeFormControl,
       num_epochs: formData.numEpochsFormControl,
-      ...formData.factNameFormControl ? {fact_name: formData.factNameFormControl} : {},
+      ...formData.factNameFormControl ? {fact_name: formData.factNameFormControl.name} : {},
       indices: formData.indicesFormControl.map((x: ProjectIndex) => [{name: x.index}]).flat(),
       bert_model: formData.bertModelFormControl,
       learning_rate: formData.learningRateFormControl,
@@ -182,6 +185,8 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
       ...formData.sentenceShuffleFormControl ? {use_sentence_shuffle: formData.sentenceShuffleFormControl} : {},
       ...formData.balanceFormControl ? {balance: formData.balanceFormControl} : {},
       ...formData.maxBalanceFormControl ? {balance_to_max_limit: formData.maxBalanceFormControl} : {},
+      ...(formData.posLabelFormControl && formData.factNameFormControl.values.length === 2) ?
+        {pos_label: formData.posLabelFormControl} : {},
       ...this.query ? {query: this.query} : {},
     };
     this.bertTaggerService.createBertTaggerTask(this.currentProject.id, body).subscribe(resp => {
@@ -206,8 +211,8 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
 
   getFactsForIndices(val: ProjectIndex[]): void {
     if (val.length > 0) {
-      this.projectFacts = ['Loading...'];
-      this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat()).subscribe(resp => {
+      this.projectFacts = [{name: 'Loading...', values: []}];
+      this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat(), true).subscribe(resp => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
           this.projectFacts = resp;
         } else {

@@ -142,12 +142,17 @@ export class ProjectService {
       catchError(this.logService.handleError<string[]>('projectFactValueAutoComplete')));
   }
 
-  getProjectFacts(id: number, indices: unknown): Observable<string[] | HttpErrorResponse> {
-    return this.http.post<string[]>(
-      `${this.apiUrl}/projects/${id}/get_facts/`, {indices, output_type: false}
+  getProjectFacts(id: number, indices: unknown, outputType: true): Observable<{ name: string, values: string[] }[] | HttpErrorResponse>;
+  getProjectFacts(id: number, indices: unknown, outputType?: boolean): Observable<string[] | HttpErrorResponse>;
+  // tslint:disable-next-line:no-any
+  getProjectFacts(id: number, indices: unknown, outputType?: boolean): Observable<any |
+    HttpErrorResponse> {
+    // tslint:disable-next-line:no-any
+    return this.http.post<any>(
+      `${this.apiUrl}/projects/${id}/get_facts/`, {indices, output_type: !!outputType}
     ).pipe(
       tap(e => this.logService.logStatus(e, 'get Project Facts')),
-      catchError(this.logService.handleError<string[]>('getProjectFacts')));
+      catchError(this.logService.handleError('getProjectFacts')));
   }
 
   getResourceCounts(projId: number): Observable<ProjectResourceCounts | HttpErrorResponse> {
