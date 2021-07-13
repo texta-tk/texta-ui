@@ -99,21 +99,21 @@
 
           <tr>
             <td>MLP Queue</td>
-            <td>{{celeryInfo?.mlp_queue?.active || celeryInfo ? 0 : 'Loading...'}}</td>
-            <td>{{celeryInfo?.mlp_queue?.scheduled || celeryInfo ? 0 : 'Loading...' }}</td>
-            <td>{{celeryInfo?.mlp_queue?.reserved || celeryInfo ? 0 : 'Loading...'}}</td>
+            <td>{{ celeryInfo ? celeryInfo?.mlp_queue?.active : 'Loading...'}}</td>
+            <td>{{ celeryInfo ? celeryInfo?.mlp_queue?.scheduled : 'Loading...'}}</td>
+            <td>{{ celeryInfo ? celeryInfo?.mlp_queue?.reserved : 'Loading...'}}</td>
           </tr>
           <tr>
             <td>Short Term</td>
-            <td>{{celeryInfo?.short_term_tasks?.active || celeryInfo ? 0 : 'Loading...'}}</td>
-            <td>{{celeryInfo?.short_term_tasks?.scheduled || celeryInfo ? 0 : 'Loading...' }}</td>
-            <td>{{celeryInfo?.short_term_tasks?.reserved || celeryInfo ? 0 : 'Loading...'}}</td>
+            <td>{{ celeryInfo ? celeryInfo?.short_term_tasks?.active : 'Loading...'}}</td>
+            <td>{{ celeryInfo ? celeryInfo?.short_term_tasks?.scheduled : 'Loading...'}}</td>
+            <td>{{ celeryInfo ? celeryInfo?.short_term_tasks?.reserved : 'Loading...'}}</td>
           </tr>
           <tr>
             <td>Long Term</td>
-            <td>{{celeryInfo?.long_term_tasks?.active || celeryInfo ? 0 : 'Loading...' }}</td>
-            <td>{{celeryInfo?.long_term_tasks?.scheduled || celeryInfo ? 0 : 'Loading...' }}</td>
-            <td>{{celeryInfo?.long_term_tasks?.reserved || celeryInfo ? 0 : 'Loading...'}}</td>
+            <td>{{ celeryInfo ? celeryInfo?.long_term_tasks?.active : 'Loading...'}}</td>
+            <td>{{ celeryInfo ? celeryInfo?.long_term_tasks?.scheduled : 'Loading...'}}</td>
+            <td>{{ celeryInfo ? celeryInfo?.long_term_tasks?.reserved : 'Loading...'}}</td>
           </tr>
         </table>
       </mat-card>
