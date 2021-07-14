@@ -33,7 +33,7 @@ interface OnSubmitParams {
   sentenceShuffleFormControl: boolean;
   maxBalanceFormControl: boolean;
   posLabelFormControl: string;
-  checkPointModelFormControl: number;
+  checkPointModelFormControl: BertTagger;
 }
 
 @Component({
@@ -112,6 +112,16 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
         this.bertTaggerForm.get('maxBalanceFormControl')?.disable({emitEvent: false});
         this.bertTaggerForm.get('balanceFormControl')?.disable({emitEvent: false});
         this.bertTaggerForm.get('sentenceShuffleFormControl')?.disable({emitEvent: false});
+      }
+    });
+
+    this.bertTaggerForm.get('checkPointModelFormControl')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((val: BertTagger) => {
+      const ctrl = this.bertTaggerForm.get('bertModelFormControl');
+      if (val) {
+        ctrl?.setValue(val.bert_model);
+        ctrl?.disable();
+      } else {
+        ctrl?.enable();
       }
     });
   }
@@ -195,7 +205,7 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
       ...formData.maxBalanceFormControl ? {balance_to_max_limit: formData.maxBalanceFormControl} : {},
       ...(formData.posLabelFormControl && formData.factNameFormControl.values.length === 2) ?
         {pos_label: formData.posLabelFormControl} : {},
-      ...formData.checkPointModelFormControl ? {checkpoint_model: formData.checkPointModelFormControl} : {},
+      ...formData.checkPointModelFormControl ? {checkpoint_model: formData.checkPointModelFormControl.id} : {},
       ...this.query ? {query: this.query} : {},
     };
     this.bertTaggerService.createBertTaggerTask(this.currentProject.id, body).subscribe(resp => {

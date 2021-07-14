@@ -54,7 +54,6 @@
       <mat-label>Positive label</mat-label>
       <mat-select [disableOptionCentering]="true"
                   formControlName="posLabelFormControl" panelClass="select-panel-reveal-input">
-        <mat-option>None</mat-option>
         <mat-option *ngFor="let factVal of this.taggerForm.get('factNameFormControl')?.value?.values" [value]="factVal">
           {{factVal}}
         </mat-option>

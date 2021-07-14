@@ -64,7 +64,6 @@
       <mat-label>Positive label</mat-label>
       <mat-select [disableOptionCentering]="true"
                   formControlName="posLabelFormControl" panelClass="select-panel-reveal-input">
-        <mat-option>None</mat-option>
         <mat-option *ngFor="let factVal of this.bertTaggerForm.get('factNameFormControl')?.value?.values"
                     [value]="factVal">
           {{factVal}}
@@ -79,7 +78,7 @@
       <mat-select [disableOptionCentering]="true" formControlName="checkPointModelFormControl"
                   panelClass="select-panel-reveal-input">
         <mat-option>None</mat-option>
-        <mat-option *ngFor="let model of trainedModels" [value]="model.id">
+        <mat-option *ngFor="let model of trainedModels" [value]="model">
           {{model.id}}: {{model.description}}
         </mat-option>
       </mat-select>
@@ -87,7 +86,8 @@
     </mat-form-field>
     <mat-form-field>
       <mat-label>Bert model</mat-label>
-      <mat-select [disabled]="!!bertTaggerForm.get('checkPointModelFormControl')?.value" [disableOptionCentering]="true" formControlName="bertModelFormControl"
+      <mat-select [disableOptionCentering]="true"
+                  formControlName="bertModelFormControl"
                   panelClass="select-panel-reveal-input">
         <mat-option *ngFor="let model of bertModels" [value]="model">
           {{model}}
