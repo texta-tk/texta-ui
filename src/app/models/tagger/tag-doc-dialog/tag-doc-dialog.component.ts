@@ -13,7 +13,7 @@ import {LogService} from 'src/app/core/util/log.service';
 export class TagDocDialogComponent implements OnInit {
   lemmatize: boolean;
   defaultDoc: string;
-  result: { result: boolean, probability: number, feedback?: { id: string } };
+  result: { result: boolean, probability: number, feedback?: { id: string }, tag: string };
   feedback = false;
   isLoading = false;
 
@@ -36,7 +36,7 @@ export class TagDocDialogComponent implements OnInit {
     }, this.data.currentProjectId, this.data.tagger.id)
       .subscribe(resp => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
-          this.result = resp as { result: boolean, probability: number, feedback?: { id: string } };
+          this.result = resp as { result: boolean, probability: number, feedback?: { id: string }, tag: string };
         } else if (resp instanceof HttpErrorResponse) {
           this.logService.snackBarError(resp, 4000);
         }

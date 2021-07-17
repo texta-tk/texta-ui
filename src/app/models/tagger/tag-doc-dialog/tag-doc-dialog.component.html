@@ -8,6 +8,8 @@
   <span class="mat-body-strong">Result: </span>{{result.result}}
   <br>
   <span class="mat-body-strong">Probability: </span> {{result.probability}}
+  <br>
+  <span class="mat-body-strong">Tag:</span> {{result?.tag}}
   <ng-container *ngIf="result.feedback">
     <br>
     <span class="mat-body-strong">Feedback id: </span> {{result.feedback.id}}

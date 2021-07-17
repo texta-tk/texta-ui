@@ -11,7 +11,7 @@ import {LogService} from 'src/app/core/util/log.service';
 })
 export class TagTextDialogComponent {
   lemmatize: boolean;
-  result: { result: boolean, probability: number, feedback?: { id: string } };
+  result: { result: boolean, probability: number, feedback?: { id: string }, tag: string };
   feedback = false;
   isLoading = false;
 
@@ -27,7 +27,7 @@ export class TagTextDialogComponent {
     }, this.data.currentProjectId, this.data.taggerId)
       .subscribe(resp => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
-          this.result = resp as { result: boolean, probability: number, feedback?: { id: string } };
+          this.result = resp as { result: boolean, probability: number, feedback?: { id: string }, tag: string };
         } else if (resp instanceof HttpErrorResponse) {
           this.logService.snackBarError(resp, 4000);
         }

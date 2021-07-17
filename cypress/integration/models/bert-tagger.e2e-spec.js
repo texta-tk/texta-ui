@@ -10,6 +10,7 @@ describe('bert-taggers should work', function () {
         cy.intercept('GET', '**get_fields**').as('getProjectIndices');
         cy.intercept('GET', '**/bert_taggers/**').as('getbertTaggers');
         cy.intercept('POST', '**/bert_taggers/**').as('postbertTaggers');
+        cy.intercept('DELETE', '**/bert_taggers/**').as('deletebertTaggers');
       });
     });
   });
@@ -98,6 +99,7 @@ describe('bert-taggers should work', function () {
     cy.get('.cdk-column-actions:nth(1)').click();
     cy.get('[data-cy=appBertTaggerMenuDelete]').click();
     cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
+    cy.wait('@deletebertTaggers');
     cy.get('.cdk-column-actions').should('have.length', 1);
 
   });

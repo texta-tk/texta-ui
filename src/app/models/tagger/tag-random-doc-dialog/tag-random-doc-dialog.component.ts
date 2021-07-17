@@ -14,7 +14,7 @@ import {ProjectIndex} from '../../../shared/types/Project';
   styleUrls: ['./tag-random-doc-dialog.component.scss']
 })
 export class TagRandomDocDialogComponent implements OnInit {
-  result: { document: unknown, prediction: { result: boolean, probability: number } };
+  result: { document: unknown, prediction: { result: boolean, probability: number, tag: string; } };
   isLoading = false;
   indices: ProjectIndex[];
 
