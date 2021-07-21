@@ -12,7 +12,7 @@
     <mat-label>Fact name</mat-label>
     <mat-select [disableOptionCentering]="true" [formControl]="factNameFormControl"
                 multiple panelClass="select-panel-reveal-input">
-      <mat-option *ngFor="let fact of projectFacts" [value]="fact">
+      <mat-option *ngFor="let fact of (projectFacts | async)" [value]="fact">
         {{fact}}
       </mat-option>
     </mat-select>
@@ -31,7 +31,8 @@
       </mat-select>
     </mat-form-field>
     <div fxFlex fxLayoutAlign="end">
-      <button data-cy="appSearcherSideBarBuildSearchFactValueInputGroupAdd" (click)="createGroupListeners()" aria-label="Add" class="addFact mat-icon-button" mat-icon-button>
+      <button data-cy="appSearcherSideBarBuildSearchFactValueInputGroupAdd" (click)="createGroupListeners()"
+              aria-label="Add" class="addFact mat-icon-button" mat-icon-button>
         <mat-icon>add</mat-icon>
       </button>
     </div>
@@ -41,7 +42,7 @@
       <mat-label>Fact name</mat-label>
       <mat-select [disableOptionCentering]="true" [formControl]="inputGroup.factTextFactNameFormControl"
                   panelClass="select-panel-reveal-input">
-        <mat-option *ngFor="let fact of projectFacts" [value]="fact">
+        <mat-option *ngFor="let fact of (projectFacts | async)" [value]="fact">
           {{fact}}
         </mat-option>
       </mat-select>
@@ -68,7 +69,8 @@
         </mat-option>
       </mat-autocomplete>
     </mat-form-field>
-    <div fxFlex fxFlexAlign="center" fxLayoutAlign="end" data-cy="appSearcherSideBarBuildSearchFactValueInputGroupDelete">
+    <div fxFlex fxFlexAlign="center" fxLayoutAlign="end"
+         data-cy="appSearcherSideBarBuildSearchFactValueInputGroupDelete">
       <button (click)="deleteInputGroup(inputGroup)" aria-label="Close" class="mat-icon-button" mat-icon-button>
         <mat-icon>close</mat-icon>
       </button>

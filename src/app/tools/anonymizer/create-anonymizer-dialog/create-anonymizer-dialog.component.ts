@@ -8,8 +8,8 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {Project} from '../../../shared/types/Project';
-import {Subject} from 'rxjs';
-import {takeUntil} from 'rxjs/operators';
+import {of, Subject} from 'rxjs';
+import {switchMap, take, takeUntil} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
@@ -31,7 +31,8 @@ export class CreateAnonymizerDialogComponent implements OnInit, OnDestroy {
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   currentProject: Project;
   destroyed$: Subject<boolean> = new Subject<boolean>();
-
+  // tslint:disable-next-line:no-any
+  analyzerOptions: any;
   constructor(private dialogRef: MatDialogRef<CreateAnonymizerDialogComponent>,
               private projectService: ProjectService,
               private logService: LogService,
@@ -40,9 +41,17 @@ export class CreateAnonymizerDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(x => {
-      if (x) {
-        this.currentProject = x;
+    this.projectStore.getCurrentProject().pipe(take(1), switchMap(proj => {
+      if (proj) {
+        this.currentProject = proj;
+        return this.anonymizerService.getAnonymizerOptions(proj.id);
+      }
+      return of(null);
+    })).subscribe(resp => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.analyzerOptions = resp;
+      } else if (resp) {
+        this.logService.snackBarError(resp);
       }
     });
   }

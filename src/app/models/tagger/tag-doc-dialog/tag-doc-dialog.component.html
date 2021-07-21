@@ -1,8 +1,8 @@
 <mat-form-field class="max-width">
   <input matInput placeholder="Tag document" #textInput [value]="defaultDoc">
 </mat-form-field>
-<mat-checkbox [(ngModel)]="lemmatize" class="margin-right">Lemmatize</mat-checkbox>
-<mat-checkbox [(ngModel)]="feedback">Feedback</mat-checkbox>
+<mat-checkbox [(ngModel)]="lemmatize" matTooltip="{{tagDocOptions?.actions?.POST?.lemmatize?.help_text || ''}}">Lemmatize</mat-checkbox>
+<mat-checkbox [(ngModel)]="feedback" class="m-l-15" matTooltip="{{tagDocOptions?.actions?.POST?.feedback_enabled?.help_text || ''}}">Feedback</mat-checkbox>
 <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
 <div *ngIf="result" class="m-top-10">
   <span class="mat-body-strong">Result: </span>{{result.result}}

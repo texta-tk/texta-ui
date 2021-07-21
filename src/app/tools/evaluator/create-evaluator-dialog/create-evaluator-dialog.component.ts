@@ -60,6 +60,8 @@ export class CreateEvaluatorDialogComponent implements OnInit, OnDestroy {
   trueFactValueOptions: string[] = [];
   predictedFactValueOptions: string[] = [];
   averageFunctionOptions: Choice[] = [];
+  // tslint:disable-next-line:no-any
+  evaluatorOptions: any;
 
   constructor(private dialogRef: MatDialogRef<CreateEvaluatorDialogComponent>,
               private projectService: ProjectService,
@@ -84,6 +86,7 @@ export class CreateEvaluatorDialogComponent implements OnInit, OnDestroy {
       return of(null);
     })).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.evaluatorOptions = resp;
         this.averageFunctionOptions = resp.actions.POST.average_function.choices;
         this.evaluatorForm.get('averageFunctionFormControl')?.setValue(resp.actions.POST.average_function.default);
       } else if (resp) {

@@ -11,7 +11,7 @@ import {MatMenuTrigger} from '@angular/material/menu';
 import {LexiconService} from '../../../core/lexicon/lexicon.service';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {Project} from '../../../shared/types/Project';
-import {of, Subject} from 'rxjs';
+import {forkJoin, of, Subject} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
@@ -57,6 +57,8 @@ export class CreateRegexTaggerDialogComponent implements OnInit, OnDestroy {
   lexicons: Lexicon[] = [];
   currentProject: Project;
   destroyed$: Subject<boolean> = new Subject();
+  // tslint:disable-next-line:no-any
+  regexTaggerOptions: any;
   @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
 
   constructor(private dialogRef: MatDialogRef<CreateRegexTaggerDialogComponent>,
@@ -70,12 +72,20 @@ export class CreateRegexTaggerDialogComponent implements OnInit, OnDestroy {
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), switchMap(currentProject => {
       if (currentProject) {
         this.currentProject = currentProject;
-        return this.lexiconService.getLexicons(currentProject.id);
+        return forkJoin({
+          lexicons: this.lexiconService.getLexicons(currentProject.id),
+          options: this.regexTaggerService.getRegexTaggerOptions(currentProject.id)
+        });
       }
       return of(null);
     })).subscribe(resp => {
-      if (!(resp instanceof HttpErrorResponse) && resp) {
-        this.lexicons = resp.results;
+      if (resp) {
+        if (!(resp.options instanceof HttpErrorResponse)) {
+          this.regexTaggerOptions = resp.options;
+        }
+        if (!(resp.lexicons instanceof HttpErrorResponse)) {
+          this.lexicons = resp.lexicons.results;
+        }
       }
     });
   }

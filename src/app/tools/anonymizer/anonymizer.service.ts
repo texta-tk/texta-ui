@@ -53,4 +53,11 @@ export class AnonymizerService {
       tap(e => this.logService.logStatus(e, 'bulkDeleteAnonymizers')),
       catchError(this.logService.handleError<unknown>('bulkDeleteAnonymizers')));
   }
+
+  // tslint:disable-next-line:no-any
+  getAnonymizerOptions(projectId: number): Observable<any | HttpErrorResponse> {
+    return this.http.options(`${this.apiUrl}/projects/${projectId}/anonymizers/`).pipe(
+      tap(e => this.logService.logStatus(e, 'getAnonymizerOptions')),
+      catchError(this.logService.handleError('getAnonymizerOptions')));
+  }
 }

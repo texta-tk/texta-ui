@@ -56,4 +56,19 @@ export class SearchTaggerService {
       tap(e => this.logService.logStatus(e, 'bulkDeleteSearchQueryTaggerTasks')),
       catchError(this.logService.handleError<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>('bulkDeleteSearchQueryTaggerTasks')));
   }
+
+
+  // tslint:disable-next-line:no-any
+  getSearchQueryTaggerOptions(projectId: number): Observable<any | HttpErrorResponse> {
+    return this.http.options(`${this.apiUrl2}/projects/${projectId}/elastic/search_query_tagger/`).pipe(
+      tap(e => this.logService.logStatus(e, 'getSearchQueryTaggerOptions')),
+      catchError(this.logService.handleError('getSearchQueryTaggerOptions')));
+  }
+
+  // tslint:disable-next-line:no-any
+  getSearchFieldsTaggerOptions(projectId: number): Observable<any | HttpErrorResponse> {
+    return this.http.options(`${this.apiUrl2}/projects/${projectId}/elastic/search_fields_tagger/`).pipe(
+      tap(e => this.logService.logStatus(e, 'getSearchFieldsTaggerOptions')),
+      catchError(this.logService.handleError('getSearchFieldsTaggerOptions')));
+  }
 }

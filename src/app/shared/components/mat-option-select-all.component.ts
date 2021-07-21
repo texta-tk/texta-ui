@@ -90,9 +90,7 @@ export class MatOptionSelectAllComponent implements AfterViewInit, OnDestroy {
     const areAllSelected = this.areArraysEqual(this.value, this.options);
     if (areAllSelected) {
       this.state = 'checked';
-      // todo fix in TS 3.7
-      // tslint:disable-next-line:no-non-null-assertion
-    } else if (this.value!.length > 0) {
+    } else if (this.value && this.value.length > 0) {
       this.state = 'indeterminate';
     } else {
       this.state = 'unchecked';

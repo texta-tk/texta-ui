@@ -7,7 +7,7 @@ import {LiveErrorStateMatcher} from 'src/app/shared/CustomerErrorStateMatchers';
 import {Field, Project, ProjectIndex} from 'src/app/shared/types/Project';
 import {ProjectService} from 'src/app/core/projects/project.service';
 import {ProjectStore} from 'src/app/core/projects/project.store';
-import {filter, mergeMap, take, takeUntil} from 'rxjs/operators';
+import {filter, mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
 import {forkJoin, of} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../../../core/util/log.service';
@@ -34,7 +34,8 @@ export class CreateReindexerDialogComponent implements OnInit {
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   projectIndices: ProjectIndex[];
   projectFields: ProjectIndex[] = [];
-  reindexerOptions: unknown;
+  // tslint:disable-next-line:no-any
+  reindexerOptions: any;
   currentProject: Project;
 
   constructor(private dialogRef: MatDialogRef<CreateReindexerDialogComponent>,
@@ -46,7 +47,7 @@ export class CreateReindexerDialogComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.projectStore.getCurrentProject().pipe(take(1), mergeMap(currentProject => {
+    this.projectStore.getCurrentProject().pipe(take(1), switchMap(currentProject => {
       if (currentProject) {
         this.currentProject = currentProject;
         return this.reindexerService.getReindexerOptions(currentProject.id);

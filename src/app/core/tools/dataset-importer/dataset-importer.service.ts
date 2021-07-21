@@ -42,4 +42,11 @@ export class DatasetImporterService {
       tap(e => this.logService.logStatus(e, 'deleteIndex')),
       catchError(this.logService.handleError<unknown>('deleteIndex')));
   }
+
+  // tslint:disable-next-line:no-any
+  getDatasetImporterOptions(projectId: number): Observable<any | HttpErrorResponse> {
+    return this.http.options(`${this.apiUrl}/projects/${projectId}/dataset_imports/`).pipe(
+      tap(e => this.logService.logStatus(e, 'getDatasetImporterOptions')),
+      catchError(this.logService.handleError('getDatasetImporterOptions')));
+  }
 }

@@ -37,6 +37,8 @@ export class ApplyTaggerGroupDialogComponent implements OnInit, OnDestroy {
   projectRegexTaggers: RegexTaggerGroup[] = [];
   indices: ProjectIndex[];
   projectFields: ProjectIndex[] = [];
+  // tslint:disable-next-line:no-any
+  regexTaggerOptions: any;
 
   constructor(private dialogRef: MatDialogRef<ApplyTaggerGroupDialogComponent>,
               private projectService: ProjectService,
@@ -52,6 +54,7 @@ export class ApplyTaggerGroupDialogComponent implements OnInit, OnDestroy {
         return forkJoin({
           taggers: this.regexTaggerGroupService.getRegexTaggerGroupTasks(proj.id),
           indices: this.projectStore.getProjectIndices().pipe(filter(x => !!x), take(1)),
+          options: this.regexTaggerGroupService.applyRegexTaggerGroupOptions(proj.id),
         });
       }
       return of(null);
@@ -67,6 +70,12 @@ export class ApplyTaggerGroupDialogComponent implements OnInit, OnDestroy {
       } else if (x?.indices && (x.indices instanceof HttpErrorResponse)) {
         this.logService.snackBarError(x.indices);
       }
+
+      if (x?.options && !(x.options instanceof HttpErrorResponse)) {
+        this.regexTaggerOptions = x.options;
+      } else if (x?.options && (x.options instanceof HttpErrorResponse)) {
+        this.logService.snackBarError(x.options);
+      }
     });
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(currentProjIndices => {
       if (currentProjIndices) {
@@ -75,6 +84,7 @@ export class ApplyTaggerGroupDialogComponent implements OnInit, OnDestroy {
         this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, [], ['fact'], true);
       }
     });
+
   }
 
   public indicesOpenedChange(opened: boolean): void {

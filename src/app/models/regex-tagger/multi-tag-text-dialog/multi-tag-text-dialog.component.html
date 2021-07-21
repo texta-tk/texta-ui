@@ -4,6 +4,7 @@
   <mat-form-field class="max-width" data-cy="appRegexTaggerMultiTagDialogText">
     <textarea [(ngModel)]="text" [ngModelOptions]="{standalone: true}" [rows]="5" matInput
               placeholder="Text"></textarea>
+    <mat-hint>{{regexTaggerOptions?.actions?.POST?.text?.help_text || ''}}</mat-hint>
   </mat-form-field>
   <mat-form-field class="max-width" data-cy="appRegexTaggerMultiTagDialogTaggers">
     <mat-label>Regex Taggers</mat-label>
@@ -14,6 +15,7 @@
         {{tagger.description}}
       </mat-option>
     </mat-select>
+    <mat-hint>{{regexTaggerOptions?.actions?.POST?.taggers?.help_text || ''}}</mat-hint>
   </mat-form-field>
   <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
 
@@ -28,7 +30,9 @@
 <mat-dialog-actions>
   <div class="flex-row max-width">
     <div class="flex-item-left">
-      <button class="flex-item-left" mat-button mat-dialog-close data-cy="appRegexTaggerMultiTagDialogClose" type="button">Close</button>
+      <button class="flex-item-left" mat-button mat-dialog-close data-cy="appRegexTaggerMultiTagDialogClose"
+              type="button">Close
+      </button>
     </div>
     <div class="flex-item-right">
       <button (click)="onSubmit(text, selectedTaggers)" [disabled]="!text" data-cy="appRegexTaggerMultiTagDialogSubmit"

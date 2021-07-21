@@ -9,11 +9,13 @@
       <mat-error *ngIf="torchTaggerForm.get('descriptionFormControl')?.hasError('required')">
         Description is <strong>required</strong>
       </mat-error>
+      <mat-hint>{{torchTaggerOptions?.actions?.POST?.description?.help_text || ''}}</mat-hint>
     </mat-form-field>
     <mat-form-field data-cy="appTorchTaggerCreateDialogIndices">
       <mat-label>Indices</mat-label>
       <mat-select #indicesSelect (openedChange)="indicesOpenedChange($event)" [disableOptionCentering]="true"
                   formControlName="indicesFormControl" multiple panelClass="select-panel-reveal-input" required>
+        <app-mat-option-select-all></app-mat-option-select-all>
         <mat-option *ngFor="let projectIndex of projectIndices" [value]="projectIndex">
           {{projectIndex.index}}
         </mat-option>
@@ -21,6 +23,7 @@
       <mat-error *ngIf="torchTaggerForm.get('indicesFormControl')?.hasError('required')">
         Need at least 1 index
       </mat-error>
+      <mat-hint>{{torchTaggerOptions?.actions?.POST?.indices?.help_text || ''}}</mat-hint>
     </mat-form-field>
     <mat-form-field data-cy="appTorchTaggerCreateDialogFields">
 
@@ -31,6 +34,7 @@
       <mat-error *ngIf="torchTaggerForm.get('fieldsFormControl')?.hasError('required')">
         Field is <strong>required</strong>
       </mat-error>
+      <mat-hint>{{torchTaggerOptions?.actions?.POST?.fields?.help_text || ''}}</mat-hint>
     </mat-form-field>
     <mat-form-field>
       <mat-label>Fact name</mat-label>
@@ -41,22 +45,24 @@
           {{fact.name}}
         </mat-option>
       </mat-select>
+      <mat-hint>{{torchTaggerOptions?.actions?.POST?.fact_name?.help_text || ''}}</mat-hint>
     </mat-form-field>
     <div class="flex-row">
       <mat-checkbox formControlName="balanceFormControl"
-                    matTooltip="Balance sample sizes of different classes. Only applicable for multiclass taggers."
+                    matTooltip="{{torchTaggerOptions?.actions?.POST?.balance?.help_text || ''}}"
                     matTooltipPosition="left">Balance
       </mat-checkbox>
       <mat-checkbox class="m-l-15" formControlName="sentenceShuffleFormControl"
-                    matTooltip="Shuffle sentences in added examples. NB! Only applicable for multiclass taggers with balance enabled."
+                    matTooltip="{{torchTaggerOptions?.actions?.POST?.use_sentence_shuffle?.help_text || ''}}"
                     matTooltipPosition="left">Use sentence shuffle
       </mat-checkbox>
       <mat-checkbox class="m-l-15" formControlName="maxBalanceFormControl"
-                    matTooltip="If enabled, the number of samples for each class is set to `maximum_sample_size`. Otherwise, it is set to max class size. NB! Only applicable for multiclass taggers with balance enabled"
+                    matTooltip="{{torchTaggerOptions?.actions?.POST?.balance_to_max_limit?.help_text || ''}}"
                     matTooltipPosition="left">Balance to max limit
       </mat-checkbox>
     </div>
-    <mat-form-field style="margin-top: 10px;" *ngIf="this.torchTaggerForm.get('factNameFormControl')?.value?.values.length === 2">
+    <mat-form-field style="margin-top: 10px;"
+                    *ngIf="this.torchTaggerForm.get('factNameFormControl')?.value?.values.length === 2">
       <mat-label>Positive label</mat-label>
       <mat-select [disableOptionCentering]="true"
                   formControlName="posLabelFormControl" panelClass="select-panel-reveal-input">
@@ -65,6 +71,7 @@
           {{factVal}}
         </mat-option>
       </mat-select>
+      <mat-hint>{{torchTaggerOptions?.actions?.POST?.pos_label?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"></app-saved-search-autocomplete>
@@ -80,6 +87,7 @@
       <mat-error *ngIf="torchTaggerForm.get('modelArchitectureFormControl')?.hasError('required')">
         Model architecture is <strong>required</strong>
       </mat-error>
+      <mat-hint>{{torchTaggerOptions?.actions?.POST?.model_architecture?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
     <mat-form-field data-cy="appTorchTaggerCreateDialogEmbedding">
@@ -95,19 +103,23 @@
       <mat-error *ngIf="torchTaggerForm.get('embeddingFormControl')?.hasError('required')">
         Embedding is <strong>required</strong>
       </mat-error>
-    </mat-form-field>
-
-    <mat-form-field>
-      <input formControlName="minSampleSizeFormControl" matInput placeholder="Minimum sample size" step="50"
-             type="number">
+      <mat-hint>{{torchTaggerOptions?.actions?.POST?.embedding?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
     <mat-form-field data-cy="appTorchTaggerCreateDialogMaxSample">
       <input formControlName="sampleSizeFormControl" matInput placeholder="Maximum sample size" step="1000"
              type="number">
+      <mat-hint>{{torchTaggerOptions?.actions?.POST?.maximum_sample_size?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input formControlName="minSampleSizeFormControl" matInput placeholder="Minimum sample size" step="50"
+             type="number">
+      <mat-hint>{{torchTaggerOptions?.actions?.POST?.minimum_sample_size?.help_text || ''}}</mat-hint>
     </mat-form-field>
     <mat-form-field>
       <input formControlName="numEpochsFormControl" matInput placeholder="Number of epochs" type="number">
+      <mat-hint>{{torchTaggerOptions?.actions?.POST?.num_epochs?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
   </form>

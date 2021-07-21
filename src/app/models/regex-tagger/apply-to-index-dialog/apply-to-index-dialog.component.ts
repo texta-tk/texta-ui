@@ -54,6 +54,8 @@ export class ApplyToIndexDialogComponent implements OnInit, OnDestroy {
   indices: ProjectIndex[];
   projectFields: ProjectIndex[] = [];
 
+  // tslint:disable-next-line:no-any
+  regexTaggerOptions: any;
   constructor(private dialogRef: MatDialogRef<ApplyToIndexDialogComponent>,
               private projectService: ProjectService,
               @Inject(MAT_DIALOG_DATA) public data: RegexTagger,
@@ -71,6 +73,7 @@ export class ApplyToIndexDialogComponent implements OnInit, OnDestroy {
       return of(null);
     })).subscribe(options => {
       if (options && !(options instanceof HttpErrorResponse)) {
+        this.regexTaggerOptions = options;
         this.applyForm.get('addSpansFormControl')?.setValue(options.actions.POST.add_spans.default);
         this.applyForm.get('esTimeoutFormControl')?.setValue(options.actions.POST.es_timeout.default);
         this.applyForm.get('bulkSizeFormControl')?.setValue(options.actions.POST.bulk_size.default);

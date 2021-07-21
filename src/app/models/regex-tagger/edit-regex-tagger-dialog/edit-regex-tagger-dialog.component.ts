@@ -4,7 +4,7 @@ import {ErrorStateMatcher} from '@angular/material/core';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {Lexicon} from '../../../shared/types/Lexicon';
 import {Project} from '../../../shared/types/Project';
-import {of, Subject} from 'rxjs';
+import {forkJoin, of, Subject} from 'rxjs';
 import {MatMenuTrigger} from '@angular/material/menu';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {RegexTaggerService} from '../../../core/models/taggers/regex-tagger.service';
@@ -28,6 +28,8 @@ export class EditRegexTaggerDialogComponent implements OnInit, OnDestroy {
   lexicons: Lexicon[] = [];
   currentProject: Project;
   destroyed$: Subject<boolean> = new Subject();
+  // tslint:disable-next-line:no-any
+  regexTaggerOptions: any;
   @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
 
   constructor(private dialogRef: MatDialogRef<EditRegexTaggerDialogComponent>,
@@ -86,12 +88,20 @@ export class EditRegexTaggerDialogComponent implements OnInit, OnDestroy {
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), switchMap(currentProject => {
       if (currentProject) {
         this.currentProject = currentProject;
-        return this.lexiconService.getLexicons(currentProject.id);
+        return forkJoin({
+          lexicons: this.lexiconService.getLexicons(currentProject.id),
+          options: this.regexTaggerService.getRegexTaggerOptions(currentProject.id)
+        });
       }
       return of(null);
     })).subscribe(resp => {
-      if (!(resp instanceof HttpErrorResponse) && resp) {
-        this.lexicons = resp.results;
+      if (resp) {
+        if (!(resp.options instanceof HttpErrorResponse)) {
+          this.regexTaggerOptions = resp.options;
+        }
+        if (!(resp.lexicons instanceof HttpErrorResponse)) {
+          this.lexicons = resp.lexicons.results;
+        }
       }
     });
   }

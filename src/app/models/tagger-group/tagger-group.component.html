@@ -190,7 +190,7 @@
   <ng-template let-element="element" let-i="i" matMenuContent>
     <div *ngIf="element.tagger_status && element.tagger_status.completed >= 1">
       <button (click)="openModelsListDialog(element)" data-cy="appTaggerGroupMenuModelList" mat-menu-item>
-        Models list
+        Tagger list
       </button>
       <button (click)="applyToIndexDialog(element)" data-cy="appTaggerGroupMenuApplyToIndices" mat-menu-item>
         Apply to indices

@@ -65,6 +65,8 @@ export class CreateElasticAnalyzerDialogComponent implements OnInit, OnDestroy {
     value: string;
     display_name: string;
   }[];
+  // tslint:disable-next-line:no-any
+  elasticAnalyzerOptions: any;
 
   constructor(private dialogRef: MatDialogRef<CreateElasticAnalyzerDialogComponent>,
               private projectService: ProjectService,
@@ -113,6 +115,7 @@ export class CreateElasticAnalyzerDialogComponent implements OnInit, OnDestroy {
       }
     })).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.elasticAnalyzerOptions = resp;
         this.stemmerLangs = resp.actions.POST.stemmer_lang.choices;
         this.analyzers = resp.actions.POST.analyzers.choices;
         this.tokenizers = resp.actions.POST.tokenizer.choices;

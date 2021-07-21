@@ -41,4 +41,11 @@ export class LangDetectService {
       tap(e => this.logService.logStatus(e, 'bulkDeleteLangDetectTasks')),
       catchError(this.logService.handleError<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>('bulkDeleteLangDetectTasks')));
   }
+
+  // tslint:disable-next-line:no-any
+  getLangDetectOptions(projectId: number): Observable<any | HttpErrorResponse> {
+    return this.http.options(`${this.apiUrl}/projects/${projectId}/lang_index/`).pipe(
+      tap(e => this.logService.logStatus(e, 'getLangDetectOptions')),
+      catchError(this.logService.handleError('getLangDetectOptions')));
+  }
 }

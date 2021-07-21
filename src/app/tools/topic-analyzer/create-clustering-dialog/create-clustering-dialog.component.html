@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>New Topic Analyzer</h1>
 <div mat-dialog-content>
-  <form (ngSubmit)="onSubmit(clusterForm.value)" [formGroup]="clusterForm" class="flex-col">
+  <form (ngSubmit)="onSubmit(clusterForm.value)" [formGroup]="clusterForm" class="flex-col" id="clusterForm">
     <mat-form-field data-cy="appClusterCreateDialogDesc">
       <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
              placeholder="Description" required>
@@ -8,12 +8,14 @@
       <mat-error *ngIf="clusterForm.get('descriptionFormControl')?.hasError('required')">
         Description is <strong>required</strong>
       </mat-error>
+      <mat-hint>{{clusterOptions?.actions?.POST?.description?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
     <mat-form-field data-cy="appClusterCreateDialogIndices">
       <mat-label>Indices</mat-label>
       <mat-select (openedChange)="indicesOpenedChange($event)" [disableOptionCentering]="true"
                   formControlName="indicesFormControl" multiple panelClass="select-panel-reveal-input" required>
+        <app-mat-option-select-all></app-mat-option-select-all>
         <mat-option *ngFor="let projectIndex of projectIndices" [value]="projectIndex">
           {{projectIndex.index}}
         </mat-option>
@@ -21,6 +23,7 @@
       <mat-error *ngIf="clusterForm.get('indicesFormControl')?.hasError('required')">
         Need at least 1 index
       </mat-error>
+      <mat-hint>{{clusterOptions?.actions?.POST?.indices?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
     <mat-form-field data-cy="appClusterCreateDialogFields">
@@ -32,6 +35,7 @@
       <mat-error *ngIf="clusterForm.get('fieldsFormControl')?.hasError('required')">
         Field is <strong>required</strong>
       </mat-error>
+      <mat-hint>{{clusterOptions?.actions?.POST?.fields?.help_text || ''}}</mat-hint>
     </mat-form-field>
     <mat-form-field data-cy="appClusterCreateDialogEmbedding">
       <mat-label>Select Embedding</mat-label>
@@ -42,6 +46,7 @@
           {{item.description}}
         </mat-option>
       </mat-select>
+      <mat-hint>{{clusterOptions?.actions?.POST?.embedding?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"
@@ -50,7 +55,7 @@
     <mat-form-field>
       <input autocomplete="off" formControlName="keywordFilterFormControl" matInput
              placeholder="Keywords filter">
-      <mat-hint>Default regex: [0-9]+</mat-hint>
+      <mat-hint>{{clusterOptions?.actions?.POST?.significant_words_filter?.help_text || ''}}</mat-hint>
     </mat-form-field>
     <mat-form-field>
       <app-textarea-lexicon formControlName="stopWordsFormControl"
@@ -69,6 +74,7 @@
             </mat-option>
           </ng-container>
         </mat-select>
+        <mat-hint>{{clusterOptions?.actions?.POST?.clustering_algorithm?.help_text || ''}}</mat-hint>
       </mat-form-field>
 
       <mat-form-field fxFlex="calc(50%-24px)">
@@ -81,6 +87,7 @@
             </mat-option>
           </ng-container>
         </mat-select>
+        <mat-hint>{{clusterOptions?.actions?.POST?.vectorizer?.help_text || ''}}</mat-hint>
       </mat-form-field>
     </div>
 
@@ -89,37 +96,46 @@
         <input formControlName="documentLimitFormControl" matInput pattern="[1-9]\d*" placeholder="Document limit"
                step="10"
                type="number">
+        <mat-hint>{{clusterOptions?.actions?.POST?.document_limit?.help_text || ''}}</mat-hint>
       </mat-form-field>
 
       <mat-form-field fxFlex="calc(25%-24px)">
         <input formControlName="numClusterFormControl" matInput pattern="[1-9]\d*" placeholder="Num cluster" step="1"
                type="number">
+        <mat-hint>{{clusterOptions?.actions?.POST?.num_cluster?.help_text || ''}}</mat-hint>
       </mat-form-field>
 
       <mat-form-field fxFlex="calc(25%-24px)">
         <input formControlName="numDimsFormControl" matInput pattern="[1-9]\d*" placeholder="Num dims" step="100"
                type="number">
+
+        <mat-hint>{{clusterOptions?.actions?.POST?.num_dims?.help_text || ''}}</mat-hint>
       </mat-form-field>
 
       <mat-form-field fxFlex="calc(25%-24px)">
         <input formControlName="numTopicsFormControl" matInput pattern="[1-9]\d*" placeholder="Num topics" step="100"
                type="number">
+        <mat-hint>{{clusterOptions?.actions?.POST?.num_topics?.help_text || ''}}</mat-hint>
       </mat-form-field>
 
     </div>
-    <mat-checkbox formControlName="useLSIFormControl">Use LSI</mat-checkbox>
+    <mat-checkbox formControlName="useLSIFormControl" style="margin-top: 2em"
+                  matTooltip="{{clusterOptions?.actions?.POST?.use_lsi?.help_text || ''}}" matTooltipPosition="left">Use
+      LSI
+    </mat-checkbox>
 
-    <div class="flex-col">
-      <div class="flex-row">
-        <div class="flex-item-left">
-          <button (click)="closeDialog()" class="flex-item-left" mat-button type="button">Close</button>
-        </div>
-        <div class="flex-item-right">
-          <button [disabled]="!clusterForm.valid" data-cy="appClusterCreateDialogSubmit" mat-button type="submit">
-            Create
-          </button>
-        </div>
-      </div>
-    </div>
   </form>
 </div>
+<mat-dialog-actions>
+  <div class="flex-row max-width">
+    <div class="flex-item-left">
+      <button (click)="closeDialog()" class="flex-item-left" mat-button type="button">Close</button>
+    </div>
+    <div class="flex-item-right">
+      <button form="clusterForm" [disabled]="!clusterForm.valid" data-cy="appClusterCreateDialogSubmit" mat-button
+              type="submit">
+        Create
+      </button>
+    </div>
+  </div>
+</mat-dialog-actions>

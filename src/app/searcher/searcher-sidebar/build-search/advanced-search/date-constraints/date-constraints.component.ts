@@ -1,8 +1,12 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {DateConstraint, ElasticsearchQuery} from '../../Constraints';
 import {FormControl, FormGroup} from '@angular/forms';
-import {debounceTime, distinctUntilChanged, pairwise, startWith, takeUntil} from 'rxjs/operators';
-import {Subject} from 'rxjs';
+import {debounceTime, distinctUntilChanged, min, pairwise, skip, startWith, switchMap, take, takeUntil} from 'rxjs/operators';
+import {forkJoin, merge, of, Subject} from 'rxjs';
+import {ProjectStore} from '../../../../../core/projects/project.store';
+import {SearcherService} from '../../../../../core/searcher/searcher.service';
+import {HttpErrorResponse} from '@angular/common/http';
+import {Project} from '../../../../../shared/types/Project';
 
 @Component({
   selector: 'app-date-constraints',
@@ -12,15 +16,18 @@ import {Subject} from 'rxjs';
 })
 export class DateConstraintsComponent implements OnInit, OnDestroy {
   @Input() elasticSearchQuery: ElasticsearchQuery;
+  @Input() currentProject: Project;
   @Output() constraintChanged = new EventEmitter<ElasticsearchQuery>(); // search as you type, emit changes
   dateFromFormControl: FormControl = new FormControl();
   dateToFormControl: FormControl = new FormControl();
   destroyed$: Subject<boolean> = new Subject<boolean>();
   // tslint:disable-next-line:no-any
   constraintQuery: any = {bool: {must: []}};
+  public minDate: Date;
+  public maxDate: Date;
 
 
-  constructor() {
+  constructor(private projectStore: ProjectStore, private searcherService: SearcherService) {
   }
 
   // tslint:disable-next-line:variable-name
@@ -58,7 +65,62 @@ export class DateConstraintsComponent implements OnInit, OnDestroy {
           this.constraintChanged.emit(this.elasticSearchQuery);
         }
       });
+      // when we change project component doesnt get destroyed before it fires request, so check it here
+      const stopConditions$ = merge(this.destroyed$, this.projectStore.getCurrentProject().pipe(skip(1)));
+      this.projectStore.getSelectedProjectIndices().pipe(takeUntil(stopConditions$), switchMap(selectedIndices => {
+        console.log(selectedIndices);
+        if (selectedIndices) {
+          const queryMinMax = {
+            query: {
+              aggs: {}, size: 0
+            },
+            indices: selectedIndices.map(x => x.index)
+          };
+          let index = 0;
+          for (const field of fieldPaths) {
+            // @ts-ignore
+            queryMinMax.query.aggs['min_date' + index] = {min: {field, format: 'yyyy-MM-dd'}};
+            // @ts-ignore
+            queryMinMax.query.aggs['max_date' + index] = {max: {field, format: 'yyyy-MM-dd'}};
+            index++;
+          }
+          return this.searcherService.search(queryMinMax, this.currentProject.id);
+        }
+        return of(null);
+      })).subscribe(resp => {
+        if (resp && !(resp instanceof HttpErrorResponse)) {
+          let minDate: Date | undefined;
+          let maxDate: Date | undefined;
+          for (const prop in resp.aggs) {
+            if (resp.aggs.hasOwnProperty(prop)) {
+              if (prop.includes('min_date')) {
+                if ((minDate && resp.aggs[prop].value < minDate) || !minDate) {
+                  minDate = new Date(resp.aggs[prop].value);
+                }
+              }
+              if (prop.includes('max_date')) {
+                if ((maxDate && resp.aggs[prop].value > maxDate) || !maxDate) {
+                  maxDate = new Date(resp.aggs[prop].value);
+                }
+              }
+            }
+          }
+          if (minDate && maxDate) {
+            this.minDate = minDate;
+            this.maxDate = maxDate;
+            // if we dont already have dates set from saved search or user hasnt entered, set min max
+            if (!this.dateFromFormControl.value && !this.dateToFormControl.value) {
+              this.dateFromFormControl.setValue(this.minDate);
+              this.dateToFormControl.setValue(this.maxDate);
+              // @ts-ignore
+              this.makeDateQuery(fieldPaths, this.minDate, this.maxDate);
+            }
+          }
+        }
+      });
+
     }
+
   }
 
 

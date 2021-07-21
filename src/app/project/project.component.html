@@ -109,14 +109,14 @@
 <mat-menu #indicesMenu="matMenu">
   <ng-template let-element="element" matMenuContent>
     <ng-template [ngForOf]="element.indices" let-indice ngFor>
-      <button mat-menu-item>{{ indice.name }}</button>
+      <button mat-menu-item matTooltip="{{indice.name}}">{{ indice.name }}</button>
     </ng-template>
   </ng-template>
 </mat-menu>
 <mat-menu #resourceMenu="matMenu">
   <ng-template matMenuContent>
     <ng-container *ngIf="projectCounts$ | async as counts">
-      <button *ngFor="let item of counts | keyvalue: valueAscOrder"
+      <button *ngFor="let item of counts | keyvalue: valueAscOrder" matTooltip="{{ item.key.split('_').slice(1) | join:' ' | titlecase }}: {{item.value}}"
               mat-menu-item>{{ item.key.split('_').slice(1) | join:' ' | titlecase }}: {{item.value}}</button>
     </ng-container>
   </ng-template>

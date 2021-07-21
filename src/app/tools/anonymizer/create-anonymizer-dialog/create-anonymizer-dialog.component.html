@@ -8,10 +8,12 @@
       <mat-error *ngIf="anonymizerForm.get('descriptionFormControl')?.hasError('required')">
         Description is <strong>required</strong>
       </mat-error>
+      <mat-hint>{{analyzerOptions?.actions?.POST?.description?.help_text || ''}}</mat-hint>
     </mat-form-field>
     <mat-form-field *ngIf="anonymizerForm.get('replaceMisspelledNamesFormControl')?.value">
       <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="misspellingThresholdFormControl"
              matInput
+             matTooltip="{{analyzerOptions?.actions?.POST?.misspelling_threshold?.help_text || ''}}"
              max="1"
              min="0" placeholder="Misspelling Threshold" required step="0.1" type="number">
       <mat-error *ngIf="anonymizerForm.get('misspellingThresholdFormControl')?.hasError('required')">
@@ -24,17 +26,26 @@
         Threshold must be between <strong>0 and 1</strong>
       </mat-error>
     </mat-form-field>
-    <mat-checkbox formControlName="replaceMisspelledNamesFormControl">Replace Misspelled
+    <mat-checkbox formControlName="replaceMisspelledNamesFormControl"
+                  matTooltip="{{analyzerOptions?.actions?.POST?.replace_misspelled_names?.help_text || ''}}"
+                  matTooltipPosition="left">Replace Misspelled
       Names
     </mat-checkbox>
-    <mat-checkbox formControlName="replaceSingleLastNamesFormControl">Replace Single Last
+    <mat-checkbox formControlName="replaceSingleLastNamesFormControl"
+                  matTooltip="{{analyzerOptions?.actions?.POST?.replace_single_last_names?.help_text || ''}}"
+                  matTooltipPosition="left">Replace Single Last
       Names
     </mat-checkbox>
-    <mat-checkbox formControlName="replaceSingleFirstNamesFormControl">Replace Single First
+    <mat-checkbox formControlName="replaceSingleFirstNamesFormControl"
+                  matTooltip="{{analyzerOptions?.actions?.POST?.replace_single_first_names?.help_text || ''}}"
+                  matTooltipPosition="left">Replace Single First
       Names
     </mat-checkbox>
     <!--<mat-checkbox formControlName="mimicCasingFormControl">Mimic casing</mat-checkbox>-->
-    <mat-checkbox formControlName="autoAdjustThresholdFormControl">Auto Adjust Threshold</mat-checkbox>
+    <mat-checkbox formControlName="autoAdjustThresholdFormControl"
+                  matTooltip="{{analyzerOptions?.actions?.POST?.auto_adjust_threshold?.help_text || ''}}"
+                  matTooltipPosition="left">Auto Adjust Threshold
+    </mat-checkbox>
     <div class="flex-col m-top-10">
       <div class="flex-row">
         <div class="flex-item-left">

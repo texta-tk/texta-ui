@@ -20,6 +20,7 @@ import {expandRowAnimation} from '../../../shared/animations';
 import {EditEmbeddingDialogComponent} from './edit-embedding-dialog/edit-embedding-dialog.component';
 import {Index} from '../../../shared/types/Index';
 import {UseLexiconDialogComponent} from "./use-lexicon-dialog/use-lexicon-dialog.component";
+import {MatSelectChange} from '@angular/material/select';
 
 @Component({
   selector: 'app-embedding',
@@ -250,7 +251,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  applyFilter(filterValue: EventTarget | null, field: string): void {
+  applyFilter(filterValue: MatSelectChange | EventTarget | null, field: string): void {
     this.filteringValues[field] = (filterValue as HTMLInputElement).value ? (filterValue as HTMLInputElement).value : '';
     this.paginator.pageIndex = 0;
     this.filterQueriesToString();

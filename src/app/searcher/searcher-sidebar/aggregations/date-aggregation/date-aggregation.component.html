@@ -5,6 +5,7 @@
       <input (dateChange)="makeDateAggregation(dateFromFormControl.value, dateToFormControl.value)"
              [formControl]="dateFromFormControl" [matDatepicker]="from" id="dateFrom"
              matInput
+             [min]="minDate" [max]="maxDate"
              placeholder="From">
       <mat-datepicker-toggle [for]="from" matSuffix></mat-datepicker-toggle>
       <mat-datepicker #from></mat-datepicker>
@@ -12,6 +13,7 @@
     <mat-form-field appearance="outline">
       <input (dateChange)="makeDateAggregation(dateFromFormControl.value, dateToFormControl.value)"
              [formControl]="dateToFormControl" [matDatepicker]="to" id="dateTo" matInput
+             [min]="minDate" [max]="maxDate"
              placeholder="To">
       <mat-datepicker-toggle [for]="to" matSuffix></mat-datepicker-toggle>
       <mat-datepicker #to></mat-datepicker>
