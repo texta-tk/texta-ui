@@ -7,8 +7,8 @@ import {ErrorStateMatcher} from '@angular/material/core';
 import {MatDialogRef} from '@angular/material/dialog';
 import {ProjectService} from '../../../core/projects/project.service';
 import {LogService} from '../../../core/util/log.service';
-import {auditTime, takeUntil} from 'rxjs/operators';
-import {Subject} from 'rxjs';
+import {auditTime, switchMap, take, takeUntil} from 'rxjs/operators';
+import {of, Subject} from 'rxjs';
 import {DatasetImporterService} from '../../../core/tools/dataset-importer/dataset-importer.service';
 import {FileValidator} from 'ngx-material-file-input';
 import {HttpErrorResponse, HttpEventType, HttpResponse} from '@angular/common/http';
@@ -52,6 +52,8 @@ export class CreateDatasetDialogComponent implements OnInit, OnDestroy {
   uploadedBytes = 0;
   totalBytes = 0;
 
+  dataSetImporterOptions: any;
+
   constructor(private dialogRef: MatDialogRef<CreateDatasetDialogComponent>,
               private projectService: ProjectService,
               private importerService: DatasetImporterService,
@@ -60,9 +62,21 @@ export class CreateDatasetDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(project => {
-      if (project) {
-        this.currentProject = project;
+
+    this.projectStore.getCurrentProject().pipe(take(1), switchMap(currentProject => {
+      if (currentProject) {
+        this.currentProject = currentProject;
+        return this.importerService.getDatasetImporterOptions(currentProject.id);
+      } else {
+        return of(null);
+      }
+    })).subscribe(resp => {
+      if (resp) {
+        if (!(resp instanceof HttpErrorResponse)) {
+          this.dataSetImporterOptions = resp;
+        } else {
+          this.logService.snackBarError(resp, 2000);
+        }
       }
     });
     this.uploadProgressQueue.pipe(takeUntil(this.destroyed$), auditTime(240)).subscribe(x => this.uploadProgress = x);

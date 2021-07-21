@@ -1,13 +1,13 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
+  ElementRef, EventEmitter,
   HostBinding,
   Inject,
   Input,
   OnDestroy,
   OnInit,
-  Optional,
+  Optional, Output,
   Self,
   ViewChild
 } from '@angular/core';
@@ -23,7 +23,7 @@ import {FocusMonitor} from '@angular/cdk/a11y';
 import {coerceBooleanProperty} from '@angular/cdk/coercion';
 import {takeUntil} from 'rxjs/operators';
 import {UtilityFunctions} from '../../UtilityFunctions';
-import {MatSelect} from '@angular/material/select';
+import {MatSelect, MatSelectChange} from '@angular/material/select';
 
 @Component({
   selector: 'app-project-field-select',
@@ -37,6 +37,9 @@ export class ProjectFieldSelectComponent implements OnInit, OnDestroy, ControlVa
   currentProject: Project;
   lexicons: Lexicon[] = [];
   destroyed$: Subject<boolean> = new Subject();
+  // tslint:disable-next-line:no-any
+  @Output() selectionChanged: EventEmitter<any> = new EventEmitter();
+  @Output() openedChange: EventEmitter<boolean> = new EventEmitter<boolean>();
   @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
   stateChanges = new Subject<void>();
   @HostBinding() id = `project-field-select-${ProjectFieldSelectComponent.nextId++}`;
@@ -78,9 +81,13 @@ export class ProjectFieldSelectComponent implements OnInit, OnDestroy, ControlVa
 
   @Input() set projectFields(value: ProjectIndex[]) {
     if (value && value.length > 0) {
-      this.value = [];
-      this._projectFields = ProjectIndex.sortTextaFactsAsFirstItem(value);
+      this._projectFields = value;
       this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this._projectFields.map(x => x.fields).flat(), (x => x.path));
+      // when changing indices remember selected fields only if they also exist in the new indices
+      if (this.value) {
+        this.value = this.value.filter(val => this.fieldsUnique.find(x => x.path === val));
+      }
+      this.fieldsUnique.push(this.fieldsUnique.splice(this.fieldsUnique.findIndex(x => x.type === 'fact'), 1)[0]);
       this.fieldIndexMap = ProjectIndex.getFieldToIndexMap(value);
       this.disabled = false;
     } else {
@@ -96,13 +103,13 @@ export class ProjectFieldSelectComponent implements OnInit, OnDestroy, ControlVa
     return this.fieldFormControl.value;
   }
 
-  set value(stopWords: string[] | null) {
-    this.fieldFormControl.setValue(stopWords);
+  set value(fields: string[] | null) {
+    this.fieldFormControl.setValue(fields);
     this.stateChanges.next();
   }
 
   get empty(): boolean {
-    return this.fieldFormControl.value.length === 0;
+    return this.fieldFormControl?.value?.length === 0;
   }
 
   @HostBinding('class.floating')
@@ -170,10 +177,10 @@ export class ProjectFieldSelectComponent implements OnInit, OnDestroy, ControlVa
 
   // tslint:disable-next-line:no-any
   onChange = (_: any) => {
-  }
+  };
 
   onTouched = () => {
-  }
+  };
 
 
   setDescribedByIds(ids: string[]): void {
@@ -218,6 +225,7 @@ export class ProjectFieldSelectComponent implements OnInit, OnDestroy, ControlVa
       this.focused = false;
       this.onTouched();
       this.stateChanges.next();
+      this.openedChange.next(event);
     }
   }
 

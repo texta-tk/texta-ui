@@ -31,6 +31,9 @@ export class MLPApplyTextDialogComponent implements OnInit, OnDestroy {
   isLoading: boolean;
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
 
+  // tslint:disable-next-line:no-any
+  mlpOptions: any;
+
   constructor(private dialogRef: MatDialogRef<MLPApplyTextDialogComponent>,
               private projectService: ProjectService,
               private mlpService: MLPService,
@@ -48,6 +51,7 @@ export class MLPApplyTextDialogComponent implements OnInit, OnDestroy {
       }
     })).subscribe((resp: MLPOptions | HttpErrorResponse | null) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.mlpOptions = resp;
         this.analyzers = resp.actions.POST.analyzers.choices;
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);

@@ -18,12 +18,13 @@ import {forkJoin, of, Subject} from 'rxjs';
 import {debounceTime, delay, distinctUntilChanged, filter, switchMap, take, takeUntil} from 'rxjs/operators';
 import {ProjectStore} from '../../core/projects/project.store';
 import {ElasticsearchQuery} from '../searcher-sidebar/build-search/Constraints';
-import {Project, ProjectIndex} from '../../shared/types/Project';
+import {Field, Project, ProjectIndex} from '../../shared/types/Project';
 import {LocalStorageService} from '../../core/util/local-storage.service';
 import {SearcherOptions} from '../SearcherOptions';
 import {HttpErrorResponse} from '@angular/common/http';
 import {SearcherService} from '../../core/searcher/searcher.service';
 import {ProjectService} from '../../core/projects/project.service';
+import {UtilityFunctions} from '../../shared/UtilityFunctions';
 
 @Component({
   selector: 'app-searcher-table',
@@ -36,7 +37,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
   totalCountLength: number; // paginator max length with label
   // tslint:disable-next-line:no-any
   public tableData: MatTableDataSource<any> = new MatTableDataSource();
-  public displayedColumns: string[] = [];
+  public displayedColumns: Field[] = [];
   public columnsToDisplay: string[] = [];
   public columnFormControl = new FormControl([]);
   public isLoadingResults = false;
@@ -47,8 +48,8 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @Output() drawerToggle = new EventEmitter<boolean>();
   searchQueue$: Subject<void> = new Subject<void>();
+  public projectFields: ProjectIndex[];
   private destroy$: Subject<boolean> = new Subject();
-  private projectFields: ProjectIndex[];
   private currentProject: Project;
   private totalDocs = 0;
 
@@ -56,6 +57,8 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
               private searcherService: SearcherService, private projectService: ProjectService,
               private localStorage: LocalStorageService) {
   }
+
+  pathAccessor = (x: { path: string; type: string }) => x.path;
 
   ngOnInit(): void {
     // paginator label hack
@@ -73,12 +76,9 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroy$), filter(x => !!x), distinctUntilChanged(),
       switchMap(projField => {
         if (projField) {
-          this.projectFields = projField;
+          this.projectFields = ProjectIndex.cleanProjectIndicesFields(projField, ['text', 'long', 'fact', 'date'], []);
           // combine all fields of all indexes into one unique array to make columns
-          // @ts-ignore
-          const cols: string[] = [...new Set([].concat.apply([], (projField.map(x => x.fields.map(y => y.path)))))];
-          cols.push(cols.splice(cols.indexOf('texta_facts'), 1)[0]);
-          this.displayedColumns = cols;
+          this.displayedColumns = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(x => x.fields).flat(), (x => x.path));
           this.setColumnsToDisplay();
           // project changed reset table
           this.tableData.data = [];
@@ -137,7 +137,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     });
 
     this.sort.sortChange.pipe(takeUntil(this.destroy$)).subscribe(x => {
-      if (x && x.active && this.projectFields) {
+      if (x && x.active && this.projectFields && this.currentElasticQuery) {
         this.currentElasticQuery.elasticSearchQuery.sort = this.buildSortQuery(x);
         this.currentElasticQuery.elasticSearchQuery.from = 0; // paginator reset is done in getSearch response
         this.searchQueue$.next();
@@ -208,7 +208,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     }
   }
 
-  public onfieldSelectionChange(opened: boolean): void {
+  public onFieldSelectionChange(opened: boolean): void {
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && (this.columnFormControl.value)) {
       this.columnsToDisplay = this.columnFormControl.value;
@@ -242,7 +242,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     } else {
       return `${startIndex + 1} - ${endIndex} of ${length}/${this.totalDocs}`;
     }
-  }
+  };
 
   // tslint:disable-next-line:no-any
   trackByTableData: TrackByFunction<any> = (index: number, item: any) => item.doc;
@@ -260,7 +260,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     if (currentProjectState?.searcher?.selectedFields && currentProjectState.searcher.selectedFields.length >= 1) {
       let fieldsExist = true;
       for (const field of currentProjectState.searcher.selectedFields) {
-        if (!this.displayedColumns.includes(field)) {
+        if (!this.displayedColumns.find(x => x.path === field)) {
           fieldsExist = false;
         }
       }
@@ -270,7 +270,14 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
         return;
       }
     }
-    this.columnsToDisplay = this.displayedColumns.slice(0, 10);
+    if (this.displayedColumns.length > 0) {
+      this.displayedColumns.push(this.displayedColumns.splice(this.displayedColumns.findIndex(x => x.type === 'fact'), 1)[0]);
+      this.columnsToDisplay = this.displayedColumns.slice(0, 10).map(x => x.path);
+      const factCol = this.displayedColumns.find(x => x.type === 'fact');
+      if (factCol && !this.columnsToDisplay.includes(factCol.path)) {
+        this.columnsToDisplay.splice(this.columnsToDisplay.length, 0, factCol.path);
+      }
+    }
     this.columnFormControl.setValue(this.columnsToDisplay);
   }
 

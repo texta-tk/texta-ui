@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
 import {of, Subject} from 'rxjs';
 import {ErrorStateMatcher} from '@angular/material/core';
-import {mergeMap, takeUntil} from 'rxjs/operators';
+import {filter, mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
@@ -45,6 +45,8 @@ export class CreateSearchFieldsTaggerDialogComponent implements OnInit, OnDestro
   destroyed$: Subject<boolean> = new Subject<boolean>();
   projectIndices: ProjectIndex[] = [];
   projectFields: ProjectIndex[];
+  // tslint:disable-next-line:no-any
+  searchTaggerOptions: any;
 
   constructor(private dialogRef: MatDialogRef<CreateSearchFieldsTaggerDialogComponent>,
               private projectService: ProjectService,
@@ -71,6 +73,17 @@ export class CreateSearchFieldsTaggerDialogComponent implements OnInit, OnDestro
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(proj => {
       if (proj) {
         this.currentProject = proj;
+      }
+    });
+    this.projectStore.getCurrentProject().pipe(filter(x => !!x), take(1), switchMap(proj => {
+      if (proj) {
+        this.currentProject = proj;
+        return this.searchTaggerService.getSearchFieldsTaggerOptions(proj.id);
+      }
+      return of(null);
+    })).subscribe(options => {
+      if (options && !(options instanceof HttpErrorResponse)) {
+        this.searchTaggerOptions = options;
       }
     });
   }

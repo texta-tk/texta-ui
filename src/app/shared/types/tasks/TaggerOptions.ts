@@ -1,313 +1,550 @@
-
-// tslint:disable:variable-name
-class Id {
-  type: string;
-  required: boolean;
-  read_only: boolean;
-  label: string;
+interface Id {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
 }
 
-class Url {
-  type: string;
-  required: boolean;
-  read_only: boolean;
-  label: string;
+interface Url {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
 }
 
-class Description {
-  type: string;
-  required: boolean;
-  read_only: boolean;
-  label: string;
-  help_text: string;
+interface AuthorUsername {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
 }
 
-class Query {
-  type: string;
-  required: boolean;
-  read_only: boolean;
-  label: string;
+interface Description {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+    help_text: string;
 }
 
-class Child {
-  type: string;
-  required: boolean;
-  read_only: boolean;
+interface Query {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+    help_text: string;
+    default: string;
 }
 
-class Fields {
-  type: string;
-  required: boolean;
-  read_only: boolean;
-  label: string;
-  help_text: string;
-  child: Child;
+interface FactName {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+    help_text: string;
 }
 
-class EmbeddingTaggerOptions {
-  type: string;
-  required: boolean;
-  read_only: boolean;
-  label: string;
+interface Id2 {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
 }
 
-class Choice {
-  value: string;
-  display_name: string;
+interface IsOpen {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+    default: boolean;
 }
 
-class Vectorizer {
-  type: string;
-  required: boolean;
-  read_only: boolean;
-  label: string;
-  help_text: string;
-  choices: Choice[];
+interface Url2 {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
 }
 
-class Choice2 {
-  value: string;
-  display_name: string;
+interface Name {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+    max_length: number;
 }
 
-class Classifier {
-  type: string;
-  required: boolean;
-  read_only: boolean;
-  label: string;
-  help_text: string;
-  choices: Choice2[];
+interface Description2 {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+    help_text: string;
+    max_length: number;
 }
 
-class Choice3 {
-  value: string;
-  display_name: string;
+interface AddedBy {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+    help_text: string;
+    max_length: number;
 }
 
-class FeatureSelector {
-  type: string;
-  required: boolean;
-  read_only: boolean;
-  label: string;
-  help_text: string;
-  choices: Choice3[];
+interface Test {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+    help_text: string;
+    default: boolean;
 }
 
-class StopWords {
-  type: string;
-  required: boolean;
-  read_only: boolean;
-  label: string;
+interface Source {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+    help_text: string;
+    max_length: number;
 }
 
-class MaximumSampleSize {
-  type: string;
-  required: boolean;
-  read_only: boolean;
-  label: string;
-  help_text: string;
+interface Client {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+    help_text: string;
+    max_length: number;
 }
 
-class NegativeMultiplier {
-  type: string;
-  required: boolean;
-  read_only: boolean;
-  label: string;
-  help_text: string;
+interface Choice {
+    value: string;
+    display_name: string;
 }
 
-class Location {
-  type: string;
-  required: boolean;
-  read_only: boolean;
-  label: string;
+interface Domain {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+    choices: Choice[];
 }
 
-class Precision {
-  type: string;
-  required: boolean;
-  read_only: boolean;
-  label: string;
+interface CreatedAt {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
 }
 
-class Recall {
-  type: string;
-  required: boolean;
-  read_only: boolean;
-  label: string;
+interface Children {
+    id: Id2;
+    is_open: IsOpen;
+    url: Url2;
+    name: Name;
+    description: Description2;
+    added_by: AddedBy;
+    test: Test;
+    source: Source;
+    client: Client;
+    domain: Domain;
+    created_at: CreatedAt;
 }
 
-class F1Score {
-  type: string;
-  required: boolean;
-  read_only: boolean;
-  label: string;
+interface Child {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    help_text: string;
+    default: string;
+    children: Children;
 }
 
-class NumFeatures {
-  type: string;
-  required: boolean;
-  read_only: boolean;
-  label: string;
+interface Indices {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+    help_text: string;
+    default: string;
+    child: Child;
 }
 
-class Plot {
-  type: string;
-  required: boolean;
-  read_only: boolean;
-  label: string;
+interface Child2 {
+    type: string;
+    required: boolean;
+    read_only: boolean;
 }
 
-class Id2 {
-  type: string;
-  required: boolean;
-  read_only: boolean;
-  label: string;
+interface Fields {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+    help_text: string;
+    child: Child2;
 }
 
-class Status {
-  type: string;
-  required: boolean;
-  read_only: boolean;
-  label: string;
+interface DetectLang {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+    help_text: string;
+    default: boolean;
 }
 
-class Progress {
-  type: string;
-  required: boolean;
-  read_only: boolean;
-  label: string;
+interface Embedding {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+    help_text: string;
 }
 
-class Step {
-  type: string;
-  required: boolean;
-  read_only: boolean;
-  label: string;
+interface Choice2 {
+    value: string;
+    display_name: string;
 }
 
-class Errors {
-  type: string;
-  required: boolean;
-  read_only: boolean;
-  label: string;
+interface Vectorizer {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+    help_text: string;
+    default: string;
+    choices: Choice2[];
 }
 
-class TimeStarted {
-  type: string;
-  required: boolean;
-  read_only: boolean;
-  label: string;
+interface Choice3 {
+    value: string;
+    display_name: string;
 }
 
-class LastUpdate {
-  type: string;
-  required: boolean;
-  read_only: boolean;
-  label: string;
+interface Classifier {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+    help_text: string;
+    default: string;
+    choices: Choice3[];
 }
 
-class TimeCompleted {
-  type: string;
-  required: boolean;
-  read_only: boolean;
-  label: string;
+interface Child3 {
+    type: string;
+    required: boolean;
+    read_only: boolean;
 }
 
-class Children {
-  id: Id2;
-  status: Status;
-  progress: Progress;
-  step: Step;
-  errors: Errors;
-  time_started: TimeStarted;
-  last_update: LastUpdate;
-  time_completed: TimeCompleted;
+interface StopWords {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+    help_text: string;
+    default: string;
+    child: Child3;
 }
 
-class Task {
-  type: string;
-  required: boolean;
-  read_only: boolean;
-  label: string;
-  children: Children;
-}
-class SnowballLanguage{
-  type: string;
-  required: boolean;
-  read_only: boolean;
-  label: string;
-  help_text: string;
-  choices: Choice[];
-}
-class ScoringFunction{
-  type: string;
-  required: boolean;
-  read_only: boolean;
-  label: string;
-  help_text: string;
-  choices: Choice[];
-}
-class POST {
-  id: Id;
-  url: Url;
-  description: Description;
-  query: Query;
-  fields: Fields;
-  embedding: EmbeddingTaggerOptions;
-  vectorizer: Vectorizer;
-  classifier: Classifier;
-  feature_selector: FeatureSelector;
-  stop_words: StopWords;
-  maximum_sample_size: MaximumSampleSize;
-  negative_multiplier: NegativeMultiplier;
-  location: Location;
-  precision: Precision;
-  recall: Recall;
-  f1_score: F1Score;
-  snowball_language: SnowballLanguage;
-  scoring_function: ScoringFunction;
-  num_features: NumFeatures;
-  plot: Plot;
-  task: Task;
+interface MaximumSampleSize {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+    help_text: string;
+    default: number;
 }
 
-export class Actions {
-  POST: POST;
+interface MinimumSampleSize {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+    help_text: string;
+    default: number;
 }
 
-export class TaggerOptions {
-  name: string;
-  description: string;
-  renders: string[];
-  parses: string[];
-  actions: Actions;
+interface ScoreThreshold {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+    help_text: string;
+    default: number;
+}
 
-  static createEmpty(): TaggerOptions {
-    const out = new TaggerOptions();
-    out.actions = new Actions();
-    out.actions.POST = new POST();
-    out.actions.POST.vectorizer = new Vectorizer();
-    out.actions.POST.classifier = new Classifier();
-    out.actions.POST.feature_selector = new FeatureSelector();
-    out.actions.POST.description = new Description();
-    out.actions.POST.embedding = new EmbeddingTaggerOptions();
-    out.actions.POST.f1_score = new F1Score();
-    out.actions.POST.fields = new Fields();
-    out.actions.POST.id = new Id();
-    out.actions.POST.location = new Location();
-    out.actions.POST.maximum_sample_size = new MaximumSampleSize();
-    out.actions.POST.negative_multiplier = new NegativeMultiplier();
-    out.actions.POST.num_features = new NumFeatures();
-    out.actions.POST.plot = new Plot();
-    out.actions.POST.precision = new Precision();
-    out.actions.POST.query = new Query();
-    out.actions.POST.recall = new Recall();
-    out.actions.POST.scoring_function = new ScoringFunction();
-    out.actions.POST.snowball_language = new SnowballLanguage();
-    out.actions.POST.stop_words = new StopWords();
-    out.actions.POST.task = new Task();
-    out.actions.POST.url = new Url();
-    return out;
-  }
+interface NegativeMultiplier {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+    help_text: string;
+    default: number;
+}
+
+interface Precision {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+}
+
+interface Recall {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+}
+
+interface F1Score {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+}
+
+interface Choice4 {
+    value: string;
+    display_name: string;
+}
+
+interface SnowballLanguage {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+    help_text: string;
+    choices: Choice4[];
+}
+
+interface Choice5 {
+    value: string;
+    display_name: string;
+}
+
+interface ScoringFunction {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+    help_text: string;
+    default: string;
+    choices: Choice5[];
+}
+
+interface NumFeatures {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+}
+
+interface NumExamples {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+}
+
+interface ConfusionMatrix {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+}
+
+interface Plot {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+}
+
+interface Id3 {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+}
+
+interface Status {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+}
+
+interface Progress {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+}
+
+interface Step {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+}
+
+interface Errors {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+}
+
+interface TimeStarted {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+}
+
+interface LastUpdate {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+}
+
+interface TimeCompleted {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+}
+
+interface Total {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+    help_text: string;
+    min_value: number;
+    max_value: number;
+}
+
+interface NumProcessed {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+    min_value: number;
+    max_value: number;
+}
+
+interface Children2 {
+    id: Id3;
+    status: Status;
+    progress: Progress;
+    step: Step;
+    errors: Errors;
+    time_started: TimeStarted;
+    last_update: LastUpdate;
+    time_completed: TimeCompleted;
+    total: Total;
+    num_processed: NumProcessed;
+}
+
+interface Task {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+    children: Children2;
+}
+
+interface TaggerGroups {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+}
+
+interface IgnoreNumbers {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+    help_text: string;
+    default: boolean;
+}
+
+interface Balance {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+    help_text: string;
+    default: boolean;
+}
+
+interface BalanceToMaxLimit {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+    help_text: string;
+    default: boolean;
+}
+
+interface PosLabel {
+    type: string;
+    required: boolean;
+    read_only: boolean;
+    label: string;
+    help_text: string;
+}
+
+interface POST {
+    id: Id;
+    url: Url;
+    author_username: AuthorUsername;
+    description: Description;
+    query: Query;
+    fact_name: FactName;
+    indices: Indices;
+    fields: Fields;
+    detect_lang: DetectLang;
+    embedding: Embedding;
+    vectorizer: Vectorizer;
+    classifier: Classifier;
+    stop_words: StopWords;
+    maximum_sample_size: MaximumSampleSize;
+    minimum_sample_size: MinimumSampleSize;
+    score_threshold: ScoreThreshold;
+    negative_multiplier: NegativeMultiplier;
+    precision: Precision;
+    recall: Recall;
+    f1_score: F1Score;
+    snowball_language: SnowballLanguage;
+    scoring_function: ScoringFunction;
+    num_features: NumFeatures;
+    num_examples: NumExamples;
+    confusion_matrix: ConfusionMatrix;
+    plot: Plot;
+    task: Task;
+    tagger_groups: TaggerGroups;
+    ignore_numbers: IgnoreNumbers;
+    balance: Balance;
+    balance_to_max_limit: BalanceToMaxLimit;
+    pos_label: PosLabel;
+}
+
+interface Actions {
+    POST: POST;
+}
+
+export interface TaggerOptions {
+    name: string;
+    description: string;
+    renders: string[];
+    parses: string[];
+    actions: Actions;
 }

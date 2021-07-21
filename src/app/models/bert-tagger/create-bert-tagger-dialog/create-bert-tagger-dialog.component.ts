@@ -76,12 +76,13 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   currentProject: Project;
   destroyed$: Subject<boolean> = new Subject<boolean>();
-  fieldsUnique: Field[] = [];
   projectIndices: ProjectIndex[] = [];
   projectFields: ProjectIndex[];
   projectFacts: { name: string, values: string[] }[];
   bertModels: string[] = [];
   trainedModels: BertTagger[] = [];
+  // tslint:disable-next-line:no-any
+  bertOptions: any;
 
   constructor(private dialogRef: MatDialogRef<CreateBertTaggerDialogComponent>,
               private projectService: ProjectService,
@@ -99,6 +100,8 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
       } else {
         this.bertTaggerForm.get('maxBalanceFormControl')?.disable({emitEvent: false});
         this.bertTaggerForm.get('sentenceShuffleFormControl')?.disable({emitEvent: false});
+        this.bertTaggerForm.get('maxBalanceFormControl')?.setValue(false, {emitEvent: false});
+        this.bertTaggerForm.get('sentenceShuffleFormControl')?.setValue(false, {emitEvent: false});
       }
     });
     this.bertTaggerForm.get('factNameFormControl')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(val => {
@@ -147,8 +150,8 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
         return of(null);
       }
     })).subscribe(resp => {
-      if (resp?.options) {
-        console.log(resp.options);
+      if (resp?.options && !(resp.options instanceof HttpErrorResponse)) {
+        this.bertOptions = resp.options;
       }
       if (resp?.models && !(resp.models instanceof HttpErrorResponse)) {
         this.bertModels = resp.models;

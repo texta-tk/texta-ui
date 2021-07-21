@@ -16,6 +16,7 @@ import {QueryDialogComponent} from 'src/app/shared/components/dialogs/query-dial
 import {ReindexerService} from '../../core/tools/reindexer/reindexer.service';
 import {CreateReindexerDialogComponent} from './create-reindexer-dialog/create-reindexer-dialog.component';
 import {animate, state, style, transition, trigger} from '@angular/animations';
+import {MatSelectChange} from '@angular/material/select';
 
 @Component({
   selector: 'app-reindexer',
@@ -205,7 +206,7 @@ export class ReindexerComponent implements OnInit, OnDestroy {
   }
 
 
-  applyFilter(filterValue: EventTarget | null, field: string): void {
+  applyFilter(filterValue: MatSelectChange | EventTarget | null, field: string): void {
     this.filteringValues[field] = (filterValue as HTMLInputElement).value ? (filterValue as HTMLInputElement).value : '';
     this.filterQueriesToString();
     this.filteredSubject.next();

@@ -3,15 +3,21 @@
   <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
               [formControl]="fieldsFormControl"
               multiple (openedChange)="onOpenedChange($event)"
-
               (selectionChange)="onSelectionChange($event)">
+    <mat-select-trigger>{{fieldsFormControl?.value | getPropertyList: pathAccessor | join: ', '}}</mat-select-trigger>
     <mat-option *ngFor="let fields of (fieldsFiltered|async);trackBy:trackByPath" [value]="fields" title="{{fieldIndexMap.get(fields.path)?.join('\n')}}">
       <ng-container *ngIf="fields.type === 'fact' || fields.type === 'factName'">
         <ng-container *ngIf="fields.type === 'fact'">{{fields.path}}[fact_value]</ng-container>
         <ng-container *ngIf="fields.type === 'factName'">{{fields.path}}[fact_name]</ng-container>
       </ng-container>
-      <ng-container *ngIf="fields.type !== 'fact' && fields.type !== 'factName'">
-        {{fields.path}}
+      <ng-container *ngIf="fields.type === 'date'">
+        <mat-icon>date_range</mat-icon>{{fields.path}}
+      </ng-container>
+      <ng-container *ngIf="fields.type === 'text'">
+        <mat-icon>text_fields</mat-icon>{{fields.path}}
+      </ng-container>
+      <ng-container *ngIf="fields.type === 'long'">
+        <mat-icon>pin</mat-icon>{{fields.path}}
       </ng-container>
     </mat-option>
   </mat-select>
@@ -33,6 +39,7 @@
   </div>
   <div class="content" *ngIf="isDateConstraint(constraint)" data-cy="appSearcherSideBarBuildSearchDateConstraint">
     <app-date-constraints [dateConstraint]="$any(constraint)" [elasticSearchQuery]="elasticQuery"
+                          [currentProject]="currentProject"
                           (constraintChanged)="searchOnChange($event)"></app-date-constraints>
   </div>
   <div class="content" *ngIf="isFactNameConstraint(constraint)" data-cy="appSearcherSideBarBuildSearchFactConstraint">

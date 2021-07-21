@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>New Bert Tagger</h1>
+<h1 mat-dialog-title>New BERT Tagger</h1>
 <mat-dialog-content>
   <form (ngSubmit)="onSubmit(bertTaggerForm.value)" [formGroup]="bertTaggerForm" class="flex-col" id="bertForm">
     <mat-form-field data-cy="appBertTaggerCreateDialogDesc">
@@ -8,6 +8,7 @@
       <mat-error *ngIf="bertTaggerForm.get('descriptionFormControl')?.hasError('required')">
         Description is <strong>required</strong>
       </mat-error>
+      <mat-hint>{{bertOptions?.actions?.POST?.description?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
 
@@ -15,6 +16,7 @@
       <mat-label>Indices</mat-label>
       <mat-select (openedChange)="indicesOpenedChange($event)" [disableOptionCentering]="true"
                   formControlName="indicesFormControl" multiple panelClass="select-panel-reveal-input" required>
+        <app-mat-option-select-all></app-mat-option-select-all>
         <mat-option *ngFor="let projectIndex of projectIndices" [value]="projectIndex">
           {{projectIndex.index}}
         </mat-option>
@@ -22,6 +24,7 @@
       <mat-error *ngIf="bertTaggerForm.get('indicesFormControl')?.hasError('required')">
         Select at least <strong>1 index</strong>
       </mat-error>
+      <mat-hint>{{bertOptions?.actions?.POST?.indices?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
     <mat-form-field data-cy="appBertTaggerCreateDialogFields">
@@ -32,6 +35,7 @@
       <mat-error *ngIf="bertTaggerForm.get('fieldsFormControl')?.hasError('required')">
         Field is <strong>required</strong>
       </mat-error>
+      <mat-hint>{{bertOptions?.actions?.POST?.fields?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
     <mat-form-field>
@@ -43,18 +47,19 @@
           {{fact.name}}
         </mat-option>
       </mat-select>
+      <mat-hint>{{bertOptions?.actions?.POST?.fact_name?.help_text || ''}}</mat-hint>
     </mat-form-field>
     <div class="flex-row">
       <mat-checkbox formControlName="balanceFormControl"
-                    matTooltip="Balance sample sizes of different classes. Only applicable for multiclass taggers."
+                    matTooltip="{{bertOptions?.actions?.POST?.balance?.help_text || ''}}"
                     matTooltipPosition="left">Balance
       </mat-checkbox>
       <mat-checkbox class="m-l-15" formControlName="sentenceShuffleFormControl"
-                    matTooltip="Shuffle sentences in added examples. NB! Only applicable for multiclass taggers with balance enabled."
+                    matTooltip="{{bertOptions?.actions?.POST?.use_sentence_shuffle?.help_text || ''}}"
                     matTooltipPosition="left">Use sentence shuffle
       </mat-checkbox>
       <mat-checkbox class="m-l-15" formControlName="maxBalanceFormControl"
-                    matTooltip="If enabled, the number of samples for each class is set to `maximum_sample_size`. Otherwise, it is set to max class size. NB! Only applicable for multiclass taggers with balance enabled"
+                    matTooltip="{{bertOptions?.actions?.POST?.balance_to_max_limit?.help_text || ''}}"
                     matTooltipPosition="left">Balance to max limit
       </mat-checkbox>
     </div>
@@ -69,6 +74,7 @@
           {{factVal}}
         </mat-option>
       </mat-select>
+      <mat-hint>{{bertOptions?.actions?.POST?.pos_label?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"
@@ -76,16 +82,16 @@
     <mat-form-field>
       <mat-label>Checkpoint model</mat-label>
       <mat-select [disableOptionCentering]="true" formControlName="checkPointModelFormControl"
+      matTooltip="{{bertOptions?.actions?.POST?.checkpoint_model?.help_text || ''}}"
                   panelClass="select-panel-reveal-input">
         <mat-option>None</mat-option>
         <mat-option *ngFor="let model of trainedModels" [value]="model">
           {{model.id}}: {{model.description}}
         </mat-option>
       </mat-select>
-      <mat-hint>Fine-tune previously trained BERT model.</mat-hint>
     </mat-form-field>
     <mat-form-field>
-      <mat-label>Bert model</mat-label>
+      <mat-label>BERT model</mat-label>
       <mat-select [disableOptionCentering]="true"
                   formControlName="bertModelFormControl"
                   panelClass="select-panel-reveal-input">
@@ -93,16 +99,19 @@
           {{model}}
         </mat-option>
       </mat-select>
+      <mat-hint>{{bertOptions?.actions?.POST?.bert_model?.help_text || ''}}</mat-hint>
     </mat-form-field>
     <div fxFlex="column" fxLayoutGap="5px">
 
       <mat-form-field fxFlex="50%">
         <input formControlName="minSampleSizeFormControl" matInput placeholder="Minimum sample size" step="50"
                type="number">
+        <mat-hint>{{bertOptions?.actions?.POST?.minimum_sample_size?.help_text || ''}}</mat-hint>
       </mat-form-field>
       <mat-form-field fxFlex="50%">
         <input formControlName="sampleSizeFormControl" matInput placeholder="Maximum sample size" step="1000"
                type="number">
+        <mat-hint>{{bertOptions?.actions?.POST?.maximum_sample_size?.help_text || ''}}</mat-hint>
       </mat-form-field>
 
     </div>
@@ -110,12 +119,14 @@
       <input formControlName="negativeMultiplierFormControl" matInput pattern="([0-9]*|[0-9]*[.]?)\d*"
              placeholder="Negative multiplier" step="0.1"
              type="number">
+      <mat-hint>{{bertOptions?.actions?.POST?.maximum_sample_size?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
     <mat-form-field>
       <input formControlName="maxLengthFormControl" matInput
              placeholder="Maximum sequence length of BERT tokenized input text used for training"
              type="number">
+      <mat-hint>{{bertOptions?.actions?.POST?.max_length?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
     <!--advanced -->
@@ -127,31 +138,33 @@
         <mat-form-field class="advanced-setting">
           <input formControlName="numEpochsFormControl" matInput placeholder="Number of training epochs."
                  type="number">
+          <mat-hint>{{bertOptions?.actions?.POST?.num_epochs?.help_text || ''}}</mat-hint>
         </mat-form-field>
 
         <mat-form-field class="advanced-setting">
           <input formControlName="learningRateFormControl" matInput placeholder="Learning rate"
                  type="number">
+          <mat-hint>{{bertOptions?.actions?.POST?.learning_rate?.help_text || ''}}</mat-hint>
         </mat-form-field>
 
         <mat-form-field class="advanced-setting m-bot-10">
           <input formControlName="epsFormControl"
                  matInput placeholder="Eps" type="number">
-          <mat-hint>Term added to the denominator to improve numerical stability</mat-hint>
+          <mat-hint>{{bertOptions?.actions?.POST?.eps?.help_text || ''}}</mat-hint>
         </mat-form-field>
 
         <mat-form-field class="advanced-setting m-bot-10">
           <input formControlName="batchSizeFormControl" matInput
                  placeholder="Batch size"
                  type="number">
-          <mat-hint>Batch size used for training. NB! Autoscaled based on max length if too large</mat-hint>
+          <mat-hint>{{bertOptions?.actions?.POST?.batch_size?.help_text || ''}}</mat-hint>
         </mat-form-field>
 
         <mat-form-field class="advanced-setting m-bot-10">
           <input formControlName="splitRatioFormControl" matInput
                  placeholder="Split ratio"
                  type="number">
-          <mat-hint>Proportion of documents used for training; others are used for validation</mat-hint>
+          <mat-hint>{{bertOptions?.actions?.POST?.split_ratio?.help_text || ''}}</mat-hint>
         </mat-form-field>
       </ng-template>
     </mat-expansion-panel>

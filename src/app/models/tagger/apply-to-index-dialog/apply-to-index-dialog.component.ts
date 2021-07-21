@@ -53,6 +53,8 @@ export class ApplyToIndexDialogComponent implements OnInit, OnDestroy {
   destroyed$: Subject<boolean> = new Subject<boolean>();
   indices: ProjectIndex[];
   projectFields: ProjectIndex[] = [];
+  // tslint:disable-next-line:no-any
+  applyToIndexOptions: any;
 
 
   constructor(private dialogRef: MatDialogRef<ApplyToIndexDialogComponent>,
@@ -76,6 +78,7 @@ export class ApplyToIndexDialogComponent implements OnInit, OnDestroy {
         this.applyForm.get('esTimeoutFormControl')?.setValue(options.actions.POST.es_timeout.default);
         this.applyForm.get('bulkSizeFormControl')?.setValue(options.actions.POST.bulk_size.default);
         this.applyForm.get('chunkSizeFormControl')?.setValue(options.actions.POST.max_chunk_bytes.default);
+        this.applyToIndexOptions = options;
       }
     });
     this.projectStore.getProjectIndices().pipe(filter(x => !!x), take(1)).subscribe(indices => {

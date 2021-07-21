@@ -87,12 +87,15 @@ export class TorchTaggerService {
 
   // tslint:disable-next-line:no-any
   applyToIndexOptions(projectId: number, taskId: number): Observable<any | HttpErrorResponse> {
-    // tslint:disable-next-line:no-any
-    return this.http.options<any>(
-      `${this.apiUrl}/projects/${projectId}/torchtaggers/${taskId}/apply_to_index/`
-    ).pipe(
+    return this.http.options(`${this.apiUrl}/projects/${projectId}/torchtaggers/${taskId}/apply_to_index/`).pipe(
       tap(e => this.logService.logStatus(e, 'applyToIndexOptions')),
-      // tslint:disable-next-line:no-any
-      catchError(this.logService.handleError<any>('applyToIndexOptions')));
+      catchError(this.logService.handleError('applyToIndexOptions')));
+  }
+
+  // tslint:disable-next-line:no-any
+  getTagTextOptions(projectId: number, taskId: number): Observable<any | HttpErrorResponse> {
+    return this.http.options(`${this.apiUrl}/projects/${projectId}/torchtaggers/${taskId}/tag_text/`).pipe(
+      tap(e => this.logService.logStatus(e, 'getTagTextOptions')),
+      catchError(this.logService.handleError('getTagTextOptions')));
   }
 }

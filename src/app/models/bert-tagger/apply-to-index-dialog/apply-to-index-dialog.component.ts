@@ -51,7 +51,8 @@ export class ApplyToIndexDialogComponent implements OnInit, OnDestroy {
   destroyed$: Subject<boolean> = new Subject<boolean>();
   indices: ProjectIndex[];
   projectFields: ProjectIndex[] = [];
-
+  // tslint:disable-next-line:no-any
+  bertOptions: any;
   constructor(private dialogRef: MatDialogRef<ApplyToIndexDialogComponent>,
               private projectService: ProjectService,
               @Inject(MAT_DIALOG_DATA) public data: BertTagger,
@@ -69,6 +70,7 @@ export class ApplyToIndexDialogComponent implements OnInit, OnDestroy {
       return of(null);
     })).subscribe(options => {
       if (options && !(options instanceof HttpErrorResponse)) {
+        this.bertOptions = options;
         this.applyForm.get('esTimeoutFormControl')?.setValue(options.actions.POST.es_timeout.default);
         this.applyForm.get('bulkSizeFormControl')?.setValue(options.actions.POST.bulk_size.default);
         this.applyForm.get('chunkSizeFormControl')?.setValue(options.actions.POST.max_chunk_bytes.default);

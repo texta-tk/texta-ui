@@ -86,7 +86,7 @@
          routerLinkActive="is-active-menu">Search Fields Taggers <span
         *ngIf="projectResourceCounts?.num_search_fields_taggers"> ({{projectResourceCounts.num_search_fields_taggers}})</span></a>
       <a [routerLink]="['bert-taggers']" data-cy="appNavbarModelMenuBertTaggers" mat-menu-item
-         routerLinkActive="is-active-menu">Bert Taggers <span
+         routerLinkActive="is-active-menu">BERT Taggers <span
         *ngIf="projectResourceCounts?.num_bert_taggers">({{projectResourceCounts.num_bert_taggers}})</span></a>
       <a [routerLink]="['embeddings']" data-cy="appNavbarModelMenuEmbeddings" mat-menu-item
          routerLinkActive="is-active-menu">Embeddings <span
@@ -142,7 +142,7 @@
 
 
     <div *ngIf="user" class="flex-item-right flex-row user-name" fxLayoutAlign="baseline baseline">
-      <mat-form-field *ngIf="projectFields" class="project-select">
+      <mat-form-field *ngIf="projectFields" class="dropdown-select">
         <mat-select (openedChange)="indexSelectionOpenedChange($event)" [compareWith]="compareIndices"
                     [disableOptionCentering]="true"
                     [formControl]="projectFieldsControl" data-cy="appNavbarProjectFieldsSelect"
@@ -155,7 +155,7 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field class="project-select">
+      <mat-form-field class="dropdown-select" style="width: 140px">
         <mat-select (selectionChange)="projectStore.setCurrentProject($event.value)" [compareWith]="compareProjects"
                     [disableOptionCentering]="true" [formControl]="projectControl"
                     data-cy="appNavbarProjectSelect"
@@ -187,6 +187,11 @@
             <span>Log out</span> </a>
         </mat-menu>
       </div>
+
+      <a mat-icon-button aria-label="Docs" href="https://docs.texta.ee/" target="_blank"
+      matTooltip="Open documentation">
+        <mat-icon>description</mat-icon>
+      </a>
 
     </div>
 

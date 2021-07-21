@@ -15,6 +15,7 @@ import {SelectionModel} from '@angular/cdk/collections';
 import {CreateDatasetDialogComponent} from './create-dataset-dialog/create-dataset-dialog.component';
 import {DatasetImporterService} from '../../core/tools/dataset-importer/dataset-importer.service';
 import {expandRowAnimation} from '../../shared/animations';
+import {MatSelectChange} from '@angular/material/select';
 
 @Component({
   selector: 'app-dataset-importer',
@@ -191,7 +192,7 @@ export class DatasetImporterComponent implements OnInit, OnDestroy {
   }
 
 
-  applyFilter(filterValue: EventTarget | null, field: string): void {
+  applyFilter(filterValue: MatSelectChange | EventTarget | null, field: string): void {
     this.filteringValues[field] = (filterValue as HTMLInputElement).value ? (filterValue as HTMLInputElement).value : '';
     this.filterQueriesToString();
     this.filteredSubject.next();

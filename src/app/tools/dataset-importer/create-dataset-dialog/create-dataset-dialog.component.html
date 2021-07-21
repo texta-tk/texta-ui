@@ -8,6 +8,7 @@
       <mat-error *ngIf="importerForm?.get('descriptionFormControl')?.hasError('required')">
         Task description is <strong>required</strong>
       </mat-error>
+      <mat-hint>{{dataSetImporterOptions?.actions?.POST?.description?.help_text || ''}}</mat-hint>
     </mat-form-field>
     <mat-form-field data-cy="appDatasetImporterCreateDialogName">
       <input matInput placeholder="Dataset name" autocomplete="off" formControlName="newNameFormControl"
@@ -25,6 +26,7 @@
       <mat-error *ngIf="importerForm?.get('newNameFormControl')?.hasError('colon')">
         ':' symbols are not allowed in Index names
       </mat-error>
+      <mat-hint>{{dataSetImporterOptions?.actions?.POST?.index?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
     <mat-form-field>

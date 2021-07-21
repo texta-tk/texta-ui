@@ -8,11 +8,13 @@
       <mat-error *ngIf="taggerForm.get('descriptionFormControl')?.hasError('required')">
         Description is <strong>required</strong>
       </mat-error>
+      <mat-hint>{{taggerOptions?.actions?.POST?.description?.help_text ?? ''}}</mat-hint>
     </mat-form-field>
     <mat-form-field data-cy="appTaggerCreateDialogIndices">
       <mat-label>Indices</mat-label>
       <mat-select (openedChange)="indicesOpenedChange($event)" [disableOptionCentering]="true"
                   formControlName="indicesFormControl" multiple panelClass="select-panel-reveal-input" required>
+        <app-mat-option-select-all></app-mat-option-select-all>
         <mat-option *ngFor="let projectIndex of projectIndices" [value]="projectIndex">
           {{projectIndex.index}}
         </mat-option>
@@ -20,6 +22,7 @@
       <mat-error *ngIf="taggerForm.get('indicesFormControl')?.hasError('required')">
         Need at least 1 index
       </mat-error>
+      <mat-hint>{{taggerOptions?.actions?.POST?.indices?.help_text || ''}}</mat-hint>
     </mat-form-field>
     <mat-form-field data-cy="appTaggerCreateDialogFields">
       <mat-label>Select Fields</mat-label>
@@ -28,6 +31,7 @@
       <mat-error *ngIf="taggerForm.get('fieldsFormControl')?.hasError('required')">
         Field is <strong>required</strong>
       </mat-error>
+      <mat-hint>{{taggerOptions?.actions?.POST?.fields?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
     <mat-form-field>
@@ -39,18 +43,20 @@
           {{fact.name}}
         </mat-option>
       </mat-select>
+      <mat-hint>{{taggerOptions?.actions?.POST?.fact_name?.help_text || ''}}</mat-hint>
     </mat-form-field>
     <div class="flex-row">
       <mat-checkbox formControlName="balanceFormControl"
-                    matTooltip="Balance sample sizes of different classes. Only applicable for multiclass taggers."
+                    matTooltip="{{taggerOptions?.actions?.POST?.balance?.help_text || ''}}"
                     matTooltipPosition="left">Balance
       </mat-checkbox>
       <mat-checkbox class="m-l-15" formControlName="maxBalanceFormControl"
-                    matTooltip="If enabled, the number of samples for each class is set to `maximum_sample_size`. Otherwise, it is set to max class size. NB! Only applicable for multiclass taggers with balance enabled"
+                    matTooltip="{{taggerOptions?.actions?.POST?.balance_to_max_limit?.help_text || ''}}"
                     matTooltipPosition="left">Balance to max limit
       </mat-checkbox>
     </div>
-    <mat-form-field style="margin-top: 10px;" *ngIf="this.taggerForm.get('factNameFormControl')?.value?.values.length === 2">
+    <mat-form-field style="margin-top: 10px;"
+                    *ngIf="this.taggerForm.get('factNameFormControl')?.value?.values.length === 2">
       <mat-label>Positive label</mat-label>
       <mat-select [disableOptionCentering]="true"
                   formControlName="posLabelFormControl" panelClass="select-panel-reveal-input">
@@ -58,12 +64,15 @@
           {{factVal}}
         </mat-option>
       </mat-select>
+      <mat-hint>{{taggerOptions?.actions?.POST?.pos_label?.help_text || ''}}</mat-hint>
     </mat-form-field>
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"
                                    data-cy="appTaggerCreateDialogQuery"></app-saved-search-autocomplete>
     <mat-form-field>
       <app-textarea-lexicon formControlName="stopWordsFormControl"
                             placeholder="Stopwords (newline separated)"></app-textarea-lexicon>
+
+      <mat-hint>{{taggerOptions?.actions?.POST?.stop_words?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
     <mat-form-field data-cy="appTaggerCreateDialogEmbedding">
@@ -78,6 +87,7 @@
       <mat-error *ngIf="taggerForm.get('embeddingFormControl')?.hasError('required')">
         Embedding is <strong>required</strong>
       </mat-error>
+      <mat-hint>{{taggerOptions?.actions?.POST?.embedding?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
     <mat-form-field>
@@ -88,10 +98,11 @@
           {{item ? item : 'None'}}
         </mat-option>
       </mat-select>
+      <mat-hint>{{taggerOptions?.actions?.POST?.snowball_language?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
     <mat-checkbox class="m-bot-10" formControlName="detectLangFormControl"
-                  matTooltip="Whether to detect the language for the stemmer from the document itself. Disabled when using snowball language"
+                  matTooltip="{{taggerOptions?.actions?.POST?.detect_lang?.help_text || ''}}"
                   matTooltipPosition="left">Detect language
     </mat-checkbox>
 
@@ -99,32 +110,35 @@
       <mat-label>Scoring Function</mat-label>
       <mat-select [disableOptionCentering]="true" formControlName="scoringFormControl"
                   panelClass="select-panel-reveal-input">
-        <mat-option *ngFor="let item of taggerOptions.actions.POST.scoring_function.choices" [value]="item">
+        <mat-option *ngFor="let item of taggerOptions?.actions?.POST?.scoring_function?.choices" [value]="item">
           {{item.display_name}}
         </mat-option>
       </mat-select>
+      <mat-hint>{{taggerOptions?.actions?.POST?.scoring_function?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
     <mat-form-field>
       <mat-label>Vectorizer</mat-label>
       <mat-select [disableOptionCentering]="true" formControlName="vectorizerFormControl"
                   panelClass="select-panel-reveal-input" required>
-        <mat-option *ngFor="let item of taggerOptions.actions.POST.vectorizer.choices" [value]="item">
+        <mat-option *ngFor="let item of taggerOptions?.actions?.POST?.vectorizer?.choices" [value]="item">
           {{item.display_name}}
         </mat-option>
       </mat-select>
       <mat-error *ngIf="taggerForm.get('vectorizerFormControl')?.hasError('required')">
         Vectorizer is <strong>required</strong>
       </mat-error>
+      <mat-hint>{{taggerOptions?.actions?.POST?.vectorizer?.help_text || ''}}</mat-hint>
     </mat-form-field>
     <mat-form-field>
       <mat-label>Classifier</mat-label>
       <mat-select [disableOptionCentering]="true" formControlName="classifierFormControl"
                   panelClass="select-panel-reveal-input" required>
-        <mat-option *ngFor="let item of taggerOptions.actions.POST.classifier.choices" [value]="item">
+        <mat-option *ngFor="let item of taggerOptions?.actions?.POST?.classifier?.choices" [value]="item">
           {{item.display_name}}
         </mat-option>
       </mat-select>
+      <mat-hint>{{taggerOptions?.actions?.POST?.classifier?.help_text || ''}}</mat-hint>
       <mat-error *ngIf="taggerForm.get('classifierFormControl')?.hasError('required')">
         Classifier is <strong>required</strong>
       </mat-error>
@@ -134,20 +148,24 @@
       <input formControlName="sampleSizeFormControl" matInput pattern="[1-9]\d*" placeholder="Maximum sample size"
              step="1000"
              type="number">
+      <mat-hint>{{taggerOptions?.actions?.POST?.maximum_sample_size?.help_text || ''}}</mat-hint>
     </mat-form-field>
     <mat-form-field>
       <input formControlName="minSampleSizeFormControl" matInput pattern="[1-9]\d*" placeholder="Minimum sample size"
              step="10"
              type="number">
+      <mat-hint>{{taggerOptions?.actions?.POST?.minimum_sample_size?.help_text || ''}}</mat-hint>
     </mat-form-field>
     <mat-form-field>
       <input formControlName="negativeMultiplierFormControl" matInput pattern="([0-9]*|[0-9]*[.]?)\d*"
              placeholder="Negative Multiplier" step="0.1"
              type="number">
+
+      <mat-hint>{{taggerOptions?.actions?.POST?.negative_multiplier?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
     <mat-checkbox formControlName="ignoreNumbersFormControl"
-                  matTooltip="If enabled, ignore all numbers as possible features."
+                  matTooltip="{{taggerOptions?.actions?.POST?.ignore_numbers?.help_text || ''}}"
                   matTooltipPosition="left">Ignore numbers
     </mat-checkbox>
   </form>

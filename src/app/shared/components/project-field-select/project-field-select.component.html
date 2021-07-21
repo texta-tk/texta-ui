@@ -1,7 +1,31 @@
-<mat-select #select [disableOptionCentering]="true" (focusout)="onSelectFocusLeave($event)" (openedChange)="selectBlur($event)"
-            [formControl]="fieldFormControl" [multiple]="multiple" [required]="required" panelClass="select-panel-reveal-input">
+<mat-select #select [disableOptionCentering]="true" (focusout)="onSelectFocusLeave($event)"
+            (openedChange)="selectBlur($event)"
+            (selectionChange)="selectionChanged.next($event)"
+            [formControl]="fieldFormControl" [multiple]="multiple" [required]="required"
+            panelClass="select-panel-reveal-input">
+  <mat-select-trigger>{{fieldFormControl?.value | join: ', '}}</mat-select-trigger>
   <app-mat-option-select-all [multiple]="multiple"></app-mat-option-select-all>
-  <mat-option *ngFor="let fields of fieldsUnique" title="{{fieldIndexMap.get(fields.path)?.join('\n')}}" [value]="fields.path">
-    {{fields.path}}
+  <mat-option *ngFor="let field of fieldsUnique" title="{{fieldIndexMap.get(field.path)?.join('\n')}}"
+              [value]="field.path">
+    <ng-container *ngIf="field.type === 'fact'">
+      {{field.path}}
+    </ng-container>
+    <ng-container *ngIf="field.type === 'date'">
+      <mat-icon>date_range</mat-icon>
+      {{field.path}}
+    </ng-container>
+    <ng-container *ngIf="field.type === 'text' || field.type === 'keyword'">
+      <mat-icon>text_fields</mat-icon>
+      {{field.path}}
+    </ng-container>
+    <ng-container *ngIf="field.type === 'long' || field.type === 'float'">
+      <mat-icon>pin</mat-icon>
+      {{field.path}}
+    </ng-container>
+    <ng-container *ngIf="field.type === 'boolean'">
+      <mat-icon>flaky</mat-icon>
+      {{field.path}}
+    </ng-container>
   </mat-option>
+
 </mat-select>

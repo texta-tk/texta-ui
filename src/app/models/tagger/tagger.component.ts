@@ -24,6 +24,7 @@ import {expandRowAnimation} from '../../shared/animations';
 import {EditTaggerDialogComponent} from './edit-tagger-dialog/edit-tagger-dialog.component';
 import {Index} from '../../shared/types/Index';
 import {ApplyToIndexDialogComponent} from './apply-to-index-dialog/apply-to-index-dialog.component';
+import {MatSelectChange} from '@angular/material/select';
 
 @Component({
   selector: 'app-tagger',
@@ -179,10 +180,10 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dialog.open(EditTaggerDialogComponent, {
       width: '700px',
       data: tagger
-    }).afterClosed().subscribe((x: Tagger | HttpErrorResponse | undefined) => {
+    }).afterClosed().subscribe(x => {
       if (x && !(x instanceof HttpErrorResponse)) {
         tagger.description = x.description;
-      } else if (x instanceof HttpErrorResponse) {
+      } else if (x && x instanceof HttpErrorResponse) {
         this.logService.snackBarError(x, 3000);
       }
     });
@@ -310,8 +311,9 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  applyFilter(filterValue: EventTarget | null, field: string): void {
-    this.filteringValues[field] = (filterValue as HTMLInputElement).value ? (filterValue as HTMLInputElement).value : '';
+  applyFilter(filterValue: MatSelectChange | null | EventTarget, field: string): void {
+    // @ts-ignore
+    this.filteringValues[field] = filterValue?.value ? filterValue.value : '';
     this.paginator.pageIndex = 0;
     this.filterQueriesToString();
     this.filteredSubject.next();

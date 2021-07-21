@@ -5,9 +5,9 @@ import {RegexTaggerService} from '../../../core/models/taggers/regex-tagger.serv
 import {LogService} from '../../../core/util/log.service';
 import {LexiconService} from '../../../core/lexicon/lexicon.service';
 import {ProjectStore} from '../../../core/projects/project.store';
-import {takeUntil} from 'rxjs/operators';
+import {switchMap, takeUntil} from 'rxjs/operators';
 import {Project} from '../../../shared/types/Project';
-import {Subject} from 'rxjs';
+import {of, Subject} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
@@ -25,6 +25,8 @@ export class MultiTagTextDialogComponent implements OnInit, OnDestroy {
 
   result: unknown;
   isLoading: boolean;
+  // tslint:disable-next-line:no-any
+  regexTaggerOptions: any;
 
   constructor(private dialogRef: MatDialogRef<MultiTagTextDialogComponent>,
               private regexTaggerService: RegexTaggerService,
@@ -36,11 +38,18 @@ export class MultiTagTextDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(currentProject => {
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), switchMap((currentProject => {
       if (currentProject) {
         this.currentProject = currentProject;
+        return this.regexTaggerService.getMultiTagTextOptions(currentProject.id);
+      }
+      return of(null);
+    }))).subscribe(resp => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.regexTaggerOptions = resp;
       }
     });
+
   }
 
   onSubmit(text: string, selectedTaggers: RegexTagger[]): void {

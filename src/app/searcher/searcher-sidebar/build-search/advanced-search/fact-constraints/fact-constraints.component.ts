@@ -1,15 +1,15 @@
 import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {ElasticsearchQuery, FactConstraint, FactTextInputGroup} from '../../Constraints';
 import {FormControl} from '@angular/forms';
-import {debounceTime, pairwise, startWith, switchMap, takeUntil} from 'rxjs/operators';
+import {debounceTime, pairwise, skip, startWith, switchMap, takeUntil} from 'rxjs/operators';
 import {Project, ProjectFact, ProjectIndex} from '../../../../../shared/types/Project';
-import {of, Subject} from 'rxjs';
+import {BehaviorSubject, merge, of, Subject} from 'rxjs';
 import {ProjectService} from '../../../../../core/projects/project.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import {UtilityFunctions} from '../../../../../shared/UtilityFunctions';
-import {ProjectStore} from "../../../../../core/projects/project.store";
-import {LogService} from "../../../../../core/util/log.service";
+import {ProjectStore} from '../../../../../core/projects/project.store';
+import {LogService} from '../../../../../core/util/log.service';
 
 
 @Component({
@@ -21,7 +21,7 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
   // inner hits name counter
   static componentCount = 0;
   @Input() elasticSearchQuery: ElasticsearchQuery;
-  projectFacts: string[] = ['Loading...'];
+  projectFacts: BehaviorSubject<string[]> = new BehaviorSubject(['Loading...']);
   @Input() currentProject: Project;
   @Input() indices: string[];
   @Output() constraintChanged = new EventEmitter<ElasticsearchQuery>(); // search as you type, emit changes
@@ -170,17 +170,17 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-
-    this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$), switchMap(currentProjIndices => {
+    const stopConditions$ = merge(this.destroyed$, this.projectStore.getCurrentProject().pipe(skip(1)));
+    this.projectStore.getSelectedProjectIndices().pipe(takeUntil(stopConditions$), switchMap(currentProjIndices => {
       if (this.currentProject?.id && currentProjIndices) {
-        this.projectFacts = ['Loading...'];
+        this.projectFacts.next(['Loading...']);
         return this.projectService.getProjectFacts(this.currentProject.id, currentProjIndices.map(x => [{name: x.index}]).flat());
       } else {
         return of(null);
       }
     })).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.projectFacts = resp;
+        this.projectFacts.next(resp);
       } else if (resp) {
         this.logService.snackBarError(resp, 4000);
       }

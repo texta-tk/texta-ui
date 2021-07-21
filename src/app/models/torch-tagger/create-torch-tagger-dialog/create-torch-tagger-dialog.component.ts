@@ -90,6 +90,8 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
       } else {
         this.torchTaggerForm.get('maxBalanceFormControl')?.disable({emitEvent: false});
         this.torchTaggerForm.get('sentenceShuffleFormControl')?.disable({emitEvent: false});
+        this.torchTaggerForm.get('maxBalanceFormControl')?.setValue(false, {emitEvent: false});
+        this.torchTaggerForm.get('sentenceShuffleFormControl')?.setValue(false, {emitEvent: false});
       }
     });
     this.torchTaggerForm.get('factNameFormControl')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(val => {

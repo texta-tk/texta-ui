@@ -8,6 +8,8 @@
       <mat-error *ngIf="summarizerForm.get('descriptionFormControl')?.hasError('required')">
         Description is <strong>required</strong>
       </mat-error>
+
+      <mat-hint>{{summarizerOptions?.actions?.POST?.description?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
 
@@ -15,6 +17,7 @@
       <mat-label>Indices</mat-label>
       <mat-select (openedChange)="indicesOpenedChange($event)" [disableOptionCentering]="true"
                   formControlName="indicesFormControl" multiple panelClass="select-panel-reveal-input" required>
+        <app-mat-option-select-all></app-mat-option-select-all>
         <mat-option *ngFor="let projectIndex of projectIndices" [value]="projectIndex">
           {{projectIndex.index}}
         </mat-option>
@@ -22,15 +25,17 @@
       <mat-error *ngIf="summarizerForm.get('indicesFormControl')?.hasError('required')">
         Select at least <strong>1 index</strong>
       </mat-error>
+      <mat-hint>{{summarizerOptions?.actions?.POST?.indices?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
     <mat-form-field>
-          <mat-label>Select Fields</mat-label>
-          <app-project-field-select [projectFields]="projectFields" [required]="true"
-                                    formControlName="fieldsFormControl"></app-project-field-select>
+      <mat-label>Select Fields</mat-label>
+      <app-project-field-select [projectFields]="projectFields" [required]="true"
+                                formControlName="fieldsFormControl"></app-project-field-select>
       <mat-error *ngIf="summarizerForm.get('fieldsFormControl')?.hasError('required')">
         Field is <strong>required</strong>
       </mat-error>
+      <mat-hint>{{summarizerOptions?.actions?.POST?.fields?.help_text || ''}}</mat-hint>
     </mat-form-field>
     <mat-form-field data-cy="appSummarizerCreateDialogAlgorithms">
       <mat-label>Algorithms</mat-label>
@@ -42,6 +47,7 @@
           </mat-option>
         </ng-container>
       </mat-select>
+      <mat-hint>{{summarizerOptions?.actions?.POST?.algorithm?.help_text || ''}}</mat-hint>
     </mat-form-field>
     <mat-form-field>
       <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="ratioFormControl"
@@ -54,7 +60,7 @@
       <mat-error *ngIf="summarizerForm.get('ratioFormControl')?.hasError('max')">
         Ratio must be between <strong>0 and 100</strong>
       </mat-error>
-      <mat-hint>Min value 0.1, Max value 99.9 anything above 1.0 will be calculated as sentence count.</mat-hint>
+      <mat-hint>{{summarizerOptions?.actions?.POST?.ratio?.help_text || ''}}</mat-hint>
     </mat-form-field>
   </form>
 </mat-dialog-content>
@@ -64,7 +70,8 @@
       <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
     </div>
     <div class="flex-item-right">
-      <button [disabled]="!summarizerForm.valid" form="summarizerForm" data-cy="appSummarizerCreateDialogSubmit" mat-button type="submit">
+      <button [disabled]="!summarizerForm.valid" form="summarizerForm" data-cy="appSummarizerCreateDialogSubmit"
+              mat-button type="submit">
         Create
       </button>
     </div>

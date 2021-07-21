@@ -69,6 +69,7 @@ export interface Description {
   required: boolean;
   read_only: boolean;
   label: string;
+  help_text: string;
   max_length: number;
 }
 
@@ -120,6 +121,7 @@ export interface Indices {
   required: boolean;
   read_only: boolean;
   label: string;
+  help_text: string;
   child: Child;
 }
 
@@ -156,6 +158,7 @@ export interface EmbeddingType {
   required: boolean;
   read_only: boolean;
   label: string;
+  help_text: string;
   choices: Choice[];
 }
 

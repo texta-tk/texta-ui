@@ -117,6 +117,7 @@ export interface ScrollSize {
   type: string;
   required: boolean;
   read_only: boolean;
+  help_text: string;
   label: string;
   min_value: number;
   max_value: number;

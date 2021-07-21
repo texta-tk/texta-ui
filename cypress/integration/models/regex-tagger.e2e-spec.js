@@ -23,15 +23,6 @@ describe('regex-taggers should work', function () {
   function tagRandomDoc() {
     cy.get('.cdk-column-actions:nth(1)').should('be.visible').click('left');
     cy.get('[data-cy=appRegexTaggerMenuTagRandomDoc]').should('be.visible').click();
-    cy.get('[data-cy=appRegexTaggerTagRandomDocDialogIndices]').click().then((indices => {
-      cy.wrap(indices).should('have.class', 'mat-focused');
-      cy.closeCurrentCdkOverlay();
-      cy.matFormFieldShouldHaveError(indices, 'required');
-      cy.wrap(indices).click();
-      cy.get('.mat-option-text:nth(0)').should('be.visible').click();
-      cy.closeCurrentCdkOverlay();
-      cy.wrap(indices).find('mat-error').should('have.length', 0)
-    }));
     cy.get('[data-cy=appRegexTaggerTagRandomDocDialogfields]').click().then((fields => {
       cy.wrap(fields).should('have.class', 'mat-focused');
       cy.closeCurrentCdkOverlay();

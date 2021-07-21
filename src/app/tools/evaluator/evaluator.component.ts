@@ -103,7 +103,7 @@ export class EvaluatorComponent implements OnInit, OnDestroy, AfterViewInit {
   openCreateDialog(): void {
     const dialogRef = this.dialog.open(CreateEvaluatorDialogComponent, {
       maxHeight: '90vh',
-      width: '700px',
+      width: '750px',
       disableClose: true,
     });
     dialogRef.afterClosed().subscribe(resp => {

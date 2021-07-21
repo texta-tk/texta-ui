@@ -82,4 +82,19 @@ export class RegexTaggerGroupService {
       tap(e => this.logService.logStatus(e, 'multiTagText')),
       catchError(this.logService.handleError<unknown>('multiTagText')));
   }
+
+  // tslint:disable-next-line:no-any
+  applyRegexTaggerGroupOptions(projectId: number): Observable<any | HttpErrorResponse> {
+    return this.http.options(`${this.apiUrl}/projects/${projectId}/regex_tagger_groups/apply_tagger_group/apply_tagger_group/`).pipe(
+      tap(e => this.logService.logStatus(e, 'applyRegexTaggerGroupOptions')),
+      catchError(this.logService.handleError('applyRegexTaggerGroupOptions')));
+  }
+
+  // tslint:disable-next-line:no-any
+  getTagRdocOptions(projectId: number, taggerId: number): Observable<any | HttpErrorResponse> {
+    return this.http.options(`${this.apiUrl}/projects/${projectId}/regex_tagger_groups/${taggerId}/tag_random_doc/`).pipe(
+      tap(e => this.logService.logStatus(e, 'getTagRdocOptions')),
+      catchError(this.logService.handleError('getTagRdocOptions')));
+  }
+
 }

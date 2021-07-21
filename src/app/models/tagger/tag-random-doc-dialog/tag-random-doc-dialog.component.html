@@ -2,11 +2,7 @@
   <div mat-dialog-content>
     <div class="m-top-10"><span class="mat-body-strong">Result: </span>
       <div class="code-wrapper">
-        <code>
-          <pre *ngIf="result">
-                    {{result.document | json}}
-                </pre>
-        </code>
+        <code><pre *ngIf="result">{{result.document | json}}</pre></code>
       </div>
       <div class="loading-div">
       <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>

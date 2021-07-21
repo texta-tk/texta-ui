@@ -13,7 +13,7 @@ export class Search {
 export interface SearchByQueryResponse {
   results: { highlight: unknown, doc: unknown }[];
   count: { value: number; relation: string } | number;
-  aggs?: unknown;
+  aggs?: any;
 }
 
 export class SearchOptions {

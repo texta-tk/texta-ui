@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import {LexiconService} from '../../../core/lexicon/lexicon.service';
 import {switchMap, takeUntil} from 'rxjs/operators';
-import {Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../../../core/util/log.service';
 import {ProjectStore} from '../../../core/projects/project.store';
@@ -33,7 +33,8 @@ export class TextareaLexiconComponent implements OnInit, OnDestroy, ControlValue
   static nextId = 0;
   textareaFormControl: FormControl = new FormControl('');
   currentProject: Project;
-  lexicons: Lexicon[] = [];
+  lexicons = new BehaviorSubject<Lexicon[]>([]);
+  loadingLexicons = new BehaviorSubject(true);
   destroyed$: Subject<boolean> = new Subject();
   @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
   stateChanges = new Subject<void>();
@@ -126,10 +127,10 @@ export class TextareaLexiconComponent implements OnInit, OnDestroy, ControlValue
 
   // tslint:disable-next-line:no-any
   onChange = (_: any) => {
-  }
+  };
 
   onTouched = () => {
-  }
+  };
 
   setDescribedByIds(ids: string[]): void {
     const controlElement = this.elRef.nativeElement.querySelector('.textarea-lexicon-input');
@@ -150,8 +151,11 @@ export class TextareaLexiconComponent implements OnInit, OnDestroy, ControlValue
       }
       return of(null);
     })).subscribe(resp => {
+      this.loadingLexicons.next(false);
       if (!(resp instanceof HttpErrorResponse) && resp) {
-        this.lexicons = resp.results;
+        this.lexicons.next(resp.results);
+      } else if (resp) {
+        this.logService.snackBarError(resp);
       }
     });
   }
