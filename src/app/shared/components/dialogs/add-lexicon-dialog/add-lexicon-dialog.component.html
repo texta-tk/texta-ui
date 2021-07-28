@@ -10,7 +10,6 @@
     <mat-label>Select Lexicon</mat-label>
     <mat-select [(ngModel)]="selectedLexicon"
                 [disableOptionCentering]="true" panelClass="select-panel-reveal-input" required>
-      <mat-option>None</mat-option>
       <mat-option *ngFor="let lex of lexicons" [value]="lex">
         {{lex.description}}
       </mat-option>

@@ -9,6 +9,7 @@ import {UserStore} from '../users/user.store';
 import {distinctUntilChanged, skip, switchMap} from 'rxjs/operators';
 import {LocalStorageService} from '../util/local-storage.service';
 import {UtilityFunctions} from '../../shared/UtilityFunctions';
+import {UserProfile} from '../../shared/types/UserProfile';
 
 
 @Injectable({
@@ -23,6 +24,8 @@ export class ProjectStore {
   private selectedProjectResourceCounts$: BehaviorSubject<ProjectResourceCounts> = new BehaviorSubject(new ProjectResourceCounts());
   // tslint:disable-next-line:variable-name
   private _selectedProject: Project | null;
+  // tslint:disable-next-line:variable-name
+  private _currentUser: UserProfile;
 
   constructor(private projectService: ProjectService,
               private logService: LogService,
@@ -30,6 +33,7 @@ export class ProjectStore {
               private userStore: UserStore) {
     this.userStore.getCurrentUser().pipe(switchMap(currentUser => {
       if (currentUser) {
+        this._currentUser = currentUser;
         return this.projectService.getProjects();
       }
       return of(null);
@@ -109,7 +113,13 @@ export class ProjectStore {
     if (cachedProject) {
       this.setCurrentProject(cachedProject);
     } else {
-      this.setCurrentProject(projects[0]);
+      const projectsUserIsIn = projects.filter(x => x.users.find(y => y.id === this._currentUser.id)).sort((a, b) => {
+        if (a.id > b.id) {
+          return -1;
+        }
+        return 1;
+      });
+      this.setCurrentProject(projectsUserIsIn[0]);
     }
   }
 

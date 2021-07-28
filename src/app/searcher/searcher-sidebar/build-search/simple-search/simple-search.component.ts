@@ -121,21 +121,6 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
     }
   }
 
-  // THIS IS TEMPORARY todo, think of a way to save simple searches and advanced searches with a clear cut difference
-  saveSearch(description: string): void {
-    if (this.currentUser) {
-      this.searcherService.saveSearch(
-        this.currentProject.id,
-        [],
-        this.elasticSearchQuery.elasticSearchQuery,
-        description).subscribe(resp => {
-        if (resp) {
-          this.searcherComponentService.nextSavedSearchUpdate();
-        }
-      });
-    }
-  }
-
   buildSavedSearch(search: SavedSearch): void {
     if (search.query) {
       const query = JSON.parse(search.query);

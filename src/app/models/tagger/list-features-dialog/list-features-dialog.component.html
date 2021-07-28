@@ -1,11 +1,7 @@
 <ng-container>
   <div fxLayout="row" style="align-items: baseline">
     <h1 fxFlex mat-dialog-title>Showing {{size}} features out of {{result ? result.total_features : '...' }}</h1>
-    <button [disabled]="!selectedOptions || selectedOptions.length === 0 || isLoading" color="primary" mat-raised-button
-            matTooltip="Add selected list items as stopwords"
-            (click)="addStopWords(this.selectedOptions)"
-            style="margin-right: 2em">Add to stopwords
-    </button>
+
     <mat-form-field fxFlex="10">
       <input [(ngModel)]="size" matInput placeholder="size" type="number">
     </mat-form-field>
@@ -27,3 +23,14 @@
     </mat-selection-list>
   </mat-dialog-content>
 </ng-container>
+<mat-dialog-actions>
+  <button [disabled]="!selectedOptions || selectedOptions.length === 0 || isLoading" color="primary" mat-raised-button
+          matTooltip="Add selected list items as stopwords"
+          (click)="addStopWords(this.selectedOptions)"
+          style="margin-left: auto">Add as stopwords
+  </button>
+  <button [disabled]="!selectedOptions || selectedOptions.length === 0 || isLoading" color="primary" mat-raised-button
+          matTooltip="Add selected list items to lexicon"
+          (click)="addToLexicon(this.selectedOptions)">Add to lexicon
+  </button>
+</mat-dialog-actions>

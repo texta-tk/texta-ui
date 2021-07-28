@@ -7,3 +7,10 @@ table {
 .mat-column-key {
   max-width: 50%;
 }
+
+.cdk-column-select {
+  padding-right: 16px;
+}
+.cdk-column-doc_count{
+  min-width: 80px;
+}

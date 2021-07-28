@@ -1,4 +1,38 @@
+<plotly-plot *ngIf="graph?.data && graph.data.length>0" (selected)="areaSelected($event)"
+             (plotlyClick)="pointClicked($event)"
+             [useResizeHandler]="true" [style]="{position: 'relative', width: '100%', height: '50%'}"
+             [data]="graph.data" [layout]="graph.layout" [updateOnlyWithRevision]="true"
+             [revision]="revision"></plotly-plot>
+<div class="overflow-auto" fxLayout="row" style="height: 50%;"
+     fxLayoutGap="10px"
+     cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)">
+  <div *ngFor="let item of dataSource; let i=index;" class="table-container" cdkDrag>
+    <table [dataSource]="item.extra.buckets" class="readable-table" mat-table>
+      <ng-container matColumnDef="key">
+        <th *matHeaderCellDef mat-header-cell>Key</th>
+        <td *matCellDef="let element" class="table-row pointer" mat-cell>{{element.key}}</td>
+      </ng-container>
+      <ng-container matColumnDef="doc_count">
+        <th *matHeaderCellDef mat-header-cell>Doc count</th>
+        <td *matCellDef="let element" class="table-row" mat-cell><span>{{element.doc_count}}</span>
+        </td>
+      </ng-container>
+      <!-- Header row first group -->
+      <ng-container matColumnDef="header-row-first-group">
+        <th *matHeaderCellDef [attr.colspan]="2" mat-header-cell style="text-align: center; cursor: move;"
+            cdkDragHandle> {{item.epoch | date}}
+          <ng-container>
+            <span>({{item.value}})</span>
+          </ng-container>
+          <button mat-icon-button color="warn" (click)="removeDataSrcEntry(i)">
+            <mat-icon>clear</mat-icon>
+          </button>
+        </th>
+      </ng-container>
 
-<plotly-plot  *ngIf="graph?.data && graph.data.length>0" (selected)="areaSelected($event)"
-             [useResizeHandler]="true" [style]="{position: 'relative', width: '100%', height: '100%'}"
-             [data]="graph.data" [layout]="graph.layout" [updateOnlyWithRevision]="true" [revision]="revision"></plotly-plot>
+      <tr *matHeaderRowDef="['header-row-first-group']; sticky: true" mat-header-row></tr>
+      <tr *matHeaderRowDef="displayedColumns;" mat-header-row></tr>
+      <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+    </table>
+  </div>
+</div>

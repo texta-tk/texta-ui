@@ -4,7 +4,7 @@ import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatDialog} from '@angular/material/dialog';
-import {AddLexiconDialogComponent} from './add-lexicon-dialog/add-lexicon-dialog.component';
+import {AddLexiconDialogComponent} from '../../../shared/components/dialogs/add-lexicon-dialog/add-lexicon-dialog.component';
 
 interface TableElement {
   doc_count: number;
@@ -59,7 +59,7 @@ export class AggregationResultTableComponent {
     this.dialog.open(AddLexiconDialogComponent, {
       maxHeight: '90vh',
       width: '800px',
-      data: selected
+      data: selected.map(x => x.key)
     });
   }
 }

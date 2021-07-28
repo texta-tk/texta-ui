@@ -31,7 +31,7 @@ export class MLPComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: MLP | null;
   public tableData: MatTableDataSource<MLP> = new MatTableDataSource();
   selectedRows = new SelectionModel<MLP>(true, []);
-  public displayedColumns = ['select', 'id', 'description', 'analyzers', 'query', 'task__time_started',
+  public displayedColumns = ['select', 'id', 'author__username', 'description', 'analyzers', 'query', 'task__time_started',
     'task__time_completed', 'task__status'];
   public isLoadingResults = true;
 

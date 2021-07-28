@@ -1,17 +1,17 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {ErrorStateMatcher} from '@angular/material/core';
-import {LiveErrorStateMatcher} from '../../../../shared/CustomerErrorStateMatchers';
+import {LiveErrorStateMatcher} from '../../../CustomerErrorStateMatchers';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {Evaluator} from '../../../../shared/types/tasks/Evaluator';
+import {Evaluator} from '../../../types/tasks/Evaluator';
 import {EvaluatorService} from '../../../../core/tools/evaluator/evaluator.service';
 import {LogService} from '../../../../core/util/log.service';
 import {ProjectStore} from '../../../../core/projects/project.store';
 import {mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
 import {of, Subject} from 'rxjs';
 import {LexiconService} from '../../../../core/lexicon/lexicon.service';
-import {Project} from '../../../../shared/types/Project';
-import {HttpErrorResponse} from "@angular/common/http";
-import {Lexicon} from "../../../../shared/types/Lexicon";
+import {Project} from '../../../types/Project';
+import {HttpErrorResponse} from '@angular/common/http';
+import {Lexicon} from '../../../types/Lexicon';
 
 @Component({
   selector: 'app-add-lexicon-dialog',
@@ -30,11 +30,7 @@ export class AddLexiconDialogComponent implements OnInit, OnDestroy {
   type: 'positives_used' | 'positives_unused' | 'negatives_used' | 'negatives_unused' = 'positives_used';
 
   constructor(private dialogRef: MatDialogRef<AddLexiconDialogComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: {
-                doc_count: number;
-                key: string;
-                top_reverse_nested: { doc_count: number };
-              }[],
+              @Inject(MAT_DIALOG_DATA) public data: string[],
               private lexiconService: LexiconService,
               private logService: LogService,
               private projectStore: ProjectStore) {
@@ -42,7 +38,7 @@ export class AddLexiconDialogComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (this.data && this.data.length > 0) {
-      this.lexWords = this.stringListToString(this.data.map(x => x.key));
+      this.lexWords = this.stringListToString(this.data);
     }
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), switchMap(proj => {
       if (proj) {

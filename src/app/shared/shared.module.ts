@@ -66,11 +66,13 @@ import {ProjectFieldSelectComponent} from './components/project-field-select/pro
 import {ParseJsonPipe} from './pipes/parse-json.pipe';
 import {TextaFactsChipsComponent} from './components/texta-facts-chips/texta-facts-chips.component';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import {AddLexiconDialogComponent} from './components/dialogs/add-lexicon-dialog/add-lexicon-dialog.component';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
     RegistrationDialogComponent,
     ConfirmDialogComponent,
+    AddLexiconDialogComponent,
     MatOptionSelectAllComponent,
     QueryDialogComponent,
     GenericDialogComponent,

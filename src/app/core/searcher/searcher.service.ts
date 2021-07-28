@@ -3,7 +3,11 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../util/log.service';
 import {environment} from '../../../environments/environment';
 import {LocalStorageService} from '../util/local-storage.service';
-import {Constraint, ElasticsearchQueryStructure} from '../../searcher/searcher-sidebar/build-search/Constraints';
+import {
+  Constraint,
+  ElasticsearchQuery,
+  ElasticsearchQueryStructure
+} from '../../searcher/searcher-sidebar/build-search/Constraints';
 import {catchError, tap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {SavedSearch} from '../../shared/types/SavedSearch';
@@ -32,16 +36,16 @@ export class SearcherService {
   }
 
   saveSearch(projectId: number, constraintList: Constraint[],
-             elasticQuery: ElasticsearchQueryStructure, desc: string): Observable<unknown> {
+             elasticQuery: ElasticsearchQueryStructure, desc: string): Observable<SavedSearch | HttpErrorResponse> {
     const body = {
       query_constraints: JSON.stringify(UtilityFunctions.convertConstraintListToJson(constraintList)),
       description: desc,
       query: JSON.stringify(elasticQuery)
     };
 
-    return this.http.post(`${this.apiUrl}/projects/${projectId}/searches/`, body).pipe(
+    return this.http.post<SavedSearch>(`${this.apiUrl}/projects/${projectId}/searches/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'saveSearch')),
-      catchError(this.logService.handleError<unknown>('saveSearch')));
+      catchError(this.logService.handleError('saveSearch')));
   }
 
   search(body: unknown, projectId: number): Observable<SearchByQueryResponse | HttpErrorResponse> {
@@ -57,10 +61,21 @@ export class SearcherService {
       catchError(this.logService.handleError<unknown>('bulkDeleteSavedSearches')));
   }
 
-  editSavedSearch(projectId: number, searchId: number, body: unknown): Observable<SavedSearch | HttpErrorResponse> {
+  editSavedSearchDescription(projectId: number, searchId: number, description: string): Observable<SavedSearch | HttpErrorResponse> {
     return this.http.patch<SavedSearch | HttpErrorResponse>
-    (`${this.apiUrl}/projects/${projectId}/searches/${searchId}/`, body).pipe(
-      tap(e => this.logService.logStatus(e, 'editSavedSearch')),
-      catchError(this.logService.handleError<SavedSearch | HttpErrorResponse>('editSavedSearch')));
+    (`${this.apiUrl}/projects/${projectId}/searches/${searchId}/`, {description}).pipe(
+      tap(e => this.logService.logStatus(e, 'editSavedSearchDescription')),
+      catchError(this.logService.handleError<SavedSearch | HttpErrorResponse>('editSavedSearchDescription')));
+  }
+
+  patchSavedSearch(projectId: number, searchId: number, constraintList: Constraint[], query: ElasticsearchQueryStructure):
+    Observable<SavedSearch | HttpErrorResponse> {
+    const body = {
+      query_constraints: JSON.stringify(UtilityFunctions.convertConstraintListToJson(constraintList)),
+      query: JSON.stringify(query)
+    };
+    return this.http.patch<SavedSearch>(`${this.apiUrl}/projects/${projectId}/searches/${searchId}/`, body).pipe(
+      tap(e => this.logService.logStatus(e, 'patchSavedSearch')),
+      catchError(this.logService.handleError('patchSavedSearch')));
   }
 }
