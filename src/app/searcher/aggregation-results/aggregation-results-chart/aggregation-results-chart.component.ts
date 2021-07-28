@@ -14,7 +14,8 @@ import {SearcherComponentService} from '../../services/searcher-component.servic
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {PlotlyComponent} from 'angular-plotly.js';
-import {Component, Injector, Input, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, Injector, Input, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-aggregation-results-chart',
@@ -23,7 +24,10 @@ import {Component, Injector, Input, NgZone, OnDestroy, OnInit, ViewChild} from '
 })
 export class AggregationResultsChartComponent implements OnInit, OnDestroy {
   // tslint:disable-next-line:no-any
+  dataSource: any[] = [];
+  // tslint:disable-next-line:no-any
   public graph: { data: unknown[], layout: any };
+  displayedColumns = ['key', 'doc_count'];
   revision = 0;
   @ViewChild(PlotlyComponent) plotly: PlotlyComponent;
   overlayRef: OverlayRef;
@@ -32,15 +36,16 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
 
   constructor(private overlay: Overlay, private injector: Injector, private ngZone: NgZone,
               private platform: Platform, private overLayContainer: OverlayContainer,
+              private changeDetectorRef: ChangeDetectorRef,
               private searcherComponentService: SearcherComponentService) {
   }
 
   @Input() set yLabel(val: string) {
     this.title = val;
     if (val === 'frequency') {
-      this.graph.layout['yaxis'] = {title: {text: this.title}, tickformat: ',.0%'};
+      this.graph.layout.yaxis = {title: {text: this.title}, tickformat: ',.0%'};
     } else {
-      this.graph.layout['yaxis'] = {title: {text: this.title}};
+      this.graph.layout.yaxis = {title: {text: this.title}};
     }
   }
 
@@ -59,7 +64,7 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
           namelength: 25,
         },
         hoverdistance: -1,
-        yaxis: this.graph?.layout['yaxis'] || {title: {text: this.title}},
+        yaxis: this.graph?.layout.yaxis || {title: {text: this.title}},
         xaxis: {type: 'date'},
         legend: {
           orientation: 'h',
@@ -78,7 +83,9 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
             this.graph.data.push({
               x: series.map(x => new Date(x.epoch)),
               y: series.map(x => x.value),
-              hovertext: series.map(x => x?.extra?.buckets.map(y => `${y.key.slice(0, 30)}:<b>${y.doc_count}</b><br>`).join('')),
+              customData: series,
+              // limit hover text to 20 rows, if it doesnt fit graph plotly wont show
+              hovertext: series.map(x => x?.extra?.buckets.slice(0, 20).map(y => `${y.key.slice(0, 30)}:<b>${y.doc_count}</b><br>`).join('')),
               type: 'scattergl',
               mode,
               /*          line: {shape: 'spline'},*/
@@ -152,8 +159,8 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
           overlayX: 'start',
           overlayY: 'bottom',
         }]);
-        positionStrategy.withDefaultOffsetY(-30);
-        positionStrategy.withDefaultOffsetX(80);
+        positionStrategy.withDefaultOffsetY(-60);
+        positionStrategy.withDefaultOffsetX(10);
 
         this.overlayRef = this.overlay.create({
           positionStrategy
@@ -180,5 +187,30 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
     ]);
 
     return new PortalInjector(this.injector, injectorTokens);
+  }
+
+  // tslint:disable-next-line:no-any
+  drop(event: CdkDragDrop<any[]>): void {
+    moveItemInArray(this.dataSource, event.previousIndex, event.currentIndex);
+  }
+
+  // tslint:disable-next-line:no-any
+  pointClicked($event: any): void {
+    if ($event?.points[0]?.data?.customData) {
+      const pointIndex = $event?.points[0]?.pointNumber;
+      if (pointIndex) {
+        console.log($event?.points[0]?.data?.customData[pointIndex]);
+        const customDatum = $event?.points[0]?.data?.customData[pointIndex];
+        this.dataSource = [...this.dataSource, customDatum];
+      }
+    }
+
+  }
+
+  removeDataSrcEntry(index: number): void {
+    if (index >= 0) {
+      this.dataSource.splice(index, 1);
+      this.changeDetectorRef.detectChanges();
+    }
   }
 }

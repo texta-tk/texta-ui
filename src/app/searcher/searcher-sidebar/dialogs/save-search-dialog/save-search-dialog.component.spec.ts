@@ -26,13 +26,9 @@ describe('SaveSearchDialogComponent', () => {
         {
           provide: MatDialogRef,
           useValue: mockDialogRef
-        }]
-    }).overrideComponent(BuildSearchComponent, {
-      set: {
-        providers: [
+        }, [
           {provide: SearcherComponentService, useClass: SearchServiceSpy}
-        ]
-      }
+        ]]
     })
       .compileComponents();
   }));

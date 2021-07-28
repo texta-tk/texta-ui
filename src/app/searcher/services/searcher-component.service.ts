@@ -32,7 +32,7 @@ export class SearcherComponentService {
       factTextInput: 'texta-facts-chips-placeholder'
     }]
   };
-  private searchSubject = new Subject<Search | null>();
+  private searchSubject = new BehaviorSubject<Search | null>(null);
   // tslint:disable-next-line:no-any
   private aggregationSubject = new Subject<{ globalAgg: any, agg: any } | null>();
   // so query wouldnt be null (we use current query in aggs so we dont want null even if user hasnt searched everything,

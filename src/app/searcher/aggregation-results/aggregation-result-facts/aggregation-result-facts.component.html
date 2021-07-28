@@ -2,8 +2,7 @@
   <div [ngStyle]="{display: viewState !== 'table' ? 'none' : 'flex'}" class="overflow-auto max-height" fxLayout="row"
        fxLayoutGap="10px"
        cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)">
-    <div *ngFor="let item of dataSource" class="table-container" cdkDrag
-         fxLayout="col">
+    <div *ngFor="let item of dataSource" class="table-container" cdkDrag>
       <table [dataSource]="item.buckets" class="readable-table" mat-table>
         <ng-container matColumnDef="key">
           <th *matHeaderCellDef mat-header-cell>Value</th>

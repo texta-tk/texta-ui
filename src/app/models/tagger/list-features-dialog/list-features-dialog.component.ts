@@ -1,9 +1,10 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {ListFeaturesResponse} from 'src/app/shared/types/tasks/Tagger';
 import {HttpErrorResponse} from '@angular/common/http';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {TaggerService} from 'src/app/core/models/taggers/tagger.service';
 import {LogService} from 'src/app/core/util/log.service';
+import {AddLexiconDialogComponent} from '../../../shared/components/dialogs/add-lexicon-dialog/add-lexicon-dialog.component';
 
 @Component({
   selector: 'app-list-features-dialog',
@@ -19,6 +20,7 @@ export class ListFeaturesDialogComponent implements OnInit {
   constructor(private dialogRef: MatDialogRef<ListFeaturesDialogComponent>,
               @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, taggerId: number },
               private taggerService: TaggerService,
+              public dialog: MatDialog,
               private logService: LogService) {
   }
 
@@ -58,6 +60,14 @@ export class ListFeaturesDialogComponent implements OnInit {
         this.logService.snackBarError(resp, 4000);
       }
       this.isLoading = false;
+    });
+  }
+
+  addToLexicon(selectedOptions: string[]): void {
+    this.dialog.open(AddLexiconDialogComponent, {
+      maxHeight: '90vh',
+      width: '800px',
+      data: selectedOptions
     });
   }
 }

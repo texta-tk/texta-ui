@@ -79,14 +79,6 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     });
   }
 
-  saveSearch(description: string): void {
-    if (this.searcherType === 2) {
-      this.advancedSearchComponent.saveSearch(description);
-    } else {
-      this.simpleSearchComponent.saveSearch(description);
-    }
-  }
-
   queryNewSearch(): void {
     if (this.searcherType === 2) {
       this.advancedSearchComponent.searchQueue$.next();

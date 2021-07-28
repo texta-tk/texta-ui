@@ -234,20 +234,6 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     }
   }
 
-  public saveSearch(description: string): void {
-    if (this.currentUser) {
-      this.searcherService.saveSearch(
-        this.currentProject.id,
-        [...this.constraintList],
-        this.elasticQuery.elasticSearchQuery,
-        description).subscribe(resp => {
-        if (resp) {
-          this.searchService.nextSavedSearchUpdate();
-        }
-      });
-    }
-  }
-
   removeConstraint(index: number): void {
     this.constraintList.splice(index, 1);
     this.changeDetectorRef.detectChanges();

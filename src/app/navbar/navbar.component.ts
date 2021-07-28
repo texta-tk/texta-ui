@@ -73,7 +73,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
     this.projectStore.getProjects().pipe(takeUntil(this.destroyed$)).subscribe(projects => {
       if (projects && projects.length > 0) {
-        this.projects = projects.filter(x => x.users.find(y => y.url === this.user.url)).sort((a, b) => {
+        this.projects = projects.filter(x => x.users.find(y => y.id === this.user.id)).sort((a, b) => {
           if (a.id > b.id) {
             return -1;
           }

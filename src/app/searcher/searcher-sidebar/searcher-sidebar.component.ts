@@ -1,6 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Subject} from 'rxjs';
-import {BuildSearchComponent} from './build-search/build-search.component';
 import {take, takeUntil} from 'rxjs/operators';
 import {SaveSearchDialogComponent} from './dialogs/save-search-dialog/save-search-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
@@ -13,7 +12,7 @@ import {LogService} from '../../core/util/log.service';
 import {SearcherComponentService} from '../services/searcher-component.service';
 import {SavedSearch} from '../../shared/types/SavedSearch';
 import {GenericDialogComponent} from '../../shared/components/dialogs/generic-dialog/generic-dialog.component';
-import {LocalStorageService} from "../../core/util/local-storage.service";
+import {LocalStorageService} from '../../core/util/local-storage.service';
 
 @Component({
   selector: 'app-searcher-sidebar',
@@ -28,15 +27,13 @@ export class SearcherSidebarComponent implements OnInit, OnDestroy {
   aggregationsExpanded = false;
   currentProject: Project;
   localStorageState: ProjectState | null;
-  @ViewChild(BuildSearchComponent)
-  private buildSearchComponent: BuildSearchComponent;
   @ViewChild(SavedSearchesComponent)
   private savedSearchesComponent: SavedSearchesComponent;
 
   constructor(public dialog: MatDialog,
               private changeDetectorRef: ChangeDetectorRef,
               private searcherService: SearcherService,
-              private searchService: SearcherComponentService,
+              private searchComponentService: SearcherComponentService,
               private projectStore: ProjectStore,
               private localStorageService: LocalStorageService,
               private logService: LogService) {
@@ -95,7 +92,7 @@ export class SearcherSidebarComponent implements OnInit, OnDestroy {
   }
 
   openViewQueryDialog(): void {
-    this.searchService.getElasticQuery().pipe(take(1)).subscribe(x => {
+    this.searchComponentService.getElasticQuery().pipe(take(1)).subscribe(x => {
       if (x) {
         this.dialog.open(GenericDialogComponent, {
           data: {
@@ -110,20 +107,21 @@ export class SearcherSidebarComponent implements OnInit, OnDestroy {
   }
 
   openSaveSearchDialog(): void {
-    const dialogRef = this.dialog.open(SaveSearchDialogComponent, {
-      maxHeight: '300px',
-      width: '300px'
-    });
-    dialogRef.afterClosed().pipe(takeUntil(this.destroy$)).subscribe((resp: string) => {
-      if (resp) {
-        this.buildSearchComponent.saveSearch(resp);
-        this.logService.snackBarMessage('Successfully saved search.', 2000);
+    this.searchComponentService.getElasticQuery().pipe(take(1)).subscribe(x => {
+      if (x) {
+        this.dialog.open(SaveSearchDialogComponent, {
+          maxHeight: '300px',
+          width: '500px',
+          data: {
+            query: x.elasticSearchQuery.query
+          },
+        });
       }
     });
   }
 
   onDeleteAllSelected(): void {
-    const selectedRows = this.searchService.savedSearchSelection;
+    const selectedRows = this.searchComponentService.savedSearchSelection;
     if (selectedRows.selected.length > 0) {
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         data: {

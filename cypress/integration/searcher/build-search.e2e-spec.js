@@ -165,6 +165,7 @@ describe('searching and search related activities should be working correctly', 
         cy.get('.mat-option-text').contains(foobar).click();
         cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
         cy.wait('@searcherQuery');
+        cy.wait(1000);
         cy.get('.cdk-column-texta_facts > app-texta-facts-chips > span').contains(foobar).should('exist');
       });
 
@@ -187,7 +188,7 @@ describe('searching and search related activities should be working correctly', 
     cy.wait('@searcherQuery');
     cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted ').should('be.visible');
     cy.get('[data-cy=appSearcherSidebarSaveSearchButton]').should('be.visible').click();
-    cy.get('mat-dialog-container input').click().type('delete_me');
+    cy.get('[data-cy=appSearcherSidebarSaveSearchDesc]').click().type('delete_me');
     cy.intercept('GET', '**/searches').as('saveSearch');
     cy.get('[type="submit"]').click();
     cy.wait('@saveSearch');
