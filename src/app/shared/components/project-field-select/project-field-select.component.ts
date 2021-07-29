@@ -87,7 +87,9 @@ export class ProjectFieldSelectComponent implements OnInit, OnDestroy, ControlVa
       if (this.value && Array.isArray(this.value)) {
         this.value = this.value.filter(val => this.fieldsUnique.find(x => x.path === val));
       }
-      this.fieldsUnique.push(this.fieldsUnique.splice(this.fieldsUnique.findIndex(x => x.type === 'fact'), 1)[0]);
+      if (this.fieldsUnique.length > 0) {
+        this.fieldsUnique.push(this.fieldsUnique.splice(this.fieldsUnique.findIndex(x => x.type === 'fact'), 1)[0]);
+      }
       this.fieldIndexMap = ProjectIndex.getFieldToIndexMap(this._projectFields);
       this.disabled = false;
     } else {
