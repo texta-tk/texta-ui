@@ -3,7 +3,8 @@
             (selectionChange)="selectionChanged.next($event)"
             [formControl]="fieldFormControl" [multiple]="multiple" [required]="required"
             panelClass="select-panel-reveal-input">
-  <mat-select-trigger>{{fieldFormControl?.value | join: ', '}}</mat-select-trigger>
+  <mat-select-trigger *ngIf="multiple">{{fieldFormControl?.value | join: ', '}}</mat-select-trigger>
+  <mat-select-trigger *ngIf="!multiple">{{fieldFormControl?.value}}</mat-select-trigger>
   <app-mat-option-select-all [multiple]="multiple"></app-mat-option-select-all>
   <mat-option *ngFor="let field of fieldsUnique" title="{{fieldIndexMap.get(field.path)?.join('\n')}}"
               [value]="field.path">
