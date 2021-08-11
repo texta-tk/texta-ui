@@ -40,6 +40,22 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
+    <mat-form-field *ngIf="!currentUser?.is_superuser && useUAA">
+      <mat-label>Scopes</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="scopeFormControl" required
+                  multiple panelClass="select-panel-reveal-input">
+        <mat-option *ngFor="let item of users" [value]="item.username">
+          {{item.username}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field *ngIf="currentUser?.is_superuser && useUAA" class="max-width" floatLabel="never"  data-cy="appProjectCreateDialogScope">
+      <textarea class="max-width" formControlName="scopeFormControl" required
+                matInput
+                placeholder="Scopes">
+      </textarea>
+      <mat-hint>Scopes</mat-hint>
+    </mat-form-field>
   </form>
 </div>
 <div class="flex-col max-width" mat-dialog-actions>

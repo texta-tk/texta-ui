@@ -56,7 +56,7 @@ export class LoginDialogComponent {
       const conf = AppConfigService.settings.uaaConf;
       // Encode the URI first
       const redirectURI = encodeURI(conf.redirect_uri);
-      const uaaLoginURL = `${conf.uaaURL}?response_type=${conf.response_type}&client_id=${conf.client_id}&scope=${conf.scope}&redirect_uri=${redirectURI}`;
+      const uaaLoginURL = `${conf.uaaURL}/uaa/oauth/authorize?response_type=${conf.response_type}&client_id=${conf.client_id}&scope=${conf.scope}&redirect_uri=${redirectURI}`;
       window.location.href = uaaLoginURL;
     }
   }

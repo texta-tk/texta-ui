@@ -20,8 +20,8 @@
                placeholder="Filter by author">
         <mat-icon matSuffix>search</mat-icon>
         <mat-autocomplete #auto="matAutocomplete" (optionSelected)="applyFilter($event.option)">
-          <mat-option *ngFor="let user of filteredUsers | async" [value]="user.username">
-            <span>{{user.username}}</span>
+          <mat-option *ngFor="let user of filteredUsers | async" [value]="user.display_name">
+            <span>{{user.display_name}}</span>
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
@@ -124,8 +124,8 @@
 <mat-menu #userMenu="matMenu">
   <ng-template let-element="element" matMenuContent>
     <ng-container *ngFor="let user of element.users">
-      <button *ngIf="user.username" [matMenuTriggerFor]="userDetailed" mat-menu-item>
-        {{ user.username }}
+      <button *ngIf="user.display_name" [matMenuTriggerFor]="userDetailed" mat-menu-item>
+        {{ user.display_name }}
       </button>
       <mat-menu #userDetailed="matMenu">
         <button mat-menu-item>Email: {{ user.email }}</button>
@@ -145,13 +145,13 @@
       Use
     </button>
     <button (click)="edit(element)"
-            *ngIf="(element.administrators | getPropertyList: urlAccessor).includes(currentUser.url) || currentUser.is_superuser || element.author_username === currentUser.username"
+            *ngIf="(element.administrators | getPropertyList: urlAccessor).includes(currentUser.url) || currentUser.is_superuser || element.author_username === currentUser.display_name"
             mat-menu-item>
       <mat-icon aria-label="Edit Project">edit</mat-icon>
       Edit
     </button>
     <button (click)="onDelete(element)"
-            *ngIf="(element.administrators | getPropertyList: urlAccessor).includes(currentUser.url) || currentUser.is_superuser || element.author_username === currentUser.username"
+            *ngIf="(element.administrators | getPropertyList: urlAccessor).includes(currentUser.url) || currentUser.is_superuser || element.author_username === currentUser.display_name"
             mat-menu-item>
       <mat-icon>delete</mat-icon>
       Delete

@@ -14,12 +14,14 @@ import {MatSelect} from '@angular/material/select';
 import {UtilityFunctions} from '../../shared/UtilityFunctions';
 import {CoreService} from '../../core/core.service';
 import {UserStore} from '../../core/users/user.store';
+import {AppConfigService} from '../../core/util/app-config.service';
 
 interface OnSubmitParams {
   indicesFormControl: { id: number; name: string }[];
   usersFormControl: UserProfile[];
   titleFormControl: string;
   administratorsFormControl: UserProfile[];
+  scopeFormControl?: string[] | string;
 }
 
 @Component({
@@ -28,6 +30,7 @@ interface OnSubmitParams {
   styleUrls: ['./edit-project-dialog.component.scss']
 })
 export class EditProjectDialogComponent implements OnInit, AfterViewInit {
+  useUAA = AppConfigService.settings.useCloudFoundryUAA;
   // @ts-ignore
   public filteredIndices: BehaviorSubject<{ id: number, name: string }[] | null> = new BehaviorSubject(null);
   indicesFilterFormControl = new FormControl();
@@ -88,9 +91,19 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
         users.setValue(this.initialProjectState.administrators);
       }
     }
+    if (this.useUAA) {
+      const scopes = this.projectForm.get('scopeFormControl');
+      if (scopes) {
+        scopes.setValue(this.initialProjectState.scopes.join('\n'));
+      }
+    }
   }
 
   ngOnInit(): void {
+    if (this.useUAA) {
+      this.projectForm.addControl('scopeFormControl', new FormControl([], [Validators.required]));
+    }
+
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(proj => {
       if (proj) {
         this.currentProject = proj;
@@ -146,6 +159,15 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
       });
   }
 
+  newLineStringToList(stringWithNewLines: string): string[] {
+    if (stringWithNewLines) {
+      const stringList = stringWithNewLines.split('\n');
+      // filter out empty values
+      return stringList.filter(x => x !== '');
+    }else{
+      return [];
+    }
+  }
 
   onSubmit(formData: OnSubmitParams): void {
     const observables: Observable<{ addObs: HttpErrorResponse | { message: string }, deleteObs: HttpErrorResponse | { message: string } } | HttpErrorResponse | Project>[] = [];
@@ -163,6 +185,12 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
 
     if (this.initialProjectState.title !== formData.titleFormControl) {
       observables.push(this.projectService.editProject({title: formData.titleFormControl}, this.initialProjectState.id));
+    }
+    if (this.useUAA) {
+      const normalizedScopes = this.currentUser.is_superuser ? this.newLineStringToList(formData.scopeFormControl as string) : formData.scopeFormControl as string[];
+      if (!UtilityFunctions.arrayValuesEqual(this.initialProjectState.scopes, normalizedScopes)) {
+        observables.push(this.projectService.editProject({scopes: normalizedScopes}, this.initialProjectState.id));
+      }
     }
 
     this.isLoading = observables.length > 0;

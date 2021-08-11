@@ -171,7 +171,7 @@
         <mat-icon aria-label="Edit Project">edit</mat-icon>
       </button>
       <div class="flex-row logout">
-        <button [matMenuTriggerFor]="menu" data-cy="appNavbarLoggedInUserMenu" mat-button><span>{{user.username}}
+        <button [matMenuTriggerFor]="menu" data-cy="appNavbarLoggedInUserMenu" mat-button><span>{{user.display_name}}
           <mat-icon>arrow_drop_down</mat-icon></span>
         </button>
         <mat-menu #menu="matMenu">

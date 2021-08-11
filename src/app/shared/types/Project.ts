@@ -17,6 +17,7 @@ export class Project {
     embedding_clusters: number[];
     taggers: number[];
   };
+  scopes: string[];
 }
 
 export class ProjectResourceCounts {
