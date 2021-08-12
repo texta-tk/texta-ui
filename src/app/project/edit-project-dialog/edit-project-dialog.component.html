@@ -42,19 +42,20 @@
     </mat-form-field>
     <mat-form-field *ngIf="!currentUser?.is_superuser && useUAA">
       <mat-label>Scopes</mat-label>
-      <mat-select [disableOptionCentering]="true" formControlName="scopeFormControl" required
+      <mat-select [disableOptionCentering]="true" formControlName="scopeFormControl"
                   multiple panelClass="select-panel-reveal-input">
-        <mat-option *ngFor="let item of users" [value]="item.username">
-          {{item.username}}
+        <mat-option *ngFor="let item of currentUser.profile.scopes" [value]="item">
+          {{item}}
         </mat-option>
       </mat-select>
+      <mat-hint>Users that belong to the given scope will have access to the Projects resources.</mat-hint>
     </mat-form-field>
-    <mat-form-field *ngIf="currentUser?.is_superuser && useUAA" class="max-width" floatLabel="never"  data-cy="appProjectCreateDialogScope">
-      <textarea class="max-width" formControlName="scopeFormControl" required
+    <mat-form-field *ngIf="currentUser?.is_superuser && useUAA" class="max-width" floatLabel="never"  data-cy="appProjectEditDialogScope">
+      <textarea class="max-width" formControlName="scopeFormControl"
                 matInput
                 placeholder="Scopes">
       </textarea>
-      <mat-hint>Scopes</mat-hint>
+      <mat-hint>Users that belong to the given scope will have access to the Projects resources.</mat-hint>
     </mat-form-field>
   </form>
 </div>

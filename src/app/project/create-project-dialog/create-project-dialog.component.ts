@@ -59,7 +59,7 @@ export class CreateProjectDialogComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (this.useUAA) {
-      this.projectForm.addControl('scopeFormControl', new FormControl([], [Validators.required]));
+      this.projectForm.addControl('scopeFormControl', new FormControl([]));
     }
 
     this.userService.getAllUsers().subscribe(resp => {
@@ -122,11 +122,11 @@ export class CreateProjectDialogComponent implements OnInit, OnDestroy {
   }
 
   newLineStringToList(stringWithNewLines: string): string[] {
-    if (stringWithNewLines) {
+    if (stringWithNewLines && stringWithNewLines.length !== 0) {
       const stringList = stringWithNewLines.split('\n');
       // filter out empty values
       return stringList.filter(x => x !== '');
-    }else{
+    } else {
       return [];
     }
   }

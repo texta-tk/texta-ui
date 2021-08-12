@@ -15,7 +15,7 @@ import {LogService} from '../core/util/log.service';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {EditProjectDialogComponent} from '../project/edit-project-dialog/edit-project-dialog.component';
-import {AppConfigService} from "../core/util/app-config.service";
+import {AppConfigService} from '../core/util/app-config.service';
 
 @Component({
   selector: 'app-navbar',
@@ -136,7 +136,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
     const observable = this.user.profile.is_uaa_account ? this.userService.logout().pipe(switchMap(x => this.userService.logoutUAA())) : this.userService.logout();
     observable.subscribe(
       () => {
-        console.log('wtf');
         this.localStorageService.deleteUser();
         this.userStore.setCurrentUser(null);
         location.reload();

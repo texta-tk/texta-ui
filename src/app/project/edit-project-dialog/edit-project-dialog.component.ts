@@ -101,7 +101,7 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     if (this.useUAA) {
-      this.projectForm.addControl('scopeFormControl', new FormControl([], [Validators.required]));
+      this.projectForm.addControl('scopeFormControl', new FormControl([]));
     }
 
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(proj => {
@@ -160,7 +160,7 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
   }
 
   newLineStringToList(stringWithNewLines: string): string[] {
-    if (stringWithNewLines) {
+    if (stringWithNewLines && stringWithNewLines.length !== 0) {
       const stringList = stringWithNewLines.split('\n');
       // filter out empty values
       return stringList.filter(x => x !== '');
