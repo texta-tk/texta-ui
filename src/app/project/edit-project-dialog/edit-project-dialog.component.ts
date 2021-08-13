@@ -31,6 +31,7 @@ interface OnSubmitParams {
 })
 export class EditProjectDialogComponent implements OnInit, AfterViewInit {
   useUAA = AppConfigService.settings.useCloudFoundryUAA;
+  PROJECT_ADMIN_SCOPE = AppConfigService.settings.uaaConf.admin_scope;
   // @ts-ignore
   public filteredIndices: BehaviorSubject<{ id: number, name: string }[] | null> = new BehaviorSubject(null);
   indicesFilterFormControl = new FormControl();
@@ -94,7 +95,11 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
     if (this.useUAA) {
       const scopes = this.projectForm.get('scopeFormControl');
       if (scopes) {
-        scopes.setValue(this.initialProjectState.scopes.join('\n'));
+        if (this.currentUser.is_superuser) {
+          scopes.setValue(this.initialProjectState.scopes.join('\n'));
+        } else {
+          scopes.setValue(this.initialProjectState.scopes);
+        }
       }
     }
   }
@@ -110,13 +115,13 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
       }
     });
     this.initialProjectState = {...this.data};
-    this.initForm();
     this.userStore.getCurrentUser().pipe(take(1), switchMap(resp => {
       if (resp) {
         this.currentUser = resp;
+        this.initForm();
         if (resp?.is_superuser) {
           return forkJoin({indices: this.coreService.getIndices(), users: this.userService.getAllUsers()});
-        } else if (this.initialProjectState.author_username === resp.username || this.initialProjectState.administrators.find(y => y.id === resp.id)) {
+        } else if (this.initialProjectState.author_username === resp.username || this.initialProjectState.administrators.find(y => y.id === resp.id) || this.currentUser.profile.scopes.includes(this.PROJECT_ADMIN_SCOPE)) {
           this.hasIndexPermissions = true;
           this.users = UtilityFunctions.sortByStringProperty(this.initialProjectState.users, (x => x.username));
           this.indices = this.initialProjectState.indices.sort((a, b) => (a.name > b.name) ? 1 : -1);
@@ -164,7 +169,7 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
       const stringList = stringWithNewLines.split('\n');
       // filter out empty values
       return stringList.filter(x => x !== '');
-    }else{
+    } else {
       return [];
     }
   }

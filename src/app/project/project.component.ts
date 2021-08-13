@@ -28,7 +28,7 @@ import {AppConfigService} from "../core/util/app-config.service";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProjectComponent implements OnInit, OnDestroy {
-
+  PROJECT_ADMIN_SCOPE = AppConfigService.settings.uaaConf.admin_scope;
   destroyed$: Subject<boolean> = new Subject<boolean>();
   filteredUsers: Observable<UserProfile[]>;
   // tslint:disable-next-line:no-any
