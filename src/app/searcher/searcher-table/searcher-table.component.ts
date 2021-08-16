@@ -187,7 +187,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
         return [{[field.path + '.keyword']: {order: sort.direction, unmapped_type: 'text'}}];
       } else if (field.type === 'fact') { // fact is nested type
         // no sorting for facts right now
-        return [];
+        return [{[field.path + '.fact']: {order: sort.direction, nested: { path: field.path }}}];
       } else {
         return [{[field.path]: {order: sort.direction, unmapped_type: field.type}}];
       }
