@@ -19,7 +19,7 @@ import {UserStore} from '../core/users/user.store';
 import {FormControl} from '@angular/forms';
 import {MatOption} from '@angular/material/core';
 import {KeyValue} from '@angular/common';
-import {AppConfigService} from "../core/util/app-config.service";
+import {AppConfigService} from '../core/util/app-config.service';
 
 @Component({
   selector: 'app-project',
@@ -29,6 +29,7 @@ import {AppConfigService} from "../core/util/app-config.service";
 })
 export class ProjectComponent implements OnInit, OnDestroy {
   PROJECT_ADMIN_SCOPE = AppConfigService.settings.uaaConf.admin_scope;
+  UAA_ENABLED = AppConfigService.settings.useCloudFoundryUAA;
   destroyed$: Subject<boolean> = new Subject<boolean>();
   filteredUsers: Observable<UserProfile[]>;
   // tslint:disable-next-line:no-any

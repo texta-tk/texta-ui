@@ -132,7 +132,7 @@
         <button mat-menu-item>
           Joined: {{ user.date_joined | date }}
         </button>
-        <button mat-menu-item>Is UAA: {{ user.profile.is_uaa_account }}</button>
+        <button mat-menu-item *ngIf="UAA_ENABLED">Is UAA: {{ user.profile.is_uaa_account }}</button>
         <button mat-menu-item>ID: {{ user.id }}</button>
       </mat-menu>
     </ng-container>
