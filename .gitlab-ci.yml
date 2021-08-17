@@ -70,7 +70,7 @@ Cypress:
   before_script:
     - npm ci
     - apt-get update && apt-get install python3-pip -y
-    - pip3 install elasticsearch==7.10.2
+    - pip3 install elasticsearch==7.10.1
     - python3 import_test_data.py
     - sh wait_for_uaa.sh
   script:
