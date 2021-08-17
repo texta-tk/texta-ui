@@ -90,8 +90,7 @@ export class HttpAuthInterceptor implements HttpInterceptor {
       // If the access token exists, use UAA
       if (accessToken) {
         request = request.clone({
-          headers: request.headers.set('Authorization', 'Bearer ' + accessToken),
-          withCredentials: true
+          headers: request.headers.set('Authorization', 'Bearer ' + accessToken)
         });
       }
     }
