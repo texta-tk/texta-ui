@@ -39,11 +39,11 @@ variables:
     TEXTA_LANGUAGE_CODES: et
     # UAA
     TEXTA_USE_UAA: "True"
-    TEXTA_UAA_REDIRECT_URI: http://texta-rest/api/v1/uaa/callback
+    TEXTA_UAA_REDIRECT_URI: http://localhost:80/api/v1/uaa/callback
     TEXTA_UAA_USER: test
     TEXTA_UAA_EMAIL: test@test.com
     TEXTA_UAA_PWD: test
-    TEXTA_UAA_URL: http://texta-uaa:8080
+    TEXTA_UAA_URL: http://172.17.0.1:8080/uaa
     TEXTA_UAA_FRONT_REDIRECT_URL: http://localhost:4200/oauth
     TEXTA_UAA_CLIENT_ID: login
     TEXTA_UAA_CLIENT_SECRET: loginsecret
