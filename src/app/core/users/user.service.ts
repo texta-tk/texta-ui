@@ -103,7 +103,7 @@ export class UserService {
 
   refreshUAAOAuthToken(refreshToken: string): Observable<RefreshTokenResp> {
     return this.http.post<RefreshTokenResp>(
-      `${this.UAAUrl}/uaa/refresh-token/`, {'refresh_token': refreshToken}).pipe(
+      `${this.apiUrl}/uaa/refresh-token/`, {'refresh_token': refreshToken}).pipe(
       tap(e => this.logService.logStatus(e, 'refreshUAAOAuthToken')));
   }
 
