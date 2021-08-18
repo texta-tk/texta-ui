@@ -6,7 +6,8 @@
   <div *ngIf="celeryStatus" fxLayout="column" style="padding: 10px">
     <h3>Active</h3>
     <ng-container *ngFor="let item of celeryStatus.active | keyvalue">
-      <h4 *ngIf="celeryStatus.active[item.key][0]" style="margin: 0;">{{item.key}}</h4>
+      <h4 *ngIf="celeryStatus.active[item.key]" style="margin: 0;">{{item.key}}</h4>
+      <ng-container *ngIf="!celeryStatus.active[item.key][0]">No active tasks</ng-container>
       <table class="simple-table" style="margin-bottom: 20px">
         <tr>
           <th *ngFor="let cols of celeryStatus.active[item.key][0] | keyvalue">{{cols.key}}</th>
@@ -25,7 +26,8 @@
     </ng-container>
     <h3>Reserved</h3>
     <ng-container *ngFor="let item of celeryStatus.reserved | keyvalue">
-      <h4 *ngIf="celeryStatus.reserved[item.key][0]" style="margin: 0;">{{item.key}}</h4>
+      <h4 *ngIf="celeryStatus.reserved[item.key]" style="margin: 0;">{{item.key}}</h4>
+      <ng-container *ngIf="!celeryStatus.reserved[item.key][0]">No reserved tasks</ng-container>
       <table class="simple-table" style="margin-bottom: 20px">
         <tr>
           <th *ngFor="let cols of celeryStatus.reserved[item.key][0] | keyvalue">{{cols.key}}</th>

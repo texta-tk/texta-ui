@@ -19,6 +19,7 @@ import {UserStore} from '../core/users/user.store';
 import {FormControl} from '@angular/forms';
 import {MatOption} from '@angular/material/core';
 import {KeyValue} from '@angular/common';
+import {AppConfigService} from '../core/util/app-config.service';
 
 @Component({
   selector: 'app-project',
@@ -27,7 +28,8 @@ import {KeyValue} from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProjectComponent implements OnInit, OnDestroy {
-
+  PROJECT_ADMIN_SCOPE = AppConfigService.settings.uaaConf.admin_scope;
+  UAA_ENABLED = AppConfigService.settings.useCloudFoundryUAA;
   destroyed$: Subject<boolean> = new Subject<boolean>();
   filteredUsers: Observable<UserProfile[]>;
   // tslint:disable-next-line:no-any
@@ -132,7 +134,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
   openCreateDialog(): void {
     const dialogRef = this.dialog.open(CreateProjectDialogComponent, {
-      maxHeight: '440px',
+      maxHeight: '90vh',
       width: '700px',
     });
     dialogRef.afterClosed().pipe(takeUntil(this.destroyed$)).subscribe(resp => {
@@ -182,7 +184,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
   }
 
   selectProject(val: Project): void {
-    if (val.users.find(x => x.url === this.currentUser.url)) {
+    if (val.users.find(x => x.url === this.currentUser.url) ||
+      (AppConfigService.settings.useCloudFoundryUAA && val.scopes.find(x => this.currentUser.profile.scopes.includes(x)))) {
       this.projectStore.setCurrentProject(val);
     } else {
       this.isLoadingResults = true;

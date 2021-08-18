@@ -14,12 +14,14 @@ import {MatSelect} from '@angular/material/select';
 import {UtilityFunctions} from '../../shared/UtilityFunctions';
 import {CoreService} from '../../core/core.service';
 import {UserStore} from '../../core/users/user.store';
+import {AppConfigService} from '../../core/util/app-config.service';
 
 interface OnSubmitParams {
   indicesFormControl: { id: number; name: string }[];
   usersFormControl: UserProfile[];
   titleFormControl: string;
   administratorsFormControl: UserProfile[];
+  scopeFormControl?: string[] | string;
 }
 
 @Component({
@@ -28,6 +30,8 @@ interface OnSubmitParams {
   styleUrls: ['./edit-project-dialog.component.scss']
 })
 export class EditProjectDialogComponent implements OnInit, AfterViewInit {
+  useUAA = AppConfigService.settings.useCloudFoundryUAA;
+  PROJECT_ADMIN_SCOPE = AppConfigService.settings.uaaConf.admin_scope;
   // @ts-ignore
   public filteredIndices: BehaviorSubject<{ id: number, name: string }[] | null> = new BehaviorSubject(null);
   indicesFilterFormControl = new FormControl();
@@ -88,22 +92,36 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
         users.setValue(this.initialProjectState.administrators);
       }
     }
+    if (this.useUAA) {
+      const scopes = this.projectForm.get('scopeFormControl');
+      if (scopes) {
+        if (this.currentUser.is_superuser) {
+          scopes.setValue(this.initialProjectState.scopes.join('\n'));
+        } else {
+          scopes.setValue(this.initialProjectState.scopes);
+        }
+      }
+    }
   }
 
   ngOnInit(): void {
+    if (this.useUAA) {
+      this.projectForm.addControl('scopeFormControl', new FormControl([]));
+    }
+
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(proj => {
       if (proj) {
         this.currentProject = proj;
       }
     });
     this.initialProjectState = {...this.data};
-    this.initForm();
     this.userStore.getCurrentUser().pipe(take(1), switchMap(resp => {
       if (resp) {
         this.currentUser = resp;
+        this.initForm();
         if (resp?.is_superuser) {
           return forkJoin({indices: this.coreService.getIndices(), users: this.userService.getAllUsers()});
-        } else if (this.initialProjectState.author_username === resp.username || this.initialProjectState.administrators.find(y => y.id === resp.id)) {
+        } else if (this.initialProjectState.author_username === resp.username || this.initialProjectState.administrators.find(y => y.id === resp.id) || this.currentUser.profile.scopes.includes(this.PROJECT_ADMIN_SCOPE)) {
           this.hasIndexPermissions = true;
           this.users = UtilityFunctions.sortByStringProperty(this.initialProjectState.users, (x => x.username));
           this.indices = this.initialProjectState.indices.sort((a, b) => (a.name > b.name) ? 1 : -1);
@@ -146,6 +164,15 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
       });
   }
 
+  newLineStringToList(stringWithNewLines: string): string[] {
+    if (stringWithNewLines && stringWithNewLines.length !== 0) {
+      const stringList = stringWithNewLines.split('\n');
+      // filter out empty values
+      return stringList.filter(x => x !== '');
+    } else {
+      return [];
+    }
+  }
 
   onSubmit(formData: OnSubmitParams): void {
     const observables: Observable<{ addObs: HttpErrorResponse | { message: string }, deleteObs: HttpErrorResponse | { message: string } } | HttpErrorResponse | Project>[] = [];
@@ -163,6 +190,12 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
 
     if (this.initialProjectState.title !== formData.titleFormControl) {
       observables.push(this.projectService.editProject({title: formData.titleFormControl}, this.initialProjectState.id));
+    }
+    if (this.useUAA) {
+      const normalizedScopes = this.currentUser.is_superuser ? this.newLineStringToList(formData.scopeFormControl as string) : formData.scopeFormControl as string[];
+      if (!UtilityFunctions.arrayValuesEqual(this.initialProjectState.scopes, normalizedScopes)) {
+        observables.push(this.projectService.editProject({scopes: normalizedScopes}, this.initialProjectState.id));
+      }
     }
 
     this.isLoading = observables.length > 0;

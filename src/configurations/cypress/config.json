@@ -6,10 +6,11 @@
   "fileFieldReplace":"texta_filepath",
   "useCloudFoundryUAA":true,
   "uaaConf":{
-    "uaaURL":"http://texta-uaa:8080/uaa/oauth/authorize",
-    "redirect_uri":"http://texta-rest/api/v1/uaa/callback",
+    "uaaURL":"http://texta-uaa:8080",
+    "redirect_uri":"http://texta-rest:80/api/v1/uaa/callback",
     "client_id":"login",
-    "scope":"openid",
+    "scope":"openid texta.*",
+    "admin_scope": "texta.project_admin",
     "response_type":"code"
   }
 }
