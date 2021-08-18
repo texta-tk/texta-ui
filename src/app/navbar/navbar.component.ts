@@ -12,9 +12,10 @@ import {ProjectStore} from '../core/projects/project.store';
 import {Subject} from 'rxjs';
 import {RegistrationDialogComponent} from '../shared/components/dialogs/registration/registration-dialog.component';
 import {LogService} from '../core/util/log.service';
-import {takeUntil} from 'rxjs/operators';
+import {switchMap, takeUntil} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {EditProjectDialogComponent} from '../project/edit-project-dialog/edit-project-dialog.component';
+import {AppConfigService} from '../core/util/app-config.service';
 
 @Component({
   selector: 'app-navbar',
@@ -73,7 +74,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
     this.projectStore.getProjects().pipe(takeUntil(this.destroyed$)).subscribe(projects => {
       if (projects && projects.length > 0) {
-        this.projects = projects.filter(x => x.users.find(y => y.id === this.user.id)).sort((a, b) => {
+        this.projects = projects.filter(x => (x.users.find(y => y.id === this.user.id) ||
+          (AppConfigService.settings.useCloudFoundryUAA && x.scopes.find(y => this.user.profile.scopes.includes(y))))).sort((a, b) => {
           if (a.id > b.id) {
             return -1;
           }
@@ -131,7 +133,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   logout(): void {
-    this.userService.logout().subscribe(
+    const observable = this.user.profile.is_uaa_account ? this.userService.logout().pipe(switchMap(x => this.userService.logoutUAA())) : this.userService.logout();
+    observable.subscribe(
       () => {
         this.localStorageService.deleteUser();
         this.userStore.setCurrentUser(null);

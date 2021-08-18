@@ -9,6 +9,7 @@ export interface UaaConf {
   client_id: string;
   // OAuth 2.0 scope and response_type
   scope: string;
+  admin_scope: string;
   response_type: string;
 }
 
@@ -37,6 +38,7 @@ export class AppConfigService {
     useCloudFoundryUAA: true,
     uaaConf: {
       uaaURL: '',
+      admin_scope: 'texta.project_admin',
       redirect_uri: '',
       client_id: 'login',
       scope: 'openid',

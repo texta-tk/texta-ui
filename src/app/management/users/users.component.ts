@@ -14,6 +14,7 @@ import {UserStore} from '../../core/users/user.store';
 import {takeUntil} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {AppConfigService} from "../../core/util/app-config.service";
 
 @Component({
   selector: 'app-users',
@@ -25,7 +26,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   projects: Project[];
   public tableData: MatTableDataSource<UserProfile> = new MatTableDataSource<UserProfile>();
 
-  public displayedColumns = ['id', 'is_superuser', 'username', 'application', 'email', 'date_joined', 'last_login', 'delete'];
+  public displayedColumns = ['id', 'is_superuser', 'first_name', 'last_name', 'username', 'application', 'email', 'date_joined', 'last_login', 'delete'];
   public isLoadingResults = true;
 
   @ViewChild(MatSort, {static: true}) sort: MatSort;
@@ -41,6 +42,9 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    if (AppConfigService.settings.useCloudFoundryUAA) {
+      this.displayedColumns.splice(2, 0, 'is_uaa_account');
+    }
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
     this.sort.sortChange.pipe(takeUntil(this.destroyed$)).subscribe(() => this.paginator.pageIndex = 0);
