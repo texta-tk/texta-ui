@@ -6,7 +6,7 @@
   "fileFieldReplace":"texta_filepath",
   "useCloudFoundryUAA":true,
   "uaaConf":{
-    "uaaURL":"http://localhost:8080",
+    "uaaURL":"http://texta-uaa:8080",
     "redirect_uri":"http://localhost:80/api/v1/uaa/callback",
     "client_id":"login",
     "scope":"openid texta.*",
