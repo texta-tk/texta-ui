@@ -9,7 +9,7 @@
     "uaaURL":"http://texta-uaa:8080",
     "redirect_uri":"http://texta-rest/api/v1/uaa/callback",
     "client_id":"login",
-    "scope":"openid texta.*",
+    "scope":"openid,texta.*",
     "admin_scope": "texta.project_admin",
     "response_type":"code"
   }
