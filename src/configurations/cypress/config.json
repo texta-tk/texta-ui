@@ -1,13 +1,13 @@
 {
-  "apiHost":"http://texta-rest",
+  "apiHost":"http://172.17.0.1:80",
   "apiBasePath":"/api/v1",
   "apiBasePath2":"/api/v2",
   "logging":true,
   "fileFieldReplace":"texta_filepath",
   "useCloudFoundryUAA":true,
   "uaaConf":{
-    "uaaURL":"http://texta-uaa:8080",
-    "redirect_uri":"http://texta-rest/api/v1/uaa/callback",
+    "uaaURL":"http://172.17.0.1:8080",
+    "redirect_uri":"http://172.17.0.1:80/api/v1/uaa/callback",
     "client_id":"login",
     "scope":"openid texta.*",
     "admin_scope": "texta.project_admin",

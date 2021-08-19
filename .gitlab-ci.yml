@@ -28,7 +28,7 @@ variables:
     TEXTA_ES_URL: http://texta-elastic:9200
     TEXTA_MLP_URL: http://mlp-dev.texta.ee:5000
     TEXTA_REDIS_URL: redis://redis:6379/0
-    TEXTA_API_URL: http://texta-rest
+    TEXTA_API_URL: http://172.17.0.1:80
     TEXTA_ADMIN_PASSWORD: "1234"
     TEXTA_USE_CSRF: "False"
     TEXTA_EXTERNAL_DATA_DIR: /cache
@@ -39,11 +39,11 @@ variables:
     TEXTA_LANGUAGE_CODES: et
     # UAA
     TEXTA_USE_UAA: "True"
-    TEXTA_UAA_REDIRECT_URI: http://texta-rest/api/v1/uaa/callback
+    TEXTA_UAA_REDIRECT_URI: http://172.17.0.1:80/api/v1/uaa/callback
     TEXTA_UAA_USER: test
     TEXTA_UAA_EMAIL: test@test.com
     TEXTA_UAA_PWD: test
-    TEXTA_UAA_URL: http://texta-uaa:8080
+    TEXTA_UAA_URL: http://172.17.0.1:8080
     TEXTA_UAA_FRONT_REDIRECT_URL: http://localhost:4200/oauth
     TEXTA_UAA_CLIENT_ID: login
     TEXTA_UAA_CLIENT_SECRET: loginsecret
