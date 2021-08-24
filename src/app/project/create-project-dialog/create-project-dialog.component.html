@@ -54,7 +54,7 @@
       </textarea>
       <mat-hint>List of administrators with access to this project (newline separated)</mat-hint>
     </mat-form-field>
-    <mat-form-field *ngIf="!currentUser?.is_superuser && useUAA">
+    <mat-form-field *ngIf="!currentUser?.is_superuser && useUAA && currentUser?.profile">
       <mat-label>Scopes</mat-label>
       <mat-select [disableOptionCentering]="true" formControlName="scopeFormControl"
                   multiple panelClass="select-panel-reveal-input">
