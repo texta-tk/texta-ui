@@ -29,6 +29,7 @@ describe('/oauth and uaa auth tests', function () {
                 // Click the login button
                 cy.get('.island-button').should('exist').click();
             });
+            cy.wait(5000);
         }
     });
 
@@ -36,7 +37,6 @@ describe('/oauth and uaa auth tests', function () {
     it('should be able to log in and out with uaa', function () {
         // Verify logged in
         cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible').click();
-
         // Logout
         cy.intercept('POST', 'logout').as('logout');
         cy.get('[data-cy=appNavbarlogOutMenuItem]').should('be.visible').click();
