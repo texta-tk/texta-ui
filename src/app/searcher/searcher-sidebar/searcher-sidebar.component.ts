@@ -1,4 +1,12 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import {Subject} from 'rxjs';
 import {take, takeUntil} from 'rxjs/operators';
 import {SaveSearchDialogComponent} from './dialogs/save-search-dialog/save-search-dialog.component';
@@ -29,6 +37,8 @@ export class SearcherSidebarComponent implements OnInit, OnDestroy {
   localStorageState: ProjectState | null;
   @ViewChild(SavedSearchesComponent)
   private savedSearchesComponent: SavedSearchesComponent;
+  @ViewChild('buildSearchPanel', {read: ElementRef})
+  private buildSearchComponent: ElementRef;
 
   constructor(public dialog: MatDialog,
               private changeDetectorRef: ChangeDetectorRef,
@@ -58,6 +68,11 @@ export class SearcherSidebarComponent implements OnInit, OnDestroy {
           this.aggregationsExpanded = this.localStorageState.searcher.sidePanelsState.aggregations;
         }
         this.changeDetectorRef.markForCheck();
+      }
+    });
+    this.searchComponentService.getSavedSearch().pipe(takeUntil(this.destroy$)).subscribe(search => {
+      if (search) {
+        this.buildSearchComponent.nativeElement.scrollIntoView();
       }
     });
   }

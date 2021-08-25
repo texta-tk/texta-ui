@@ -4,7 +4,7 @@ import {
   Constraint,
   ElasticsearchQuery,
   FactConstraint,
-  FactTextInputGroup
+  FactTextInputGroup, TextConstraint
 } from '../searcher-sidebar/build-search/Constraints';
 import {SelectionModel} from '@angular/cdk/collections';
 import {SavedSearch} from '../../shared/types/SavedSearch';
@@ -13,6 +13,7 @@ import {map, take} from 'rxjs/operators';
 import {UtilityFunctions} from '../../shared/UtilityFunctions';
 import {Project} from '../../shared/types/Project';
 import {LocalStorageService} from '../../core/util/local-storage.service';
+import {AggregationForm} from '../searcher-sidebar/aggregations/aggregations.component';
 
 @Injectable()
 export class SearcherComponentService {
@@ -33,8 +34,8 @@ export class SearcherComponentService {
     }]
   };
   private searchSubject = new BehaviorSubject<Search | null>(null);
-  // tslint:disable-next-line:no-any
-  private aggregationSubject = new Subject<{ globalAgg: any, agg: any } | null>();
+  // tslint:disable-next-line:no-any aggregationForm is just a list of field paths used in the aggregation, used to create constraints
+  private aggregationSubject = new Subject<{ globalAgg: any, agg: any, aggregationForm: string[] } | null>();
   // so query wouldnt be null (we use current query in aggs so we dont want null even if user hasnt searched everything,
   private savedSearchUpdate = new Subject<boolean>();
   // we still want to be able to make aggs)
@@ -65,12 +66,12 @@ export class SearcherComponentService {
   }
 
   // tslint:disable-next-line:no-any
-  public nextAggregation(aggregation: { globalAgg: any, agg: any } | null): void {
+  public nextAggregation(aggregation: { globalAgg: any, agg: any, aggregationForm: string[] } | null): void {
     this.aggregationSubject.next(aggregation);
   }
 
   // tslint:disable-next-line:no-any
-  public getAggregation(): Observable<{ globalAgg: any, agg: any } | null> {
+  public getAggregation(): Observable<{ globalAgg: any, agg: any, aggregationForm: string[] } | null> {
     return this.aggregationSubject.asObservable();
   }
 
@@ -126,6 +127,31 @@ export class SearcherComponentService {
           const constraintBluePrint = {...this.constraintBluePrint};
           constraintBluePrint.inputGroup[0].factTextInput = factValue;
           constraintBluePrint.inputGroup[0].factTextName = factName;
+          constraint.query_constraints.push(constraintBluePrint);
+        }
+        constraint.query_constraints.push(...UtilityFunctions.convertConstraintListToJson(constraintList));
+        constraint.query_constraints = JSON.stringify(constraint.query_constraints);
+        this.nextSavedSearch(constraint);
+      }
+    });
+  }
+
+  public createTextConstraint(docPath: string, constraintValue: string): void {
+    const constraint = new SavedSearch();
+    constraint.query_constraints = [];
+    this.getAdvancedSearchConstraints$().pipe(take(1)).subscribe(constraintList => {
+      if (typeof constraint.query_constraints !== 'string') {
+        const textConstraint = constraintList.find(y => y instanceof TextConstraint && y.fields.length === 1 && y.fields[0].path === docPath);
+        // inputGroup means its a fact_val constraint
+        if (textConstraint instanceof TextConstraint) {
+          const controlValue = textConstraint.textAreaFormControl.value;
+          if (controlValue.length > 0) {
+            textConstraint.textAreaFormControl.setValue(`${controlValue}\n${constraintValue}`);
+          }else{
+            textConstraint.textAreaFormControl.setValue(constraintValue);
+          }
+        } else {
+          const constraintBluePrint = {fields: [{path: docPath, type: 'text'}], text: constraintValue};
           constraint.query_constraints.push(constraintBluePrint);
         }
         constraint.query_constraints.push(...UtilityFunctions.convertConstraintListToJson(constraintList));
