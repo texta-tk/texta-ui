@@ -36,10 +36,10 @@
     </mat-form-field>
   </div>
   <div fxLayout="column">
-    <mat-form-field class="max-width" floatLabel="never">
-  <textarea [formControl]="textAreaFormControl" class="max-width"
-            matInput
-            placeholder="Type here"></textarea>
+    <mat-form-field class="max-width">
+      <textarea [formControl]="textAreaFormControl" class="max-width"
+                matInput
+                placeholder="Type here"></textarea>
     </mat-form-field>
     <button *ngIf="lexicons.length > 0" [matMenuTriggerFor]="menu" mat-stroked-button>Add lexicon</button>
     <mat-menu #menu="matMenu">

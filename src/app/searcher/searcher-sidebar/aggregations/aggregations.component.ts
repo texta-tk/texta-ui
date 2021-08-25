@@ -168,7 +168,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
         }, this.currentProject.id) : of(null),
       agg: this.searcherService.search(body, this.currentProject.id)
     }).subscribe(resp => {
-      const aggResp = {globalAgg: {}, agg: {}};
+      const aggResp = {globalAgg: {}, agg: {}, aggregationForm: this.aggregationList.map(x => x.formControl.value.path)};
       if (resp.agg && !(resp.agg instanceof HttpErrorResponse)) {
         aggResp.agg = resp.agg;
       } else if (resp.agg instanceof HttpErrorResponse) {

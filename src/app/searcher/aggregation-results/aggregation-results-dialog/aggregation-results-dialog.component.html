@@ -1,5 +1,5 @@
 <div class="table" *ngIf="type === 'table'">
-  <app-aggregation-result-table [tableData]="aggData"></app-aggregation-result-table>
+  <app-aggregation-result-table [tableData]="aggData" [docPath]="docPath"></app-aggregation-result-table>
 </div>
 <div class="histo" *ngIf="type === 'histo'">
   <app-aggregation-results-chart [aggregationData]="aggData"></app-aggregation-results-chart>

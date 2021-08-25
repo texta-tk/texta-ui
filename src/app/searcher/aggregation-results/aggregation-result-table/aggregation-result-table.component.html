@@ -3,7 +3,8 @@
     <div class="table-paginator-row">
 
       <div class="paginator-row">
-        <button (click)="openLexiconDialog(selection.selected)" [disabled]="selection.selected.length < 1" class="paginator-margin-left" color="primary"
+        <button (click)="openLexiconDialog(selection.selected)" [disabled]="selection.selected.length < 1"
+                class="paginator-margin-left" color="primary"
                 mat-raised-button>Add to lexicon
         </button>
         <mat-paginator [pageSizeOptions]="[20, 50, 100]" showFirstLastButtons>
@@ -30,7 +31,9 @@
 
       <ng-container matColumnDef="key">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Key</th>
-        <td *matCellDef="let element" mat-cell> {{element.key}}
+        <td *matCellDef="let element" mat-cell (click)="createConstraint(element.key)" [ngClass]="{'pointer': docPath}"
+            [matTooltip]="docPath ? 'Click to add as a search constraint' : ''">
+          <a>{{element.key}}</a>
           <ng-container *ngIf="element.top_reverse_nested"><br>({{element.doc_count}})</ng-container>
         </td>
       </ng-container>
@@ -50,6 +53,10 @@
         <td *matCellDef="let element" mat-cell> {{element.score}}</td>
       </ng-container>
 
+      <!-- Row shown when there is no matching data. -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">No results for this aggregation.</td>
+      </tr>
 
       <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
       <tr *matRowDef="let element; columns: displayedColumns;" mat-row></tr>
