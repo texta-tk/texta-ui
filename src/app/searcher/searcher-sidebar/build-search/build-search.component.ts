@@ -75,6 +75,9 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
           this.searcherType = 2;
           this.saveTypeSelection(2);
         }
+        // if someone saves an empty search it wont trigger changedetection in the child, so just do it here
+        // so the layout wouldnt change when the user triggers changedetection by interacting with the component
+        this.changeDetectorRef.markForCheck();
       }
     });
   }

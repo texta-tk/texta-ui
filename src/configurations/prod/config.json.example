@@ -9,7 +9,6 @@
     "uaaURL":"http://localhost:8080",
     "redirect_uri":"http://localhost:8000/api/v1/uaa/callback",
     "client_id":"login",
-    "scope":"openid",
     "scope":"openid texta.*",
     "admin_scope": "texta.project_admin",
     "response_type":"code"

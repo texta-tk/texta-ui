@@ -17,7 +17,7 @@
     <mat-error>This field is <strong>required</strong></mat-error>
   </mat-form-field>
   <mat-form-field *ngIf="method === 'new'" class="max-width" data-cy="appSearcherSidebarSaveSearchDesc">
-    <input #ctrl="ngModel" [(ngModel)]="newDesc" [errorStateMatcher]="matcher" autocomplete="off"
+    <input #ctrl="ngModel" [(ngModel)]="newDesc" [errorStateMatcher]="matcher" autocomplete="off" cdkFocusInitial
            matInput placeholder="Description" required>
     <mat-error *ngIf="ctrl?.hasError('required')">
       Description is <strong>required</strong>
@@ -29,9 +29,10 @@
   <div class="flex-item-left">
     <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Cancel</button>
   </div>
-  <div class="flex-item-right">
+  <div class="flex-item-right" [matTooltip]="!latestSearch ? 'No search to save!' : ''">
     <button type="submit" mat-button
-            [disabled]="(method === 'new' && !newDesc) || method === 'existing' && !selectedSearch"
-            (click)="onSubmit()">Save</button>
+            [disabled]="(method === 'new' && !newDesc) || (method === 'existing' && !selectedSearch) || !latestSearch"
+            (click)="onSubmit()">Save
+    </button>
   </div>
 </mat-dialog-actions>

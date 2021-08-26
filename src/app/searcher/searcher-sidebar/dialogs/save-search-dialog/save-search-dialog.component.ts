@@ -72,7 +72,7 @@ export class SaveSearchDialogComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.currentProject?.id) {
+    if (this.currentProject?.id && this.latestSearch) {
       // onlyShowMatchingColumns is a simple search option, kinda hacky way to know if it was a simple or advanced search
       const constraints = this.latestSearch.searchOptions.onlyShowMatchingColumns ? [] : this.constraints;
       if (this.method === 'existing' && this.selectedSearch?.id) {
