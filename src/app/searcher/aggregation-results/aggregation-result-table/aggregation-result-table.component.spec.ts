@@ -16,6 +16,12 @@ describe('AggregationResultTableComponent', () => {
       imports: [
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule,
       ],
+    }).overrideComponent(AggregationResultsTreeComponent, {
+      set: {
+        providers: [
+          {provide: SearcherComponentService, useClass: SearchServiceSpy}
+        ]
+      }
     })
       .compileComponents();
   }));
