@@ -12,23 +12,21 @@ export class AggregationResultsDialogComponent implements OnInit {
   // tslint:disable-next-line:no-any
   aggData: MatTableDataSource<any> | any;
   // for creating constraints
-  docPath: string;
+  docPaths: string[];
 
   constructor(private dialogRef: MatDialogRef<AggregationResultsDialogComponent>,
               // tslint:disable-next-line:no-any
-              @Inject(MAT_DIALOG_DATA) public data: { type: 'table' | 'histo', aggData: MatTableDataSource<any> | any, docPath: string; }) {
+              @Inject(MAT_DIALOG_DATA) public data: { type: 'table' | 'histo', aggData: MatTableDataSource<any> | any, docPaths: string[]; }) {
     if (data.type === 'table') {
       // tslint:disable-next-line:no-any
       this.aggData = data.aggData as MatTableDataSource<any>;
-      if (this.data.docPath) {
-        this.docPath = this.data.docPath;
-      }
     }
   }
 
   ngOnInit(): void {
     setTimeout(() => {
       this.type = this.data.type;
+      this.docPaths = this.data.docPaths;
       if (this.type === 'histo') {
         this.data.aggData = this.data.aggData.slice(0, 50);
         for (const element of this.data.aggData) {

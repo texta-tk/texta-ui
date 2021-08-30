@@ -13,7 +13,7 @@ export interface AggregationData {
     treeData?: any[],
     name: string,
     // tslint:disable-next-line:no-any
-    histoBuckets?: any[]
+    histoBuckets?: any[] // only used for unified timeline
   }[];
   tableData?: {
     // tslint:disable-next-line:no-any
@@ -196,7 +196,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   // tslint:disable-next-line:no-any max-line-length
   populateAggData(rootAggObj, aggName, aggDataAccessor: (x: any) => any, aggregationType: 'agg_histo' | 'agg_fact' | 'agg_term', aggData: AggregationData): void {
     const formattedData = this.formatAggDataStructure(rootAggObj, rootAggObj,
-        ['agg_histo', 'agg_fact', 'agg_fact_val', 'agg_term', 'fact_val_reverse']);
+      ['agg_histo', 'agg_fact', 'agg_fact_val', 'agg_term', 'fact_val_reverse']);
     const MAIN_AGG_NAME = 'Aggregation results';
     // empty result agg might have 0 results so the nested variable might be false, even though it's still a fact agg
     // we still want fact aggregations to pass this if statement so add checking if its a fact
@@ -212,7 +212,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
         // we still want empty fact aggregations to pass this if statement, (nested = false, type = agg_fact)
         // so we can show the user we had an empty result
         if (aggregationType === 'agg_fact' && this.determineDepthOfObject(formattedData, (x: { buckets: unknown; }) => x.buckets) === 3
-            || (aggregationType === 'agg_fact' && formattedData.nested === false)) {
+          || (aggregationType === 'agg_fact' && formattedData.nested === false)) {
           // @ts-ignore
           aggData.textaFactsTableData.push({
             name: aggName === aggregationType ? MAIN_AGG_NAME : aggName,
@@ -222,7 +222,8 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
           // @ts-ignore
           aggData.treeData.push({
             name: aggName === aggregationType ? MAIN_AGG_NAME : aggName,
-            histoBuckets: formattedData.histoBuckets ? formattedData.histoBuckets : [],
+            // tslint:disable-next-line:no-any
+            histoBuckets: formattedData.histoBuckets && this.determineDepthOfObject(formattedData, (x: any) => x.buckets) === 3 ? formattedData.histoBuckets : [],
             treeData: this.bucketAccessor(formattedData)
           });
         }
@@ -244,7 +245,8 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   openUnifiedTimeline(buckets: any[]): void {
     this.dialog.open(AggregationResultsDialogComponent, {
       data: {
-        aggData: buckets, type: 'histo'
+        aggData: buckets, type: 'histo',
+        docPaths: [this.fieldPathList[1], this.fieldPathList[0]], // first index is date col, order matters
       },
       height: '95%',
       width: '90%',

@@ -39,6 +39,7 @@ export class AggregationResultFactsComponent {
   xAxisLabel = 'Count';
   selectedFacts: BarChartDataCategories[];
   @Input() viewState: string | 'tree' | 'table' | 'chart';
+  @Input() docPaths: string[];
 
   constructor(public searchService: SearcherComponentService) {
   }

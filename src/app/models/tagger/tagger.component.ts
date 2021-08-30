@@ -141,17 +141,27 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  retrainTagger(value: { id: number; }): void {
-    if (this.currentProject) {
-      this.taggerService.retrainTagger(this.currentProject.id, value.id)
-        .subscribe(resp => {
-          if (resp && !(resp instanceof HttpErrorResponse)) {
-            this.logService.snackBarMessage('Successfully started retraining', 4000);
-          } else if (resp instanceof HttpErrorResponse) {
-            this.logService.snackBarError(resp, 5000);
-          }
-        });
-    }
+  retrainTagger(value: Tagger): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        confirmText: 'Retrain',
+        mainText: `Are you sure you want to retrain: ${value.description}`
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.taggerService.retrainTagger(this.currentProject.id, value.id)
+          .subscribe(resp => {
+            if (resp && !(resp instanceof HttpErrorResponse)) {
+              this.logService.snackBarMessage('Successfully started retraining', 4000);
+            } else if (resp instanceof HttpErrorResponse) {
+              this.logService.snackBarError(resp, 5000);
+            }
+          });
+      }
+    });
+
   }
 
   ngOnDestroy(): void {

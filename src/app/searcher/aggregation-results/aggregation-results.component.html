@@ -28,7 +28,7 @@
               <mat-icon>assessment</mat-icon>
             </button>
           </ng-template>
-          <app-aggregation-result-facts [data]="item.data"
+          <app-aggregation-result-facts [data]="item.data" [docPaths]="fieldPathList"
                                         [viewState]="state.viewState"></app-aggregation-result-facts>
         </ng-container>
       </mat-tab>
@@ -48,7 +48,7 @@
       </mat-tab>
     </mat-tab-group>
 
-    <app-aggregation-results-chart
+    <app-aggregation-results-chart [docPaths]="fieldPathList"
       *ngIf="aggregationData.dateData !== undefined && aggregationData.dateData.length > 0"
       [aggregationData]="aggregationData"
       [yLabel]="timeLineYLabel">

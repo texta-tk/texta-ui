@@ -34,6 +34,7 @@ export class AggregationResultsTreeComponent implements OnDestroy {
     if (this.bucketAccessor(val)[0].key_as_string) {
       this.dialog.open(AggregationResultsDialogComponent, {
         data: {
+          docPaths: [this.docPaths[depth + 1]],
           aggData: [{
             name: val.key,
             series: this.formatDateData(this.bucketAccessor(val))
@@ -47,7 +48,7 @@ export class AggregationResultsTreeComponent implements OnDestroy {
         const isTextaFactsNode = this.docPaths[depth] === 'texta_facts' || this.docPaths[depth + 1] === 'texta_facts';
         this.dialog.open(AggregationResultsDialogComponent, {
           data: {
-            docPath: isTextaFactsNode ? undefined : this.docPaths[depth + 1],
+            docPaths: isTextaFactsNode ? undefined : [this.docPaths[depth + 1]],
             aggData: new MatTableDataSource(this.bucketAccessor(val)), type: 'table'
           },
           height: '95%',

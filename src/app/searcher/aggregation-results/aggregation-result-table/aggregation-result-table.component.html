@@ -49,7 +49,10 @@
 
       <!-- Weight Column -->
       <ng-container matColumnDef="score">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header> Score</th>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header
+            matTooltip="The scores are derived from the document frequencies in foreground and background sets. In brief, a term is considered significant if there is a noticeable difference in the frequency in which a term appears in the subset and in the background.">
+          Score
+        </th>
         <td *matCellDef="let element" mat-cell> {{element.score}}</td>
       </ng-container>
 

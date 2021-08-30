@@ -122,19 +122,26 @@ export class TopicAnalyzerComponent implements OnInit, OnDestroy, AfterViewInit 
     });
   }
 
-  retrainCluster(element: Cluster): null | Subscription {
-    if (this.currentProject) {
-      return this.clusterService.retrainCluster(this.currentProject.id, element.id)
-        .subscribe((resp: unknown | HttpErrorResponse) => {
-          if (resp && !(resp instanceof HttpErrorResponse)) {
-            this.logService.snackBarMessage('Successfully started retraining clustering', 4000);
-          } else if (resp instanceof HttpErrorResponse) {
-            this.logService.snackBarError(resp, 5000);
-          }
-        });
-    } else {
-      return null;
-    }
+  retrainCluster(element: Cluster): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        confirmText: 'Retrain',
+        mainText: `Are you sure you want to retrain: ${element.description}`
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.clusterService.retrainCluster(this.currentProject.id, element.id)
+          .subscribe((resp: unknown | HttpErrorResponse) => {
+            if (resp && !(resp instanceof HttpErrorResponse)) {
+              this.logService.snackBarMessage('Successfully started retraining clustering', 4000);
+            } else if (resp instanceof HttpErrorResponse) {
+              this.logService.snackBarError(resp, 5000);
+            }
+          });
+      }
+    });
   }
 
   openQueryDialog(query: string): void {

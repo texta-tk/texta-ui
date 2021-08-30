@@ -1,5 +1,5 @@
 {
-  "apiHost":"http://localhost",
+  "apiHost":"https://rest-dev.texta.ee",
   "apiBasePath":"/api/v1",
   "apiBasePath2":"/api/v2",
   "logging":true,
