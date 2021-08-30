@@ -6,9 +6,9 @@
                 [(ngModel)]="aggregationType"
                 name="aggregationTextType" (selectionChange)="updateAggregations()">
       <mat-option value="terms" selected>frequent items</mat-option>
-      <mat-option value="significant_terms" *ngIf="fieldsFormControl?.value?.type !== 'fact' && isMainAgg">significant items
+      <mat-option value="significant_terms" *ngIf="fieldsFormControl?.value?.type !== 'fact' && isMainAgg" matTooltip="Mainly used alongside search constraints or as a sub aggregation, optimized for fields that consist of keywords">significant items
       </mat-option>
-      <mat-option value="significant_text" *ngIf="fieldsFormControl?.value?.type !== 'fact'  && isMainAgg">significant words
+      <mat-option value="significant_text" *ngIf="fieldsFormControl?.value?.type !== 'fact'  && isMainAgg" matTooltip="Mainly used alongside search constraints or as a sub aggregation, optimized for free-text fields">significant words
       </mat-option>
     </mat-select>
   </mat-form-field>

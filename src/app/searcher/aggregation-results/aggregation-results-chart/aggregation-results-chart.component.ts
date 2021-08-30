@@ -33,6 +33,10 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
   overlayRef: OverlayRef;
   destroyed$: Subject<boolean> = new Subject();
   title = '';
+  // 0 index is date, 1 is data col
+  @Input() docPaths: string[];
+  textColPath: string;
+  dateColPath: string;
 
   constructor(private overlay: Overlay, private injector: Injector, private ngZone: NgZone,
               private platform: Platform, private overLayContainer: OverlayContainer,
@@ -80,6 +84,8 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
           const series = el.series;
           const mode = el.series.length > 100 ? 'lines+points' : 'lines+points+markers';
           if (series[0].extra) { // date->term structure plots, saved searches
+            this.textColPath = this.docPaths[1];
+            this.dateColPath = this.docPaths[0];
             this.graph.data.push({
               x: series.map(x => new Date(x.epoch)),
               y: series.map(x => x.value),
@@ -92,6 +98,7 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
               name: el.name,
             });
           } else {
+            this.dateColPath = this.docPaths[0];
             this.graph.data.push({ // regular plots, no nesting, saved searches
               x: series.map(x => new Date(x.epoch)),
               y: series.map(x => x.value),
@@ -107,6 +114,8 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
       this.graph.layout.hoverdistance = 33;
       this.graph.layout.showlegend = false;
       for (const el of val) {
+        this.textColPath = this.docPaths[1];
+        this.dateColPath = this.docPaths[0];
         const mode = el.series.length > 100 ? 'lines+points' : 'lines+points+markers';
         const series = el.series;
         this.graph.data.push({
@@ -196,21 +205,51 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
 
   // tslint:disable-next-line:no-any
   pointClicked($event: any): void {
-    if ($event?.points[0]?.data?.customData) {
-      const pointIndex = $event?.points[0]?.pointNumber;
-      if (pointIndex) {
-        console.log($event?.points[0]?.data?.customData[pointIndex]);
-        const customDatum = $event?.points[0]?.data?.customData[pointIndex];
+    const pointIndex = $event?.points[0]?.pointNumber;
+    if ($event?.points[0]?.data?.customData && pointIndex >= 0) {// date->term structure plots, saved searches
+      console.log($event?.points[0]?.data?.customData[pointIndex]);
+      const customDatum = $event?.points[0]?.data?.customData[pointIndex];
+      this.dataSource = [...this.dataSource, customDatum];
+    } else if (pointIndex >= 0) {
+      if ($event?.points.length === 1) {// regular plots, no nesting, saved searches
+        const clickedDate = $event?.points[0]?.data?.x[pointIndex];
+        this.createDateConstraint(clickedDate);
+      } else { // nested aggs plots, ex: author->datecreated
+        const customDatum: { value: number, name: string, extra: { buckets: { key: string, doc_count: number }[] } } = {
+          value: 0,
+          name: $event.points[0].x,
+          extra: {
+            buckets: []
+          }
+        };
+        $event.points.forEach((x: { y: number, data: { name: string }, x: string }) => {
+          if (x.x === $event.points[0].x) {
+            customDatum.value += x.y;
+            customDatum.extra.buckets.push({key: x.data.name, doc_count: x.y});
+          }
+        });
+        customDatum.extra.buckets.sort((a, b) => b.doc_count - a.doc_count);
         this.dataSource = [...this.dataSource, customDatum];
       }
     }
-
   }
 
   removeDataSrcEntry(index: number): void {
     if (index >= 0) {
       this.dataSource.splice(index, 1);
       this.changeDetectorRef.detectChanges();
+    }
+  }
+
+  createConstraint(key: string): void {
+    if (this.docPaths) {
+      this.searcherComponentService.createTextConstraint(this.textColPath, key);
+    }
+  }
+
+  createDateConstraint(key: string): void {
+    if (this.dateColPath) {
+      this.searcherComponentService.createDateConstraint(this.dateColPath, key);
     }
   }
 }

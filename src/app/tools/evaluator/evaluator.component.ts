@@ -206,16 +206,25 @@ export class EvaluatorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   retrainEvaluator(value: Evaluator): void {
-    if (this.currentProject) {
-      this.evaluatorService.retrainEvaluator(this.currentProject.id, value.id)
-        .subscribe(resp => {
-          if (resp && !(resp instanceof HttpErrorResponse)) {
-            this.logService.snackBarMessage('Successfully started reevaluating', 4000);
-          } else if (resp instanceof HttpErrorResponse) {
-            this.logService.snackBarError(resp, 5000);
-          }
-        });
-    }
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        confirmText: 'Reevaluate',
+        mainText: `Are you sure you want to reevaluate: ${value.description}`
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.evaluatorService.retrainEvaluator(this.currentProject.id, value.id)
+          .subscribe(resp => {
+            if (resp && !(resp instanceof HttpErrorResponse)) {
+              this.logService.snackBarMessage('Successfully started reevaluating', 4000);
+            } else if (resp instanceof HttpErrorResponse) {
+              this.logService.snackBarError(resp, 5000);
+            }
+          });
+      }
+    });
   }
 
   onEdit(element: Evaluator): void {

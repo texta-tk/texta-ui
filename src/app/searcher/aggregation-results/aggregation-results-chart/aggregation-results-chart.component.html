@@ -10,7 +10,10 @@
     <table [dataSource]="item.extra.buckets" class="readable-table" mat-table>
       <ng-container matColumnDef="key">
         <th *matHeaderCellDef mat-header-cell>Key</th>
-        <td *matCellDef="let element" class="table-row pointer" mat-cell>{{element.key}}</td>
+        <td *matCellDef="let element" class="table-row pointer" mat-cell
+            (click)="createConstraint(element.key)"
+            [ngClass]="{'pointer': textColPath}"
+            [matTooltip]="textColPath ? 'Click to add as a search constraint' : ''">{{element.key}}</td>
       </ng-container>
       <ng-container matColumnDef="doc_count">
         <th *matHeaderCellDef mat-header-cell>Doc count</th>
@@ -20,9 +23,15 @@
       <!-- Header row first group -->
       <ng-container matColumnDef="header-row-first-group">
         <th *matHeaderCellDef [attr.colspan]="2" mat-header-cell style="text-align: center; cursor: move;"
-            cdkDragHandle> {{item.epoch | date}}
+            cdkDragHandle>
+          <button mat-icon-button (click)="createDateConstraint(item.name)"
+                  [matTooltip]="dateColPath ? 'Add date as a search constraint' : ''">
+            <mat-icon>search</mat-icon>
+          </button>
+          <ng-container *ngIf="item.epoch">{{item.epoch | date}}</ng-container>
+          <ng-container *ngIf="item.name && !item.epoch">{{item.name | date}}</ng-container>
           <ng-container>
-            <span>({{item.value}})</span>
+            <span> ({{item.value}})</span>
           </ng-container>
           <button mat-icon-button color="warn" (click)="removeDataSrcEntry(i)">
             <mat-icon>clear</mat-icon>

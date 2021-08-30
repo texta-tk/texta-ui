@@ -1,7 +1,7 @@
 import {Search} from '../../shared/types/Search';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {
-  Constraint,
+  Constraint, DateConstraint,
   ElasticsearchQuery,
   FactConstraint,
   FactTextInputGroup, TextConstraint
@@ -147,7 +147,7 @@ export class SearcherComponentService {
           const controlValue = textConstraint.textAreaFormControl.value;
           if (controlValue.length > 0) {
             textConstraint.textAreaFormControl.setValue(`${controlValue}\n${constraintValue}`);
-          }else{
+          } else {
             textConstraint.textAreaFormControl.setValue(constraintValue);
           }
         } else {
@@ -191,5 +191,24 @@ export class SearcherComponentService {
     if (currentProjectState?.searcher?.itemsPerPage) {
       elasticQuery.elasticSearchQuery.size = currentProjectState.searcher.itemsPerPage;
     }
+  }
+
+  createDateConstraint(dateColPath: string, key: string): void {
+    const constraint = new SavedSearch();
+    constraint.query_constraints = [];
+    this.getAdvancedSearchConstraints$().pipe(take(1)).subscribe(constraintList => {
+      if (typeof constraint.query_constraints !== 'string') {
+        const dateConstraint = constraintList.find(y => y instanceof DateConstraint && y.fields.length === 1 && y.fields[0].path === dateColPath);
+        if (dateConstraint instanceof DateConstraint) {
+          dateConstraint.dateFromFormControl.setValue(new Date(key));
+        } else {
+          const constraintBluePrint = {fields: [{path: dateColPath, type: 'date'}], dateFrom: new Date(key)};
+          constraint.query_constraints.push(constraintBluePrint);
+        }
+        constraint.query_constraints.push(...UtilityFunctions.convertConstraintListToJson(constraintList));
+        constraint.query_constraints = JSON.stringify(constraint.query_constraints);
+        this.nextSavedSearch(constraint);
+      }
+    });
   }
 }

@@ -22,6 +22,7 @@ import {EditBertTaggerDialogComponent} from './edit-bert-tagger-dialog/edit-bert
 import {EpochReportsDialogComponent} from './epoch-reports-dialog/epoch-reports-dialog.component';
 import {QueryDialogComponent} from '../../shared/components/dialogs/query-dialog/query-dialog.component';
 import {ApplyToIndexDialogComponent} from './apply-to-index-dialog/apply-to-index-dialog.component';
+
 @Component({
   selector: 'app-bert-tagger',
   templateUrl: './bert-tagger.component.html',
@@ -49,6 +50,7 @@ export class BertTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
               public dialog: MatDialog,
               private logService: LogService) {
   }
+
   getIndicesName = (x: Index) => x.name;
 
   ngOnInit(): void {
@@ -98,6 +100,7 @@ export class BertTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     });
   }
+
   openQueryDialog(query: string): void {
     this.dialog.open(QueryDialogComponent, {
       data: {query},
@@ -105,6 +108,7 @@ export class BertTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
       width: '700px',
     });
   }
+
   downloadModelDialog(): void {
     const dialogRef = this.dialog.open(AddBertModelDialogComponent, {
       maxHeight: '90vh',
@@ -233,17 +237,27 @@ export class BertTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
 
-  retrainTagger(value: { id: number; }): void {
-    if (this.currentProject) {
-      this.bertTaggerService.retrainTagger(this.currentProject.id, value.id)
-        .subscribe(resp => {
-          if (resp && !(resp instanceof HttpErrorResponse)) {
-            this.logService.snackBarMessage('Successfully started retraining', 4000);
-          } else if (resp instanceof HttpErrorResponse) {
-            this.logService.snackBarError(resp, 5000);
-          }
-        });
-    }
+  retrainTagger(value: BertTagger): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        confirmText: 'Retrain',
+        mainText: `Are you sure you want to retrain: ${value.description}`
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.bertTaggerService.retrainTagger(this.currentProject.id, value.id)
+          .subscribe(resp => {
+            if (resp && !(resp instanceof HttpErrorResponse)) {
+              this.logService.snackBarMessage('Successfully started retraining', 4000);
+            } else if (resp instanceof HttpErrorResponse) {
+              this.logService.snackBarError(resp, 5000);
+            }
+          });
+      }
+    });
+
   }
 
   applyToIndexDialog(tagger: BertTagger): void {
@@ -253,6 +267,7 @@ export class BertTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
       width: '700px',
     });
   }
+
   ngOnDestroy(): void {
     this.destroyed$.next(true);
     this.destroyed$.complete();
