@@ -211,7 +211,7 @@ interface Analyzers {
 interface POST {
   id: Id;
   url: Url;
-  author_username: AuthorUsername;
+  author: AuthorUsername;
   indices: Indices;
   description: Description;
   task: Task;

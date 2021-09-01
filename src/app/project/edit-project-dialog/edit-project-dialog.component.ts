@@ -121,7 +121,7 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
         this.initForm();
         if (resp?.is_superuser) {
           return forkJoin({indices: this.coreService.getIndices(), users: this.userService.getAllUsers()});
-        } else if (this.initialProjectState.author_username === resp.username || this.initialProjectState.administrators.find(y => y.id === resp.id) || this.currentUser.profile.scopes.includes(this.PROJECT_ADMIN_SCOPE)) {
+        } else if (this.initialProjectState.author.id === resp.id || this.initialProjectState.administrators.find(y => y.id === resp.id) || this.currentUser.profile.scopes.includes(this.PROJECT_ADMIN_SCOPE)) {
           this.hasIndexPermissions = true;
           this.users = UtilityFunctions.sortByStringProperty(this.initialProjectState.users, (x => x.username));
           this.indices = this.initialProjectState.indices.sort((a, b) => (a.name > b.name) ? 1 : -1);

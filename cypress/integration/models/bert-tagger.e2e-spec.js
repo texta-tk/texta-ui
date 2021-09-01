@@ -93,6 +93,7 @@ describe('bert-taggers should work', function () {
         });
       })
     });
+    cy.wait(5000);
     tagRandomDoc();
     tagText();
 

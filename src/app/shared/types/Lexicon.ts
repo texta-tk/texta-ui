@@ -1,8 +1,10 @@
 
 // tslint:disable:variable-name
+import {UserProfile} from './UserProfile';
+
 export class Lexicon {
   id: number;
-  author: string;
+  author: UserProfile;
   description: string;
   positives_used: string[];
   negatives_used: string[];

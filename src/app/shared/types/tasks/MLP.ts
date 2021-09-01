@@ -1,3 +1,5 @@
+import {UserProfile} from '../UserProfile';
+
 interface Index {
   id: number;
   is_open: boolean;
@@ -23,7 +25,7 @@ interface Task {
 export interface MLP {
   id: number;
   url: string;
-  author_username: string;
+  author: UserProfile;
   indices: Index[];
   description: string;
   task: Task;

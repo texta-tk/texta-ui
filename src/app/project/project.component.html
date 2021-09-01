@@ -13,17 +13,17 @@
         CREATE
       </button>
       <mat-form-field class="m-l-15 author">
-        <input [formControl]="authorFilterControl"
-               [matAutocomplete]="auto"
-               aria-label="Filter by author"
-               matInput
-               placeholder="Filter by author">
-        <mat-icon matSuffix>search</mat-icon>
-        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="applyFilter($event.option)">
-          <mat-option *ngFor="let user of filteredUsers | async" [value]="user.display_name">
-            <span>{{user.display_name}}</span>
+        <mat-select placeholder="Filter by author"
+        (selectionChange)="applyFilter($event)">
+          <mat-option>
+            <ngx-mat-select-search [formControl]="authorFilterControl" noEntriesFoundLabel="No entries"
+                                   placeholderLabel="Filter by author"></ngx-mat-select-search>
           </mat-option>
-        </mat-autocomplete>
+	  <mat-option value="">None</mat-option>
+          <mat-option *ngFor="let user of filteredUsers | async" [value]="user" [matTooltip]="user.username">
+            {{user.display_name}}
+          </mat-option>
+        </mat-select>
       </mat-form-field>
       <mat-form-field class="m-l-15 title">
         <input [formControl]="titleFilterControl"
@@ -44,9 +44,9 @@
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Id</th>
         <td *matCellDef="let element" mat-cell>{{ element.id }}</td>
       </ng-container>
-      <ng-container matColumnDef="author_username">
+      <ng-container matColumnDef="author">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Author</th>
-        <td *matCellDef="let element" mat-cell>{{ element.author_username }}</td>
+        <td *matCellDef="let element" mat-cell [matTooltip]="element?.author?.username"> {{element?.author?.display_name}}</td>
       </ng-container>
       <ng-container matColumnDef="title">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Title</th>
@@ -146,13 +146,13 @@
       Use
     </button>
     <button (click)="edit(element)"
-            *ngIf="(element.administrators | getPropertyList: urlAccessor).includes(currentUser.url) || currentUser.is_superuser || element.author_username === currentUser.display_name || currentUser.profile.scopes.includes(PROJECT_ADMIN_SCOPE)"
+            *ngIf="(element.administrators | getPropertyList: urlAccessor).includes(currentUser.url) || currentUser.is_superuser || element.author === currentUser.display_name || currentUser.profile.scopes.includes(PROJECT_ADMIN_SCOPE)"
             mat-menu-item>
       <mat-icon aria-label="Edit Project">edit</mat-icon>
       Edit
     </button>
     <button (click)="onDelete(element)"
-            *ngIf="(element.administrators | getPropertyList: urlAccessor).includes(currentUser.url) || currentUser.is_superuser || element.author_username === currentUser.display_name || currentUser.profile.scopes.includes(PROJECT_ADMIN_SCOPE)"
+            *ngIf="(element.administrators | getPropertyList: urlAccessor).includes(currentUser.url) || currentUser.is_superuser || element.author === currentUser.display_name || currentUser.profile.scopes.includes(PROJECT_ADMIN_SCOPE)"
             mat-menu-item>
       <mat-icon>delete</mat-icon>
       Delete

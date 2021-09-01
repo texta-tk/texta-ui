@@ -1,4 +1,6 @@
 import {TaskStatus} from './TaskStatus';
+import {Index} from '../Index';
+import {UserProfile} from '../UserProfile';
 
 
 // tslint:disable:variable-name
@@ -7,10 +9,10 @@ export class Tagger {
   id: number;
   description: string;
   project: number;
-  author: number;
+  author: UserProfile;
   query: string;
   fields: string[];
-  embedding: null;
+  embedding: number;
   vectorizer: TaggerVectorizerChoices;
   num_positives: number;
   num_negatives: number;
@@ -24,10 +26,16 @@ export class Tagger {
   f1_score: number;
   num_features: number;
   tagger_groups: string[];
-  indices: string[];
+  indices: Index[];
   ignore_numbers: boolean;
+  scoring_function: string;
   plot: unknown;
+  fact_name: string;
+  classifier: string;
+  pos_label: string;
+  minimum_sample_size: number;
   task: TaskStatus;
+  snowball_language: string;
   detect_lang: boolean;
   balance: boolean;
   balance_to_max_limit: boolean;

@@ -39,7 +39,7 @@
       <mat-select [disableOptionCentering]="true"
                   formControlName="factNameFormControl" panelClass="select-panel-reveal-input">
         <mat-option>None</mat-option>
-        <mat-option *ngFor="let fact of projectFacts" [value]="fact">
+        <mat-option *ngFor="let fact of projectFacts | async" [value]="fact">
           {{fact.name}}
         </mat-option>
       </mat-select>
@@ -66,7 +66,7 @@
       </mat-select>
       <mat-hint>{{taggerOptions?.actions?.POST?.pos_label?.help_text || ''}}</mat-hint>
     </mat-form-field>
-    <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"
+    <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)" [startingQuery]="query"
                                    data-cy="appTaggerCreateDialogQuery"></app-saved-search-autocomplete>
     <mat-form-field>
       <app-textarea-lexicon formControlName="stopWordsFormControl"

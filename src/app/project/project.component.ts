@@ -35,7 +35,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
   // tslint:disable-next-line:no-any
   public projectCounts$: Observable<any>; // strict template and async pipe with keyvalue has buggy types for some reason
   public tableData: MatTableDataSource<Project> = new MatTableDataSource<Project>([]);
-  public displayedColumns = ['id', 'title', 'author_username', 'indices_count', 'resource_count', 'users_count', 'Modify'];
+  public displayedColumns = ['id', 'title', 'author', 'indices_count', 'resource_count', 'users_count', 'Modify'];
   public isLoadingResults = true;
   public currentUser: UserProfile;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
@@ -63,24 +63,12 @@ export class ProjectComponent implements OnInit, OnDestroy {
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
     this.tableData.filterPredicate = (data, element) => {
-      return data.author_username === element;
-    };
-    this.userService.getAllUsers().subscribe(users => {
-      if (users && !(users instanceof HttpErrorResponse)) {
-        this.filteredUsers = this.authorFilterControl.valueChanges
-          .pipe(
-            startWith(''),
-            takeUntil(this.destroyed$),
-            map(value => {
-              const filterVal = value.toLowerCase();
-              if (value === '') {
-                this.applyFilter({value: ''});
-              }
-              return users.filter(option => option.username.toLowerCase().includes(filterVal));
-            })
-          );
+      if(element === '-1'){
+	      return true;
       }
-    });
+      return data.author.id === +element;
+    };
+    this.filteredUsers = this.userService.getAllUsers().pipe(filter(x=> !(x instanceof HttpErrorResponse))) as Observable<UserProfile[]>;
 
     this.titleFilterControl.valueChanges.pipe(takeUntil(this.destroyed$), debounceTime(200)).subscribe(x => {
       this.isLoadingResults = true;
@@ -112,7 +100,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
       if (proj) {
         this.currentProject = proj;
       }
-    })
+    });
   }
 
   ngOnDestroy(): void {
@@ -179,8 +167,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
     });
   }
 
-  applyFilter(filterValue: MatOption | { value: string }): void {
-    this.tableData.filter = filterValue?.value ? filterValue.value : '';
+  applyFilter(filterValue: { value: { id: number } }): void {
+    this.tableData.filter = filterValue?.value ? filterValue.value.id.toString() : '';
   }
 
   selectProject(val: Project): void {

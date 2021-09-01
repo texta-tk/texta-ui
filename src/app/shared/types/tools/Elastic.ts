@@ -1,4 +1,5 @@
 import {TaskStatus} from '../tasks/TaskStatus';
+import {UserProfile} from '../UserProfile';
 
 export interface Reindexer {
   id: number;
@@ -12,7 +13,7 @@ export interface Reindexer {
 }
 
 export interface DatasetImporter {
-  author_username: string;
+  author: UserProfile;
   description: string;
   id: number;
   index: string;

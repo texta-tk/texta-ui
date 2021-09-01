@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { CreateTaggerDialogComponent } from './create-tagger-dialog.component';
-import { MatDialogRef } from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {SharedModule} from '../../../shared/shared.module';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
@@ -13,6 +13,7 @@ describe('CreateTaggerDialogComponent', () => {
   const mockDialogRef = {
     close: jasmine.createSpy('close')
   };
+  const data = {cloneTagger: undefined};
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
@@ -23,6 +24,10 @@ describe('CreateTaggerDialogComponent', () => {
         {
           provide: MatDialogRef,
           useValue: mockDialogRef
+        },
+        {
+          provide: MAT_DIALOG_DATA,
+          useValue: data
         }]
     })
     .compileComponents();
