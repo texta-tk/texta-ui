@@ -505,7 +505,7 @@ interface PosLabel {
 interface POST {
     id: Id;
     url: Url;
-    author_username: AuthorUsername;
+    author: AuthorUsername;
     description: Description;
     query: Query;
     fact_name: FactName;

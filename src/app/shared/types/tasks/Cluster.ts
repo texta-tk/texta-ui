@@ -1,6 +1,7 @@
 import {Field} from '../Project';
 import {TaskStatus} from './TaskStatus';
 import {Index} from '../Index';
+import {UserProfile} from '../UserProfile';
 
 // tslint:disable:variable-name
 export class Cluster {
@@ -8,7 +9,7 @@ export class Cluster {
   url: string;
   description: string;
   significant_words_filter: string;
-  author_username: string;
+  author: UserProfile;
   query: string;
   indices: Index[];
   num_cluster: number;

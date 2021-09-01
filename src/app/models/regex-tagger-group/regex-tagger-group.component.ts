@@ -33,7 +33,7 @@ export class RegexTaggerGroupComponent implements OnInit, OnDestroy, AfterViewIn
   expandedElements: [boolean, boolean[]][] = [];
   public tableData: MatTableDataSource<RegexTaggerGroup> = new MatTableDataSource();
   selectedRows = new SelectionModel<RegexTaggerGroup>(true, []);
-  public displayedColumns = ['select', 'id', 'author_username', 'description', 'regex_taggers', 'task__status', 'actions'];
+  public displayedColumns = ['select', 'id', 'author', 'description', 'regex_taggers', 'task__status', 'actions'];
   public isLoadingResults = true;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;

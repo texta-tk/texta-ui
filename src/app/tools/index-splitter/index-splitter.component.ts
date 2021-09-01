@@ -30,7 +30,7 @@ export class IndexSplitterComponent implements OnInit, OnDestroy, AfterViewInit 
   expandedElement: IndexSplitter | null;
   public tableData: MatTableDataSource<IndexSplitter> = new MatTableDataSource();
   selectedRows = new SelectionModel<IndexSplitter>(true, []);
-  public displayedColumns = ['select', 'author_username', 'description', 'test_index', 'train_index', 'distribution', 'task__time_started', 'task__time_completed', 'task__status'];
+  public displayedColumns = ['select', 'author', 'description', 'test_index', 'train_index', 'distribution', 'task__time_started', 'task__time_completed', 'task__status'];
   public isLoadingResults = true;
 
   @ViewChild(MatSort) sort: MatSort;

@@ -9,7 +9,7 @@ export class Project {
   owner: number;
   users: UserProfile[];
   indices: Index[];
-  author_username: string;
+  author: UserProfile;
   resource_count: number;
   administrators: UserProfile[];
   resources: {

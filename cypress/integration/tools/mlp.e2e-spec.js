@@ -77,6 +77,7 @@ describe('mlp should work', function () {
       expect(created.response.statusCode).to.eq(201);
       assert.equal(created.response.body.task.status, 'created');
     });
+    cy.wait(5000);
     cy.get('.mat-header-row > .cdk-column-select >').click();
     cy.get('[data-cy=appMLPDeleteBtn]').click();
     cy.get('[data-cy=appConfirmDialogSubmit]').click();

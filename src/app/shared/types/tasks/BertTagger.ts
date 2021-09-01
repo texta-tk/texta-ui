@@ -1,3 +1,5 @@
+import {UserProfile} from '../UserProfile';
+
 export interface Task {
   id: number;
   status: string;
@@ -20,7 +22,7 @@ export interface Index {
 
 export interface BertTagger {
   url: string;
-  author_username: string;
+  author: UserProfile;
   id: number;
   description: string;
   query: string;

@@ -29,11 +29,11 @@
       </ng-container>
       <ng-container matColumnDef="first_name">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>First name</th>
-        <td mat-cell *matCellDef="let element">{{ element?.profile?.first_name || '' }}</td>
+        <td mat-cell *matCellDef="let element">{{ element?.profile?.first_name || '-' }}</td>
       </ng-container>
       <ng-container matColumnDef="last_name">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Last name</th>
-        <td mat-cell *matCellDef="let element">{{ element?.profile?.last_name || '' }}</td>
+        <td mat-cell *matCellDef="let element">{{ element?.profile?.last_name || '-' }}</td>
       </ng-container>
       <ng-container matColumnDef="username">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Username</th>

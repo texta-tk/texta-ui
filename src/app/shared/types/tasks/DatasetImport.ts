@@ -1,9 +1,10 @@
 import {TaskStatus} from './TaskStatus';
+import {UserProfile} from '../UserProfile';
 
 export interface DatasetImport{
   id: number;
   url: string;
-  author_username: string;
+  author: UserProfile;
   description: string;
   index: string;
   separator: string;

@@ -387,7 +387,7 @@ interface Query {
 interface POST {
   id: Id;
   url: Url;
-  author_username: AuthorUsername;
+  author: AuthorUsername;
   strip_html: StripHtml;
   indices: Indices;
   analyzers: Analyzers;

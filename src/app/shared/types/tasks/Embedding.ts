@@ -299,7 +299,7 @@ export interface Task {
 export interface POST {
   id: Id;
   url: Url;
-  author_username: AuthorUsername;
+  author: AuthorUsername;
   description: Description;
   indices: Indices;
   fields: Fields;

@@ -321,7 +321,7 @@ export interface POST {
   id: Id;
   url: Url;
   description: Description;
-  author_username: AuthorUsername;
+  author: AuthorUsername;
   query: Query;
   indices: Indices;
   num_cluster: NumCluster;
