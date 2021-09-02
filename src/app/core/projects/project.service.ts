@@ -41,7 +41,7 @@ export class ProjectService {
       catchError(this.logService.handleError<Project>('editProject')));
   }
 
-  addUsersToProject(users: number[], projectId: number): Observable<{ message: string } | HttpErrorResponse> {
+  addUsersToProject(users: string[], projectId: number): Observable<{ message: string } | HttpErrorResponse> {
     return this.http.post<{ message: string }>(
       `${this.apiUrl}/projects/${projectId}/add_users/`,
       {users}
@@ -50,7 +50,7 @@ export class ProjectService {
       catchError(this.logService.handleError<{ message: string }>('addUsersToProject')));
   }
 
-  addAdminsToProject(users: number[], projectId: number): Observable<{ message: string } | HttpErrorResponse> {
+  addAdminsToProject(users: string[], projectId: number): Observable<{ message: string } | HttpErrorResponse> {
     return this.http.post<{ message: string }>(
       `${this.apiUrl}/projects/${projectId}/add_project_admins/`,
       {project_admins: users}
@@ -77,7 +77,7 @@ export class ProjectService {
       catchError(this.logService.handleError<{ message: string }>('deleteIndicesFromProject')));
   }
 
-  deleteAdminsFromProject(users: number[], projectId: number): Observable<{ message: string } | HttpErrorResponse> {
+  deleteAdminsFromProject(users: string[], projectId: number): Observable<{ message: string } | HttpErrorResponse> {
     return this.http.post<{ message: string }>(
       `${this.apiUrl}/projects/${projectId}/remove_project_admins/`,
       {project_admins: users}
@@ -86,7 +86,7 @@ export class ProjectService {
       catchError(this.logService.handleError<{ message: string }>('deleteAdminsFromProject')));
   }
 
-  deleteUsersFromProject(users: number[], projectId: number): Observable<{ message: string } | HttpErrorResponse> {
+  deleteUsersFromProject(users: string[], projectId: number): Observable<{ message: string } | HttpErrorResponse> {
     return this.http.post<{ message: string }>(
       `${this.apiUrl}/projects/${projectId}/remove_users/`,
       {users}

@@ -63,12 +63,12 @@ export class ProjectComponent implements OnInit, OnDestroy {
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
     this.tableData.filterPredicate = (data, element) => {
-      if(element === '-1'){
-	      return true;
+      if (element === '-1') {
+        return true;
       }
       return data.author.id === +element;
     };
-    this.filteredUsers = this.userService.getAllUsers().pipe(filter(x=> !(x instanceof HttpErrorResponse))) as Observable<UserProfile[]>;
+    this.filteredUsers = this.userService.getAllUsers().pipe(filter(x => !(x instanceof HttpErrorResponse))) as Observable<UserProfile[]>;
 
     this.titleFilterControl.valueChanges.pipe(takeUntil(this.destroyed$), debounceTime(200)).subscribe(x => {
       this.isLoadingResults = true;
@@ -177,7 +177,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
       this.projectStore.setCurrentProject(val);
     } else {
       this.isLoadingResults = true;
-      this.projectService.addUsersToProject([this.currentUser.id], val.id).subscribe(resp => {
+      this.projectService.addUsersToProject([this.currentUser.username], val.id).subscribe(resp => {
         if (resp instanceof HttpErrorResponse) {
           this.logService.snackBarError(resp, 5000);
         } else if (resp) {

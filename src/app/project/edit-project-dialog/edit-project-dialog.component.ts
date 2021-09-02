@@ -18,9 +18,9 @@ import {AppConfigService} from '../../core/util/app-config.service';
 
 interface OnSubmitParams {
   indicesFormControl: { id: number; name: string }[];
-  usersFormControl: UserProfile[];
+  usersFormControl: UserProfile[] | string;
   titleFormControl: string;
-  administratorsFormControl: UserProfile[];
+  administratorsFormControl: UserProfile[] | string;
   scopeFormControl?: string[] | string;
 }
 
@@ -37,14 +37,13 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
   indicesFilterFormControl = new FormControl();
   indices: { id: number, name: string }[] = [];
   users: UserProfile[] = [];
-  selectedUsers: UserProfile[] = [];
   currentProject: Project;
   projectForm = new FormGroup({
     titleFormControl: new FormControl('', [
       Validators.required,
     ]),
     indicesFormControl: new FormControl([]),
-    usersFormControl: new FormControl(this.selectedUsers),
+    usersFormControl: new FormControl(),
     administratorsFormControl: new FormControl([]),
   });
   destroyed$: Subject<boolean> = new Subject<boolean>();
@@ -80,16 +79,23 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
       title.setValue(this.initialProjectState.title);
     }
     if (this.initialProjectState.users) {
-      this.selectedUsers.push(...this.initialProjectState.users);
       const users = this.projectForm.get('usersFormControl');
       if (users) {
-        users.setValue(this.selectedUsers);
+        if (this.currentUser.is_superuser) {
+          users.setValue(this.initialProjectState.users);
+        } else {
+          users.setValue(this.initialProjectState.users.map(x => x.username).join('\n'));
+        }
       }
     }
     if (this.initialProjectState.administrators) {
       const users = this.projectForm.get('administratorsFormControl');
       if (users) {
-        users.setValue(this.initialProjectState.administrators);
+        if (this.currentUser.is_superuser) {
+          users.setValue(this.initialProjectState.administrators);
+        } else {
+          users.setValue(this.initialProjectState.administrators.map(x => x.username).join('\n'));
+        }
       }
     }
     if (this.useUAA) {
@@ -176,12 +182,21 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
 
   onSubmit(formData: OnSubmitParams): void {
     const observables: Observable<{ addObs: HttpErrorResponse | { message: string }, deleteObs: HttpErrorResponse | { message: string } } | HttpErrorResponse | Project>[] = [];
-    if (!UtilityFunctions.arrayValuesEqual(this.initialProjectState.users, formData.usersFormControl, (x => x.url))) {
-      observables.push(this.updateProjectUsers(this.initialProjectState.users, formData.usersFormControl, this.initialProjectState.id));
-    }
 
-    if (!UtilityFunctions.arrayValuesEqual(this.initialProjectState.administrators, formData.administratorsFormControl, (x => x.url))) {
-      observables.push(this.updateProjectAdministrators(this.initialProjectState.administrators, formData.administratorsFormControl, this.initialProjectState.id));
+    if (this.currentUser.is_superuser) {
+      if (!UtilityFunctions.arrayValuesEqual(this.initialProjectState.users, formData.usersFormControl as UserProfile[], (x => x.url))) {
+        observables.push(this.updateProjectUsers(this.initialProjectState.users, formData.usersFormControl as UserProfile[], this.initialProjectState.id));
+      }
+      if (!UtilityFunctions.arrayValuesEqual(this.initialProjectState.administrators, formData.administratorsFormControl as UserProfile[], (x => x.url))) {
+        observables.push(this.updateProjectAdministrators(this.initialProjectState.administrators, formData.administratorsFormControl as UserProfile[], this.initialProjectState.id));
+      }
+    } else {
+      if (!UtilityFunctions.arrayValuesEqual(this.initialProjectState.users.map(x => x.username), this.newLineStringToList(formData.usersFormControl as string))) {
+        observables.push(this.updateProjectUsers(this.initialProjectState.users, this.newLineStringToList(formData.usersFormControl as string), this.initialProjectState.id));
+      }
+      if (!UtilityFunctions.arrayValuesEqual(this.initialProjectState.administrators.map(x => x.username), this.newLineStringToList(formData.administratorsFormControl as string))) {
+        observables.push(this.updateProjectAdministrators(this.initialProjectState.administrators, this.newLineStringToList(formData.administratorsFormControl as string), this.initialProjectState.id));
+      }
     }
 
     if (formData.indicesFormControl && !UtilityFunctions.arrayValuesEqual(this.initialProjectState.indices, formData.indicesFormControl, (x => x.id))) {
@@ -214,7 +229,12 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
           }
         }
         if (!errors) {
-          this.projectStore.refreshProjects(this.currentProject.id === this.data.id);
+          if (this.currentProject && this.currentProject.id === this.data.id) {
+            // when im editing a project that is currently selected, refresh it
+            this.projectStore.refreshProjects(true);
+          } else {
+            this.projectStore.refreshProjects(false);
+          }
           this.dialogRef.close(true);
         }
       }
@@ -227,28 +247,31 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
   }
 
   // tslint:disable-next-line:max-line-length
-  updateProjectUsers(oldUsers: UserProfile[], newUsers: UserProfile[], projectId: number): Observable<{ addObs: HttpErrorResponse | { message: string }, deleteObs: HttpErrorResponse | { message: string } }> {
+  updateProjectUsers(oldUsers: UserProfile[], newUsers: UserProfile[] | string[], projectId: number): Observable<{ addObs: HttpErrorResponse | { message: string }, deleteObs: HttpErrorResponse | { message: string } }> {
     // tslint:disable-next-line:no-any
     const forkObject: { addObs: Observable<any>, deleteObs: Observable<any> } = {addObs: of(null), deleteObs: of(null)};
-
-    const usersToDelete = oldUsers.filter(oldUser => !newUsers.find(x => x.url === oldUser.url));
-    const usersToAdd = newUsers.filter(newUser => !oldUsers.find(x => x.url === newUser.url));
-
+    let usersToDelete: string[] = [];
+    let usersToAdd: string[]  = [];
+    if (this.currentUser.is_superuser) {
+      usersToDelete = oldUsers.filter(oldUser => !(newUsers as UserProfile[]).find(x => x.url === oldUser.url)).map(x => x.username);
+      usersToAdd = (newUsers as UserProfile[]).filter((newUser: UserProfile) => !oldUsers.find(x => x.url === newUser.url)).map(x => x.username);
+    } else {
+      usersToDelete = oldUsers.filter(oldUser => !(newUsers as string[]).find(x => x === oldUser.username)).map(x => x.username);
+      usersToAdd = (newUsers as string[]).filter((newUser: string) => !oldUsers.find(x => x.username === newUser));
+    }
     if (usersToAdd.length > 0) {
-      forkObject.addObs = this.projectService.addUsersToProject(usersToAdd.map(x => x.id), projectId).pipe(tap(resp => {
+      forkObject.addObs = this.projectService.addUsersToProject(usersToAdd, projectId).pipe(tap(resp => {
         if ((resp instanceof HttpErrorResponse)) {
           this.logService.snackBarError(resp);
         } else if (resp) {
-          this.initialProjectState.users.push(...usersToAdd);
         }
       }));
     }
     if (usersToDelete.length > 0) {
-      forkObject.deleteObs = this.projectService.deleteUsersFromProject(usersToDelete.map(x => x.id), projectId).pipe(tap(resp => {
+      forkObject.deleteObs = this.projectService.deleteUsersFromProject(usersToDelete, projectId).pipe(tap(resp => {
         if ((resp instanceof HttpErrorResponse)) {
           this.logService.snackBarError(resp);
         } else if (resp) {
-          this.initialProjectState.users = this.initialProjectState.users.filter(x => !usersToDelete.includes(x));
         }
       }));
     }
@@ -275,28 +298,34 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
   }
 
   // tslint:disable-next-line:max-line-length
-  private updateProjectAdministrators(oldUsers: UserProfile[], newUsers: UserProfile[], projectId: number): Observable<{ addObs: HttpErrorResponse | { message: string }, deleteObs: HttpErrorResponse | { message: string } }> {
+  private updateProjectAdministrators(oldUsers: UserProfile[], newUsers: UserProfile[] | string[], projectId: number): Observable<{ addObs: HttpErrorResponse | { message: string }, deleteObs: HttpErrorResponse | { message: string } }> {
     // tslint:disable-next-line:no-any
     const forkObject: { addObs: Observable<any>, deleteObs: Observable<any> } = {addObs: of(null), deleteObs: of(null)};
 
-    const usersToDelete = oldUsers.filter(oldUser => !newUsers.find(x => x.url === oldUser.url));
-    const usersToAdd = newUsers.filter(newUser => !oldUsers.find(x => x.url === newUser.url));
+    let usersToDelete: string[] = [];
+    let usersToAdd: string[] = [];
+    if (this.currentUser.is_superuser) {
+      usersToDelete = oldUsers.filter(oldUser => !(newUsers as UserProfile[]).find(x => x.url === oldUser.url)).map(x => x.username);
+      usersToAdd = (newUsers as UserProfile[]).filter((newUser: UserProfile) => !oldUsers.find(x => x.url === newUser.url)).map(x => x.username);
+    } else {
+      usersToDelete = oldUsers.filter(oldUser => !(newUsers as string[]).find(x => x === oldUser.username)).map(x => x.username);
+      usersToAdd = (newUsers as string[]).filter((newUser: string) => !oldUsers.find(x => x.username === newUser));
+    }
 
     if (usersToAdd.length > 0) {
-      forkObject.addObs = this.projectService.addAdminsToProject(usersToAdd.map(x => x.id), projectId).pipe(tap(resp => {
+      forkObject.addObs = this.projectService.addAdminsToProject(usersToAdd, projectId).pipe(tap(resp => {
         if ((resp instanceof HttpErrorResponse)) {
           this.logService.snackBarError(resp);
         } else if (resp) {
-          this.initialProjectState.users.push(...usersToAdd);
+
         }
       }));
     }
     if (usersToDelete.length > 0) {
-      forkObject.deleteObs = this.projectService.deleteAdminsFromProject(usersToDelete.map(x => x.id), projectId).pipe(tap(resp => {
+      forkObject.deleteObs = this.projectService.deleteAdminsFromProject(usersToDelete, projectId).pipe(tap(resp => {
         if ((resp instanceof HttpErrorResponse)) {
           this.logService.snackBarError(resp);
         } else if (resp) {
-          this.initialProjectState.users = this.initialProjectState.users.filter(x => !usersToDelete.includes(x));
         }
       }));
     }
