@@ -29,6 +29,7 @@ import {EditSavedSearchDialogComponent} from './searcher-sidebar/saved-searches/
 import {SearcherComponentService} from './services/searcher-component.service';
 import {PlotlyViaWindowModule} from 'angular-plotly.js';
 import {DragDropModule} from '@angular/cdk/drag-drop';
+import { AggregationResultFactVisComponent } from './aggregation-results/aggregation-result-facts/aggregation-result-fact-vis/aggregation-result-fact-vis.component';
 
 @NgModule({
   declarations: [
@@ -56,6 +57,7 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
     AggregationResultFactsComponent,
     GraphSelectedPortalComponent,
     EditSavedSearchDialogComponent,
+    AggregationResultFactVisComponent,
   ],
   imports: [
     SharedModule,

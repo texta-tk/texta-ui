@@ -27,6 +27,10 @@
                     mat-icon-button>
               <mat-icon>assessment</mat-icon>
             </button>
+            <button (click)="state.viewState = 'visualization'" [color]="state.viewState === 'visualization' ? 'primary' : undefined"
+                    mat-icon-button>
+              <mat-icon>auto_graph</mat-icon>
+            </button>
           </ng-template>
           <app-aggregation-result-facts [data]="item.data" [docPaths]="fieldPathList"
                                         [viewState]="state.viewState"></app-aggregation-result-facts>

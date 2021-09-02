@@ -67,4 +67,8 @@
   <!--        [customColors]="customColors"-->
   <app-aggregation-results-tree class="overflow-auto" [dataSource]="dataSource" [docPaths]="docPaths"
                                 [ngStyle]="{display: viewState !== 'tree' ? 'none' : 'flex'}"></app-aggregation-results-tree>
+
+  <app-aggregation-result-fact-vis class="overflow-auto" [dataSource]="dataSource"
+                                [ngStyle]="{display: viewState !== 'visualization' ? 'none' : 'flex'}"></app-aggregation-result-fact-vis>
+
 </div>
