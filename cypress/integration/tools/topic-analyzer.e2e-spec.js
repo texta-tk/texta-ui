@@ -72,6 +72,7 @@ describe('Topic Analyzer should work', function () {
       .should('have.property', 'message');
     cy.intercept('GET', '**/clusters/**').as('getClusters');
     cy.closeCurrentCdkOverlay();
+    cy.closeCurrentCdkOverlay();
     cy.wait('@getClusters');
     cy.get('[data-cy=appClusterDocumentsTagBtn]').click();
     cy.wait(1000);

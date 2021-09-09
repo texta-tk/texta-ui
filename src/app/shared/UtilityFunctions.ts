@@ -5,12 +5,15 @@ import {
   NumberConstraint,
   TextConstraint
 } from '../searcher/searcher-sidebar/build-search/Constraints';
+import {HttpErrorResponse} from "@angular/common/http";
 
 export interface LegibleColor {
   backgroundColor: string;
   textColor: string;
 }
 
+// tslint:disable-next-line:no-any
+type Constructor<T> = new (...args: any[]) => T;
 export class UtilityFunctions {
   static colors: Map<string, LegibleColor> = new Map<string, LegibleColor>([
     ['ORG', {backgroundColor: '#9FC2BA', textColor: 'black'}],
@@ -25,6 +28,19 @@ export class UtilityFunctions {
 
   static typeGuard<T>(o: unknown, className: new(...args: unknown[]) => T): o is T {
     return o instanceof className;
+  }
+
+  // tslint:disable-next-line:no-any
+  static logForkJoinErrors<T>(o: any, filterType: Constructor<T>, logFunction: (x: T) => void): void {
+    if (o) {
+      for (const key in o) {
+        // @ts-ignore
+        if (o.hasOwnProperty(key) && o[key] instanceof filterType) {
+          // @ts-ignore
+          logFunction(o[key]);
+        }
+      }
+    }
   }
 
   static propertiesToArray<T, K extends keyof T>(o: T, propertyNames: K[]): T[K][] {
@@ -86,6 +102,7 @@ export class UtilityFunctions {
           slop: constraint.slopFormControl.value,
           text: constraint.textAreaFormControl.value,
           operator: constraint.operatorFormControl.value,
+          ignoreCase: constraint.ignoreCaseFormControl.value,
           fuzziness: constraint.fuzzinessFormControl.value,
           prefix_length: constraint.prefixLengthFormControl.value
         });

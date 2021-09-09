@@ -41,7 +41,7 @@
       <mat-select [disableOptionCentering]="true" formControlName="factNameFormControl"
                   panelClass="select-panel-reveal-input">
         <mat-option>None</mat-option>
-        <mat-option *ngFor="let fact of projectFacts" [value]="fact">
+        <mat-option *ngFor="let fact of projectFacts | async" [value]="fact">
           {{fact.name}}
         </mat-option>
       </mat-select>
@@ -74,13 +74,13 @@
       <mat-hint>{{torchTaggerOptions?.actions?.POST?.pos_label?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
-    <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"></app-saved-search-autocomplete>
+    <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)" [startingQuery]="query"></app-saved-search-autocomplete>
     <mat-form-field data-cy="appTorchTaggerCreateDialogArchitecture">
       <mat-label>Model architecture</mat-label>
       <mat-select [disableOptionCentering]="true" formControlName="modelArchitectureFormControl"
                   panelClass="select-panel-reveal-input" required>
         <mat-option *ngFor="let item of torchTaggerOptions?.actions.POST.model_architecture.choices"
-                    [value]="item.value">
+                    [value]="item">
           {{item.display_name}}
         </mat-option>
       </mat-select>
@@ -94,8 +94,9 @@
       <mat-label>Select Embedding</mat-label>
       <mat-select [disableOptionCentering]="true" formControlName="embeddingFormControl"
                   panelClass="select-panel-reveal-input" required>
+        <mat-option>None</mat-option>
         <ng-container *ngFor="let item of embeddings">
-          <mat-option *ngIf="item.task.status === 'completed'" [value]="item.id">
+          <mat-option *ngIf="item.task.status === 'completed'" [value]="item">
             {{item.description}}
           </mat-option>
         </ng-container>

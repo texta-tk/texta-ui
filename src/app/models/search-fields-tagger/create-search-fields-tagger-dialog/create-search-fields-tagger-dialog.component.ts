@@ -17,6 +17,7 @@ interface OnSubmitParams {
   fieldsFormControl: string[];
   descriptionFormControl: string;
   indicesFormControl: ProjectIndex[];
+  breakUpCharacter: string;
   factNameFormControl: string;
   bulkSizeFormControl: number;
   esTimeoutFormControl: number;
@@ -36,6 +37,7 @@ export class CreateSearchFieldsTaggerDialogComponent implements OnInit, OnDestro
     indicesFormControl: new FormControl([], [Validators.required]),
     fieldsFormControl: new FormControl([], [Validators.required]),
     factNameFormControl: new FormControl('', [Validators.required]),
+    breakUpCharacter: new FormControl(''),
     bulkSizeFormControl: new FormControl(100, [Validators.required]),
     esTimeoutFormControl: new FormControl(10),
   });
@@ -94,6 +96,8 @@ export class CreateSearchFieldsTaggerDialogComponent implements OnInit, OnDestro
       indices: formData.indicesFormControl.map(x => [{name: x.index}]).flat(),
       fields: formData.fieldsFormControl,
       fact_name: formData.factNameFormControl,
+      use_breakup: !!formData.breakUpCharacter,
+      ...formData.breakUpCharacter ? {breakup_character: formData.breakUpCharacter} : {},
       ...this.query ? {query: this.query} : {},
       bulk_size: formData.bulkSizeFormControl,
       es_timeout: formData.esTimeoutFormControl,

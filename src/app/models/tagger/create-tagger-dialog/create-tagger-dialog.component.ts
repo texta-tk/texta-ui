@@ -139,7 +139,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initFormControlListeners();
-    this.projectFacts.pipe(filter(x => x[0].name !== 'Loading...'), take(1)).subscribe(facts => {
+    this.projectFacts.pipe(filter(x => x[0]?.name !== 'Loading...'), take(1)).subscribe(facts => {
       if (facts && this.data?.cloneTagger) {
         const factNameForm = this.taggerForm.get('factNameFormControl');
         factNameForm?.setValue(facts.find(x => x.name === this.data.cloneTagger.fact_name));
@@ -162,8 +162,6 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
       if (resp?.taggerOptions && !(resp.taggerOptions instanceof HttpErrorResponse)) {
         this.taggerOptions = resp.taggerOptions;
         this.setDefaultFormValues(this.taggerOptions);
-      } else if (resp?.taggerOptions instanceof HttpErrorResponse) {
-        this.logService.snackBarError(resp.taggerOptions, 5000);
       }
       if (resp?.embeddings && !(resp.embeddings instanceof HttpErrorResponse)) {
         this.embeddings = resp.embeddings.results;
@@ -173,16 +171,12 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
             this.taggerForm.get('embeddingFormControl')?.setValue(foundEmbedding);
           }
         }
-      } else if (resp?.embeddings instanceof HttpErrorResponse) {
-        this.logService.snackBarError(resp.embeddings, 5000);
       }
       if (resp?.snowBallLanguages && !(resp.snowBallLanguages instanceof HttpErrorResponse)) {
         this.snowballLanguages = resp.snowBallLanguages;
         if (this.data?.cloneTagger?.snowball_language) {
           this.taggerForm.get('snowballFormControl')?.setValue(this.data?.cloneTagger?.snowball_language);
         }
-      } else if (resp?.snowBallLanguages instanceof HttpErrorResponse) {
-        this.logService.snackBarError(resp.snowBallLanguages, 5000);
       }
       if (resp?.projectIndices && !(resp.projectIndices instanceof HttpErrorResponse)) {
         this.projectIndices = resp.projectIndices;
@@ -195,14 +189,12 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
           fieldsForm?.setValue(this.data.cloneTagger.fields);
 
         }
-      } else if (resp?.projectIndices instanceof HttpErrorResponse) {
-        this.logService.snackBarError(resp.projectIndices, 5000);
       }
       if (resp?.stopwords && !(resp.stopwords instanceof HttpErrorResponse)) {
         this.taggerForm.get('stopWordsFormControl')?.setValue(resp.stopwords.stop_words.join('\n'));
-      } else if (resp?.stopwords instanceof HttpErrorResponse) {
-        this.logService.snackBarError(resp.stopwords);
       }
+
+      UtilityFunctions.logForkJoinErrors(resp, HttpErrorResponse, this.logService.snackBarError);
     });
 
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$), switchMap(currentProjIndices => {

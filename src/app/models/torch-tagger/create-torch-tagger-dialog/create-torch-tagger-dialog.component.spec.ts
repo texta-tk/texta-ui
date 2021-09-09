@@ -5,7 +5,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatDialogRef } from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
 describe('CreateTorchTaggerDialogComponent', () => {
   let component: CreateTorchTaggerDialogComponent;
@@ -13,6 +13,7 @@ describe('CreateTorchTaggerDialogComponent', () => {
   const mockDialogRef = {
     close: jasmine.createSpy('close')
   };
+  const data = {cloneElement: undefined};
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
@@ -23,6 +24,10 @@ describe('CreateTorchTaggerDialogComponent', () => {
         {
           provide: MatDialogRef,
           useValue: mockDialogRef
+        },
+        {
+          provide: MAT_DIALOG_DATA,
+          useValue: data
         }]
     })
     .compileComponents();

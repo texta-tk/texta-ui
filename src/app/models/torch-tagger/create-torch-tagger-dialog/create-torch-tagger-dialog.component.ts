@@ -1,14 +1,14 @@
-import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
-import {MatDialogRef} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {LiveErrorStateMatcher} from 'src/app/shared/CustomerErrorStateMatchers';
-import {Embedding} from 'src/app/shared/types/tasks/Embedding';
+import {Choice, Embedding} from 'src/app/shared/types/tasks/Embedding';
 import {Field, Project, ProjectFact, ProjectIndex} from 'src/app/shared/types/Project';
 import {TorchTaggerService} from '../../../core/models/taggers/torch-tagger.service';
 import {ProjectService} from 'src/app/core/projects/project.service';
 import {ProjectStore} from 'src/app/core/projects/project.store';
-import {mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
+import {filter, mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
 import {forkJoin, of, Subject} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {TorchTagger} from 'src/app/shared/types/tasks/TorchTagger';
@@ -22,11 +22,11 @@ interface OnSubmitParams {
     descriptionFormControl: string;
     fieldsFormControl: Field[];
     indicesFormControl: ProjectIndex[];
-    embeddingFormControl: number;
+    embeddingFormControl: Embedding;
     sampleSizeFormControl: number;
     minSampleSizeFormControl: number;
     numEpochsFormControl: number;
-    modelArchitectureFormControl: string;
+    modelArchitectureFormControl: Choice;
     factNameFormControl: { name: string, values: string[] };
     balanceFormControl: boolean;
     sentenceShuffleFormControl: boolean;
@@ -41,24 +41,33 @@ interface OnSubmitParams {
   styleUrls: ['./create-torch-tagger-dialog.component.scss']
 })
 export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
-  readonly defaultQuery = '{"query": {"match_all": {}}}';
-  query = this.defaultQuery;
+  defaultQuery = '{"query": {"match_all": {}}}';
+  query = this.data?.cloneElement?.query || this.defaultQuery;
 
   torchTaggerForm = new FormGroup({
-    descriptionFormControl: new FormControl('', [Validators.required]),
+    descriptionFormControl: new FormControl(this.data?.cloneElement?.description || '', [Validators.required]),
     indicesFormControl: new FormControl([], [Validators.required]),
     fieldsFormControl: new FormControl([], [Validators.required]),
     embeddingFormControl: new FormControl('', [Validators.required]),
-    sampleSizeFormControl: new FormControl(10000, [Validators.required]),
-    minSampleSizeFormControl: new FormControl(50, [Validators.required]),
+    sampleSizeFormControl: new FormControl(this.data?.cloneElement?.maximum_sample_size || 10000, [Validators.required]),
+    minSampleSizeFormControl: new FormControl(this.data?.cloneElement?.minimum_sample_size || 50, [Validators.required]),
     factNameFormControl: new FormControl(),
     modelArchitectureFormControl: new FormControl('', [Validators.required]),
-    numEpochsFormControl: new FormControl(5, [Validators.required]),
-    posLabelFormControl: new FormControl(''),
+    numEpochsFormControl: new FormControl(this.data?.cloneElement?.num_epochs || 5, [Validators.required]),
+    posLabelFormControl: new FormControl(this.data?.cloneElement?.pos_label || ''),
 
-    balanceFormControl: new FormControl({value: false, disabled: true}),
-    sentenceShuffleFormControl: new FormControl({value: false, disabled: true}),
-    maxBalanceFormControl: new FormControl({value: false, disabled: true}),
+    balanceFormControl: new FormControl({
+      value: this.data?.cloneElement?.balance !== undefined ? this.data?.cloneElement?.balance : false,
+      disabled: true
+    }),
+    sentenceShuffleFormControl: new FormControl({
+      value: this.data?.cloneElement?.use_sentence_shuffle !== undefined ? this.data?.cloneElement?.use_sentence_shuffle : false,
+      disabled: true
+    }),
+    maxBalanceFormControl: new FormControl({
+      value: this.data?.cloneElement?.balance_to_max_limit !== undefined ? this.data?.cloneElement?.balance_to_max_limit : false,
+      disabled: true
+    }),
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
@@ -66,7 +75,7 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
   torchTaggerOptions: any;
   embeddings: Embedding[] = [];
   projectFields: ProjectIndex[];
-  projectFacts: { name: string, values: string[] }[];
+  projectFacts: Subject<{ name: string, values: string[] }[]> = new Subject();
   destroyed$ = new Subject<boolean>();
   fieldsUnique: Field[] = [];
   currentProject: Project;
@@ -77,6 +86,7 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
               private torchTaggerService: TorchTaggerService,
               private projectService: ProjectService,
               private logService: LogService,
+              @Inject(MAT_DIALOG_DATA) public data: { cloneElement: TorchTagger },
               private embeddingService: EmbeddingsService,
               private projectStore: ProjectStore) {
   }
@@ -111,48 +121,75 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initFormControlListeners();
-
+    this.projectFacts.pipe(filter(x => x[0]?.name !== 'Loading...'), take(1)).subscribe(facts => {
+      if (facts && this.data?.cloneElement) {
+        const factNameForm = this.torchTaggerForm.get('factNameFormControl');
+        factNameForm?.setValue(facts.find(x => x.name === this.data.cloneElement.fact_name));
+      }
+    });
     this.projectStore.getCurrentProject().pipe(take(1), mergeMap(currentProject => {
       if (currentProject) {
         this.currentProject = currentProject;
         return forkJoin(
           {
             torchTaggerOptions: this.torchTaggerService.getTorchTaggerOptions(currentProject.id),
-            projectEmbeddings: this.embeddingService.getEmbeddings(currentProject.id)
+            projectEmbeddings: this.embeddingService.getEmbeddings(currentProject.id),
+            projectIndices: this.projectStore.getProjectIndices().pipe(take(1)), // take 1 to complete observable
           });
       } else {
         return of(null);
       }
     })).subscribe(resp => {
       if (resp) {
-        if (!(resp.projectEmbeddings instanceof HttpErrorResponse)) {
+        if (resp?.projectEmbeddings && !(resp.projectEmbeddings instanceof HttpErrorResponse)) {
           this.embeddings = resp.projectEmbeddings.results;
+          if (this.data?.cloneElement?.embedding) {
+            const foundEmbedding = this.embeddings.find(x => x.id === this.data.cloneElement.embedding);
+            if (foundEmbedding) {
+              this.torchTaggerForm.get('embeddingFormControl')?.setValue(foundEmbedding);
+            }
+          }
         }
-        if (!(resp.torchTaggerOptions instanceof HttpErrorResponse)) {
+        if (resp?.torchTaggerOptions && !(resp.torchTaggerOptions instanceof HttpErrorResponse)) {
           this.torchTaggerOptions = resp.torchTaggerOptions;
+          const architecture = this.torchTaggerForm.get('modelArchitectureFormControl');
+          if (architecture) {
+            if (this.data?.cloneElement?.model_architecture) {
+              // @ts-ignore
+              const architectureVal = resp.torchTaggerOptions.actions.POST.model_architecture.choices.find(x => x.display_name === this.data.cloneElement.model_architecture);
+              architecture.setValue(architectureVal);
+            }
+          }
         }
+        if (resp?.projectIndices && !(resp.projectIndices instanceof HttpErrorResponse)) {
+          this.projectIndices = resp.projectIndices;
+          if (this.data.cloneElement) {
+            const indexInstances = resp.projectIndices.filter(x => this.data.cloneElement.indices.some(y => y.name === x.index));
+            const indicesForm = this.torchTaggerForm.get('indicesFormControl');
+            indicesForm?.setValue(indexInstances);
+            this.indicesOpenedChange(false); // refreshes the field and fact selection data
+            const fieldsForm = this.torchTaggerForm.get('fieldsFormControl');
+            fieldsForm?.setValue(this.data.cloneElement.fields);
+          }
+        }
+        UtilityFunctions.logForkJoinErrors(resp, HttpErrorResponse, this.logService.snackBarError);
       }
     });
 
-    this.projectStore.getProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(x => {
-      if (x) {
-        this.projectIndices = x;
-      }
-    });
 
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$), switchMap(currentProjIndices => {
-      if (this.currentProject?.id && currentProjIndices) {
+      if (this.currentProject?.id && currentProjIndices && !this.data.cloneElement) {
         const indicesForm = this.torchTaggerForm.get('indicesFormControl');
         indicesForm?.setValue(currentProjIndices);
         this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
-        this.projectFacts = [{name: 'Loading...', values: []}];
+        this.projectFacts.next([{name: 'Loading...', values: []}]);
         return this.projectService.getProjectFacts(this.currentProject.id, currentProjIndices.map(x => [{name: x.index}]).flat(), true);
       } else {
         return of(null);
       }
     })).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.projectFacts = resp;
+        this.projectFacts.next(resp);
       } else if (resp) {
         this.logService.snackBarError(resp, 4000);
       }
@@ -166,20 +203,20 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
 
   getFactsForIndices(val: ProjectIndex[]): void {
     if (val.length > 0 && this.currentProject.id) {
-      this.projectFacts = [{name: 'Loading...', values: []}];
+      this.projectFacts.next([{name: 'Loading...', values: []}]);
       this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat(), true).subscribe(resp => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
-          this.projectFacts = resp;
+          this.projectFacts.next(resp);
         } else {
           this.logService.snackBarError(resp);
         }
       });
     } else {
-      this.projectFacts = [];
+      this.projectFacts.next([]);
     }
   }
 
-  public indicesOpenedChange(opened: unknown): void {
+  public indicesOpenedChange(opened: boolean): void {
     const indicesForm = this.torchTaggerForm.get('indicesFormControl');
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && indicesForm?.value && !UtilityFunctions.arrayValuesEqual(indicesForm?.value, this.projectFields, (x => x.index))) {
@@ -194,11 +231,11 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
         description: formData.descriptionFormControl,
         fields: formData.fieldsFormControl,
         indices: formData.indicesFormControl.map(x => [{name: x.index}]).flat(),
-        embedding: formData.embeddingFormControl,
+        embedding: formData.embeddingFormControl ? formData.embeddingFormControl.id : null,
         maximum_sample_size: formData.sampleSizeFormControl,
         minimum_sample_size: formData.minSampleSizeFormControl,
         num_epochs: formData.numEpochsFormControl,
-        model_architecture: formData.modelArchitectureFormControl,
+        ...formData.modelArchitectureFormControl ? {model_architecture: formData.modelArchitectureFormControl.value} : {},
         ...this.query ? {query: this.query} : {},
         ...formData.factNameFormControl ? {fact_name: formData.factNameFormControl.name} : {},
         ...formData.sentenceShuffleFormControl ? {use_sentence_shuffle: formData.sentenceShuffleFormControl} : {},

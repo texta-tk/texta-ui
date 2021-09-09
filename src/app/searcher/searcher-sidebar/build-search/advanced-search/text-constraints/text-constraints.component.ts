@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import {ElasticsearchQuery, TextConstraint} from '../../Constraints';
 import {FormControl} from '@angular/forms';
-import {pairwise, startWith, takeUntil} from 'rxjs/operators';
+import {debounceTime, pairwise, startWith, takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {Lexicon} from '../../../../../shared/types/Lexicon';
 import {MatMenuTrigger} from '@angular/material/menu';
@@ -36,6 +36,7 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
   operatorFormControl = new FormControl();
   fuzzinessFormControl = new FormControl();
   prefixLengthFormControl = new FormControl();
+  ignoreCaseFormControl = new FormControl();
   lexicons: Lexicon[] = [];
   operatorConverter: { [key: string]: string } = {
     must: 'and',
@@ -57,6 +58,7 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
       this.operatorFormControl = this._textConstraint.operatorFormControl;
       this.fuzzinessFormControl = this._textConstraint.fuzzinessFormControl;
       this.prefixLengthFormControl = this._textConstraint.prefixLengthFormControl;
+      this.ignoreCaseFormControl = this._textConstraint.ignoreCaseFormControl;
       if (this._textConstraint.lexicons) {
         this.lexicons = this._textConstraint.lexicons;
       }
@@ -100,6 +102,8 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
         startWith(this.textAreaFormControl.value as object, this.textAreaFormControl.value as object), pairwise()).subscribe(value => {
         if (this.matchFormControl.value === 'regexp') {
           this.buildRegexQuery(formQueries, value[1], this._textConstraint.fields.map(x => x.path));
+        } else if (this.matchFormControl.value === 'term') {
+          this.buildTermQuery(formQueries, value[1], this._textConstraint.fields.map(x => x.path), !!this.ignoreCaseFormControl.value);
         } else if (this.matchFormControl.value === 'fuzzy') {
           this.buildFuzzyQuery(formQueries, value[1], this._textConstraint.fields.map(x => x.path), fuzzyBlueprint);
         } else if (this.matchFormControl.value === 'match_fuzzy') {
@@ -118,6 +122,8 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
         if (this.textAreaFormControl.value && this.textAreaFormControl.value.length > 0) {
           if (value === 'regexp') {
             this.buildRegexQuery(formQueries, this.textAreaFormControl.value, this._textConstraint.fields.map(x => x.path));
+          } else if (value === 'term') {
+            this.buildTermQuery(formQueries, this.textAreaFormControl.value, this._textConstraint.fields.map(x => x.path), !!this.ignoreCaseFormControl.value);
           } else if (value === 'fuzzy') {
             this.buildFuzzyQuery(formQueries, this.textAreaFormControl.value, this._textConstraint.fields.map(x => x.path), fuzzyBlueprint);
           } else if (value === 'match_fuzzy') {
@@ -162,6 +168,11 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
             this.buildMatchFuzzyQuery(formQueries, this.textAreaFormControl.value, this._textConstraint.fields.map(x => x.path), fuzzyMatchBlueprint);
           }
           this.constraintChanged.emit(this.elasticSearchQuery);
+        }
+      });
+      this.ignoreCaseFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(value => {
+        if (this.textAreaFormControl.value) {
+          this.buildTermQuery(formQueries, this.textAreaFormControl.value, this._textConstraint.fields.map(x => x.path), !!value);
         }
       });
 
@@ -329,6 +340,27 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
         }
         newFormQuery.bool.should.push(fuzzyQuery);
         formQueries.push(newFormQuery);
+      }
+    }
+  }
+
+  private buildTermQuery(formQueries: unknown[], formValue: string, fields: string[], ignoreCase = false): void {
+    // https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-term-query.html
+    formQueries.splice(0, formQueries.length);
+    const textareaValues = this.stringToArray(formValue, '\n');
+
+    if (textareaValues.length > 0) {
+      for (const line of textareaValues) {
+        for (const field of fields) {
+          formQueries.push({
+            term: {
+              [`${field}.keyword`]: {
+                value: line,
+                case_insensitive: ignoreCase
+              }
+            }
+          });
+        }
       }
     }
   }

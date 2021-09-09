@@ -53,7 +53,7 @@ describe('should be able to build aggregations', function () {
     cy.wait(1000);
     for (let i = 0; i < depth; i++) {
       if (i === 0) {
-        cy.get('.mat-tree-node > [mattreenodetoggle=""]:first()').click();
+        cy.get('.mat-tree-node > [mattreenodetoggle=""]:last()').click();
       } else {
         cy.get('ul > .mat-nested-tree-node > li > .mat-tree-node > [mattreenodetoggle=""]:last()').click();
       }
