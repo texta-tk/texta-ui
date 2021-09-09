@@ -266,7 +266,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
       if (formFields.length >= 1) {
         if (formFields[0].type === 'text') {
           this.constraintList.push(new TextConstraint(formFields,
-            this.lexicons, constraint.match, constraint.text, constraint.operator, constraint.slop, constraint.fuzziness, constraint.prefix_length));
+            this.lexicons, constraint.match, constraint.text, constraint.operator, constraint.slop, constraint.fuzziness, constraint.prefix_length, constraint.ignoreCase));
         } else if (formFields[0].type === 'date') {
           this.constraintList.push(new DateConstraint(formFields, constraint.dateFrom, constraint.dateTo));
         } else if (this.mappingNumeric.includes(formFields[0].type)) {

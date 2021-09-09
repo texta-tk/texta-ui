@@ -166,16 +166,17 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.destroyed$.complete();
   }
 
-  openCreateDialog(): void {
+  openCreateDialog(cloneElement?: TorchTagger): void {
     const dialogRef = this.dialog.open(CreateTorchTaggerDialogComponent, {
       maxHeight: '90vh',
       width: '700px',
+      data: {cloneElement: cloneElement ? cloneElement : undefined},
       disableClose: true
     });
     dialogRef.afterClosed().subscribe((resp: TorchTagger | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.tableData.data = [...this.tableData.data, resp];
-        this.logService.snackBarMessage(`Created TorchTagger ${resp.description}`, 2000);
+        this.logService.snackBarMessage(`Created Torch Tagger ${resp.description}`, 2000);
         this.projectStore.refreshSelectedProjectResourceCounts();
       }
     });

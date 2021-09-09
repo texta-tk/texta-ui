@@ -126,6 +126,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
     dialogRef.afterClosed().subscribe((resp: TaggerGroup) => {
       if (resp) {
         this.tableData.data = [...this.tableData.data, resp];
+        this.logService.snackBarMessage(`Created Tagger Group ${resp.description}`, 2000);
         this.projectStore.refreshSelectedProjectResourceCounts();
       }
     });

@@ -51,7 +51,7 @@ describe('Torch Taggers should work', function () {
         cy.closeCurrentCdkOverlay();
         cy.matFormFieldShouldHaveError(embedding, 'required');
         cy.wrap(embedding).click();
-        cy.get('.mat-option-text:first()').should('be.visible').click();
+        cy.get('.mat-option-text:nth(1)').should('be.visible').click();
         cy.closeCurrentCdkOverlay();
         cy.wrap(embedding).find('mat-error').should('have.length', 0)
       }));

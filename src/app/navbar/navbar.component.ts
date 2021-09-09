@@ -136,7 +136,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     const observable = this.user.profile.is_uaa_account ? this.userService.logout().pipe(switchMap(x => this.userService.logoutUAA())) : this.userService.logout();
     observable.subscribe(
       () => {
-        this.localStorageService.deleteUser();
+        localStorage.clear();
         this.userStore.setCurrentUser(null);
         location.reload();
       },

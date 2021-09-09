@@ -121,10 +121,11 @@ export class BertTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  openCreateDialog(): void {
+  openCreateDialog(cloneElement?: BertTagger): void {
     const dialogRef = this.dialog.open(CreateBertTaggerDialogComponent, {
       maxHeight: '90vh',
       width: '700px',
+      data: {cloneElement: cloneElement ? cloneElement : undefined},
       disableClose: true,
     });
     dialogRef.afterClosed().subscribe(resp => {
