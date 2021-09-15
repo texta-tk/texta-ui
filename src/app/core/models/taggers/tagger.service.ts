@@ -110,7 +110,8 @@ export class TaggerService {
       catchError(this.logService.handleError<TaggerOptions>('getTaggerOptions')));
   }
 
-  tagRandomDocument(projectId: number, taggerId: number, body: unknown): Observable<unknown | HttpErrorResponse> {
+  // tslint:disable-next-line:no-any
+  tagRandomDocument(projectId: number, taggerId: number, body: unknown): Observable<any | HttpErrorResponse> {
     return this.http.post(`${this.apiUrl}/projects/${projectId}/taggers/${taggerId}/tag_random_doc/`, body
     ).pipe(
       tap(e => this.logService.logStatus(e, 'tagRandomDocument')),

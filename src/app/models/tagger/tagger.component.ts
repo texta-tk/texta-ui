@@ -228,8 +228,9 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   tagRandomDocDialog(tagger: Tagger): void {
     const dialogRef = this.dialog.open(TagRandomDocDialogComponent, {
       data: {tagger, currentProjectId: this.currentProject.id},
-      maxHeight: '665px',
-      width: '1200px',
+      maxHeight: '90vh',
+      width: '700px',
+      disableClose: true,
     });
   }
 

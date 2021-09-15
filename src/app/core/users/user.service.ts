@@ -15,7 +15,7 @@ import {AppConfigService} from '../util/app-config.service';
 export class UserService {
   apiUrl = AppConfigService.settings.apiHost + AppConfigService.settings.apiBasePath;
   UAAUrl = AppConfigService.settings.uaaConf.uaaURL;
-
+  UAALogout = AppConfigService.settings.uaaConf.logout_uri;
   constructor(private http: HttpClient, private localStorageService: LocalStorageService,
               private logService: LogService) {
   }
@@ -66,7 +66,7 @@ export class UserService {
   }
   logoutUAA(): Observable<unknown> {
     return this.http.get<unknown>(
-      `${this.UAAUrl}/uaa/logout.do?redirect=${window.location}`, {}).pipe(
+      `${this.UAALogout}?redirect=${window.location}`, {}).pipe(
       tap(e => this.logService.logStatus(e, 'logoutUAA')));
   }
 

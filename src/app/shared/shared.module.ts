@@ -67,6 +67,7 @@ import {ParseJsonPipe} from './pipes/parse-json.pipe';
 import {TextaFactsChipsComponent} from './components/texta-facts-chips/texta-facts-chips.component';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {AddLexiconDialogComponent} from './components/dialogs/add-lexicon-dialog/add-lexicon-dialog.component';
+import { TagRandomDocResultComponent } from './components/dialogs/tag-random-doc-result/tag-random-doc-result.component';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
@@ -95,6 +96,7 @@ import {AddLexiconDialogComponent} from './components/dialogs/add-lexicon-dialog
     ParseJsonPipe,
     ProjectFieldSelectComponent,
     TextaFactsChipsComponent,
+    TagRandomDocResultComponent,
   ],
   imports: [
     RouterModule,
@@ -200,6 +202,7 @@ import {AddLexiconDialogComponent} from './components/dialogs/add-lexicon-dialog
     CombineArrayPipe,
     ParseJsonPipe,
     TextaFactsChipsComponent,
+    TagRandomDocResultComponent,
   ]
 })
 export class SharedModule {

@@ -5,6 +5,9 @@ export interface UaaConf {
   uaaURL: string;
   // Callback URL defined on the UAA server, to which the user will be redirected after logging in on UAA
   redirect_uri: string;
+  oauth_uri: string;
+  authorize_uri: string;
+  logout_uri: string;
   // OAuth 2.0 client application (eg texta_toolkit) id and secret.
   client_id: string;
   // OAuth 2.0 scope and response_type

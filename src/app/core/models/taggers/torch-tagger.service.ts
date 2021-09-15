@@ -7,6 +7,7 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {catchError, tap} from 'rxjs/operators';
 import {ResultsWrapper} from '../../../shared/types/Generic';
 import {AppConfigService} from '../../util/app-config.service';
+import {RegexTaggerTagRandomDocResult} from "../../../shared/types/tasks/RegexTaggerGroup";
 
 @Injectable({
   providedIn: 'root'
@@ -97,5 +98,11 @@ export class TorchTaggerService {
     return this.http.options(`${this.apiUrl}/projects/${projectId}/torchtaggers/${taskId}/tag_text/`).pipe(
       tap(e => this.logService.logStatus(e, 'getTagTextOptions')),
       catchError(this.logService.handleError('getTagTextOptions')));
+  }
+
+  tagRandomDoc(currentProjectId: number, id: number, body: { indices: FlatArray<{ name: string }[][], 1>[]; fields: string[] }): Observable<any | HttpErrorResponse> {
+    return this.http.post<any>(`${this.apiUrl}/projects/${currentProjectId}/torchtaggers/${id}/tag_random_doc/`, body).pipe(
+      tap(e => this.logService.logStatus(e, 'tagRandomDoc')),
+      catchError(this.logService.handleError<any>('tagRandomDoc')));
   }
 }

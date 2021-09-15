@@ -81,6 +81,23 @@ describe('Torch Taggers should work', function () {
       cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
       cy.wait('@postTorchTaggers').its('response.statusCode').should('eq', 200);
       cy.closeCurrentCdkOverlay();
+      // tag random doc
+      cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
+      cy.get('[data-cy=appTorchTaggerMenuTagRandomDoc]').should('be.visible').click();
+      cy.get('[data-cy=appTorchTaggerTagRandomDocDialogFields]').click().then((fields => {
+        cy.wrap(fields).should('have.class', 'mat-focused');
+        cy.closeCurrentCdkOverlay();
+        cy.matFormFieldShouldHaveError(fields, 'required');
+        cy.wrap(fields).click();
+        cy.get('.mat-option-text').contains('comment_content').should('be.visible').click();
+        cy.closeCurrentCdkOverlay();
+        cy.wrap(fields).find('mat-error').should('have.length', 0)
+      }));
+      cy.get('[data-cy=appTorchTaggerTagRandomDocDialogSubmit]').should('be.visible').click();
+      cy.wait('@postTorchTaggers').then(resp => {
+        cy.wrap(resp).its('response.statusCode').should('eq', 200);
+        cy.get('[data-cy=appTorchTaggerTagRandomDocDialogClose]').click();
+      });
       // edit
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
       cy.get('[data-cy=appTorchTaggerMenuEdit]').should('be.visible').click();
