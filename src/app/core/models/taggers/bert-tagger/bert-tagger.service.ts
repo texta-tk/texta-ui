@@ -30,7 +30,7 @@ export class BertTaggerService {
       catchError(this.logService.handleError<string>('downloadBertModel')));
   }
 
-  tagRandomDocument(projectId: number, taggerId: number, body: unknown): Observable<unknown | HttpErrorResponse> {
+  tagRandomDocument(projectId: number, taggerId: number, body: unknown): Observable<any | HttpErrorResponse> {
     return this.http.post(`${this.apiUrl}/projects/${projectId}/bert_taggers/${taggerId}/tag_random_doc/`, body
     ).pipe(
       tap(e => this.logService.logStatus(e, 'tagRandomDocument')),

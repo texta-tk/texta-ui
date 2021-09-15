@@ -21,6 +21,7 @@ import {EditTorchTaggerDialogComponent} from '../edit-torch-tagger-dialog/edit-t
 import {EpochReportsDialogComponent} from '../epoch-reports-dialog/epoch-reports-dialog.component';
 import {ApplyToIndexDialogComponent} from '../apply-to-index-dialog/apply-to-index-dialog.component';
 import {MatSelectChange} from '@angular/material/select';
+import {TagRandomDocComponent} from '../tag-random-doc/tag-random-doc.component';
 
 @Component({
   selector: 'app-torch-tagger',
@@ -301,6 +302,15 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
       data: tagger,
       maxHeight: '90vh',
       width: '700px',
+    });
+  }
+
+  tagRandomDoc(element: TorchTagger): void {
+    this.dialog.open(TagRandomDocComponent, {
+      maxHeight: '90vh',
+      width: '700px',
+      disableClose: true,
+      data: {currentProjectId: this.currentProject.id, tagger: element}
     });
   }
 }

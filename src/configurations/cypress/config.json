@@ -11,6 +11,9 @@
     "client_id":"login",
     "scope":"openid texta.*",
     "admin_scope": "texta.project_admin",
-    "response_type":"code"
+    "response_type":"code",
+    "oauth_uri": "http://texta-uaa:8080/uaa/oauth",
+    "logout_uri": "http://texta-uaa:8080/uaa/logout.do",
+    "authorize_uri": "http://texta-uaa:8080/uaa/oauth/authorize"
   }
 }

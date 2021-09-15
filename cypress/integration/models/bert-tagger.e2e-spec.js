@@ -6,7 +6,6 @@ describe('bert-taggers should work', function () {
       cy.createTestProject().then(x => {
         assert.isNotNull(x.body.id, 'should have project id');
         cy.wrap(x.body.id).as('projectId');
-        cy.intercept('GET', '**user**').as('getUser');
         cy.intercept('GET', '**get_fields**').as('getProjectIndices');
         cy.intercept('GET', '**/bert_taggers/**').as('getbertTaggers');
         cy.intercept('POST', '**/bert_taggers/**').as('postbertTaggers');
@@ -71,7 +70,7 @@ describe('bert-taggers should work', function () {
       cy.closeCurrentCdkOverlay();
       cy.matFormFieldShouldHaveError(fields, 'required');
       cy.wrap(fields).click();
-      cy.get('.mat-option-text:nth(1)').should('be.visible').click();
+      cy.get('.mat-option-text').contains('comment_content').should('be.visible').click();
       cy.closeCurrentCdkOverlay();
       cy.wrap(fields).find('mat-error').should('have.length', 0)
     }));
@@ -86,9 +85,9 @@ describe('bert-taggers should work', function () {
           console.log(intercepted)
           if (intercepted?.response?.body?.results[0]?.task?.status === 'completed') {
             assert.equal(intercepted?.response?.body?.results[0]?.task?.status, 'completed');
-            return false;
+            return true;
           }else {
-            return cy.wait(15000);
+            return cy.wait(25000);
           }
         });
       })

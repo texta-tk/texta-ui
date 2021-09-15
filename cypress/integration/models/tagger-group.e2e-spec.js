@@ -91,9 +91,20 @@ describe('tagger groups should work', function () {
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
       cy.intercept('POST', '**/tag_random_doc/**').as('tagRandomDoc');
       cy.get('[data-cy=appTaggerGroupMenuTagRandomDoc]').should('be.visible').click();
-      cy.wait('@tagRandomDoc', {timeout: 120000});
-      cy.get('app-tagger-group-tag-random-doc-dialog button').should('be.visible').click();
-      cy.wait('@tagRandomDoc', {timeout: 120000});
+      cy.get('[data-cy=appTaggerGroupTagRandomDocDialogFields]').click().then((fields => {
+        cy.wrap(fields).should('have.class', 'mat-focused');
+        cy.closeCurrentCdkOverlay();
+        cy.matFormFieldShouldHaveError(fields, 'required');
+        cy.wrap(fields).click();
+        cy.get('.mat-option-text').contains('comment_content').should('be.visible').click();
+        cy.closeCurrentCdkOverlay();
+        cy.wrap(fields).find('mat-error').should('have.length', 0)
+      }));
+      cy.get('[data-cy=appTaggerGroupTagRandomDocDialogSubmit]').should('be.visible').click();
+      cy.wait('@tagRandomDoc', {timeout: 120000}).then(resp => {
+        cy.wrap(resp).its('response.statusCode').should('eq', 200);
+        cy.get('[data-cy=appTaggerGroupTagRandomDocDialogClose]').click();
+      });
       cy.closeCurrentCdkOverlay();
       // edit
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();

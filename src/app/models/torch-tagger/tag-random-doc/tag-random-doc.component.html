@@ -9,7 +9,7 @@
 <div mat-dialog-content>
   <form #docForm="ngForm" (ngSubmit)="onSubmit()" class="max-width" id="docForm">
 
-    <mat-form-field class="max-width" data-cy="appTaggerGroupTaggerTagRandomDocDialogIndices">
+    <mat-form-field class="max-width" data-cy="appTorchTaggerTagRandomDocDialogIndices">
       <mat-label>Indices</mat-label>
       <mat-select #indices="ngModel" (openedChange)="indicesOpenedChange($event)"
                   [(ngModel)]="model.indices" [disableOptionCentering]="true" multiple name="indices"
@@ -23,29 +23,32 @@
         Index is <strong>required</strong>
       </mat-error>
     </mat-form-field>
-    <mat-form-field class="max-width" data-cy="appTaggerGroupTagRandomDocDialogFields">
-      <mat-label>Select Fields</mat-label>
+    <mat-form-field class="max-width" data-cy="appTorchTaggerTagRandomDocDialogFields">
+      <mat-label>Select Field</mat-label>
       <app-project-field-select #fields="ngModel" [projectFields]="projectFields" [required]="true" name="fields"
                                 [(ngModel)]="model.fields" [multiple]="true"></app-project-field-select>
-
       <mat-error *ngIf="fields?.hasError('required')">
         Field is <strong>required</strong>
       </mat-error>
     </mat-form-field>
 
-    <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
-    <app-tag-random-doc-result [tagRandomDocResult]="{result: result, fields: model.fields, tooltipAccessor: taggerIdAccessor, taggerIdAccessor: 'tagger_id'}"></app-tag-random-doc-result>
   </form>
+  <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+  <app-tag-random-doc-result
+    [tagRandomDocResult]="{result: result, fields: model.fields, tooltipAccessor: taggerIdAccessor, taggerIdAccessor: 'tagger_id'}"></app-tag-random-doc-result>
+
 </div>
 <div mat-dialog-actions>
 
   <div class="flex-col max-width">
     <div class="flex-row">
       <div class="flex-item-left">
-        <button data-cy="appTaggerGroupTagRandomDocDialogClose" mat-dialog-close="" mat-stroked-button>Close</button>
+        <button data-cy="appTorchTaggerTagRandomDocDialogClose" mat-dialog-close="" mat-stroked-button>Close</button>
       </div>
       <div class="flex-item-right">
-        <button [disabled]="docForm.invalid" data-cy="appTaggerGroupTagRandomDocDialogSubmit" form="docForm" mat-stroked-button type="submit">Tag</button>
+        <button [disabled]="docForm.invalid" data-cy="appTorchTaggerTagRandomDocDialogSubmit" form="docForm"
+                mat-stroked-button type="submit">Tag
+        </button>
       </div>
     </div>
   </div>

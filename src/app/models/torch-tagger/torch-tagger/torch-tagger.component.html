@@ -261,8 +261,12 @@
       <button (click)="tagTextDialog(element)" data-cy="appTorchTaggerMenuTagText" mat-menu-item>
         Tag Text
       </button>
+      <button (click)="tagRandomDoc(element)" data-cy="appTorchTaggerMenuTagRandomDoc"
+              mat-menu-item>
+        Tag Random Doc
+      </button>
     </div>
-    <button (click)="retrainTagger(element)" data-cy="appTaggerMenuRetrain" mat-menu-item>
+    <button (click)="retrainTagger(element)" data-cy="appTorchTaggerMenuRetrain" mat-menu-item>
       Retrain
     </button>
     <button (click)="edit(element)" data-cy="appTorchTaggerMenuEdit" mat-menu-item>
