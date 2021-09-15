@@ -19,7 +19,6 @@
           {{projectIndex.index}}
         </mat-option>
       </mat-select>
-      <mat-hint>{{bertOptions?.actions?.POST?.indices?.help_text || ''}}</mat-hint>
       <mat-error *ngIf="indices.hasError('required')">
         Index is <strong>required</strong>
       </mat-error>

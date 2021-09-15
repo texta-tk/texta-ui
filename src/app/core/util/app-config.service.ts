@@ -43,6 +43,9 @@ export class AppConfigService {
       uaaURL: '',
       admin_scope: 'texta.project_admin',
       redirect_uri: '',
+      oauth_uri: '',
+      authorize_uri: '',
+      logout_uri: '',
       client_id: 'login',
       scope: 'openid',
       response_type: 'code'
