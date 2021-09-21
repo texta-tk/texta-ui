@@ -11,6 +11,7 @@ import {
 } from '@angular-devkit/schematics';
 
 import {normalize, strings, experimental} from '@angular-devkit/core';
+// @ts-ignore
 import {Schema} from './schema';
 
 

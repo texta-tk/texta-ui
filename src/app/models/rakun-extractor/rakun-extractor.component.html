@@ -1,0 +1,206 @@
+<div class="wrapper max-height" fxLayout="column">
+  <div class="table-paginator-row">
+    <div class="loading-bar">
+      <mat-progress-bar *ngIf="isLoadingResults" mode="indeterminate"></mat-progress-bar>
+    </div>
+    <div class="paginator-row">
+      <button (click)="openCreateDialog()" class="paginator-margin-left"
+              color="primary" data-cy="appRakunExtractorCreateBtn" mat-raised-button>
+        CREATE
+      </button>
+      <button (click)="onDeleteAllSelected()" [disabled]="selectedRows.selected.length < 1" class="new-resource-btn"
+              color="warn" data-cy="appRakunExtractorDeleteBtn"
+              mat-icon-button matTooltip="Delete selected">
+        <mat-icon>delete</mat-icon>
+      </button>
+      <mat-paginator [length]="resultsLength" [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
+      </mat-paginator>
+    </div>
+  </div>
+
+  <div [appScrollTop]="tableData" class="tasks-table overflow-auto">
+    <table [dataSource]="tableData" mat-table
+           matSort matSortDirection="asc"
+           multiTemplateDataRows>
+      <ng-container matColumnDef="select">
+        <th *matHeaderCellDef mat-header-cell>
+          <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selectedRows.hasValue() && isAllSelected()"
+                        [indeterminate]="selectedRows.hasValue() && !isAllSelected()">
+          </mat-checkbox>
+        </th>
+        <td *matCellDef="let row" mat-cell>
+          <mat-checkbox (change)="$event ? selectedRows.toggle(row) : null" (click)="$event.stopPropagation()"
+                        [checked]="selectedRows.isSelected(row)">
+          </mat-checkbox>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="id">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Id</th>
+        <td *matCellDef="let element" mat-cell> {{element.id}}</td>
+      </ng-container>
+      <ng-container matColumnDef="description">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Description</th>
+        <td *matCellDef="let element" mat-cell> {{element.description}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="distance_method">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Distance method</th>
+        <td *matCellDef="let element" mat-cell> {{element.distance_method}}</td>
+      </ng-container>
+      <ng-container matColumnDef="num_keywords">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Number of keywords</th>
+        <td *matCellDef="let element" mat-cell> {{element.num_keywords}}</td>
+      </ng-container>
+      <ng-container matColumnDef="min_tokens">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Min tokens</th>
+        <td *matCellDef="let element" mat-cell> {{element.min_tokens}}</td>
+      </ng-container>
+      <ng-container matColumnDef="max_tokens">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Max tokens</th>
+        <td *matCellDef="let element" mat-cell> {{element.max_tokens}}</td>
+      </ng-container>
+      <ng-container matColumnDef="task__time_started">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Time started</th>
+        <td *matCellDef="let element" mat-cell><span
+          *ngIf="element.task">{{element.task.time_started | date:'y-M-d H:mm:ss'}}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="task__time_completed">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Time completed</th>
+        <td *matCellDef="let element" mat-cell>
+          <span
+            *ngIf="element.task && element.task.time_completed">{{element.task.time_completed | date:'y-M-d H:mm:ss'}}</span>
+          <span *ngIf="element.task && !element.task.time_completed">-</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="task__status">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Task</th>
+        <td *matCellDef="let element" mat-cell>
+          <mat-progress-bar *ngIf="element.task && element.task.step !== 'training'" [value]="element.task.progress"
+                            mode="determinate">
+          </mat-progress-bar>
+          <mat-progress-bar *ngIf="element.task && element.task.step === 'training' && element.task.status !== 'failed'"
+                            [value]="element.task.progress" mode="indeterminate">
+          </mat-progress-bar>
+          <mat-hint *ngIf="element.task">{{element.task.step ? element.task.step : element.task.status}}</mat-hint>
+        </td>
+      </ng-container>
+
+
+      <ng-container matColumnDef="expandedDetail">
+        <td *matCellDef="let element" [attr.colspan]="displayedColumns.length" mat-cell>
+          <div *ngIf="element == expandedElement" [@detailExpand] class="element-detail">
+            <div class="flex-col m-l-r-5" fxFlex="50">
+              <table class="simple-table">
+                <tr>
+                  <th class="mat-body-strong">Resource id</th>
+                  <td>{{element.id}}</td>
+                </tr>
+                <tr>
+                  <th class="mat-body-strong">Task id</th>
+                  <td>{{element?.task?.id}}</td>
+                </tr>
+                <tr>
+                  <th class="mat-body-strong">Status</th>
+                  <td>{{element?.task?.status}}</td>
+                </tr>
+                <tr>
+                  <th class="mat-body-strong">Progress</th>
+                  <td>{{element?.task?.progress}}</td>
+                </tr>
+                <tr>
+                  <th class="mat-body-strong">Step</th>
+                  <td>{{element?.task?.step}}</td>
+                </tr>
+                <tr>
+                  <th class="mat-body-strong">Errors</th>
+                  <td>{{element?.task?.errors}}</td>
+                </tr>
+                <tr>
+                  <th class="mat-body-strong">Last Update</th>
+                  <td>{{element?.task?.last_update | date:'y-M-d H:mm:ss'}}</td>
+                </tr>
+              </table>
+            </div>
+            <div class="flex-col m-l-r-5" fxFlex="50">
+              <table class="simple-table">
+                <tr *ngIf="element.fasttext_embedding">
+                  <th class="mat-body-strong">FastText embedding</th>
+                  <td>{{element.fasttext_embedding}}</td>
+                </tr>
+                <tr>
+                  <th class="mat-body-strong">Distance threshold</th>
+                  <td>{{element.distance_threshold}}</td>
+                </tr>
+                <tr>
+                  <th class="mat-body-strong">Max occurrence</th>
+                  <td>{{element.max_occurrence}}</td>
+                </tr>
+                <tr>
+                  <th class="mat-body-strong">Max similar</th>
+                  <td>{{element.max_similar}}</td>
+                </tr>
+                <tr>
+                  <th class="mat-body-strong">Pair diff length</th>
+                  <td>{{element.pair_diff_length}}</td>
+                </tr>
+                <tr>
+                  <th class="mat-body-strong">Bigram count threshold</th>
+                  <td>{{element.bigram_count_threshold}}</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th *matHeaderCellDef class="center-header-cell" mat-header-cell>Actions</th>
+        <td (click)="$event.stopPropagation();" *matCellDef="let element; let i = dataIndex" mat-cell>
+
+          <button [matMenuTriggerData]="{element: element, i:i}" [matMenuTriggerFor]="editMenu" color="primary"
+                  mat-icon-button>
+            <mat-icon aria-label="Actions">more_vert</mat-icon>
+          </button>
+
+        </td>
+      </ng-container>
+
+      <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
+      <tr (click)="expandedElement = expandedElement === element ? null : element" *matRowDef="let element; columns: displayedColumns;"
+          [class.expanded-row]="expandedElement === element"
+          class="element-row"
+          mat-row></tr>
+      <tr *matRowDef="let row; columns: ['expandedDetail']" class="detail-row" mat-row></tr>
+
+    </table>
+
+  </div>
+
+
+</div>
+
+<mat-menu #editMenu="matMenu">
+  <ng-template let-element="element" let-i="i" matMenuContent>
+      <button (click)="applyToIndexDialog(element)" data-cy="appRakunExtractorMenuApplyToIndices" mat-menu-item>
+        Apply to indices
+      </button>
+      <button (click)="tagTextDialog(element)" data-cy="appRakunExtractorMenuExtractText" mat-menu-item>
+        Extract from text
+      </button>
+      <button (click)="tagRandomDocDialog(element)" data-cy="appRakunExtractorMenuExtractRandomDoc" mat-menu-item>
+        Extract from random doc
+      </button>
+    <button (click)="editStopwordsDialog(element)" data-cy="appRakunExtractorMenuStopWords" mat-menu-item>
+      Stop words
+    </button>
+    <button (click)="duplicateRakun(element)" data-cy="appRakunExtractorMenuRetrain" mat-menu-item>
+      Duplicate
+    </button>
+    <mat-divider></mat-divider>
+    <button (click)="onDelete(element, i)" data-cy="appRakunExtractorMenuDelete" mat-menu-item>
+      Delete
+    </button>
+  </ng-template>
+</mat-menu>

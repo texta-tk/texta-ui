@@ -131,6 +131,7 @@ export class BertTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     dialogRef.afterClosed().subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.tableData.data = [...this.tableData.data, resp];
+        this.projectStore.refreshSelectedProjectResourceCounts();
       }
     });
   }
@@ -223,6 +224,8 @@ export class BertTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
             this.logService.snackBarMessage(`Deleted ${this.selectedRows.selected.length} Tasks.`, 2000);
             this.removeSelectedRows();
           });
+
+          this.projectStore.refreshSelectedProjectResourceCounts();
         }
       });
     }
