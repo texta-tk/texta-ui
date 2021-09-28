@@ -1,4 +1,5 @@
 import {
+  BooleanConstraint,
   Constraint,
   DateConstraint,
   FactConstraint,
@@ -119,6 +120,13 @@ export class UtilityFunctions {
         outPutJson.push({
           fields: constraint.fields,
           fromToInput: constraint.fromToInput,
+          operator: constraint.operatorFormControl.value
+        });
+      }
+      if (constraint instanceof BooleanConstraint) {
+        outPutJson.push({
+          fields: constraint.fields,
+          booleanValue: constraint.booleanValueFormControl.value,
           operator: constraint.operatorFormControl.value
         });
       }

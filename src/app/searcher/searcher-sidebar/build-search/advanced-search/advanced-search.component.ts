@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy,
 import {FormControl} from '@angular/forms';
 import {Field, Project, ProjectFact, ProjectIndex} from '../../../../shared/types/Project';
 import {
+  BooleanConstraint,
   Constraint,
   DateConstraint,
   ElasticsearchQuery,
@@ -88,7 +89,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     });
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroy$)).subscribe(projectFields => {
       if (projectFields) {
-        this.projectFields = ProjectIndex.cleanProjectIndicesFields(projectFields, ['text', 'long', 'date', 'fact'], []);
+        this.projectFields = ProjectIndex.cleanProjectIndicesFields(projectFields, ['text', 'long', 'date', 'fact', 'boolean'], []);
         this.fieldIndexMap = ProjectIndex.getFieldToIndexMap(projectFields);
         this.selectedIndices = this.projectFields.map(x => x.index);
         const distinct = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(x => x.fields).flat(), (x => x.path));
@@ -167,6 +168,8 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
         this.constraintList.push(new DateConstraint(formFields));
       } else if (this.mappingNumeric.includes(formFields[0].type)) {
         this.constraintList.push(new NumberConstraint(formFields));
+      } else if (formFields[0].type === 'boolean') {
+        this.constraintList.push(new BooleanConstraint(formFields, true));
       } else if (formFields[0].path === 'texta_facts') {
         const newFactConstraint = new FactConstraint(formFields);
         if (formFields[0].type !== 'factName') {
@@ -187,7 +190,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     let shouldMatch = 0;
     for (const item of this.constraintList) {
       if (!(item instanceof FactConstraint) && !(item instanceof DateConstraint)
-        && !(item instanceof NumberConstraint)) {
+        && !(item instanceof NumberConstraint) && !(item instanceof BooleanConstraint)) {
         shouldMatch += 1;
       }
     }
@@ -257,6 +260,10 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     return constraintType instanceof NumberConstraint;
   }
 
+  isBooleanConstraint(constraintType: Constraint): constraintType is BooleanConstraint {
+    return constraintType instanceof BooleanConstraint;
+  }
+
   buildSavedSearch(savedSearch: SavedSearch): void {
     this.constraintList = [];
     // tslint:disable-next-line:no-any
@@ -269,6 +276,8 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
             this.lexicons, constraint.match, constraint.text, constraint.operator, constraint.slop, constraint.fuzziness, constraint.prefix_length, constraint.ignoreCase));
         } else if (formFields[0].type === 'date') {
           this.constraintList.push(new DateConstraint(formFields, constraint.dateFrom, constraint.dateTo));
+        } else if (formFields[0].type === 'boolean') {
+          this.constraintList.push(new BooleanConstraint(formFields, constraint.booleanValue, constraint.operator));
         } else if (this.mappingNumeric.includes(formFields[0].type)) {
           this.constraintList.push(new NumberConstraint(formFields, constraint.fromToInput, constraint.operator));
         } else {

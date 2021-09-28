@@ -19,6 +19,10 @@
       <ng-container *ngIf="fields.type === 'long'">
         <mat-icon>pin</mat-icon>{{fields.path}}
       </ng-container>
+      <ng-container *ngIf="fields.type === 'boolean'">
+        <mat-icon>flaky</mat-icon>
+        {{fields.path}}
+      </ng-container>
     </mat-option>
   </mat-select>
 </mat-form-field>
@@ -50,5 +54,9 @@
   <div class="content" *ngIf="isNumberConstraint(constraint)" data-cy="appSearcherSideBarBuildSearchNumberConstraint">
     <app-number-constraints [numberConstraint]="$any(constraint)" [elasticSearchQuery]="elasticQuery"
                           (constraintChanged)="searchOnChange($event)"></app-number-constraints>
+  </div>
+  <div class="content" *ngIf="isBooleanConstraint(constraint)" data-cy="appSearcherSideBarBuildSearchBooleanConstraint">
+    <app-boolean-constraints [booleanConstraint]="$any(constraint)" [elasticSearchQuery]="elasticQuery"
+                            (constraintChanged)="searchOnChange($event)"></app-boolean-constraints>
   </div>
 </div>

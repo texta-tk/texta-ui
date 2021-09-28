@@ -13,6 +13,17 @@ export class Constraint {
 
 }
 
+export class BooleanConstraint extends Constraint {
+  booleanValueFormControl = new FormControl();
+  operatorFormControl = new FormControl();
+
+  constructor(fields: Field[], booleanValue: boolean, operator?: undefined) {
+    super(fields);
+    this.operatorFormControl.setValue(operator ? operator : 'must');
+    this.booleanValueFormControl.setValue(booleanValue);
+  }
+
+}
 
 export class TextConstraint extends Constraint {
   textAreaFormControl = new FormControl();

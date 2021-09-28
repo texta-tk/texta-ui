@@ -36,7 +36,7 @@ export class ExtractFromRandomDocDialogComponent implements OnInit {
               @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, rakun: RakunExtractor; }) {
   }
 
-  taggerIdAccessor = (x: Match) => 'probability: ' + x.str_val;
+  taggerIdAccessor = (x: { probability: string; }) => 'probability: ' + x.probability;
 
   ngOnInit(): void {
     this.projectStore.getProjectIndices().pipe(filter(x => !!x), take(1)).subscribe(x => {
