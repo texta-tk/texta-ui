@@ -72,7 +72,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
         this.fieldIndexMap = ProjectIndex.getFieldToIndexMap(projectFields);
         const distinct = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(x => x.fields).flat(), (x => x.path));
         const textaFactIndex = distinct.findIndex(item => item.type === 'fact');
-        if (textaFactIndex) {
+        if (textaFactIndex >= 0) {
           distinct.unshift(distinct.splice(textaFactIndex, 1)[0]);
         }
 
