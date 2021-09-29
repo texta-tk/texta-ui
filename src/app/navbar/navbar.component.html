@@ -79,16 +79,13 @@
         *ngIf="projectResourceCounts?.num_regex_taggers"> ({{projectResourceCounts.num_regex_taggers}})</span></a>
       <a [routerLink]="['regex-tagger-groups']" data-cy="appNavbarModelMenuRegexTaggerGroups" mat-menu-item
          routerLinkActive="is-active-menu">Regex Tagger Groups <span
-        *ngIf="projectResourceCounts?.num_regex_tagger_groups">({{projectResourceCounts.num_regex_tagger_groups}}
-        )</span></a>
+        *ngIf="projectResourceCounts?.num_regex_tagger_groups">({{projectResourceCounts.num_regex_tagger_groups}})</span></a>
       <a [routerLink]="['search-query-taggers']" data-cy="appNavbarModelMenuSearchQueryTagger" mat-menu-item
          routerLinkActive="is-active-menu">Search Query Taggers <span
-        *ngIf="projectResourceCounts?.num_search_query_taggers"> ({{projectResourceCounts.num_search_query_taggers}}
-        )</span></a>
+        *ngIf="projectResourceCounts?.num_search_query_taggers"> ({{projectResourceCounts.num_search_query_taggers}})</span></a>
       <a [routerLink]="['search-fields-taggers']" data-cy="appNavbarModelMenuSearchFieldsTagger" mat-menu-item
          routerLinkActive="is-active-menu">Search Fields Taggers <span
-        *ngIf="projectResourceCounts?.num_search_fields_taggers"> ({{projectResourceCounts.num_search_fields_taggers}}
-        )</span></a>
+        *ngIf="projectResourceCounts?.num_search_fields_taggers"> ({{projectResourceCounts.num_search_fields_taggers}})</span></a>
       <a [routerLink]="['bert-taggers']" data-cy="appNavbarModelMenuBertTaggers" mat-menu-item
          routerLinkActive="is-active-menu">BERT Taggers <span
         *ngIf="projectResourceCounts?.num_bert_taggers">({{projectResourceCounts.num_bert_taggers}})</span></a>
