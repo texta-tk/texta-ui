@@ -104,6 +104,7 @@ export class RegexTaggerGroupComponent implements OnInit, OnDestroy, AfterViewIn
     dialogRef.afterClosed().subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.updateTable.next(true);
+        this.projectStore.refreshSelectedProjectResourceCounts();
       }
     });
   }
@@ -175,6 +176,7 @@ export class RegexTaggerGroupComponent implements OnInit, OnDestroy, AfterViewIn
         this.regexTaggerGroupService.bulkDeleteRegexTaggerGroupTasks(this.currentProject.id, body).subscribe(() => {
           this.logService.snackBarMessage(`Deleted regex tagger group ${regexTaggerGroup.description}`, 2000);
           this.updateTable.next(true);
+          this.projectStore.refreshSelectedProjectResourceCounts();
         });
       }
     });
@@ -213,6 +215,7 @@ export class RegexTaggerGroupComponent implements OnInit, OnDestroy, AfterViewIn
             this.logService.snackBarMessage(`Deleted ${this.selectedRows.selected.length} Regex Tagger Groups.`, 2000);
             this.selectedRows.clear();
             this.updateTable.next(true);
+            this.projectStore.refreshSelectedProjectResourceCounts();
           });
         }
       });

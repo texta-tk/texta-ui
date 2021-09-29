@@ -62,7 +62,8 @@ export class ProjectStore {
       if (resp?.indices && !(resp.indices instanceof HttpErrorResponse)) {
         this.getLocalStorageIndicesSelection(this._selectedProject || 0, resp.indices);
         this.projectIndices$.next(UtilityFunctions.sortByStringProperty<ProjectIndex>(resp.indices, y => y.index));
-      } else if (resp?.resourceCounts && !(resp.resourceCounts instanceof HttpErrorResponse)) {
+      }
+      if (resp?.resourceCounts && !(resp.resourceCounts instanceof HttpErrorResponse)) {
         this.selectedProjectResourceCounts$.next(resp.resourceCounts);
       }
       UtilityFunctions.logForkJoinErrors(resp, HttpErrorResponse, this.logService.snackBarError);

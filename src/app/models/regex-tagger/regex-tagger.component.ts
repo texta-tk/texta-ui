@@ -139,6 +139,7 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     dialogRef.afterClosed().subscribe((resp: RegexTagger) => {
       if (resp) {
         this.tableData.data = [resp, ...this.tableData.data];
+        this.projectStore.refreshSelectedProjectResourceCounts();
         this.logService.snackBarMessage(`Created regex tagger: ${resp.description}`, 2000);
       }
     });
@@ -204,6 +205,7 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
           this.regexTaggerService.bulkDeleteRegexTaggers(this.currentProject.id, body).subscribe(() => {
             this.logService.snackBarMessage(`Deleted ${this.selectedRows.selected.length} regex taggers.`, 2000);
             this.removeSelectedRows();
+            this.projectStore.refreshSelectedProjectResourceCounts();
           });
         }
       });
@@ -223,6 +225,7 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
           this.logService.snackBarMessage(`Deleted regex tagger ${regexTagger.description}`, 2000);
           this.tableData.data.splice(index, 1);
           this.tableData.data = [...this.tableData.data];
+          this.projectStore.refreshSelectedProjectResourceCounts();
         });
       }
     });
