@@ -31,12 +31,12 @@ variables:
     TEXTA_API_URL: http://texta-rest
     TEXTA_ADMIN_PASSWORD: "1234"
     TEXTA_USE_CSRF: "False"
-    TEXTA_EXTERNAL_DATA_DIR: /cache
+    #TEXTA_EXTERNAL_DATA_DIR: /cache
     npm_config_cache: "$CI_PROJECT_DIR/.npm"
     CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/Cypress"
     FF_NETWORK_PER_BUILD: 1
     # MLP
-    TEXTA_LANGUAGE_CODES: et,en
+    TEXTA_LANGUAGE_CODES: et
     # UAA
     TEXTA_USE_UAA: "True"
     TEXTA_UAA_REDIRECT_URI: http://texta-rest/api/v1/uaa/callback
