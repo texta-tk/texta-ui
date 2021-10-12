@@ -20,6 +20,7 @@ export interface HighlightSpan {
   fact: string;
   spans: string | number[];
   str_val: string;
+  sent_index?: number;
   id?: number;
   urlSpan?: boolean;
   searcherHighlight?: boolean;
@@ -57,24 +58,24 @@ interface HighlightObject {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HighlightComponent {
+
+  constructor(private renderer2: Renderer2, private el: ElementRef, private cdrf: ChangeDetectorRef) {
+    this.cdrf.detach();
+  }
+
+  @Input() set highlightConfig(highlightConfig: HighlightConfig) {
+    this._highlightConfig = highlightConfig;
+    this.makeHighlightArray(highlightConfig);
+  }
   static linkify = new LinkifyIt();
   static readonly HYPERLINKS_COL = AppConfigService.settings.fileFieldReplace; // hosted_filepath
   highlightArray: HighlightObject[] = [];
   textHidden = true;
   listenerList: (() => any)[] = [];
 
-  constructor(private renderer2: Renderer2, private el: ElementRef, private cdrf: ChangeDetectorRef) {
-    this.cdrf.detach();
-  }
-
   // tslint:disable:no-any
   // tslint:disable:variable-name
   _highlightConfig: HighlightConfig;
-
-  @Input() set highlightConfig(highlightConfig: HighlightConfig) {
-    this._highlightConfig = highlightConfig;
-    this.makeHighlightArray(highlightConfig);
-  }
 
   static generateColorsForFacts(facts: { fact: string }[]): Map<string, LegibleColor> {
     facts.forEach(fact => {
@@ -90,27 +91,36 @@ export class HighlightComponent {
   }
 
   // convert searcher highlight into mlp fact format
-  static makeSearcherHighlights(searcherHighlight: any, currentColumn: string): HighlightSpan[] {
+  static makeSearcherHighlights(searcherHighlight: any, currentColumn: string, isSentenceSplit: boolean): HighlightSpan[] {
     const highlight = searcherHighlight ? searcherHighlight[currentColumn] : null;
     if (highlight && highlight.length === 1) { // elasticsearch returns as array
+      let sentenceSplit = [];
       const highlightArray: HighlightSpan[] = [];
-      const columnText: string = highlight[0]; // highlight number of fragments has to be 0
-      const splitStartTag: string[] = columnText.split(HighlightSettings.PRE_TAG);
-      let previousIndex = 0; // char start index of highlight
-      for (const row of splitStartTag) {
-        const endTagIndex = row.indexOf(HighlightSettings.POST_TAG);
-        if (endTagIndex > 0) {
-          const f: HighlightSpan = {} as HighlightSpan;
-          f.doc_path = currentColumn;
-          f.fact = '';
-          f.searcherHighlight = true;
-          f.spans = `[[${previousIndex}, ${previousIndex + endTagIndex}]]`;
-          f.str_val = 'searcher highlight';
-          highlightArray.push(f);
-          const rowClean = row.replace(HighlightSettings.POST_TAG, '');
-          previousIndex = previousIndex + rowClean.length;
-        } else {
-          previousIndex = previousIndex + row.length;
+      if (isSentenceSplit) {
+        sentenceSplit = highlight[0].split(' \n ');
+      } else {
+        sentenceSplit[0] = highlight[0];
+      }
+      for (let sentenceIndex = 0; sentenceIndex <= sentenceSplit.length - 1; sentenceIndex++) {
+        const columnText = sentenceSplit[sentenceIndex];
+        const splitStartTag: string[] = columnText.split(HighlightSettings.PRE_TAG);
+        let previousIndex = 0; // char start index of highlight
+        for (const row of splitStartTag) {
+          const endTagIndex = row.indexOf(HighlightSettings.POST_TAG);
+          if (endTagIndex > 0) {
+            const f: HighlightSpan = {} as HighlightSpan;
+            f.doc_path = currentColumn;
+            f.fact = '';
+            f.sent_index = sentenceIndex;
+            f.searcherHighlight = true;
+            f.spans = `[[${previousIndex}, ${previousIndex + endTagIndex}]]`;
+            f.str_val = 'searcher highlight';
+            highlightArray.push(f);
+            const rowClean = row.replace(HighlightSettings.POST_TAG, '');
+            previousIndex = previousIndex + rowClean.length;
+          } else {
+            previousIndex = previousIndex + row.length;
+          }
         }
       }
       return highlightArray;
@@ -118,26 +128,36 @@ export class HighlightComponent {
     return [];
   }
 
-  static makeHyperlinksClickable(currentColumnData: unknown, colName: string): HighlightSpan[] {
+  static makeHyperlinksClickable(currentColumnData: unknown, colName: string, isSentenceSplit: boolean): HighlightSpan[] {
     // Very quick check, that can give false positives.
     if (colName === HighlightComponent.HYPERLINKS_COL) {
       currentColumnData = `${AppConfigService.settings.apiHost}/${currentColumnData}`;
     }
-    if (isNaN(Number(currentColumnData)) && HighlightComponent.linkify.pretest(currentColumnData as string)) {
-      const highlightArray: HighlightSpan[] = [];
-      const matches = HighlightComponent.linkify.match(currentColumnData as string);
-      if (matches && matches.length > 0) {
-        for (const match of matches) {
-          const f: HighlightSpan = {} as HighlightSpan;
-          f.doc_path = colName;
-          f.fact = '';
-          f.urlSpan = true;
-          f.spans = `[[${match.index}, ${match.lastIndex}]]`;
-          f.str_val = match.url;
-          highlightArray.push(f);
+    let sentenceSplit = [];
+    const highlightArray: HighlightSpan[] = [];
+    if (isSentenceSplit) {
+      sentenceSplit = (currentColumnData as string).split(' \n ');
+    } else {
+      sentenceSplit[0] = currentColumnData;
+    }
+    for (let sentenceIndex = 0; sentenceIndex <= sentenceSplit.length - 1; sentenceIndex++) {
+      const columnText = sentenceSplit[sentenceIndex];
+      if (isNaN(Number(columnText)) && HighlightComponent.linkify.pretest(columnText as string)) {
+        const matches = HighlightComponent.linkify.match(columnText as string);
+        if (matches && matches.length > 0) {
+          for (const match of matches) {
+            const f: HighlightSpan = {} as HighlightSpan;
+            f.doc_path = colName;
+            f.fact = '';
+            f.sent_index = sentenceIndex;
+            f.urlSpan = true;
+            f.spans = `[[${match.index}, ${match.lastIndex}]]`;
+            f.str_val = match.url;
+            highlightArray.push(f);
+          }
         }
+        return highlightArray;
       }
-      return highlightArray;
     }
     return [];
   }
@@ -350,6 +370,12 @@ export class HighlightComponent {
     return false;
   }
 
+  static isFactSentIndexEqual(fact1: HighlightSpan, fact2: HighlightSpan): boolean {
+    const fact1SentIndex = fact1.sent_index !== undefined ? fact1.sent_index : 0;
+    const fact2SentIndex = fact2.sent_index !== undefined ? fact2.sent_index : 0;
+    return fact1SentIndex === fact2SentIndex;
+  }
+
   toggleShowShortVersion(span: HighlightObject): void {
     let lastFullTextSpan: HighlightObject | undefined;
     span.shortVersion?.spans?.forEach(x => {
@@ -411,14 +437,17 @@ export class HighlightComponent {
       if ((isNaN(Number(highlightConfig.data[highlightConfig.currentColumn])))) {
         highlightConfig.data[highlightConfig.currentColumn] = highlightConfig.data[highlightConfig.currentColumn].trim();
       }
+
+      const isSentenceSplit = fieldFacts.some(x => x.sent_index && x.sent_index > 0);
+
       if (highlightConfig.highlightHyperlinks) {
         hyperLinks = HighlightComponent.makeHyperlinksClickable(highlightConfig.data[highlightConfig.currentColumn],
-          highlightConfig.currentColumn);
+          highlightConfig.currentColumn, isSentenceSplit);
       }
 
       const highlightTerms = [
         ...hyperLinks,
-        ...HighlightComponent.makeSearcherHighlights(highlightConfig.searcherHighlight, highlightConfig.currentColumn),
+        ...HighlightComponent.makeSearcherHighlights(highlightConfig.searcherHighlight, highlightConfig.currentColumn, isSentenceSplit),
         ...fieldFacts
       ];
       const colors = HighlightComponent.generateColorsForFacts(highlightTerms);
@@ -491,65 +520,65 @@ export class HighlightComponent {
     // column content can be number, convert to string
     originalText = originalText.toString();
     if (facts.length === 0) {
-      if (originalText.length < 400) {
-        return [{text: originalText, highlighted: false}];
-      } else { // chrome cant handle rendering large chunks of text, 90% perf improvement on large texts
-        const numChunks = Math.ceil(originalText.length / 400);
-        const chunks = new Array(numChunks);
-
-        for (let i = 0, o = 0; i < numChunks; ++i, o += 400) {
-          chunks[i] = {text: originalText.substr(o, 400), highlighted: false};
-        }
-        return chunks;
-      }
-
+      return [{text: originalText, highlighted: false}];
     }
 
     // need this sort for fact priority
     facts.sort(this.sortByStartLowestSpan);
-
     const highlightArray: HighlightObject[] = [];
     const overLappingFacts = this.detectOverlappingFacts(facts);
     let factText = '';
-    let lowestSpanNumber: number | null = facts[0].spans[0] as number;
-    for (let i = 0; i <= originalText.length; i++) {
-      let fact: HighlightSpan | undefined;
-      // get next span position when needed
-      if (lowestSpanNumber !== null && i >= lowestSpanNumber) {
-        fact = this.getFactByStartSpan(i, facts);
-        lowestSpanNumber = this.getFactWithStartSpanHigherThan(i, facts);
-      }
-
-      if (fact !== undefined && fact.spans[0] !== fact.spans[1]) {
-        if (this.isOverLappingFact(overLappingFacts, fact)) {
-          // push old non fact text into array
-          highlightArray.push({text: factText, highlighted: false});
-          factText = '';
-          // highlightarray is updated inside this function, return new loop index (where to resume from)
-          i = this.makeFactNested(highlightArray, fact, overLappingFacts, i, originalText, factColors);
-        } else {
-          // push old non fact text into array
-          highlightArray.push({text: factText, highlighted: false});
-          factText = '';
-          // make a regular fact, highlightarray updated inside function, return new loop index
-          i = this.makeFact(highlightArray, fact, i, originalText, factColors);
-        }
-      } else {
-        if (!lowestSpanNumber) {
-          factText += originalText.slice(i, originalText.length);
-          i = originalText.length;
-        } else {
-          factText += originalText.slice(i, lowestSpanNumber);
-          i = lowestSpanNumber - 1;
-        }
-      }
+    let sentenceSplit = [];
+    const isSentenceSplit = facts.some(x => x.sent_index && x.sent_index > 0);
+    if (isSentenceSplit) {
+      sentenceSplit = originalText.split(' \n ');
+    } else {
+      sentenceSplit[0] = originalText;
     }
+    for (let sentenceIndex = 0; sentenceIndex <= sentenceSplit.length - 1; sentenceIndex++) {
+      const sentenceText = sentenceSplit[sentenceIndex];
+      const sentenceIndexFacts = isSentenceSplit ? facts.filter(x => x.sent_index === sentenceIndex) : facts;
+      let lowestSpanNumber: number | null = sentenceIndexFacts.length > 0 ? sentenceIndexFacts[0]?.spans[0] as number : null;
+      for (let i = 0; i <= sentenceText.length; i++) {
+        let fact: HighlightSpan | undefined;
+        // get next span position when needed
+        if (lowestSpanNumber !== null && i >= lowestSpanNumber) {
+          fact = this.getFactByStartSpan(i, sentenceIndexFacts);
+          lowestSpanNumber = this.getFactWithStartSpanHigherThan(i, sentenceIndexFacts);
+        }
 
-    if (factText !== '') {
-      // if the last substring in the whole string wasnt a fact
-      // that means there was no way for it to be added into the highlightarray,
-      // push non fact text into array
-      highlightArray.push({text: factText, highlighted: false});
+        if (fact !== undefined && fact.spans[0] !== fact.spans[1]) {
+          if (this.isOverLappingFact(overLappingFacts, fact)) {
+            // push old non fact text into array
+            highlightArray.push({text: factText, highlighted: false});
+            factText = '';
+            // highlightarray is updated inside this function, return new loop index (where to resume from)
+            i = this.makeFactNested(highlightArray, fact, overLappingFacts, i, sentenceText, factColors);
+          } else {
+            // push old non fact text into array
+            highlightArray.push({text: factText, highlighted: false});
+            factText = '';
+            // make a regular fact, highlightarray updated inside function, return new loop index
+            i = this.makeFact(highlightArray, fact, i, sentenceText, factColors);
+          }
+        } else {
+          if (!lowestSpanNumber) {
+            factText += sentenceText.slice(i, sentenceText.length);
+            i = sentenceText.length;
+          } else {
+            factText += sentenceText.slice(i, lowestSpanNumber);
+            i = lowestSpanNumber - 1;
+          }
+        }
+      }
+
+      if (factText !== '') {
+        // if the last substring in the whole string wasnt a fact
+        // that means there was no way for it to be added into the highlightarray,
+        // push non fact text into array
+        highlightArray.push({text: factText, highlighted: false});
+        factText = '';
+      }
     }
 
     return highlightArray;
@@ -769,7 +798,7 @@ export class HighlightComponent {
                                       nestedArray: Map<HighlightSpan, HighlightSpan[]>): Map<HighlightSpan, HighlightSpan[]> {
     // endSpan = previous facts span ending so we can make long chains of nested facts
     if (index < facts.length) {
-      if (facts[index].spans[0] < endSpan) {
+      if (facts[index].spans[0] < endSpan && HighlightComponent.isFactSentIndexEqual(facts[index], factRoot)) {
         endSpan = facts[index].spans[1] as number > endSpan ? facts[index].spans[1] as number : endSpan;
         // keep iterating with current fact till it finds one who isnt nested into this fact
         // todo fix in TS 3.7
@@ -806,7 +835,18 @@ export class HighlightComponent {
   }
 
   private sortByStartLowestSpan(a: HighlightSpan, b: HighlightSpan): -1 | 1 {
-    if (a.spans[0] === b.spans[0]) {
+    if (a.sent_index !== undefined && b.sent_index !== undefined) {
+      if (a.sent_index === b.sent_index) {
+        if (a.spans[0] === b.spans[0]) {
+          return (a.spans[1] < b.spans[1]) ? -1 : 1; // sort by last span instead (need this for nested facts order)
+        } else {
+          return (a.spans[0] < b.spans[0]) ? -1 : 1;
+        }
+      } else {
+        return (a.sent_index < b.sent_index) ? -1 : 1;
+      }
+
+    } else if (a.spans[0] === b.spans[0]) {
       return (a.spans[1] < b.spans[1]) ? -1 : 1; // sort by last span instead (need this for nested facts order)
     } else {
       return (a.spans[0] < b.spans[0]) ? -1 : 1;
@@ -876,6 +916,7 @@ export class HighlightComponent {
       this.renderer2.setStyle(s, 'background-color', highlight?.color?.backgroundColor);
       this.renderer2.setStyle(s, 'color', highlight?.color?.textColor);
       this.renderer2.setStyle(s, 'cursor', 'pointer');
+      this.renderer2.setProperty(s, 'title', `${highlight.span?.fact}`);
       this.renderer2.appendChild(s, t);
       this.renderer2.appendChild(wrapper, s);
     } else if (highlight.highlighted && highlight.span?.searcherHighlight) {

@@ -1,10 +1,10 @@
 [
   {
-    "url": "http://localhost:8000/api/v1/projects/0/",
+    "url": "http://localhost:8000/api/v2/projects/0/",
     "id": 0,
     "title": "stubProject",
     "users": [
-      "http://localhost:8000/api/v1/users/1/"
+      "http://localhost:8000/api/v2/users/1/"
     ],
     "indices": [
       "articles_tags_v2"

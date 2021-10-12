@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, Inject, OnDestroy, OnInit} from '@angular/core';
-import {ClusterService} from '../../../../../core/tools/clusters/cluster.service';
+import {TopicAnalyzerService} from '../../../../../core/tools/topic-analyzer/topic-analyzer.service';
 import {LogService} from '../../../../../core/util/log.service';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
@@ -36,7 +36,7 @@ export class TagClusterDialogComponent implements OnInit, OnDestroy {
   indices: Index[] = [];
   projectFacts: string[] = [];
 
-  constructor(private clusterService: ClusterService, private logService: LogService,
+  constructor(private clusterService: TopicAnalyzerService, private logService: LogService,
               private dialogRef: MatDialogRef<TagClusterDialogComponent>,
               private projectStore: ProjectStore,
               private projectService: ProjectService,

@@ -15,7 +15,7 @@
       <mat-icon>date_range</mat-icon>
       {{field.path}}
     </ng-container>
-    <ng-container *ngIf="field.type === 'text' || field.type === 'keyword'">
+    <ng-container *ngIf="field.type === 'text' || field.type === 'keyword' || field.type === 'mlp'">
       <mat-icon>text_fields</mat-icon>
       {{field.path}}
     </ng-container>

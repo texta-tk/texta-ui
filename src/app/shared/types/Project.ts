@@ -39,6 +39,7 @@ export class ProjectResourceCounts {
   num_summarizers = 0;
   num_lang_detectors = 0;
   num_search_fields_taggers = 0;
+  num_crf_extractors = 0;
   num_search_query_taggers = 0;
   num_elastic_analyzers = 0;
   num_rakun_keyword_extractors = 0;

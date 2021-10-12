@@ -31,9 +31,15 @@ export class TagRandomDocComponent implements OnInit, OnDestroy {
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   model: { indices: ProjectIndex[], fields: string[] } = {indices: [], fields: []};
   projectIndices: ProjectIndex[];
+  fieldsUnique: Field[] = [];
+  defaultColors = HighlightSettings.legibleColors;
+  uniqueFacts: { fact: Match, textColor: string, backgroundColor: string }[] = [];
   colorMap: Map<string, { backgroundColor: string, textColor: string }> = new Map();
+  distinctMatches: Match[];
+  resultFields: string[];
   projectFields: ProjectIndex[] = [];
   selection = new SelectionModel<number | string>(true, [0, 1]);
+  selectedFields: string[];
 
   destroyed$: Subject<boolean> = new Subject<boolean>();
   // tslint:disable-next-line:no-any
@@ -55,7 +61,7 @@ export class TagRandomDocComponent implements OnInit, OnDestroy {
     });
 
     this.regexTaggerGroupService.getTagRdocOptions(this.data.currentProjectId, this.data.tagger.id).pipe(
-      takeUntil(this.destroyed$)).subscribe(resp => {
+        takeUntil(this.destroyed$)).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.regexTaggerOptions = resp;
       }
@@ -86,11 +92,30 @@ export class TagRandomDocComponent implements OnInit, OnDestroy {
       };
       this.regexTaggerGroupService.tagRandomDoc(this.data.currentProjectId, this.data.tagger.id, body).subscribe(x => {
         if (x && !(x instanceof HttpErrorResponse)) {
+          this.colorMap = new Map();
           this.result = x;
           this.result.matches.forEach(match => {
             match.fact = match.str_val;
           });
+          // replace texta_facts with matches array
+          const textaFacts = 'texta_facts';
+          this.result.document[textaFacts] = this.result.matches;
+          this.resultFields = Object.keys(x.document);
+          this.distinctMatches = this.getDistinctMatches(this.result);
+          this.resultFields.sort((a, b) => this.model.fields.includes(a) ? -1 : 0);
 
+          // make selected fields open the accordion panels by default
+          if (this.selectedFields !== this.model.fields) {
+            this.selectedFields = this.model.fields;
+            this.model.fields.forEach(field => {
+              const fieldSelected = this.resultFields.find(y => y === field);
+              if (fieldSelected && !this.selection.isSelected(fieldSelected)) {
+                this.selection.toggle(fieldSelected);
+              }
+            });
+          }
+
+          this.uniqueFacts = this.getUniqueFacts(this.result.matches);
         } else if (x) {
           this.logService.snackBarError(x);
         }
@@ -100,9 +125,74 @@ export class TagRandomDocComponent implements OnInit, OnDestroy {
     }
   }
 
+  getUniqueFacts(matches: Match[]): { fact: Match; textColor: string; backgroundColor: string }[] {
+    const returnVal: { fact: Match, textColor: string, backgroundColor: string }[] = [];
+    const uniques = UtilityFunctions.getDistinctByProperty(matches, (y => y.fact));
+    for (let i = 0; i < uniques.length; i++) {
+      if (i < this.defaultColors.length) {
+        const color = this.defaultColors[i];
+        this.colorMap.set(uniques[i].fact, color);
+        returnVal.push({
+          fact: uniques[i],
+          backgroundColor: color.backgroundColor,
+          textColor: color.textColor
+        });
+      } else {
+        const color = {
+          // tslint:disable-next-line:no-bitwise
+          backgroundColor: `hsla(${~~(360 * Math.random())},70%,70%,0.8)`,
+          textColor: 'black'
+        };
+        this.colorMap.set(uniques[i].fact, color);
+        returnVal.push({
+          fact: uniques[i],
+          backgroundColor: color.backgroundColor,
+          textColor: color.textColor
+        });
+      }
+    }
+    return returnVal;
+  }
+
+  getDistinctMatches(data: RegexTaggerGroupTagRandomDocResult): Match[] {
+    data.matches.forEach(fact => {
+      (fact.spans) = JSON.parse(fact.spans as string).flat();
+    });
+    // remove document wide facts and empty facts (facts that have same span start and end index)
+    const matches = data.matches.filter(x => x.spans[0] !== x.spans[1]);
+    matches.sort(this.sortByStartLowestSpan);
+    let previousMatch: Match | undefined;
+    for (const match of matches) {
+      previousMatch = match.doc_path !== previousMatch?.doc_path ? undefined : previousMatch;
+      const matchSpans: number[] = match.spans as number[];
+      const colContent = (data.document[match.doc_path] as number | string | object).toString();
+      if (colContent) {
+        match.str_val = colContent.substr(matchSpans[0], matchSpans[1] - matchSpans[0]);
+        if (previousMatch === undefined || previousMatch.spans[0] !== match.spans[0] && previousMatch.spans[1] !== match.spans[1]) {
+          previousMatch = match;
+        } else if (match && previousMatch) {
+          const src = JSON.parse(previousMatch.source);
+          const matchSrc = JSON.parse(match.source);
+          if (src.hasOwnProperty('regextagger_id') && matchSrc.hasOwnProperty('regextagger_id')) {
+            src.regextagger_id = src.regextagger_id + ', ' + matchSrc.regextagger_id;
+            previousMatch.source = JSON.stringify(src);
+          }
+        }
+      }
+    }
+    return UtilityFunctions.getDistinctByProperty(this.result.matches, (y => y.str_val));
+  }
+
   ngOnDestroy(): void {
     this.destroyed$.next(true);
     this.destroyed$.complete();
   }
 
+  private sortByStartLowestSpan(a: Match, b: Match): -1 | 1 {
+    if (a.spans[0] === b.spans[0]) {
+      return (a.spans[1] < b.spans[1]) ? -1 : 1; // sort by last span instead (need this for nested facts order)
+    } else {
+      return (a.spans[0] < b.spans[0]) ? -1 : 1;
+    }
+  }
 }

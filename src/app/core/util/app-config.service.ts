@@ -19,7 +19,6 @@ export interface UaaConf {
 interface AppConf {
   apiHost: string;
   apiBasePath: string;
-  apiBasePath2: string;
   logging: boolean;
   fileFieldReplace: string;
   // For CF UAA authentication
@@ -34,8 +33,7 @@ export class AppConfigService {
 
   static settings: AppConf = {
     apiHost: '',
-    apiBasePath: '/api/v1',
-    apiBasePath2: '/api/v2',
+    apiBasePath: '/api/v2',
     logging: true,
     fileFieldReplace: 'texta_filepath',
     useCloudFoundryUAA: true,

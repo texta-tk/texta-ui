@@ -79,6 +79,11 @@ const routes: Routes = [
     loadChildren: () => import('./models/rakun-extractor/rakun-extractor.module').then(m => m.RakunExtractorModule)
   },
   {
+    path: 'crf-extractors',
+    canActivate: [AuthGuard, ProjectGuard],
+    loadChildren: () => import('./models/crf-extractor/crf-extractor.module').then(m => m.CRFExtractorModule)
+  },
+  {
     path: 'topic-analyzer',
     canActivate: [AuthGuard, ProjectGuard],
     data: {breadcrumb: 'clustering', tooltip: 'Topic analyzer list'},

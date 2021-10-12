@@ -49,7 +49,7 @@ export class SearcherService {
   }
 
   search(body: unknown, projectId: number): Observable<SearchByQueryResponse | HttpErrorResponse> {
-    return this.http.post<SearchByQueryResponse>(`${this.apiUrl}/projects/${projectId}/search_by_query/`, body).pipe(
+    return this.http.post<SearchByQueryResponse>(`${this.apiUrl}/projects/${projectId}/elastic/search_by_query/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'search')),
       catchError(this.logService.handleError<SearchByQueryResponse>('search')));
   }

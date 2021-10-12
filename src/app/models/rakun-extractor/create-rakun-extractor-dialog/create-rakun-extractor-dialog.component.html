@@ -19,7 +19,7 @@
       </mat-select>
       <mat-hint>{{rakunOptions?.actions?.POST?.distance_method?.help_text || ''}}</mat-hint>
       <mat-error *ngIf="rakunExtractorForm.get('distanceMethodFormControl')?.hasError('noEmbeddings')">
-        fastText embedding missing from the project
+        fastText embedding missing from current project
       </mat-error>
     </mat-form-field>
 
@@ -88,25 +88,25 @@
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
         <div fxLayout="column">
-          <mat-form-field>
+          <mat-form-field class="advanced-setting">
             <input formControlName="maxSimilarFormControl" matInput pattern="[1-9]\d*"
                    placeholder="Max similar" step="1" min="0"
                    type="number">
             <mat-hint>{{rakunOptions?.actions?.POST?.max_similar?.help_text || ''}}</mat-hint>
           </mat-form-field>
-          <mat-form-field style="margin-top: 12px">
+          <mat-form-field style="margin-top: 12px" class="advanced-setting">
             <input formControlName="distanceThresholdFormControl" matInput pattern="([0-9]*|[0-9]*[.]?)\d*"
                    placeholder="Distance threshold" [step]="this.rakunExtractorForm?.get('distanceMethodFormControl')?.value?.value === 'fasttext' ? 0.1 : 1" min="0" [max]="this.rakunExtractorForm?.get('distanceMethodFormControl')?.value?.value === 'fasttext' ? 1 : 9999"
                    type="number">
             <mat-hint>{{rakunOptions?.actions?.POST?.distance_threshold?.help_text || ''}}</mat-hint>
           </mat-form-field>
-          <mat-form-field>
+          <mat-form-field class="advanced-setting">
             <input formControlName="bigramCountThresholdFormControl" matInput pattern="[1-9]\d*"
                    placeholder="Bigram count threshold" step="1" min="0"
                    type="number">
             <mat-hint>{{rakunOptions?.actions?.POST?.bigram_count_threshold?.help_text || ''}}</mat-hint>
           </mat-form-field>
-          <mat-form-field>
+          <mat-form-field  class="advanced-setting">
             <input formControlName="pairDiffLengthFormControl" matInput pattern="[1-9]\d*"
                    placeholder="Pair diff length" step="1" min="0"
                    type="number">

@@ -50,7 +50,7 @@ describe('reindexer should work', function () {
   it('extra_actions should work', function () {
     cy.request({
       method: 'POST',
-      url: `${Cypress.env('api_host')}${Cypress.env('api_basePath')}/projects/${this.projectId}/reindexer/`,
+      url: `${Cypress.env('api_host')}${Cypress.env('api_basePath')}/projects/${this.projectId}/elastic/reindexer/`,
       body: {
         "description": "test",
         "new_index": "asdasdasasdasadada",

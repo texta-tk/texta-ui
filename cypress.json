@@ -5,7 +5,7 @@
   "viewportWidth": 1920,
   "env": {
     "api_host": "http://texta-rest",
-    "api_basePath": "/api/v1",
+    "api_basePath": "/api/v2",
     "test_uaa": true
   },
   "projectId": "8nu659",

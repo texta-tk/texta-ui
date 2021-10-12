@@ -11,8 +11,8 @@ import {ProjectStore} from '../../../../core/projects/project.store';
 import {Field, ProjectIndex} from '../../../../shared/types/Project';
 import {ProjectService} from '../../../../core/projects/project.service';
 import {UtilityFunctions} from '../../../../shared/UtilityFunctions';
-import {LogService} from "../../../../core/util/log.service";
-import {EmbeddingOptions} from "../../../../shared/types/tasks/Embedding";
+import {LogService} from '../../../../core/util/log.service';
+import {EmbeddingOptions} from '../../../../shared/types/tasks/Embedding';
 
 @Component({
   selector: 'app-create-embedding-dialog',
