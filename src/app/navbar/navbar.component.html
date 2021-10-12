@@ -21,7 +21,7 @@
       </button>
     </a>
     <a [matMenuTriggerFor]="models"
-       [ngClass]="{'is-active': ['/tagger-groups', '/taggers', '/regex-taggers', '/regex-tagger-groups', '/embeddings', '/torch-taggers', '/bert-taggers', '/search-query-taggers','/search-fields-taggers', '/rakun-extractors'].includes(router.url)}"
+       [ngClass]="{'is-active': ['/tagger-groups', '/taggers', '/regex-taggers', '/regex-tagger-groups', '/embeddings', '/torch-taggers', '/bert-taggers', '/search-query-taggers','/search-fields-taggers', '/rakun-extractors', '/crf-extractors'].includes(router.url)}"
        class="pointer">
       <button class="nav-button" data-cy="appNavbarModels" mat-button>
         <mat-icon class="margin-right">storage</mat-icon>
@@ -36,7 +36,8 @@
         projectResourceCounts.num_embeddings +
         projectResourceCounts.num_search_query_taggers +
         projectResourceCounts.num_search_fields_taggers +
-        projectResourceCounts.num_rakun_keyword_extractors}})
+        projectResourceCounts.num_rakun_keyword_extractors +
+          projectResourceCounts.num_crf_extractors}})
         </ng-container>
 
         <mat-icon>arrow_drop_down</mat-icon>
@@ -95,6 +96,9 @@
       <a [routerLink]="['rakun-extractors']" data-cy="appNavbarModelMenuRakun" mat-menu-item
          routerLinkActive="is-active-menu">Rakun Extractors <span
         *ngIf="projectResourceCounts?.num_rakun_keyword_extractors">({{projectResourceCounts.num_rakun_keyword_extractors}})</span></a>
+      <a [routerLink]="['crf-extractors']" data-cy="appNavbarModelMenuCRF" mat-menu-item
+         routerLinkActive="is-active-menu">CRF Extractors <span
+        *ngIf="projectResourceCounts?.num_crf_extractors">({{projectResourceCounts.num_crf_extractors}})</span></a>
     </mat-menu>
 
     <mat-menu #tools="matMenu">

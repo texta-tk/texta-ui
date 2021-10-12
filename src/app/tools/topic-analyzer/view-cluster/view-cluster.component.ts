@@ -1,5 +1,5 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {ClusterService} from '../../../core/tools/clusters/cluster.service';
+import {TopicAnalyzerService} from '../../../core/tools/topic-analyzer/topic-analyzer.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ClusterView} from '../../../shared/types/tasks/Cluster';
 import {ProjectStore} from '../../../core/projects/project.store';
@@ -53,7 +53,7 @@ export class ViewClusterComponent implements OnInit, OnDestroy, AfterViewInit {
     public dialog: MatDialog,
     private localStorageService: LocalStorageService,
     private projectStore: ProjectStore,
-    private clusterService: ClusterService) {
+    private clusterService: TopicAnalyzerService) {
   }
 
   public sigWordAccessor = (x: { key: string, count: number }) => x.key;

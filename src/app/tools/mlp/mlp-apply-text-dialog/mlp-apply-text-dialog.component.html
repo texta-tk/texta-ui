@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>Apply to text</h1>
 <div mat-dialog-content>
-  <form (ngSubmit)="onSubmit(MLPForm.value)" [formGroup]="MLPForm" class="flex-col">
+  <form (ngSubmit)="onSubmit(MLPForm.value)" [formGroup]="MLPForm" class="flex-col" id="mlpForm">
     <mat-form-field class="max-width" data-cy="appMLPApplyDialogText">
       <input [errorStateMatcher]="matcher" formControlName="textFormControl" matInput placeholder="Text" required>
       <mat-error *ngIf="MLPForm.get('textFormControl')?.hasError('required')">
@@ -22,26 +22,43 @@
         Select at least <strong>1 analyzer</strong>
       </mat-error>
     </mat-form-field>
-    <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
-
-    <div class="flex-col">
-      <div class="flex-row">
-        <div class="flex-item-left">
-          <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
-        </div>
-        <div class="flex-item-right">
-          <button [disabled]="!MLPForm.valid" data-cy="appMLPApplyDialogSubmit" mat-button type="submit">
-            Apply
-          </button>
-        </div>
-      </div>
-    </div>
   </form>
-  <div *ngIf="result" class="m-top-10">
-    <div class="code-wrapper">
-      <code>
-        <pre *ngIf="result">{{result | json}}</pre>
-      </code>
+
+  <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+  <p style="display: inline-block;" *ngIf="result" title="{{result[0].text_mlp.language | json}}">Language: {{result[0].text_mlp.language.detected}}</p>
+  <div *ngIf="result" class="m-bot-10">
+    <mat-accordion displayMode="flat" multi>
+      <ng-container *ngFor="let field of resultFields; let i = index">
+        <mat-expansion-panel *ngIf="field !== 'texta_facts'" expanded>
+          <mat-expansion-panel-header [expandedHeight]="'48px'">
+            <mat-panel-title>
+              {{field}}
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <ng-template matExpansionPanelContent>
+            <app-generic-highlighter
+              [highlightConfig]="{
+                currentColumn: field,
+                searcherHighlight: null,
+                highlightTextaFacts: true,
+                colors: colorMap,
+                highlightHyperlinks: true,
+                titleAccessor: idAccessor,
+                data:result[0].text_mlp}"></app-generic-highlighter>
+          </ng-template>
+        </mat-expansion-panel>
+      </ng-container>
+    </mat-accordion>
+  </div>
+
+  <div class="flex-row">
+    <div class="flex-item-left">
+      <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
+    </div>
+    <div class="flex-item-right">
+      <button [disabled]="!MLPForm.valid" form="mlpForm" data-cy="appMLPApplyDialogSubmit" mat-button type="submit">
+        Apply
+      </button>
     </div>
   </div>
 </div>

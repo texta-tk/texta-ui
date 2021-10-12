@@ -1,13 +1,12 @@
 {
-  "apiHost":"https://rest-dev.texta.ee",
-  "apiBasePath":"/api/v1",
-  "apiBasePath2":"/api/v2",
+  "apiHost":"https://rest-dev.texta.ee/",
+  "apiBasePath":"/api/v2",
   "logging":true,
   "fileFieldReplace":"texta_filepath",
   "useCloudFoundryUAA":true,
   "uaaConf": {
     "uaaURL":"http://localhost:8080",
-    "redirect_uri":"http://localhost:80/api/v1/uaa/callback",
+    "redirect_uri":"http://localhost:80/api/v2/uaa/callback",
     "client_id":"login",
     "scope":"openid texta.*",
     "admin_scope": "texta.project_admin",

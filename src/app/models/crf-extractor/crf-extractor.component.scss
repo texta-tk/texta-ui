@@ -1,0 +1,22 @@
+
+
+:host {
+  overflow: hidden;
+}
+
+.mat-column-actions {
+  width: 60px;
+  text-align: center;
+}
+
+.mat-column-task__status {
+  max-width: 160px;
+}
+
+tr.element-row:not(.expanded-row):hover {
+  background: #eeeeee;
+}
+
+tr.element-row:not(.expanded-row):active {
+  background: #efefef;
+}

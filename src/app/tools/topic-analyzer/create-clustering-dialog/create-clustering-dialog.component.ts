@@ -12,7 +12,7 @@ import {mergeMap, takeUntil} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 import {Cluster} from '../../../shared/types/tasks/Cluster';
-import {ClusterService} from '../../../core/tools/clusters/cluster.service';
+import {TopicAnalyzerService} from '../../../core/tools/topic-analyzer/topic-analyzer.service';
 import {ClusterOptions} from '../../../shared/types/tasks/ClusterOptions';
 import {EmbeddingsService} from '../../../core/models/embeddings/embeddings.service';
 import {ResultsWrapper} from '../../../shared/types/Generic';
@@ -54,7 +54,7 @@ export class CreateClusteringDialogComponent implements OnInit, OnDestroy {
   embeddings: Embedding[];
 
   constructor(private dialogRef: MatDialogRef<CreateClusteringDialogComponent>,
-              private clusterService: ClusterService,
+              private clusterService: TopicAnalyzerService,
               private logService: LogService,
               private embeddingsService: EmbeddingsService,
               private projectService: ProjectService,

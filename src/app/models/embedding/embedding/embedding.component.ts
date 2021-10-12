@@ -19,7 +19,7 @@ import {ConfirmDialogComponent} from 'src/app/shared/components/dialogs/confirm-
 import {expandRowAnimation} from '../../../shared/animations';
 import {EditEmbeddingDialogComponent} from './edit-embedding-dialog/edit-embedding-dialog.component';
 import {Index} from '../../../shared/types/Index';
-import {UseLexiconDialogComponent} from "./use-lexicon-dialog/use-lexicon-dialog.component";
+import {UseLexiconDialogComponent} from './use-lexicon-dialog/use-lexicon-dialog.component';
 import {MatSelectChange} from '@angular/material/select';
 
 @Component({

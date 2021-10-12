@@ -8,10 +8,10 @@ describe('Topic Analyzer should work', function () {
         cy.wrap(x.body.id).as('projectId');
         cy.intercept('GET', '**user**').as('getUser');
         cy.intercept('GET', '**get_fields**').as('getProjectIndices');
-        cy.intercept('GET', '**/clustering/?ordering?**').as('getClustering');
-        cy.intercept('DELETE', '**/clustering/**').as('deleteClustering');
-        cy.intercept('POST', '**/clustering/**').as('postClustering');
-        cy.intercept('PATCH', '**/clustering/**').as('patchClustering');
+        cy.intercept('GET', '**/topic_analyzer/?ordering?**').as('getClustering');
+        cy.intercept('DELETE', '**/topic_analyzer/**').as('deleteClustering');
+        cy.intercept('POST', '**/topic_analyzer/**').as('postClustering');
+        cy.intercept('PATCH', '**/topic_analyzer/**').as('patchClustering');
       });
     });
   });

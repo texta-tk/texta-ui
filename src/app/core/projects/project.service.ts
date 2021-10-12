@@ -97,7 +97,7 @@ export class ProjectService {
 
   exportSearch(projId: number, query: unknown, indices: string[]): Observable<string | HttpErrorResponse> {
     return this.http.post<string>(
-      `${this.apiUrl}/projects/${projId}/export_search/`,
+      `${this.apiUrl}/projects/${projId}/elastic/export_search/`,
       {indices, query}
     ).pipe(
       tap(e => this.logService.logStatus(e, 'exportSearch')),
@@ -114,7 +114,7 @@ export class ProjectService {
 
   getProjectIndices(id: number): Observable<ProjectIndex[] | HttpErrorResponse> {
     return this.http.get<ProjectIndex[]>(
-      `${this.apiUrl}/projects/${id}/get_fields/`,
+      `${this.apiUrl}/projects/${id}/elastic/get_fields/`,
     ).pipe(
       tap(e => this.logService.logStatus(e, 'getProjectFields')),
       catchError(this.logService.handleError<ProjectIndex[]>('getProjectFields')));
@@ -149,7 +149,7 @@ export class ProjectService {
     HttpErrorResponse> {
     // tslint:disable-next-line:no-any
     return this.http.post<any>(
-      `${this.apiUrl}/projects/${id}/get_facts/`, {indices, output_type: !!outputType}
+      `${this.apiUrl}/projects/${id}/elastic/get_facts/`, {indices, output_type: !!outputType}
     ).pipe(
       tap(e => this.logService.logStatus(e, 'get Project Facts')),
       catchError(this.logService.handleError('getProjectFacts')));

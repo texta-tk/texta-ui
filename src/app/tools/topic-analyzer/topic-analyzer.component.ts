@@ -11,7 +11,7 @@ import {LogService} from '../../core/util/log.service';
 import {debounceTime, startWith, switchMap, takeUntil} from 'rxjs/operators';
 import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {Cluster} from '../../shared/types/tasks/Cluster';
-import {ClusterService} from '../../core/tools/clusters/cluster.service';
+import {TopicAnalyzerService} from '../../core/tools/topic-analyzer/topic-analyzer.service';
 import {QueryDialogComponent} from '../../shared/components/dialogs/query-dialog/query-dialog.component';
 import {expandRowAnimation} from '../../shared/animations';
 import {CreateClusteringDialogComponent} from './create-clustering-dialog/create-clustering-dialog.component';
@@ -44,7 +44,7 @@ export class TopicAnalyzerComponent implements OnInit, OnDestroy, AfterViewInit 
   resultsLength: number;
 
   constructor(private projectStore: ProjectStore,
-              private clusterService: ClusterService,
+              private clusterService: TopicAnalyzerService,
               public dialog: MatDialog,
               public logService: LogService) {
   }

@@ -54,7 +54,7 @@ export class TagRandomDocResultComponent implements OnInit {
         val.result.predictionTags?.forEach(x => {
           if (x.tag) { // 2 types of binary tagger result formats, Grouped and non grouped
             predicted.push({
-              fact: `${x?.result ? x.result : x.tag} (${Math.round((x.probability + Number.EPSILON) * 1000) / 1000}) ${x.ner_match ? 'ner_match: ' + x.ner_match : ''}`,
+              fact: `${x.hasOwnProperty('result') ? x.result : x.tag} (${Math.round((x.probability + Number.EPSILON) * 1000) / 1000}) ${x.ner_match ? 'ner_match: ' + x.ner_match : ''}`,
               str_val: x.probability,
               doc_path: '',
               spans: [0, 0],

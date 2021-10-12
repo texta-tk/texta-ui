@@ -29,11 +29,16 @@ export class TagRandomDocComponent implements OnInit, OnDestroy {
   model: { indices: ProjectIndex[], fields: string[] } = {indices: [], fields: []};
   projectIndices: ProjectIndex[];
   projectFields: ProjectIndex[] = [];
+  defaultColors = HighlightSettings.legibleColors;
+  uniqueFacts: { fact: Match, textColor: string, backgroundColor: string }[] = [];
   colorMap: Map<string, { backgroundColor: string, textColor: string }> = new Map();
+  distinctMatches: Match[];
+  resultFields: string[];
   selection = new SelectionModel<number | string>(true, [0, 1]);
   destroyed$: Subject<boolean> = new Subject<boolean>();
   // tslint:disable-next-line:no-any
   regexTaggerOptions: any;
+  selectedFields: string[];
 
   constructor(private regexTaggerService: RegexTaggerService, private logService: LogService,
               private projectStore: ProjectStore,
@@ -79,7 +84,27 @@ export class TagRandomDocComponent implements OnInit, OnDestroy {
       };
       this.regexTaggerService.tagRandomDoc(this.data.currentProjectId, this.data.tagger.id, body).subscribe(x => {
         if (x && !(x instanceof HttpErrorResponse)) {
+          this.colorMap = new Map();
           this.result = x;
+          // replace texta_facts with matches array
+          const textaFacts = 'texta_facts';
+          this.result.document[textaFacts] = this.result.matches;
+          this.resultFields = Object.keys(x.document);
+          this.distinctMatches = UtilityFunctions.getDistinctByProperty(this.result.matches, (y => y.str_val));
+          this.resultFields.sort((a, b) => this.model.fields.includes(a) ? -1 : 0);
+
+          // make selected fields open the accordion panels by default
+          if (this.selectedFields !== this.model.fields) {
+            this.selectedFields = this.model.fields;
+            this.model.fields.forEach(field => {
+              const fieldSelected = this.resultFields.find(y => y === field);
+              if (fieldSelected && !this.selection.isSelected(fieldSelected)) {
+                this.selection.toggle(fieldSelected);
+              }
+            });
+          }
+
+          this.uniqueFacts = this.getUniqueFacts(this.result.matches);
         } else if (x) {
           this.logService.snackBarError(x);
         }
@@ -89,6 +114,34 @@ export class TagRandomDocComponent implements OnInit, OnDestroy {
     }
   }
 
+  getUniqueFacts(matches: Match[]): { fact: Match; textColor: string; backgroundColor: string }[] {
+    const returnVal: { fact: Match, textColor: string, backgroundColor: string }[] = [];
+    const uniques = UtilityFunctions.getDistinctByProperty(matches, (y => y.tagger_id));
+    for (let i = 0; i < uniques.length; i++) {
+      if (i < this.defaultColors.length) {
+        const color = this.defaultColors[i];
+        this.colorMap.set(uniques[i].fact, color);
+        returnVal.push({
+          fact: uniques[i],
+          backgroundColor: color.backgroundColor,
+          textColor: color.textColor
+        });
+      } else {
+        const color = {
+          // tslint:disable-next-line:no-bitwise
+          backgroundColor: `hsla(${~~(360 * Math.random())},70%,70%,0.8)`,
+          textColor: 'black'
+        };
+        this.colorMap.set(uniques[i].fact, color);
+        returnVal.push({
+          fact: uniques[i],
+          backgroundColor: color.backgroundColor,
+          textColor: color.textColor
+        });
+      }
+    }
+    return returnVal;
+  }
 
   ngOnDestroy(): void {
     this.destroyed$.next(true);

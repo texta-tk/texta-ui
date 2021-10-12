@@ -11,7 +11,7 @@ import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers'
 import {ProjectService} from '../../../core/projects/project.service';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {LogService} from '../../../core/util/log.service';
-import {ElasticAnalyzerService} from '../../../core/tools/snowball-stemmer/elastic-analyzer.service';
+import {ElasticAnalyzerService} from '../../../core/tools/elastic-analyzer/elastic-analyzer.service';
 
 interface OnSubmitParams {
   descriptionFormControl: string;

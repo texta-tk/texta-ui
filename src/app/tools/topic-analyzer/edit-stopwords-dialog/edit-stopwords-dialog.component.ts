@@ -2,7 +2,7 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {LogService} from '../../../core/util/log.service';
 import {HttpErrorResponse} from '@angular/common/http';
-import {ClusterService} from '../../../core/tools/clusters/cluster.service';
+import {TopicAnalyzerService} from '../../../core/tools/topic-analyzer/topic-analyzer.service';
 import {Cluster} from '../../../shared/types/tasks/Cluster';
 
 @Component({
@@ -15,7 +15,7 @@ export class EditStopwordsDialogComponent implements OnInit {
 
   constructor(private dialogRef: MatDialogRef<EditStopwordsDialogComponent>,
               @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, cluster: Cluster; },
-              private clusterService: ClusterService,
+              private clusterService: TopicAnalyzerService,
               private logService: LogService) {
   }
 
