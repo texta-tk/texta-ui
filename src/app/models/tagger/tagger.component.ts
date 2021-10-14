@@ -25,6 +25,7 @@ import {EditTaggerDialogComponent} from './edit-tagger-dialog/edit-tagger-dialog
 import {Index} from '../../shared/types/Index';
 import {ApplyToIndexDialogComponent} from './apply-to-index-dialog/apply-to-index-dialog.component';
 import {MatSelectChange} from '@angular/material/select';
+import { MultiTagTextDialogComponent } from './multi-tag-text-dialog/multi-tag-text-dialog.component';
 
 @Component({
   selector: 'app-tagger',
@@ -343,6 +344,13 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   applyToIndexDialog(tagger: Tagger): void {
     this.dialog.open(ApplyToIndexDialogComponent, {
       data: tagger,
+      maxHeight: '90vh',
+      width: '700px',
+    });
+  }
+
+  openMultiTagDialog(): void {
+    this.dialog.open(MultiTagTextDialogComponent, {
       maxHeight: '90vh',
       width: '700px',
     });

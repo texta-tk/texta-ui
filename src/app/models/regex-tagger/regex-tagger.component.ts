@@ -167,7 +167,6 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dialog.open(MultiTagTextDialogComponent, {
       maxHeight: '90vh',
       width: '700px',
-      data: JSON.parse(JSON.stringify(this.tableData.data)),
       disableClose: true
     });
   }

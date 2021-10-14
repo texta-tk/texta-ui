@@ -14,6 +14,9 @@
               mat-icon-button matTooltip="Delete selected">
         <mat-icon>delete</mat-icon>
       </button>
+      <button (click)="openMultiTagDialog()" data-cy="appModelsTaggerMultiTag" mat-stroked-button>
+        Multitag Text
+      </button>
       <mat-form-field class="m-l-15">
         <mat-icon matSuffix>search</mat-icon>
         <input (keyup)="applyFilter($event.target, 'description')" matInput placeholder="Filter description">

@@ -7,8 +7,9 @@ import {LexiconService} from '../../../core/lexicon/lexicon.service';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {Project} from '../../../shared/types/Project';
-import {of, Subject} from 'rxjs';
+import {forkJoin, of, Subject} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
+import {UtilityFunctions} from "../../../shared/UtilityFunctions";
 
 @Component({
   selector: 'app-multi-tag-text-dialog',
@@ -30,24 +31,30 @@ export class MultiTagTextDialogComponent implements OnInit, OnDestroy {
 
   constructor(private dialogRef: MatDialogRef<MultiTagTextDialogComponent>,
               private regexTaggerService: RegexTaggerService,
-              @Inject(MAT_DIALOG_DATA) public data: RegexTagger[],
               private logService: LogService,
               private lexiconService: LexiconService,
               private projectStore: ProjectStore) {
-    this.taggers = data;
   }
 
   ngOnInit(): void {
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), switchMap((currentProject => {
       if (currentProject) {
         this.currentProject = currentProject;
-        return this.regexTaggerService.getMultiTagTextOptions(currentProject.id);
+        return forkJoin({
+          options: this.regexTaggerService.getMultiTagTextOptions(currentProject.id),
+          taggers: this.regexTaggerService.getRegexTaggers(this.currentProject.id, '&page_size=9999')
+        });
       }
       return of(null);
     }))).subscribe(resp => {
-      if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.regexTaggerOptions = resp;
+      if (resp?.options && !(resp.options instanceof HttpErrorResponse)) {
+        this.regexTaggerOptions = resp.options;
       }
+      if (resp?.taggers && !(resp.taggers instanceof HttpErrorResponse)) {
+        this.taggers = resp.taggers.results;
+      }
+
+        UtilityFunctions.logForkJoinErrors(resp, HttpErrorResponse, this.logService.snackBarError);
     });
 
   }
