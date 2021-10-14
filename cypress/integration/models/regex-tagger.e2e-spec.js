@@ -16,8 +16,8 @@ describe('regex-taggers should work', function () {
 
   function initPage() {
     cy.visit('/regex-taggers');
-    cy.wait('@getRegexTaggers');
     cy.wait('@getProjectIndices');
+    cy.wait('@getRegexTaggers');
   }
 
   function tagRandomDoc() {

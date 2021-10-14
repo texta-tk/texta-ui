@@ -15,7 +15,6 @@ import {LogService} from '../../../core/util/log.service';
 import {Choice, Embedding} from '../../../shared/types/tasks/Embedding';
 import {CRFExtractor} from '../../../shared/types/tasks/CRFExtractor';
 import {EmbeddingsService} from '../../../core/models/embeddings/embeddings.service';
-import {TaggerOptions} from "../../../shared/types/tasks/TaggerOptions";
 
 interface OnSubmitParams {
   descriptionFormControl: string;
@@ -24,8 +23,7 @@ interface OnSubmitParams {
   windowSizeFormControl: number;
   testSizeFormControl: number;
   numIterFormControl: number;
-  c1FormControl: number;
-  c2FormControl: number;
+  cValuesFormControl: string;
   biasFormControl: boolean;
   suffixLenFormControl: string;
   labelsFormControl: string[];
@@ -52,8 +50,7 @@ export class CreateCRFExtractorDialogComponent implements OnInit, OnDestroy {
     windowSizeFormControl: new FormControl(this.data?.cloneElement?.window_size || 2),
     testSizeFormControl: new FormControl(this.data?.cloneElement?.test_size || 0.3),
     numIterFormControl: new FormControl(this.data?.cloneElement?.num_iter || 100),
-    c1FormControl: new FormControl(this.data?.cloneElement?.c1 || 1.0),
-    c2FormControl: new FormControl(this.data?.cloneElement?.c2 || 1.0),
+    cValuesFormControl: new FormControl(this.data?.cloneElement?.c_values.toString() || '0.001, 0.1, 0.5'),
     biasFormControl: new FormControl(this.data?.cloneElement?.bias !== undefined ? this.data?.cloneElement?.bias : true),
     suffixLenFormControl: new FormControl(this.data?.cloneElement?.suffix_len.toString() || '2,2'),
     labelsFormControl: new FormControl(),
@@ -140,8 +137,7 @@ export class CreateCRFExtractorDialogComponent implements OnInit, OnDestroy {
       window_size: formData.windowSizeFormControl,
       test_size: formData.testSizeFormControl,
       num_iter: formData.numIterFormControl,
-      c1: formData.c1FormControl,
-      c2: formData.c2FormControl,
+      c_values: formData.cValuesFormControl.split(',').map(x => +x),
       bias: formData.biasFormControl,
       suffix_len: formData.suffixLenFormControl.split(',').map(x => +x),
       ...formData.labelsFormControl ? {labels: formData.labelsFormControl} : {},

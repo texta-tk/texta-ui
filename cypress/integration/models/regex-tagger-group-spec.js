@@ -16,8 +16,8 @@ describe('regex-tagger-group should work', function () {
 
   function initPage() {
     cy.visit('/regex-tagger-groups');
-    cy.wait('@getRegexTaggers');
     cy.wait('@getProjectIndices');
+    cy.wait('@getRegexTaggers');
   }
 
   function multiTagTest() {

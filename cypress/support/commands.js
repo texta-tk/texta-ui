@@ -31,11 +31,11 @@ Cypress.Commands.add('login', (username, password) => {
     localStorage.setItem('user', JSON.stringify({key: resp.body.key}));
   })
 });
-Cypress.Commands.add('createTestProject', () => {
+Cypress.Commands.add('createTestProject', (projects = ["texta_test_index"]) => {
   cy.request({
     method: 'POST', url: `${Cypress.env('api_host')}${Cypress.env('api_basePath')}/projects/`,
     body: {
-      "indices_write": ["texta_test_index"],
+      "indices_write": projects,
       "users_write": ["admin"],
       "title": "integration_test_project"
     },
