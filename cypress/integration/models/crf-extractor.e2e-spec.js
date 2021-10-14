@@ -88,7 +88,7 @@ describe('Crf-extractor should work', function () {
             assert.equal(intercepted?.response?.body?.results[0]?.task?.status, 'completed');
             return true;
           }else {
-            return cy.wait(5000);
+            return cy.wait(25000);
           }
         });
       })
