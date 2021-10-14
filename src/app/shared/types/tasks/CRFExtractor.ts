@@ -21,6 +21,7 @@ interface Task {
 }
 
 export interface CRFExtractor {
+  c_values: number[];
   id: number;
   url: string;
   // tslint:disable-next-line:no-any
@@ -32,8 +33,8 @@ export interface CRFExtractor {
   window_size: number;
   test_size: number;
   num_iter: number;
-  c1: number;
-  c2: number;
+  best_c1: number;
+  best_c2: number;
   bias: boolean;
   suffix_len: string;
   labels: string;

@@ -26,7 +26,7 @@
       <mat-hint>{{CRFOptions?.actions?.POST?.indices?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field data-cy="appCRFExtractorCreateDialogFields">
       <mat-label>MLP field</mat-label>
       <app-project-field-select [projectFields]="projectFields" [required]="true" [multiple]=false
                                 formControlName="mlpFieldsFormControl"></app-project-field-select>
@@ -130,16 +130,12 @@
             <mat-hint>{{CRFOptions?.actions?.POST?.num_iter?.help_text || ''}}</mat-hint>
           </mat-form-field>
           <mat-form-field class="advanced-setting">
-            <input formControlName="c1FormControl" matInput pattern="[1-9]\d*"
-                   placeholder="C1" step="1" min="0"
-                   type="number">
-            <mat-hint>{{CRFOptions?.actions?.POST?.c1?.help_text || ''}}</mat-hint>
-          </mat-form-field>
-          <mat-form-field class="advanced-setting">
-            <input formControlName="c2FormControl" matInput pattern="[1-9]\d*"
-                   placeholder="C2" step="1" min="0"
-                   type="number">
-            <mat-hint>{{CRFOptions?.actions?.POST?.c2?.help_text || ''}}</mat-hint>
+            <input formControlName="cValuesFormControl" matInput pattern="^[+-]?((\d+\.?\d*)|(\.\d+))(?:[ \t]*,[ \t]*[+-]?((\d+\.?\d*)|(\.\d+)))+$"
+                   placeholder="C values" >
+            <mat-hint>{{CRFOptions?.actions?.POST?.c_values?.help_text || ''}}</mat-hint>
+            <mat-error *ngIf="CRFExtractorForm.get('cValuesFormControl')?.hasError('pattern')">
+              Format is incorrect, example format: 0.001, 0.1, 0.5
+            </mat-error>
           </mat-form-field>
           <mat-form-field class="advanced-setting">
             <input formControlName="suffixLenFormControl" matInput pattern="\d+,\d+"

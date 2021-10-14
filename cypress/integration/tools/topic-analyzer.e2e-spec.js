@@ -18,8 +18,8 @@ describe('Topic Analyzer should work', function () {
 
   function initClusteringPage() {
     cy.visit('/topic-analyzer');
-    cy.wait('@getClustering');
     cy.wait('@getProjectIndices');
+    cy.wait('@getClustering');
   }
 
   it('Topic Analyzer should work', function () {

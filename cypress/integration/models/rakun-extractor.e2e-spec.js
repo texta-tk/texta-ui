@@ -16,8 +16,8 @@ describe('rakun-extractor should work', function () {
 
   function initPage() {
     cy.visit('/rakun-extractors');
-    cy.wait('@getRakunExtractors');
     cy.wait('@getProjectIndices');
+    cy.wait('@getRakunExtractors');
   }
 
   function extractRandomDoc() {
