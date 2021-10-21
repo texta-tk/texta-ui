@@ -52,7 +52,7 @@ export class ApplyTaggerGroupDialogComponent implements OnInit, OnDestroy {
       if (proj) {
         this.currentProject = proj;
         return forkJoin({
-          taggers: this.regexTaggerGroupService.getRegexTaggerGroupTasks(proj.id),
+          taggers: this.regexTaggerGroupService.getRegexTaggerGroupTasks(proj.id, '&page_size=9999'),
           indices: this.projectStore.getProjectIndices().pipe(filter(x => !!x), take(1)),
           options: this.regexTaggerGroupService.applyRegexTaggerGroupOptions(proj.id),
         });

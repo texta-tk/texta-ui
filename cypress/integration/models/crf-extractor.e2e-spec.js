@@ -76,6 +76,15 @@ describe('Crf-extractor should work', function () {
       cy.closeCurrentCdkOverlay();
       cy.wrap(fields).find('mat-error').should('have.length', 0)
     }));
+    cy.get('[data-cy=appCRFExtractorCreateDialogContextFeatureFields]').click().then((fields => {
+      cy.get('.mat-option-text').contains('word_features').should('be.visible').click();
+      cy.closeCurrentCdkOverlay();
+    }));
+
+    cy.get('[data-cy=appCRFExtractorCreateDialogFeatureFields]').click().then((fields => {
+      cy.get('.mat-option-text').contains('word_features').should('be.visible').click();
+      cy.closeCurrentCdkOverlay();
+    }));
     cy.get('[data-cy=appCRFExtractorCreateDialogSubmit]').click();
     cy.wait('@postCrfExtractor').its('response.statusCode').should('eq', 201);
     cy.wait(1000);

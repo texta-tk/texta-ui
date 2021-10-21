@@ -42,7 +42,7 @@ export class MultiTagTextDialogComponent implements OnInit, OnDestroy {
         this.currentProject = currentProject;
         return forkJoin({
           options: this.regexTaggerService.getMultiTagTextOptions(currentProject.id),
-          taggers: this.regexTaggerService.getRegexTaggers(this.currentProject.id, '&page_size=9999')
+          taggers: this.regexTaggerService.getRegexTaggers(this.currentProject.id, '&page_size=999')
         });
       }
       return of(null);

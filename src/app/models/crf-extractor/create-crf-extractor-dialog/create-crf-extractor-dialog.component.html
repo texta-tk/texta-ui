@@ -64,7 +64,7 @@
       <mat-hint>{{CRFOptions?.actions?.POST?.labels?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field data-cy="appCRFExtractorCreateDialogFeatureFields">
       <mat-label>Feature fields</mat-label>
       <mat-select [disableOptionCentering]="true" formControlName="featureFieldsFormControl"
                   panelClass="select-panel-reveal-input" multiple>
@@ -77,7 +77,7 @@
       <mat-hint>{{CRFOptions?.actions?.POST?.feature_fields?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field data-cy="appCRFExtractorCreateDialogContextFeatureFields">
       <mat-label>Context feature fields</mat-label>
       <mat-select [disableOptionCentering]="true" formControlName="contextFeatureFieldsFormControl"
                   panelClass="select-panel-reveal-input" multiple>

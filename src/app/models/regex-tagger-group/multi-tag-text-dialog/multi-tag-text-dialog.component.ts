@@ -39,7 +39,7 @@ export class MultiTagTextDialogComponent implements OnInit, OnDestroy {
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), switchMap(project => {
       if (project) {
         this.currentProject = project;
-        return this.regexTaggerGroupService.getRegexTaggerGroupTasks(project.id);
+        return this.regexTaggerGroupService.getRegexTaggerGroupTasks(project.id, '&page_size=9999');
       }
       return of(null);
     })).subscribe(resp => {
@@ -54,7 +54,7 @@ export class MultiTagTextDialogComponent implements OnInit, OnDestroy {
   onSubmit(text: string, selectedTaggers: RegexTaggerGroup[]): void {
     const body = {
       text,
-      taggers: selectedTaggers?.map(x => x.id) || [],
+      tagger_groups: selectedTaggers?.map(x => x.id) || [],
     };
     this.isLoading = true;
     this.regexTaggerGroupService.multiTagText(this.currentProject.id, body).subscribe(x => {
