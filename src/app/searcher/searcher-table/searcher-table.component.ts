@@ -25,6 +25,8 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {SearcherService} from '../../core/searcher/searcher.service';
 import {ProjectService} from '../../core/projects/project.service';
 import {UtilityFunctions} from '../../shared/UtilityFunctions';
+import {ExportSearchDialogComponent} from "./export-search-dialog/export-search-dialog.component";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-searcher-table',
@@ -54,6 +56,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
   private totalDocs = 0;
 
   constructor(public searchService: SearcherComponentService, private projectStore: ProjectStore,
+              private dialog: MatDialog,
               private searcherService: SearcherService, private projectService: ProjectService,
               private localStorage: LocalStorageService) {
   }
@@ -163,14 +166,14 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
 
   exportSearch(): void {
     if (this.currentElasticQuery?.elasticSearchQuery && this.currentProject) {
-      const indices = this.projectFields.map(y => y.index);
-      this.projectService.exportSearch(this.currentProject.id, this.currentElasticQuery.elasticSearchQuery, indices).subscribe(resp => {
-        if (resp && !(resp instanceof HttpErrorResponse)) {
-          const a = document.createElement('a');
-          a.href = resp;
-          a.download = resp;
-          a.click();
-        }
+      this.dialog.open(ExportSearchDialogComponent, {
+        data: {
+          projectFields: this.projectFields,
+          selectedProjectFields: this.columnsToDisplay,
+          currentProjectId: this.currentProject.id
+        },
+        maxHeight: '500px',
+        width: '450px'
       });
     }
   }
@@ -187,7 +190,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
         return [{[field.path + '.keyword']: {order: sort.direction, unmapped_type: 'text'}}];
       } else if (field.type === 'fact') { // fact is nested type
         // no sorting for facts right now
-        return [{[field.path + '.fact']: {order: sort.direction, nested: { path: field.path }}}];
+        return [{[field.path + '.fact']: {order: sort.direction, nested: {path: field.path}}}];
       } else {
         return [{[field.path]: {order: sort.direction, unmapped_type: field.type}}];
       }

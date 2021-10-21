@@ -95,10 +95,10 @@ export class ProjectService {
       catchError(this.logService.handleError<{ message: string }>('deleteUsersFromProject')));
   }
 
-  exportSearch(projId: number, query: unknown, indices: string[]): Observable<string | HttpErrorResponse> {
+  exportSearch(projId: number, body: unknown): Observable<string | HttpErrorResponse> {
     return this.http.post<string>(
       `${this.apiUrl}/projects/${projId}/elastic/export_search/`,
-      {indices, query}
+      body
     ).pipe(
       tap(e => this.logService.logStatus(e, 'exportSearch')),
       catchError(this.logService.handleError<string>('exportSearch')));

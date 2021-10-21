@@ -13,7 +13,7 @@
           [formControl]="columnFormControl" [multiple]="true" [projectFields]="projectFields"></app-project-field-select>
       </mat-form-field>
       <button (click)="drawerToggle.emit(true)" mat-stroked-button>Toggle drawer</button>
-      <button (click)="exportSearch()" data-cy="appSearcherTableExport" mat-stroked-button style="margin-left: 5px">
+      <button (click)="exportSearch()" data-cy="appSearcherTableExport" mat-stroked-button style="margin-left: 5px" [disabled]="!this.currentElasticQuery">
         Export results
       </button>
       <mat-paginator (page)="pageChange($event)" [length]="paginatorLength" [pageSizeOptions]="[10, 20, 50]"

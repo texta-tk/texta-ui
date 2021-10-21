@@ -52,6 +52,7 @@ describe('searching and search related activities should be working correctly', 
     cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted ').should('be.visible');
 
     cy.get('[data-cy=appSearcherTableExport]').click();
+    cy.get('[data-cy=appSearcherExportResultsDialogSubmit]').click();
     cy.wait('@export').then(x => {
       assert(typeof x.response.body === 'string');
     })

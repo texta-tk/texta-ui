@@ -30,6 +30,7 @@ import {SearcherComponentService} from './services/searcher-component.service';
 import {PlotlyViaWindowModule} from 'angular-plotly.js';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import { BooleanConstraintsComponent } from './searcher-sidebar/build-search/advanced-search/boolean-constraints/boolean-constraints.component';
+import { ExportSearchDialogComponent } from './searcher-table/export-search-dialog/export-search-dialog.component';
 
 @NgModule({
   declarations: [
@@ -58,6 +59,7 @@ import { BooleanConstraintsComponent } from './searcher-sidebar/build-search/adv
     GraphSelectedPortalComponent,
     EditSavedSearchDialogComponent,
     BooleanConstraintsComponent,
+    ExportSearchDialogComponent,
   ],
   imports: [
     SharedModule,
