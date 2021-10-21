@@ -20,6 +20,10 @@
               style="margin-left: 10px">
         Apply Regex Tagger Group
       </button>
+      <mat-form-field class="m-l-15">
+        <mat-icon matSuffix>search</mat-icon>
+        <input (keyup)="applyFilter($event.target, 'description')" matInput placeholder="Filter description">
+      </mat-form-field>
       <mat-paginator [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons [length]="resultsLength">
       </mat-paginator>
     </div>
@@ -51,7 +55,8 @@
       </ng-container>
       <ng-container matColumnDef="author">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Author</th>
-        <td *matCellDef="let element" mat-cell [matTooltip]="element?.author?.username"> {{element?.author?.display_name}}
+        <td *matCellDef="let element" mat-cell
+            [matTooltip]="element?.author?.username"> {{element?.author?.display_name}}
         </td>
       </ng-container>
       <ng-container matColumnDef="regex_taggers">
@@ -103,7 +108,7 @@
                 </tr>
                 <ng-container *ngFor="let tagger of element.tagger_info; let innerIndex = index">
                   <tr (click)="this.expandedElements[i][1][innerIndex] = !this.expandedElements[i][1][innerIndex];"
-                      role="row" class="inner-element-row" [class.expanded-row]="expandedElements[i][1][innerIndex]" >
+                      role="row" class="inner-element-row" [class.expanded-row]="expandedElements[i][1][innerIndex]">
                     <td>{{tagger.id}}</td>
                     <td class="detail-desc-col" title="{{tagger.description}}">{{tagger.description}}</td>
                     <td>{{tagger.operator}}</td>

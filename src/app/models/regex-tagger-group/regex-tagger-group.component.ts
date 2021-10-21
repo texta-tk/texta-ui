@@ -20,6 +20,7 @@ import {ApplyTaggerGroupDialogComponent} from './apply-tagger-group-dialog/apply
 import {TagTextDialogComponent} from './tag-text-dialog/tag-text-dialog.component';
 import {TagRandomDocComponent} from './tag-random-doc/tag-random-doc.component';
 import {EditRegexTaggerGroupDialogComponent} from './edit-regex-tagger-group-dialog/edit-regex-tagger-group-dialog.component';
+import {MatSelectChange} from "@angular/material/select";
 
 @Component({
   selector: 'app-regex-tagger-group',
@@ -40,6 +41,10 @@ export class RegexTaggerGroupComponent implements OnInit, OnDestroy, AfterViewIn
   destroyed$: Subject<boolean> = new Subject<boolean>();
   currentProject: Project;
   resultsLength: number;
+  filteredSubject = new Subject();
+  // For custom filtering, such as text search in description
+  inputFilterQuery = '';
+  filteringValues: { [key: string]: string } = {};
   private updateTable = new Subject<boolean>();
 
   constructor(private projectStore: ProjectStore,
@@ -68,7 +73,7 @@ export class RegexTaggerGroupComponent implements OnInit, OnDestroy, AfterViewIn
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
-    merge(this.sort.sortChange, this.paginator.page, this.updateTable).pipe(debounceTime(250), startWith({}), switchMap(() => {
+    merge(this.sort.sortChange, this.paginator.page, this.updateTable, this.filteredSubject).pipe(debounceTime(250), startWith({}), switchMap(() => {
       this.isLoadingResults = true;
       return this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$));
     })).pipe(switchMap(proj => {
@@ -77,7 +82,7 @@ export class RegexTaggerGroupComponent implements OnInit, OnDestroy, AfterViewIn
         return this.regexTaggerGroupService.getRegexTaggerGroupTasks(
           this.currentProject.id,
           // Add 1 to to index because Material paginator starts from 0 and DRF paginator from 1
-          `ordering=${sortDirection}${this.sort.active}&page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`);
+          `${this.inputFilterQuery}&ordering=${sortDirection}${this.sort.active}&page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`);
       } else {
         return of(null);
       }
@@ -219,6 +224,23 @@ export class RegexTaggerGroupComponent implements OnInit, OnDestroy, AfterViewIn
           });
         }
       });
+    }
+  }
+
+  applyFilter(filterValue: MatSelectChange | null | EventTarget, field: string): void {
+    // @ts-ignore
+    this.filteringValues[field] = filterValue?.value ? filterValue.value : '';
+    this.paginator.pageIndex = 0;
+    this.filterQueriesToString();
+    this.filteredSubject.next();
+  }
+
+  filterQueriesToString(): void {
+    this.inputFilterQuery = '';
+    for (const field in this.filteringValues) {
+      if (this.filteringValues.hasOwnProperty(field)) {
+        this.inputFilterQuery += `&${field}=${this.filteringValues[field]}`;
+      }
     }
   }
 
