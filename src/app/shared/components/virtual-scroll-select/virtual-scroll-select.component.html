@@ -1,4 +1,4 @@
-<mat-select [formControl]="selectFormControl" [compareWith]="idCompare"
+<mat-select [formControl]="selectFormControl" [compareWith]="idCompare" *ngIf="scrollableDataSource"
             (openedChange)="this.cdkVirtualScrollViewport.setRenderedContentOffset(0);
       this.cdkVirtualScrollViewport.setRenderedRange({start: 0, end: 9})"
             [disableOptionCentering]="true"  multiple>
@@ -12,7 +12,7 @@
                            placeholderLabel="Search"></ngx-mat-select-search>
   </mat-option>
   <cdk-virtual-scroll-viewport #cdkVirtualScrollViewport itemSize="48"
-                               [style.height.px]="(scrollableDataSource?.length >= 9 ? 9 : scrollableDataSource?.length)*48"
+                               [style.height.px]="(scrollableDataSource.length >= 9 ? 9 : scrollableDataSource.length)*48"
                                [minBufferPx]="10*48"
                                [maxBufferPx]="20*48"
                                class="example-viewport">
