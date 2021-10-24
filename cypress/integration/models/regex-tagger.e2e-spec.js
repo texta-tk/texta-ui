@@ -89,7 +89,7 @@ describe('regex-taggers should work', function () {
     cy.get('[data-cy=appRegexTaggerMultiTagDialogText]').type('test');
     cy.get('[data-cy=appRegexTaggerMultiTagDialogTaggers]').click().then((taggers => {
       cy.wrap(taggers).should('have.class', 'mat-focused');
-      cy.get('.mat-option-text:nth(0)').click();
+      cy.get('.mat-option-text:nth(1)').click();
       cy.closeCurrentCdkOverlay();
     }));
     cy.get('[data-cy=appRegexTaggerMultiTagDialogSubmit]').click();

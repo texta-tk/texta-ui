@@ -68,6 +68,7 @@ import {TextaFactsChipsComponent} from './components/texta-facts-chips/texta-fac
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {AddLexiconDialogComponent} from './components/dialogs/add-lexicon-dialog/add-lexicon-dialog.component';
 import { TagRandomDocResultComponent } from './components/dialogs/tag-random-doc-result/tag-random-doc-result.component';
+import { VirtualScrollSelectComponent } from './components/virtual-scroll-select/virtual-scroll-select.component';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
@@ -97,6 +98,7 @@ import { TagRandomDocResultComponent } from './components/dialogs/tag-random-doc
     ProjectFieldSelectComponent,
     TextaFactsChipsComponent,
     TagRandomDocResultComponent,
+    VirtualScrollSelectComponent,
   ],
   imports: [
     RouterModule,
@@ -203,6 +205,7 @@ import { TagRandomDocResultComponent } from './components/dialogs/tag-random-doc
     ParseJsonPipe,
     TextaFactsChipsComponent,
     TagRandomDocResultComponent,
+    VirtualScrollSelectComponent,
   ]
 })
 export class SharedModule {

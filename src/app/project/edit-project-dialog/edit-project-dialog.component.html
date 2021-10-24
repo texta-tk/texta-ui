@@ -14,6 +14,7 @@
         <mat-option>
           <ngx-mat-select-search [formControl]="indicesFilterFormControl"
                                  noEntriesFoundLabel="No entries" #multiSelect
+                                 [clearSearchInput]="false"
                                  placeholderLabel="Search"></ngx-mat-select-search>
         </mat-option>
         <mat-option *ngFor="let item of (filteredIndices | async)" [value]="item">

@@ -8,13 +8,7 @@
     </mat-form-field>
     <mat-form-field class="max-width" data-cy="appTaggerMultiTagDialogTaggers">
       <mat-label>Taggers</mat-label>
-      <mat-select [(ngModel)]="formModel.selectedTaggers"
-                  [disableOptionCentering]="true" [ngModelOptions]="{standalone: true}" multiple
-                  panelClass="select-panel-reveal-input">
-        <mat-option *ngFor="let tagger of taggers" [value]="tagger.id">
-          {{tagger.description}}
-        </mat-option>
-      </mat-select>
+      <app-virtual-scroll-select [scrollableDataSource]="taggers" [formControl]="taggerSelectionFormControl"></app-virtual-scroll-select>
       <mat-hint>{{taggerOptions?.actions?.POST?.taggers?.help_text || ''}}</mat-hint>
     </mat-form-field>
     <div class="flex-row" style="margin-bottom: 10px;">
