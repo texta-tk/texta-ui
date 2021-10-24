@@ -1,0 +1,23 @@
+<mat-select [formControl]="selectFormControl" [compareWith]="idCompare"
+            (openedChange)="this.cdkVirtualScrollViewport.setRenderedContentOffset(0);
+      this.cdkVirtualScrollViewport.setRenderedRange({start: 0, end: 9})"
+            [disableOptionCentering]="true"  multiple>
+  <mat-option>
+    <ngx-mat-select-search [formControl]="descriptionFilterControl" #matSelectSearch
+                           cdkMonitorSubtreeFocus
+                           (cdkFocusChange)="searchFocused = !!$event;"
+                           [clearSearchInput]="false"
+                           [disableScrollToActiveOnOptionsChanged]="true"
+                           noEntriesFoundLabel="No entries"
+                           placeholderLabel="Search"></ngx-mat-select-search>
+  </mat-option>
+  <cdk-virtual-scroll-viewport #cdkVirtualScrollViewport itemSize="48"
+                               [style.height.px]="(scrollableDataSource?.length >= 9 ? 9 : scrollableDataSource?.length)*48"
+                               [minBufferPx]="10*48"
+                               [maxBufferPx]="20*48"
+                               class="example-viewport">
+    <mat-option *cdkVirtualFor="let item of scrollableDataSource"
+                [value]="item">{{item?.description || 'Loading...'}}</mat-option>
+  </cdk-virtual-scroll-viewport>
+  <mat-option *ngFor="let tagger of selectFormControl.value" [value]="tagger" style="display: none">{{tagger.description}}</mat-option>
+</mat-select>
