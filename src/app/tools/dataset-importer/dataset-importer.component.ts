@@ -87,7 +87,7 @@ export class DatasetImporterComponent implements OnInit, OnDestroy {
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
-    merge(this.sort.sortChange, this.paginator.page, this.filteredSubject)
+    merge(this.sort.sortChange, this.paginator.page, this.filteredSubject, this.updateTable)
       .pipe(debounceTime(250), startWith({}), switchMap(() => {
         this.isLoadingResults = true;
         const sortDirection = this.sort.direction === 'desc' ? '-' : '';

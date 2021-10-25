@@ -102,12 +102,14 @@ describe('rakun-extractor should work', function () {
 
     cy.get('[data-cy=appRakunExtractorCreateDialogSubmit]').click();
     cy.wait('@postRakunExtractor').its('response.statusCode').should('eq', 201);
+    cy.wait('@getRakunExtractors')
     cy.wait(1000);
-
+    
     extractRandomDoc();
     extractText();
     applyToIndex();
 
+    cy.wait(1000);
     cy.get('.cdk-column-actions:nth(1)').click('left');
     cy.get('[data-cy=appRakunExtractorMenuDelete]').click();
     cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
