@@ -21,19 +21,6 @@
         <mat-expansion-panel expanded>
           <mat-expansion-panel-header [expandedHeight]="'48px'">
             <mat-panel-title>
-              Keywords
-            </mat-panel-title>
-          </mat-expansion-panel-header>
-          <div fxLayout="row wrap">
-            <app-fact-chip *ngFor="let item of uniqueFacts" [backGroundColor]="item.backgroundColor"
-                           [displayValue]="item.fact.fact"
-                           [hoverValue]="taggerIdAccessor(item.fact)"
-                           [textColor]="item.textColor"></app-fact-chip>
-          </div>
-        </mat-expansion-panel>
-        <mat-expansion-panel expanded>
-          <mat-expansion-panel-header [expandedHeight]="'48px'">
-            <mat-panel-title>
               Matches
             </mat-panel-title>
           </mat-expansion-panel-header>
@@ -41,7 +28,7 @@
             <app-fact-chip *ngFor="let item of distinctMatches"
                            [backGroundColor]="colorMap.get(item.fact)?.backgroundColor || ''"
                            [displayValue]="item.str_val"
-                           [hoverValue]="taggerIdAccessor(item)"
+                           [hoverValue]="probabilityAccessor(item)"
                            [textColor]="colorMap.get(item.fact)?.textColor || ''"></app-fact-chip>
           </div>
         </mat-expansion-panel>
@@ -57,9 +44,9 @@
             searcherHighlight: null,
             highlightTextaFacts: true,
             highlightHyperlinks: true,
-            titleAccessor: taggerIdAccessor,
+            titleAccessor: probabilityAccessor,
             colors: colorMap,
-            data:{text:result.text, texta_facts: result.matches}}"></app-generic-highlighter>
+            data:{text:result.text, texta_facts: result.keywords}}"></app-generic-highlighter>
         </mat-expansion-panel>
       </mat-accordion>
     </div>

@@ -143,11 +143,14 @@ export class TagRandomDocResultComponent implements OnInit {
           if (previousMatch === undefined || previousMatch.spans[0] !== match.spans[0] && previousMatch.spans[1] !== match.spans[1]) {
             previousMatch = match;
           } else if (match && previousMatch) {
-            const src = JSON.parse(previousMatch.source);
-            const matchSrc = JSON.parse(match.source);
-            if (src.hasOwnProperty(this.taggerIdAccessor) && matchSrc.hasOwnProperty(this.taggerIdAccessor)) {
-              src[this.taggerIdAccessor] = src[this.taggerIdAccessor] + ', ' + matchSrc[this.taggerIdAccessor];
-              previousMatch.source = JSON.stringify(src);
+            if (previousMatch.source && match.source) {
+              const src = JSON.parse(previousMatch.source);
+              const matchSrc = JSON.parse(match.source);
+
+              if (src.hasOwnProperty(this.taggerIdAccessor) && matchSrc.hasOwnProperty(this.taggerIdAccessor)) {
+                src[this.taggerIdAccessor] = src[this.taggerIdAccessor] + ', ' + matchSrc[this.taggerIdAccessor];
+                previousMatch.source = JSON.stringify(src);
+              }
             }
           }
         }

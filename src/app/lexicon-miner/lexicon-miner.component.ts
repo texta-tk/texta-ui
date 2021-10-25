@@ -32,6 +32,7 @@ export class LexiconMinerComponent implements OnInit, OnDestroy, AfterViewInit {
   currentProject: Project;
   destroyed$ = new Subject<boolean>();
   resultsLength: number;
+  private updateTable = new Subject<boolean>();
 
   constructor(private projectStore: ProjectStore,
               private lexiconService: LexiconService,
@@ -58,7 +59,7 @@ export class LexiconMinerComponent implements OnInit, OnDestroy, AfterViewInit {
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
-    merge(this.sort.sortChange, this.paginator.page)
+    merge(this.sort.sortChange, this.paginator.page, this.updateTable)
       .pipe(debounceTime(250), startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
@@ -94,8 +95,9 @@ export class LexiconMinerComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     dialogRef.afterClosed().subscribe((resp: Lexicon | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.tableData.data = [...this.tableData.data, resp];
+        this.updateTable.next(true);
         this.logService.snackBarMessage(`Created Lexicon ${resp.description}`, 2000);
+        this.projectStore.refreshSelectedProjectResourceCounts();
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       }

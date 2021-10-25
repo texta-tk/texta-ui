@@ -50,17 +50,35 @@
     </mat-form-field>
 
 
-    <mat-form-field data-cy="appEmbeddingCreateDialogDimensions">
+    <mat-form-field>
+      <input formControlName="frequencyFormControl" matInput pattern="[1-9]\d*" placeholder="Minimum frequency"
+             step="5"
+             type="number">
+      <mat-hint>{{embeddingOptions?.actions?.POST?.min_freq?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field data-cy="appEmbeddingCreateDialogDimensions" >
       <input formControlName="dimensionsFormControl" matInput pattern="[1-9]\d*" placeholder="Number of Dimensions"
              step="50"
              type="number">
       <mat-hint>{{embeddingOptions?.actions?.POST?.num_dimensions?.help_text || ''}}</mat-hint>
     </mat-form-field>
+
     <mat-form-field>
-      <input formControlName="frequencyFormControl" matInput pattern="[1-9]\d*" placeholder="Minimum frequency" step="5"
+      <input formControlName="windowSizeFormControl" matInput pattern="[1-9]\d*"
+             placeholder="Window size" step="1" min="1"
              type="number">
-      <mat-hint>{{embeddingOptions?.actions?.POST?.min_freq?.help_text || ''}}</mat-hint>
+      <mat-hint>{{embeddingOptions?.actions?.POST?.window_size?.help_text || ''}}</mat-hint>
     </mat-form-field>
+
+    <mat-form-field>
+      <input formControlName="epochFormControl" matInput pattern="[1-9]\d*"
+             placeholder="Epoch" step="1" min="1"
+             type="number">
+      <mat-hint>{{embeddingOptions?.actions?.POST?.num_epochs?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+
+
     <mat-checkbox data-cy="appEmbeddingCreateDialogUsePhraser" formControlName="usePhraserFormControl"
                   matTooltip="{{embeddingOptions?.actions?.POST?.use_phraser?.help_text || ''}}"
                   matTooltipPosition="left">Use phraser

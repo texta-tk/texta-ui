@@ -44,6 +44,7 @@ export class DatasetImporterComponent implements OnInit, OnDestroy {
 
   currentProject: Project;
   resultsLength: number;
+  private updateTable = new Subject<boolean>();
 
   constructor(private projectStore: ProjectStore,
               private importerService: DatasetImporterService,
@@ -118,7 +119,8 @@ export class DatasetImporterComponent implements OnInit, OnDestroy {
     });
     dialogRef.afterClosed().subscribe((resp: DatasetImporter | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.tableData.data = [...this.tableData.data, resp];
+        this.updateTable.next(true);
+        this.projectStore.refreshSelectedProjectResourceCounts();
         this.logService.snackBarMessage(`Created importer ${resp.description}`, 2000);
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);

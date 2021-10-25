@@ -47,6 +47,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
   inputFilterQuery = '';
   filteringValues: { [key: string]: string } = {};
   resultsLength: number;
+  private updateTable = new Subject<boolean>();
 
 
   currentProject: Project;
@@ -101,7 +102,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
-    merge(this.sort.sortChange, this.paginator.page, this.filteredSubject)
+    merge(this.sort.sortChange, this.paginator.page, this.filteredSubject, this.updateTable)
       .pipe(debounceTime(250), startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
@@ -154,7 +155,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     dialogRef.afterClosed().subscribe((resp: Embedding | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.tableData.data = [...this.tableData.data, resp];
+        this.updateTable.next();
         this.logService.snackBarMessage(`Created embedding ${resp.description}`, 2000);
         this.projectStore.refreshSelectedProjectResourceCounts();
       } else if (resp instanceof HttpErrorResponse) {

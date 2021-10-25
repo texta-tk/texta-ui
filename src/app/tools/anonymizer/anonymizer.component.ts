@@ -38,6 +38,7 @@ export class AnonymizerComponent implements OnInit, OnDestroy, AfterViewInit {
   destroyed$: Subject<boolean> = new Subject<boolean>();
   currentProject: Project;
   patchRowQueue: Subject<Anonymizer> = new Subject();
+  private updateTable = new Subject<boolean>();
 
   constructor(private projectStore: ProjectStore,
               private anonymizerService: AnonymizerService,
@@ -74,7 +75,7 @@ export class AnonymizerComponent implements OnInit, OnDestroy, AfterViewInit {
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
-    merge(this.sort.sortChange, this.paginator.page)
+    merge(this.sort.sortChange, this.paginator.page, this.updateTable)
       .pipe(debounceTime(250), startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
@@ -117,7 +118,7 @@ export class AnonymizerComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     dialogRef.afterClosed().subscribe(resp => {
       if (resp) {
-        this.tableData.data = [resp, ...this.tableData.data];
+        this.updateTable.next(true);
       }
     });
   }

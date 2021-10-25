@@ -42,6 +42,7 @@ export class TopicAnalyzerComponent implements OnInit, OnDestroy, AfterViewInit 
   currentProject: Project;
   destroyed$ = new Subject<boolean>();
   resultsLength: number;
+  private updateTable = new Subject<boolean>();
 
   constructor(private projectStore: ProjectStore,
               private clusterService: TopicAnalyzerService,
@@ -70,7 +71,7 @@ export class TopicAnalyzerComponent implements OnInit, OnDestroy, AfterViewInit 
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
-    merge(this.sort.sortChange, this.paginator.page)
+    merge(this.sort.sortChange, this.paginator.page, this.updateTable)
       .pipe(debounceTime(250), startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
@@ -114,7 +115,8 @@ export class TopicAnalyzerComponent implements OnInit, OnDestroy, AfterViewInit 
     });
     dialogRef.afterClosed().subscribe((resp: Cluster | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.tableData.data = [...this.tableData.data, resp];
+        this.updateTable.next(true);
+        this.projectStore.refreshSelectedProjectResourceCounts();
         this.logService.snackBarMessage(`Created cluster ${resp.description}`, 2000);
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);

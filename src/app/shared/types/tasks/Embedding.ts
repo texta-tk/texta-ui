@@ -311,6 +311,8 @@ export interface POST {
   min_freq: MinFreq;
   vocab_size: VocabSize;
   task: Task;
+  window_size: NumDimensions;
+  num_epochs: NumDimensions;
 }
 
 export interface Actions {

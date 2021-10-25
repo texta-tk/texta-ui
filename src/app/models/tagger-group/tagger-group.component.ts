@@ -50,6 +50,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
   currentProject: Project;
   destroyed$ = new Subject<boolean>();
   resultsLength: number;
+  private updateTable = new Subject<boolean>();
 
   constructor(public dialog: MatDialog,
               private projectStore: ProjectStore,
@@ -82,7 +83,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
-    merge(this.sort.sortChange, this.paginator.page, this.filteredSubject)
+    merge(this.sort.sortChange, this.paginator.page, this.filteredSubject, this.updateTable)
       .pipe(debounceTime(250), startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
@@ -125,7 +126,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     dialogRef.afterClosed().subscribe((resp: TaggerGroup) => {
       if (resp) {
-        this.tableData.data = [...this.tableData.data, resp];
+        this.updateTable.next();
         this.logService.snackBarMessage(`Created Tagger Group ${resp.description}`, 2000);
         this.projectStore.refreshSelectedProjectResourceCounts();
       }

@@ -14,6 +14,18 @@ import {UtilityFunctions} from '../../../../shared/UtilityFunctions';
 import {LogService} from '../../../../core/util/log.service';
 import {EmbeddingOptions} from '../../../../shared/types/tasks/Embedding';
 
+interface OnSubmitParams {
+  fieldsFormControl: string[];
+  descriptionFormControl: string;
+  indicesFormControl: ProjectIndex[];
+  dimensionsFormControl: number;
+  frequencyFormControl: number;
+  usePhraserFormControl: boolean;
+  embeddingTypeFormControl: { value: string, display_name: string };
+  windowSizeFormControl: number;
+  epochFormControl: number;
+}
+
 @Component({
   selector: 'app-create-embedding-dialog',
   templateUrl: './create-embedding-dialog.component.html',
@@ -30,6 +42,8 @@ export class CreateEmbeddingDialogComponent implements OnInit {
     embeddingTypeFormControl: new FormControl(),
     dimensionsFormControl: new FormControl(100, [Validators.required]),
     frequencyFormControl: new FormControl(5, [Validators.required]),
+    epochFormControl: new FormControl(5, [Validators.required]),
+    windowSizeFormControl: new FormControl(5, [Validators.required]),
     usePhraserFormControl: new FormControl(false)
 
   });
@@ -94,10 +108,7 @@ export class CreateEmbeddingDialogComponent implements OnInit {
     this.query = query ? query : this.defaultQuery;
   }
 
-  onSubmit(formData: {
-    fieldsFormControl: string[]; descriptionFormControl: string;
-    indicesFormControl: ProjectIndex[]; dimensionsFormControl: number; frequencyFormControl: number; usePhraserFormControl: boolean; embeddingTypeFormControl: { value: string, display_name: string }
-  }): void {
+  onSubmit(formData: OnSubmitParams): void {
     this.isLoading = true;
     const body = {
       description: formData.descriptionFormControl,
@@ -107,6 +118,8 @@ export class CreateEmbeddingDialogComponent implements OnInit {
       embedding_type: formData.embeddingTypeFormControl.value,
       min_freq: formData.frequencyFormControl,
       use_phraser: formData.usePhraserFormControl,
+      num_epochs: formData.epochFormControl,
+      window_size: formData.windowSizeFormControl,
       ...this.query ? {query: this.query} : {},
     };
 

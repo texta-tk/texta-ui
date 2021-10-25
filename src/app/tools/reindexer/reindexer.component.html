@@ -34,7 +34,7 @@
 
   <div class="table-container overflow-auto">
     <table [dataSource]="tableData" mat-table matSort
-           matSortActive="id" matSortDirection="asc" matSortDisableClear multiTemplateDataRows>
+           matSortActive="id" matSortDirection="desc" matSortDisableClear multiTemplateDataRows>
       <ng-container matColumnDef="select">
         <th *matHeaderCellDef mat-header-cell>
           <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selectedRows.hasValue() && isAllSelected()"

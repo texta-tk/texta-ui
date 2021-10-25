@@ -143,7 +143,7 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     dialogRef.afterClosed().subscribe((resp: RegexTagger) => {
       if (resp) {
-        this.tableData.data = [resp, ...this.tableData.data];
+        this.updateTable.next(true);
         this.projectStore.refreshSelectedProjectResourceCounts();
         this.logService.snackBarMessage(`Created regex tagger: ${resp.description}`, 2000);
       }

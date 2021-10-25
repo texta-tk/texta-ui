@@ -32,7 +32,8 @@ export class ExtractFromTextDialogComponent implements OnInit {
               @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, rakun: RakunExtractor; }) {
   }
 
-  taggerIdAccessor = (x: Match) => '';
+  // tslint:disable-next-line:no-any
+  probabilityAccessor = (x: any) => `probability: ${x.probability}`;
 
   ngOnInit(): void {
     this.projectStore.getCurrentProject().pipe(filter(x => !!x), take(1), switchMap(proj => {
