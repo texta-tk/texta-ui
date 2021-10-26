@@ -12,9 +12,9 @@
                            placeholderLabel="Search"></ngx-mat-select-search>
   </mat-option>
   <cdk-virtual-scroll-viewport #cdkVirtualScrollViewport itemSize="48"
-                               [style.height.px]="(scrollableDataSource.length >= 9 ? 9 : scrollableDataSource.length)*48"
-                               [minBufferPx]="10*48"
-                               [maxBufferPx]="20*48"
+                               [style.height.px]="(scrollableDataSource.length >= 7 ? 7 : scrollableDataSource.length)*48"
+                               [minBufferPx]="8*48"
+                               [maxBufferPx]="16*48"
                                class="example-viewport">
     <mat-option *cdkVirtualFor="let item of scrollableDataSource"
                 [value]="item">{{item?.description || 'Loading...'}}</mat-option>
