@@ -5,6 +5,7 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {LogService} from 'src/app/core/util/log.service';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
+import {TaggerGroup} from '../../../shared/types/tasks/Tagger';
 
 @Component({
   selector: 'app-tagger-group-tag-text-dialog',
@@ -22,16 +23,18 @@ export class TaggerGroupTagTextDialogComponent implements OnInit, OnDestroy {
   tagTextOptions: any;
 
   constructor(private taggerGroupService: TaggerGroupService, private logService: LogService,
-              @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, taggerId: number; }) {
+              @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, tagger: TaggerGroup; }) {
   }
 
   ngOnInit(): void {
-    this.taggerGroupService.getTagTextOptions(this.data.currentProjectId, this.data.taggerId).pipe(
-      takeUntil(this.destroyed$)).subscribe(options => {
-      if (options && !(options instanceof HttpErrorResponse)) {
-        this.tagTextOptions = options;
-      }
-    });
+    if (this.data?.tagger?.id) {
+      this.taggerGroupService.getTagTextOptions(this.data.currentProjectId, this.data.tagger.id).pipe(
+        takeUntil(this.destroyed$)).subscribe(options => {
+        if (options && !(options instanceof HttpErrorResponse)) {
+          this.tagTextOptions = options;
+        }
+      });
+    }
   }
 
   ngOnDestroy(): void {
@@ -41,19 +44,22 @@ export class TaggerGroupTagTextDialogComponent implements OnInit, OnDestroy {
 
   onSubmit(value: string): void {
     this.isLoading = true;
-    this.taggerGroupService.tagText(
-      {
-        text: value, lemmatize: this.lemmatize, use_ner: this.ner,
-        n_similar_docs: this.nSimilarDocs
-      }, this.data.currentProjectId, this.data.taggerId)
-      .subscribe((resp: { probability: number, tag: string, tagger_id: number }[] | HttpErrorResponse) => {
-        if (resp && !(resp instanceof HttpErrorResponse)) {
-          this.results = resp;
-        } else if (resp instanceof HttpErrorResponse) {
-          this.logService.snackBarError(resp, 4000);
-          this.results = null;
-        }
-      }, null, () => this.isLoading = false);
+    if (this.data?.tagger?.id) {
+      this.taggerGroupService.tagText(
+        {
+          text: value, lemmatize: this.lemmatize, use_ner: this.ner,
+          n_similar_docs: this.nSimilarDocs
+        }, this.data.currentProjectId, this.data.tagger.id)
+        .subscribe((resp: { probability: number, tag: string, tagger_id: number }[] | HttpErrorResponse) => {
+          if (resp && !(resp instanceof HttpErrorResponse)) {
+            this.results = resp;
+          } else if (resp instanceof HttpErrorResponse) {
+            this.logService.snackBarError(resp, 4000);
+            this.results = null;
+          }
+          this.isLoading = false;
+        });
+    }
   }
 
 

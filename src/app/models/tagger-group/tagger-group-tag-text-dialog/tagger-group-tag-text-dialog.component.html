@@ -1,3 +1,10 @@
+<div class="flex-row">
+  <h1 mat-dialog-title>Tag Text</h1>
+  <mat-chip-list disabled class="flex-item-right">
+    <mat-chip *ngIf="data.tagger" color="primary" selected style="opacity: 1"><span
+      [matTooltip]="'Id: '+data.tagger.id">{{data.tagger.description}}</span></mat-chip>
+  </mat-chip-list>
+</div>
 <mat-form-field class="max-width">
   <input matInput placeholder="Tag text" #textInput>
 </mat-form-field>
@@ -21,10 +28,11 @@
   <br>
   <br>
 </div>
-<div class="flex-col">
-  <div class="flex-row">
-    <div class="flex-item-right">
-      <button type="submit" mat-button (click)="onSubmit(textInput.value)">Post</button>
-    </div>
+<div class="flex-row" mat-dialog-actions>
+  <div class="flex-item-left">
+    <button mat-dialog-close="" mat-stroked-button>Close</button>
+  </div>
+  <div class="flex-item-right">
+    <button type="submit" mat-stroked-button (click)="onSubmit(textInput.value)">Tag</button>
   </div>
 </div>

@@ -35,7 +35,7 @@ export class BertTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: BertTagger | null;
   public tableData: MatTableDataSource<BertTagger> = new MatTableDataSource();
   selectedRows = new SelectionModel<BertTagger>(true, []);
-  public displayedColumns = ['select', 'author__username', 'description', 'fields', 'task__time_started',
+  public displayedColumns = ['select', 'id', 'author__username', 'description', 'fields', 'task__time_started',
     'task__time_completed', 'f1_score', 'precision', 'recall', 'task__status', 'actions'];
   public isLoadingResults = true;
 
@@ -44,6 +44,7 @@ export class BertTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   resultsLength: number;
   destroyed$: Subject<boolean> = new Subject<boolean>();
   currentProject: Project;
+  private updateTable = new Subject<boolean>();
 
   constructor(private projectStore: ProjectStore,
               private bertTaggerService: BertTaggerService,
@@ -74,7 +75,7 @@ export class BertTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
-    merge(this.sort.sortChange, this.paginator.page)
+    merge(this.sort.sortChange, this.paginator.page, this.updateTable)
       .pipe(debounceTime(250), startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
@@ -130,7 +131,7 @@ export class BertTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     dialogRef.afterClosed().subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.tableData.data = [...this.tableData.data, resp];
+        this.updateTable.next();
         this.projectStore.refreshSelectedProjectResourceCounts();
       }
     });

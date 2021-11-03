@@ -15,8 +15,8 @@ import {ProjectStore} from '../../core/projects/project.store';
 import {IndexSplitterService} from '../../core/tools/index-splitter/index-splitter.service';
 import {LogService} from '../../core/util/log.service';
 import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
-import {Index} from "../../shared/types/tasks/BertTagger";
-import {QueryDialogComponent} from "../../shared/components/dialogs/query-dialog/query-dialog.component";
+import {Index} from '../../shared/types/tasks/BertTagger';
+import {QueryDialogComponent} from '../../shared/components/dialogs/query-dialog/query-dialog.component';
 
 @Component({
   selector: 'app-index-splitter',
@@ -30,7 +30,7 @@ export class IndexSplitterComponent implements OnInit, OnDestroy, AfterViewInit 
   expandedElement: IndexSplitter | null;
   public tableData: MatTableDataSource<IndexSplitter> = new MatTableDataSource();
   selectedRows = new SelectionModel<IndexSplitter>(true, []);
-  public displayedColumns = ['select', 'author', 'description', 'test_index', 'train_index', 'distribution', 'task__time_started', 'task__time_completed', 'task__status'];
+  public displayedColumns = ['select', 'id', 'author', 'description', 'test_index', 'train_index', 'distribution', 'task__time_started', 'task__time_completed', 'task__status'];
   public isLoadingResults = true;
 
   @ViewChild(MatSort) sort: MatSort;

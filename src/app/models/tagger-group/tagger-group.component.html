@@ -10,7 +10,8 @@
               data-cy="appModelsTaggerGroupCreateBtn" mat-raised-button>
         CREATE
       </button>
-      <button (click)="onDeleteAllSelected()" [disabled]="selectedRows.selected.length < 1" class="new-resource-btn" color="warn"
+      <button (click)="onDeleteAllSelected()" [disabled]="selectedRows.selected.length < 1" class="new-resource-btn"
+              color="warn"
               mat-icon-button matTooltip="Delete selected">
         <mat-icon>delete</mat-icon>
       </button>
@@ -26,7 +27,7 @@
 
   <div class="table-container overflow-auto" [appScrollTop]="tableData">
     <table [dataSource]="tableData" mat-table matSort
-           matSortDirection="asc" matSortDisableClear multiTemplateDataRows>
+           matSortDirection="desc" matSortActive="id" matSortDisableClear multiTemplateDataRows>
       <ng-container matColumnDef="select">
         <th *matHeaderCellDef mat-header-cell>
           <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selectedRows.hasValue() && isAllSelected()"
@@ -39,10 +40,14 @@
           </mat-checkbox>
         </td>
       </ng-container>
-
+      <ng-container matColumnDef="id">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Id</th>
+        <td *matCellDef="let element" mat-cell> {{element.id}}</td>
+      </ng-container>
       <ng-container matColumnDef="author__username">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Author</th>
-        <td *matCellDef="let element" mat-cell [matTooltip]="element?.author?.username"> {{element?.author?.display_name}}</td>
+        <td *matCellDef="let element" mat-cell
+            [matTooltip]="element?.author?.username"> {{element?.author?.display_name}}</td>
       </ng-container>
       <ng-container matColumnDef="description">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Description</th>
@@ -78,7 +83,8 @@
         <th *matHeaderCellDef mat-header-cell> Progress</th>
         <td *matCellDef="let element" mat-cell>
 
-          <mat-progress-bar *ngIf="element.tagger_status" [value]="(element.tagger_status.completed /element.tagger_status.total) * 100"
+          <mat-progress-bar *ngIf="element.tagger_status"
+                            [value]="(element.tagger_status.completed /element.tagger_status.total) * 100"
                             mode="determinate">
           </mat-progress-bar>
           <mat-hint *ngIf="element.tagger_status">{{element.tagger_status.completed}}
@@ -138,6 +144,10 @@
                     <th class="mat-body-strong">Average F1 Score</th>
                     <td>{{element.tagger_statistics.avg_f1_score}}</td>
                   </tr>
+                  <tr>
+                    <th class="mat-body-strong">Sum size</th>
+                    <td>{{element.tagger_statistics.sum_size.size || 0}} {{element.tagger_statistics.sum_size.unit || ''}}</td>
+                  </tr>
                 </table>
               </div>
               <div>
@@ -148,12 +158,32 @@
                     <td>{{element.tagger_params.fields| join: ', '}}</td>
                   </tr>
                   <tr>
+                    <th class="mat-body-strong">Fact name</th>
+                    <td>{{element.fact_name}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Balance</th>
+                    <td>{{element.tagger_params.balance}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Balance to max limit</th>
+                    <td>{{element.tagger_params.balance_to_max_limit}}</td>
+                  </tr>
+                  <tr>
                     <th class="mat-body-strong">Vectorizer</th>
                     <td>{{element.tagger_params.vectorizer}}</td>
                   </tr>
                   <tr>
                     <th class="mat-body-strong">Classifier</th>
                     <td>{{element.tagger_params.classifier}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Ignore numbers</th>
+                    <td>{{element.tagger_params.ignore_numbers}}</td>
+                  </tr>
+                  <tr>
+                    <th class="mat-body-strong">Minimum sample size</th>
+                    <td>{{element.minimum_sample_size}}</td>
                   </tr>
                 </table>
               </div>
@@ -177,7 +207,8 @@
       </ng-container>
 
       <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
-      <tr (click)="expandedElement = expandedElement === element ? null : element" *matRowDef="let element; columns: displayedColumns;" [class.expanded-row]="expandedElement === element"
+      <tr (click)="expandedElement = expandedElement === element ? null : element"
+          *matRowDef="let element; columns: displayedColumns;" [class.expanded-row]="expandedElement === element"
           class="element-row"
           mat-row></tr>
       <tr *matRowDef="let row; columns: ['expandedDetail']" class="detail-row" mat-row></tr>

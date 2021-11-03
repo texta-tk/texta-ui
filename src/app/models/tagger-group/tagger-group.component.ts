@@ -36,7 +36,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: TaggerGroup | null;
   public tableData: MatTableDataSource<TaggerGroup> = new MatTableDataSource();
   selectedRows = new SelectionModel<TaggerGroup>(true, []);
-  public displayedColumns = ['select', 'author__username', 'description', 'fact_name', 'minimum_sample_size',
+  public displayedColumns = ['select', 'id', 'author__username', 'description', 'fact_name', 'minimum_sample_size',
     'num_tags', 'f1_score', 'precision', 'recall', 'progress', 'Modify'];
   public isLoadingResults = true;
 
@@ -179,27 +179,26 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   tagTextDialog(tagger: TaggerGroup): void {
-    const dialogRef = this.dialog.open(TaggerGroupTagTextDialogComponent, {
-      data: {taggerId: tagger.id, currentProjectId: this.currentProject.id},
-      maxHeight: '665px',
+    this.dialog.open(TaggerGroupTagTextDialogComponent, {
+      data: {tagger, currentProjectId: this.currentProject.id},
+      maxHeight: '90vh',
       width: '700px',
     });
   }
 
   tagDocDialog(tagger: TaggerGroup): void {
-    const dialogRef = this.dialog.open(TaggerGroupTagDocDialogComponent, {
+    this.dialog.open(TaggerGroupTagDocDialogComponent, {
       data: {taggerId: tagger.id, currentProjectId: this.currentProject.id},
-      maxHeight: '665px',
+      maxHeight: '90vh',
       width: '700px',
     });
   }
 
   tagRandomDocDialog(tagger: TaggerGroup): void {
-    const dialogRef = this.dialog.open(TaggerGroupTagRandomDocDialogComponent, {
+    this.dialog.open(TaggerGroupTagRandomDocDialogComponent, {
       data: {tagger, currentProjectId: this.currentProject.id},
-      minHeight: '300px',
-      maxHeight: '710x',
-      width: '1200px',
+      maxHeight: '90vh',
+      width: '700px',
     });
   }
 

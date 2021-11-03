@@ -31,7 +31,7 @@ export class CRFExtractorComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: CRFExtractor | null;
   public tableData: MatTableDataSource<CRFExtractor> = new MatTableDataSource();
   selectedRows = new SelectionModel<CRFExtractor>(true, []);
-  public displayedColumns = ['select', 'author__username', 'description', 'mlp_field', 'task__time_started', 'task__time_completed', 'f1_score', 'precision', 'recall', 'task__status', 'actions'];
+  public displayedColumns = ['select', 'id', 'author__username', 'description', 'mlp_field', 'task__time_started', 'task__time_completed', 'f1_score', 'precision', 'recall', 'task__status', 'actions'];
   public isLoadingResults = true;
 
   @ViewChild(MatSort) sort: MatSort;
