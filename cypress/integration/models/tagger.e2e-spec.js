@@ -132,6 +132,7 @@ describe('taggers should work', function () {
       expect(created.response.statusCode).to.eq(201);
       assert.equal(created.response.body.task.status, 'created');
     });
+    cy.wait('@getTaggers');
 
     cy.get('.mat-header-row > .cdk-column-author__username').should('be.visible').then(bb => {
       cy.wrap([0, 0, 0, 0, 0, 0, 0, 0]).each(y => { // hack to wait for task to complete

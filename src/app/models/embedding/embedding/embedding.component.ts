@@ -33,7 +33,7 @@ import {MatSelectChange} from '@angular/material/select';
 export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: Embedding | null;
   public tableData: MatTableDataSource<Embedding> = new MatTableDataSource();
-  public displayedColumns = ['select', 'author__username', 'description',
+  public displayedColumns = ['select', 'id', 'author__username', 'description',
     'fields', 'task__time_started', 'task__time_completed', 'num_dims', 'min_freq', 'vocab_size', 'task__status', 'Modify'];
   selectedRows = new SelectionModel<Embedding>(true, []);
   public isLoadingResults = true;

@@ -13,7 +13,7 @@ describe('TagTextDialogComponent', () => {
   const mockDialogRef = {
     close: jasmine.createSpy('close')
   };
-  const data = {currentProjectId: 1, taggerId: 2};
+  const data = {currentProjectId: 1, tagger: undefined};
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [TagTextDialogComponent],

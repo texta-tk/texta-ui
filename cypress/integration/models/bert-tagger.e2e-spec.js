@@ -77,6 +77,7 @@ describe('bert-taggers should work', function () {
     cy.get('[data-cy=appBertTaggerCreateDialogQuery]').type('{"query":{"bool":{"must":[],"filter":[],"must_not":[],"should":[{"bool":{"must":[{"bool":{"should":[{"multi_match":{"query":"tere","type":"phrase_prefix","slop":"0","fields":["comment_content"]}}],"minimum_should_match":1}}]}}],"minimum_should_match":1}}}',{ parseSpecialCharSequences: false })
     cy.get('[data-cy=appBertTaggerCreateDialogSubmit]').click();
     cy.wait('@postbertTaggers').its('response.statusCode').should('eq', 201);
+    cy.wait('@getbertTaggers');
     cy.wait(1000);
     cy.get('.mat-header-row > .cdk-column-author__username').should('be.visible').then(bb => {
       cy.wrap([0, 0, 0, 0]).each(xy => { // hack to wait for task to complete

@@ -119,6 +119,7 @@ export class AnonymizerComponent implements OnInit, OnDestroy, AfterViewInit {
     dialogRef.afterClosed().subscribe(resp => {
       if (resp) {
         this.updateTable.next(true);
+        this.projectStore.refreshSelectedProjectResourceCounts();
       }
     });
   }

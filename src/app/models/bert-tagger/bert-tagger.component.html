@@ -23,7 +23,7 @@
 
   <div [appScrollTop]="tableData" class="tasks-table overflow-auto">
     <table [dataSource]="tableData" mat-table
-           matSort matSortDirection="asc"
+           matSort matSortDirection="desc" matSortActive="id"
            multiTemplateDataRows>
       <ng-container matColumnDef="select">
         <th *matHeaderCellDef mat-header-cell>

@@ -25,7 +25,7 @@ import {EditTaggerDialogComponent} from './edit-tagger-dialog/edit-tagger-dialog
 import {Index} from '../../shared/types/Index';
 import {ApplyToIndexDialogComponent} from './apply-to-index-dialog/apply-to-index-dialog.component';
 import {MatSelectChange} from '@angular/material/select';
-import { MultiTagTextDialogComponent } from './multi-tag-text-dialog/multi-tag-text-dialog.component';
+import {MultiTagTextDialogComponent} from './multi-tag-text-dialog/multi-tag-text-dialog.component';
 
 @Component({
   selector: 'app-tagger',
@@ -40,7 +40,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: Tagger | null;
   public tableData: MatTableDataSource<Tagger> = new MatTableDataSource();
   selectedRows = new SelectionModel<Tagger>(true, []);
-  public displayedColumns = ['select', 'author__username', 'description', 'fields', 'task__time_started',
+  public displayedColumns = ['select', 'id', 'author__username', 'description', 'fields', 'task__time_started',
     'task__time_completed', 'f1_score', 'precision', 'recall', 'task__status', 'Modify'];
   public isLoadingResults = true;
 
@@ -54,6 +54,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   currentProject: Project;
   destroyed$ = new Subject<boolean>();
+  private updateTable = new Subject<boolean>();
 
   constructor(private projectStore: ProjectStore,
               private taggerService: TaggerService,
@@ -99,7 +100,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
-    merge(this.sort.sortChange, this.paginator.page, this.filteredSubject)
+    merge(this.sort.sortChange, this.paginator.page, this.filteredSubject, this.updateTable)
       .pipe(debounceTime(250), startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
@@ -179,7 +180,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     dialogRef.afterClosed().subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.tableData.data = [...this.tableData.data, resp];
+        this.updateTable.next();
         this.logService.snackBarMessage(`Created tagger ${resp.description}`, 2000);
         this.projectStore.refreshSelectedProjectResourceCounts();
       } else if (resp instanceof HttpErrorResponse) {
@@ -202,23 +203,23 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   editStopwordsDialog(tagger: Tagger): void {
-    const dialogRef = this.dialog.open(EditStopwordsDialogComponent, {
+    this.dialog.open(EditStopwordsDialogComponent, {
       data: {taggerId: tagger.id, currentProjectId: this.currentProject.id, ignore_numbers: tagger.ignore_numbers},
       maxHeight: '90vh',
       width: '700px',
     });
   }
 
-  tagTextDialog(tagger: Tagger): void {
-    const dialogRef = this.dialog.open(TagTextDialogComponent, {
-      data: {taggerId: tagger.id, currentProjectId: this.currentProject.id},
+  tagTextDialog(element: Tagger): void {
+    this.dialog.open(TagTextDialogComponent, {
+      data: {tagger: element, currentProjectId: this.currentProject.id},
       maxHeight: '665px',
       width: '700px',
     });
   }
 
   tagDocDialog(tagger: Tagger): void {
-    const dialogRef = this.dialog.open(TagDocDialogComponent, {
+    this.dialog.open(TagDocDialogComponent, {
       data: {tagger, currentProjectId: this.currentProject.id},
       maxHeight: '665px',
       width: '700px',
@@ -227,7 +228,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
   tagRandomDocDialog(tagger: Tagger): void {
-    const dialogRef = this.dialog.open(TagRandomDocDialogComponent, {
+    this.dialog.open(TagRandomDocDialogComponent, {
       data: {tagger, currentProjectId: this.currentProject.id},
       maxHeight: '90vh',
       width: '700px',

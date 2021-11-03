@@ -38,7 +38,7 @@
 
   <div [appScrollTop]="tableData" class="table-container overflow-auto">
     <table [dataSource]="tableData" mat-table
-           matSort matSortDirection="asc" matSortDisableClear
+           matSort matSortDirection="desc" matSortActive="id" matSortDisableClear
            multiTemplateDataRows>
       <ng-container matColumnDef="select">
         <th *matHeaderCellDef mat-header-cell>
@@ -52,7 +52,10 @@
           </mat-checkbox>
         </td>
       </ng-container>
-
+      <ng-container matColumnDef="id">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Id</th>
+        <td *matCellDef="let element" mat-cell> {{element.id}}</td>
+      </ng-container>
       <ng-container matColumnDef="description">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Description</th>
         <td *matCellDef="let element" mat-cell> {{element.description}}</td>

@@ -20,7 +20,7 @@
 
   <div [appScrollTop]="tableData" class="tasks-table overflow-auto">
     <table [dataSource]="tableData" mat-table
-           matSort matSortDirection="asc"
+           matSort matSortDirection="desc" matSortActive="id"
            multiTemplateDataRows>
       <ng-container matColumnDef="select">
         <th *matHeaderCellDef mat-header-cell>
@@ -34,7 +34,10 @@
           </mat-checkbox>
         </td>
       </ng-container>
-
+      <ng-container matColumnDef="id">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Id</th>
+        <td *matCellDef="let element" mat-cell> {{element.id}}</td>
+      </ng-container>
       <ng-container matColumnDef="description">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Description</th>
         <td *matCellDef="let element" mat-cell> {{element.description}}</td>
