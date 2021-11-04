@@ -1,6 +1,6 @@
 <div class="wrapper" fxFlex fxLayout="column">
 
-  <div *ngFor="let aggregation of aggregationList; let i = index;" class="aggregation-form" fxFlex fxLayout="column">
+  <div class="aggregation-form flex-col" *ngFor="let aggregation of aggregationList; let i = index;">
 
     <div *ngIf="i !== 0" fxFlex fxLayoutAlign="end">
       <button (click)="removeAggregation(i)" aria-label="Close" class="mat-icon-button close-button" mat-icon-button>
@@ -9,14 +9,24 @@
     </div>
     <mat-form-field appearance="outline" class="max-width">
       <mat-label>Select Fields</mat-label>
-      <mat-select [disableOptionCentering]="true" [formControl]="aggregation.formControl"
+      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
                   data-cy="appSearcherSidebarAggregationsSelectField"
-                  panelClass="select-panel-reveal-input">
-        <mat-option *ngFor="let fields of (fieldsFiltered | async)"
-                    [disabled]="fields.type === 'date' && aggregation.formControl.value.type !== 'date' && dateAlreadySelected"
-                    [value]="fields"
-                    title="{{fieldIndexMap.get(fields.path)?.join('\n')}}">
-          {{fields.path}}
+                  [formControl]="aggregation.formControl">
+        <mat-select-trigger>{{aggregation?.formControl?.value?.path}}</mat-select-trigger>
+        <mat-option *ngFor="let fields of (fieldsFiltered | async)" [value]="fields"
+                    title="{{fieldIndexMap.get(fields.path)?.join('\n')}}"
+                    [disabled]="fields.type === 'date' && aggregation.formControl.value.type !== 'date' && dateAlreadySelected">
+          <ng-container *ngIf="fields.type === 'fact'">
+            {{fields.path}}
+          </ng-container>
+          <ng-container *ngIf="fields.type === 'date'">
+            <mat-icon>date_range</mat-icon>
+            {{fields.path}}
+          </ng-container>
+          <ng-container *ngIf="fields.type === 'text'">
+            <mat-icon>text_fields</mat-icon>
+            {{fields.path}}
+          </ng-container>
         </mat-option>
       </mat-select>
     </mat-form-field>

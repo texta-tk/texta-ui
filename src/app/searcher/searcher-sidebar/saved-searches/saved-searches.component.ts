@@ -24,6 +24,7 @@ export class SavedSearchesComponent implements OnInit, OnDestroy {
   dataSource: MatTableDataSource<SavedSearch> = new MatTableDataSource();
   destroyed$: Subject<boolean> = new Subject<boolean>();
   currentProject: Project;
+  loadingSavedSearches = true;
 
   constructor(private searcherService: SearcherService,
               private projectStore: ProjectStore,
@@ -36,27 +37,36 @@ export class SavedSearchesComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), switchMap(currentProject => {
       if (currentProject) {
+        this.loadingSavedSearches = true;
         this.currentProject = currentProject;
+        this.changeDetectorRef.markForCheck();
         return this.searcherService.getSavedSearches(currentProject.id);
       } else {
         return of(null);
       }
     })).subscribe(response => {
+      this.loadingSavedSearches = false;
       if (response && !(response instanceof HttpErrorResponse)) {
         this.dataSource.data = response;
         this.searchService.savedSearchSelection = new SelectionModel<SavedSearch>(true, []);
       }
+      this.changeDetectorRef.markForCheck();
     });
 
     this.searchService.getSavedSearchUpdate().pipe(takeUntil(this.destroyed$), switchMap(val => {
       if (this.currentProject.id && val) {
+        this.loadingSavedSearches = true;
+        this.changeDetectorRef.markForCheck();
         return this.searcherService.getSavedSearches(this.currentProject.id);
       }
       return of(null);
     })).subscribe(response => {
+      this.loadingSavedSearches = false;
       if (response && !(response instanceof HttpErrorResponse)) {
         this.dataSource.data = response;
+        this.searchService.savedSearchSelection.clear();
       }
+      this.changeDetectorRef.markForCheck();
     });
   }
 
@@ -91,6 +101,7 @@ export class SavedSearchesComponent implements OnInit, OnDestroy {
       this.dataSource.data = [...this.dataSource.data];
     });
     this.searchService.savedSearchSelection.clear();
+    this.changeDetectorRef.markForCheck();
   }
 
   edit(search: SavedSearch): void {

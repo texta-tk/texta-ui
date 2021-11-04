@@ -16,10 +16,7 @@ describe('regex-tagger-group should work', function () {
 
   function initPage() {
     cy.visit('/regex-tagger-groups');
-    cy.wait('@getRegexTaggers');
     cy.wait('@getProjectIndices');
-    cy.get('[data-cy=appNavbarProjectSelect]').click();
-    cy.get('mat-option').contains('integration_test_project').click();
     cy.wait('@getRegexTaggers');
   }
 
@@ -76,15 +73,6 @@ describe('regex-tagger-group should work', function () {
   function tagRandomDoc() {
     cy.get('.cdk-column-actions:nth(1)').should('be.visible').click('left');
     cy.get('[data-cy=appRegexTaggerGroupMenuTagRandomDoc]').should('be.visible').click();
-    cy.get('[data-cy=appRegexTaggerGroupTagRandomDocDialogIndices]').click().then((indices => {
-      cy.wrap(indices).should('have.class', 'mat-focused');
-      cy.closeCurrentCdkOverlay();
-      cy.matFormFieldShouldHaveError(indices, 'required');
-      cy.wrap(indices).click();
-      cy.get('.mat-option-text:nth(0)').should('be.visible').click();
-      cy.closeCurrentCdkOverlay();
-      cy.wrap(indices).find('mat-error').should('have.length', 0)
-    }));
     cy.get('[data-cy=appRegexTaggerGroupTagRandomDocDialogfields]').click().then((fields => {
       cy.wrap(fields).should('have.class', 'mat-focused');
       cy.closeCurrentCdkOverlay();

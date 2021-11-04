@@ -69,9 +69,13 @@ export class AggregationsComponent implements OnInit, OnDestroy {
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroy$)).subscribe(projectFields => {
       if (projectFields) {
         this.projectFields = ProjectIndex.cleanProjectIndicesFields(projectFields, ['fact', 'text', 'date', 'geo_shape', 'geo_point'], []);
-        this.projectFields = ProjectIndex.sortTextaFactsAsFirstItem(this.projectFields);
         this.fieldIndexMap = ProjectIndex.getFieldToIndexMap(projectFields);
         const distinct = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(x => x.fields).flat(), (x => x.path));
+        const textaFactIndex = distinct.findIndex(item => item.type === 'fact');
+        if (textaFactIndex >= 0) {
+          distinct.unshift(distinct.splice(textaFactIndex, 1)[0]);
+        }
+
         this.fieldsFiltered.next(distinct);
         this.fieldsUnique = distinct;
         this.dateAlreadySelected = false;
@@ -164,7 +168,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
         }, this.currentProject.id) : of(null),
       agg: this.searcherService.search(body, this.currentProject.id)
     }).subscribe(resp => {
-      const aggResp = {globalAgg: {}, agg: {}};
+      const aggResp = {globalAgg: {}, agg: {}, aggregationForm: this.aggregationList.map(x => x.formControl.value.path)};
       if (resp.agg && !(resp.agg instanceof HttpErrorResponse)) {
         aggResp.agg = resp.agg;
       } else if (resp.agg instanceof HttpErrorResponse) {

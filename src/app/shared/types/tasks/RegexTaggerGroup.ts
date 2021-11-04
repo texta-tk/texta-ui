@@ -1,12 +1,13 @@
 import {TaskStatus} from './TaskStatus';
 import {RegexTagger} from './RegexTagger';
+import {UserProfile} from '../UserProfile';
 
 
 export interface RegexTaggerGroup {
   id: number;
   url: string;
   regex_taggers: number[];
-  author_username: string;
+  author: UserProfile;
   task: TaskStatus;
   description: string;
   tagger_info: RegexTagger[];

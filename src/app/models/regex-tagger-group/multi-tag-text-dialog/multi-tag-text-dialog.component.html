@@ -9,6 +9,7 @@
     <mat-select [(ngModel)]="selectedTaggers"
                 [disableOptionCentering]="true" [ngModelOptions]="{standalone: true}" multiple
                 panelClass="select-panel-reveal-input">
+      <app-mat-option-select-all></app-mat-option-select-all>
       <mat-option *ngFor="let tagger of taggers" [value]="tagger">
         {{tagger.description}}
       </mat-option>

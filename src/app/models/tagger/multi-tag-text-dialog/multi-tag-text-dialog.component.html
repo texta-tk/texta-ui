@@ -1,0 +1,49 @@
+<h1 mat-dialog-title>Multitag Text</h1>
+<mat-dialog-content>
+  <div fxLayout="column">
+    <mat-form-field class="max-width" data-cy="appTaggerMultiTagDialogText">
+    <textarea [(ngModel)]="formModel.text" [ngModelOptions]="{standalone: true}" [rows]="5" matInput
+              placeholder="Text"></textarea>
+      <mat-hint>{{taggerOptions?.actions?.POST?.text?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+    <mat-form-field class="max-width" data-cy="appTaggerMultiTagDialogTaggers">
+      <mat-label>Taggers</mat-label>
+      <app-virtual-scroll-select [scrollableDataSource]="taggers" [formControl]="taggerSelectionFormControl"></app-virtual-scroll-select>
+      <mat-hint>{{taggerOptions?.actions?.POST?.taggers?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+    <div class="flex-row" style="margin-bottom: 10px;">
+      <mat-checkbox [(ngModel)]="formModel.lemmatize"
+                    matTooltip="{{taggerOptions?.actions?.POST?.lemmatize?.help_text || ''}}">Lemmatize
+      </mat-checkbox>
+      <mat-checkbox [(ngModel)]="formModel.feedback" class="m-l-15"
+                    matTooltip="{{taggerOptions?.actions?.POST?.feedback_enabled?.help_text || ''}}">Feedback
+      </mat-checkbox>
+      <mat-checkbox [(ngModel)]="formModel.hideFalse" class="m-l-15"
+                    matTooltip="{{taggerOptions?.actions?.POST?.hide_false?.help_text || ''}}">Hide false
+      </mat-checkbox>
+    </div>
+    <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+  </div>
+  <div *ngIf="result" class="m-top-10">
+    <div class="code-wrapper">
+      <code>
+        <pre *ngIf="result">{{result | json}}</pre>
+      </code>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <div class="flex-row max-width">
+    <div class="flex-item-left">
+      <button class="flex-item-left" mat-button mat-dialog-close data-cy="appTaggerMultiTagDialogClose"
+              type="button">Close
+      </button>
+    </div>
+    <div class="flex-item-right">
+      <button (click)="onSubmit(formModel)" [disabled]="!formModel.text" data-cy="appTaggerMultiTagDialogSubmit"
+              mat-button>
+        Tag
+      </button>
+    </div>
+  </div>
+</mat-dialog-actions>

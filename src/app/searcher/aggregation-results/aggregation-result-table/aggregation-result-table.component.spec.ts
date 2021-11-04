@@ -5,6 +5,8 @@ import {SharedModule} from '../../../shared/shared.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
+import {SearcherComponentService} from '../../services/searcher-component.service';
+import {SearchServiceSpy} from '../../services/searcher-component.service.spec';
 
 describe('AggregationResultTableComponent', () => {
   let component: AggregationResultTableComponent;
@@ -16,6 +18,12 @@ describe('AggregationResultTableComponent', () => {
       imports: [
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule,
       ],
+    }).overrideComponent(AggregationResultTableComponent, {
+      set: {
+        providers: [
+          {provide: SearcherComponentService, useClass: SearchServiceSpy}
+        ]
+      }
     })
       .compileComponents();
   }));

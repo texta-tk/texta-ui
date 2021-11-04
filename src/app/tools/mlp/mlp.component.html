@@ -22,7 +22,7 @@
 
   <div [appScrollTop]="tableData" class="table-container overflow-auto">
     <table [dataSource]="tableData" mat-table
-           matSort matSortDirection="asc"
+           matSort matSortDirection="desc" matSortActive="id"
            multiTemplateDataRows>
       <ng-container matColumnDef="select">
         <th *matHeaderCellDef mat-header-cell>
@@ -39,6 +39,10 @@
       <ng-container matColumnDef="id">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Id</th>
         <td *matCellDef="let element" mat-cell> {{element.id}}</td>
+      </ng-container>
+      <ng-container matColumnDef="author__username">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Author</th>
+        <td *matCellDef="let element" mat-cell [matTooltip]="element?.author?.username"> {{element?.author?.display_name}}</td>
       </ng-container>
       <ng-container matColumnDef="description">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Description</th>
@@ -105,6 +109,14 @@
                 <tr>
                   <th class="mat-body-strong">Progress</th>
                   <td>{{element.task.progress}}</td>
+                </tr>
+                <tr>
+                  <th class="mat-body-strong">Processed nr. of documents</th>
+                  <td>{{element.task.num_processed}}</td>
+                </tr>
+                <tr>
+                  <th class="mat-body-strong">Total nr. of documents</th>
+                  <td>{{element.task.total}}</td>
                 </tr>
                 <tr>
                   <th class="mat-body-strong">Step</th>

@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {ClusterService} from '../../../../../../core/tools/clusters/cluster.service';
+import {TopicAnalyzerService} from '../../../../../../core/tools/topic-analyzer/topic-analyzer.service';
 import {LogService} from '../../../../../../core/util/log.service';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
@@ -24,7 +24,7 @@ export class SimilarOptionsDialogComponent implements OnInit {
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
 
-  constructor(private clusterService: ClusterService, private logService: LogService,
+  constructor(private clusterService: TopicAnalyzerService, private logService: LogService,
               private dialogRef: MatDialogRef<SimilarOptionsDialogComponent>,
               public dialog: MatDialog,
               // tslint:disable-next-line:no-any

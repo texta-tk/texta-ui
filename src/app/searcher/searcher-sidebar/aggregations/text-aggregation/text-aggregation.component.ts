@@ -16,7 +16,7 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
   @Input() fieldsFormControl: FormControl;
   isMainAgg: boolean;
   aggregationType: 'terms' | 'significant_text' | 'significant_terms' = 'terms';
-  aggregationSize = 30;
+  aggregationSize = 20;
   destroy$: Subject<boolean> = new Subject();
 
   constructor(

@@ -1,10 +1,10 @@
 import {Search} from '../../shared/types/Search';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {
-  Constraint,
+  Constraint, DateConstraint,
   ElasticsearchQuery,
   FactConstraint,
-  FactTextInputGroup
+  FactTextInputGroup, TextConstraint
 } from '../searcher-sidebar/build-search/Constraints';
 import {SelectionModel} from '@angular/cdk/collections';
 import {SavedSearch} from '../../shared/types/SavedSearch';
@@ -13,6 +13,7 @@ import {map, take} from 'rxjs/operators';
 import {UtilityFunctions} from '../../shared/UtilityFunctions';
 import {Project} from '../../shared/types/Project';
 import {LocalStorageService} from '../../core/util/local-storage.service';
+import {AggregationForm} from '../searcher-sidebar/aggregations/aggregations.component';
 
 @Injectable()
 export class SearcherComponentService {
@@ -32,9 +33,9 @@ export class SearcherComponentService {
       factTextInput: 'texta-facts-chips-placeholder'
     }]
   };
-  private searchSubject = new Subject<Search | null>();
-  // tslint:disable-next-line:no-any
-  private aggregationSubject = new Subject<{ globalAgg: any, agg: any } | null>();
+  private searchSubject = new BehaviorSubject<Search | null>(null);
+  // tslint:disable-next-line:no-any aggregationForm is just a list of field paths used in the aggregation, used to create constraints
+  private aggregationSubject = new Subject<{ globalAgg: any, agg: any, aggregationForm: string[] } | null>();
   // so query wouldnt be null (we use current query in aggs so we dont want null even if user hasnt searched everything,
   private savedSearchUpdate = new Subject<boolean>();
   // we still want to be able to make aggs)
@@ -65,12 +66,12 @@ export class SearcherComponentService {
   }
 
   // tslint:disable-next-line:no-any
-  public nextAggregation(aggregation: { globalAgg: any, agg: any } | null): void {
+  public nextAggregation(aggregation: { globalAgg: any, agg: any, aggregationForm: string[] } | null): void {
     this.aggregationSubject.next(aggregation);
   }
 
   // tslint:disable-next-line:no-any
-  public getAggregation(): Observable<{ globalAgg: any, agg: any } | null> {
+  public getAggregation(): Observable<{ globalAgg: any, agg: any, aggregationForm: string[] } | null> {
     return this.aggregationSubject.asObservable();
   }
 
@@ -135,6 +136,31 @@ export class SearcherComponentService {
     });
   }
 
+  public createTextConstraint(docPath: string, constraintValue: string): void {
+    const constraint = new SavedSearch();
+    constraint.query_constraints = [];
+    this.getAdvancedSearchConstraints$().pipe(take(1)).subscribe(constraintList => {
+      if (typeof constraint.query_constraints !== 'string') {
+        const textConstraint = constraintList.find(y => y instanceof TextConstraint && y.fields.length === 1 && y.fields[0].path === docPath);
+        // inputGroup means its a fact_val constraint
+        if (textConstraint instanceof TextConstraint) {
+          const controlValue = textConstraint.textAreaFormControl.value;
+          if (controlValue.length > 0) {
+            textConstraint.textAreaFormControl.setValue(`${controlValue}\n${constraintValue}`);
+          } else {
+            textConstraint.textAreaFormControl.setValue(constraintValue);
+          }
+        } else {
+          const constraintBluePrint = {fields: [{path: docPath, type: 'text'}], text: constraintValue};
+          constraint.query_constraints.push(constraintBluePrint);
+        }
+        constraint.query_constraints.push(...UtilityFunctions.convertConstraintListToJson(constraintList));
+        constraint.query_constraints = JSON.stringify(constraint.query_constraints);
+        this.nextSavedSearch(constraint);
+      }
+    });
+  }
+
   buildFactNameSearch(fact: string): void {
     const constraint = new SavedSearch();
     constraint.query_constraints = [];
@@ -165,5 +191,24 @@ export class SearcherComponentService {
     if (currentProjectState?.searcher?.itemsPerPage) {
       elasticQuery.elasticSearchQuery.size = currentProjectState.searcher.itemsPerPage;
     }
+  }
+
+  createDateConstraint(dateColPath: string, key: string): void {
+    const constraint = new SavedSearch();
+    constraint.query_constraints = [];
+    this.getAdvancedSearchConstraints$().pipe(take(1)).subscribe(constraintList => {
+      if (typeof constraint.query_constraints !== 'string') {
+        const dateConstraint = constraintList.find(y => y instanceof DateConstraint && y.fields.length === 1 && y.fields[0].path === dateColPath);
+        if (dateConstraint instanceof DateConstraint) {
+          dateConstraint.dateFromFormControl.setValue(new Date(key));
+        } else {
+          const constraintBluePrint = {fields: [{path: dateColPath, type: 'date'}], dateFrom: new Date(key)};
+          constraint.query_constraints.push(constraintBluePrint);
+        }
+        constraint.query_constraints.push(...UtilityFunctions.convertConstraintListToJson(constraintList));
+        constraint.query_constraints = JSON.stringify(constraint.query_constraints);
+        this.nextSavedSearch(constraint);
+      }
+    });
   }
 }

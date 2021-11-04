@@ -14,12 +14,14 @@ import {of, Subject} from 'rxjs';
 import {switchMap, take, takeUntil} from 'rxjs/operators';
 import {UtilityFunctions} from '../../shared/UtilityFunctions';
 import {CoreService} from '../../core/core.service';
+import {AppConfigService} from '../../core/util/app-config.service';
 
 interface OnSubmitParams {
   indicesFormControl: number[];
   usersFormControl: string[] | string;
   titleFormControl: string;
   administratorsFormControl: string[] | string;
+  scopeFormControl?: string[] | string;
 }
 
 @Component({
@@ -28,7 +30,7 @@ interface OnSubmitParams {
   styleUrls: ['./create-project-dialog.component.scss']
 })
 export class CreateProjectDialogComponent implements OnInit, OnDestroy {
-
+  useUAA = AppConfigService.settings.useCloudFoundryUAA;
   projectForm = new FormGroup({
     titleFormControl: new FormControl('', [
       Validators.required,
@@ -56,6 +58,10 @@ export class CreateProjectDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    if (this.useUAA) {
+      this.projectForm.addControl('scopeFormControl', new FormControl([]));
+    }
+
     this.userService.getAllUsers().subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.users = UtilityFunctions.sortByStringProperty(resp, (x => x.username));
@@ -94,14 +100,16 @@ export class CreateProjectDialogComponent implements OnInit, OnDestroy {
         indices_write: formData.indicesFormControl || [],
         users_write: formData.usersFormControl || [],
         title: formData.titleFormControl,
-        administrators_write: formData.administratorsFormControl || []
+        administrators_write: formData.administratorsFormControl || [],
+        ...formData.scopeFormControl ? {scopes: this.newLineStringToList(formData.scopeFormControl as string) || []} : {},
       };
     } else {
       body = {
         indices_write: formData.indicesFormControl || [],
         users_write: this.newLineStringToList(formData.usersFormControl as string) || [],
         title: formData.titleFormControl,
-        administrators_write: this.newLineStringToList(formData.administratorsFormControl as string) || []
+        administrators_write: this.newLineStringToList(formData.administratorsFormControl as string) || [],
+        ...formData.scopeFormControl ? {scopes: formData.scopeFormControl || []} : {},
       };
     }
     this.projectService.createProject(body).subscribe((resp: Project | HttpErrorResponse) => {
@@ -114,9 +122,13 @@ export class CreateProjectDialogComponent implements OnInit, OnDestroy {
   }
 
   newLineStringToList(stringWithNewLines: string): string[] {
-    const stringList = stringWithNewLines.split('\n');
-    // filter out empty values
-    return stringList.filter(x => x !== '');
+    if (stringWithNewLines && stringWithNewLines.length !== 0) {
+      const stringList = stringWithNewLines.split('\n');
+      // filter out empty values
+      return stringList.filter(x => x !== '');
+    } else {
+      return [];
+    }
   }
 
   closeDialog(): void {

@@ -27,7 +27,7 @@
 
       <ng-container matColumnDef="author">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Author</th>
-        <td *matCellDef="let element" mat-cell> {{element.author_username}}</td>
+        <td *matCellDef="let element" mat-cell [matTooltip]="element?.author?.username"> {{element?.author?.display_name}}</td>
       </ng-container>
       <ng-container matColumnDef="positives_used">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Pos. Used</th>
@@ -71,7 +71,7 @@
       </ng-container>
       <ng-container matColumnDef="delete">
         <th *matHeaderCellDef class="center-header-cell" mat-header-cell>Actions</th>
-        <td (click)="$event.stopPropagation();" *matCellDef="let element; let i = dataIndex" mat-cell>
+        <td (click)="$event.stopPropagation();" *matCellDef="let element; let i = index" mat-cell>
           <button (click)="onDelete(element, i)" data-cy="appLexiconMenuDelete" color="warn" mat-icon-button
                   matTooltip="Delete lexicon">
             <mat-icon>cancel</mat-icon>

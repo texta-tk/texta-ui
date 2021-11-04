@@ -31,6 +31,13 @@ parser.add_argument(
     help='Also import larger dataset for performance testing.'
 )
 
+parser.add_argument(
+    '-ci',
+    type=str,
+    default='texta_crf_test_index',
+    help='The final index name of the evaluation testing index, that will be added to Elasticsearch. If an old index exists, IT WILL BE DELETED!'
+)
+
 args = parser.parse_args()
 
 HOST = args.es
@@ -49,6 +56,11 @@ dataset_params = {
         "url": url_prefix + "elastic_data/texta_test_index.zip",
         "file_name": "texta_test_index"
     },
+    "crf": {
+        "index": args.ci,
+        "url": url_prefix + "elastic_data/texta_crf_test_index.zip",
+        "file_name": "texta_crf_test_index"
+    },
     "collection": {
         "url": url_prefix + "import_data/import_test_data.zip"
     }
@@ -65,7 +77,8 @@ FACT_MAPPING = {
                 'fact': {'type': 'keyword'},
                 'num_val': {'type': 'long'},
                 'spans': {'type': 'keyword'},
-                'str_val': {'type': 'keyword'}
+                'str_val': {'type': 'keyword'},
+                'sent_index': {'type': 'long'},
             }
         }
     }
@@ -104,6 +117,8 @@ def main():
     try:
         print("Processing small dataset:")
         import_docs(dataset_params["sm"])
+        print("Processing CRF dataset")
+        import_docs(dataset_params["crf"])
         if LARGE is True:
             print("Processing large dataset:")
             import_docs(dataset_params["lg"])

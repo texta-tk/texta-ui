@@ -1,16 +1,19 @@
 {
   "apiHost":"http://localhost",
-  "apiBasePath":"/api/v1",
-  "apiBasePath2":"/api/v2",
+  "apiBasePath":"/api/v2",
   "logging":true,
   "fileFieldReplace":"texta_filepath",
   "useCloudFoundryUAA":true,
   "uaaConf":{
-    "uaaURL":"http://localhost:8080/uaa/oauth/authorize",
-    "redirect_uri":"http://localhost:8000/api/v1/uaa/callback",
+    "uaaURL":"http://localhost:8080",
+    "redirect_uri":"http://localhost:8000/api/v2/uaa/callback",
     "client_id":"login",
-    "scope":"openid",
-    "response_type":"code"
+    "scope":"openid texta.*",
+    "admin_scope": "texta.project_admin",
+    "response_type":"code",
+    "oauth_uri": "http://localhost:8080/uaa/oauth",
+    "logout_uri": "http://localhost:8080/uaa/logout.do",
+    "authorize_uri": "http://localhost:8080/uaa/oauth/authorize"
   }
 }
 

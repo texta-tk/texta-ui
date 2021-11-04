@@ -21,6 +21,20 @@
                         [disabled]="element.id===1 || element.id === currentUser.id"></mat-checkbox>
         </td>
       </ng-container>
+      <ng-container matColumnDef="is_uaa_account">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>UAA</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-checkbox [(ngModel)]="element.profile.is_uaa_account" disabled></mat-checkbox>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="first_name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>First name</th>
+        <td mat-cell *matCellDef="let element">{{ element?.profile?.first_name || '-' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="last_name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Last name</th>
+        <td mat-cell *matCellDef="let element">{{ element?.profile?.last_name || '-' }}</td>
+      </ng-container>
       <ng-container matColumnDef="username">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Username</th>
         <td mat-cell *matCellDef="let element">{{ element.username }}</td>

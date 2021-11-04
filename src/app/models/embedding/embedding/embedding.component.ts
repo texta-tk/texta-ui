@@ -19,7 +19,8 @@ import {ConfirmDialogComponent} from 'src/app/shared/components/dialogs/confirm-
 import {expandRowAnimation} from '../../../shared/animations';
 import {EditEmbeddingDialogComponent} from './edit-embedding-dialog/edit-embedding-dialog.component';
 import {Index} from '../../../shared/types/Index';
-import {UseLexiconDialogComponent} from "./use-lexicon-dialog/use-lexicon-dialog.component";
+import {UseLexiconDialogComponent} from './use-lexicon-dialog/use-lexicon-dialog.component';
+import {MatSelectChange} from '@angular/material/select';
 
 @Component({
   selector: 'app-embedding',
@@ -46,6 +47,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
   inputFilterQuery = '';
   filteringValues: { [key: string]: string } = {};
   resultsLength: number;
+  private updateTable = new Subject<boolean>();
 
 
   currentProject: Project;
@@ -100,7 +102,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
-    merge(this.sort.sortChange, this.paginator.page, this.filteredSubject)
+    merge(this.sort.sortChange, this.paginator.page, this.filteredSubject, this.updateTable)
       .pipe(debounceTime(250), startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
@@ -153,7 +155,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     dialogRef.afterClosed().subscribe((resp: Embedding | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.tableData.data = [...this.tableData.data, resp];
+        this.updateTable.next();
         this.logService.snackBarMessage(`Created embedding ${resp.description}`, 2000);
         this.projectStore.refreshSelectedProjectResourceCounts();
       } else if (resp instanceof HttpErrorResponse) {
@@ -250,7 +252,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  applyFilter(filterValue: EventTarget | null, field: string): void {
+  applyFilter(filterValue: MatSelectChange | EventTarget | null, field: string): void {
     this.filteringValues[field] = (filterValue as HTMLInputElement).value ? (filterValue as HTMLInputElement).value : '';
     this.paginator.pageIndex = 0;
     this.filterQueriesToString();

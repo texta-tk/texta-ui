@@ -16,9 +16,6 @@ describe('searching and search related activities should be working correctly', 
       cy.wait('@getProjectIndices');
       cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible');
       cy.get('[data-cy=appNavbarSearcher]').click();
-      cy.get('[data-cy=appNavbarProjectSelect]').click();
-      cy.get('mat-option').contains('integration_test_project').click();
-      cy.wait('@getProjectIndices');
     });
 
   });
@@ -55,6 +52,7 @@ describe('searching and search related activities should be working correctly', 
     cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted ').should('be.visible');
 
     cy.get('[data-cy=appSearcherTableExport]').click();
+    cy.get('[data-cy=appSearcherExportResultsDialogSubmit]').click();
     cy.wait('@export').then(x => {
       assert(typeof x.response.body === 'string');
     })
@@ -90,15 +88,7 @@ describe('searching and search related activities should be working correctly', 
     cy.get('[data-cy=appSearcherSideBarBuildSearchConstraintSelect]').click();
     cy.get('mat-option').contains('@timestamp').scrollIntoView().click();
     cy.closeCurrentCdkOverlay();
-    cy.get('[data-cy=appSearcherSideBarBuildSearchDateConstraintStart]')
-      .should('be.visible')
-      .click()
-      .type('1/3/2016');
-    cy.get('[data-cy=appSearcherSideBarBuildSearchDateConstraintEnd]')
-      .should('be.visible')
-      .click()
-      .type('3/24/2020');
-    cy.wait(1000); // todo searchoptions debouncetime
+    cy.wait(5000); // todo searchoptions debouncetime
     cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
     cy.wait('@searcherQuery');
     cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted ').should('be.visible');
@@ -107,7 +97,7 @@ describe('searching and search related activities should be working correctly', 
     cy.get('[data-cy=appSearcherSideBarBuildSearchConstraintSelect]').click();
     cy.get('mat-option').contains('texta_facts[fact_name]').scrollIntoView().click();
     cy.closeCurrentCdkOverlay();
-
+    cy.wait(1000);
     cy.get('[data-cy=appSearcherSideBarBuildSearchFactNameOperator]').click();
     cy.get('mat-option').contains('not').click();
     cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
@@ -134,10 +124,11 @@ describe('searching and search related activities should be working correctly', 
     cy.get('mat-option').contains('and').click();
     cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
     cy.wait('@searcherQuery');
+    cy.wait(5000);
     cy.get('.cdk-column-texta_facts > app-texta-facts-chips > span').should('exist');
 
     // fact values
-    cy.get(':nth-child(1) > .cdk-column-texta_facts > app-texta-facts-chips > span:first()').scrollIntoView().click()
+    cy.get(':nth-child(1) > .cdk-column-texta_facts > app-texta-facts-chips > span').contains(/foo|bar|FUBAR/g).first().scrollIntoView().click()
       .then(span => {
         const text = span.text();
         cy.get('[data-cy=appSearcherSideBarBuildSearchFactValueInputGroupOperator]').click();
@@ -175,6 +166,7 @@ describe('searching and search related activities should be working correctly', 
         cy.get('.mat-option-text').contains(foobar).click();
         cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
         cy.wait('@searcherQuery');
+        cy.wait(1000);
         cy.get('.cdk-column-texta_facts > app-texta-facts-chips > span').contains(foobar).should('exist');
       });
 
@@ -197,7 +189,7 @@ describe('searching and search related activities should be working correctly', 
     cy.wait('@searcherQuery');
     cy.get(':nth-child(1) > .cdk-column-comment_content > .ng-star-inserted ').should('be.visible');
     cy.get('[data-cy=appSearcherSidebarSaveSearchButton]').should('be.visible').click();
-    cy.get('mat-dialog-container input').click().type('delete_me');
+    cy.get('[data-cy=appSearcherSidebarSaveSearchDesc]').click().type('delete_me');
     cy.intercept('GET', '**/searches').as('saveSearch');
     cy.get('[type="submit"]').click();
     cy.wait('@saveSearch');

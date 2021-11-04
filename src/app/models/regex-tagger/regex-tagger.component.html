@@ -16,6 +16,10 @@
       <button (click)="openMultiTagDialog()" data-cy="appRegexTaggerMultiTagBtn" mat-stroked-button>
         Multitag Text
       </button>
+      <mat-form-field class="m-l-15">
+        <mat-icon matSuffix>search</mat-icon>
+        <input (keyup)="applyFilter($event.target, 'description')" matInput placeholder="Filter description">
+      </mat-form-field>
       <mat-paginator [length]="resultsLength" [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
       </mat-paginator>
     </div>
@@ -117,7 +121,8 @@
       </ng-container>
 
       <ng-container matColumnDef="expandedDetail">
-        <td *matCellDef="let element; let i = dataIndex" [attr.colspan]="displayedColumns.length" mat-cell class="expanded-detail">
+        <td *matCellDef="let element; let i = dataIndex" [attr.colspan]="displayedColumns.length" mat-cell
+            class="expanded-detail">
           <div *ngIf="expandedElements[i]" [@detailExpand] class="element-detail">
             <div class="flex-col m-l-r-5" fxFlex="50">
               <table class="simple-table">
@@ -167,13 +172,13 @@
             mat-menu-item>
       Tag Text
     </button>
-    <mat-divider></mat-divider>
     <button (click)="edit(element);" mat-menu-item>
       Edit
     </button>
     <button (click)="duplicateRegexTagger(element);" mat-menu-item>
       Duplicate
     </button>
+    <mat-divider></mat-divider>
     <button (click)="onDelete(element, i)" data-cy="appRegexTaggerMenuDelete" mat-menu-item>
       Delete
     </button>

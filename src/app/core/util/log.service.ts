@@ -46,9 +46,15 @@ export class LogService {
     } else if (error.error && typeof error.error === 'object' && !('type' in error.error)) {
       for (const element in error.error) {
         if (error.error.hasOwnProperty(element)) {
-          this.snackBar.open(`${element}: ${error.error[element][0]}`, 'Close', {
-            duration: time,
-          });
+          if (typeof error.error[element] === 'string') {
+            this.snackBar.open(`${element}: ${error.error[element]}`, 'Close', {
+              duration: time,
+            });
+          } else if (typeof error.error[element].length === 'object') {
+            this.snackBar.open(`${element}: ${error.error[element][0]}`, 'Close', {
+              duration: time,
+            });
+          }
           break;
         }
       }

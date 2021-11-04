@@ -13,7 +13,6 @@
     "module": "es2020",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "strictNullChecks": true,
     "importHelpers": true,
@@ -24,7 +23,8 @@
     "lib": [
       "es2019",
       "dom"
-    ]
+    ],
+    "allowSyntheticDefaultImports": true
   },
   "angularCompilerOptions": {
     "strictTemplates": true,

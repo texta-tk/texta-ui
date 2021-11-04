@@ -19,6 +19,7 @@ import {UserStore} from '../core/users/user.store';
 import {FormControl} from '@angular/forms';
 import {MatOption} from '@angular/material/core';
 import {KeyValue} from '@angular/common';
+import {AppConfigService} from '../core/util/app-config.service';
 
 @Component({
   selector: 'app-project',
@@ -27,13 +28,14 @@ import {KeyValue} from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProjectComponent implements OnInit, OnDestroy {
-
+  PROJECT_ADMIN_SCOPE = AppConfigService.settings.uaaConf.admin_scope;
+  UAA_ENABLED = AppConfigService.settings.useCloudFoundryUAA;
   destroyed$: Subject<boolean> = new Subject<boolean>();
   filteredUsers: Observable<UserProfile[]>;
   // tslint:disable-next-line:no-any
   public projectCounts$: Observable<any>; // strict template and async pipe with keyvalue has buggy types for some reason
   public tableData: MatTableDataSource<Project> = new MatTableDataSource<Project>([]);
-  public displayedColumns = ['id', 'title', 'author_username', 'indices_count', 'resource_count', 'users_count', 'Modify'];
+  public displayedColumns = ['id', 'title', 'author', 'indices_count', 'resource_count', 'users_count', 'Modify'];
   public isLoadingResults = true;
   public currentUser: UserProfile;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
@@ -61,24 +63,12 @@ export class ProjectComponent implements OnInit, OnDestroy {
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
     this.tableData.filterPredicate = (data, element) => {
-      return data.author_username === element;
-    };
-    this.userService.getAllUsers().subscribe(users => {
-      if (users && !(users instanceof HttpErrorResponse)) {
-        this.filteredUsers = this.authorFilterControl.valueChanges
-          .pipe(
-            startWith(''),
-            takeUntil(this.destroyed$),
-            map(value => {
-              const filterVal = value.toLowerCase();
-              if (value === '') {
-                this.applyFilter({value: ''});
-              }
-              return users.filter(option => option.username.toLowerCase().includes(filterVal));
-            })
-          );
+      if (element === '-1') {
+        return true;
       }
-    });
+      return data.author.id === +element;
+    };
+    this.filteredUsers = this.userService.getAllUsers().pipe(filter(x => !(x instanceof HttpErrorResponse))) as Observable<UserProfile[]>;
 
     this.titleFilterControl.valueChanges.pipe(takeUntil(this.destroyed$), debounceTime(200)).subscribe(x => {
       this.isLoadingResults = true;
@@ -110,7 +100,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
       if (proj) {
         this.currentProject = proj;
       }
-    })
+    });
   }
 
   ngOnDestroy(): void {
@@ -132,7 +122,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
   openCreateDialog(): void {
     const dialogRef = this.dialog.open(CreateProjectDialogComponent, {
-      maxHeight: '440px',
+      maxHeight: '90vh',
       width: '700px',
     });
     dialogRef.afterClosed().pipe(takeUntil(this.destroyed$)).subscribe(resp => {
@@ -177,16 +167,17 @@ export class ProjectComponent implements OnInit, OnDestroy {
     });
   }
 
-  applyFilter(filterValue: MatOption | { value: string }): void {
-    this.tableData.filter = filterValue?.value ? filterValue.value : '';
+  applyFilter(filterValue: { value: { id: number } }): void {
+    this.tableData.filter = filterValue?.value ? filterValue.value.id.toString() : '';
   }
 
   selectProject(val: Project): void {
-    if (val.users.find(x => x.url === this.currentUser.url)) {
+    if (val.users.find(x => x.url === this.currentUser.url) ||
+      (AppConfigService.settings.useCloudFoundryUAA && val.scopes.find(x => this.currentUser.profile.scopes.includes(x)))) {
       this.projectStore.setCurrentProject(val);
     } else {
       this.isLoadingResults = true;
-      this.projectService.addUsersToProject([this.currentUser.id], val.id).subscribe(resp => {
+      this.projectService.addUsersToProject([this.currentUser.username], val.id).subscribe(resp => {
         if (resp instanceof HttpErrorResponse) {
           this.logService.snackBarError(resp, 5000);
         } else if (resp) {

@@ -1,0 +1,172 @@
+<h1 mat-dialog-title>New CRF Extractor</h1>
+<mat-dialog-content>
+  <form (ngSubmit)="onSubmit(CRFExtractorForm.value)" [formGroup]="CRFExtractorForm" id="CRFForm" class="flex-col">
+    <mat-form-field data-cy="appCRFExtractorCreateDialogDesc">
+      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
+             placeholder="Description" required>
+
+      <mat-error *ngIf="CRFExtractorForm.get('descriptionFormControl')?.hasError('required')">
+        Description is <strong>required</strong>
+      </mat-error>
+      <mat-hint>{{CRFOptions?.actions?.POST?.description?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+
+
+    <mat-form-field data-cy="appCRFExtractorCreateDialogIndices">
+      <mat-label>Indices</mat-label>
+      <mat-select (openedChange)="indicesOpenedChange($event)" [disableOptionCentering]="true"
+                  formControlName="indicesFormControl" multiple panelClass="select-panel-reveal-input" required>
+        <mat-option *ngFor="let projectIndex of projectIndices" [value]="projectIndex">
+          {{projectIndex.index}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="CRFExtractorForm.get('indicesFormControl')?.hasError('required')">
+        Select at least <strong>1 index</strong>
+      </mat-error>
+      <mat-hint>{{CRFOptions?.actions?.POST?.indices?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field data-cy="appCRFExtractorCreateDialogFields">
+      <mat-label>MLP field</mat-label>
+      <app-project-field-select [projectFields]="projectFields" [required]="true" [multiple]=false
+                                formControlName="mlpFieldsFormControl"></app-project-field-select>
+      <mat-error *ngIf="CRFExtractorForm.get('mlpFieldsFormControl')?.hasError('required')">
+        Field is <strong>required</strong>
+      </mat-error>
+      <mat-hint>{{CRFOptions?.actions?.POST?.mlp_field?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+
+    <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)" [startingQuery]="query"
+                                   data-cy="appCRFExtractorCreateDialogQuery"></app-saved-search-autocomplete>
+
+    <mat-form-field>
+      <mat-label>Embedding</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="embeddingFormControl"
+                  panelClass="select-panel-reveal-input">
+        <mat-option>None</mat-option>
+        <mat-option *ngFor="let item of embeddings" [value]="item">
+          {{item.description}}
+        </mat-option>
+      </mat-select>
+      <mat-hint>{{CRFOptions?.actions?.POST?.embedding?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Labels</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="labelsFormControl"
+                  panelClass="select-panel-reveal-input" multiple>
+        <ng-container *ngIf="CRFOptions">
+          <mat-option *ngFor="let item of labelDefaults" [value]="item">
+            {{item}}
+          </mat-option>
+        </ng-container>
+      </mat-select>
+      <mat-hint>{{CRFOptions?.actions?.POST?.labels?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field data-cy="appCRFExtractorCreateDialogFeatureFields">
+      <mat-label>Feature fields</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="featureFieldsFormControl"
+                  panelClass="select-panel-reveal-input" multiple>
+        <ng-container *ngIf="CRFOptions">
+          <mat-option *ngFor="let item of CRFOptions.actions.POST.feature_fields.choices" [value]="item">
+            {{item.display_name}}
+          </mat-option>
+        </ng-container>
+      </mat-select>
+      <mat-hint>{{CRFOptions?.actions?.POST?.feature_fields?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field data-cy="appCRFExtractorCreateDialogContextFeatureFields">
+      <mat-label>Context feature fields</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="contextFeatureFieldsFormControl"
+                  panelClass="select-panel-reveal-input" multiple>
+        <ng-container *ngIf="CRFOptions">
+          <mat-option *ngFor="let item of CRFOptions.actions.POST.context_feature_fields.choices" [value]="item">
+            {{item.display_name}}
+          </mat-option>
+        </ng-container>
+      </mat-select>
+      <mat-hint>{{CRFOptions?.actions?.POST?.context_feature_fields?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Feature extractors</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="featureExtractorsFormControl"
+                  panelClass="select-panel-reveal-input" multiple>
+        <ng-container *ngIf="CRFOptions">
+          <mat-option *ngFor="let item of CRFOptions.actions.POST.feature_extractors.choices" [value]="item">
+            {{item.display_name}}
+          </mat-option>
+        </ng-container>
+      </mat-select>
+      <mat-hint>{{CRFOptions?.actions?.POST?.feature_extractors?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+
+    <!--advanced -->
+    <mat-expansion-panel expanded="false">
+      <mat-expansion-panel-header>
+        <h3>Advanced settings</h3>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
+        <div fxLayout="column">
+
+          <mat-form-field class="advanced-setting">
+            <input formControlName="windowSizeFormControl" matInput pattern="[1-9]\d*"
+                   placeholder="Window size" step="1" min="0"
+                   type="number">
+            <mat-hint>{{CRFOptions?.actions?.POST?.window_size?.help_text || ''}}</mat-hint>
+          </mat-form-field>
+          <mat-form-field class="advanced-setting">
+            <input formControlName="testSizeFormControl" matInput
+                   placeholder="Test size" step="1"
+                   type="number">
+            <mat-hint>{{CRFOptions?.actions?.POST?.test_size?.help_text || ''}}</mat-hint>
+          </mat-form-field>
+          <mat-form-field class="advanced-setting">
+            <input formControlName="numIterFormControl" matInput pattern="[1-9]\d*"
+                   placeholder="Num iter" step="1" min="0"
+                   type="number">
+            <mat-hint>{{CRFOptions?.actions?.POST?.num_iter?.help_text || ''}}</mat-hint>
+          </mat-form-field>
+          <mat-form-field class="advanced-setting">
+            <input formControlName="cValuesFormControl" matInput pattern="^[+-]?((\d+\.?\d*)|(\.\d+))(?:[ \t]*,[ \t]*[+-]?((\d+\.?\d*)|(\.\d+)))+$"
+                   placeholder="C values" >
+            <mat-hint>{{CRFOptions?.actions?.POST?.c_values?.help_text || ''}}</mat-hint>
+            <mat-error *ngIf="CRFExtractorForm.get('cValuesFormControl')?.hasError('pattern')">
+              Format is incorrect, example format: 0.001, 0.1, 0.5
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="advanced-setting">
+            <input formControlName="suffixLenFormControl" matInput pattern="\d+,\d+"
+                   placeholder="Suffix len" >
+            <mat-hint>{{CRFOptions?.actions?.POST?.suffix_len?.help_text || ''}}</mat-hint>
+
+            <mat-error *ngIf="CRFExtractorForm.get('suffixLenFormControl')?.hasError('pattern')">
+              Format is incorrect, example format: 2,3
+            </mat-error>
+          </mat-form-field>
+          <mat-checkbox formControlName="biasFormControl" style="margin-top: 1em;"
+                        matTooltip="{{CRFOptions?.actions?.POST?.bias?.help_text || ''}}"
+                        matTooltipPosition="left">Bias
+          </mat-checkbox>
+
+        </div>
+      </ng-template>
+    </mat-expansion-panel>
+
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <div class="flex-row max-width">
+    <div class="flex-item-left">
+      <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
+    </div>
+    <div class="flex-item-right">
+      <button [disabled]="!CRFExtractorForm.valid" form="CRFForm" data-cy="appCRFExtractorCreateDialogSubmit" mat-button
+              type="submit">
+        Create
+      </button>
+    </div>
+  </div>
+</mat-dialog-actions>

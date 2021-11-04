@@ -41,7 +41,7 @@ export class ProjectService {
       catchError(this.logService.handleError<Project>('editProject')));
   }
 
-  addUsersToProject(users: number[], projectId: number): Observable<{ message: string } | HttpErrorResponse> {
+  addUsersToProject(users: string[], projectId: number): Observable<{ message: string } | HttpErrorResponse> {
     return this.http.post<{ message: string }>(
       `${this.apiUrl}/projects/${projectId}/add_users/`,
       {users}
@@ -50,7 +50,7 @@ export class ProjectService {
       catchError(this.logService.handleError<{ message: string }>('addUsersToProject')));
   }
 
-  addAdminsToProject(users: number[], projectId: number): Observable<{ message: string } | HttpErrorResponse> {
+  addAdminsToProject(users: string[], projectId: number): Observable<{ message: string } | HttpErrorResponse> {
     return this.http.post<{ message: string }>(
       `${this.apiUrl}/projects/${projectId}/add_project_admins/`,
       {project_admins: users}
@@ -77,7 +77,7 @@ export class ProjectService {
       catchError(this.logService.handleError<{ message: string }>('deleteIndicesFromProject')));
   }
 
-  deleteAdminsFromProject(users: number[], projectId: number): Observable<{ message: string } | HttpErrorResponse> {
+  deleteAdminsFromProject(users: string[], projectId: number): Observable<{ message: string } | HttpErrorResponse> {
     return this.http.post<{ message: string }>(
       `${this.apiUrl}/projects/${projectId}/remove_project_admins/`,
       {project_admins: users}
@@ -86,7 +86,7 @@ export class ProjectService {
       catchError(this.logService.handleError<{ message: string }>('deleteAdminsFromProject')));
   }
 
-  deleteUsersFromProject(users: number[], projectId: number): Observable<{ message: string } | HttpErrorResponse> {
+  deleteUsersFromProject(users: string[], projectId: number): Observable<{ message: string } | HttpErrorResponse> {
     return this.http.post<{ message: string }>(
       `${this.apiUrl}/projects/${projectId}/remove_users/`,
       {users}
@@ -95,10 +95,10 @@ export class ProjectService {
       catchError(this.logService.handleError<{ message: string }>('deleteUsersFromProject')));
   }
 
-  exportSearch(projId: number, query: unknown, indices: string[]): Observable<string | HttpErrorResponse> {
+  exportSearch(projId: number, body: unknown): Observable<string | HttpErrorResponse> {
     return this.http.post<string>(
-      `${this.apiUrl}/projects/${projId}/export_search/`,
-      {indices, query}
+      `${this.apiUrl}/projects/${projId}/elastic/export_search/`,
+      body
     ).pipe(
       tap(e => this.logService.logStatus(e, 'exportSearch')),
       catchError(this.logService.handleError<string>('exportSearch')));
@@ -114,7 +114,7 @@ export class ProjectService {
 
   getProjectIndices(id: number): Observable<ProjectIndex[] | HttpErrorResponse> {
     return this.http.get<ProjectIndex[]>(
-      `${this.apiUrl}/projects/${id}/get_fields/`,
+      `${this.apiUrl}/projects/${id}/elastic/get_fields/`,
     ).pipe(
       tap(e => this.logService.logStatus(e, 'getProjectFields')),
       catchError(this.logService.handleError<ProjectIndex[]>('getProjectFields')));
@@ -142,12 +142,17 @@ export class ProjectService {
       catchError(this.logService.handleError<string[]>('projectFactValueAutoComplete')));
   }
 
-  getProjectFacts(id: number, indices: unknown): Observable<string[] | HttpErrorResponse> {
-    return this.http.post<string[]>(
-      `${this.apiUrl}/projects/${id}/get_facts/`, {indices, output_type: false}
+  getProjectFacts(id: number, indices: unknown, outputType: true): Observable<{ name: string, values: string[] }[] | HttpErrorResponse>;
+  getProjectFacts(id: number, indices: unknown, outputType?: boolean): Observable<string[] | HttpErrorResponse>;
+  // tslint:disable-next-line:no-any
+  getProjectFacts(id: number, indices: unknown, outputType?: boolean): Observable<any |
+    HttpErrorResponse> {
+    // tslint:disable-next-line:no-any
+    return this.http.post<any>(
+      `${this.apiUrl}/projects/${id}/elastic/get_facts/`, {indices, output_type: !!outputType}
     ).pipe(
       tap(e => this.logService.logStatus(e, 'get Project Facts')),
-      catchError(this.logService.handleError<string[]>('getProjectFacts')));
+      catchError(this.logService.handleError('getProjectFacts')));
   }
 
   getResourceCounts(projId: number): Observable<ProjectResourceCounts | HttpErrorResponse> {

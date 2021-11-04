@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {SearcherService} from 'src/app/core/searcher/searcher.service';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {Project} from '../../types/Project';
@@ -7,19 +7,24 @@ import {SavedSearch} from '../../types/SavedSearch';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ProjectStore} from 'src/app/core/projects/project.store';
 import {MatFormFieldAppearance} from '@angular/material/form-field';
+import {FormControl} from '@angular/forms';
+import {MatAutocomplete, MatAutocompleteTrigger} from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-saved-search-autocomplete',
   templateUrl: './saved-search-autocomplete.component.html',
   styleUrls: ['./saved-search-autocomplete.component.scss']
 })
-export class SavedSearchAutocompleteComponent implements OnInit, OnDestroy {
+export class SavedSearchAutocompleteComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() appearance: MatFormFieldAppearance = 'standard';
   @Output() queryChanged = new EventEmitter<string>();
+
+  @Input() startingQuery: string;
 
   defaultQuery = '{"query": {"match_all": {}}}';
   currentProject: Project;
   savedSearches: SavedSearch[];
+  @ViewChild(MatAutocompleteTrigger) matAutoComplete: MatAutocompleteTrigger;
 
   destroyed$: Subject<boolean> = new Subject<boolean>();
 
@@ -51,5 +56,11 @@ export class SavedSearchAutocompleteComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroyed$.next(true);
     this.destroyed$.complete();
+  }
+
+  ngAfterViewInit(): void {
+    if (this.startingQuery !== this.defaultQuery) {
+      this.matAutoComplete.writeValue(this.startingQuery);
+    }
   }
 }

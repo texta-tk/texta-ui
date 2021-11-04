@@ -1,20 +1,38 @@
 <h1 mat-dialog-title>Save search</h1>
-<div class="dialog-content-wrapper" mat-dialog-content>
-  <form id="saveSearch" [formGroup]="saveSearchForm" (ngSubmit)="onSubmit(saveSearchForm.value)">
-
-    <mat-form-field class="max-width">
-      <input matInput placeholder="Description" formControlName="descriptionFormControl">
-    </mat-form-field>
-  </form>
-
-</div>
-<div>
-  <div fxLayout="row">
-    <div class="flex-item-left">
-      <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Cancel</button>
-    </div>
-    <div class="flex-item-right">
-      <button type="submit" mat-button form="saveSearch" [disabled]="!saveSearchForm.valid">Save</button>
-    </div>
+<mat-dialog-content>
+  <div class="m-bot-10">
+    <mat-radio-group [(ngModel)]="method">
+      <mat-radio-button value="new">Create new search</mat-radio-button>
+      <mat-radio-button class="m-l-15" value="existing">Overwrite existing search</mat-radio-button>
+    </mat-radio-group>
   </div>
-</div>
+  <mat-form-field *ngIf="method === 'existing'" class="max-width">
+    <mat-label>Select Saved Search</mat-label>
+    <mat-select [(ngModel)]="selectedSearch"
+                [disableOptionCentering]="true" panelClass="select-panel-reveal-input" required>
+      <mat-option *ngFor="let search of savedSearches" [value]="search">
+        {{search.description}}
+      </mat-option>
+    </mat-select>
+    <mat-error>This field is <strong>required</strong></mat-error>
+  </mat-form-field>
+  <mat-form-field *ngIf="method === 'new'" class="max-width" data-cy="appSearcherSidebarSaveSearchDesc">
+    <input #ctrl="ngModel" [(ngModel)]="newDesc" [errorStateMatcher]="matcher" autocomplete="off" cdkFocusInitial
+           matInput placeholder="Description" required>
+    <mat-error *ngIf="ctrl?.hasError('required')">
+      Description is <strong>required</strong>
+    </mat-error>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions fxLayout="row">
+  <div class="flex-item-left">
+    <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Cancel</button>
+  </div>
+  <div class="flex-item-right" [matTooltip]="!latestSearch ? 'No search to save!' : ''">
+    <button type="submit" mat-button
+            [disabled]="(method === 'new' && !newDesc) || (method === 'existing' && !selectedSearch) || !latestSearch"
+            (click)="onSubmit()">Save
+    </button>
+  </div>
+</mat-dialog-actions>

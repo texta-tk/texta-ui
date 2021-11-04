@@ -15,25 +15,19 @@
       <mat-select [disableOptionCentering]="true" [formControl]="matchFormControl"
                   panelClass="select-panel-reveal-input">
         <mat-option value="phrase_prefix">phrase prefix</mat-option>
-        <mat-option value="best_fields">word</mat-option>
+        <mat-option value="best_fields" matTooltip="The best fields type is most useful when you are searching for multiple words best found in the same field. For instance “brown fox” in a single field is more meaningful than “brown” in one field and “fox” in the other.">best fields</mat-option>
         <mat-option value="phrase">phrase</mat-option>
         <mat-option value="regexp">regex</mat-option>
-        <mat-option value="fuzzy">fuzzy</mat-option>
-        <mat-option value="match_fuzzy">match fuzzy</mat-option>
+        <mat-option value="term" matTooltip="Returns documents that contain an exact term in a provided field">exact term</mat-option>
+        <mat-option value="fuzzy" matTooltip="For term level queries">fuzzy term</mat-option>
+        <mat-option value="match_fuzzy" matTooltip="For full-text search">fuzzy phrase</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field *ngIf="matchFormControl.value !== 'fuzzy' && matchFormControl.value !== 'match_fuzzy'" fxFlex="20">
+    <mat-form-field *ngIf="matchFormControl.value !== 'fuzzy' && matchFormControl.value !== 'match_fuzzy' && matchFormControl.value !== 'term'" fxFlex="20">
       <mat-label>Slop</mat-label>
-      <mat-select [disableOptionCentering]="true" [formControl]="slopFormControl"
-                  panelClass="select-panel-reveal-input">
-        <mat-option value="0">0</mat-option>
-        <mat-option value="1">1</mat-option>
-        <mat-option value="2">2</mat-option>
-        <mat-option value="3">3</mat-option>
-        <mat-option value="4">4</mat-option>
-        <mat-option value="5">5</mat-option>
-      </mat-select>
+      <input [formControl]="slopFormControl" matInput min="0" type="number">
     </mat-form-field>
+    <mat-checkbox *ngIf="matchFormControl.value === 'term'" style="align-self: center;margin-right: 5px;" [formControl]="ignoreCaseFormControl">ignore case</mat-checkbox>
     <mat-form-field *ngIf="matchFormControl.value === 'fuzzy' || matchFormControl.value === 'match_fuzzy'" fxFlex="20">
       <mat-label>Fuzziness</mat-label>
       <input [formControl]="fuzzinessFormControl" matInput min="0" type="number">
@@ -44,10 +38,10 @@
     </mat-form-field>
   </div>
   <div fxLayout="column">
-    <mat-form-field class="max-width" floatLabel="never">
-  <textarea [formControl]="textAreaFormControl" class="max-width"
-            matInput
-            placeholder="Type here"></textarea>
+    <mat-form-field class="max-width">
+      <textarea [formControl]="textAreaFormControl" class="max-width"
+                matInput
+                placeholder="Type here"></textarea>
     </mat-form-field>
     <button *ngIf="lexicons.length > 0" [matMenuTriggerFor]="menu" mat-stroked-button>Add lexicon</button>
     <mat-menu #menu="matMenu">

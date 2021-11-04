@@ -10,7 +10,6 @@
     <mat-label>Select Lexicon</mat-label>
     <mat-select [(ngModel)]="selectedLexicon"
                 [disableOptionCentering]="true" panelClass="select-panel-reveal-input" required>
-      <mat-option>None</mat-option>
       <mat-option *ngFor="let lex of lexicons" [value]="lex">
         {{lex.description}}
       </mat-option>
@@ -28,10 +27,10 @@
     <mat-label>Word type</mat-label>
     <mat-select [(ngModel)]="type"
                 [disableOptionCentering]="true" panelClass="select-panel-reveal-input" required>
-      <mat-option value="positives_used">Positives used</mat-option>
-      <mat-option value="positives_unused">Positives unused</mat-option>
-      <mat-option value="negatives_used">Negatives used</mat-option>
-      <mat-option value="negatives_unused">Negatives unused</mat-option>
+      <mat-option value="positives_used" matTooltip="Words you want to keep in the lexicon and base new suggestions on">Positives used</mat-option>
+      <mat-option value="positives_unused" matTooltip="Words you want to keep in the lexicon but don't want to base new suggestions on">Positives unused</mat-option>
+      <mat-option value="negatives_used" matTooltip="Words that you don't want to see when basing new suggestions">Negatives used</mat-option>
+      <mat-option value="negatives_unused" matTooltip="Words you don't want to keep in the lexicon and don't want to base new suggestions on">Negatives unused</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field appearance="outline" class="stretch-height max-width"

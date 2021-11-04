@@ -16,6 +16,7 @@ import {QueryDialogComponent} from 'src/app/shared/components/dialogs/query-dial
 import {ReindexerService} from '../../core/tools/reindexer/reindexer.service';
 import {CreateReindexerDialogComponent} from './create-reindexer-dialog/create-reindexer-dialog.component';
 import {animate, state, style, transition, trigger} from '@angular/animations';
+import {MatSelectChange} from '@angular/material/select';
 
 @Component({
   selector: 'app-reindexer',
@@ -48,6 +49,7 @@ export class ReindexerComponent implements OnInit, OnDestroy {
   currentProject: Project;
   resultsLength: number;
 
+  private updateTable = new Subject<boolean>();
   constructor(private projectStore: ProjectStore,
               private reindexerService: ReindexerService,
               public dialog: MatDialog,
@@ -88,7 +90,7 @@ export class ReindexerComponent implements OnInit, OnDestroy {
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.pipe(takeUntil(this.destroyed$)).subscribe(() => this.paginator.pageIndex = 0);
 
-    merge(this.sort.sortChange, this.paginator.page, this.filteredSubject)
+    merge(this.sort.sortChange, this.paginator.page, this.filteredSubject, this.updateTable)
       .pipe(debounceTime(250), startWith({}), switchMap(() => {
         this.isLoadingResults = true;
         const sortDirection = this.sort.direction === 'desc' ? '-' : '';
@@ -122,7 +124,8 @@ export class ReindexerComponent implements OnInit, OnDestroy {
     });
     dialogRef.afterClosed().subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.tableData.data = [...this.tableData.data, resp];
+        this.updateTable.next(true);
+        this.projectStore.refreshSelectedProjectResourceCounts();
         this.logService.snackBarMessage(`Created re-indexer: ${resp.description}`, 2000);
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
@@ -205,7 +208,7 @@ export class ReindexerComponent implements OnInit, OnDestroy {
   }
 
 
-  applyFilter(filterValue: EventTarget | null, field: string): void {
+  applyFilter(filterValue: MatSelectChange | EventTarget | null, field: string): void {
     this.filteringValues[field] = (filterValue as HTMLInputElement).value ? (filterValue as HTMLInputElement).value : '';
     this.filterQueriesToString();
     this.filteredSubject.next();

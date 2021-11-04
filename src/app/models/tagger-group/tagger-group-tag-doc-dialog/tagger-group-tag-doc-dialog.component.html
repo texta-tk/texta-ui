@@ -6,10 +6,10 @@
 <mat-form-field class="max-width m-bot-10" floatLabel="always">
   <mat-label>Number of similar documents</mat-label>
   <input matInput type="number" placeholder="Number of Similar docs" #nSimilarDocsInput [(ngModel)]="nSimilarDocs">
-  <mat-hint>Number of documents used in unsupervised prefiltering</mat-hint>
+  <mat-hint>{{tagDocOptions?.actions?.POST?.n_similar_docs?.help_text || ''}}</mat-hint>
 </mat-form-field>
-<mat-checkbox [(ngModel)]="lemmatize" class="margin-right">Lemmatize</mat-checkbox>
-<mat-checkbox [(ngModel)]="ner">Use NER</mat-checkbox>
+<mat-checkbox [(ngModel)]="lemmatize" matTooltip="{{tagDocOptions?.actions?.POST?.lemmatize?.help_text || ''}}">Lemmatize</mat-checkbox>
+<mat-checkbox [(ngModel)]="ner" class="m-l-15" matTooltip="{{tagDocOptions?.actions?.POST?.use_ner?.help_text || ''}}">Use NER</mat-checkbox>
 <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
 <div class="m-top-10">
   <div *ngFor="let result of results" class="m-top-10">

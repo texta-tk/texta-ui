@@ -12,6 +12,7 @@ import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers'
 import {ProjectService} from '../../../core/projects/project.service';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {LogService} from '../../../core/util/log.service';
+import {MLPOptions} from '../../../shared/types/tasks/MLPOptions';
 
 @Component({
   selector: 'app-create-lang-detect-dialog',
@@ -32,6 +33,8 @@ export class CreateLangDetectDialogComponent implements OnInit, OnDestroy {
   destroyed$: Subject<boolean> = new Subject<boolean>();
   projectIndices: ProjectIndex[] = [];
   projectFields: ProjectIndex[];
+  // tslint:disable-next-line:no-any
+  langDetectOptions: any;
 
   constructor(private dialogRef: MatDialogRef<CreateLangDetectDialogComponent>,
               private projectService: ProjectService,
@@ -48,9 +51,18 @@ export class CreateLangDetectDialogComponent implements OnInit, OnDestroy {
         this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
       }
     });
-    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(project => {
-      if (project) {
-        this.currentProject = project;
+    this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), mergeMap(currentProject => {
+      if (currentProject) {
+        this.currentProject = currentProject;
+        return this.langDetectService.getLangDetectOptions(currentProject.id);
+      } else {
+        return of(null);
+      }
+    })).subscribe(resp => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.langDetectOptions = resp;
+      } else if (resp instanceof HttpErrorResponse) {
+        this.logService.snackBarError(resp, 5000);
       }
     });
     this.projectStore.getProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(projIndices => {

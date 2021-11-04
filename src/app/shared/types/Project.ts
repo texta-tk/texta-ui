@@ -9,7 +9,7 @@ export class Project {
   owner: number;
   users: UserProfile[];
   indices: Index[];
-  author_username: string;
+  author: UserProfile;
   resource_count: number;
   administrators: UserProfile[];
   resources: {
@@ -17,6 +17,7 @@ export class Project {
     embedding_clusters: number[];
     taggers: number[];
   };
+  scopes: string[];
 }
 
 export class ProjectResourceCounts {
@@ -38,8 +39,10 @@ export class ProjectResourceCounts {
   num_summarizers = 0;
   num_lang_detectors = 0;
   num_search_fields_taggers = 0;
+  num_crf_extractors = 0;
   num_search_query_taggers = 0;
   num_elastic_analyzers = 0;
+  num_rakun_keyword_extractors = 0;
 }
 
 export interface ProjectFact {
@@ -55,29 +58,6 @@ export interface Field {
 export class ProjectIndex {
   index: string;
   fields: Field[];
-
-  static sortTextaFactsAsFirstItem(fields: ProjectIndex[]): ProjectIndex[] {
-    fields = JSON.parse(JSON.stringify(fields)); // deep clone, dont want to change original
-    return fields.map((field: ProjectIndex) => {
-      field.fields.sort((x, y) => (x.type === 'fact' ? -1 : y.type === 'fact' ? 1 : 0));
-      return field;
-    });
-  }
-
-  static isProjectFields(val: unknown): val is ProjectIndex | ProjectIndex[] {
-    if (Array.isArray(val) && val.length > 0) {
-      return (
-        (val[0] as ProjectIndex).index !== undefined &&
-        (val[0] as ProjectIndex).fields !== undefined
-      );
-    } else {
-      return (
-        (val as ProjectIndex).index !== undefined &&
-        (val as ProjectIndex).fields !== undefined
-      );
-    }
-  }
-
   static cleanProjectIndicesFields(fields: ProjectIndex[], whiteList: string[], blackList: string[], whiteListAll?: boolean): ProjectIndex[] {
     fields = JSON.parse(JSON.stringify(fields)); // deep clone, dont want to change original
     const filteredField: ProjectIndex[] = [];

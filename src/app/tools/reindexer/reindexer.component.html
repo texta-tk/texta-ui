@@ -18,8 +18,13 @@
         <input (keyup)="applyFilter($event.target, 'description')" matInput placeholder="Filter description">
       </mat-form-field>
       <mat-form-field class="m-l-15">
-        <mat-icon matSuffix>search</mat-icon>
-        <input (keyup)="applyFilter($event.target, 'task_status')" matInput placeholder="Filter task status">
+        <mat-label>Filter task status</mat-label>
+        <mat-select (selectionChange)="applyFilter($event, 'task_status')">
+          <mat-option value="">None</mat-option>
+          <mat-option value="completed">Completed</mat-option>
+          <mat-option value="failed">Failed</mat-option>
+          <mat-option value="running">Running</mat-option>
+        </mat-select>
       </mat-form-field>
 
       <mat-paginator [length]="resultsLength" [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
@@ -29,7 +34,7 @@
 
   <div class="table-container overflow-auto">
     <table [dataSource]="tableData" mat-table matSort
-           matSortActive="id" matSortDirection="asc" matSortDisableClear multiTemplateDataRows>
+           matSortActive="id" matSortDirection="desc" matSortDisableClear multiTemplateDataRows>
       <ng-container matColumnDef="select">
         <th *matHeaderCellDef mat-header-cell>
           <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selectedRows.hasValue() && isAllSelected()"
@@ -50,7 +55,7 @@
 
       <ng-container matColumnDef="author__username">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Author</th>
-        <td *matCellDef="let element" mat-cell> {{element.author_username}}</td>
+        <td *matCellDef="let element" mat-cell [matTooltip]="element?.author?.username"> {{element?.author?.display_name}}</td>
       </ng-container>
 
       <ng-container matColumnDef="description">
@@ -92,7 +97,7 @@
       </ng-container>
       <ng-container matColumnDef="task__status">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Task</th>
-        <td *matCellDef="let element" mat-cell>
+        <td *matCellDef="let element" mat-cell style="min-width: 100px">
           <mat-progress-bar
             [value]="element.task.progress"
             mode="determinate">

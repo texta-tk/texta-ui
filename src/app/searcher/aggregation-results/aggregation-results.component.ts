@@ -20,7 +20,7 @@ export interface AggregationData {
     treeData?: any[],
     name: string,
     // tslint:disable-next-line:no-any
-    histoBuckets?: any[]
+    histoBuckets?: any[] // only used for unified timeline
   }[];
   tableData?: {
     // tslint:disable-next-line:no-any
@@ -54,6 +54,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject();
   aggregation: unknown;
   aggregationData: AggregationData;
+  fieldPathList: string[] = [];
   timeLineYLabel = 'number of hits';
   MAIN_AGG_NAME = 'Aggregation results'; /*default name of aggregation when not using saved searches*/
   constructor(public searchService: SearcherComponentService, public dialog: MatDialog) {
@@ -99,6 +100,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.searchService.getAggregation().pipe(takeUntil(this.destroy$)).subscribe((aggregation) => {
       if (aggregation && aggregation.agg && aggregation.agg.aggs) {
+        this.fieldPathList = aggregation.aggregationForm;
         this.aggregationData = {
           treeData: [],
           tableData: [],
@@ -223,61 +225,18 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
 
     const formattedData = this.formatAggDataStructure(rootAggObj, rootAggObj,
       ['agg_histo', 'agg_fact', 'agg_fact_val', 'agg_term', 'fact_val_reverse', 'agg_geohash', 'agg_distance', 'agg_centroid']);
-
-    if (this.bucketAccessor(formattedData).length > 0) {
-      if (formattedData.nested) {
-        // depth of 3 means this structure: agg -> sub-agg
-        // tslint:disable-next-line:no-any
-        if (aggregationType === 'agg_histo' && this.determineDepthOfObject(formattedData, (x: any) => x.buckets) === 3) {
-          aggDataAccessor(aggData).push({
-            name: aggName === 'agg_histo' ? this.MAIN_AGG_NAME : aggName,
-            series: this.formatDateDataExtraBucket(this.bucketAccessor(formattedData))
-          });
-        } else if (aggregationType === 'agg_geohash') {
-          aggDataAccessor(aggData).push({
-            name: aggName === 'agg_geohash' ? this.MAIN_AGG_NAME : aggName,
-            agg_geohash: this.bucketAccessor(formattedData),
-            type: aggregationType
-          });
-        } else if (aggregationType === 'agg_distance') {
-          aggDataAccessor(aggData).push({
-            name: aggName === 'agg_distance' ? this.MAIN_AGG_NAME : aggName,
-            agg_distance: this.bucketAccessor(formattedData),
-            type: aggregationType
-          });
-        } else if (aggregationType === 'agg_centroid') {
-          aggDataAccessor(aggData).push({
-            name: aggName === 'agg_centroid' ? this.MAIN_AGG_NAME : aggName,
-            agg_centroid: this.bucketAccessor(formattedData),
-            type: aggregationType
-          });
-        } else {
-          if (aggregationType === 'agg_fact' && this.determineDepthOfObject(formattedData, (x: { buckets: unknown; }) => x.buckets) === 3) {
-            // @ts-ignore
-            aggData.textaFactsTableData.push({
-              name: aggName === aggregationType ? this.MAIN_AGG_NAME : aggName,
-              data: this.bucketAccessor(formattedData)
-            });
-          } else {
-            // @ts-ignore
-            aggData.treeData.push({
-              name: aggName === aggregationType ? this.MAIN_AGG_NAME : aggName,
-              histoBuckets: formattedData.histoBuckets ? formattedData.histoBuckets : [],
-              treeData: this.bucketAccessor(formattedData)
-            });
-          }
-        }
-      } else if (aggregationType === 'agg_term') {
+    const MAIN_AGG_NAME = 'Aggregation results';
+    // empty result agg might have 0 results so the nested variable might be false, even though it's still a fact agg
+    // we still want fact aggregations to pass this if statement so add checking if its a fact
+    if (formattedData.nested || aggregationType === 'agg_fact') {
+      // depth of 3 means this structure: agg -> sub-agg
+      // tslint:disable-next-line:no-any
+      if (aggregationType === 'agg_histo' && this.determineDepthOfObject(formattedData, (x: any) => x.buckets) === 3) {
         aggDataAccessor(aggData).push({
-          tableData: new MatTableDataSource(this.bucketAccessor(formattedData)),
-          name: aggName === aggregationType ? this.MAIN_AGG_NAME : aggName
+          name: aggName === 'agg_histo' ? MAIN_AGG_NAME : aggName,
+          series: this.formatDateDataExtraBucket(this.bucketAccessor(formattedData))
         });
-      } else if (aggregationType === 'agg_histo') {
-        aggDataAccessor(aggData).push({
-          name: aggName === 'agg_histo' ? this.MAIN_AGG_NAME : aggName,
-          series: this.formatDateData(this.bucketAccessor(formattedData))
-        });
-      } else if (aggregationType === 'agg_geohash') {
+      }else if (aggregationType === 'agg_geohash') {
         aggDataAccessor(aggData).push({
           name: aggName === 'agg_geohash' ? this.MAIN_AGG_NAME : aggName,
           agg_geohash: this.bucketAccessor(formattedData),
@@ -292,10 +251,54 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
       } else if (aggregationType === 'agg_centroid') {
         aggDataAccessor(aggData).push({
           name: aggName === 'agg_centroid' ? this.MAIN_AGG_NAME : aggName,
-          agg_centroid: formattedData,
+          agg_centroid: this.bucketAccessor(formattedData),
           type: aggregationType
         });
       }
+       else {
+        // we still want empty fact aggregations to pass this if statement, (nested = false, type = agg_fact)
+        // so we can show the user we had an empty result
+        if (aggregationType === 'agg_fact' && this.determineDepthOfObject(formattedData, (x: { buckets: unknown; }) => x.buckets) === 3
+          || (aggregationType === 'agg_fact' && formattedData.nested === false)) {
+          // @ts-ignore
+          aggData.textaFactsTableData.push({
+            name: aggName === aggregationType ? MAIN_AGG_NAME : aggName,
+            data: this.bucketAccessor(formattedData)
+          });
+        } else {
+          // @ts-ignore
+          aggData.treeData.push({
+            name: aggName === aggregationType ? MAIN_AGG_NAME : aggName,
+            // tslint:disable-next-line:no-any
+            histoBuckets: formattedData.histoBuckets && this.determineDepthOfObject(formattedData, (x: any) => x.buckets) === 3 ? formattedData.histoBuckets : [],
+            treeData: this.bucketAccessor(formattedData)
+          });
+        }
+      }
+      
+    } else if (aggregationType === 'agg_term') {
+      aggDataAccessor(aggData).push({
+        tableData: new MatTableDataSource(this.bucketAccessor(formattedData)),
+        name: aggName === aggregationType ? MAIN_AGG_NAME : aggName
+      });
+    } else if (aggregationType === 'agg_histo') {
+      aggDataAccessor(aggData).push({
+        name: aggName === 'agg_histo' ? MAIN_AGG_NAME : aggName,
+        series: this.formatDateData(this.bucketAccessor(formattedData))
+      });
+    }
+    else if (aggregationType === 'agg_geohash') {
+      aggDataAccessor(aggData).push({
+        name: aggName === 'agg_geohash' ? this.MAIN_AGG_NAME : aggName,
+        agg_geohash: this.bucketAccessor(formattedData),
+        type: aggregationType
+      });
+    } else if (aggregationType === 'agg_distance') {
+      aggDataAccessor(aggData).push({
+        name: aggName === 'agg_distance' ? this.MAIN_AGG_NAME : aggName,
+        agg_distance: this.bucketAccessor(formattedData),
+        type: aggregationType
+      });
     } else if (aggregationType === 'agg_centroid') {
       aggDataAccessor(aggData).push({
         name: aggName === 'agg_centroid' ? this.MAIN_AGG_NAME : aggName,
@@ -313,7 +316,8 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   openUnifiedTimeline(buckets: any[]): void {
     this.dialog.open(AggregationResultsDialogComponent, {
       data: {
-        aggData: buckets, type: 'histo'
+        aggData: buckets, type: 'histo',
+        docPaths: [this.fieldPathList[1], this.fieldPathList[0]], // first index is date col, order matters
       },
       height: '95%',
       width: '90%',

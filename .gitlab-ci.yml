@@ -31,7 +31,7 @@ variables:
     TEXTA_API_URL: http://texta-rest
     TEXTA_ADMIN_PASSWORD: "1234"
     TEXTA_USE_CSRF: "False"
-    TEXTA_EXTERNAL_DATA_DIR: /cache
+    #TEXTA_EXTERNAL_DATA_DIR: /cache
     npm_config_cache: "$CI_PROJECT_DIR/.npm"
     CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/Cypress"
     FF_NETWORK_PER_BUILD: 1
@@ -39,12 +39,12 @@ variables:
     TEXTA_LANGUAGE_CODES: et
     # UAA
     TEXTA_USE_UAA: "True"
-    TEXTA_UAA_REDIRECT_URI: http://texta-rest/api/v1/uaa/callback
-    TEXTA_UAA_USER: test1
-    TEXTA_UAA_EMAIL: test1@test1.com
-    TEXTA_UAA_PWD: test1
+    TEXTA_UAA_REDIRECT_URI: http://texta-rest/api/v2/uaa/callback
+    TEXTA_UAA_USER: test
+    TEXTA_UAA_EMAIL: test@test.com
+    TEXTA_UAA_PWD: test
     TEXTA_UAA_URL: http://texta-uaa:8080/uaa
-    TEXTA_UAA_FRONT_REDIRECT_URL: http://localhost:4200/oauth
+    TEXTA_UAA_FRONT_REDIRECT_URL: http://localhost:4200/oauth/uaa
     TEXTA_UAA_CLIENT_ID: login
     TEXTA_UAA_CLIENT_SECRET: loginsecret
 
@@ -54,7 +54,7 @@ stages:
   - build
 
 Karma:
-  image: circleci/node:10-browsers
+  image: zenika/alpine-chrome:89-with-node-14
   script:
     - npm ci
     - npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
@@ -63,14 +63,14 @@ Karma:
   - ci-test
 
 Cypress:
-  image: cypress/browsers:node12.16.2-chrome81-ff75
+  image: cypress/base:14.17.0
   stage: e2e-test
   tags:
     - ci-test
   before_script:
     - npm ci
     - apt-get update && apt-get install python3-pip -y
-    - pip3 install elasticsearch==7.*
+    - pip3 install elasticsearch==7.10.1
     - python3 import_test_data.py
     - sh wait_for_uaa.sh
   script:
@@ -85,7 +85,7 @@ Cypress:
     expire_in: 1 day
 
 build:
-  image: node:latest
+  image: node:14.15-stretch
   stage: build
   only:
   - master
@@ -98,11 +98,13 @@ build:
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
     - npm install -g @angular/cli
     - npm ci
+    - apt-get update && apt-get install jq -y
   script:
     - ng build --prod
     - mkdir release
     - tar -czvf release/texta-rest-front-latest.tar.gz dist/TEXTA
-    - cp release/texta-rest-front-latest.tar.gz release/texta-rest-front-${CI_COMMIT_TAG}.tar.gz
+    - export FRONT_VERSION=$(jq .version package.json | sed -s s'/"//'g)
+    - cp release/texta-rest-front-latest.tar.gz release/texta-rest-front-${FRONT_VERSION}.tar.gz
     - ssh-add <(echo "$STAGING_PRIVATE_KEY")
     - ssh texta-docs@web.texta.ee "mkdir -p /opt/packages/texta-rest-front"
     - scp -r release/* texta-docs@web.texta.ee:/opt/packages/texta-rest-front

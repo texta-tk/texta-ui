@@ -20,6 +20,7 @@ import {EditRegexTaggerDialogComponent} from './edit-regex-tagger-dialog/edit-re
 import {TagTextDialogComponent} from './tag-text-dialog/tag-text-dialog.component';
 import {TagRandomDocComponent} from './tag-random-doc/tag-random-doc.component';
 import {ApplyToIndexDialogComponent} from './apply-to-index-dialog/apply-to-index-dialog.component';
+import {MatSelectChange} from "@angular/material/select";
 
 @Component({
   selector: 'app-regex-tagger',
@@ -41,6 +42,10 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   currentProject: Project;
   patchRowQueue: Subject<RegexTagger> = new Subject();
   resultsLength: number;
+  filteredSubject = new Subject();
+  // For custom filtering, such as text search in description
+  inputFilterQuery = '';
+  filteringValues: { [key: string]: string } = {};
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   private updateTable = new Subject<boolean>();
@@ -65,7 +70,7 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit(): void {   // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
-    merge(this.sort.sortChange, this.paginator.page, this.updateTable)
+    merge(this.sort.sortChange, this.paginator.page, this.updateTable, this.filteredSubject)
       .pipe(debounceTime(250), switchMap(() => {
         if (this.currentProject) {
           this.isLoadingResults = true;
@@ -73,7 +78,7 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
           return this.regexTaggerService.getRegexTaggers(
             this.currentProject.id,
             // Add 1 to to index because Material paginator starts from 0 and DRF paginator from 1
-            `ordering=${sortDirection}${this.sort.active}&page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`);
+            `${this.inputFilterQuery}&ordering=${sortDirection}${this.sort.active}&page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`);
         } else {
           return of(null);
         }
@@ -138,7 +143,8 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     dialogRef.afterClosed().subscribe((resp: RegexTagger) => {
       if (resp) {
-        this.tableData.data = [resp, ...this.tableData.data];
+        this.updateTable.next(true);
+        this.projectStore.refreshSelectedProjectResourceCounts();
         this.logService.snackBarMessage(`Created regex tagger: ${resp.description}`, 2000);
       }
     });
@@ -166,7 +172,6 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dialog.open(MultiTagTextDialogComponent, {
       maxHeight: '90vh',
       width: '700px',
-      data: JSON.parse(JSON.stringify(this.tableData.data)),
       disableClose: true
     });
   }
@@ -204,6 +209,7 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
           this.regexTaggerService.bulkDeleteRegexTaggers(this.currentProject.id, body).subscribe(() => {
             this.logService.snackBarMessage(`Deleted ${this.selectedRows.selected.length} regex taggers.`, 2000);
             this.removeSelectedRows();
+            this.projectStore.refreshSelectedProjectResourceCounts();
           });
         }
       });
@@ -223,6 +229,7 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
           this.logService.snackBarMessage(`Deleted regex tagger ${regexTagger.description}`, 2000);
           this.tableData.data.splice(index, 1);
           this.tableData.data = [...this.tableData.data];
+          this.projectStore.refreshSelectedProjectResourceCounts();
         });
       }
     });
@@ -251,8 +258,27 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  applyFilter(filterValue: MatSelectChange | null | EventTarget, field: string): void {
+    // @ts-ignore
+    this.filteringValues[field] = filterValue?.value ? filterValue.value : '';
+    this.paginator.pageIndex = 0;
+    this.filterQueriesToString();
+    this.filteredSubject.next();
+  }
+
+  filterQueriesToString(): void {
+    this.inputFilterQuery = '';
+    for (const field in this.filteringValues) {
+      if (this.filteringValues.hasOwnProperty(field)) {
+        this.inputFilterQuery += `&${field}=${this.filteringValues[field]}`;
+      }
+    }
+  }
+
   ngOnDestroy(): void {
     this.destroyed$.next(true);
     this.destroyed$.complete();
   }
+
+
 }

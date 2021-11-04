@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, Input, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {MatTableDataSource} from '@angular/material/table';
 
@@ -11,10 +11,12 @@ export class AggregationResultsDialogComponent implements OnInit {
   type: 'table' | 'histo' | undefined = undefined;
   // tslint:disable-next-line:no-any
   aggData: MatTableDataSource<any> | any;
+  // for creating constraints
+  docPaths: string[];
 
   constructor(private dialogRef: MatDialogRef<AggregationResultsDialogComponent>,
               // tslint:disable-next-line:no-any
-              @Inject(MAT_DIALOG_DATA) public data: { type: 'table' | 'histo', aggData: MatTableDataSource<any> | any }) {
+              @Inject(MAT_DIALOG_DATA) public data: { type: 'table' | 'histo', aggData: MatTableDataSource<any> | any, docPaths: string[]; }) {
     if (data.type === 'table') {
       // tslint:disable-next-line:no-any
       this.aggData = data.aggData as MatTableDataSource<any>;
@@ -24,6 +26,7 @@ export class AggregationResultsDialogComponent implements OnInit {
   ngOnInit(): void {
     setTimeout(() => {
       this.type = this.data.type;
+      this.docPaths = this.data.docPaths;
       if (this.type === 'histo') {
         this.data.aggData = this.data.aggData.slice(0, 50);
         for (const element of this.data.aggData) {

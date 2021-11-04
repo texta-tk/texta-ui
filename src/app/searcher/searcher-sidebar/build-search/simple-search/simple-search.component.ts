@@ -45,7 +45,7 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroy$)).subscribe(projectFields => {
       if (projectFields) {
-        this.projectFields = ProjectIndex.sortTextaFactsAsFirstItem(projectFields);
+        this.projectFields = projectFields;
         this.makeQuery(this.searchFormControl.value);
       }
     });
@@ -118,21 +118,6 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
     } else if (this.projectFields) {
       this.elasticSearchQuery = new ElasticsearchQuery(); // emptied the searchbox, so reset query
       this.searcherComponentService.nextElasticQuery(this.elasticSearchQuery);
-    }
-  }
-
-  // THIS IS TEMPORARY todo, think of a way to save simple searches and advanced searches with a clear cut difference
-  saveSearch(description: string): void {
-    if (this.currentUser) {
-      this.searcherService.saveSearch(
-        this.currentProject.id,
-        [],
-        this.elasticSearchQuery.elasticSearchQuery,
-        description).subscribe(resp => {
-        if (resp) {
-          this.searcherComponentService.nextSavedSearchUpdate();
-        }
-      });
     }
   }
 

@@ -31,7 +31,7 @@ export class MLPComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: MLP | null;
   public tableData: MatTableDataSource<MLP> = new MatTableDataSource();
   selectedRows = new SelectionModel<MLP>(true, []);
-  public displayedColumns = ['select', 'id', 'description', 'analyzers', 'query', 'task__time_started',
+  public displayedColumns = ['select', 'id', 'author__username', 'description', 'analyzers', 'query', 'task__time_started',
     'task__time_completed', 'task__status'];
   public isLoadingResults = true;
 
@@ -40,6 +40,7 @@ export class MLPComponent implements OnInit, OnDestroy, AfterViewInit {
   resultsLength: number;
   destroyed$: Subject<boolean> = new Subject<boolean>();
   currentProject: Project;
+  private updateTable = new Subject<boolean>();
 
   constructor(private projectStore: ProjectStore,
               private mlpService: MLPService,
@@ -70,7 +71,7 @@ export class MLPComponent implements OnInit, OnDestroy, AfterViewInit {
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
-    merge(this.sort.sortChange, this.paginator.page)
+    merge(this.sort.sortChange, this.paginator.page, this.updateTable)
       .pipe(debounceTime(250), startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
@@ -122,7 +123,8 @@ export class MLPComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     dialogRef.afterClosed().subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.tableData.data = [...this.tableData.data, resp];
+        this.updateTable.next(true);
+        this.projectStore.refreshSelectedProjectResourceCounts();
       }
     });
   }

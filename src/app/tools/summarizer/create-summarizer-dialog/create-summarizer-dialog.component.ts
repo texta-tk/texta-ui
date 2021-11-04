@@ -37,6 +37,8 @@ export class CreateSummarizerDialogComponent implements OnInit, OnDestroy {
     value: string;
     display_name: string;
   }[];
+  // tslint:disable-next-line:no-any
+  summarizerOptions: any;
 
   constructor(private dialogRef: MatDialogRef<CreateSummarizerDialogComponent>,
               private projectService: ProjectService,
@@ -69,6 +71,7 @@ export class CreateSummarizerDialogComponent implements OnInit, OnDestroy {
       }
     })).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.summarizerOptions = resp;
         this.algorithms = resp.actions.POST.algorithm.choices;
         this.summarizerForm.get('algorithmsFormControl')?.setValue([this.algorithms.find(x => x.display_name === 'lexrank')?.value || this.algorithms[0]?.value]);
       } else if (resp instanceof HttpErrorResponse) {

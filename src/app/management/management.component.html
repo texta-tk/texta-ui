@@ -1,15 +1,25 @@
-<mat-tab-group>
-  <mat-tab label="Users">
-    <app-users></app-users>
-  </mat-tab>
-  <mat-tab label="Indices">
-    <ng-template matTabContent>
-      <app-indices></app-indices>
-    </ng-template>
-  </mat-tab>
-  <mat-tab label="Core variables">
-    <ng-template matTabContent>
-      <app-core-variables></app-core-variables>
-    </ng-template>
-  </mat-tab>
-</mat-tab-group>
+<div class="flex-col max-height">
+  <nav mat-tab-nav-bar style="max-height: 49px; height: 49px;">
+    <a #rla="routerLinkActive"
+       [active]="rla.isActive" mat-tab-link
+       routerLink="users"
+       routerLinkActive> Users </a>
+
+    <a #rla2="routerLinkActive"
+       [active]="rla2.isActive"
+       mat-tab-link routerLink="indices"
+       routerLinkActive> Indices </a>
+
+    <a #rla3="routerLinkActive"
+       [active]="rla3.isActive"
+       mat-tab-link routerLink="core-variables"
+       routerLinkActive> Core Variables </a>
+
+    <a #rla4="routerLinkActive"
+       *ngIf="currentUser?.is_superuser"
+       [active]="rla4.isActive"
+       mat-tab-link routerLink="celery-tasks"
+       routerLinkActive> Celery Tasks </a>
+  </nav>
+  <router-outlet></router-outlet>
+</div>

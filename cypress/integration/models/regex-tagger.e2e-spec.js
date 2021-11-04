@@ -16,24 +16,13 @@ describe('regex-taggers should work', function () {
 
   function initPage() {
     cy.visit('/regex-taggers');
-    cy.wait('@getRegexTaggers');
     cy.wait('@getProjectIndices');
-    cy.get('[data-cy=appNavbarProjectSelect]').click();
-    cy.get('mat-option').contains('integration_test_project').click();
+    cy.wait('@getRegexTaggers');
   }
 
   function tagRandomDoc() {
     cy.get('.cdk-column-actions:nth(1)').should('be.visible').click('left');
     cy.get('[data-cy=appRegexTaggerMenuTagRandomDoc]').should('be.visible').click();
-    cy.get('[data-cy=appRegexTaggerTagRandomDocDialogIndices]').click().then((indices => {
-      cy.wrap(indices).should('have.class', 'mat-focused');
-      cy.closeCurrentCdkOverlay();
-      cy.matFormFieldShouldHaveError(indices, 'required');
-      cy.wrap(indices).click();
-      cy.get('.mat-option-text:nth(0)').should('be.visible').click();
-      cy.closeCurrentCdkOverlay();
-      cy.wrap(indices).find('mat-error').should('have.length', 0)
-    }));
     cy.get('[data-cy=appRegexTaggerTagRandomDocDialogfields]').click().then((fields => {
       cy.wrap(fields).should('have.class', 'mat-focused');
       cy.closeCurrentCdkOverlay();
@@ -100,7 +89,7 @@ describe('regex-taggers should work', function () {
     cy.get('[data-cy=appRegexTaggerMultiTagDialogText]').type('test');
     cy.get('[data-cy=appRegexTaggerMultiTagDialogTaggers]').click().then((taggers => {
       cy.wrap(taggers).should('have.class', 'mat-focused');
-      cy.get('.mat-option-text:nth(0)').click();
+      cy.get('.mat-option-text:nth(1)').click();
       cy.closeCurrentCdkOverlay();
     }));
     cy.get('[data-cy=appRegexTaggerMultiTagDialogSubmit]').click();

@@ -19,27 +19,27 @@ export class IndexSplitterService {
   }
 
   getIndexSplitterTasks(projectId: number, params = ''): Observable<ResultsWrapper<IndexSplitter> | HttpErrorResponse> {
-    return this.http.get<ResultsWrapper<IndexSplitter>>(`${this.apiUrl}/projects/${projectId}/index_splitter/?${params}`).pipe(
+    return this.http.get<ResultsWrapper<IndexSplitter>>(`${this.apiUrl}/projects/${projectId}/elastic/index_splitter/?${params}`).pipe(
       tap(e => this.logService.logStatus(e, 'getIndexSplitterTasks')),
       catchError(this.logService.handleError<ResultsWrapper<IndexSplitter>>('getIndexSplitterTasks')));
   }
 
   createIndexSplitterTask(projectId: number, body: unknown): Observable<IndexSplitter | HttpErrorResponse> {
-    return this.http.post<IndexSplitter>(`${this.apiUrl}/projects/${projectId}/index_splitter/`, body).pipe(
+    return this.http.post<IndexSplitter>(`${this.apiUrl}/projects/${projectId}/elastic/index_splitter/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'createIndexSplitterTask')),
       catchError(this.logService.handleError<IndexSplitter>('createIndexSplitterTask')));
   }
 
   bulkDeleteIndexSplitterTasks(projectId: number, body: unknown): Observable<{ 'num_deleted': number, 'deleted_types': { string: number }[] } | HttpErrorResponse> {
     return this.http.post<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>
-    (`${this.apiUrl}/projects/${projectId}/index_splitter/bulk_delete/`, body).pipe(
+    (`${this.apiUrl}/projects/${projectId}/elastic/index_splitter/bulk_delete/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'bulkDeleteIndexSplitterTasks')),
       catchError(this.logService.handleError<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>('bulkDeleteIndexSplitterTasks')));
   }
 
   getIndexSplitterOptions(projectId: number): Observable<IndexSplitterOptions | HttpErrorResponse> {
     return this.http.options<IndexSplitterOptions>(
-      `${this.apiUrl}/projects/${projectId}/index_splitter/`
+      `${this.apiUrl}/projects/${projectId}/elastic/index_splitter/`
     ).pipe(
       tap(e => this.logService.logStatus(e, 'getIndexSplitterOptions')),
       catchError(this.logService.handleError<IndexSplitterOptions>('getIndexSplitterOptions')));

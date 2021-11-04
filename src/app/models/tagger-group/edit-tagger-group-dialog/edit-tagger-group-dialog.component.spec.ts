@@ -13,7 +13,7 @@ describe('EditTaggerGroupDialogComponent', () => {
   const mockDialogRef = {
     close: jasmine.createSpy('close')
   };
-  const taggerGroup = new TaggerGroup();
+  const taggerGroup = undefined;
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [

@@ -15,6 +15,7 @@
       <mat-label>Regex Taggers</mat-label>
       <mat-select [disableOptionCentering]="true"
                   formControlName="regexTaggersFormControl" multiple panelClass="select-panel-reveal-input" required>
+        <app-mat-option-select-all></app-mat-option-select-all>
         <mat-option *ngFor="let regexTagger of projectRegexTaggers" [value]="regexTagger">
           {{regexTagger.id}}: {{regexTagger.description}}
         </mat-option>

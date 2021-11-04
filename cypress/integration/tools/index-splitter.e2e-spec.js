@@ -40,7 +40,7 @@ describe('index-splitter should work', function () {
       assert.equal(created.response.body.task.status, 'created');
     });
     cy.intercept('GET', '**/index_splitter/**').as('getSplitterTasks');
-    cy.get('.mat-header-row > .cdk-column-author_username').should('be.visible').then(bb => {
+    cy.get('.mat-header-row > .cdk-column-author').should('be.visible').then(bb => {
       cy.wrap([0, 0, 0, 0, 0, 0, 0]).each(y => { // hack to wait for task to complete
         cy.wrap(bb).click();
         return cy.wait('@getSplitterTasks').then((x) => {

@@ -3,7 +3,7 @@
   [required]="required"
   [placeholder]="placeholder"
   (input)="_handleInput()" cdkTextareaAutosize cdkAutosizeMinRows="5" cdkAutosizeMaxRows="35" matInput></textarea>
-<a (click)="$event.stopPropagation();" *ngIf="lexicons.length > 0"
+<a (click)="$event.stopPropagation();"
    [matMenuTriggerData]="{data: textareaFormControl}" [matMenuTriggerFor]="menu"
    class="lexicon-fab pointer"
    type="button">
@@ -12,8 +12,8 @@
 
 <mat-menu #menu="matMenu">
   <ng-template let-data="data" matMenuContent>
-    <ng-container *ngFor="let lexicon of lexicons">
-      <ng-container *ngIf="(lexicon.positives_used|combineArray: [lexicon.positives_unused]).length > 0">
+    <ng-container *ngFor="let lexicon of lexicons | async">
+      <ng-container>
         <button (click)="addLexicon(lexicon, data)" [matMenuTriggerFor]="lexiconDetailed" mat-menu-item>
           {{ lexicon.description }}
         </button>
@@ -21,8 +21,17 @@
       <mat-menu #lexiconDetailed="matMenu">
         <div *ngFor="let phrase of lexicon.positives_used|combineArray: [lexicon.positives_unused]" disabled
              mat-menu-item>{{ phrase }}</div>
+        <div mat-menu-item *ngIf="(lexicon.positives_used|combineArray: [lexicon.positives_unused]).length === 0">
+          Empty lexicon
+        </div>
       </mat-menu>
     </ng-container>
+    <div mat-menu-item *ngIf="loadingLexicons|async">
+      Loading...
+    </div>
+    <div mat-menu-item *ngIf="!(loadingLexicons | async) && (lexicons|async)?.length === 0">
+      No lexicons available
+    </div>
 
   </ng-template>
 </mat-menu>

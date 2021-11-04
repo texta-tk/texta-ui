@@ -4,9 +4,10 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {UserStore} from '../core/users/user.store';
 import {UserProfile} from '../shared/types/UserProfile';
 import {of, Subject, Subscription} from 'rxjs';
-import * as projectPackage from '../../../package.json';
+import projectPackage from '../../../package.json';
 import {CoreService} from '../core/core.service';
 import {switchMap, takeUntil} from 'rxjs/operators';
+import {CeleryCountTasks} from "../shared/types/Celery";
 
 
 @Component({
@@ -21,6 +22,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   frontVersion = projectPackage.version;
   destroyed$ = new Subject<boolean>();
   isLoading = true;
+  celeryInfo: CeleryCountTasks;
 
   constructor(private coreService: CoreService, private userStore: UserStore) {
 
@@ -41,6 +43,12 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.unreachable = false;
       } else {
         this.unreachable = true;
+      }
+    });
+
+    this.coreService.getCeleryTaskInfo().pipe(takeUntil(this.destroyed$)).subscribe(resp => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.celeryInfo = resp;
       }
     });
 

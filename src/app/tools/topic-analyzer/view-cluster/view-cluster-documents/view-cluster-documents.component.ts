@@ -15,7 +15,7 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {ProjectStore} from '../../../../core/projects/project.store';
-import {ClusterService} from '../../../../core/tools/clusters/cluster.service';
+import {TopicAnalyzerService} from '../../../../core/tools/topic-analyzer/topic-analyzer.service';
 import {filter, switchMap, takeUntil} from 'rxjs/operators';
 import {Observable, of, Subject} from 'rxjs';
 import {LogService} from '../../../../core/util/log.service';
@@ -60,7 +60,7 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
     private logService: LogService,
     private changeDetectorRef: ChangeDetectorRef,
     private localStorageService: LocalStorageService,
-    private clusterService: ClusterService) {
+    private clusterService: TopicAnalyzerService) {
   }
 
   textaFactAccessor = (x: TextaFact) => x.fact;

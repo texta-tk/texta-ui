@@ -15,7 +15,7 @@ describe('TaggerGroupTagDocDialogComponent', () => {
     close: jasmine.createSpy('close')
   };
 
-  const data = {currentProjectId: 1, tagger: new TaggerGroup()};
+  const data = {currentProjectId: 1, tagger: undefined};
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({

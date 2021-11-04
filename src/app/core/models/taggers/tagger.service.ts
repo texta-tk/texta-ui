@@ -63,6 +63,33 @@ export class TaggerService {
       catchError(this.logService.handleError<{ 'stop_words': string[] }>('getStopWords')));
   }
 
+  // tslint:disable-next-line:no-any
+  getStopWordsOptions(projectId: number, taskId: number): Observable<any | HttpErrorResponse> {
+    return this.http.options(`${this.apiUrl}/projects/${projectId}/taggers/${taskId}/stop_words/`).pipe(
+      tap(e => this.logService.logStatus(e, 'getStopWordsOptions')),
+      catchError(this.logService.handleError('getStopWordsOptions')));
+  }
+
+  // tslint:disable-next-line:no-any
+  getTagTextOptions(projectId: number, taskId: number): Observable<any | HttpErrorResponse> {
+    return this.http.options(`${this.apiUrl}/projects/${projectId}/taggers/${taskId}/tag_text/`).pipe(
+      tap(e => this.logService.logStatus(e, 'getTagTextOptions')),
+      catchError(this.logService.handleError('getTagTextOptions')));
+  }
+
+  // tslint:disable-next-line:no-any
+  getTagDocOptions(projectId: number, taskId: number): Observable<any | HttpErrorResponse> {
+    return this.http.options(`${this.apiUrl}/projects/${projectId}/taggers/${taskId}/tag_doc/`).pipe(
+      tap(e => this.logService.logStatus(e, 'getTagDocOptions')),
+      catchError(this.logService.handleError('getTagDocOptions')));
+  }
+  // tslint:disable-next-line:no-any
+  getTagRandomDocOptions(projectId: number, taskId: number): Observable<any | HttpErrorResponse> {
+    return this.http.options(`${this.apiUrl}/projects/${projectId}/taggers/${taskId}/tag_random_doc/`).pipe(
+      tap(e => this.logService.logStatus(e, 'getTagRandomDocOptions')),
+      catchError(this.logService.handleError('getTagRandomDocOptions')));
+  }
+
   listFeatures(projectId: number, taggerId: number, size: number): Observable<ListFeaturesResponse | HttpErrorResponse> {
     return this.http.post<ListFeaturesResponse>(`${this.apiUrl}/projects/${projectId}/taggers/${taggerId}/list_features/`, {size}).pipe(
       tap(e => this.logService.logStatus(e, 'listFeatures')),
@@ -83,7 +110,8 @@ export class TaggerService {
       catchError(this.logService.handleError<TaggerOptions>('getTaggerOptions')));
   }
 
-  tagRandomDocument(projectId: number, taggerId: number, body: unknown): Observable<unknown | HttpErrorResponse> {
+  // tslint:disable-next-line:no-any
+  tagRandomDocument(projectId: number, taggerId: number, body: unknown): Observable<any | HttpErrorResponse> {
     return this.http.post(`${this.apiUrl}/projects/${projectId}/taggers/${taggerId}/tag_random_doc/`, body
     ).pipe(
       tap(e => this.logService.logStatus(e, 'tagRandomDocument')),
@@ -137,6 +165,23 @@ export class TaggerService {
       catchError(this.logService.handleError('applyToIndex')));
   }
 
+  // tslint:disable-next-line:no-any
+  multiTagText(projectId: number, body: unknown): Observable<any | HttpErrorResponse> {
+    return this.http.post(`${this.apiUrl}/projects/${projectId}/taggers/multitag_text/`, body
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'multiTagTextTagger')),
+      catchError(this.logService.handleError('multiTagTextTagger')));
+  }
+// tslint:disable-next-line:no-any
+  getMultiTagTextOptions(projectId: number): Observable<any | HttpErrorResponse> {
+    // tslint:disable-next-line:no-any
+    return this.http.options<any>(
+      `${this.apiUrl}/projects/${projectId}/taggers/multitag_text/`
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'getMultiTagTextOptions')),
+      // tslint:disable-next-line:no-any
+      catchError(this.logService.handleError<any>('getMultiTagTextOptions')));
+  }
   // tslint:disable-next-line:no-any
   applyToIndexOptions(projectId: number, taskId: number): Observable<any | HttpErrorResponse> {
     // tslint:disable-next-line:no-any

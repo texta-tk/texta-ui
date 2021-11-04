@@ -8,6 +8,7 @@
       <mat-error *ngIf="indexSplitterForm.get('descriptionFormControl')?.hasError('required')">
         Description is <strong>required</strong>
       </mat-error>
+      <mat-hint>{{indexSplitterOptions?.actions?.POST?.description?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
 
@@ -15,6 +16,7 @@
       <mat-label>Indices</mat-label>
       <mat-select (openedChange)="indicesOpenedChange($event)" [disableOptionCentering]="true"
                   formControlName="indicesFormControl" multiple panelClass="select-panel-reveal-input" required>
+        <app-mat-option-select-all></app-mat-option-select-all>
         <mat-option *ngFor="let projectIndex of projectIndices" [value]="projectIndex">
           {{projectIndex.index}}
         </mat-option>
@@ -22,12 +24,14 @@
       <mat-error *ngIf="indexSplitterForm.get('indicesFormControl')?.hasError('required')">
         Select at least <strong>1 index</strong>
       </mat-error>
+      <mat-hint>{{indexSplitterOptions?.actions?.POST?.indices?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
     <mat-form-field>
       <mat-label>Select Fields</mat-label>
       <app-project-field-select [projectFields]="projectFields"
                                 formControlName="fieldsFormControl"></app-project-field-select>
+      <mat-hint>{{indexSplitterOptions?.actions?.POST?.fields?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"
@@ -38,6 +42,7 @@
       <input formControlName="scrollSizeFormControl" matInput max="10000"
              min="1" pattern="([0-9]*|[0-9]*[.]?)\d*" placeholder="Scroll size" step="100"
              type="number">
+      <mat-hint>{{indexSplitterOptions?.actions?.POST?.scroll_size?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
     <mat-form-field data-cy="appIndexSplitterCreateDialogTrainIndex">
@@ -46,6 +51,7 @@
       <mat-error *ngIf="indexSplitterForm.get('trainIndexFormControl')?.hasError('required')">
         Train index is <strong>required</strong>
       </mat-error>
+      <mat-hint>{{indexSplitterOptions?.actions?.POST?.train_index?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
     <mat-form-field data-cy="appIndexSplitterCreateDialogTestIndex">
@@ -54,15 +60,15 @@
       <mat-error *ngIf="indexSplitterForm.get('testIndexFormControl')?.hasError('required')">
         Test index is <strong>required</strong>
       </mat-error>
+      <mat-hint>{{indexSplitterOptions?.actions?.POST?.test_index?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
     <mat-form-field class="m-bot-10">
       <input formControlName="testSizeIndexFormControl" matInput max="10000"
              min="1" pattern="([0-9]*|[0-9]*[.]?)\d*" placeholder="Test size" step="100"
              type="number">
-      <mat-hint>Size of the test set. Represents a percentage with "random" or "original" distribution and a quantity
-        with "equal" or "custom" distribution
-      </mat-hint>
+
+      <mat-hint>{{indexSplitterOptions?.actions?.POST?.test_size?.help_text || ''}}</mat-hint>
     </mat-form-field>
     <div fxLayout="row" class="m-bot-10">
       <mat-form-field fxFlex>
@@ -75,7 +81,7 @@
             {{fact}}
           </mat-option>
         </mat-select>
-        <mat-hint>Name of the fact on which the test index distribution will base</mat-hint>
+        <mat-hint>{{indexSplitterOptions?.actions?.POST?.fact?.help_text || ''}}</mat-hint>
       </mat-form-field>
       <mat-form-field class="m-l-15" fxFlex>
         <input [matAutocomplete]="trueVal"
@@ -91,7 +97,7 @@
           </mat-option>
         </mat-autocomplete>
 
-        <mat-hint>Name of the fact value on which the test index distribution will base</mat-hint>
+        <mat-hint>{{indexSplitterOptions?.actions?.POST?.str_val?.help_text || ''}}</mat-hint>
       </mat-form-field>
     </div>
 
@@ -104,13 +110,13 @@
             {{item.display_name}}
           </mat-option>
         </ng-container>
+        <mat-hint>{{indexSplitterOptions?.actions?.POST?.distribution?.help_text || ''}}</mat-hint>
       </mat-select>
     </mat-form-field>
     <mat-form-field>
       <input autocomplete="off" formControlName="customDistributionFormControl" matInput
              placeholder="Custom distribution">
-      <mat-hint>A dictionary containing custom label distribution with keys as labels and values as quantities
-      </mat-hint>
+      <mat-hint>{{indexSplitterOptions?.actions?.POST?.custom_distribution?.help_text || ''}}</mat-hint>
     </mat-form-field>
   </form>
 </mat-dialog-content>

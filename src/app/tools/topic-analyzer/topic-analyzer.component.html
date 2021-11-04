@@ -20,7 +20,7 @@
 
   <div [appScrollTop]="tableData" class="table-container overflow-auto">
     <table [dataSource]="tableData" mat-table
-           matSort matSortDirection="asc" matSortDisableClear
+           matSort matSortDirection="desc" matSortActive="id" matSortDisableClear
            multiTemplateDataRows>
       <ng-container matColumnDef="select">
         <th *matHeaderCellDef mat-header-cell>
@@ -44,7 +44,7 @@
       </ng-container>
       <ng-container matColumnDef="author__username">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Author</th>
-        <td *matCellDef="let element" mat-cell> {{element.author_username}}</td>
+        <td *matCellDef="let element" mat-cell [matTooltip]="element?.author?.username"> {{element?.author?.display_name}}</td>
       </ng-container>
 
       <ng-container matColumnDef="view_cluster">

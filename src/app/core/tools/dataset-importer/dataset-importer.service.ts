@@ -19,27 +19,34 @@ export class DatasetImporterService {
   }
 
   getDatasetImports(projectId: number, params = ''): Observable<ResultsWrapper<DatasetImport> | HttpErrorResponse> {
-    return this.http.get<ResultsWrapper<DatasetImport>>(`${this.apiUrl}/projects/${projectId}/dataset_imports/?${params}`).pipe(
+    return this.http.get<ResultsWrapper<DatasetImport>>(`${this.apiUrl}/projects/${projectId}/elastic/dataset_imports/?${params}`).pipe(
       tap(e => this.logService.logStatus(e, 'getIndices')),
       catchError(this.logService.handleError<ResultsWrapper<DatasetImport>>('getIndices')));
   }
 
   createIndex(body: FormData, projectId: number): Observable<HttpEvent<unknown> | HttpErrorResponse> {
-    const request = new HttpRequest('POST', `${this.apiUrl}/projects/${projectId}/dataset_imports/`, body, {reportProgress: true});
+    const request = new HttpRequest('POST', `${this.apiUrl}/projects/${projectId}/elastic/dataset_imports/`, body, {reportProgress: true});
     return this.http.request(request).pipe(
       catchError(this.logService.handleError<HttpEvent<unknown>>('createIndex')));
   }
 
   bulkDeleteIndices(projectId: number, body: { ids: number[]; }): Observable<unknown> {
     return this.http.post<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>
-    (`${this.apiUrl}/projects/${projectId}/dataset_imports/bulk_delete/`, body).pipe(
+    (`${this.apiUrl}/projects/${projectId}/elastic/dataset_imports/bulk_delete/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'bulkDeleteIndices')),
       catchError(this.logService.handleError<unknown>('bulkDeleteReindexers')));
   }
 
   deleteIndex(datasetId: number, projectId: number): Observable<unknown> {
-    return this.http.delete(`${this.apiUrl}/projects/${projectId}/dataset_imports/${datasetId}/`).pipe(
+    return this.http.delete(`${this.apiUrl}/projects/${projectId}/elastic/dataset_imports/${datasetId}/`).pipe(
       tap(e => this.logService.logStatus(e, 'deleteIndex')),
       catchError(this.logService.handleError<unknown>('deleteIndex')));
+  }
+
+  // tslint:disable-next-line:no-any
+  getDatasetImporterOptions(projectId: number): Observable<any | HttpErrorResponse> {
+    return this.http.options(`${this.apiUrl}/projects/${projectId}/elastic/dataset_imports/`).pipe(
+      tap(e => this.logService.logStatus(e, 'getDatasetImporterOptions')),
+      catchError(this.logService.handleError('getDatasetImporterOptions')));
   }
 }

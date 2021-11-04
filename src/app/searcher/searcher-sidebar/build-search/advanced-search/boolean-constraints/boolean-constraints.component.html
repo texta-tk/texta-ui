@@ -1,0 +1,25 @@
+<div fxLayout="column">
+  <div fxLayout="row" fxLayoutGap="5px" style="align-items: end">
+    <mat-form-field fxFlex="20">
+      <mat-label>Operator</mat-label>
+      <mat-select [disableOptionCentering]="true" [formControl]="operatorFormControl"
+                  panelClass="select-panel-reveal-input">
+        <mat-option value="must">and</mat-option>
+        <mat-option value="should">or</mat-option>
+        <mat-option value="must_not">not</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field fxFlex>
+      <mat-label>Field value</mat-label>
+      <mat-select [disableOptionCentering]="true" [formControl]="booleanValueFormControl"
+                  panelClass="select-panel-reveal-input" (openedChange)="booleanOpenedChange($event)">
+        <mat-option [value]="true">
+          True
+        </mat-option>
+        <mat-option [value]="false">
+          False
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+</div>

@@ -59,6 +59,8 @@ export class ApplyToIndexDialogComponent implements OnInit, OnDestroy {
   destroyed$: Subject<boolean> = new Subject<boolean>();
   indices: ProjectIndex[];
   projectFields: ProjectIndex[] = [];
+  // tslint:disable-next-line:no-any
+  taggerGroupOptions: any;
 
   constructor(private dialogRef: MatDialogRef<ApplyToIndexDialogComponent>,
               private projectService: ProjectService,
@@ -77,6 +79,7 @@ export class ApplyToIndexDialogComponent implements OnInit, OnDestroy {
       return of(null);
     })).subscribe(options => {
       if (options && !(options instanceof HttpErrorResponse)) {
+        this.taggerGroupOptions = options;
         this.applyForm.get('lemmatizeFormControl')?.setValue(options.actions.POST.lemmatize.default);
         this.applyForm.get('maxTagsFormControl')?.setValue(options.actions.POST.max_tags.default);
         this.applyForm.get('nerFormControl')?.setValue(options.actions.POST.use_ner.default);

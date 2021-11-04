@@ -29,7 +29,6 @@ import {EditSavedSearchDialogComponent} from './searcher-sidebar/saved-searches/
 import {SearcherComponentService} from './services/searcher-component.service';
 import {PlotlyViaWindowModule} from 'angular-plotly.js';
 import {DragDropModule} from '@angular/cdk/drag-drop';
-import { AddLexiconDialogComponent } from './aggregation-results/aggregation-result-table/add-lexicon-dialog/add-lexicon-dialog.component';
 import { GeoShapeAggregationComponent } from './searcher-sidebar/aggregations/geo-shape-aggregation/geo-shape-aggregation.component';
 import { GeoPointAggregationComponent } from './searcher-sidebar/aggregations/geo-point-aggregation/geo-point-aggregation.component';
 import { AggregationResultsMapComponent } from './aggregation-results/aggregation-results-map/aggregation-results-map.component';
@@ -37,6 +36,10 @@ import { GeohashAggregationComponent } from './searcher-sidebar/aggregations/geo
 import {LeafletModule} from "@asymmetrik/ngx-leaflet";
 import { GeoDistanceAggregationComponent } from './searcher-sidebar/aggregations/geo-point-aggregation/geo-distance-aggregation/geo-distance-aggregation.component';
 import { GeoCentroidAggregationComponent } from './searcher-sidebar/aggregations/geo-point-aggregation/geo-centroid-aggregation/geo-centroid-aggregation.component';
+import { BooleanConstraintsComponent } from './searcher-sidebar/build-search/advanced-search/boolean-constraints/boolean-constraints.component';
+import { ExportSearchDialogComponent } from './searcher-table/export-search-dialog/export-search-dialog.component';
+import { AddLexiconDialogComponent } from '../shared/components/dialogs/add-lexicon-dialog/add-lexicon-dialog.component';
+
 @NgModule({
   declarations: [
     SearcherComponent,
@@ -70,6 +73,8 @@ import { GeoCentroidAggregationComponent } from './searcher-sidebar/aggregations
     GeohashAggregationComponent,
     GeoDistanceAggregationComponent,
     GeoCentroidAggregationComponent,
+    BooleanConstraintsComponent,
+    ExportSearchDialogComponent,
   ],
   imports: [
     SharedModule,

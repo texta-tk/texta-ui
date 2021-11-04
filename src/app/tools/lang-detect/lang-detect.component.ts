@@ -38,6 +38,7 @@ export class LangDetectComponent implements OnInit, OnDestroy, AfterViewInit {
   resultsLength: number;
   destroyed$: Subject<boolean> = new Subject<boolean>();
   currentProject: Project;
+  private updateTable = new Subject<boolean>();
 
   constructor(private projectStore: ProjectStore,
               private langDetectService: LangDetectService,
@@ -68,7 +69,7 @@ export class LangDetectComponent implements OnInit, OnDestroy, AfterViewInit {
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
-    merge(this.sort.sortChange, this.paginator.page)
+    merge(this.sort.sortChange, this.paginator.page, this.updateTable)
       .pipe(debounceTime(250), startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
@@ -124,7 +125,8 @@ export class LangDetectComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     dialogRef.afterClosed().subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.tableData.data = [...this.tableData.data, resp];
+        this.updateTable.next(true);
+        this.projectStore.refreshSelectedProjectResourceCounts();
       }
     });
   }

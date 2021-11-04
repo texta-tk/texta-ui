@@ -13,10 +13,9 @@ import {Platform} from '@angular/cdk/platform';
 import {SearcherComponentService} from '../../services/searcher-component.service';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
-import {Plotly} from 'angular-plotly.js/lib/plotly.interface';
-import Layout = Plotly.Layout;
 import {PlotlyComponent} from 'angular-plotly.js';
-import {Component, Injector, Input, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, Injector, Input, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-aggregation-results-chart',
@@ -24,24 +23,33 @@ import {Component, Injector, Input, NgZone, OnDestroy, OnInit, ViewChild} from '
   styleUrls: ['./aggregation-results-chart.component.scss']
 })
 export class AggregationResultsChartComponent implements OnInit, OnDestroy {
-  public graph: { data: unknown[], layout: Layout };
+  // tslint:disable-next-line:no-any
+  dataSource: any[] = [];
+  // tslint:disable-next-line:no-any
+  public graph: { data: unknown[], layout: any };
+  displayedColumns = ['key', 'doc_count'];
   revision = 0;
   @ViewChild(PlotlyComponent) plotly: PlotlyComponent;
   overlayRef: OverlayRef;
   destroyed$: Subject<boolean> = new Subject();
   title = '';
+  // 0 index is date, 1 is data col
+  @Input() docPaths: string[];
+  textColPath: string;
+  dateColPath: string;
 
   constructor(private overlay: Overlay, private injector: Injector, private ngZone: NgZone,
               private platform: Platform, private overLayContainer: OverlayContainer,
+              private changeDetectorRef: ChangeDetectorRef,
               private searcherComponentService: SearcherComponentService) {
   }
 
   @Input() set yLabel(val: string) {
     this.title = val;
     if (val === 'frequency') {
-      this.graph.layout['yaxis'] = {title: {text: this.title}, tickformat: ',.0%'};
+      this.graph.layout.yaxis = {title: {text: this.title}, tickformat: ',.0%'};
     } else {
-      this.graph.layout['yaxis'] = {title: {text: this.title}};
+      this.graph.layout.yaxis = {title: {text: this.title}};
     }
   }
 
@@ -60,7 +68,7 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
           namelength: 25,
         },
         hoverdistance: -1,
-        yaxis: this.graph?.layout['yaxis'] || {title: {text: this.title}},
+        yaxis: this.graph?.layout.yaxis || {title: {text: this.title}},
         xaxis: {type: 'date'},
         legend: {
           orientation: 'h',
@@ -76,16 +84,21 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
           const series = el.series;
           const mode = el.series.length > 100 ? 'lines+points' : 'lines+points+markers';
           if (series[0].extra) { // date->term structure plots, saved searches
+            this.textColPath = this.docPaths[1];
+            this.dateColPath = this.docPaths[0];
             this.graph.data.push({
               x: series.map(x => new Date(x.epoch)),
               y: series.map(x => x.value),
-              hovertext: series.map(x => x?.extra?.buckets.map(y => `${y.key.slice(0, 30)}:<b>${y.doc_count}</b><br>`).join('')),
+              customData: series,
+              // limit hover text to 20 rows, if it doesnt fit graph plotly wont show
+              hovertext: series.map(x => x?.extra?.buckets.slice(0, 20).map(y => `${y.key.slice(0, 30)}:<b>${y.doc_count}</b><br>`).join('')),
               type: 'scattergl',
               mode,
               /*          line: {shape: 'spline'},*/
               name: el.name,
             });
           } else {
+            this.dateColPath = this.docPaths[0];
             this.graph.data.push({ // regular plots, no nesting, saved searches
               x: series.map(x => new Date(x.epoch)),
               y: series.map(x => x.value),
@@ -101,6 +114,8 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
       this.graph.layout.hoverdistance = 33;
       this.graph.layout.showlegend = false;
       for (const el of val) {
+        this.textColPath = this.docPaths[1];
+        this.dateColPath = this.docPaths[0];
         const mode = el.series.length > 100 ? 'lines+points' : 'lines+points+markers';
         const series = el.series;
         this.graph.data.push({
@@ -153,8 +168,8 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
           overlayX: 'start',
           overlayY: 'bottom',
         }]);
-        positionStrategy.withDefaultOffsetY(-30);
-        positionStrategy.withDefaultOffsetX(80);
+        positionStrategy.withDefaultOffsetY(-60);
+        positionStrategy.withDefaultOffsetX(10);
 
         this.overlayRef = this.overlay.create({
           positionStrategy
@@ -181,5 +196,60 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
     ]);
 
     return new PortalInjector(this.injector, injectorTokens);
+  }
+
+  // tslint:disable-next-line:no-any
+  drop(event: CdkDragDrop<any[]>): void {
+    moveItemInArray(this.dataSource, event.previousIndex, event.currentIndex);
+  }
+
+  // tslint:disable-next-line:no-any
+  pointClicked($event: any): void {
+    const pointIndex = $event?.points[0]?.pointNumber;
+    if ($event?.points[0]?.data?.customData && pointIndex >= 0) {// date->term structure plots, saved searches
+      console.log($event?.points[0]?.data?.customData[pointIndex]);
+      const customDatum = $event?.points[0]?.data?.customData[pointIndex];
+      this.dataSource = [...this.dataSource, customDatum];
+    } else if (pointIndex >= 0) {
+      if ($event?.points.length === 1) {// regular plots, no nesting, saved searches
+        const clickedDate = $event?.points[0]?.data?.x[pointIndex];
+        this.createDateConstraint(clickedDate);
+      } else { // nested aggs plots, ex: author->datecreated
+        const customDatum: { value: number, name: string, extra: { buckets: { key: string, doc_count: number }[] } } = {
+          value: 0,
+          name: $event.points[0].x,
+          extra: {
+            buckets: []
+          }
+        };
+        $event.points.forEach((x: { y: number, data: { name: string }, x: string }) => {
+          if (x.x === $event.points[0].x) {
+            customDatum.value += x.y;
+            customDatum.extra.buckets.push({key: x.data.name, doc_count: x.y});
+          }
+        });
+        customDatum.extra.buckets.sort((a, b) => b.doc_count - a.doc_count);
+        this.dataSource = [...this.dataSource, customDatum];
+      }
+    }
+  }
+
+  removeDataSrcEntry(index: number): void {
+    if (index >= 0) {
+      this.dataSource.splice(index, 1);
+      this.changeDetectorRef.detectChanges();
+    }
+  }
+
+  createConstraint(key: string): void {
+    if (this.docPaths) {
+      this.searcherComponentService.createTextConstraint(this.textColPath, key);
+    }
+  }
+
+  createDateConstraint(key: string): void {
+    if (this.dateColPath) {
+      this.searcherComponentService.createDateConstraint(this.dateColPath, key);
+    }
   }
 }

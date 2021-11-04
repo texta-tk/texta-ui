@@ -1,6 +1,7 @@
 <div class="table" *ngIf="type === 'table'">
-  <app-aggregation-result-table [tableData]="aggData"></app-aggregation-result-table>
+  <app-aggregation-result-table [tableData]="aggData"
+                                [docPath]="docPaths ? docPaths[0] : ''"></app-aggregation-result-table>
 </div>
-<div class="histo" *ngIf="type === 'histo'">
-  <app-aggregation-results-chart [aggregationData]="aggData"></app-aggregation-results-chart>
+<div class="histo" *ngIf="type === 'histo' && this.docPaths.length > 0">
+  <app-aggregation-results-chart [docPaths]="docPaths" [aggregationData]="aggData"></app-aggregation-results-chart>
 </div>

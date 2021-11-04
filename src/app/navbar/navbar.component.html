@@ -21,7 +21,7 @@
       </button>
     </a>
     <a [matMenuTriggerFor]="models"
-       [ngClass]="{'is-active': ['/tagger-groups', '/taggers', '/regex-taggers', '/regex-tagger-groups', '/embeddings', '/torch-taggers', '/bert-taggers', '/search-query-taggers','/search-fields-taggers'].includes(router.url)}"
+       [ngClass]="{'is-active': ['/tagger-groups', '/taggers', '/regex-taggers', '/regex-tagger-groups', '/embeddings', '/torch-taggers', '/bert-taggers', '/search-query-taggers','/search-fields-taggers', '/rakun-extractors', '/crf-extractors'].includes(router.url)}"
        class="pointer">
       <button class="nav-button" data-cy="appNavbarModels" mat-button>
         <mat-icon class="margin-right">storage</mat-icon>
@@ -35,7 +35,9 @@
         projectResourceCounts.num_bert_taggers +
         projectResourceCounts.num_embeddings +
         projectResourceCounts.num_search_query_taggers +
-        projectResourceCounts.num_search_fields_taggers}})
+        projectResourceCounts.num_search_fields_taggers +
+        projectResourceCounts.num_rakun_keyword_extractors +
+          projectResourceCounts.num_crf_extractors}})
         </ng-container>
 
         <mat-icon>arrow_drop_down</mat-icon>
@@ -86,11 +88,17 @@
          routerLinkActive="is-active-menu">Search Fields Taggers <span
         *ngIf="projectResourceCounts?.num_search_fields_taggers"> ({{projectResourceCounts.num_search_fields_taggers}})</span></a>
       <a [routerLink]="['bert-taggers']" data-cy="appNavbarModelMenuBertTaggers" mat-menu-item
-         routerLinkActive="is-active-menu">Bert Taggers <span
+         routerLinkActive="is-active-menu">BERT Taggers <span
         *ngIf="projectResourceCounts?.num_bert_taggers">({{projectResourceCounts.num_bert_taggers}})</span></a>
       <a [routerLink]="['embeddings']" data-cy="appNavbarModelMenuEmbeddings" mat-menu-item
          routerLinkActive="is-active-menu">Embeddings <span
         *ngIf="projectResourceCounts?.num_embeddings">({{projectResourceCounts.num_embeddings}})</span></a>
+      <a [routerLink]="['rakun-extractors']" data-cy="appNavbarModelMenuRakun" mat-menu-item
+         routerLinkActive="is-active-menu">Rakun Extractors <span
+        *ngIf="projectResourceCounts?.num_rakun_keyword_extractors">({{projectResourceCounts.num_rakun_keyword_extractors}})</span></a>
+      <a [routerLink]="['crf-extractors']" data-cy="appNavbarModelMenuCRF" mat-menu-item
+         routerLinkActive="is-active-menu">CRF Extractors <span
+        *ngIf="projectResourceCounts?.num_crf_extractors">({{projectResourceCounts.num_crf_extractors}})</span></a>
     </mat-menu>
 
     <mat-menu #tools="matMenu">
@@ -142,7 +150,7 @@
 
 
     <div *ngIf="user" class="flex-item-right flex-row user-name" fxLayoutAlign="baseline baseline">
-      <mat-form-field *ngIf="projectFields" class="project-select">
+      <mat-form-field *ngIf="projectFields" class="dropdown-select">
         <mat-select (openedChange)="indexSelectionOpenedChange($event)" [compareWith]="compareIndices"
                     [disableOptionCentering]="true"
                     [formControl]="projectFieldsControl" data-cy="appNavbarProjectFieldsSelect"
@@ -155,7 +163,7 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field class="project-select">
+      <mat-form-field class="dropdown-select" style="width: 140px">
         <mat-select (selectionChange)="projectStore.setCurrentProject($event.value)" [compareWith]="compareProjects"
                     [disableOptionCentering]="true" [formControl]="projectControl"
                     data-cy="appNavbarProjectSelect"
@@ -171,7 +179,7 @@
         <mat-icon aria-label="Edit Project">edit</mat-icon>
       </button>
       <div class="flex-row logout">
-        <button [matMenuTriggerFor]="menu" data-cy="appNavbarLoggedInUserMenu" mat-button><span>{{user.username}}
+        <button [matMenuTriggerFor]="menu" data-cy="appNavbarLoggedInUserMenu" mat-button><span>{{user.display_name}}
           <mat-icon>arrow_drop_down</mat-icon></span>
         </button>
         <mat-menu #menu="matMenu">
@@ -187,6 +195,11 @@
             <span>Log out</span> </a>
         </mat-menu>
       </div>
+
+      <a mat-icon-button aria-label="Docs" href="https://docs.texta.ee/" target="_blank"
+         matTooltip="Open documentation">
+        <mat-icon>description</mat-icon>
+      </a>
 
     </div>
 

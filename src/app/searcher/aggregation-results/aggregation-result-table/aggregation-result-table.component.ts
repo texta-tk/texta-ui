@@ -4,7 +4,8 @@ import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatDialog} from '@angular/material/dialog';
-import {AddLexiconDialogComponent} from './add-lexicon-dialog/add-lexicon-dialog.component';
+import {AddLexiconDialogComponent} from '../../../shared/components/dialogs/add-lexicon-dialog/add-lexicon-dialog.component';
+import {SearcherComponentService} from '../../services/searcher-component.service';
 
 interface TableElement {
   doc_count: number;
@@ -24,18 +25,19 @@ export class AggregationResultTableComponent {
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   selection = new SelectionModel<TableElement>(true, []);
+  @Input() docPath: string;
 
   constructor(
-    public dialog: MatDialog) {
+    public dialog: MatDialog, private searcherComponentService: SearcherComponentService) {
   }
 
   @Input()
   set tableData(value: MatTableDataSource<TableElement>) {
-    if (value && value.data.length > 0) {
+    if (value) {
       this.tableDataSource = value;
       this.tableDataSource.paginator = this.paginator;
       this.tableDataSource.sort = this.sort;
-      if (Object.keys(value.data[0]).includes('score')) {
+      if (value.data.length > 0 && Object.keys(value.data[0]).includes('score')) {
         this.displayedColumns.push('score');
       }
     }
@@ -59,7 +61,13 @@ export class AggregationResultTableComponent {
     this.dialog.open(AddLexiconDialogComponent, {
       maxHeight: '90vh',
       width: '800px',
-      data: selected
+      data: selected.map(x => x.key)
     });
+  }
+
+  createConstraint(key: string): void {
+    if (this.docPath) {
+      this.searcherComponentService.createTextConstraint(this.docPath, key);
+    }
   }
 }

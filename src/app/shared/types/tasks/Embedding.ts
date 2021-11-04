@@ -69,6 +69,7 @@ export interface Description {
   required: boolean;
   read_only: boolean;
   label: string;
+  help_text: string;
   max_length: number;
 }
 
@@ -120,6 +121,7 @@ export interface Indices {
   required: boolean;
   read_only: boolean;
   label: string;
+  help_text: string;
   child: Child;
 }
 
@@ -156,6 +158,7 @@ export interface EmbeddingType {
   required: boolean;
   read_only: boolean;
   label: string;
+  help_text: string;
   choices: Choice[];
 }
 
@@ -296,7 +299,7 @@ export interface Task {
 export interface POST {
   id: Id;
   url: Url;
-  author_username: AuthorUsername;
+  author: AuthorUsername;
   description: Description;
   indices: Indices;
   fields: Fields;
@@ -308,6 +311,8 @@ export interface POST {
   min_freq: MinFreq;
   vocab_size: VocabSize;
   task: Task;
+  window_size: NumDimensions;
+  num_epochs: NumDimensions;
 }
 
 export interface Actions {

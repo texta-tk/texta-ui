@@ -6,20 +6,18 @@ describe('bert-taggers should work', function () {
       cy.createTestProject().then(x => {
         assert.isNotNull(x.body.id, 'should have project id');
         cy.wrap(x.body.id).as('projectId');
-        cy.intercept('GET', '**user**').as('getUser');
         cy.intercept('GET', '**get_fields**').as('getProjectIndices');
         cy.intercept('GET', '**/bert_taggers/**').as('getbertTaggers');
         cy.intercept('POST', '**/bert_taggers/**').as('postbertTaggers');
+        cy.intercept('DELETE', '**/bert_taggers/**').as('deletebertTaggers');
       });
     });
   });
 
   function initPage() {
     cy.visit('/bert-taggers');
-    cy.wait('@getbertTaggers');
     cy.wait('@getProjectIndices');
-    cy.get('[data-cy=appNavbarProjectSelect]').click();
-    cy.get('mat-option').contains('integration_test_project').click();
+    cy.wait('@getbertTaggers');
   }
 
   function tagRandomDoc() {
@@ -55,7 +53,6 @@ describe('bert-taggers should work', function () {
   it('should be able to create a new bert-tagger', function () {
     // create clustering
     initPage();
-    cy.wait('@getbertTaggers');
     cy.get('[data-cy=appBertTaggerCreateBtn]').click();
     cy.wait('@getbertTaggers');
     cy.get('[data-cy=appBertTaggerCreateDialogDesc]').then((desc => {
@@ -73,7 +70,7 @@ describe('bert-taggers should work', function () {
       cy.closeCurrentCdkOverlay();
       cy.matFormFieldShouldHaveError(fields, 'required');
       cy.wrap(fields).click();
-      cy.get('.mat-option-text:nth(1)').should('be.visible').click();
+      cy.get('.mat-option-text').contains('comment_content').should('be.visible').click();
       cy.closeCurrentCdkOverlay();
       cy.wrap(fields).find('mat-error').should('have.length', 0)
     }));
@@ -88,19 +85,21 @@ describe('bert-taggers should work', function () {
           console.log(intercepted)
           if (intercepted?.response?.body?.results[0]?.task?.status === 'completed') {
             assert.equal(intercepted?.response?.body?.results[0]?.task?.status, 'completed');
-            return false;
+            return true;
           }else {
-            return cy.wait(15000);
+            return cy.wait(25000);
           }
         });
       })
     });
+    cy.wait(5000);
     tagRandomDoc();
     tagText();
 
     cy.get('.cdk-column-actions:nth(1)').click();
     cy.get('[data-cy=appBertTaggerMenuDelete]').click();
     cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
+    cy.wait('@deletebertTaggers');
     cy.get('.cdk-column-actions').should('have.length', 1);
 
   });

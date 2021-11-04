@@ -13,14 +13,15 @@ import {
 import {Observable, of} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
 import {ProjectStore} from '../projects/project.store';
-import {map, switchMap, take} from 'rxjs/operators';
+import {filter, map, skip, skipWhile, switchMap, take, takeUntil, takeWhile} from 'rxjs/operators';
 import {ProjectGuardDialogComponent} from '../../shared/components/dialogs/project-guard-dialog/project-guard-dialog.component';
+import {UserStore} from "../users/user.store";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProjectGuard implements CanActivate, CanActivateChild {
-  constructor(public dialog: MatDialog, private projectStore: ProjectStore) {
+  constructor(public dialog: MatDialog, private projectStore: ProjectStore, private userStore: UserStore) {
   }
 
   canActivate(
@@ -32,7 +33,14 @@ export class ProjectGuard implements CanActivate, CanActivateChild {
           return result;
         }));
       } else {
-        return of(true);
+        return this.projectStore.getCurrentProject().pipe(skipWhile(x => x === null), take(1), switchMap(x => {
+          if (x) {
+            return of(true);
+          } else {
+            this.dialog.open(ProjectGuardDialogComponent);
+            return of(false);
+          }
+        }));
       }
     }));
   }

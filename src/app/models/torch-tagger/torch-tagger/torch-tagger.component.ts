@@ -19,7 +19,9 @@ import {TorchTagTextDialogComponent} from '../torch-tag-text-dialog/torch-tag-te
 import {expandRowAnimation} from '../../../shared/animations';
 import {EditTorchTaggerDialogComponent} from '../edit-torch-tagger-dialog/edit-torch-tagger-dialog.component';
 import {EpochReportsDialogComponent} from '../epoch-reports-dialog/epoch-reports-dialog.component';
-import { ApplyToIndexDialogComponent } from '../apply-to-index-dialog/apply-to-index-dialog.component';
+import {ApplyToIndexDialogComponent} from '../apply-to-index-dialog/apply-to-index-dialog.component';
+import {MatSelectChange} from '@angular/material/select';
+import {TagRandomDocComponent} from '../tag-random-doc/tag-random-doc.component';
 
 @Component({
   selector: 'app-torch-tagger',
@@ -138,17 +140,26 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  retrainTagger(value: { id: number; }): void {
-    if (this.currentProject) {
-      this.torchtaggerService.retrainTagger(this.currentProject.id, value.id)
-        .subscribe(resp => {
-          if (resp && !(resp instanceof HttpErrorResponse)) {
-            this.logService.snackBarMessage('Successfully started retraining', 2000);
-          } else if (resp instanceof HttpErrorResponse) {
-            this.logService.snackBarError(resp, 5000);
-          }
-        }, () => null, () => this.updateTable.next(true));
-    }
+  retrainTagger(value: TorchTagger): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        confirmText: 'Retrain',
+        mainText: `Are you sure you want to retrain: ${value.description}`
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.torchtaggerService.retrainTagger(this.currentProject.id, value.id)
+          .subscribe(resp => {
+            if (resp && !(resp instanceof HttpErrorResponse)) {
+              this.logService.snackBarMessage('Successfully started retraining', 2000);
+            } else if (resp instanceof HttpErrorResponse) {
+              this.logService.snackBarError(resp, 5000);
+            }
+          }, () => null, () => this.updateTable.next(true));
+      }
+    });
   }
 
   ngOnDestroy(): void {
@@ -156,19 +167,18 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.destroyed$.complete();
   }
 
-  openCreateDialog(): void {
+  openCreateDialog(cloneElement?: TorchTagger): void {
     const dialogRef = this.dialog.open(CreateTorchTaggerDialogComponent, {
       maxHeight: '90vh',
       width: '700px',
+      data: {cloneElement: cloneElement ? cloneElement : undefined},
       disableClose: true
     });
     dialogRef.afterClosed().subscribe((resp: TorchTagger | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.tableData.data = [...this.tableData.data, resp];
-        this.logService.snackBarMessage(`Created TorchTagger ${resp.description}`, 2000);
+        this.logService.snackBarMessage(`Created Torch Tagger ${resp.description}`, 2000);
         this.projectStore.refreshSelectedProjectResourceCounts();
-      } else if (resp instanceof HttpErrorResponse) {
-        this.logService.snackBarError(resp, 5000);
       }
     });
   }
@@ -177,10 +187,10 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dialog.open(EditTorchTaggerDialogComponent, {
       width: '700px',
       data: torchTagger
-    }).afterClosed().subscribe((x: TorchTagger | HttpErrorResponse) => {
+    }).afterClosed().subscribe(x => {
       if (x && !(x instanceof HttpErrorResponse)) {
         torchTagger.description = x.description;
-      } else {
+      } else if (x instanceof HttpErrorResponse) {
         this.logService.snackBarError(x, 3000);
       }
     });
@@ -263,7 +273,7 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
 
-  applyFilter(filterValue: EventTarget | null, field: string): void {
+  applyFilter(filterValue: MatSelectChange | EventTarget | null, field: string): void {
     this.filteringValues[field] = (filterValue as HTMLInputElement).value ? (filterValue as HTMLInputElement).value : '';
     this.filterQueriesToString();
     this.filteredSubject.next();
@@ -292,6 +302,15 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
       data: tagger,
       maxHeight: '90vh',
       width: '700px',
+    });
+  }
+
+  tagRandomDoc(element: TorchTagger): void {
+    this.dialog.open(TagRandomDocComponent, {
+      maxHeight: '90vh',
+      width: '700px',
+      disableClose: true,
+      data: {currentProjectId: this.currentProject.id, tagger: element}
     });
   }
 }

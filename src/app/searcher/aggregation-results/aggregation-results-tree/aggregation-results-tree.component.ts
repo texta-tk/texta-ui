@@ -14,6 +14,8 @@ import {Subject} from 'rxjs';
 export class AggregationResultsTreeComponent implements OnDestroy {
   // tslint:disable-next-line:no-any
   @Input() dataSource: any[] | undefined;
+  // for creating constraints
+  @Input() docPaths: string[];
   // tslint:disable-next-line:no-any
   treeControl: NestedTreeControl<any> = new NestedTreeControl<any>(node => node.buckets);
 
@@ -28,10 +30,11 @@ export class AggregationResultsTreeComponent implements OnDestroy {
   // tslint:disable-next-line:no-any
   bucketAccessor = (x: any) => (x.buckets);
 
-  openDialog(val: { key: string; }): void {
+  openDialog(val: { key: string; }, depth: number): void {
     if (this.bucketAccessor(val)[0].key_as_string) {
       this.dialog.open(AggregationResultsDialogComponent, {
         data: {
+          docPaths: [this.docPaths[depth + 1]],
           aggData: [{
             name: val.key,
             series: this.formatDateData(this.bucketAccessor(val))
@@ -41,13 +44,17 @@ export class AggregationResultsTreeComponent implements OnDestroy {
         width: '90%',
       });
     } else {
-      this.dialog.open(AggregationResultsDialogComponent, {
-        data: {
-          aggData: new MatTableDataSource(this.bucketAccessor(val)), type: 'table'
-        },
-        height: '95%',
-        width: '90%',
-      });
+      if (this.docPaths.length >= depth) {
+        const isTextaFactsNode = this.docPaths[depth] === 'texta_facts' || this.docPaths[depth + 1] === 'texta_facts';
+        this.dialog.open(AggregationResultsDialogComponent, {
+          data: {
+            docPaths: isTextaFactsNode ? undefined : [this.docPaths[depth + 1]],
+            aggData: new MatTableDataSource(this.bucketAccessor(val)), type: 'table'
+          },
+          height: '95%',
+          width: '90%',
+        });
+      }
     }
   }
 

@@ -8,6 +8,7 @@
       <mat-error *ngIf="reindexerForm?.get('descriptionFormControl')?.hasError('required')">
         Description is <strong>required</strong>
       </mat-error>
+      <mat-hint>{{reindexerOptions?.actions?.POST?.description?.help_text || ''}}</mat-hint>
     </mat-form-field>
     <mat-form-field data-cy="appReindexerCreateDialogIndexName">
       <input matInput placeholder="New index name" autocomplete="off" formControlName="newNameFormControl"
@@ -19,6 +20,7 @@
       <mat-error *ngIf="reindexerForm?.get('newNameFormControl')?.hasError('alreadyExists')">
         This index name is already in use
       </mat-error>
+      <mat-hint>{{reindexerOptions?.actions?.POST?.new_index?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
 
@@ -26,6 +28,7 @@
       <mat-label>Indices</mat-label>
       <mat-select (openedChange)="indicesOpenedChange($event)" [disableOptionCentering]="true"
                   formControlName="indicesFormControl" multiple panelClass="select-panel-reveal-input" required>
+        <app-mat-option-select-all></app-mat-option-select-all>
         <mat-option *ngFor="let projectIndex of projectIndices" [value]="projectIndex">
           {{projectIndex.index}}
         </mat-option>
@@ -33,24 +36,24 @@
       <mat-error *ngIf="reindexerForm?.get('indicesFormControl')?.hasError('required')">
         Index is <strong>required</strong>
       </mat-error>
+      <mat-hint>{{reindexerOptions?.actions?.POST?.indices?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
 
-    <mat-form-field  data-cy="appReindexerCreateDialogFields">
+    <mat-form-field data-cy="appReindexerCreateDialogFields">
       <mat-label>Select Fields</mat-label>
       <app-project-field-select [projectFields]="projectFields" [required]="true"
                                 formControlName="fieldsFormControl"></app-project-field-select>
       <mat-error *ngIf="reindexerForm?.get('fieldsFormControl')?.hasError('required')">
         Field is <strong>required</strong>
       </mat-error>
+      <mat-hint>{{reindexerOptions?.actions?.POST?.fields?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
     <mat-form-field>
       <input matInput placeholder="Field types" autocomplete="off" formControlName="fieldTypesFormControl"
              [errorStateMatcher]="matcher">
-      <mat-hint>For example: [{{'{'}}'"path": "comment_text", "field_type": "long", "new_path_name":
-        "CHANGED_NAME"{{'}'}}]
-      </mat-hint>
+      <mat-hint>{{reindexerOptions?.actions?.POST?.field_type?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"></app-saved-search-autocomplete>
@@ -60,10 +63,12 @@
       <input matInput type="number" pattern="[1-9]\d*" placeholder="Random subset size" autocomplete="off"
              formControlName="randomSizeFormControl"
              [errorStateMatcher]="matcher">
-      <mat-hint>If added, selects a random subset from all samples</mat-hint>
+      <mat-hint>{{reindexerOptions?.actions?.POST?.random_size?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
-    <mat-checkbox formControlName="addFactsMappingFormControl">Add facts mapping
+    <mat-checkbox formControlName="addFactsMappingFormControl"
+                  matTooltip="{{reindexerOptions?.actions?.POST?.add_facts_mapping?.help_text || ''}}"
+                  matTooltipPosition="left">Add facts mapping
     </mat-checkbox>
 
     <div class="flex-col">
@@ -72,7 +77,9 @@
           <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Close</button>
         </div>
         <div class="flex-item-right">
-          <button type="submit" [disabled]="!reindexerForm?.valid" mat-button data-cy="appReindexerCreateDialogSubmit">Create</button>
+          <button type="submit" [disabled]="!reindexerForm?.valid" mat-button data-cy="appReindexerCreateDialogSubmit">
+            Create
+          </button>
         </div>
       </div>
 

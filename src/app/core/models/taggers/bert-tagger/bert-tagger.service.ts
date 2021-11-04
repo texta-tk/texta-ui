@@ -30,7 +30,7 @@ export class BertTaggerService {
       catchError(this.logService.handleError<string>('downloadBertModel')));
   }
 
-  tagRandomDocument(projectId: number, taggerId: number, body: unknown): Observable<unknown | HttpErrorResponse> {
+  tagRandomDocument(projectId: number, taggerId: number, body: unknown): Observable<any | HttpErrorResponse> {
     return this.http.post(`${this.apiUrl}/projects/${projectId}/bert_taggers/${taggerId}/tag_random_doc/`, body
     ).pipe(
       tap(e => this.logService.logStatus(e, 'tagRandomDocument')),
@@ -107,14 +107,24 @@ export class BertTaggerService {
       tap(e => this.logService.logStatus(e, 'applyToIndex')),
       catchError(this.logService.handleError('applyToIndex')));
   }
+
   // tslint:disable-next-line:no-any
   applyToIndexOptions(projectId: number, taskId: number): Observable<any | HttpErrorResponse> {
-    // tslint:disable-next-line:no-any
-    return this.http.options<any>(
-      `${this.apiUrl}/projects/${projectId}/bert_taggers/${taskId}/apply_to_index/`
-    ).pipe(
+    return this.http.options(`${this.apiUrl}/projects/${projectId}/bert_taggers/${taskId}/apply_to_index/`).pipe(
       tap(e => this.logService.logStatus(e, 'applyToIndexOptions')),
-      // tslint:disable-next-line:no-any
-      catchError(this.logService.handleError<any>('applyToIndexOptions')));
+      catchError(this.logService.handleError('applyToIndexOptions')));
+  }
+
+  // tslint:disable-next-line:no-any
+  tagRDocOptions(projectId: number, taskId: number): Observable<any | HttpErrorResponse> {
+    return this.http.options(`${this.apiUrl}/projects/${projectId}/bert_taggers/${taskId}/tag_random_doc/`).pipe(
+      tap(e => this.logService.logStatus(e, 'tagRDocOptions')),
+      catchError(this.logService.handleError('tagRDocOptions')));
+  }
+  // tslint:disable-next-line:no-any
+  tagTextOptions(projectId: number, taskId: number): Observable<any | HttpErrorResponse> {
+    return this.http.options(`${this.apiUrl}/projects/${projectId}/bert_taggers/${taskId}/tag_text/`).pipe(
+      tap(e => this.logService.logStatus(e, 'tagTextOptions')),
+      catchError(this.logService.handleError('tagTextOptions')));
   }
 }

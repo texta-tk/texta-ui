@@ -12,8 +12,10 @@ import {LocalStorageService} from 'src/app/core/util/local-storage.service';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import {ActivatedRoute, CanDeactivate, NavigationStart, Router} from '@angular/router';
 import {Embedding, EmbeddingPrediction} from '../../shared/types/tasks/Embedding';
-import {CanDeactivateComponent} from "../../core/guards/deactivate.guard";
-import {UtilityFunctions} from "../../shared/UtilityFunctions";
+import {CanDeactivateComponent} from '../../core/guards/deactivate.guard';
+import {UtilityFunctions} from '../../shared/UtilityFunctions';
+import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {MatDialog} from '@angular/material/dialog';
 
 interface TextareaLexicon {
   positives_used: string;
@@ -41,6 +43,7 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy, CanDeactivate
               private lexiconService: LexiconService,
               private embeddingService: EmbeddingsService,
               private route: ActivatedRoute,
+              private dialog: MatDialog,
               private router: Router,
               private projectStore: ProjectStore,
               private localStorageService: LocalStorageService) {
@@ -117,7 +120,7 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy, CanDeactivate
     const embedding = this.selectedEmbedding;
     if (embedding && this.textareaLexicon) {
       if (this.newSuggestions.length > 0) {
-        this.textareaLexicon.negatives_used = this.appendSuggestionsToTextarea(this.textareaLexicon.negatives_used, this.newSuggestions);
+        this.textareaLexicon.negatives_unused = this.appendSuggestionsToTextarea(this.textareaLexicon.negatives_unused, this.newSuggestions);
       }
       this.isLoadingPredictions = true;
 
@@ -138,10 +141,21 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy, CanDeactivate
     }
   }
 
-  clearSuggestions(): void {
+  clearLexicon(): void {
     if (this.textareaLexicon) {
-      this.textareaLexicon.negatives_unused = this.appendSuggestionsToTextarea(this.textareaLexicon.negatives_unused, this.newSuggestions);
-      this.newSuggestions = [];
+      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+        data: {confirmText: 'Clear', mainText: 'Are you sure you want to clear this Lexicon?'}
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.textareaLexicon.positives_unused = '';
+          this.textareaLexicon.negatives_unused = '';
+          this.textareaLexicon.positives_used = '';
+          this.textareaLexicon.negatives_used = '';
+          this.newSuggestions = [];
+        }
+      });
     }
   }
 

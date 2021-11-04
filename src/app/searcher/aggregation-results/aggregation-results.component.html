@@ -4,40 +4,34 @@
     <mat-spinner></mat-spinner>
   </div>
   <ng-container *ngIf="aggregationData">
-    <mat-tab-group *ngIf="aggregationData.tableData !== undefined && aggregationData.tableData.length > 0"
+    <mat-tab-group *ngIf="aggregationData.dateData && aggregationData.dateData.length === 0"
                    mat-stretch-tabs>
       <mat-tab *ngFor="let tableAggregation of aggregationData.tableData" [label]="tableAggregation.name">
-        <app-aggregation-result-table *ngIf="tableAggregation.tableData !== undefined"
+        <app-aggregation-result-table *ngIf="tableAggregation.tableData !== undefined" [docPath]="fieldPathList[0]"
                                       [tableData]="tableAggregation.tableData"></app-aggregation-result-table>
       </mat-tab>
-    </mat-tab-group>
 
-    <mat-tab-group
-      *ngIf="aggregationData.textaFactsTableData !== undefined && aggregationData.textaFactsTableData.length > 0"
-      dynamicHeight
-      mat-stretch-tabs>
-      <mat-tab *ngFor="let item of aggregationData.textaFactsTableData" >
+      <mat-tab *ngFor="let item of aggregationData.textaFactsTableData">
         <ng-container *ngIf="{ viewState: 'tree' } as state">
           <ng-template mat-tab-label>
-              {{item.name}}
-              <button (click)="state.viewState = 'tree'" [color]="state.viewState === 'tree' ? 'primary' : undefined"
-                      mat-icon-button>
-                <mat-icon>account_tree</mat-icon>
-              </button>
-              <button (click)="state.viewState = 'table'" [color]="state.viewState === 'table' ? 'primary' : undefined"
-                      mat-icon-button>
-                <mat-icon>table_view</mat-icon>
-              </button>
-              <button (click)="state.viewState = 'chart'" [color]="state.viewState === 'chart' ? 'primary' : undefined"
-                      mat-icon-button>
-                <mat-icon>assessment</mat-icon>
-              </button>
+            {{item.name}}
+            <button (click)="state.viewState = 'tree'" [color]="state.viewState === 'tree' ? 'primary' : undefined"
+                    mat-icon-button>
+              <mat-icon>account_tree</mat-icon>
+            </button>
+            <button (click)="state.viewState = 'table'" [color]="state.viewState === 'table' ? 'primary' : undefined"
+                    mat-icon-button>
+              <mat-icon>table_view</mat-icon>
+            </button>
+            <button (click)="state.viewState = 'chart'" [color]="state.viewState === 'chart' ? 'primary' : undefined"
+                    mat-icon-button>
+              <mat-icon>assessment</mat-icon>
+            </button>
           </ng-template>
-          <app-aggregation-result-facts [data]="item.data"
+          <app-aggregation-result-facts [data]="item.data" [docPaths]="fieldPathList"
                                         [viewState]="state.viewState"></app-aggregation-result-facts>
         </ng-container>
       </mat-tab>
-    </mat-tab-group>
 
     <app-aggregation-results-chart
       *ngIf="aggregationData.dateData !== undefined && aggregationData.dateData.length > 0"
@@ -54,7 +48,6 @@
     <mat-tab-group *ngIf="aggregationData.treeData !== undefined && aggregationData.treeData.length > 0"
                    mat-stretch-tabs>
       <mat-tab *ngFor="let nestedAggregation of aggregationData.treeData">
-
         <ng-template mat-tab-label>
           {{nestedAggregation.name}}
           <button
@@ -64,9 +57,17 @@
             <mat-icon>assessment</mat-icon>
           </button>
         </ng-template>
-        <app-aggregation-results-tree [dataSource]="nestedAggregation.treeData">
+        <app-aggregation-results-tree [dataSource]="nestedAggregation.treeData" [docPaths]="fieldPathList">
         </app-aggregation-results-tree>
       </mat-tab>
     </mat-tab-group>
+
+    <app-aggregation-results-chart [docPaths]="fieldPathList"
+      *ngIf="aggregationData.dateData !== undefined && aggregationData.dateData.length > 0"
+      [aggregationData]="aggregationData"
+      [yLabel]="timeLineYLabel">
+
+    </app-aggregation-results-chart>
+
   </ng-container>
 </div>

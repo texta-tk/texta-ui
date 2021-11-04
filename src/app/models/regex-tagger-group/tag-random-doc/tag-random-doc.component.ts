@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {RegexTaggerGroupService} from '../../../core/models/taggers/regex-tagger-group/regex-tagger-group.service';
@@ -9,13 +9,14 @@ import {
   RegexTaggerGroup,
   RegexTaggerGroupTagRandomDocResult, RegexTaggerGroupTagTextResult,
 } from '../../../shared/types/tasks/RegexTaggerGroup';
-import {filter, take} from 'rxjs/operators';
+import {filter, take, takeUntil} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Field, ProjectIndex} from '../../../shared/types/Project';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {HighlightSettings} from '../../../shared/SettingVars';
-import {SelectionModel} from "@angular/cdk/collections";
+import {SelectionModel} from '@angular/cdk/collections';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'app-tag-random-doc',
@@ -23,7 +24,7 @@ import {SelectionModel} from "@angular/cdk/collections";
   styleUrls: ['./tag-random-doc.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TagRandomDocComponent implements OnInit {
+export class TagRandomDocComponent implements OnInit, OnDestroy {
   fields: string[] = [];
   result: RegexTaggerGroupTagRandomDocResult;
   isLoading = false;
@@ -35,10 +36,14 @@ export class TagRandomDocComponent implements OnInit {
   uniqueFacts: { fact: Match, textColor: string, backgroundColor: string }[] = [];
   colorMap: Map<string, { backgroundColor: string, textColor: string }> = new Map();
   distinctMatches: Match[];
-  fieldsWithMatches: string[];
   resultFields: string[];
-  firstTimeTaggingOverFields = true;
+  projectFields: ProjectIndex[] = [];
   selection = new SelectionModel<number | string>(true, [0, 1]);
+  selectedFields: string[];
+
+  destroyed$: Subject<boolean> = new Subject<boolean>();
+  // tslint:disable-next-line:no-any
+  regexTaggerOptions: any;
 
   constructor(private regexTaggerGroupService: RegexTaggerGroupService, private logService: LogService,
               private projectStore: ProjectStore,
@@ -55,18 +60,26 @@ export class TagRandomDocComponent implements OnInit {
       }
     });
 
+    this.regexTaggerGroupService.getTagRdocOptions(this.data.currentProjectId, this.data.tagger.id).pipe(
+        takeUntil(this.destroyed$)).subscribe(resp => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.regexTaggerOptions = resp;
+      }
+    });
 
+    this.projectStore.getSelectedProjectIndices().pipe(filter(x => !!x), take(1)).subscribe(x => {
+      if (x) {
+        this.model.indices = x;
+        this.projectFields = ProjectIndex.cleanProjectIndicesFields(this.model.indices, [], ['fact'], true);
+      }
+    });
   }
 
-  getFieldsForIndices(indices: ProjectIndex[]): void {
-    indices = ProjectIndex.cleanProjectIndicesFields(indices, [], ['fact'], true);
-    this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(indices.map(y => y.fields).flat(), (y => y.path));
-  }
 
   public indicesOpenedChange(opened: boolean): void {
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
-    if (!opened && this.model.indices.length > 0) {
-      this.getFieldsForIndices(this.model.indices);
+    if (!opened && this.model.indices && !UtilityFunctions.arrayValuesEqual(this.model.indices, this.projectFields, (x => x.index))) {
+      this.projectFields = ProjectIndex.cleanProjectIndicesFields(this.model.indices, [], ['fact'], true);
     }
   }
 
@@ -89,11 +102,11 @@ export class TagRandomDocComponent implements OnInit {
           this.result.document[textaFacts] = this.result.matches;
           this.resultFields = Object.keys(x.document);
           this.distinctMatches = this.getDistinctMatches(this.result);
-          this.fieldsWithMatches = UtilityFunctions.getDistinctByProperty(this.result.matches, (y => y.doc_path)).map(y => y.doc_path);
-          this.resultFields.sort((a, b) => this.fieldsWithMatches.includes(a) ? -1 : 0);
+          this.resultFields.sort((a, b) => this.model.fields.includes(a) ? -1 : 0);
 
-          if (this.firstTimeTaggingOverFields) {
-            this.firstTimeTaggingOverFields = false;
+          // make selected fields open the accordion panels by default
+          if (this.selectedFields !== this.model.fields) {
+            this.selectedFields = this.model.fields;
             this.model.fields.forEach(field => {
               const fieldSelected = this.resultFields.find(y => y === field);
               if (fieldSelected && !this.selection.isSelected(fieldSelected)) {
@@ -168,6 +181,11 @@ export class TagRandomDocComponent implements OnInit {
       }
     }
     return UtilityFunctions.getDistinctByProperty(this.result.matches, (y => y.str_val));
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
   }
 
   private sortByStartLowestSpan(a: Match, b: Match): -1 | 1 {

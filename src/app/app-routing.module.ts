@@ -74,6 +74,16 @@ const routes: Routes = [
     loadChildren: () => import('./models/search-fields-tagger/search-fields-tagger.module').then(m => m.SearchFieldsTaggerModule)
   },
   {
+    path: 'rakun-extractors',
+    canActivate: [AuthGuard, ProjectGuard],
+    loadChildren: () => import('./models/rakun-extractor/rakun-extractor.module').then(m => m.RakunExtractorModule)
+  },
+  {
+    path: 'crf-extractors',
+    canActivate: [AuthGuard, ProjectGuard],
+    loadChildren: () => import('./models/crf-extractor/crf-extractor.module').then(m => m.CRFExtractorModule)
+  },
+  {
     path: 'topic-analyzer',
     canActivate: [AuthGuard, ProjectGuard],
     data: {breadcrumb: 'clustering', tooltip: 'Topic analyzer list'},
@@ -122,9 +132,9 @@ const routes: Routes = [
 @NgModule({
   imports: [RouterModule.forRoot(routes,
     {
-    preloadingStrategy: PreloadAllModules,
-    relativeLinkResolution: 'legacy'
-})],
+      preloadingStrategy: PreloadAllModules,
+      relativeLinkResolution: 'legacy'
+    })],
   exports: [RouterModule]
 })
 export class AppRoutingModule {

@@ -15,9 +15,6 @@ describe('should be able to build aggregations', function () {
       cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible');
       cy.get('[data-cy=appNavbarSearcher]').click();
       cy.wait('@getProjectIndices');
-      cy.get('[data-cy=appNavbarProjectSelect]').click();
-      cy.get('mat-option').contains('integration_test_project').click();
-      cy.wait('@getProjectIndices');
     });
   });
 
@@ -56,7 +53,7 @@ describe('should be able to build aggregations', function () {
     cy.wait(1000);
     for (let i = 0; i < depth; i++) {
       if (i === 0) {
-        cy.get('.mat-tree-node > [mattreenodetoggle=""]:first()').click();
+        cy.get('.mat-tree-node > [mattreenodetoggle=""]:last()').click();
       } else {
         cy.get('ul > .mat-nested-tree-node > li > .mat-tree-node > [mattreenodetoggle=""]:last()').click();
       }
@@ -136,7 +133,7 @@ describe('should be able to build aggregations', function () {
     cy.wait('@searcherQuery');
     cy.get('.mat-tree-node').should('be.visible');
     cy.get('app-aggregation-results .mat-tab-label').should('have.length', 2);
-    cy.get('.mat-tab-label-container mat-icon:first()').click();
+
     /* cy.get('.svg-container').should('be.visible'); */
   });
 });

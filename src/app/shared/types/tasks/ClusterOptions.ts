@@ -14,6 +14,7 @@ export interface Url {
 
 export interface Description {
   type: string;
+  help_text: string;
   required: boolean;
   read_only: boolean;
   label: string;
@@ -22,6 +23,7 @@ export interface Description {
 export interface AuthorUsername {
   type: string;
   required: boolean;
+  help_text: string;
   read_only: boolean;
   label: string;
 }
@@ -45,6 +47,7 @@ export interface IsOpen {
   type: string;
   required: boolean;
   read_only: boolean;
+  help_text: string;
   label: string;
 }
 
@@ -52,6 +55,7 @@ export interface Url2 {
   type: string;
   required: boolean;
   read_only: boolean;
+  help_text: string;
   label: string;
 }
 
@@ -59,6 +63,7 @@ export interface Name {
   type: string;
   required: boolean;
   read_only: boolean;
+  help_text: string;
   label: string;
   max_length: number;
 }
@@ -80,6 +85,7 @@ export interface Child {
 export interface Indices {
   type: string;
   required: boolean;
+  help_text: string;
   read_only: boolean;
   label: string;
   child: Child;
@@ -89,6 +95,7 @@ export interface NumCluster {
   type: string;
   required: boolean;
   read_only: boolean;
+  help_text: string;
   label: string;
   min_value: number;
   max_value: number;
@@ -102,6 +109,7 @@ export interface Choice {
 export interface ClusteringAlgorithm {
   type: string;
   required: boolean;
+  help_text: string;
   read_only: boolean;
   label: string;
   choices: Choice[];
@@ -115,6 +123,7 @@ export interface Choice2 {
 export interface Vectorizer {
   type: string;
   required: boolean;
+  help_text: string;
   read_only: boolean;
   label: string;
   choices: Choice2[];
@@ -125,6 +134,7 @@ export interface NumDims {
   required: boolean;
   read_only: boolean;
   label: string;
+  help_text: string;
   min_value: number;
   max_value: number;
 }
@@ -132,6 +142,7 @@ export interface NumDims {
 export interface UseLsi {
   type: string;
   required: boolean;
+  help_text: string;
   read_only: boolean;
   label: string;
 }
@@ -140,6 +151,7 @@ export interface NumTopics {
   type: string;
   required: boolean;
   read_only: boolean;
+  help_text: string;
   label: string;
   min_value: number;
   max_value: number;
@@ -149,6 +161,7 @@ export interface OriginalTextField {
   type: string;
   required: boolean;
   read_only: boolean;
+  help_text: string;
   label: string;
 }
 
@@ -162,6 +175,7 @@ export interface StopWords {
   type: string;
   required: boolean;
   read_only: boolean;
+  help_text: string;
   label: string;
   child: Child2;
 }
@@ -176,6 +190,7 @@ export interface IgnoredIds {
   type: string;
   required: boolean;
   read_only: boolean;
+  help_text: string;
   label: string;
   child: Child3;
 }
@@ -190,6 +205,7 @@ export interface Fields {
   type: string;
   required: boolean;
   read_only: boolean;
+  help_text: string;
   label: string;
   child: Child4;
 }
@@ -199,6 +215,7 @@ export interface DocumentLimit {
   required: boolean;
   read_only: boolean;
   label: string;
+  help_text: string;
   min_value: number;
   max_value: number;
 }
@@ -273,6 +290,7 @@ export interface NumProcessed {
   type: string;
   required: boolean;
   read_only: boolean;
+  help_text: string;
   label: string;
   min_value: number;
   max_value: number;
@@ -303,18 +321,22 @@ export interface POST {
   id: Id;
   url: Url;
   description: Description;
-  author_username: AuthorUsername;
+  author: AuthorUsername;
   query: Query;
   indices: Indices;
   num_cluster: NumCluster;
   clustering_algorithm: ClusteringAlgorithm;
   vectorizer: Vectorizer;
+  // tslint:disable-next-line:no-any
+  embedding: any;
   num_dims: NumDims;
   use_lsi: UseLsi;
   num_topics: NumTopics;
   original_text_field: OriginalTextField;
   stop_words: StopWords;
   ignored_ids: IgnoredIds;
+  // tslint:disable-next-line:no-any
+  significant_words_filter: any;
   fields: Fields;
   document_limit: DocumentLimit;
   task: Task;

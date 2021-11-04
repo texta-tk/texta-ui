@@ -1,0 +1,19 @@
+<h1 mat-dialog-title>Export search</h1>
+<mat-dialog-content>
+  <mat-form-field class="max-width">
+    <mat-label>Fields to export</mat-label>
+    <app-project-field-select [formControl]="columnFormControl" [projectFields]="projectFields"></app-project-field-select>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions fxLayout="row">
+  <div class="flex-item-left">
+    <button type="button" class="flex-item-left" mat-button mat-dialog-close="">Cancel</button>
+  </div>
+  <div class="flex-item-right">
+    <button type="submit" mat-button data-cy="appSearcherExportResultsDialogSubmit"
+            [disabled]="columnFormControl.value.length === 0"
+            (click)="onSubmit()">Export
+    </button>
+  </div>
+</mat-dialog-actions>

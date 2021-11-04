@@ -21,7 +21,7 @@ import {TaggerGroupTagRandomDocDialogComponent} from './tagger-group-tag-random-
 import {expandRowAnimation} from '../../shared/animations';
 import {EditTaggerGroupDialogComponent} from './edit-tagger-group-dialog/edit-tagger-group-dialog.component';
 import {Index} from '../../shared/types/Index';
-import { ApplyToIndexDialogComponent } from './apply-to-index-dialog/apply-to-index-dialog.component';
+import {ApplyToIndexDialogComponent} from './apply-to-index-dialog/apply-to-index-dialog.component';
 
 @Component({
   selector: 'app-tagger-group',
@@ -50,6 +50,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
   currentProject: Project;
   destroyed$ = new Subject<boolean>();
   resultsLength: number;
+  private updateTable = new Subject<boolean>();
 
   constructor(public dialog: MatDialog,
               private projectStore: ProjectStore,
@@ -82,7 +83,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
-    merge(this.sort.sortChange, this.paginator.page, this.filteredSubject)
+    merge(this.sort.sortChange, this.paginator.page, this.filteredSubject, this.updateTable)
       .pipe(debounceTime(250), startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
@@ -125,7 +126,8 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     dialogRef.afterClosed().subscribe((resp: TaggerGroup) => {
       if (resp) {
-        this.tableData.data = [...this.tableData.data, resp];
+        this.updateTable.next();
+        this.logService.snackBarMessage(`Created Tagger Group ${resp.description}`, 2000);
         this.projectStore.refreshSelectedProjectResourceCounts();
       }
     });
@@ -154,15 +156,26 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onModelsRetrain(taggerGroup: TaggerGroup): void {
-    this.taggerGroupService.modelsRetrain(taggerGroup.id, this.currentProject.id).subscribe(
-      (resp: { 'success': 'retraining tasks created' } | HttpErrorResponse) => {
-        if (resp && !(resp instanceof HttpErrorResponse)) {
-          this.logService.snackBarMessage('Started retraining taggers', 3000);
-        } else if (resp instanceof HttpErrorResponse) {
-          this.logService.snackBarError(resp, 5000);
-        }
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        confirmText: 'Retrain',
+        mainText: `Are you sure you want to retrain: ${taggerGroup.description}`
       }
-    );
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.taggerGroupService.modelsRetrain(taggerGroup.id, this.currentProject.id).subscribe(
+          (resp: { 'success': 'retraining tasks created' } | HttpErrorResponse) => {
+            if (resp && !(resp instanceof HttpErrorResponse)) {
+              this.logService.snackBarMessage('Started retraining taggers', 3000);
+            } else if (resp instanceof HttpErrorResponse) {
+              this.logService.snackBarError(resp, 5000);
+            }
+          }
+        );
+      }
+    });
   }
 
   tagTextDialog(tagger: TaggerGroup): void {
@@ -272,6 +285,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
   }
+
   applyToIndexDialog(tagger: TaggerGroup): void {
     this.dialog.open(ApplyToIndexDialogComponent, {
       data: tagger,

@@ -1,3 +1,5 @@
+import {UserProfile} from '../UserProfile';
+
 export interface Task {
   id: number;
   status: string;
@@ -20,10 +22,11 @@ export interface Index {
 
 export interface BertTagger {
   url: string;
-  author_username: string;
+  author: UserProfile;
   id: number;
   description: string;
   query: string;
+  checkpoint_model: number;
   fields: string[];
   f1_score: number;
   precision: number;
@@ -34,6 +37,7 @@ export interface BertTagger {
   maximum_sample_size: number;
   minimum_sample_size: number;
   num_epochs: number;
+  pos_label: string;
   plot: string;
   task: Task;
   fact_name?: string;

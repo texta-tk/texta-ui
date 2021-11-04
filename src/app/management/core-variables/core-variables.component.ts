@@ -1,8 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../../core/util/log.service';
 import {UtilityFunctions} from '../../shared/UtilityFunctions';
 import {CoreService} from '../../core/core.service';
+import {Subject} from "rxjs";
+import {takeUntil} from "rxjs/operators";
 
 class CoreVariable {
   // tslint:disable-next-line:variable-name
@@ -15,15 +17,16 @@ class CoreVariable {
   templateUrl: './core-variables.component.html',
   styleUrls: ['./core-variables.component.scss']
 })
-export class CoreVariablesComponent implements OnInit {
+export class CoreVariablesComponent implements OnInit, OnDestroy {
   coreVariables: CoreVariable[];
   coreVariablesOriginal: CoreVariable[];
+  destroyed$: Subject<boolean> = new Subject<boolean>();
 
   constructor(private coreService: CoreService, private logService: LogService) {
   }
 
   ngOnInit(): void {
-    this.coreService.getCoreVariables().subscribe(x => {
+    this.coreService.getCoreVariables().pipe(takeUntil(this.destroyed$)).subscribe(x => {
       if (x && !(x instanceof HttpErrorResponse)) {
         this.coreVariables = UtilityFunctions.sortByStringProperty(x, (y => y.name));
         this.coreVariablesOriginal = JSON.parse(JSON.stringify(x));
@@ -51,6 +54,11 @@ export class CoreVariablesComponent implements OnInit {
         }
       });
     });
+  }
+
+  ngOnDestroy() {
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
   }
 
 }

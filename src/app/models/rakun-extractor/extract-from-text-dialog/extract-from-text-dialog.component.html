@@ -1,0 +1,67 @@
+<div class="flex-row">
+  <h1 mat-dialog-title>Extract From Text</h1>
+  <mat-chip-list disabled>
+    <mat-chip *ngIf="data.rakun" color="primary" selected><span
+      [matTooltip]="'Id: '+data.rakun.id">{{data.rakun.description}}</span></mat-chip>
+  </mat-chip-list>
+</div>
+<div mat-dialog-content>
+  <form #docForm="ngForm" (ngSubmit)="onSubmit()" class="max-width" id="docForm">
+
+    <mat-form-field class="max-width" data-cy="appRakunExtractorTextDialogText">
+      <input #text="ngModel" [(ngModel)]="model.text" matInput name="text" placeholder="text" required>
+      <mat-error *ngIf="text.hasError('required')">
+        Text is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+    <div *ngIf="result" class="m-bot-10">
+      <mat-accordion displayMode="flat" multi>
+        <mat-expansion-panel expanded>
+          <mat-expansion-panel-header [expandedHeight]="'48px'">
+            <mat-panel-title>
+              Matches
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div fxLayout="row wrap">
+            <app-fact-chip *ngFor="let item of distinctMatches"
+                           [backGroundColor]="colorMap.get(item.fact)?.backgroundColor || ''"
+                           [displayValue]="item.str_val"
+                           [hoverValue]="probabilityAccessor(item)"
+                           [textColor]="colorMap.get(item.fact)?.textColor || ''"></app-fact-chip>
+          </div>
+        </mat-expansion-panel>
+        <mat-expansion-panel expanded>
+          <mat-expansion-panel-header [expandedHeight]="'48px'">
+            <mat-panel-title>
+              Text
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <app-generic-highlighter
+            [highlightConfig]="{
+            currentColumn: 'text',
+            searcherHighlight: null,
+            highlightTextaFacts: true,
+            highlightHyperlinks: true,
+            titleAccessor: probabilityAccessor,
+            colors: colorMap,
+            data:{text:result.text, texta_facts: result.keywords}}"></app-generic-highlighter>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+  </form>
+</div>
+<div mat-dialog-actions>
+
+  <div class="flex-col max-width">
+    <div class="flex-row">
+      <div class="flex-item-left">
+        <button data-cy="appRakunExtractorTextDialogClose" mat-dialog-close="" mat-stroked-button>Close</button>
+      </div>
+      <div class="flex-item-right">
+        <button [disabled]="docForm.invalid" form="docForm" mat-stroked-button type="submit">Extract</button>
+      </div>
+    </div>
+  </div>
+</div>

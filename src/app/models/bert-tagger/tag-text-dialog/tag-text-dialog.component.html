@@ -8,7 +8,7 @@
 <mat-form-field class="max-width" data-cy="appBertTaggerTagTextDialogText">
   <input #textInput matInput placeholder="Tag text">
 </mat-form-field>
-<mat-checkbox [(ngModel)]="feedback">Feedback</mat-checkbox>
+<mat-checkbox [(ngModel)]="feedback" matTooltip="{{bertOptions?.actions?.POST?.feedback_enabled?.help_text || ''}}">Feedback</mat-checkbox>
 <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
 <div *ngIf="result" class="m-top-10">
   <span class="mat-body-strong">Result: </span>{{result.result}}
@@ -19,7 +19,7 @@
     <span class="mat-body-strong">Feedback id: </span>{{result.feedback.id}}
   </ng-container>
 </div>
-<div class="flex-col">
+<div class="flex-col m-top-10">
   <div class="flex-row">
     <div class="flex-item-left">
       <button data-cy="appBertTaggerTagTextDialogClose" mat-dialog-close="" mat-stroked-button>Close</button>

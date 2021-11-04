@@ -14,11 +14,13 @@
       <mat-error *ngIf="applyForm.get('descriptionFormControl')?.hasError('required')">
         Description is <strong>required</strong>
       </mat-error>
+      <mat-hint>{{regexTaggerOptions?.actions?.POST?.description?.help_text || ''}}</mat-hint>
     </mat-form-field>
     <mat-form-field data-cy="appRegexTaggerApplyDialogIndices">
       <mat-label>Indices</mat-label>
       <mat-select (openedChange)="indicesOpenedChange($event)" [disableOptionCentering]="true"
                   formControlName="indicesFormControl" multiple panelClass="select-panel-reveal-input" required>
+        <app-mat-option-select-all></app-mat-option-select-all>
         <mat-option *ngFor="let projectIndex of indices" [value]="projectIndex">
           {{projectIndex.index}}
         </mat-option>
@@ -26,15 +28,18 @@
       <mat-error *ngIf="applyForm.get('indicesFormControl')?.hasError('required')">
         Index is <strong>required</strong>
       </mat-error>
+      <mat-hint>{{regexTaggerOptions?.actions?.POST?.indices?.help_text || ''}}</mat-hint>
     </mat-form-field>
     <mat-form-field data-cy="appRegexTaggerApplyDialogFields">
 
       <mat-label>Select Field</mat-label>
-      <app-project-field-select formControlName="fieldsFormControl" [required]="true" [projectFields]="projectFields" ></app-project-field-select>
+      <app-project-field-select formControlName="fieldsFormControl" [required]="true"
+                                [projectFields]="projectFields"></app-project-field-select>
 
       <mat-error *ngIf="applyForm.get('fieldsFormControl')?.hasError('required')">
         Field is <strong>required</strong>
       </mat-error>
+      <mat-hint>{{regexTaggerOptions?.actions?.POST?.fields?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
 
@@ -48,13 +53,15 @@
       <mat-error *ngIf="applyForm.get('factNameFormControl')?.hasError('required')">
         Fact name is <strong>required</strong>
       </mat-error>
+      <mat-hint>{{regexTaggerOptions?.actions?.POST?.new_fact_name?.help_text || ''}}</mat-hint>
     </mat-form-field>
     <mat-form-field>
       <input autocomplete="off" formControlName="factValueFormControl" matInput
              placeholder="Fact value">
+      <mat-hint>{{regexTaggerOptions?.actions?.POST?.new_fact_value?.help_text || ''}}</mat-hint>
     </mat-form-field>
     <mat-checkbox formControlName="addSpansFormControl"
-                  matTooltip="If enabled, spans of detected matches are added to texta facts and corresponding facts can be highlighted in Searcher."
+                  matTooltip="{{regexTaggerOptions?.actions?.POST?.add_spans?.help_text || ''}}"
                   matTooltipPosition="left">Add spans
     </mat-checkbox>
     <!--advanced -->
@@ -67,17 +74,17 @@
         <mat-form-field class="advanced-setting">
           <input formControlName="bulkSizeFormControl" matInput placeholder="Bulk size"
                  type="number">
-          <mat-hint>How many documents should be sent towards Elasticsearch at once.</mat-hint>
+          <mat-hint>{{regexTaggerOptions?.actions?.POST?.bulk_size?.help_text || ''}}</mat-hint>
         </mat-form-field>
         <mat-form-field class="advanced-setting">
           <input formControlName="esTimeoutFormControl" matInput placeholder="Elasticsearch timeout"
                  type="number">
-          <mat-hint>Elasticsearch scroll timeout in minutes.</mat-hint>
+          <mat-hint>{{regexTaggerOptions?.actions?.POST?.es_timeout?.help_text || ''}}</mat-hint>
         </mat-form-field>
         <mat-form-field class="advanced-setting m-bot-10">
           <input formControlName="chunkSizeFormControl"
                  matInput placeholder="Max chunk bytes" type="number">
-          <mat-hint>Data size in bytes that Elasticsearch should accept to prevent Entity Too Large errors.</mat-hint>
+          <mat-hint>{{regexTaggerOptions?.actions?.POST?.max_chunk_bytes?.help_text || ''}}</mat-hint>
         </mat-form-field>
 
       </ng-template>

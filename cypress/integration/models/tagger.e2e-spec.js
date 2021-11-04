@@ -17,8 +17,6 @@ describe('taggers should work', function () {
     cy.wait('@getUser');
     cy.wait('@getProjectIndices');
     cy.wait('@getTaggers');
-    cy.get('[data-cy=appNavbarProjectSelect]').click();
-    cy.get('mat-option').contains('integration_test_project').click();
   }
 
   it('extra_actions should work', function () {
@@ -26,14 +24,13 @@ describe('taggers should work', function () {
     cy.importTestTagger(this.projectId).then(x => {
       cy.intercept('GET', '**/taggers/**').as('getTaggers');
       initTaggersPage();
-      cy.wait('@getTaggers');
       cy.wait(100);
 
       cy.intercept('POST', '**/taggers/**').as('postTagger');
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
       cy.get('[data-cy=appTaggerMenuListFeatures]').should('be.visible').click();
       cy.wait('@postTagger');
-      cy.get('.mat-dialog-content > div').should('have.length', 8);
+      cy.get('.mat-list-item-content').should('have.length', 8);
       cy.closeCurrentCdkOverlay();
       // Stop words
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
@@ -63,11 +60,23 @@ describe('taggers should work', function () {
       cy.wait('@postTagger');
       cy.closeCurrentCdkOverlay();
       // Tag random doc
+      cy.intercept('POST', '**/tag_random_doc/**').as('tagRandomDoc');
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
       cy.get('[data-cy=appTaggerMenuTagRandomDoc]').should('be.visible').click();
-      cy.wait('@getTaggers');
-      cy.get('app-tag-random-doc-dialog .mat-dialog-actions span').should('have.length.is.greaterThan', 2);
-      cy.closeCurrentCdkOverlay();
+      cy.get('[data-cy=appTaggerTagRandomDocDialogFields]').click().then((fields => {
+        cy.wrap(fields).should('have.class', 'mat-focused');
+        cy.closeCurrentCdkOverlay();
+        cy.matFormFieldShouldHaveError(fields, 'required');
+        cy.wrap(fields).click();
+        cy.get('.mat-option-text').contains('comment_content').should('be.visible').click();
+        cy.closeCurrentCdkOverlay();
+        cy.wrap(fields).find('mat-error').should('have.length', 0)
+      }));
+      cy.get('[data-cy=TaggerTagRandomDocDialogSubmit]').should('be.visible').click();
+      cy.wait('@tagRandomDoc', {timeout: 120000}).then(resp => {
+        cy.wrap(resp).its('response.statusCode').should('eq', 200);
+        cy.get('[data-cy=TaggerTagRandomDocDialogClose]').click();
+      });
 
       // patch tagger
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();

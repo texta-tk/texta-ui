@@ -1,3 +1,4 @@
+import {UserProfile} from '../UserProfile';
 
 export interface Task {
   id: number;
@@ -15,7 +16,7 @@ export interface Task {
 export interface IndexSplitter {
   id: number;
   url: string;
-  author_username: string;
+  author: UserProfile;
   description: string;
   scroll_size: number;
   fields: string[];
@@ -117,6 +118,7 @@ export interface ScrollSize {
   type: string;
   required: boolean;
   read_only: boolean;
+  help_text: string;
   label: string;
   min_value: number;
   max_value: number;
@@ -301,7 +303,7 @@ export interface Children2 {
 export interface POST {
   id: Id;
   url: Url;
-  author_username: AuthorUsername;
+  author: AuthorUsername;
   description: Description;
   indices: Indices;
   scroll_size: ScrollSize;

@@ -15,6 +15,7 @@ import {SelectionModel} from '@angular/cdk/collections';
 import {CreateDatasetDialogComponent} from './create-dataset-dialog/create-dataset-dialog.component';
 import {DatasetImporterService} from '../../core/tools/dataset-importer/dataset-importer.service';
 import {expandRowAnimation} from '../../shared/animations';
+import {MatSelectChange} from '@angular/material/select';
 
 @Component({
   selector: 'app-dataset-importer',
@@ -43,6 +44,7 @@ export class DatasetImporterComponent implements OnInit, OnDestroy {
 
   currentProject: Project;
   resultsLength: number;
+  private updateTable = new Subject<boolean>();
 
   constructor(private projectStore: ProjectStore,
               private importerService: DatasetImporterService,
@@ -85,7 +87,7 @@ export class DatasetImporterComponent implements OnInit, OnDestroy {
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
 
-    merge(this.sort.sortChange, this.paginator.page, this.filteredSubject)
+    merge(this.sort.sortChange, this.paginator.page, this.filteredSubject, this.updateTable)
       .pipe(debounceTime(250), startWith({}), switchMap(() => {
         this.isLoadingResults = true;
         const sortDirection = this.sort.direction === 'desc' ? '-' : '';
@@ -117,7 +119,8 @@ export class DatasetImporterComponent implements OnInit, OnDestroy {
     });
     dialogRef.afterClosed().subscribe((resp: DatasetImporter | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.tableData.data = [...this.tableData.data, resp];
+        this.updateTable.next(true);
+        this.projectStore.refreshSelectedProjectResourceCounts();
         this.logService.snackBarMessage(`Created importer ${resp.description}`, 2000);
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
@@ -191,7 +194,7 @@ export class DatasetImporterComponent implements OnInit, OnDestroy {
   }
 
 
-  applyFilter(filterValue: EventTarget | null, field: string): void {
+  applyFilter(filterValue: MatSelectChange | EventTarget | null, field: string): void {
     this.filteringValues[field] = (filterValue as HTMLInputElement).value ? (filterValue as HTMLInputElement).value : '';
     this.filterQueriesToString();
     this.filteredSubject.next();

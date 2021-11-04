@@ -1,22 +1,20 @@
 import { TestBed } from '@angular/core/testing';
 
-import { ClusterService } from './cluster.service';
+import { RakunExtractorService } from './rakun-extractor.service';
 import {RouterTestingModule} from '@angular/router/testing';
-import {SharedModule} from '../../../shared/shared.module';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {SharedModule} from '../../../shared/shared.module';
 
-describe('ClusterService', () => {
-  let service: ClusterService;
+describe('RakunExtractorService', () => {
+  let service: RakunExtractorService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [
+    TestBed.configureTestingModule({imports: [
         RouterTestingModule,
         SharedModule,
         HttpClientTestingModule
-      ]
-    });
-    service = TestBed.inject(ClusterService);
+      ]});
+    service = TestBed.inject(RakunExtractorService);
   });
 
   it('should be created', () => {

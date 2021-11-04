@@ -8,20 +8,18 @@ describe('Topic Analyzer should work', function () {
         cy.wrap(x.body.id).as('projectId');
         cy.intercept('GET', '**user**').as('getUser');
         cy.intercept('GET', '**get_fields**').as('getProjectIndices');
-        cy.intercept('GET', '**/clustering/?ordering?**').as('getClustering');
-        cy.intercept('DELETE', '**/clustering/**').as('deleteClustering');
-        cy.intercept('POST', '**/clustering/**').as('postClustering');
-        cy.intercept('PATCH', '**/clustering/**').as('patchClustering');
+        cy.intercept('GET', '**/topic_analyzer/?ordering?**').as('getClustering');
+        cy.intercept('DELETE', '**/topic_analyzer/**').as('deleteClustering');
+        cy.intercept('POST', '**/topic_analyzer/**').as('postClustering');
+        cy.intercept('PATCH', '**/topic_analyzer/**').as('patchClustering');
       });
     });
   });
 
   function initClusteringPage() {
     cy.visit('/topic-analyzer');
-    cy.wait('@getClustering');
     cy.wait('@getProjectIndices');
-    cy.get('[data-cy=appNavbarProjectSelect]').click();
-    cy.get('mat-option').contains('integration_test_project').click();
+    cy.wait('@getClustering');
   }
 
   it('Topic Analyzer should work', function () {
@@ -65,14 +63,15 @@ describe('Topic Analyzer should work', function () {
     cy.get('.cdk-column-significant_words:nth(1)').click();
     cy.get('.cdk-column-comment_content').should('be.visible');
     cy.get('[data-cy=appClusterDocumentsMLTBtn]').click();
-    cy.wait('@postClustering').its('response.body')
-      .should('have.length.greaterThan', 1);
+
+    cy.wait('@postClustering').its('response.body').should('have.length.gte', 1);
     cy.get('app-similar-cluster-dialog .mat-header-cell.mat-column-select').should('be.visible').click();
     cy.get('[data-cy=appClusterSimilarTableAddToCluster]').should('be.visible').click();
     cy.get('[type="submit"]').click();
     cy.wait('@postClustering').its('response.body')
       .should('have.property', 'message');
     cy.intercept('GET', '**/clusters/**').as('getClusters');
+    cy.closeCurrentCdkOverlay();
     cy.closeCurrentCdkOverlay();
     cy.wait('@getClusters');
     cy.get('[data-cy=appClusterDocumentsTagBtn]').click();

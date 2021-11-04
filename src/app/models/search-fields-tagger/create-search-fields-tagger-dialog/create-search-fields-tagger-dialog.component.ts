@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
 import {of, Subject} from 'rxjs';
 import {ErrorStateMatcher} from '@angular/material/core';
-import {mergeMap, takeUntil} from 'rxjs/operators';
+import {filter, mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
@@ -17,6 +17,7 @@ interface OnSubmitParams {
   fieldsFormControl: string[];
   descriptionFormControl: string;
   indicesFormControl: ProjectIndex[];
+  breakUpCharacter: string;
   factNameFormControl: string;
   bulkSizeFormControl: number;
   esTimeoutFormControl: number;
@@ -36,6 +37,7 @@ export class CreateSearchFieldsTaggerDialogComponent implements OnInit, OnDestro
     indicesFormControl: new FormControl([], [Validators.required]),
     fieldsFormControl: new FormControl([], [Validators.required]),
     factNameFormControl: new FormControl('', [Validators.required]),
+    breakUpCharacter: new FormControl(''),
     bulkSizeFormControl: new FormControl(100, [Validators.required]),
     esTimeoutFormControl: new FormControl(10),
   });
@@ -45,6 +47,8 @@ export class CreateSearchFieldsTaggerDialogComponent implements OnInit, OnDestro
   destroyed$: Subject<boolean> = new Subject<boolean>();
   projectIndices: ProjectIndex[] = [];
   projectFields: ProjectIndex[];
+  // tslint:disable-next-line:no-any
+  searchTaggerOptions: any;
 
   constructor(private dialogRef: MatDialogRef<CreateSearchFieldsTaggerDialogComponent>,
               private projectService: ProjectService,
@@ -73,6 +77,17 @@ export class CreateSearchFieldsTaggerDialogComponent implements OnInit, OnDestro
         this.currentProject = proj;
       }
     });
+    this.projectStore.getCurrentProject().pipe(filter(x => !!x), take(1), switchMap(proj => {
+      if (proj) {
+        this.currentProject = proj;
+        return this.searchTaggerService.getSearchFieldsTaggerOptions(proj.id);
+      }
+      return of(null);
+    })).subscribe(options => {
+      if (options && !(options instanceof HttpErrorResponse)) {
+        this.searchTaggerOptions = options;
+      }
+    });
   }
 
   onSubmit(formData: OnSubmitParams): void {
@@ -81,6 +96,8 @@ export class CreateSearchFieldsTaggerDialogComponent implements OnInit, OnDestro
       indices: formData.indicesFormControl.map(x => [{name: x.index}]).flat(),
       fields: formData.fieldsFormControl,
       fact_name: formData.factNameFormControl,
+      use_breakup: !!formData.breakUpCharacter,
+      ...formData.breakUpCharacter ? {breakup_character: formData.breakUpCharacter} : {},
       ...this.query ? {query: this.query} : {},
       bulk_size: formData.bulkSizeFormControl,
       es_timeout: formData.esTimeoutFormControl,

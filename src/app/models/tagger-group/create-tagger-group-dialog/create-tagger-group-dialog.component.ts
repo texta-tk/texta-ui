@@ -17,7 +17,7 @@ import {forkJoin, of, Subject} from 'rxjs';
 import {TaggerGroupService} from '../../../core/models/taggers/tagger-group.service';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 import {MatSelect} from '@angular/material/select';
-import {CoreService} from "../../../core/core.service";
+import {CoreService} from '../../../core/core.service';
 
 @Component({
   selector: 'app-create-tagger-group-dialog',
@@ -33,7 +33,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
       Validators.required,
     ]),
     factNameFormControl: new FormControl(),
-    taggerGroupSampleSizeFormControl: new FormControl(50, [Validators.required]),
+    taggerGroupMinSampleSizeFormControl: new FormControl(50, [Validators.required]),
     taggerForm: new FormGroup({
       fieldsFormControl: new FormControl([], [Validators.required]),
       indicesFormControl: new FormControl([], [Validators.required]),
@@ -53,7 +53,8 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
-  taggerOptions: TaggerOptions = TaggerOptions.createEmpty();
+  // tslint:disable-next-line:no-any
+  taggerGroupOptions: any;
   embeddings: Embedding[];
   projectFields: ProjectIndex[];
   projectFacts: string[];
@@ -65,7 +66,6 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
   @ViewChild('indicesSelect') indicesSelect: MatSelect;
 
   constructor(private dialogRef: MatDialogRef<CreateTaggerGroupDialogComponent>,
-              private taggerService: TaggerService,
               private taggerGroupService: TaggerGroupService,
               private logService: LogService,
               private projectService: ProjectService,
@@ -81,6 +81,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
         this.taggerGroupForm.get('taggerForm')?.get('maxBalanceFormControl')?.enable({emitEvent: false});
       } else {
         this.taggerGroupForm.get('taggerForm')?.get('maxBalanceFormControl')?.disable({emitEvent: false});
+        this.taggerGroupForm.get('taggerForm')?.get('maxBalanceFormControl')?.setValue(false, {emitEvent: false});
       }
     });
 
@@ -114,13 +115,6 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
 
   ngOnInit(): void {
     this.initFormControlListeners();
-    this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(currentProjIndices => {
-      if (currentProjIndices) {
-        const indicesForm = this.taggerGroupForm.get('taggerForm')?.get('indicesFormControl');
-        indicesForm?.setValue(currentProjIndices);
-        this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
-      }
-    });
 
     this.projectStore.getProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(projIndices => {
       if (projIndices) {
@@ -141,7 +135,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
         this.currentProject = currentProject;
         return forkJoin(
           {
-            taggerOptions: this.taggerService.getTaggerOptions(currentProject.id),
+            taggerOptions: this.taggerGroupService.getTaggerGroupOptions(currentProject.id),
             embeddings: this.embeddingService.getEmbeddings(currentProject.id),
           });
       } else {
@@ -150,8 +144,8 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
     })).subscribe(resp => {
       if (resp) {
         if (!(resp.taggerOptions instanceof HttpErrorResponse)) {
-          this.taggerOptions = resp.taggerOptions;
-          this.setDefaultFormValues(this.taggerOptions);
+          this.taggerGroupOptions = resp.taggerOptions;
+          this.setDefaultFormValues(this.taggerGroupOptions);
         }
         if (!(resp.embeddings instanceof HttpErrorResponse)) {
           this.embeddings = resp.embeddings.results;
@@ -159,12 +153,29 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
       }
     });
 
-    this.projectStore.getCurrentIndicesFacts().pipe(take(1)).subscribe(x => this.projectFacts = x ? x : []);
+    this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$), switchMap(currentProjIndices => {
+      this.projectFacts = ['Loading...'];
+      if (this.currentProject?.id && currentProjIndices) {
+        const indicesForm = this.taggerGroupForm.get('taggerForm')?.get('indicesFormControl');
+        indicesForm?.setValue(currentProjIndices);
+        this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
+        return this.projectService.getProjectFacts(this.currentProject.id, currentProjIndices.map(x => [{name: x.index}]).flat());
+      } else {
+        return of(null);
+      }
+    })).subscribe(resp => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.projectFacts = resp;
+      } else if (resp) {
+        this.logService.snackBarError(resp, 4000);
+      }
+    });
   }
 
   ngAfterViewInit(): void {
     this.indicesSelect.openedChange.pipe(takeUntil(this.destroyed$), switchMap(opened => {
       if (!opened && this.indicesSelect.value) {
+        this.projectFacts = ['Loading...'];
         return this.projectService.getProjectFacts(
           this.currentProject.id, this.indicesSelect.value.map((x: ProjectIndex) => [{name: x.index}]).flat());
       }
@@ -212,7 +223,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
     const body = {
       description: formData.descriptionFormControl,
       ...formData.factNameFormControl ? {fact_name: formData.factNameFormControl} : {},
-      minimum_sample_size: formData.taggerGroupSampleSizeFormControl,
+      minimum_sample_size: formData.taggerGroupMinSampleSizeFormControl,
       tagger: taggerBody
     };
     if (this.currentProject) {
@@ -226,21 +237,22 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
     }
   }
 
-  setDefaultFormValues(options: TaggerOptions): void {
+  // tslint:disable-next-line:no-any
+  setDefaultFormValues(options: any): void {
     const taggerForm = this.taggerGroupForm.get('taggerForm');
 
     if (taggerForm) {
       const vectorizer = taggerForm.get('vectorizerFormControl');
       if (vectorizer) {
-        vectorizer.setValue(options.actions.POST.vectorizer.choices[0]);
+        vectorizer.setValue(options.actions.POST.tagger.children.vectorizer.choices[0]);
       }
       const classifier = taggerForm.get('classifierFormControl');
       if (classifier) {
-        classifier.setValue(options.actions.POST.classifier.choices[0]);
+        classifier.setValue(options.actions.POST.tagger.children.classifier.choices[0]);
       }
       const scoringFunction = taggerForm.get('scoringFormControl');
       if (scoringFunction) {
-        scoringFunction.setValue(options.actions.POST.scoring_function.choices[0]);
+        scoringFunction.setValue(options.actions.POST.tagger.children.scoring_function.choices[0]);
       }
     }
   }

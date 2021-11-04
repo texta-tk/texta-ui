@@ -12,6 +12,9 @@ import {ProjectStore} from '../../../core/projects/project.store';
 import {Project} from '../../../shared/types/Project';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
+import {Match} from "../../../shared/types/tasks/RegexTaggerGroup";
+import {UtilityFunctions} from "../../../shared/UtilityFunctions";
+import {HighlightSettings} from "../../../shared/SettingVars";
 
 @Component({
   selector: 'app-mlp-apply-text-dialog',
@@ -27,9 +30,15 @@ export class MLPApplyTextDialogComponent implements OnInit, OnDestroy {
     analyzersFormControl: new FormControl([], [Validators.required]),
   });
   currentProject: Project;
-  result: unknown;
+  result: any;
   isLoading: boolean;
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
+  resultFields: string[];
+  colorMap: Map<string, { backgroundColor: string, textColor: string }> = new Map();
+
+  // tslint:disable-next-line:no-any
+  mlpOptions: any;
+  defaultColors = HighlightSettings.legibleColors;
 
   constructor(private dialogRef: MatDialogRef<MLPApplyTextDialogComponent>,
               private projectService: ProjectService,
@@ -37,6 +46,9 @@ export class MLPApplyTextDialogComponent implements OnInit, OnDestroy {
               private logService: LogService,
               private projectStore: ProjectStore) {
   }
+
+  // tslint:disable-next-line:no-any
+  idAccessor = (x: any) => x.fact;
 
   ngOnInit(): void {
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), switchMap(currentProject => {
@@ -48,6 +60,7 @@ export class MLPApplyTextDialogComponent implements OnInit, OnDestroy {
       }
     })).subscribe((resp: MLPOptions | HttpErrorResponse | null) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
+        this.mlpOptions = resp;
         this.analyzers = resp.actions.POST.analyzers.choices;
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
@@ -60,9 +73,13 @@ export class MLPApplyTextDialogComponent implements OnInit, OnDestroy {
     this.mlpService.applyMLPText({
       analyzers: formGroup.analyzersFormControl,
       texts: [formGroup.textFormControl]
-    }).subscribe(x => {
+    }).subscribe((x) => {
       if (x && !(x instanceof HttpErrorResponse)) {
         this.result = x;
+        this.result[0].text_mlp.texta_facts = x[0].texta_facts;
+        this.result[0].text_mlp.texta_facts.forEach((y: { doc_path: string; }) => y.doc_path = 'text');
+        this.resultFields = Object.keys(x[0].text_mlp).filter(y => y !== 'language');
+        this.getUniqueFacts(x[0].texta_facts);
       } else if (x instanceof HttpErrorResponse) {
         this.logService.snackBarError(x, 2000);
       }
@@ -70,6 +87,34 @@ export class MLPApplyTextDialogComponent implements OnInit, OnDestroy {
     }, () => this.isLoading = false);
   }
 
+  getUniqueFacts(matches: Match[]): { fact: Match; textColor: string; backgroundColor: string }[] {
+    const returnVal: { fact: Match, textColor: string, backgroundColor: string }[] = [];
+    const uniques = UtilityFunctions.getDistinctByProperty(matches, (y => y.fact));
+    for (let i = 0; i < uniques.length; i++) {
+      if (i < this.defaultColors.length) {
+        const color = this.defaultColors[i];
+        this.colorMap.set(uniques[i].fact, color);
+        returnVal.push({
+          fact: uniques[i],
+          backgroundColor: color.backgroundColor,
+          textColor: color.textColor
+        });
+      } else {
+        const color = {
+          // tslint:disable-next-line:no-bitwise
+          backgroundColor: `hsla(${~~(360 * Math.random())},70%,70%,0.8)`,
+          textColor: 'black'
+        };
+        this.colorMap.set(uniques[i].fact, color);
+        returnVal.push({
+          fact: uniques[i],
+          backgroundColor: color.backgroundColor,
+          textColor: color.textColor
+        });
+      }
+    }
+    return returnVal;
+  }
 
   ngOnDestroy(): void {
     this.destroyed$.next(true);

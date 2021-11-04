@@ -5,8 +5,9 @@ import {TorchTaggerComponent} from './torch-tagger/torch-tagger.component';
 import {TorchTaggerRoutingModule} from './torch-tagger-routing.module';
 import {TorchTagTextDialogComponent} from './torch-tag-text-dialog/torch-tag-text-dialog.component';
 import {EditTorchTaggerDialogComponent} from './edit-torch-tagger-dialog/edit-torch-tagger-dialog.component';
-import { EpochReportsDialogComponent } from './epoch-reports-dialog/epoch-reports-dialog.component';
+import {EpochReportsDialogComponent} from './epoch-reports-dialog/epoch-reports-dialog.component';
 import {ApplyToIndexDialogComponent} from './apply-to-index-dialog/apply-to-index-dialog.component';
+import {TagRandomDocComponent} from './tag-random-doc/tag-random-doc.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import {ApplyToIndexDialogComponent} from './apply-to-index-dialog/apply-to-inde
     TorchTagTextDialogComponent,
     EditTorchTaggerDialogComponent,
     EpochReportsDialogComponent,
-    ApplyToIndexDialogComponent
+    ApplyToIndexDialogComponent,
+    TagRandomDocComponent
   ],
   imports: [
     SharedModule,

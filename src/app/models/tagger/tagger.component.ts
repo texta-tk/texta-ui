@@ -24,6 +24,8 @@ import {expandRowAnimation} from '../../shared/animations';
 import {EditTaggerDialogComponent} from './edit-tagger-dialog/edit-tagger-dialog.component';
 import {Index} from '../../shared/types/Index';
 import {ApplyToIndexDialogComponent} from './apply-to-index-dialog/apply-to-index-dialog.component';
+import {MatSelectChange} from '@angular/material/select';
+import { MultiTagTextDialogComponent } from './multi-tag-text-dialog/multi-tag-text-dialog.component';
 
 @Component({
   selector: 'app-tagger',
@@ -140,17 +142,27 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  retrainTagger(value: { id: number; }): void {
-    if (this.currentProject) {
-      this.taggerService.retrainTagger(this.currentProject.id, value.id)
-        .subscribe(resp => {
-          if (resp && !(resp instanceof HttpErrorResponse)) {
-            this.logService.snackBarMessage('Successfully started retraining', 4000);
-          } else if (resp instanceof HttpErrorResponse) {
-            this.logService.snackBarError(resp, 5000);
-          }
-        });
-    }
+  retrainTagger(value: Tagger): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        confirmText: 'Retrain',
+        mainText: `Are you sure you want to retrain: ${value.description}`
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.taggerService.retrainTagger(this.currentProject.id, value.id)
+          .subscribe(resp => {
+            if (resp && !(resp instanceof HttpErrorResponse)) {
+              this.logService.snackBarMessage('Successfully started retraining', 4000);
+            } else if (resp instanceof HttpErrorResponse) {
+              this.logService.snackBarError(resp, 5000);
+            }
+          });
+      }
+    });
+
   }
 
   ngOnDestroy(): void {
@@ -158,10 +170,11 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.destroyed$.complete();
   }
 
-  openCreateDialog(): void {
+  openCreateDialog(cloneTagger?: Tagger): void {
     const dialogRef = this.dialog.open(CreateTaggerDialogComponent, {
       maxHeight: '90%',
       width: '700px',
+      data: {cloneTagger: cloneTagger ? cloneTagger : undefined},
       disableClose: true
     });
     dialogRef.afterClosed().subscribe(resp => {
@@ -179,10 +192,10 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dialog.open(EditTaggerDialogComponent, {
       width: '700px',
       data: tagger
-    }).afterClosed().subscribe((x: Tagger | HttpErrorResponse | undefined) => {
+    }).afterClosed().subscribe(x => {
       if (x && !(x instanceof HttpErrorResponse)) {
         tagger.description = x.description;
-      } else if (x instanceof HttpErrorResponse) {
+      } else if (x && x instanceof HttpErrorResponse) {
         this.logService.snackBarError(x, 3000);
       }
     });
@@ -216,8 +229,9 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   tagRandomDocDialog(tagger: Tagger): void {
     const dialogRef = this.dialog.open(TagRandomDocDialogComponent, {
       data: {tagger, currentProjectId: this.currentProject.id},
-      maxHeight: '665px',
-      width: '1200px',
+      maxHeight: '90vh',
+      width: '700px',
+      disableClose: true,
     });
   }
 
@@ -305,12 +319,14 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
         data: {taggerId: tagger.id, currentProjectId: this.currentProject.id},
         maxHeight: '665px',
         width: '700px',
+        autoFocus: false
       });
     }
   }
 
-  applyFilter(filterValue: EventTarget | null, field: string): void {
-    this.filteringValues[field] = (filterValue as HTMLInputElement).value ? (filterValue as HTMLInputElement).value : '';
+  applyFilter(filterValue: MatSelectChange | null | EventTarget, field: string): void {
+    // @ts-ignore
+    this.filteringValues[field] = filterValue?.value ? filterValue.value : '';
     this.paginator.pageIndex = 0;
     this.filterQueriesToString();
     this.filteredSubject.next();
@@ -328,6 +344,13 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   applyToIndexDialog(tagger: Tagger): void {
     this.dialog.open(ApplyToIndexDialogComponent, {
       data: tagger,
+      maxHeight: '90vh',
+      width: '700px',
+    });
+  }
+
+  openMultiTagDialog(): void {
+    this.dialog.open(MultiTagTextDialogComponent, {
       maxHeight: '90vh',
       width: '700px',
     });

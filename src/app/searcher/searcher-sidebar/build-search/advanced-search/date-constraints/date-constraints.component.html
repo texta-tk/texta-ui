@@ -1,12 +1,15 @@
 <div fxLayout="row" fxLayoutGap="20px">
   <mat-form-field fxFlex="calc(50%-20px)">
-    <input id="dateFrom" data-cy="appSearcherSideBarBuildSearchDateConstraintStart" matInput [matDatepicker]="from" placeholder="From"
+    <input id="dateFrom" data-cy="appSearcherSideBarBuildSearchDateConstraintStart" matInput [matDatepicker]="from"
+           placeholder="From"
+           [min]="minDate" [max]="maxDate"
            [formControl]="dateFromFormControl">
     <mat-datepicker-toggle matSuffix [for]="from"></mat-datepicker-toggle>
     <mat-datepicker #from></mat-datepicker>
   </mat-form-field>
   <mat-form-field fxFlex="calc(50%-20px)">
-    <input id="dateTo" data-cy="appSearcherSideBarBuildSearchDateConstraintEnd" matInput [matDatepicker]="to" placeholder="To" [formControl]="dateToFormControl">
+    <input [min]="minDate" [max]="maxDate" id="dateTo" data-cy="appSearcherSideBarBuildSearchDateConstraintEnd" matInput
+           [matDatepicker]="to" placeholder="To" [formControl]="dateToFormControl">
     <mat-datepicker-toggle matSuffix [for]="to"></mat-datepicker-toggle>
     <mat-datepicker #to></mat-datepicker>
   </mat-form-field>

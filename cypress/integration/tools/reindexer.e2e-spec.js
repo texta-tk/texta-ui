@@ -16,9 +16,6 @@ describe('reindexer should work', function () {
     cy.intercept('GET', '**/reindexer/**').as('getIndices');
     cy.visit('/reindexer');
     cy.wait('@getIndices');
-    cy.get('[data-cy=appNavbarProjectSelect]').click();
-    cy.get('mat-option').contains('integration_test_project').click();
-    cy.wait('@getIndices');
   }
 
   it('should be able to create a new reindexer task', function () {
@@ -53,7 +50,7 @@ describe('reindexer should work', function () {
   it('extra_actions should work', function () {
     cy.request({
       method: 'POST',
-      url: `${Cypress.env('api_host')}${Cypress.env('api_basePath')}/projects/${this.projectId}/reindexer/`,
+      url: `${Cypress.env('api_host')}${Cypress.env('api_basePath')}/projects/${this.projectId}/elastic/reindexer/`,
       body: {
         "description": "test",
         "new_index": "asdasdasasdasadada",

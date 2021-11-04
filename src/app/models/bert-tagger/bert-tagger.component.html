@@ -80,7 +80,7 @@
 
       <ng-container matColumnDef="author__username">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Author</th>
-        <td *matCellDef="let element" mat-cell> {{element.author_username}}</td>
+        <td *matCellDef="let element" mat-cell [matTooltip]="element?.author?.username"> {{element?.author?.display_name}}</td>
       </ng-container>
       <ng-container matColumnDef="f1_score">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> F1 score</th>
@@ -104,7 +104,7 @@
               <div class="flex-col m-l-r-5">
                 <table class="simple-table">
                   <tr>
-                    <th class="mat-body-strong">Bert Model</th>
+                    <th class="mat-body-strong">BERT Model</th>
                     <td>{{element.bert_model}}</td>
                   </tr>
                   <tr>
@@ -291,12 +291,16 @@
       <button (click)="tagRandomDocDialog(element)" data-cy="appBertTaggerMenuTagRandomDoc" mat-menu-item>
         Tag random doc
       </button>
-      <button (click)="edit(element)" data-cy="appBertTaggerMenuEdit" mat-menu-item>
-        Edit
-      </button>
     </ng-container>
+    <button (click)="edit(element)" data-cy="appBertTaggerMenuEdit" mat-menu-item>
+      Edit
+    </button>
     <button (click)="retrainTagger(element)" data-cy="appBertTaggerMenuRetrain" mat-menu-item>
       Retrain
+    </button>
+    <button (click)="openCreateDialog(element)" data-cy="appTaggerMenuClone" mat-menu-item
+            matTooltip="Fill a new create window with the same parameters">
+      Clone & Edit
     </button>
     <mat-divider></mat-divider>
     <button (click)="onDelete(element, i)" data-cy="appBertTaggerMenuDelete" mat-menu-item>

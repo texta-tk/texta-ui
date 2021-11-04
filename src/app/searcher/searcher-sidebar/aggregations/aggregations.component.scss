@@ -1,24 +1,32 @@
 
 .wrapper {
   font-size: 14px;
-  .aggregation-form{
+
+  .aggregation-form {
     margin-top: 5px;
     margin-bottom: 5px;
     background-color: #EFEFEF;
     padding: 5px;
   }
 }
-.close-button{
+
+.close-button {
   margin-right: -5px;
 }
+
 .exclude-search-checkbox {
   ::ng-deep .mat-checkbox-layout {
     margin-bottom: 1em;
     margin-top: 1em;
     width: 100%;
-    .mat-checkbox-inner-container{
+
+    .mat-checkbox-inner-container {
       margin-right: 0;
       margin-left: auto;
     }
   }
+}
+
+.mat-option .mat-icon {
+  margin-right: 10px;
 }

@@ -8,6 +8,7 @@
       <mat-error *ngIf="evaluatorForm.get('descriptionFormControl')?.hasError('required')">
         Description is <strong>required</strong>
       </mat-error>
+      <mat-hint>{{evaluatorOptions?.actions?.POST?.description?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
 
@@ -15,6 +16,7 @@
       <mat-label>Indices</mat-label>
       <mat-select (openedChange)="indicesOpenedChange($event)" [disableOptionCentering]="true"
                   formControlName="indicesFormControl" multiple panelClass="select-panel-reveal-input" required>
+        <app-mat-option-select-all></app-mat-option-select-all>
         <mat-option *ngFor="let projectIndex of projectIndices" [value]="projectIndex">
           {{projectIndex.index}}
         </mat-option>
@@ -22,6 +24,7 @@
       <mat-error *ngIf="evaluatorForm.get('indicesFormControl')?.hasError('required')">
         Select at least <strong>1 index</strong>
       </mat-error>
+      <mat-hint>{{evaluatorOptions?.actions?.POST?.indices?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
 
@@ -41,6 +44,7 @@
         <mat-error *ngIf="evaluatorForm.get('trueFactNameFormControl')?.hasError('required')">
           This field is <strong>required</strong>
         </mat-error>
+        <mat-hint>{{evaluatorOptions?.actions?.POST?.true_fact?.help_text || ''}}</mat-hint>
       </mat-form-field>
       <mat-form-field class="m-l-15" data-cy="appEvaluatorCreateDialogTrueFactValue" fxFlex>
         <input [matAutocomplete]="trueVal"
@@ -51,13 +55,11 @@
         <mat-autocomplete #trueVal="matAutocomplete"
                           panelWidth="auto">
           <mat-option *ngFor="let option of trueFactValueOptions" [disabled]="isLoadingOptions"
-                      [value]="option"  title="{{option}}">
+                      [value]="option" title="{{option}}">
             {{option}}
           </mat-option>
         </mat-autocomplete>
-        <mat-hint>
-          Select fact values for binary evaluation
-        </mat-hint>
+        <mat-hint>{{evaluatorOptions?.actions?.POST?.true_fact_value?.help_text || ''}}</mat-hint>
       </mat-form-field>
     </div>
     <div fxLayout="row">
@@ -75,6 +77,7 @@
         <mat-error *ngIf="evaluatorForm.get('predictedFactNameFormControl')?.hasError('required')">
           This field is <strong>required</strong>
         </mat-error>
+        <mat-hint>{{evaluatorOptions?.actions?.POST?.predicted_fact?.help_text || ''}}</mat-hint>
       </mat-form-field>
       <mat-form-field class="m-l-15" data-cy="appEvaluatorCreateDialogPredictedFactValue" fxFlex>
         <input [matAutocomplete]="predictedVal"
@@ -89,9 +92,7 @@
             {{option}}
           </mat-option>
         </mat-autocomplete>
-        <mat-hint>
-          Leave them empty for multilabel/multiclass evaluation
-        </mat-hint>
+        <mat-hint>{{evaluatorOptions?.actions?.POST?.predicted_fact_value?.help_text || ''}}</mat-hint>
       </mat-form-field>
     </div>
     <mat-form-field>
@@ -109,12 +110,14 @@
           </mat-option>
         </ng-container>
       </mat-select>
-      <mat-hint>Read more about the average functions <a target="_blank" href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.precision_score.html">here</a></mat-hint>
+      <mat-hint>Read more about the average functions <a target="_blank"
+                                                         href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.precision_score.html">here</a>
+      </mat-hint>
     </mat-form-field>
     <mat-checkbox formControlName="addIndividualFormControl" style="margin-top: 1em"
                   *ngIf="!evaluatorForm.get('predictedFactValueFormControl')?.value
           && !evaluatorForm.get('trueFactValueFormControl')?.value"
-                  matTooltip="If enabled, individual label scores are calculated and stored as well."
+                  matTooltip="{{evaluatorOptions?.actions?.POST?.add_individual_results?.help_text || ''}}"
                   matTooltipPosition="left">Add individual results
     </mat-checkbox>
     <!--advanced -->
@@ -124,17 +127,17 @@
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
         <div fxLayout="row">
-        <mat-form-field fxFlex class="advanced-setting">
-          <input formControlName="esTimeoutFormControl" matInput placeholder="Elasticsearch timeout"
-                 type="number">
-          <mat-hint>Elasticsearch scroll timeout in minutes.</mat-hint>
-        </mat-form-field>
+          <mat-form-field fxFlex class="advanced-setting">
+            <input formControlName="esTimeoutFormControl" matInput placeholder="Elasticsearch timeout"
+                   type="number">
+            <mat-hint>{{evaluatorOptions?.actions?.POST?.es_timeout?.help_text || ''}}</mat-hint>
+          </mat-form-field>
 
-        <mat-form-field fxFlex class="advanced-setting m-l-15">
-          <input formControlName="scrollSizeFormControl" matInput placeholder="Scroll size"
-                 type="number">
-          <mat-hint>How many documents should be returned by one Elasticsearch scroll.</mat-hint>
-        </mat-form-field>
+          <mat-form-field fxFlex class="advanced-setting m-l-15">
+            <input formControlName="scrollSizeFormControl" matInput placeholder="Scroll size"
+                   type="number">
+            <mat-hint>{{evaluatorOptions?.actions?.POST?.scroll_size?.help_text || ''}}</mat-hint>
+          </mat-form-field>
         </div>
       </ng-template>
     </mat-expansion-panel>
@@ -146,7 +149,8 @@
       <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
     </div>
     <div class="flex-item-right">
-      <button form="createForm" [disabled]="!evaluatorForm.valid" data-cy="appEvaluatorCreateDialogSubmit" mat-button type="submit">
+      <button form="createForm" [disabled]="!evaluatorForm.valid" data-cy="appEvaluatorCreateDialogSubmit" mat-button
+              type="submit">
         Create
       </button>
     </div>

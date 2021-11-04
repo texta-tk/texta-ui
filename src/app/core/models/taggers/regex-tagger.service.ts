@@ -94,14 +94,31 @@ export class RegexTaggerService {
       tap(e => this.logService.logStatus(e, 'applyToIndex')),
       catchError(this.logService.handleError('applyToIndex')));
   }
+
   // tslint:disable-next-line:no-any
   applyToIndexOptions(projectId: number, taskId: number): Observable<any | HttpErrorResponse> {
-    // tslint:disable-next-line:no-any
-    return this.http.options<any>(
-      `${this.apiUrl}/projects/${projectId}/regex_taggers/${taskId}/apply_to_index/`
-    ).pipe(
+    return this.http.options(`${this.apiUrl}/projects/${projectId}/regex_taggers/${taskId}/apply_to_index/`).pipe(
       tap(e => this.logService.logStatus(e, 'applyToIndexOptions')),
-      // tslint:disable-next-line:no-any
-      catchError(this.logService.handleError<any>('applyToIndexOptions')));
+      catchError(this.logService.handleError('applyToIndexOptions')));
+  }
+
+  // tslint:disable-next-line:no-any
+  getRegexTaggerOptions(projectId: number): Observable<any | HttpErrorResponse> {
+    return this.http.options(`${this.apiUrl}/projects/${projectId}/regex_taggers/`).pipe(
+      tap(e => this.logService.logStatus(e, 'getRegexTaggerOptions')),
+      catchError(this.logService.handleError('getRegexTaggerOptions')));
+  }
+  // tslint:disable-next-line:no-any
+  getRDocOptions(projectId: number, taggerId: number): Observable<any | HttpErrorResponse> {
+    return this.http.options(`${this.apiUrl}/projects/${projectId}/regex_taggers/${taggerId}/tag_random_doc/`).pipe(
+      tap(e => this.logService.logStatus(e, 'getRDocOptions')),
+      catchError(this.logService.handleError('getRDocOptions')));
+  }
+
+  // tslint:disable-next-line:no-any
+  getMultiTagTextOptions(projectId: number): Observable<any | HttpErrorResponse> {
+    return this.http.options(`${this.apiUrl}/projects/${projectId}/regex_taggers/multitag_text/`).pipe(
+      tap(e => this.logService.logStatus(e, 'getMultiTagTextOptions')),
+      catchError(this.logService.handleError('getMultiTagTextOptions')));
   }
 }

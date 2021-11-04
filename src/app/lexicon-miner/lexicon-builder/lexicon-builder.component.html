@@ -13,16 +13,16 @@
     <div class="buttons-row" fxLayout="row" fxLayoutGap="5px">
       <div
         [matTooltipDisabled]="!!selectedEmbedding" matTooltip="Select an embedding to get new word suggestions">
-        <button (click)="getNewSuggestions()" [disabled]="!selectedEmbedding" color="accent"
+        <button (click)="getNewSuggestions()" [disabled]="!selectedEmbedding" color="primary"
                 data-cy="appLexiconNewSuggestionsBtn"
                 fxFlex="grow"
-                mat-raised-button>
+                mat-stroked-button>
           New Suggestions
         </button>
       </div>
-      <button (click)="clearSuggestions()" color="accent"
+      <button (click)="clearLexicon()" color="warn"
               data-cy="appLexiconCancelBtn" fxFlex="grow" mat-stroked-button
-              matTooltip="Clear the suggestion list without adding them as negatives">Clear Suggestions
+              matTooltip="Clear all of the positive and negative entries">Clear Lexicon
       </button>
       <button (click)="saveLexicon()" color="primary"
               data-cy="appLexiconSaveBtn" fxFlex="initial" mat-raised-button>Save
@@ -45,6 +45,7 @@
              data-cy="appLexiconPredictions">
           <span>{{suggestion.phrase}}</span>
         </div>
+        <p *ngIf="newSuggestions.length === 0">No results</p>
       </div>
     </div>
 
