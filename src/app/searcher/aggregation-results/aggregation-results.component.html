@@ -33,41 +33,41 @@
         </ng-container>
       </mat-tab>
 
-    <app-aggregation-results-chart
-      *ngIf="aggregationData.dateData !== undefined && aggregationData.dateData.length > 0"
-      [aggregationData]="aggregationData"
-      [yLabel]="timeLineYLabel">
+      <app-aggregation-results-chart
+        *ngIf="aggregationData.dateData !== undefined && aggregationData.dateData.length > 0"
+        [aggregationData]="aggregationData"
+        [yLabel]="timeLineYLabel">
 
-    </app-aggregation-results-chart>
-    <app-aggregation-results-map
-      *ngIf="aggregationData.geoData !== undefined && aggregationData.geoData.length > 0"
-      [aggregationData]="aggregationData">
+      </app-aggregation-results-chart>
+      <app-aggregation-results-map
+        *ngIf="aggregationData.geoData !== undefined && aggregationData.geoData.length > 0"
+        [aggregationData]="aggregationData">
 
-    </app-aggregation-results-map>
+      </app-aggregation-results-map>
 
-    <mat-tab-group *ngIf="aggregationData.treeData !== undefined && aggregationData.treeData.length > 0"
-                   mat-stretch-tabs>
-      <mat-tab *ngFor="let nestedAggregation of aggregationData.treeData">
-        <ng-template mat-tab-label>
-          {{nestedAggregation.name}}
-          <button
-            (click)="openUnifiedTimeline(nestedAggregation.histoBuckets)"
-            *ngIf="nestedAggregation !== undefined && nestedAggregation.histoBuckets!== undefined && nestedAggregation.histoBuckets.length > 0"
-            mat-icon-button>
-            <mat-icon>assessment</mat-icon>
-          </button>
-        </ng-template>
-        <app-aggregation-results-tree [dataSource]="nestedAggregation.treeData" [docPaths]="fieldPathList">
-        </app-aggregation-results-tree>
-      </mat-tab>
+      <mat-tab-group *ngIf="aggregationData.treeData !== undefined && aggregationData.treeData.length > 0"
+                     mat-stretch-tabs>
+        <mat-tab *ngFor="let nestedAggregation of aggregationData.treeData">
+          <ng-template mat-tab-label>
+            {{nestedAggregation.name}}
+            <button
+              (click)="openUnifiedTimeline(nestedAggregation.histoBuckets)"
+              *ngIf="nestedAggregation !== undefined && nestedAggregation.histoBuckets!== undefined && nestedAggregation.histoBuckets.length > 0"
+              mat-icon-button>
+              <mat-icon>assessment</mat-icon>
+            </button>
+          </ng-template>
+          <app-aggregation-results-tree [dataSource]="nestedAggregation.treeData" [docPaths]="fieldPathList">
+          </app-aggregation-results-tree>
+        </mat-tab>
+      </mat-tab-group>
+
+      <app-aggregation-results-chart [docPaths]="fieldPathList"
+                                     *ngIf="aggregationData.dateData !== undefined && aggregationData.dateData.length > 0"
+                                     [aggregationData]="aggregationData"
+                                     [yLabel]="timeLineYLabel">
+
+      </app-aggregation-results-chart>
     </mat-tab-group>
-
-    <app-aggregation-results-chart [docPaths]="fieldPathList"
-      *ngIf="aggregationData.dateData !== undefined && aggregationData.dateData.length > 0"
-      [aggregationData]="aggregationData"
-      [yLabel]="timeLineYLabel">
-
-    </app-aggregation-results-chart>
-
   </ng-container>
 </div>

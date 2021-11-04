@@ -33,12 +33,11 @@ import { GeoShapeAggregationComponent } from './searcher-sidebar/aggregations/ge
 import { GeoPointAggregationComponent } from './searcher-sidebar/aggregations/geo-point-aggregation/geo-point-aggregation.component';
 import { AggregationResultsMapComponent } from './aggregation-results/aggregation-results-map/aggregation-results-map.component';
 import { GeohashAggregationComponent } from './searcher-sidebar/aggregations/geo-point-aggregation/geohash-aggregation/geohash-aggregation.component';
-import {LeafletModule} from "@asymmetrik/ngx-leaflet";
+import {LeafletModule} from '@asymmetrik/ngx-leaflet';
 import { GeoDistanceAggregationComponent } from './searcher-sidebar/aggregations/geo-point-aggregation/geo-distance-aggregation/geo-distance-aggregation.component';
 import { GeoCentroidAggregationComponent } from './searcher-sidebar/aggregations/geo-point-aggregation/geo-centroid-aggregation/geo-centroid-aggregation.component';
 import { BooleanConstraintsComponent } from './searcher-sidebar/build-search/advanced-search/boolean-constraints/boolean-constraints.component';
 import { ExportSearchDialogComponent } from './searcher-table/export-search-dialog/export-search-dialog.component';
-import { AddLexiconDialogComponent } from '../shared/components/dialogs/add-lexicon-dialog/add-lexicon-dialog.component';
 
 @NgModule({
   declarations: [
@@ -66,7 +65,6 @@ import { AddLexiconDialogComponent } from '../shared/components/dialogs/add-lexi
     AggregationResultFactsComponent,
     GraphSelectedPortalComponent,
     EditSavedSearchDialogComponent,
-    AddLexiconDialogComponent,
     GeoShapeAggregationComponent,
     GeoPointAggregationComponent,
     AggregationResultsMapComponent,
