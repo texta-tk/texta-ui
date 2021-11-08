@@ -1,5 +1,5 @@
-@use '~@angular/material' as mat;
-@import "~@angular/material/theming";
+@use '@angular/material' as mat;
+@import "@angular/material/theming";
 @import "variables/_variables";
 @include mat.core();
 @include mat.all-component-themes($texta-theme);
