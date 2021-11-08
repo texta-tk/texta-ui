@@ -50,3 +50,4 @@ data-volumes/*
 cypress/fixtures/users.json
 cypress/videos/*
 cypress/screenshots/*
+.vscode/settings.json
