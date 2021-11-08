@@ -39,7 +39,6 @@
     "linkify-it": "^3.0.2",
     "ngx-infinite-scroll": "^10.0.1",
     "ngx-mat-select-search": "^3.3.0",
-    "ngx-material-file-input": "^2.1.1",
     "plotly.js": "^1.54.5",
     "rxjs": "^6.5.5",
     "sass": "^1.35.1",

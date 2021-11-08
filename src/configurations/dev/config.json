@@ -1,5 +1,5 @@
 {
-  "apiHost":"https://rest-dev.texta.ee/",
+  "apiHost":"http://localhost:8000",
   "apiBasePath":"/api/v2",
   "logging":true,
   "fileFieldReplace":"texta_filepath",

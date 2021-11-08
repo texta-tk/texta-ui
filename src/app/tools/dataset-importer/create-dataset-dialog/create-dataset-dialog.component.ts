@@ -10,8 +10,8 @@ import {LogService} from '../../../core/util/log.service';
 import {auditTime, switchMap, take, takeUntil} from 'rxjs/operators';
 import {of, Subject} from 'rxjs';
 import {DatasetImporterService} from '../../../core/tools/dataset-importer/dataset-importer.service';
-import {FileValidator} from 'ngx-material-file-input';
 import {HttpErrorResponse, HttpEventType, HttpResponse} from '@angular/common/http';
+import {maxContentSize} from '../../../shared/types/file-input';
 
 function indexNameValidator(control: AbstractControl): null | ValidationErrors {
   if (typeof control.value === 'string') {
@@ -41,7 +41,7 @@ export class CreateDatasetDialogComponent implements OnInit, OnDestroy {
     newNameFormControl: new FormControl('', [Validators.required, indexNameValidator]),
     separatorFormControl: new FormControl(''),
     fileFormControl: new FormControl(undefined,
-      [Validators.required, FileValidator.maxContentSize(this.maxSize)]),
+      [Validators.required, maxContentSize(this.maxSize)]),
   });
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   indices: string[];

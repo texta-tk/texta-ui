@@ -40,7 +40,6 @@ import {InfiniteScrollModule} from 'ngx-infinite-scroll';
 import {SavedSearchAutocompleteComponent} from './components/saved-search-autocomplete/saved-search-autocomplete.component';
 import {BarChartModule} from '@swimlane/ngx-charts';
 import {MatTreeModule} from '@angular/material/tree';
-import {MaterialFileInputModule} from 'ngx-material-file-input';
 import {FormatTextaFactsPipe} from './pipes/format-texta-facts.pipe';
 import {IsObjectPipe} from './pipes/is-object.pipe';
 import {NgxMatSelectSearchModule} from 'ngx-mat-select-search';
@@ -58,7 +57,7 @@ import {FactChipComponent} from './components/fact-chip/fact-chip.component';
 import {GenericHighlighterComponent} from './components/generic-highlighter/generic-highlighter.component';
 import {AccessorPipe} from './pipes/accessor.pipe';
 import {TaggerFineTuneSliderComponent} from './components/tagger-fine-tune-slider/tagger-fine-tune-slider.component';
-import {A11yModule} from '@angular/cdk/a11y';
+import {A11yModule, FocusMonitor} from '@angular/cdk/a11y';
 import {ProjectGuardDialogComponent} from './components/dialogs/project-guard-dialog/project-guard-dialog.component';
 import {TextareaLexiconComponent} from './components/textarea-lexicon/textarea-lexicon.component';
 import {CombineArrayPipe} from './pipes/combine-array.pipe';
@@ -69,6 +68,8 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {AddLexiconDialogComponent} from './components/dialogs/add-lexicon-dialog/add-lexicon-dialog.component';
 import { TagRandomDocResultComponent } from './components/dialogs/tag-random-doc-result/tag-random-doc-result.component';
 import { VirtualScrollSelectComponent } from './components/virtual-scroll-select/virtual-scroll-select.component';
+import { FileInputComponent } from './components/file-input/file-input.component';
+import { ByteFormatPipe } from './pipes/byte-format.pipe';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
@@ -99,6 +100,8 @@ import { VirtualScrollSelectComponent } from './components/virtual-scroll-select
     TextaFactsChipsComponent,
     TagRandomDocResultComponent,
     VirtualScrollSelectComponent,
+    FileInputComponent,
+    ByteFormatPipe,
   ],
   imports: [
     RouterModule,
@@ -137,7 +140,6 @@ import { VirtualScrollSelectComponent } from './components/virtual-scroll-select
     MatRadioModule,
     BarChartModule,
     InfiniteScrollModule,
-    MaterialFileInputModule,
     PortalModule,
     OverlayModule,
     A11yModule,
@@ -186,7 +188,6 @@ import { VirtualScrollSelectComponent } from './components/virtual-scroll-select
     BarChartModule,
     GroupSameValuesPipe,
     InfiniteScrollModule,
-    MaterialFileInputModule,
     NgxMatSelectSearchModule,
     GetPropertyListPipe,
     JoinPipe,
@@ -206,7 +207,10 @@ import { VirtualScrollSelectComponent } from './components/virtual-scroll-select
     TextaFactsChipsComponent,
     TagRandomDocResultComponent,
     VirtualScrollSelectComponent,
-  ]
+    FileInputComponent,
+    ByteFormatPipe,
+  ],
+  providers: [FocusMonitor]
 })
 export class SharedModule {
 }
