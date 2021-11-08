@@ -36,7 +36,6 @@ import {ConfirmDialogComponent} from './components/dialogs/confirm-dialog/confir
 import {MatOptionSelectAllComponent} from './components/mat-option-select-all.component';
 import {QueryDialogComponent} from './components/dialogs/query-dialog/query-dialog.component';
 import {GenericDialogComponent} from './components/dialogs/generic-dialog/generic-dialog.component';
-import {InfiniteScrollModule} from 'ngx-infinite-scroll';
 import {SavedSearchAutocompleteComponent} from './components/saved-search-autocomplete/saved-search-autocomplete.component';
 import {BarChartModule} from '@swimlane/ngx-charts';
 import {MatTreeModule} from '@angular/material/tree';
@@ -139,7 +138,6 @@ import { ByteFormatPipe } from './pipes/byte-format.pipe';
     MatTreeModule,
     MatRadioModule,
     BarChartModule,
-    InfiniteScrollModule,
     PortalModule,
     OverlayModule,
     A11yModule,
@@ -187,7 +185,6 @@ import { ByteFormatPipe } from './pipes/byte-format.pipe';
     IsObjectPipe,
     BarChartModule,
     GroupSameValuesPipe,
-    InfiniteScrollModule,
     NgxMatSelectSearchModule,
     GetPropertyListPipe,
     JoinPipe,
