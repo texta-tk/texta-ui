@@ -27,6 +27,7 @@
                         [checked]="selection.isSelected(row)">
           </mat-checkbox>
         </td>
+        <td mat-footer-cell *matFooterCellDef></td>
       </ng-container>
 
       <ng-container matColumnDef="key">
@@ -36,6 +37,7 @@
           <a>{{element.key}}</a>
           <ng-container *ngIf="element.top_reverse_nested"><br>({{element.doc_count}})</ng-container>
         </td>
+        <td mat-footer-cell *matFooterCellDef> Total </td>
       </ng-container>
 
       <!-- Name Column -->
@@ -45,6 +47,7 @@
           <ng-container *ngIf="element.top_reverse_nested">{{element.top_reverse_nested.doc_count}}</ng-container>
           <ng-container *ngIf="!element.top_reverse_nested">{{element.doc_count}}</ng-container>
         </td>
+        <td mat-footer-cell *matFooterCellDef> {{getTotalCost()}} </td>
       </ng-container>
 
       <!-- Weight Column -->
@@ -54,6 +57,8 @@
           Score
         </th>
         <td *matCellDef="let element" mat-cell> {{element.score}}</td>
+
+        <td mat-footer-cell *matFooterCellDef></td>
       </ng-container>
 
       <!-- Row shown when there is no matching data. -->
@@ -63,6 +68,7 @@
 
       <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
       <tr *matRowDef="let element; columns: displayedColumns;" mat-row></tr>
+      <tr mat-footer-row *matFooterRowDef="displayedColumns"></tr>
 
     </table>
 

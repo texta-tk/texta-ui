@@ -8,6 +8,7 @@
 @include fontFace($weight: 300);
 @include fontFace($weight: 400);
 @include fontFace($weight: 500);
+@include fontFace($weight: 700);
 
 /* fallback */
 @font-face {

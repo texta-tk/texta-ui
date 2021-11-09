@@ -70,4 +70,8 @@ export class AggregationResultTableComponent {
       this.searcherComponentService.createTextConstraint(this.docPath, key);
     }
   }
+
+  getTotalCost(): number {
+    return this.tableDataSource.data.map(t => t.doc_count).reduce((acc, value) => acc + value, 0);
+  }
 }
