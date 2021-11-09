@@ -13,9 +13,11 @@ import {Platform} from '@angular/cdk/platform';
 import {SearcherComponentService} from '../../services/searcher-component.service';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
-import {PlotlyComponent} from 'angular-plotly.js';
+import {PlotlyComponent, PlotlyService} from 'angular-plotly.js';
 import {ChangeDetectorRef, Component, Injector, Input, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
+import {MatDialog, MatDialogRef} from "@angular/material/dialog";
+import {PlotDownloadDialogComponent} from "./plot-download-dialog/plot-download-dialog.component";
 
 @Component({
   selector: 'app-aggregation-results-chart',
@@ -26,7 +28,7 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
   // tslint:disable-next-line:no-any
   dataSource: any[] = [];
   // tslint:disable-next-line:no-any
-  public graph: { data: unknown[], layout: any };
+  public graph: { data: unknown[], layout: any, config: any };
   displayedColumns = ['key', 'doc_count'];
   revision = 0;
   @ViewChild(PlotlyComponent) plotly: PlotlyComponent;
@@ -41,6 +43,8 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
   constructor(private overlay: Overlay, private injector: Injector, private ngZone: NgZone,
               private platform: Platform, private overLayContainer: OverlayContainer,
               private changeDetectorRef: ChangeDetectorRef,
+              private dialog: MatDialog,
+              private plotlyService: PlotlyService,
               private searcherComponentService: SearcherComponentService) {
   }
 
@@ -52,6 +56,13 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
       this.graph.layout.yaxis = {title: {text: this.title}};
     }
   }
+
+  icon1 = {
+    width: 1000,
+    height: 1000,
+    path: 'm500 450c-83 0-150-67-150-150 0-83 67-150 150-150 83 0 150 67 150 150 0 83-67 150-150 150z m400 150h-120c-16 0-34 13-39 29l-31 93c-6 15-23 28-40 28h-340c-16 0-34-13-39-28l-31-94c-6-15-23-28-40-28h-120c-55 0-100-45-100-100v-450c0-55 45-100 100-100h800c55 0 100 45 100 100v450c0 55-45 100-100 100z m-400-550c-138 0-250 112-250 250 0 138 112 250 250 250 138 0 250-112 250-250 0-138-112-250-250-250z m365 380c-19 0-35 16-35 35 0 19 16 35 35 35 19 0 35-16 35-35 0-19-16-35-35-35z',
+    transform: 'matrix(1 0 0 -1 0 850)'
+  };
 
   // tslint:disable-next-line:no-any
   @Input() set aggregationData(val: {
@@ -77,6 +88,22 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
           x: 0.5
         },
       },
+      config: {
+        displaylogo: false,
+        modeBarButtonsToAdd: [
+          {
+            name: 'Download plot as a png',
+            icon: this.icon1,
+            click: () => {
+              this.dialog.open(PlotDownloadDialogComponent, {width: '300px'}).afterClosed().subscribe(resp => {
+                if (resp) {
+                  this.downloadGraph(resp);
+                }
+              });
+            }
+          }],
+        modeBarButtonsToRemove: ['toImage']
+      }
     };
     if (this.isAggregationData(val)) { // regular plots, saved searches and date->term structure
       if (val.dateData) {
@@ -251,5 +278,11 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
     if (this.dateColPath) {
       this.searcherComponentService.createDateConstraint(this.dateColPath, key);
     }
+  }
+  
+  public async downloadGraph(config: { format: string, width: number, height: number, filename: string, scale: number }): Promise<void> {
+    const reportGraph = this.plotlyService.getInstanceByDivId('graph');
+    const plotly = await this.plotlyService.getPlotly();
+    plotly.downloadImage(reportGraph, config);
   }
 }

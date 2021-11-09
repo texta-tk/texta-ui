@@ -1,0 +1,73 @@
+<h1 mat-dialog-title>Download plot</h1>
+<div class="dialog-content-wrapper" mat-dialog-content>
+  <form #graphForm="ngForm" id="graphForm" class="flex-col">
+    <mat-form-field>
+      <input type="text" matInput id="name"
+             placeholder="File name"
+             required
+             [(ngModel)]="config.filename" name="filename"
+             #filename="ngModel">
+      <mat-error [hidden]="filename.valid || filename.pristine"
+           class="alert alert-danger">
+        Name is required
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <input type="number"  matInput id="width"
+             placeholder="Width"
+             min="1"
+             required
+             [(ngModel)]="config.width" name="width"
+             #width="ngModel">
+      <mat-error [hidden]="width.valid || width.pristine"
+           class="alert alert-danger">
+        Width is required
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <input type="number" matInput id="height"
+             placeholder="Height"
+             required
+             min="1"
+             [(ngModel)]="config.height" name="height"
+             #height="ngModel">
+      <mat-error [hidden]="height.valid || height.pristine"
+                 class="alert alert-danger">
+        Height is required
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-select required
+                  placeholder="File format"
+                  [(ngModel)]="config.format" name="format"
+                  #format="ngModel">
+        <mat-option value="svg">SVG</mat-option>
+        <mat-option value="png">PNG</mat-option>
+        <mat-option value="jpeg">JPEG</mat-option>
+      </mat-select>
+      <mat-error [hidden]="height.valid || height.pristine"
+                 class="alert alert-danger">
+        Format is required
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <input min="0.1" step="0.1" type="number" matInput id="scale"
+             placeholder="Scale"
+             required
+             [(ngModel)]="config.scale" name="scale"
+             #scale="ngModel">
+      <mat-error [hidden]="scale.valid || scale.pristine"
+                 class="alert alert-danger">
+        Scale is required
+      </mat-error>
+    </mat-form-field>
+  </form>
+</div>
+<div mat-dialog-actions class="flex-row">
+  <div class="flex-item-left">
+    <button type="button" class="flex-item-left" mat-button mat-dialog-close>Close</button>
+  </div>
+  <div class="flex-item-right">
+    <button form="graphForm" type="submit" mat-raised-button color="primary" [disabled]="graphForm.form.invalid" [mat-dialog-close]="config">Download</button>
+  </div>
+</div>
