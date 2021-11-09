@@ -279,7 +279,7 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
       this.searcherComponentService.createDateConstraint(this.dateColPath, key);
     }
   }
-  
+
   public async downloadGraph(config: { format: string, width: number, height: number, filename: string, scale: number }): Promise<void> {
     const reportGraph = this.plotlyService.getInstanceByDivId('graph');
     const plotly = await this.plotlyService.getPlotly();
