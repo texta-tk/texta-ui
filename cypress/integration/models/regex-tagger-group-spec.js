@@ -133,7 +133,7 @@ describe('regex-tagger-group should work', function () {
       cy.closeCurrentCdkOverlay();
       cy.matFormFieldShouldHaveError(grp, 'required');
       cy.wrap(grp).click();
-      cy.get('.mat-option-text:first()').should('be.visible').click();
+      cy.get('.mat-option-text').contains('test').should('be.visible').click();
       cy.closeCurrentCdkOverlay();
       cy.wrap(grp).find('mat-error').should('have.length', 0)
     }));
