@@ -50,6 +50,7 @@ export interface BertTagger {
   adjusted_batch_size: number;
   split_ratio: number;
   negative_multiplier: number;
+  use_gpu: boolean;
   num_examples: string;
   confusion_matrix: string;
   balance: boolean;

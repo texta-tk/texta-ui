@@ -33,6 +33,7 @@ interface OnSubmitParams {
   sentenceShuffleFormControl: boolean;
   maxBalanceFormControl: boolean;
   posLabelFormControl: string;
+  useGpuFormControl: boolean;
   checkPointModelFormControl: BertTagger;
 }
 
@@ -71,6 +72,7 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
       value: this.data?.cloneElement?.balance_to_max_limit !== undefined ? this.data?.cloneElement?.balance_to_max_limit : false,
       disabled: true
     }),
+    useGpuFormControl: new FormControl(this.data?.cloneElement?.use_gpu !== undefined ? this.data?.cloneElement?.use_gpu : true),
     // advanced
     numEpochsFormControl: new FormControl(this.data?.cloneElement?.num_epochs || 2, [Validators.required]),
     posLabelFormControl: new FormControl(this.data?.cloneElement?.pos_label || ''),
@@ -239,6 +241,7 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
       batch_size: formData.batchSizeFormControl,
       split_ratio: formData.splitRatioFormControl,
       negative_multiplier: formData.negativeMultiplierFormControl,
+      use_gpu: formData.useGpuFormControl,
       ...formData.sentenceShuffleFormControl ? {use_sentence_shuffle: formData.sentenceShuffleFormControl} : {},
       ...formData.balanceFormControl ? {balance: formData.balanceFormControl} : {},
       ...formData.maxBalanceFormControl ? {balance_to_max_limit: formData.maxBalanceFormControl} : {},
