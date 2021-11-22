@@ -75,7 +75,7 @@
     <mat-form-field data-cy="appElasticAnalyzerCreateDialogLanguages">
       <mat-label>Stemmer language</mat-label>
       <mat-select [disableOptionCentering]="true" formControlName="languageFormControl"
-                  panelClass="select-panel-reveal-input" required>
+                  panelClass="select-panel-reveal-input" [required]="!!elasticAnalyzerForm?.get('languageFormControl')?.hasValidator(requiredValidator)">
         <ng-container *ngIf="stemmerLangs">
           <mat-option *ngFor="let item of stemmerLangs" [value]="item.value">
             {{item.display_name ? item.display_name : 'None'}}

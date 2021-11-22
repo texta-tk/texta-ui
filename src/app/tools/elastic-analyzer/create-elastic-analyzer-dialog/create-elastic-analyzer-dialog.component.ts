@@ -39,7 +39,7 @@ export class CreateElasticAnalyzerDialogComponent implements OnInit, OnDestroy {
     descriptionFormControl: new FormControl('', [Validators.required]),
     indicesFormControl: new FormControl([], [Validators.required]),
     fieldsFormControl: new FormControl([], [Validators.required]),
-    languageFormControl: new FormControl('', [Validators.required]),
+    languageFormControl: new FormControl(''),
     analyzersFormControl: new FormControl([], [Validators.required]),
     tokenizerFormControl: new FormControl(),
     detectLangFormControl: new FormControl(''),
@@ -67,6 +67,7 @@ export class CreateElasticAnalyzerDialogComponent implements OnInit, OnDestroy {
   }[];
   // tslint:disable-next-line:no-any
   elasticAnalyzerOptions: any;
+  requiredValidator = Validators.required;
 
   constructor(private dialogRef: MatDialogRef<CreateElasticAnalyzerDialogComponent>,
               private projectService: ProjectService,
@@ -89,6 +90,14 @@ export class CreateElasticAnalyzerDialogComponent implements OnInit, OnDestroy {
         this.elasticAnalyzerForm.get('detectLangFormControl')?.disable({emitEvent: false});
       } else {
         this.elasticAnalyzerForm.get('detectLangFormControl')?.enable({emitEvent: false});
+      }
+    });
+
+    this.elasticAnalyzerForm.get('analyzersFormControl')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(val => {
+      if (val.length > 0 && val.includes('stemmer')) {
+        this.elasticAnalyzerForm.get('languageFormControl')?.setValidators([Validators.required]);
+      } else {
+        this.elasticAnalyzerForm.get('languageFormControl')?.clearValidators();
       }
     });
 
@@ -130,7 +139,7 @@ export class CreateElasticAnalyzerDialogComponent implements OnInit, OnDestroy {
       description: formData.descriptionFormControl,
       indices: formData.indicesFormControl.map(x => [{name: x.index}]).flat(),
       fields: formData.fieldsFormControl,
-      stemmer_lang: formData.languageFormControl,
+      ...formData.languageFormControl ? {stemmer_lang: formData.languageFormControl} : {},
       ...formData.detectLangFormControl ? {detect_lang: formData.detectLangFormControl} : {},
       analyzers: formData.analyzersFormControl,
       es_timeout: formData.esTimeoutFormControl,

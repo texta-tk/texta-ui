@@ -32,22 +32,13 @@ describe('Elastic Analyzer should work', function () {
       cy.matFormFieldShouldHaveError(desc, 'required');
       cy.wrap(desc).type('testElasticAnalyzer');
     }));
-    cy.get('[data-cy=appElasticAnalyzerCreateDialogLanguages]').click().then((analyzers => {
-      cy.wrap(analyzers).should('have.class', 'mat-focused');
-      cy.closeCurrentCdkOverlay();
-      cy.wrap(analyzers).find('mat-error').should('be.visible');
-      cy.wrap(analyzers).click();
-      cy.get('.mat-option-text:nth(2)').should('be.visible').click();
-      cy.closeCurrentCdkOverlay();
-      cy.wrap(analyzers).find('mat-error').should('have.length', 0);
-    }));
 
     cy.get('[data-cy=appElasticAnalyzerCreateDialogAnalyzers]').click().then((analyzers => {
       cy.wrap(analyzers).should('have.class', 'mat-focused');
       cy.closeCurrentCdkOverlay();
       cy.matFormFieldShouldHaveError(analyzers, 'required');
       cy.wrap(analyzers).click();
-      cy.get('.mat-option-text:nth(1)').should('be.visible').click();
+      cy.get('.mat-option-text').contains('tokenizer').should('be.visible').click();
       cy.closeCurrentCdkOverlay();
       cy.wrap(analyzers).find('mat-error').should('have.length', 0);
     }));
