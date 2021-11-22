@@ -1,7 +1,8 @@
-<mat-select [formControl]="selectFormControl" [compareWith]="idCompare" *ngIf="scrollableDataSource"
+<mat-select [formControl]="selectFormControl" [compareWith]="idCompare"
+            (focusout)="onSelectFocusLeave($event)" #select *ngIf="scrollableDataSource"
             (openedChange)="this.cdkVirtualScrollViewport.setRenderedContentOffset(0);
-      this.cdkVirtualScrollViewport.setRenderedRange({start: 0, end: 9})"
-            [disableOptionCentering]="true"  multiple>
+      this.cdkVirtualScrollViewport.setRenderedRange({start: 0, end: 9});this.selectOpenedChange($event)"
+            [disableOptionCentering]="true" [multiple]="multiple" [required]="required">
   <mat-option>
     <ngx-mat-select-search [formControl]="descriptionFilterControl" #matSelectSearch
                            cdkMonitorSubtreeFocus
@@ -16,8 +17,11 @@
                                [minBufferPx]="8*48"
                                [maxBufferPx]="16*48"
                                class="example-viewport">
-    <mat-option *cdkVirtualFor="let item of scrollableDataSource"
+    <mat-option *cdkVirtualFor="let item of scrollableDataSource" [title]="'Id: '+item?.id || ''"
+                [disabled]="!item?.description"
                 [value]="item">{{item?.description || 'Loading...'}}</mat-option>
   </cdk-virtual-scroll-viewport>
-  <mat-option *ngFor="let tagger of selectFormControl.value" [value]="tagger" style="display: none">{{tagger.description}}</mat-option>
+  <mat-option *ngFor="let tagger of selectFormControl.value" [value]="tagger"
+              style="display: none">{{tagger?.description}}</mat-option>
+
 </mat-select>

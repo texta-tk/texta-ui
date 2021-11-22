@@ -20,6 +20,7 @@ import {coerceBooleanProperty} from '@angular/cdk/coercion';
 import {MatSelect} from '@angular/material/select';
 
 interface Task {
+  id: number;
   description: string;
 }
 
@@ -28,17 +29,13 @@ interface Task {
   templateUrl: './virtual-scroll-select.component.html',
   styleUrls: ['./virtual-scroll-select.component.scss'],
   providers: [{provide: MatFormFieldControl, useExisting: VirtualScrollSelectComponent}],
-  // tslint:disable-next-line:no-host-metadata-property
-  host: {
-    '[class.example-floating]': 'shouldLabelFloat',
-    '[id]': 'id',
-  }
 })
 export class VirtualScrollSelectComponent<T extends Task> implements ControlValueAccessor, MatFormFieldControl<T[]>, OnInit, OnDestroy {
   // tslint:disable:variable-name
   // tslint:disable:no-any
   @ViewChild('matSelectSearch') matSelectSearch: ElementRef;
   searchFocused = false;
+  @ViewChild('select') selectCtrl: MatSelect;
 
   constructor(@Self() public ngControl: NgControl,
               private _elementRef: ElementRef<HTMLElement>,
@@ -51,6 +48,7 @@ export class VirtualScrollSelectComponent<T extends Task> implements ControlValu
     if (this.ngControl != null) {
       // Setting the value accessor directly (instead of using
       // the providers) to avoid running into a circular import.
+      this.selectFormControl = new FormControl([], this.ngControl.validator);
       this.ngControl.valueAccessor = this;
     }
   }
@@ -81,7 +79,7 @@ export class VirtualScrollSelectComponent<T extends Task> implements ControlValu
   }
 
   get errorState(): boolean {
-    return this.selectFormControl.invalid && this.touched;
+    return this.ngControl.errors !== null && !!this.ngControl.touched;
   }
 
   @Input()
@@ -99,18 +97,33 @@ export class VirtualScrollSelectComponent<T extends Task> implements ControlValu
     return this._required;
   }
 
-  set required(req) {
+  set required(req: string | boolean) {
     this._required = coerceBooleanProperty(req);
+    this.stateChanges.next();
+  }
+
+  private _multiple = true;
+
+  @Input()
+  get multiple(): boolean {
+    return this._multiple;
+  }
+
+  set multiple(mult: string | boolean) {
+    this._multiple = coerceBooleanProperty(mult);
     this.stateChanges.next();
   }
 
   @HostBinding('class.floating')
   get shouldLabelFloat(): boolean {
-    return this.focused || this.searchFocused || !this.empty;
+    if (!this.selectCtrl) {
+      return !this.empty;
+    }
+    return this.selectCtrl?.panelOpen || !this.empty || (this.focused && !!this._placeholder);
   }
 
   static nextId = 0;
-  selectFormControl = new FormControl([]);
+  selectFormControl: FormControl;
   stateChanges = new Subject<void>();
 
   descriptionFilterControl: FormControl = new FormControl();
@@ -137,10 +150,10 @@ export class VirtualScrollSelectComponent<T extends Task> implements ControlValu
 
   ngOnInit(): void {
     this.descriptionFilterControl.valueChanges
-      .pipe(takeUntil(this.destroyed$), debounceTime(300), distinctUntilChanged())
-      .subscribe((val) => {
-        this.scrollableDataSource.filter(`&description=${val}`);
-      });
+        .pipe(takeUntil(this.destroyed$), debounceTime(300), distinctUntilChanged())
+        .subscribe((val) => {
+          this.scrollableDataSource.filter(`&description=${val}`);
+        });
     this.selectFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(val => {
       this.onChange(val);
     });
@@ -148,9 +161,15 @@ export class VirtualScrollSelectComponent<T extends Task> implements ControlValu
   }
 
   onContainerClick(event: MouseEvent): void {
-/*    if ((event.target as Element).tagName.toLowerCase() !== 'input') {
-      this._elementRef.nativeElement.querySelector('input')?.focus();
-    }*/
+
+  }
+
+  // for keyboard interaction leaves focus
+  onSelectFocusLeave($event: unknown): void {
+    if (!this.selectCtrl.panelOpen) {
+      this.onTouched();
+      this.stateChanges.next();
+    }
   }
 
   setDescribedByIds(ids: string[]): void {
@@ -173,5 +192,12 @@ export class VirtualScrollSelectComponent<T extends Task> implements ControlValu
 
   writeValue(val: T[]): void {
     this.value = val;
+  }
+
+  selectOpenedChange($event: boolean): void {
+    if (!$event) {
+      this.onTouched();
+      this.stateChanges.next();
+    }
   }
 }

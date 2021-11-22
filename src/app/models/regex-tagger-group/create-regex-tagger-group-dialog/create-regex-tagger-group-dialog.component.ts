@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
-import {of, Subject} from 'rxjs';
+import {Observable, of, Subject} from 'rxjs';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {mergeMap, switchMap, takeUntil} from 'rxjs/operators';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
@@ -14,6 +14,8 @@ import {ProjectStore} from '../../../core/projects/project.store';
 import {LogService} from '../../../core/util/log.service';
 import {RegexTaggerService} from "../../../core/models/taggers/regex-tagger.service";
 import {RegexTagger} from "../../../shared/types/tasks/RegexTagger";
+import {ScrollableDataSource} from "../../../shared/ScrollableDataSource";
+import {ResultsWrapper} from "../../../shared/types/Generic";
 
 @Component({
   selector: 'app-create-regex-tagger-group-dialog',
@@ -27,10 +29,12 @@ export class CreateRegexTaggerGroupDialogComponent implements OnInit, OnDestroy 
     regexTaggersFormControl: new FormControl([], [Validators.required])
   });
 
+  projectRegexTaggers: ScrollableDataSource<RegexTagger>;
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   currentProject: Project;
   destroyed$: Subject<boolean> = new Subject<boolean>();
-  projectRegexTaggers: RegexTagger[] = [];
+  // tslint:disable-next-line:no-any
+  regexTaggerGroupOptions: any;
 
   constructor(private dialogRef: MatDialogRef<CreateRegexTaggerGroupDialogComponent>,
               private projectService: ProjectService,
@@ -45,16 +49,22 @@ export class CreateRegexTaggerGroupDialogComponent implements OnInit, OnDestroy 
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), switchMap(proj => {
       if (proj) {
         this.currentProject = proj;
-        return this.regexTaggerService.getRegexTaggers(proj.id);
+        this.projectRegexTaggers = new ScrollableDataSource(this.fetchFn, this);
+        return this.regexTaggerGroupService.getRegexTaggerGroupOptions(proj.id);
       }
       return of(null);
     })).subscribe(x => {
       if (x && !(x instanceof HttpErrorResponse)) {
-        this.projectRegexTaggers = x.results.sort((a, b) => a.id - b.id);
+        this.regexTaggerGroupOptions = x;
       } else if (x) {
         this.logService.snackBarError(x);
       }
     });
+  }
+
+  fetchFn(pageNr: number, pageSize: number,
+          filterParam: string, context: this): Observable<ResultsWrapper<RegexTagger> | HttpErrorResponse> {
+    return context.regexTaggerService.getRegexTaggers(context.currentProject.id, `${filterParam}&page=${pageNr + 1}&page_size=${pageSize}`);
   }
 
   onSubmit(formData: {

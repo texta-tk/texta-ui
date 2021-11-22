@@ -91,6 +91,12 @@ export class RegexTaggerGroupService {
   }
 
   // tslint:disable-next-line:no-any
+  getRegexTaggerGroupOptions(projectId: number): Observable<any | HttpErrorResponse> {
+    return this.http.options(`${this.apiUrl}/projects/${projectId}/regex_tagger_groups/`).pipe(
+      tap(e => this.logService.logStatus(e, 'getRegexTaggerGroupOptions')),
+      catchError(this.logService.handleError('getRegexTaggerGroupOptions')));
+  }
+  // tslint:disable-next-line:no-any
   getTagRdocOptions(projectId: number, taggerId: number): Observable<any | HttpErrorResponse> {
     return this.http.options(`${this.apiUrl}/projects/${projectId}/regex_tagger_groups/${taggerId}/tag_random_doc/`).pipe(
       tap(e => this.logService.logStatus(e, 'getTagRdocOptions')),
