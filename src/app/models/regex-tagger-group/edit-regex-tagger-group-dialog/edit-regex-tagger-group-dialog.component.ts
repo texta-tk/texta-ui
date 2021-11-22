@@ -3,7 +3,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {Project} from '../../../shared/types/Project';
-import {of, Subject} from 'rxjs';
+import {Observable, of, Subject} from 'rxjs';
 import {RegexTagger} from '../../../shared/types/tasks/RegexTagger';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ProjectService} from '../../../core/projects/project.service';
@@ -14,6 +14,8 @@ import {ProjectStore} from '../../../core/projects/project.store';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
 import {RegexTaggerGroup} from '../../../shared/types/tasks/RegexTaggerGroup';
+import {ScrollableDataSource} from "../../../shared/ScrollableDataSource";
+import {ResultsWrapper} from "../../../shared/types/Generic";
 
 @Component({
   selector: 'app-edit-regex-tagger-group-dialog',
@@ -22,12 +24,18 @@ import {RegexTaggerGroup} from '../../../shared/types/tasks/RegexTaggerGroup';
 })
 export class EditRegexTaggerGroupDialogComponent implements OnInit, OnDestroy {
 
-  regexTaggerGroupForm: FormGroup;
+  regexTaggerGroupForm = new FormGroup({
+    descriptionFormControl: new FormControl(this.data?.description || '', [Validators.required]),
+    regexTaggersFormControl: new FormControl(this.data?.tagger_info || [], [Validators.required])
+  });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   currentProject: Project;
   destroyed$: Subject<boolean> = new Subject<boolean>();
-  projectRegexTaggers: RegexTagger[] = [];
+
+  projectRegexTaggers: ScrollableDataSource<RegexTagger>;
+  // tslint:disable-next-line:no-any
+  regexTaggerGroupOptions: any;
 
   constructor(private dialogRef: MatDialogRef<EditRegexTaggerGroupDialogComponent>,
               @Inject(MAT_DIALOG_DATA) public data: RegexTaggerGroup,
@@ -36,29 +44,29 @@ export class EditRegexTaggerGroupDialogComponent implements OnInit, OnDestroy {
               private regexTaggerService: RegexTaggerService,
               private logService: LogService,
               private projectStore: ProjectStore) {
-    if (this.data) {
-      this.regexTaggerGroupForm = new FormGroup({
-        descriptionFormControl: new FormControl(this.data.description, [Validators.required]),
-        regexTaggersFormControl: new FormControl(this.data.regex_taggers, [Validators.required])
-      });
-    }
+
   }
 
   ngOnInit(): void {
-
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), switchMap(proj => {
       if (proj) {
         this.currentProject = proj;
-        return this.regexTaggerService.getRegexTaggers(proj.id);
+        this.projectRegexTaggers = new ScrollableDataSource(this.fetchFn, this);
+        return this.regexTaggerGroupService.getRegexTaggerGroupOptions(proj.id);
       }
       return of(null);
     })).subscribe(x => {
       if (x && !(x instanceof HttpErrorResponse)) {
-        this.projectRegexTaggers = x.results.sort((a, b) => a.id - b.id);
+        this.regexTaggerGroupOptions = x;
       } else if (x) {
         this.logService.snackBarError(x);
       }
     });
+  }
+
+  fetchFn(pageNr: number, pageSize: number,
+          filterParam: string, context: this): Observable<ResultsWrapper<RegexTagger> | HttpErrorResponse> {
+    return context.regexTaggerService.getRegexTaggers(context.currentProject.id, `${filterParam}&page=${pageNr + 1}&page_size=${pageSize}`);
   }
 
   onSubmit(formData: {
@@ -67,7 +75,7 @@ export class EditRegexTaggerGroupDialogComponent implements OnInit, OnDestroy {
   }): void {
     const body = {
       description: formData.descriptionFormControl,
-      regex_taggers: formData.regexTaggersFormControl
+      regex_taggers: formData.regexTaggersFormControl.map(x => [x.id]).flat()
     };
     this.regexTaggerGroupService.patchRegexTaggerGroup(this.currentProject.id, this.data.id, body).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
@@ -75,10 +83,10 @@ export class EditRegexTaggerGroupDialogComponent implements OnInit, OnDestroy {
         this.dialogRef.close(resp);
       } else if (resp instanceof HttpErrorResponse) {
         if (resp.error.hasOwnProperty('lexicon')) {
-        this.logService.snackBarMessage(resp.error.lexicon.join(','), 5000);
-      } else {
-        this.logService.snackBarError(resp);
-      }
+          this.logService.snackBarMessage(resp.error.lexicon.join(','), 5000);
+        } else {
+          this.logService.snackBarError(resp);
+        }
       }
     });
   }

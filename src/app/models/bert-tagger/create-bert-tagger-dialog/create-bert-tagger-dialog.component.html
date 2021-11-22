@@ -128,6 +128,10 @@
              type="number">
       <mat-hint>{{bertOptions?.actions?.POST?.max_length?.help_text || ''}}</mat-hint>
     </mat-form-field>
+    <mat-checkbox formControlName="useGpuFormControl" class="m-bot-5"
+                  matTooltip="{{bertOptions?.actions?.POST?.use_gpu?.help_text || ''}}"
+                  matTooltipPosition="left">Use GPU
+    </mat-checkbox>
 
     <!--advanced -->
     <mat-expansion-panel expanded="false">

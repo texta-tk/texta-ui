@@ -10,19 +10,13 @@
       </mat-error>
     </mat-form-field>
 
-
-    <mat-form-field data-cy="appRegexTaggerGroupCreateDialogRegexTaggerGroups">
+    <mat-form-field class="max-width" data-cy="appRegexTaggerGroupCreateDialogRegexTaggerGroups">
       <mat-label>Regex Taggers</mat-label>
-      <mat-select [disableOptionCentering]="true"
-                  formControlName="regexTaggersFormControl" multiple panelClass="select-panel-reveal-input" required>
-        <app-mat-option-select-all></app-mat-option-select-all>
-        <mat-option *ngFor="let regexTagger of projectRegexTaggers" [value]="regexTagger">
-          {{regexTagger.id}}: {{regexTagger.description}}
-        </mat-option>
-      </mat-select>
-      <mat-error *ngIf="regexTaggerGroupForm.get('regexTaggersFormControl')?.hasError('required')">
+      <app-virtual-scroll-select [scrollableDataSource]="projectRegexTaggers" formControlName="regexTaggersFormControl" required></app-virtual-scroll-select>
+      <mat-error>
         Regex Tagger is <strong>required</strong>
       </mat-error>
+      <mat-hint>{{regexTaggerGroupOptions?.actions?.POST?.regex_taggers?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
     <div class="flex-col">
