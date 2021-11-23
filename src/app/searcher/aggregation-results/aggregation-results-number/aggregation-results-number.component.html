@@ -1,0 +1,43 @@
+<div class="wrapper max-height" fxLayout="column">
+  <div [appScrollTop]="tableDataSource" class="table-container overflow-auto">
+    <div class="table-paginator-row">
+
+      <div class="paginator-row">
+        <mat-paginator [pageSizeOptions]="[20, 50, 100]" showFirstLastButtons>
+        </mat-paginator>
+      </div>
+    </div>
+    <table [dataSource]="tableDataSource" mat-table matSort>
+      <ng-container matColumnDef="percentile">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Percent</th>
+        <td *matCellDef="let element" mat-cell>
+          <a>{{element.percent}}%</a>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="key">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Key</th>
+        <td *matCellDef="let element" mat-cell>
+          <a>{{element.key}}</a>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="value">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Value</th>
+        <td *matCellDef="let element" mat-cell>
+          <pre *ngIf="(element.value | isObject)">{{element.value | json}}</pre>
+          <ng-container *ngIf="!(element.value | isObject)">{{element.value}}</ng-container>
+        </td>
+      </ng-container>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">No results for this aggregation.</td>
+      </tr>
+
+      <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
+      <tr *matRowDef="let element; columns: displayedColumns;" mat-row></tr>
+
+    </table>
+
+  </div>
+
+</div>

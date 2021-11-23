@@ -32,6 +32,8 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
 import { BooleanConstraintsComponent } from './searcher-sidebar/build-search/advanced-search/boolean-constraints/boolean-constraints.component';
 import { ExportSearchDialogComponent } from './searcher-table/export-search-dialog/export-search-dialog.component';
 import { PlotDownloadDialogComponent } from './aggregation-results/aggregation-results-chart/plot-download-dialog/plot-download-dialog.component';
+import { NumberAggregationComponent } from './searcher-sidebar/aggregations/number-aggregation/number-aggregation.component';
+import { AggregationResultsNumberComponent } from './aggregation-results/aggregation-results-number/aggregation-results-number.component';
 
 @NgModule({
   declarations: [
@@ -62,6 +64,8 @@ import { PlotDownloadDialogComponent } from './aggregation-results/aggregation-r
     BooleanConstraintsComponent,
     ExportSearchDialogComponent,
     PlotDownloadDialogComponent,
+    NumberAggregationComponent,
+    AggregationResultsNumberComponent,
   ],
   imports: [
     SharedModule,

@@ -1,0 +1,13 @@
+<div class="field-type-wrapper">
+  <mat-form-field appearance="outline" class="max-width">
+    <mat-label>Aggregation</mat-label>
+    <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
+                data-cy="appSearcherSidebarAggregationsNumberAggregationType"
+                [(ngModel)]="aggregationType"
+                name="aggregationNumberType" (selectionChange)="updateAggregations()">
+      <mat-option value="percentiles" selected>Percentiles</mat-option>
+<!--      <mat-option value="boxplot">Boxplot</mat-option>-->
+      <mat-option value="extended_stats">Extended stats</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>

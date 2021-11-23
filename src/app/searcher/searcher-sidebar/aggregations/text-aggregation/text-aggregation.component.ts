@@ -14,8 +14,9 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
   // tslint:disable:no-any
   @Input() aggregationObj: { aggregation: any };
   @Input() fieldsFormControl: FormControl;
+  @Input() notSubAgg: boolean;
   isMainAgg: boolean;
-  aggregationType: 'terms' | 'significant_text' | 'significant_terms' = 'terms';
+  aggregationType: 'terms' | 'significant_text' | 'significant_terms' | 'string_stats' = 'terms';
   aggregationSize = 20;
   destroy$: Subject<boolean> = new Subject();
 
@@ -31,7 +32,7 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnInit(): void{
+  ngOnInit(): void {
     // every time we get new search result refresh the query
     this.searchService.getElasticQuery().pipe(takeUntil(this.destroy$)).subscribe((query: ElasticsearchQuery | null) => {
       if (query) {
@@ -97,17 +98,27 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
 
   makeTextAggregation(): void {
     let returnquery: { [key: string]: any };
-
-    returnquery = {
-      agg_term: {
-        [this.aggregationType]: {
-          field:
-            `${this.fieldsFormControl.value.path}${
-              this.aggregationType === 'significant_terms' || this.aggregationType === 'terms' ? '.keyword' : ''}`,
-          size: this.aggregationSize,
+    if (this.aggregationType !== 'string_stats') {
+      returnquery = {
+        agg_term: {
+          [this.aggregationType]: {
+            field:
+              `${this.fieldsFormControl.value.path}${
+                this.aggregationType === 'significant_terms' || this.aggregationType === 'terms' ? '.keyword' : ''}`,
+            size: this.aggregationSize,
+          }
         }
-      }
-    };
+      };
+    } else {
+      returnquery = {
+        agg_string_stats: {
+          [this.aggregationType]: {
+            field: `${this.fieldsFormControl.value.path}.keyword`,
+            show_distribution: true,
+          }
+        }
+      };
+    }
 
     this.aggregationObj.aggregation = returnquery;
   }
