@@ -10,6 +10,8 @@
       </mat-option>
       <mat-option value="significant_text" *ngIf="fieldsFormControl?.value?.type !== 'fact'  && isMainAgg" matTooltip="Mainly used alongside search constraints or as a sub aggregation, optimized for free-text fields">significant words
       </mat-option>
+      <mat-option value="string_stats" *ngIf="fieldsFormControl?.value?.type !== 'fact'  && notSubAgg" matTooltip="Computes statistics over string values extracted from the aggregated documents">string stats
+      </mat-option>
     </mat-select>
   </mat-form-field>
   <mat-label>Aggregation size</mat-label>

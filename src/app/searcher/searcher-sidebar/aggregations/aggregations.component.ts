@@ -68,7 +68,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
     });
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroy$)).subscribe(projectFields => {
       if (projectFields) {
-        this.projectFields = ProjectIndex.cleanProjectIndicesFields(projectFields, ['fact', 'text', 'date'], []);
+        this.projectFields = ProjectIndex.cleanProjectIndicesFields(projectFields, ['fact', 'text', 'date', 'long', 'float'], []);
         this.fieldIndexMap = ProjectIndex.getFieldToIndexMap(projectFields);
         const distinct = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(x => x.fields).flat(), (x => x.path));
         const textaFactIndex = distinct.findIndex(item => item.type === 'fact');
@@ -254,5 +254,9 @@ export class AggregationsComponent implements OnInit, OnDestroy {
       aggregation.formDestroy.complete();
     }
     this.aggregationList = [];
+  }
+
+  fieldTypeNumber(val: Field): boolean {
+    return (val && (val.type === 'long' || val.type === 'float'));
   }
 }

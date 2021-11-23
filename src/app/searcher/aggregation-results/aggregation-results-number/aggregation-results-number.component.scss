@@ -1,0 +1,18 @@
+
+table {
+  width: 100%;
+}
+
+.mat-column-key {
+  max-width: 50%;
+}
+.cdk-column-value{
+  min-width: 80px;
+}
+
+.pointer:hover {
+  background: #eeeeee;
+}
+tr.mat-footer-row {
+  font-weight: bold;
+}

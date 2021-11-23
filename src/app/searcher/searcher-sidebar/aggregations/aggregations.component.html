@@ -15,7 +15,8 @@
         <mat-select-trigger>{{aggregation?.formControl?.value?.path}}</mat-select-trigger>
         <mat-option *ngFor="let fields of (fieldsFiltered | async)" [value]="fields"
                     title="{{fieldIndexMap.get(fields.path)?.join('\n')}}"
-                    [disabled]="fields.type === 'date' && aggregation.formControl.value.type !== 'date' && dateAlreadySelected">
+                    [disabled]="(fields.type === 'date' && aggregation.formControl.value.type !== 'date' && dateAlreadySelected) ||
+                    ((fields.type === 'long' || fields.type === 'float') && aggregationList.length > 1)">
           <ng-container *ngIf="fields.type === 'fact'">
             {{fields.path}}
           </ng-container>
@@ -27,6 +28,10 @@
             <mat-icon>text_fields</mat-icon>
             {{fields.path}}
           </ng-container>
+          <ng-container *ngIf="fields.type === 'long' || fields.type === 'float'">
+            <mat-icon>pin</mat-icon>
+            {{fields.path}}
+          </ng-container>
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -35,7 +40,8 @@
       <app-text-aggregation
         [fieldsFormControl]="aggregation.formControl"
         [aggregationObj]="aggregation"
-        [isLastAgg]="(i+1) === aggregationList.length">
+        [isLastAgg]="(i+1) === aggregationList.length"
+        [notSubAgg]="aggregationList.length === 1">
       </app-text-aggregation>
     </ng-container>
     <ng-container *ngIf="fieldTypeDate(aggregation.formControl.value)">
@@ -45,11 +51,18 @@
         [aggregationObj]="aggregation" (relativeFrequency)="onRelativeFrequency($event)">
       </app-date-aggregation>
     </ng-container>
+    <ng-container *ngIf="fieldTypeNumber(aggregation.formControl.value)">
+      <app-number-aggregation
+        [fieldsFormControl]="aggregation.formControl"
+        [aggregationObj]="aggregation"
+        [notSubAgg]="i === 0">
+      </app-number-aggregation>
+    </ng-container>
   </div>
   <button class="flex-item-center" mat-icon-button aria-label="add sub aggregation"
           data-cy="appSearcherSidebarAggregationsAddNew"
           (click)="addNewAggregation()"
-          [disabled]="!(aggregationList.length > 0 && aggregationList[0].formControl.value)">
+          [disabled]="(!(aggregationList.length > 0 && aggregationList[0].formControl.value) || (aggregationList[0].formControl.value.type === 'long' || aggregationList[0].formControl.value.type === 'float'))">
     <mat-icon>add</mat-icon>
   </button>
 

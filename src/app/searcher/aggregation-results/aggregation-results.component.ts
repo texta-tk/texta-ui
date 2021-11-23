@@ -20,15 +20,19 @@ export interface AggregationData {
     tableData?: MatTableDataSource<any>,
     name: string
   }[];
+  // tslint:disable-next-line:max-line-length
   dateData?: { series: { value: number; name: string; epoch: number; extra?: { buckets: { key: string; doc_count: number }[] } }[], name: string }[];
+  // tslint:disable-next-line:no-any
+  numberData?: any[];
   // only used when aggregating over texta_facts only
   textaFactsTableData?: {
     // tslint:disable-next-line:no-any
     data?: any,
     name: string,
   }[];
-
 }
+
+type AggregationTypes = 'agg_histo' | 'agg_fact' | 'agg_term' | 'agg_number_percentiles' | 'agg_number_extended_stats' | 'agg_string_stats';
 
 @Component({
   selector: 'app-aggregation-results',
@@ -110,6 +114,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
       tableData: [],
       dateData: [],
       textaFactsTableData: [],
+      numberData: [],
     };
     if (aggregation && aggregation.aggs) {
       for (const aggKey of Object.keys(aggregation.aggs)) {
@@ -128,6 +133,15 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
         } else if (rootAggPropKeys.includes('agg_fact')) {
           rootAggObj = this.navNestedAggByKey(rootAggObj, 'agg_fact');
           this.populateAggData(rootAggObj, aggKey, (x => x.treeData), 'agg_fact', aggData);
+        } else if (rootAggPropKeys.includes('agg_number_percentiles') || aggKey === 'agg_number_percentiles') {
+          rootAggObj = this.navNestedAggByKey(rootAggObj, 'agg_number_percentiles');
+          this.populateAggData(rootAggObj, aggKey, (x => x.numberData), 'agg_number_percentiles', aggData);
+        } else if (rootAggPropKeys.includes('agg_number_extended_stats') || aggKey === 'agg_number_extended_stats') {
+          rootAggObj = this.navNestedAggByKey(rootAggObj, 'agg_number_extended_stats');
+          this.populateAggData(rootAggObj, aggKey, (x => x.numberData), 'agg_number_extended_stats', aggData);
+        }else if (rootAggPropKeys.includes('agg_string_stats') || aggKey === 'agg_string_stats') {
+          rootAggObj = this.navNestedAggByKey(rootAggObj, 'agg_string_stats');
+          this.populateAggData(rootAggObj, aggKey, (x => x.numberData), 'agg_string_stats', aggData);
         }
       }
       this.aggregationData = aggData;
@@ -138,44 +152,47 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   // gives us nested buckets->buckets->buckets, so i can build tree view
   // tslint:disable-next-line:no-any max-line-length
   formatAggDataStructure(rootAgg: { histoBuckets: { name: any; series: { value: number; name: string; }[]; }[]; nested: boolean; }, aggregation: any, aggKeys: string[]): any {
-    for (const bucket of this.bucketAccessor(aggregation)) {
-      for (const key of aggKeys) {
-        const innerBuckets = this.navNestedAggByKey(bucket, key);
-        if (this.bucketAccessor(innerBuckets)) {
-          if (bucket.hasOwnProperty('agg_histo') && key === 'agg_histo') {
-            if (!rootAgg.histoBuckets) {
-              rootAgg.histoBuckets = [];
-            }
-            rootAgg.histoBuckets.push({
-              name: bucket.key,
-              series: this.formatDateData(this.bucketAccessor(innerBuckets))
-            });
-          }
-          // dont delete original data to avoid major GC, (takes a while)
-          rootAgg.nested = true;
-          bucket.buckets = this.formatAggDataStructure(rootAgg, innerBuckets, aggKeys).buckets;
-        } else if (innerBuckets !== bucket && key === 'fact_val_reverse') {
-          for (const innerBucketKey of aggKeys) {
-            const nestedContent = this.navNestedAggByKey(innerBuckets, innerBucketKey);
-            if (this.bucketAccessor(nestedContent)) {
-              if (innerBuckets.hasOwnProperty('agg_histo') && innerBucketKey === 'agg_histo') {
-                if (!rootAgg.histoBuckets) {
-                  rootAgg.histoBuckets = [];
-                }
-                rootAgg.histoBuckets.push({
-                  name: innerBuckets.key,
-                  series: this.formatDateData(this.bucketAccessor(nestedContent))
-                });
+    if (this.bucketAccessor(aggregation)) {
+      for (const bucket of this.bucketAccessor(aggregation)) {
+        for (const key of aggKeys) {
+          const innerBuckets = this.navNestedAggByKey(bucket, key);
+          if (this.bucketAccessor(innerBuckets)) {
+            if (bucket.hasOwnProperty('agg_histo') && key === 'agg_histo') {
+              if (!rootAgg.histoBuckets) {
+                rootAgg.histoBuckets = [];
               }
-              rootAgg.nested = true;
-              bucket.buckets = this.formatAggDataStructure(rootAgg, nestedContent, aggKeys).buckets;
+              rootAgg.histoBuckets.push({
+                name: bucket.key,
+                series: this.formatDateData(this.bucketAccessor(innerBuckets))
+              });
+            }
+            // dont delete original data to avoid major GC, (takes a while)
+            rootAgg.nested = true;
+            bucket.buckets = this.formatAggDataStructure(rootAgg, innerBuckets, aggKeys).buckets;
+          } else if (innerBuckets !== bucket && key === 'fact_val_reverse') {
+            for (const innerBucketKey of aggKeys) {
+              const nestedContent = this.navNestedAggByKey(innerBuckets, innerBucketKey);
+              if (this.bucketAccessor(nestedContent)) {
+                if (innerBuckets.hasOwnProperty('agg_histo') && innerBucketKey === 'agg_histo') {
+                  if (!rootAgg.histoBuckets) {
+                    rootAgg.histoBuckets = [];
+                  }
+                  rootAgg.histoBuckets.push({
+                    name: innerBuckets.key,
+                    series: this.formatDateData(this.bucketAccessor(nestedContent))
+                  });
+                }
+                rootAgg.nested = true;
+                bucket.buckets = this.formatAggDataStructure(rootAgg, nestedContent, aggKeys).buckets;
+              }
             }
           }
         }
       }
-    }
-    if (!rootAgg.nested) {
-      rootAgg.nested = false;
+
+      if (!rootAgg.nested) {
+        rootAgg.nested = false;
+      }
     }
 
     return aggregation;
@@ -194,7 +211,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   // aggData because we can have multiple aggs so we need to push instead of returning new object
   // @ts-ignore
   // tslint:disable-next-line:no-any max-line-length
-  populateAggData(rootAggObj, aggName, aggDataAccessor: (x: any) => any, aggregationType: 'agg_histo' | 'agg_fact' | 'agg_term', aggData: AggregationData): void {
+  populateAggData(rootAggObj, aggName, aggDataAccessor: (x: any) => any, aggregationType: AggregationTypes, aggData: AggregationData): void {
     const formattedData = this.formatAggDataStructure(rootAggObj, rootAggObj,
       ['agg_histo', 'agg_fact', 'agg_fact_val', 'agg_term', 'fact_val_reverse']);
     const MAIN_AGG_NAME = 'Aggregation results';
@@ -237,6 +254,33 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
       aggDataAccessor(aggData).push({
         name: aggName === 'agg_histo' ? MAIN_AGG_NAME : aggName,
         series: this.formatDateData(this.bucketAccessor(formattedData))
+      });
+    } else if (aggregationType === 'agg_number_percentiles') {
+      console.log(formattedData.values);
+      aggDataAccessor(aggData).push({
+        tableData: new MatTableDataSource(formattedData.values.map((x: { percent: number; key: number; }) => {
+          x.percent = x.key;
+          return x;
+        })),
+        name: aggName === aggregationType ? MAIN_AGG_NAME : aggName
+      });
+    } else if (aggregationType === 'agg_number_extended_stats') {
+      const values: { key: string; value: number }[] = [];
+      for (const property in formattedData) {
+        values.push({key: property, value: formattedData[property]});
+      }
+      aggDataAccessor(aggData).push({
+        tableData: new MatTableDataSource(values),
+        name: aggName === aggregationType ? MAIN_AGG_NAME : aggName
+      });
+    }else if (aggregationType === 'agg_string_stats') {
+      const values: { key: string; value: number }[] = [];
+      for (const property in formattedData) {
+        values.push({key: property, value: formattedData[property]});
+      }
+      aggDataAccessor(aggData).push({
+        tableData: new MatTableDataSource(values),
+        name: aggName === aggregationType ? MAIN_AGG_NAME : aggName
       });
     }
   }
