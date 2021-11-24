@@ -9,7 +9,7 @@ import {RegexTagger} from '../../../shared/types/tasks/RegexTagger';
 import {
   RegexTaggerGroupTagTextResult,
   RegexTaggerTagRandomDocResult,
-  RegexTaggerTagTextResult
+  RegexTaggerTagTextResult, Tag
 } from '../../../shared/types/tasks/RegexTaggerGroup';
 import {AppConfigService} from '../../util/app-config.service';
 
@@ -79,13 +79,13 @@ export class RegexTaggerService {
       catchError(this.logService.handleError<RegexTagger>('patchRegexTagger')));
   }
 
-  multiTagText(projectId: number, body: unknown): Observable<unknown | HttpErrorResponse> {
-    return this.http.post<unknown>(
+  multiTagText(projectId: number, body: unknown): Observable<Tag[] | HttpErrorResponse> {
+    return this.http.post<Tag[]>(
       `${this.apiUrl}/projects/${projectId}/regex_taggers/multitag_text/`,
       body
     ).pipe(
       tap(e => this.logService.logStatus(e, 'multiTagText')),
-      catchError(this.logService.handleError<unknown>('multiTagText')));
+      catchError(this.logService.handleError<Tag[]>('multiTagText')));
   }
 
   applyToIndex(projectId: number, taggerId: number, body: unknown): Observable<{ message: string } | HttpErrorResponse> {

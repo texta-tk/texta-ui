@@ -1,36 +1,95 @@
 <h1 mat-dialog-title>Multitag Text</h1>
-<mat-dialog-content fxLayout="column">
-  <mat-form-field class="max-width" data-cy="appRegexTaggerGroupMultiTagDialogText">
+<div mat-dialog-content>
+  <div class="max-width">
+    <mat-form-field class="max-width" data-cy="appRegexTaggerGroupMultiTagDialogText">
     <textarea [(ngModel)]="text" [ngModelOptions]="{standalone: true}" [rows]="5" matInput
               placeholder="Tag text"></textarea>
-  </mat-form-field>
-  <mat-form-field class="max-width" data-cy="appRegexTaggerGroupMultiTagDialogTaggers">
-    <mat-label>Regex Tagger Groups</mat-label>
-    <mat-select [(ngModel)]="selectedTaggers"
-                [disableOptionCentering]="true" [ngModelOptions]="{standalone: true}" multiple
-                panelClass="select-panel-reveal-input">
-      <app-mat-option-select-all></app-mat-option-select-all>
-      <mat-option *ngFor="let tagger of taggers" [value]="tagger">
-        {{tagger.description}}
-      </mat-option>
-    </mat-select>
-    <mat-hint>Uses all Regex Tagger Groups by default</mat-hint>
-  </mat-form-field>
-  <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+    </mat-form-field>
 
-  <div *ngIf="result" class="m-top-10">
-    <div class="code-wrapper">
-      <code>
-        <pre *ngIf="result">{{result | json}}</pre>
-      </code>
+
+    <mat-form-field class="max-width" data-cy="appRegexTaggerGroupMultiTagDialogTaggers">
+      <mat-label>Regex Tagger Groups</mat-label>
+      <app-virtual-scroll-select [scrollableDataSource]="taggers" [(ngModel)]="selectedTaggers"
+                                 [ngModelOptions]="{standalone: true}"></app-virtual-scroll-select>
+
+      <mat-hint>Uses all Regex Tagger Groups by default</mat-hint>
+    </mat-form-field>
+    <div class="loading-div">
+    <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+    </div>
+    <div *ngIf="result" class="m-bot-10">
+      <mat-accordion *ngIf="result.length > 0" displayMode="flat" multi>
+        <mat-expansion-panel expanded>
+          <mat-expansion-panel-header [expandedHeight]="'48px'">
+            <mat-panel-title>
+              Regex Tagger Groups
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div fxLayout="row wrap">
+            <app-fact-chip *ngFor="let item of result"
+                           [backGroundColor]="colorMap.get(item!.tagger_group_tag)!.backgroundColor"
+                           [displayValue]="item.tagger_group_tag"
+                           [hoverValue]="'Id: '+item.tagger_group_id"
+                           [textColor]="colorMap.get(item!.tagger_group_tag)!.textColor"></app-fact-chip>
+          </div>
+        </mat-expansion-panel>
+        <mat-expansion-panel expanded>
+          <mat-expansion-panel-header [expandedHeight]="'48px'">
+            <mat-panel-title>
+              Regex Taggers
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div fxLayout="row wrap">
+            <ng-container *ngFor="let group of result">
+              <app-fact-chip *ngFor="let tagger of group.tags"
+                             [backGroundColor]="colorMap.get(group!.tagger_group_tag)!.backgroundColor"
+                             [displayValue]="tagger.tag"
+                             [hoverValue]="'Id: '+tagger.tagger_id"
+                             [textColor]="colorMap.get(group!.tagger_group_tag)!.textColor"></app-fact-chip>
+            </ng-container>
+          </div>
+        </mat-expansion-panel>
+        <mat-expansion-panel expanded>
+          <mat-expansion-panel-header [expandedHeight]="'48px'">
+            <mat-panel-title>
+              Matches
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div fxLayout="row wrap">
+            <app-fact-chip *ngFor="let match of highlightData.texta_facts"
+                           [backGroundColor]="colorMap.get(match.tagger_group_tag)!.backgroundColor"
+                           [displayValue]="match.str_val"
+                           [hoverValue]="taggerIdAccessor(match)"
+                           [textColor]="colorMap.get(match!.tagger_group_tag)!.textColor"></app-fact-chip>
+          </div>
+        </mat-expansion-panel>
+        <mat-expansion-panel expanded>
+          <mat-expansion-panel-header [expandedHeight]="'48px'">
+            <mat-panel-title>
+              Text
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <app-generic-highlighter
+            [highlightConfig]="{
+                  currentColumn: 'text',
+                  searcherHighlight: null,
+                  highlightTextaFacts: true,
+                  highlightHyperlinks: true,
+                  titleAccessor: taggerIdAccessor,
+                  colors: colorMap,
+                  data:highlightData}"></app-generic-highlighter>
+        </mat-expansion-panel>
+      </mat-accordion>
+      <h3 *ngIf="result.length === 0">No matches found</h3>
     </div>
   </div>
-</mat-dialog-content>
+</div>
 <mat-dialog-actions>
   <div class="flex-row max-width">
     <div class="flex-item-left">
       <button class="flex-item-left" mat-button mat-dialog-close type="button"
-              data-cy="appRegexTaggerGroupMultiTagDialogClose">Close</button>
+              data-cy="appRegexTaggerGroupMultiTagDialogClose">Close
+      </button>
     </div>
     <div class="flex-item-right">
       <button (click)="onSubmit(text, selectedTaggers)" [disabled]="!text"

@@ -20,7 +20,9 @@ mat-optgroup {
     padding-left: 30px;
   }
 }
-
+.mat-tooltip  {
+  white-space: pre-line;
+}
 mat-chip-list.chip-list-space-evenly {
   div {
     justify-content: space-evenly !important;

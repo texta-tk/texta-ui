@@ -49,6 +49,7 @@ export interface RegexTaggerGroupTagRandomDocResult {
   matches: Match[];
   document: { [key: string]: unknown };
 }
+
 export interface RegexTaggerTagRandomDocResult {
   tagger_id: number;
   tag: string;
@@ -57,11 +58,18 @@ export interface RegexTaggerTagRandomDocResult {
   matches: Match[];
   document: { [key: string]: unknown };
 }
+
+export interface Tag {
+  tagger_id: number;
+  tag: string;
+  matches: {
+    str_val: string;
+    span: number[];
+  }[];
+}
+
 export interface RegexTaggerGroupMultiTagTextResult {
   tagger_group_id: number;
   tagger_group_tag: string;
-  result: boolean;
-  tags: unknown[];
-  matches: Match[];
-  text: string;
+  tags: Tag[];
 }
