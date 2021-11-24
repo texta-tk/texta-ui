@@ -7,6 +7,10 @@ import {
   TextConstraint
 } from '../searcher/searcher-sidebar/build-search/Constraints';
 import {HttpErrorResponse} from "@angular/common/http";
+import {UserProfile} from "./types/UserProfile";
+import {Project} from "./types/Project";
+import {AppConfigService} from "../core/util/app-config.service";
+import {coerceBooleanProperty} from "@angular/cdk/coercion";
 
 export interface LegibleColor {
   backgroundColor: string;
@@ -15,6 +19,7 @@ export interface LegibleColor {
 
 // tslint:disable-next-line:no-any
 type Constructor<T> = new (...args: any[]) => T;
+
 export class UtilityFunctions {
   static colors: Map<string, LegibleColor> = new Map<string, LegibleColor>([
     ['ORG', {backgroundColor: '#9FC2BA', textColor: 'black'}],
@@ -42,6 +47,14 @@ export class UtilityFunctions {
         }
       }
     }
+  }
+
+  /*Check if the user has rights to use the project, needs to bo either: part of the users array,
+  part of the admins array, or part of the project scope*/
+  static isUserInProject(user: UserProfile, project: Project): boolean {
+    return coerceBooleanProperty(project.users.find(y => y.id === user.id) ||
+      project.administrators.find(y => y.id === user.id) ||
+      (AppConfigService.settings.useCloudFoundryUAA && project.scopes.find(y => user.profile.scopes.includes(y))) || false);
   }
 
   static propertiesToArray<T, K extends keyof T>(o: T, propertyNames: K[]): T[K][] {
@@ -159,7 +172,8 @@ export class UtilityFunctions {
     facts.forEach(fact => {
       if (!UtilityFunctions.colors.has(fact.fact)) {
         // tslint:disable-next-line:no-bitwise
-        UtilityFunctions.colors.set(fact.fact, {backgroundColor: `hsla(${~~(360 * Math.random())},70%,70%,0.8)`,
+        UtilityFunctions.colors.set(fact.fact, {
+          backgroundColor: `hsla(${~~(360 * Math.random())},70%,70%,0.8)`,
           textColor: 'black'
         });
       }

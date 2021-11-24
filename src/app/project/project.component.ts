@@ -20,6 +20,7 @@ import {FormControl} from '@angular/forms';
 import {MatOption} from '@angular/material/core';
 import {KeyValue} from '@angular/common';
 import {AppConfigService} from '../core/util/app-config.service';
+import {UtilityFunctions} from "../shared/UtilityFunctions";
 
 @Component({
   selector: 'app-project',
@@ -172,8 +173,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
   }
 
   selectProject(val: Project): void {
-    if (val.users.find(x => x.url === this.currentUser.url) ||
-      (AppConfigService.settings.useCloudFoundryUAA && val.scopes.find(x => this.currentUser.profile.scopes.includes(x)))) {
+    if (UtilityFunctions.isUserInProject(this.currentUser, val)) {
       this.projectStore.setCurrentProject(val);
     } else {
       this.isLoadingResults = true;
