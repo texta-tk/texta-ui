@@ -89,7 +89,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     });
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroy$)).subscribe(projectFields => {
       if (projectFields) {
-        this.projectFields = ProjectIndex.cleanProjectIndicesFields(projectFields, ['text', 'long', 'date', 'fact', 'boolean'], []);
+        this.projectFields = ProjectIndex.cleanProjectIndicesFields(projectFields, ['text', 'long', 'date', 'fact', 'boolean', 'float'], []);
         this.fieldIndexMap = ProjectIndex.getFieldToIndexMap(projectFields);
         this.selectedIndices = this.projectFields.map(x => x.index);
         const distinct = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(x => x.fields).flat(), (x => x.path));

@@ -16,7 +16,7 @@
       <ng-container *ngIf="fields.type === 'text'">
         <mat-icon>text_fields</mat-icon>{{fields.path}}
       </ng-container>
-      <ng-container *ngIf="fields.type === 'long'">
+      <ng-container *ngIf="fields.type === 'long' || fields.type === 'float'">
         <mat-icon>pin</mat-icon>{{fields.path}}
       </ng-container>
       <ng-container *ngIf="fields.type === 'boolean'">
