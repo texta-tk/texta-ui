@@ -16,6 +16,7 @@ import {switchMap, takeUntil} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {EditProjectDialogComponent} from '../project/edit-project-dialog/edit-project-dialog.component';
 import {AppConfigService} from '../core/util/app-config.service';
+import {UtilityFunctions} from "../shared/UtilityFunctions";
 
 @Component({
   selector: 'app-navbar',
@@ -74,8 +75,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
     this.projectStore.getProjects().pipe(takeUntil(this.destroyed$)).subscribe(projects => {
       if (projects && projects.length > 0) {
-        this.projects = projects.filter(x => (x.users.find(y => y.id === this.user.id) ||
-          (AppConfigService.settings.useCloudFoundryUAA && x.scopes.find(y => this.user.profile.scopes.includes(y))))).sort((a, b) => {
+        this.projects = projects.filter(x => UtilityFunctions.isUserInProject(this.user, x)).sort((a, b) => {
           if (a.id > b.id) {
             return -1;
           }

@@ -134,10 +134,10 @@ export class ProjectStore {
     const selectedProj = this.localStorageService.getCurrentlySelectedProject();
     const cachedProject = !!selectedProj ?
       projects.find(x => x.id === selectedProj.id) : null;
-    if (cachedProject && cachedProject.users.find(x => x.id === this._currentUser.id)) {
+    if (cachedProject && UtilityFunctions.isUserInProject(this._currentUser, cachedProject)) {
       this.setCurrentProject(cachedProject);
     } else {
-      const projectsUserIsIn = projects.filter(x => x.users.find(y => y.id === this._currentUser.id)).sort((a, b) => {
+      const projectsUserIsIn = projects.filter(x => UtilityFunctions.isUserInProject(this._currentUser, x)).sort((a, b) => {
         if (a.id > b.id) {
           return -1;
         }

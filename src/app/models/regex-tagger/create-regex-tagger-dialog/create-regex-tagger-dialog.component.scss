@@ -1,18 +1,33 @@
-mat-checkbox{
+mat-checkbox {
   padding-bottom: 1.25em;
 }
-.lexicon-fab{
+
+.lexicon-fab {
   position: absolute;
   right: 0;
   top: -0.84375em;
 }
-a{
-  font-size:14px;
-  color:rgb(0, 0, 238);
+
+a {
+  font-size: 14px;
+  color: rgb(0, 0, 238);
 }
-a:hover{
+
+a:hover {
   text-decoration: underline;
 }
-textarea{
+
+textarea {
   resize: none;
+}
+
+mat-expansion-panel {
+  margin-left: -24px;
+  margin-right: -24px;
+  margin-top: 16px;
+}
+
+.advanced-setting {
+  font-size: initial;
+  width: 100%;
 }

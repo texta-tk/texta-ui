@@ -1,26 +1,73 @@
 <h1 mat-dialog-title>Multitag Text</h1>
-<mat-dialog-content fxLayout="column">
+<div mat-dialog-content>
+  <div class="max-width">
 
-  <mat-form-field class="max-width" data-cy="appRegexTaggerMultiTagDialogText">
+    <mat-form-field class="max-width" data-cy="appRegexTaggerMultiTagDialogText">
     <textarea [(ngModel)]="text" [ngModelOptions]="{standalone: true}" [rows]="5" matInput
               placeholder="Text"></textarea>
-    <mat-hint>{{regexTaggerOptions?.actions?.POST?.text?.help_text || ''}}</mat-hint>
-  </mat-form-field>
-  <mat-form-field class="max-width" data-cy="appRegexTaggerMultiTagDialogTaggers">
-    <mat-label>Regex Taggers</mat-label>
-    <app-virtual-scroll-select [scrollableDataSource]="taggers" [formControl]="taggerSelectionFormControl"></app-virtual-scroll-select>
-    <mat-hint>{{regexTaggerOptions?.actions?.POST?.taggers?.help_text || ''}}</mat-hint>
-  </mat-form-field>
-  <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+      <mat-hint>{{regexTaggerOptions?.actions?.POST?.text?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+    <mat-form-field class="max-width" data-cy="appRegexTaggerMultiTagDialogTaggers">
+      <mat-label>Regex Taggers</mat-label>
+      <app-virtual-scroll-select [scrollableDataSource]="taggers"
+                                 [formControl]="taggerSelectionFormControl"></app-virtual-scroll-select>
+      <mat-hint>{{regexTaggerOptions?.actions?.POST?.taggers?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+    <div class="loading-div">
+      <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+    </div>
 
-  <div *ngIf="result" class="m-top-10">
-    <div class="code-wrapper">
-      <code>
-        <pre *ngIf="result">{{result | json}}</pre>
-      </code>
+    <div *ngIf="result" class="m-bot-10">
+      <mat-accordion *ngIf="result.length > 0" displayMode="flat" multi>
+        <mat-expansion-panel expanded>
+          <mat-expansion-panel-header [expandedHeight]="'48px'">
+            <mat-panel-title>
+              Regex Tagger
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div fxLayout="row wrap">
+            <app-fact-chip *ngFor="let item of result"
+                           [backGroundColor]="colorMap.get(item!.tag)!.backgroundColor"
+                           [displayValue]="item.tag"
+                           [hoverValue]="'Id: '+item.tagger_id"
+                           [textColor]="colorMap.get(item!.tag)!.textColor"></app-fact-chip>
+          </div>
+        </mat-expansion-panel>
+        <mat-expansion-panel expanded>
+          <mat-expansion-panel-header [expandedHeight]="'48px'">
+            <mat-panel-title>
+              Matches
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div fxLayout="row wrap">
+            <app-fact-chip *ngFor="let match of highlightData.texta_facts"
+                           [backGroundColor]="colorMap.get(match.tagger_tag)!.backgroundColor"
+                           [displayValue]="match.str_val"
+                           [hoverValue]="taggerIdAccessor(match)"
+                           [textColor]="colorMap.get(match!.tagger_tag)!.textColor"></app-fact-chip>
+          </div>
+        </mat-expansion-panel>
+        <mat-expansion-panel expanded>
+          <mat-expansion-panel-header [expandedHeight]="'48px'">
+            <mat-panel-title>
+              Text
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <app-generic-highlighter
+            [highlightConfig]="{
+                  currentColumn: 'text',
+                  searcherHighlight: null,
+                  highlightTextaFacts: true,
+                  highlightHyperlinks: true,
+                  titleAccessor: taggerIdAccessor,
+                  colors: colorMap,
+                  data:highlightData}"></app-generic-highlighter>
+        </mat-expansion-panel>
+      </mat-accordion>
+      <h3 *ngIf="result.length === 0">No matches found</h3>
     </div>
   </div>
-</mat-dialog-content>
+</div>
 <mat-dialog-actions>
   <div class="flex-row max-width">
     <div class="flex-item-left">

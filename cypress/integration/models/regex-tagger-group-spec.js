@@ -24,17 +24,11 @@ describe('regex-tagger-group should work', function () {
     cy.get('[data-cy=appRegexTaggerGroupMultiTagBtn]').click();
     cy.wait('@getRegexTaggers');
     cy.get('[data-cy=appRegexTaggerGroupMultiTagDialogText]').type('tere');
-    cy.get('[data-cy=appRegexTaggerGroupMultiTagDialogTaggers]').click().then((taggers => {
-      cy.wrap(taggers).should('have.class', 'mat-focused');
-      cy.get('.mat-option-text:nth(0)').click();
-      cy.closeCurrentCdkOverlay();
-    }));
     cy.get('[data-cy=appRegexTaggerGroupMultiTagDialogSubmit]').click();
     cy.wait('@postRegexTaggers').then(resp => {
       expect(resp.response.statusCode).to.eq(200);
       expect(resp.response.body.length).to.eq(1);
     });
-    cy.get('.code-wrapper').should('be.visible');
     cy.get('[data-cy=appRegexTaggerGroupMultiTagDialogClose]').click();
   }
 

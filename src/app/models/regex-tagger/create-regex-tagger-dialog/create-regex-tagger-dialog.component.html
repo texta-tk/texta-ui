@@ -28,107 +28,120 @@
 
       <mat-hint>{{regexTaggerOptions?.actions?.POST?.lexicon?.help_text || ''}}</mat-hint>
     </mat-form-field>
-    <mat-form-field>
-      <textarea
-        [rows]="5"
-        formControlName="counterLexiconFormControl"
-        matInput placeholder="Counter lexicon (newline separated)"></textarea>
-      <a (click)="$event.stopPropagation();" *ngIf="lexicons.length > 0"
-         [matMenuTriggerData]="{data: regexTaggerForm.get('counterLexiconFormControl')}" [matMenuTriggerFor]="menu"
-         class="lexicon-fab pointer"
-         type="button">
-        Add lexicon
-      </a>
-      <mat-hint>{{regexTaggerOptions?.actions?.POST?.counter_lexicon?.help_text || ''}}</mat-hint>
-    </mat-form-field>
-
-    <div fxLayout="row" fxLayoutGap="24px">
-      <mat-form-field data-cy="appRegexTaggerCreateDialogOperator" fxFlex="calc(33%-24px)">
-        <mat-label>Operator</mat-label>
-        <mat-select [disableOptionCentering]="true" [errorStateMatcher]="matcher"
-                    matTooltip="{{regexTaggerOptions?.actions?.POST?.operator?.help_text || ''}}"
-                    formControlName="operatorFormControl" panelClass="select-panel-reveal-input" required>
-          <mat-option value="and">and</mat-option>
-          <mat-option value="or">or</mat-option>
-        </mat-select>
-        <mat-error *ngIf="regexTaggerForm.get('operatorFormControl')?.hasError('required')">
-          Operator is <strong>required</strong>
-        </mat-error>
-      </mat-form-field>
-      <mat-form-field data-cy="appRegexTaggerCreateDialogMatchType" fxFlex="calc(33%-24px)">
-        <mat-label>Match type</mat-label>
-        <mat-select [disableOptionCentering]="true" [errorStateMatcher]="matcher"
-                    matTooltip="{{regexTaggerOptions?.actions?.POST?.match_type?.help_text || ''}}"
-                    formControlName="matchTypeFormControl" panelClass="select-panel-reveal-input" required>
-          <mat-option value="prefix">prefix</mat-option>
-          <mat-option value="exact">exact</mat-option>
-          <mat-option value="subword">subword</mat-option>
-        </mat-select>
-        <mat-error *ngIf="regexTaggerForm.get('matchTypeFormControl')?.hasError('required')">
-          Match type is <strong>required</strong>
-        </mat-error>
-      </mat-form-field>
-      <mat-form-field fxFlex="calc(33%-24px)"
-                      [ngStyle]="{'display': (regexTaggerForm.get('operatorFormControl')?.value === 'and' ? 'inline-block' : 'none'), 'margin-left': '24px'}">
-        <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="requiredWordsFormControl" matInput
-               placeholder="Required words"
-               matTooltip="{{regexTaggerOptions?.actions?.POST?.required_words?.help_text || ''}}"
-               required type="number" min="0" max="1" step="0.1">
-        <mat-error *ngIf="regexTaggerForm.get('requiredWordsFormControl')?.hasError('required')">
-          Required words is <strong>required</strong>
-        </mat-error>
-        <mat-error *ngIf="regexTaggerForm.get('requiredWordsFormControl')?.hasError('min')">
-          Number must be between <strong>0 and 1</strong>
-        </mat-error>
-        <mat-error *ngIf="regexTaggerForm.get('requiredWordsFormControl')?.hasError('max')">
-          Number must be between <strong>0 and 1</strong>
-        </mat-error>
-      </mat-form-field>
-    </div>
-
-    <div fxLayout="row" fxLayoutGap="24px">
-      <mat-form-field fxFlex="calc(33%-24px)">
-        <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="phraseSlopFormControl" matInput
-               placeholder="Phrase slop" required type="number"
-               matTooltip="{{regexTaggerOptions?.actions?.POST?.phrase_slop?.help_text || ''}}">
-        <mat-error *ngIf="regexTaggerForm.get('phraseSlopFormControl')?.hasError('required')">
-          Phrase slop is <strong>required</strong>
-        </mat-error>
-      </mat-form-field>
-      <mat-form-field fxFlex="calc(33%-24px)">
-        <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="counterSlopFormControl" matInput
-               matTooltip="{{regexTaggerOptions?.actions?.POST?.counter_slop?.help_text || ''}}"
-               placeholder="Counter slop" required type="number">
-        <mat-error *ngIf="regexTaggerForm.get('counterSlopFormControl')?.hasError('required')">
-          Counter slop is <strong>required</strong>
-        </mat-error>
-      </mat-form-field>
-      <mat-form-field fxFlex="calc(33%-24px)">
-        <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="allowedEditsFormControl" matInput
-               matTooltip="{{regexTaggerOptions?.actions?.POST?.n_allowed_edits?.help_text || ''}}"
-               placeholder="Number of allowed edits"
-               required type="number">
-        <mat-error *ngIf="regexTaggerForm.get('allowedEditsFormControl')?.hasError('required')">
-          Allowed edits words is <strong>required</strong>
-        </mat-error>
-      </mat-form-field>
-    </div>
-
-    <div fxLayout="row" fxLayoutGap="24px">
-      <mat-checkbox formControlName="fuzzyMatchFormControl" fxFlex="calc(33%-24px)"
-                    matTooltip="{{regexTaggerOptions?.actions?.POST?.return_fuzzy_match?.help_text || ''}}">Return fuzzy
-        match
-      </mat-checkbox>
-      <mat-checkbox formControlName="ignoreCaseFormControl" fxFlex="calc(33%-24px)"
-                    matTooltip="{{regexTaggerOptions?.actions?.POST?.ignore_case?.help_text || ''}}">Ignore case
-      </mat-checkbox>
-      <mat-checkbox formControlName="ignorePunctuationFormControl" fxFlex="calc(33%-24px)"
-                    matTooltip="{{regexTaggerOptions?.actions?.POST?.ignore_punctuation?.help_text || ''}}">Ignore
-        punctuation
-      </mat-checkbox>
-    </div>
+    <!--advanced -->
+    <mat-expansion-panel expanded="false">
+      <mat-expansion-panel-header>
+        <h3>Advanced settings</h3>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
+        <div fxLayout="column">
+          <mat-form-field class="advanced-setting">
+            <textarea
+              [rows]="5"
+              formControlName="counterLexiconFormControl"
+              matInput placeholder="Counter lexicon (newline separated)"></textarea>
+            <a (click)="$event.stopPropagation();" *ngIf="lexicons.length > 0"
+               [matMenuTriggerData]="{data: regexTaggerForm.get('counterLexiconFormControl')}"
+               [matMenuTriggerFor]="menu"
+               class="lexicon-fab pointer"
+               type="button">
+              Add lexicon
+            </a>
+            <mat-hint>{{regexTaggerOptions?.actions?.POST?.counter_lexicon?.help_text || ''}}</mat-hint>
+          </mat-form-field>
+          <div fxLayout="row" fxLayoutGap="24px">
+            <mat-form-field class="advanced-setting" data-cy="appRegexTaggerCreateDialogOperator"
+                            fxFlex="calc(33%-24px)">
+              <mat-label>Operator</mat-label>
+              <mat-select [disableOptionCentering]="true" [errorStateMatcher]="matcher"
+                          matTooltip="{{regexTaggerOptions?.actions?.POST?.operator?.help_text || ''}}"
+                          formControlName="operatorFormControl" panelClass="select-panel-reveal-input" required>
+                <mat-option value="and">and</mat-option>
+                <mat-option value="or">or</mat-option>
+              </mat-select>
+              <mat-error *ngIf="regexTaggerForm.get('operatorFormControl')?.hasError('required')">
+                Operator is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="advanced-setting" data-cy="appRegexTaggerCreateDialogMatchType"
+                            fxFlex="calc(33%-24px)">
+              <mat-label>Match type</mat-label>
+              <mat-select [disableOptionCentering]="true" [errorStateMatcher]="matcher"
+                          matTooltip="{{regexTaggerOptions?.actions?.POST?.match_type?.help_text || ''}}"
+                          formControlName="matchTypeFormControl" panelClass="select-panel-reveal-input" required>
+                <mat-option value="prefix">prefix</mat-option>
+                <mat-option value="exact">exact</mat-option>
+                <mat-option value="subword">subword</mat-option>
+              </mat-select>
+              <mat-error *ngIf="regexTaggerForm.get('matchTypeFormControl')?.hasError('required')">
+                Match type is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="advanced-setting" fxFlex="calc(33%-24px)"
+                            [ngStyle]="{'display': (regexTaggerForm.get('operatorFormControl')?.value === 'and' ? 'inline-block' : 'none'), 'margin-left': '24px'}">
+              <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="requiredWordsFormControl"
+                     matInput
+                     placeholder="Required words"
+                     matTooltip="{{regexTaggerOptions?.actions?.POST?.required_words?.help_text || ''}}"
+                     required type="number" min="0" max="1" step="0.1">
+              <mat-error *ngIf="regexTaggerForm.get('requiredWordsFormControl')?.hasError('required')">
+                Required words is <strong>required</strong>
+              </mat-error>
+              <mat-error *ngIf="regexTaggerForm.get('requiredWordsFormControl')?.hasError('min')">
+                Number must be between <strong>0 and 1</strong>
+              </mat-error>
+              <mat-error *ngIf="regexTaggerForm.get('requiredWordsFormControl')?.hasError('max')">
+                Number must be between <strong>0 and 1</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div fxLayout="row" fxLayoutGap="24px">
+            <mat-form-field class="advanced-setting" fxFlex="calc(33%-24px)">
+              <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="phraseSlopFormControl" matInput
+                     placeholder="Phrase slop" required type="number"
+                     matTooltip="{{regexTaggerOptions?.actions?.POST?.phrase_slop?.help_text || ''}}">
+              <mat-error *ngIf="regexTaggerForm.get('phraseSlopFormControl')?.hasError('required')">
+                Phrase slop is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="advanced-setting" fxFlex="calc(33%-24px)">
+              <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="counterSlopFormControl" matInput
+                     matTooltip="{{regexTaggerOptions?.actions?.POST?.counter_slop?.help_text || ''}}"
+                     placeholder="Counter slop" required type="number">
+              <mat-error *ngIf="regexTaggerForm.get('counterSlopFormControl')?.hasError('required')">
+                Counter slop is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="advanced-setting" fxFlex="calc(33%-24px)">
+              <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="allowedEditsFormControl" matInput
+                     matTooltip="{{regexTaggerOptions?.actions?.POST?.n_allowed_edits?.help_text || ''}}"
+                     placeholder="Number of allowed edits"
+                     required type="number">
+              <mat-error *ngIf="regexTaggerForm.get('allowedEditsFormControl')?.hasError('required')">
+                Allowed edits words is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
 
 
+          <div fxLayout="row" fxLayoutGap="24px">
+            <mat-checkbox class="advanced-setting" formControlName="fuzzyMatchFormControl" fxFlex="calc(33%-24px)"
+                          matTooltip="{{regexTaggerOptions?.actions?.POST?.return_fuzzy_match?.help_text || ''}}">Return
+              fuzzy
+              match
+            </mat-checkbox>
+            <mat-checkbox class="advanced-setting" formControlName="ignoreCaseFormControl" fxFlex="calc(33%-24px)"
+                          matTooltip="{{regexTaggerOptions?.actions?.POST?.ignore_case?.help_text || ''}}">Ignore case
+            </mat-checkbox>
+            <mat-checkbox class="advanced-setting" formControlName="ignorePunctuationFormControl"
+                          fxFlex="calc(33%-24px)"
+                          matTooltip="{{regexTaggerOptions?.actions?.POST?.ignore_punctuation?.help_text || ''}}">Ignore
+              punctuation
+            </mat-checkbox>
+          </div>
+        </div>
+      </ng-template>
+    </mat-expansion-panel>
   </form>
 </mat-dialog-content>
 <mat-dialog-actions>

@@ -87,14 +87,8 @@ describe('regex-taggers should work', function () {
     cy.wait(1000);
     cy.get('[data-cy=appRegexTaggerMultiTagBtn]').click();
     cy.get('[data-cy=appRegexTaggerMultiTagDialogText]').type('test');
-    cy.get('[data-cy=appRegexTaggerMultiTagDialogTaggers]').click().then((taggers => {
-      cy.wrap(taggers).should('have.class', 'mat-focused');
-      cy.get('.mat-option-text:nth(1)').click();
-      cy.closeCurrentCdkOverlay();
-    }));
     cy.get('[data-cy=appRegexTaggerMultiTagDialogSubmit]').click();
     cy.wait('@postRegexTaggers').its('response.statusCode').should('eq', 200);
-    cy.get('.code-wrapper').should('be.visible');
     cy.get('[data-cy=appRegexTaggerMultiTagDialogClose]').click();
 
     tagRandomDoc();
