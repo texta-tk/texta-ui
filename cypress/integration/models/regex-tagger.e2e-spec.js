@@ -89,7 +89,6 @@ describe('regex-taggers should work', function () {
     cy.get('[data-cy=appRegexTaggerMultiTagDialogText]').type('test');
     cy.get('[data-cy=appRegexTaggerMultiTagDialogSubmit]').click();
     cy.wait('@postRegexTaggers').its('response.statusCode').should('eq', 200);
-    cy.get('.code-wrapper').should('be.visible');
     cy.get('[data-cy=appRegexTaggerMultiTagDialogClose]').click();
 
     tagRandomDoc();

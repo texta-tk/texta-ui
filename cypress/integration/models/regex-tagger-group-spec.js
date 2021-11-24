@@ -29,7 +29,6 @@ describe('regex-tagger-group should work', function () {
       expect(resp.response.statusCode).to.eq(200);
       expect(resp.response.body.length).to.eq(1);
     });
-    cy.get('.code-wrapper').should('be.visible');
     cy.get('[data-cy=appRegexTaggerGroupMultiTagDialogClose]').click();
   }
 
