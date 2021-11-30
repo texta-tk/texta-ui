@@ -1,5 +1,5 @@
 import {NgModule} from '@angular/core';
-import {SharedModule} from 'src/app/shared/shared.module';
+import {SharedModule} from 'src/app/shared/shared-module/shared.module';
 import {CreateTorchTaggerDialogComponent} from './create-torch-tagger-dialog/create-torch-tagger-dialog.component';
 import {TorchTaggerComponent} from './torch-tagger/torch-tagger.component';
 import {TorchTaggerRoutingModule} from './torch-tagger-routing.module';
@@ -8,6 +8,7 @@ import {EditTorchTaggerDialogComponent} from './edit-torch-tagger-dialog/edit-to
 import {EpochReportsDialogComponent} from './epoch-reports-dialog/epoch-reports-dialog.component';
 import {ApplyToIndexDialogComponent} from './apply-to-index-dialog/apply-to-index-dialog.component';
 import {TagRandomDocComponent} from './tag-random-doc/tag-random-doc.component';
+import {AppPlotlyModule} from '../../shared/plotly-module/app-plotly.module';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import {TagRandomDocComponent} from './tag-random-doc/tag-random-doc.component';
   ],
   imports: [
     SharedModule,
+    AppPlotlyModule,
     TorchTaggerRoutingModule,
   ],
 })

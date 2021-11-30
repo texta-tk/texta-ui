@@ -57,3 +57,18 @@ export interface BertTagger {
   balance_to_max_limit: boolean;
   use_sentence_shuffle: boolean;
 }
+
+export interface BertEpochReport {
+  f1_score: number;
+  precision: number;
+  recall: number;
+  confusion_matrix: number[][];
+  accuracy: number;
+  training_loss: number;
+  validation_loss: number;
+  training_time: string;
+  validation_time: string;
+  area_under_curve: number;
+  classes: string[];
+  epoch: number;
+}

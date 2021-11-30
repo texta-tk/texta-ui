@@ -1,0 +1,61 @@
+<div *ngIf="result" class="m-bot-10">
+  <h3 data-cy="appRegexTaggerTagRandomDocNoMatches" class="m-top-5"
+      *ngIf="(uniqueFacts.length === 0 && this.result.matches) || this.result?.predictionTags?.length === 0">No matches
+    found</h3>
+  <mat-accordion displayMode="flat" multi>
+    <mat-expansion-panel [expanded]="selection.isSelected(0)" *ngIf="!this.result.matches">
+      <mat-expansion-panel-header (click)="selection.toggle(0)" [expandedHeight]="'48px'">
+        <mat-panel-title>
+          Result
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div fxLayout="row wrap">
+        <app-fact-chip *ngFor="let item of uniqueFacts" [backGroundColor]="item.backgroundColor"
+                       [displayValue]="item.fact.fact"
+                       [hoverValue]="hoverTooltip(item.fact)"
+                       [textColor]="item.textColor"></app-fact-chip>
+      </div>
+    </mat-expansion-panel>
+    <mat-expansion-panel [expanded]="selection.isSelected(1) && this.result.matches" *ngIf="this.result.matches">
+      <mat-expansion-panel-header (click)="selection.toggle(1)" [expandedHeight]="'48px'">
+        <mat-panel-title>
+          Matches
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div fxLayout="row wrap">
+        <app-fact-chip *ngFor="let item of distinctMatches"
+                       [backGroundColor]="colorMap.get(item.fact)?.backgroundColor || ''"
+                       [displayValue]="item.str_val"
+                       [hoverValue]="hoverTooltip(item)"
+                       [textColor]="colorMap.get(item.fact)?.textColor || ''"></app-fact-chip>
+      </div>
+    </mat-expansion-panel>
+    <ng-container *ngFor="let field of resultFields; let i = index">
+      <mat-expansion-panel
+        [expanded]="selection.isSelected(field)">
+        <mat-expansion-panel-header (click)="selection.toggle(field)" [expandedHeight]="'48px'">
+          <mat-panel-title>
+            {{field}}
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <ng-template matExpansionPanelContent>
+          <ng-container *ngIf="field !== 'texta_facts'">
+            <app-generic-highlighter
+              [highlightConfig]="{
+                currentColumn: field,
+                searcherHighlight: null,
+                highlightTextaFacts: true,
+                highlightHyperlinks: true,
+                titleAccessor: hoverTooltip,
+                colors: colorMap,
+                data:result.document}"></app-generic-highlighter>
+          </ng-container>
+          <ng-container *ngIf="field === 'texta_facts'">
+            <app-texta-facts-chips factNameHover=""
+              [facts]="result.document['texta_facts']"></app-texta-facts-chips>
+          </ng-container>
+        </ng-template>
+      </mat-expansion-panel>
+    </ng-container>
+  </mat-accordion>
+</div>

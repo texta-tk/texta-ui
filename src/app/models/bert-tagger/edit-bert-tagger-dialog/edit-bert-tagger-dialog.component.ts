@@ -13,7 +13,7 @@ import {BertTaggerService} from '../../../core/models/taggers/bert-tagger/bert-t
   templateUrl: './edit-bert-tagger-dialog.component.html',
   styleUrls: ['./edit-bert-tagger-dialog.component.scss']
 })
-export class EditBertTaggerDialogComponent{
+export class EditBertTaggerDialogComponent {
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
 
@@ -27,7 +27,10 @@ export class EditBertTaggerDialogComponent{
   onSubmit(): void {
     this.projectStore.getCurrentProject().pipe(take(1), mergeMap(project => {
       if (project) {
-        return this.bertTaggerService.editTagger({description: this.data.description}, project.id, this.data.id);
+        return this.bertTaggerService.editTagger({
+          description: this.data.description,
+          use_gpu: this.data.use_gpu
+        }, project.id, this.data.id);
       }
       return of(null);
     })).subscribe(resp => {

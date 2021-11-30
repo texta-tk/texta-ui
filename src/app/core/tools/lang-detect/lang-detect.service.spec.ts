@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { LangDetectService } from './lang-detect.service';
 import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {SharedModule} from "../../../shared/shared.module";
+import {SharedModule} from "../../../shared/shared-module/shared.module";
 
 describe('LangDetectService', () => {
   let service: LangDetectService;

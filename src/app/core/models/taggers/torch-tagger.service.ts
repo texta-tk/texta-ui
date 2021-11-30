@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {environment} from 'src/environments/environment';
-import {TorchTagger} from '../../../shared/types/tasks/TorchTagger';
+import {TorchTagger, TorchTaggerEpoch} from '../../../shared/types/tasks/TorchTagger';
 import {LogService} from '../../util/log.service';
 import {Observable} from 'rxjs';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
@@ -33,11 +33,11 @@ export class TorchTaggerService {
       catchError(this.logService.handleError<TorchTagger>('editTorchTagger')));
   }
 
-  torchEpochReport(projectId: number, taggerId: number): Observable<unknown | HttpErrorResponse> {
-    return this.http.get<unknown>(
+  torchEpochReport(projectId: number, taggerId: number): Observable<TorchTaggerEpoch[] | HttpErrorResponse> {
+    return this.http.get<TorchTaggerEpoch[]>(
       `${this.apiUrl}/projects/${projectId}/torchtaggers/${taggerId}/epoch_reports/`,
     ).pipe(tap(e => this.logService.logStatus(e, 'torchEpochReport')),
-      catchError(this.logService.handleError<unknown>('torchEpochReport')));
+      catchError(this.logService.handleError<TorchTaggerEpoch[]>('torchEpochReport')));
   }
 
   retrainTagger(projectId: number, taggerId: number): Observable<unknown> {

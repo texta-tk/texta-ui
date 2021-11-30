@@ -14,7 +14,7 @@ import {Project} from '../../shared/types/Project';
 import {ProjectStore} from '../../core/projects/project.store';
 import {RegexTaggerGroupService} from '../../core/models/taggers/regex-tagger-group/regex-tagger-group.service';
 import {LogService} from '../../core/util/log.service';
-import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {ConfirmDialogComponent} from '../../shared/shared-module/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {MultiTagTextDialogComponent} from './multi-tag-text-dialog/multi-tag-text-dialog.component';
 import {ApplyTaggerGroupDialogComponent} from './apply-tagger-group-dialog/apply-tagger-group-dialog.component';
 import {TagTextDialogComponent} from './tag-text-dialog/tag-text-dialog.component';

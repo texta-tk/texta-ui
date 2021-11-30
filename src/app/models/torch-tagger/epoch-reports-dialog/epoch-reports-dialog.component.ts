@@ -10,19 +10,25 @@ import {TorchTaggerService} from '../../../core/models/taggers/torch-tagger.serv
   styleUrls: ['./epoch-reports-dialog.component.scss']
 })
 export class EpochReportsDialogComponent implements OnInit {
-
-  result: unknown;
+  isLoadingResults = true;
+  result: { validation_loss: number, accuracy: number, training_loss: number, epoch: number }[];
 
   constructor(private torchTaggerService: TorchTaggerService, private logService: LogService,
               @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, taggerId: number; }) {
   }
 
   ngOnInit(): void {
-    this.torchTaggerService.torchEpochReport(this.data.currentProjectId, this.data.taggerId).subscribe(x => {
-      if (x instanceof HttpErrorResponse) {
-        this.logService.snackBarError(x);
+    this.torchTaggerService.torchEpochReport(this.data.currentProjectId, this.data.taggerId).subscribe(resp => {
+      if (resp instanceof HttpErrorResponse) {
+        this.logService.snackBarError(resp);
       } else {
-        this.result = x;
+        this.isLoadingResults = false;
+        this.result = resp.flatMap((x, index) => [{
+          validation_loss: x.val_loss,
+          training_loss: x.training_loss,
+          accuracy: x.accuracy,
+          epoch: index
+        }]);
       }
     });
 

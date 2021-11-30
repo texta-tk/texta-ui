@@ -10,13 +10,13 @@ import {MatPaginator} from '@angular/material/paginator';
 import {CreateLangDetectDialogComponent} from './create-lang-detect-dialog/create-lang-detect-dialog.component';
 import {Project} from '../../shared/types/Project';
 import {LangDetectService} from '../../core/tools/lang-detect/lang-detect.service';
-import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {ConfirmDialogComponent} from '../../shared/shared-module/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {expandRowAnimation} from '../../shared/animations';
 import {ProjectStore} from '../../core/projects/project.store';
 import {LangDetect} from '../../shared/types/tasks/LangDetect';
 import {LogService} from '../../core/util/log.service';
 import {Index} from '../../shared/types/Index';
-import {QueryDialogComponent} from '../../shared/components/dialogs/query-dialog/query-dialog.component';
+import {QueryDialogComponent} from '../../shared/shared-module/components/dialogs/query-dialog/query-dialog.component';
 
 @Component({
   selector: 'app-lang-detect',

@@ -1,7 +1,7 @@
 import {Field} from '../../../shared/types/Project';
 import {FormControl} from '@angular/forms';
 import {Lexicon} from '../../../shared/types/Lexicon';
-import {FromToInput} from '../../../shared/components/from-to-input/from-to-input.component';
+import {FromToInput} from '../../../shared/shared-module/components/from-to-input/from-to-input.component';
 import {HighlightSettings} from '../../../shared/SettingVars';
 
 export class Constraint {

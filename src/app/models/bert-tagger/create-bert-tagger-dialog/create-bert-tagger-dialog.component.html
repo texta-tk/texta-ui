@@ -79,18 +79,18 @@
 
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)" [startingQuery]="query"
                                    data-cy="appBertTaggerCreateDialogQuery"></app-saved-search-autocomplete>
-    <mat-form-field>
+    <mat-form-field class="m-bot-10">
       <mat-label>Checkpoint model</mat-label>
       <mat-select [disableOptionCentering]="true" formControlName="checkPointModelFormControl"
-      matTooltip="{{bertOptions?.actions?.POST?.checkpoint_model?.help_text || ''}}"
                   panelClass="select-panel-reveal-input">
         <mat-option>None</mat-option>
         <mat-option *ngFor="let model of trainedModels" [value]="model">
           {{model.id}}: {{model.description}}
         </mat-option>
       </mat-select>
+      <mat-hint>{{bertOptions?.actions?.POST?.checkpoint_model?.help_text || ''}}</mat-hint>
     </mat-form-field>
-    <mat-form-field>
+    <mat-form-field class="m-top-5">
       <mat-label>BERT model</mat-label>
       <mat-select [disableOptionCentering]="true"
                   formControlName="bertModelFormControl"

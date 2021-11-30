@@ -10,8 +10,8 @@ import {ProjectStore} from 'src/app/core/projects/project.store';
 import {LogService} from 'src/app/core/util/log.service';
 import {debounceTime, startWith, switchMap, takeUntil} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
-import {ConfirmDialogComponent} from 'src/app/shared/components/dialogs/confirm-dialog/confirm-dialog.component';
-import {QueryDialogComponent} from 'src/app/shared/components/dialogs/query-dialog/query-dialog.component';
+import {ConfirmDialogComponent} from 'src/app/shared/shared-module/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {QueryDialogComponent} from 'src/app/shared/shared-module/components/dialogs/query-dialog/query-dialog.component';
 import {TorchTagger} from 'src/app/shared/types/tasks/TorchTagger';
 import {CreateTorchTaggerDialogComponent} from '../create-torch-tagger-dialog/create-torch-tagger-dialog.component';
 import {TorchTaggerService} from '../../../core/models/taggers/torch-tagger.service';
@@ -90,7 +90,7 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   epochReportDialog(tagger: TorchTagger): void {
     this.dialog.open(EpochReportsDialogComponent, {
       data: {taggerId: tagger.id, currentProjectId: this.currentProject.id},
-      maxHeight: '665px',
+      height: '465px',
       width: '700px',
     });
   }

@@ -4,7 +4,7 @@ import { IndexSplitterComponent } from './index-splitter.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {SharedModule} from '../../shared/shared.module';
+import {SharedModule} from '../../shared/shared-module/shared.module';
 
 describe('IndexSplitterComponent', () => {
   let component: IndexSplitterComponent;

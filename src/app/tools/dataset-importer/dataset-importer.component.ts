@@ -10,7 +10,7 @@ import {merge, Subject, timer} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../../core/util/log.service';
 import {DatasetImporter} from '../../shared/types/tools/Elastic';
-import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {ConfirmDialogComponent} from '../../shared/shared-module/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {SelectionModel} from '@angular/cdk/collections';
 import {CreateDatasetDialogComponent} from './create-dataset-dialog/create-dataset-dialog.component';
 import {DatasetImporterService} from '../../core/tools/dataset-importer/dataset-importer.service';

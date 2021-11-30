@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { UaaOauthComponent } from './uaa-oauth.component';
 import { RouterModule, Routes } from '@angular/router';
-import { SharedModule } from '../shared/shared.module';
+import { SharedModule } from '../shared/shared-module/shared.module';
 
 const routes: Routes = [
   {

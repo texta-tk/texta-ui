@@ -14,7 +14,7 @@ import {Observable, of} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
 import {ProjectStore} from '../projects/project.store';
 import {filter, map, skip, skipWhile, switchMap, take, takeUntil, takeWhile} from 'rxjs/operators';
-import {ProjectGuardDialogComponent} from '../../shared/components/dialogs/project-guard-dialog/project-guard-dialog.component';
+import {ProjectGuardDialogComponent} from '../../shared/shared-module/components/dialogs/project-guard-dialog/project-guard-dialog.component';
 import {UserStore} from "../users/user.store";
 
 @Injectable({

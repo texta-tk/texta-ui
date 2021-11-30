@@ -14,13 +14,13 @@ import {Project} from '../../shared/types/Project';
 import {ProjectStore} from '../../core/projects/project.store';
 import {BertTaggerService} from '../../core/models/taggers/bert-tagger/bert-tagger.service';
 import {LogService} from '../../core/util/log.service';
-import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {ConfirmDialogComponent} from '../../shared/shared-module/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {AddBertModelDialogComponent} from './add-bert-model-dialog/add-bert-model-dialog.component';
 import {TagTextDialogComponent} from './tag-text-dialog/tag-text-dialog.component';
 import {TagRandomDocDialogComponent} from './tag-random-doc-dialog/tag-random-doc-dialog.component';
 import {EditBertTaggerDialogComponent} from './edit-bert-tagger-dialog/edit-bert-tagger-dialog.component';
 import {EpochReportsDialogComponent} from './epoch-reports-dialog/epoch-reports-dialog.component';
-import {QueryDialogComponent} from '../../shared/components/dialogs/query-dialog/query-dialog.component';
+import {QueryDialogComponent} from '../../shared/shared-module/components/dialogs/query-dialog/query-dialog.component';
 import {ApplyToIndexDialogComponent} from './apply-to-index-dialog/apply-to-index-dialog.component';
 
 @Component({
@@ -148,7 +148,7 @@ export class BertTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   epochReportDialog(tagger: BertTagger): void {
     this.dialog.open(EpochReportsDialogComponent, {
       data: {taggerId: tagger.id, currentProjectId: this.currentProject.id},
-      maxHeight: '665px',
+      height: '465px',
       width: '700px',
     });
   }
@@ -163,7 +163,7 @@ export class BertTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onDelete(tagger: BertTagger, index: number): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: {confirmText: 'Delete', mainText: 'Are you sure you want to delete this Tagger?'}
+      data: {confirmText: 'Delete', mainText: 'Are you sure you want to delete this task?'}
     });
 
     dialogRef.afterClosed().subscribe(result => {

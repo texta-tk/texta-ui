@@ -10,7 +10,7 @@ import {LogService} from '../../core/util/log.service';
 import {Project} from '../../shared/types/Project';
 import {MatTableDataSource} from '@angular/material/table';
 import {expandRowAnimation} from '../../shared/animations';
-import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {ConfirmDialogComponent} from '../../shared/shared-module/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {SelectionModel} from '@angular/cdk/collections';
 import {RegexTaggerService} from '../../core/models/taggers/regex-tagger.service';
 import {CreateRegexTaggerDialogComponent} from './create-regex-tagger-dialog/create-regex-tagger-dialog.component';

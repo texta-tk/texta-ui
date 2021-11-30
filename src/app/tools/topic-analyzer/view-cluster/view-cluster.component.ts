@@ -12,7 +12,7 @@ import {MatSort, MatSortHeader} from '@angular/material/sort';
 import {MatPaginator} from '@angular/material/paginator';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatDialog} from '@angular/material/dialog';
-import {ConfirmDialogComponent} from '../../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {ConfirmDialogComponent} from '../../../shared/shared-module/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {LogService} from '../../../core/util/log.service';
 import {LocalStorageService} from '../../../core/util/local-storage.service';
 import {ArrowViewStateTransition} from '@angular/material/sort/sort-header';

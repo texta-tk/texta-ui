@@ -10,12 +10,12 @@ import {MatPaginator} from '@angular/material/paginator';
 import {CreateSearchFieldsTaggerDialogComponent} from './create-search-fields-tagger-dialog/create-search-fields-tagger-dialog.component';
 import {expandRowAnimation} from '../../shared/animations';
 import {Project} from '../../shared/types/Project';
-import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {ConfirmDialogComponent} from '../../shared/shared-module/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {ProjectStore} from '../../core/projects/project.store';
 import {LogService} from '../../core/util/log.service';
 import {SearchFieldsTagger} from '../../shared/types/tasks/SearchFieldsTagger';
 import {SearchTaggerService} from '../../core/models/taggers/search-tagger/search-tagger.service';
-import {QueryDialogComponent} from '../../shared/components/dialogs/query-dialog/query-dialog.component';
+import {QueryDialogComponent} from '../../shared/shared-module/components/dialogs/query-dialog/query-dialog.component';
 
 @Component({
   selector: 'app-search-fields-tagger',

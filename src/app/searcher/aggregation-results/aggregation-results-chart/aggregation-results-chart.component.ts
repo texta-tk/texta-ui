@@ -17,7 +17,7 @@ import {PlotlyComponent, PlotlyService} from 'angular-plotly.js';
 import {ChangeDetectorRef, Component, Injector, Input, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
-import {PlotDownloadDialogComponent} from "./plot-download-dialog/plot-download-dialog.component";
+import {PlotDownloadDialogComponent} from "../../../shared/plotly-module/plot-download-dialog/plot-download-dialog.component";
 
 @Component({
   selector: 'app-aggregation-results-chart',

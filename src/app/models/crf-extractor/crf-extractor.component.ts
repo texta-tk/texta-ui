@@ -11,11 +11,11 @@ import {CreateCRFExtractorDialogComponent} from './create-crf-extractor-dialog/c
 import {expandRowAnimation} from '../../shared/animations';
 import {Project} from '../../shared/types/Project';
 import {CRFExtractorService} from '../../core/models/crf-extractor/crf-extractor.service';
-import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {ConfirmDialogComponent} from '../../shared/shared-module/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {CRFExtractor} from '../../shared/types/tasks/CRFExtractor';
 import {ProjectStore} from '../../core/projects/project.store';
 import {LogService} from '../../core/util/log.service';
-import {QueryDialogComponent} from '../../shared/components/dialogs/query-dialog/query-dialog.component';
+import {QueryDialogComponent} from '../../shared/shared-module/components/dialogs/query-dialog/query-dialog.component';
 import {ApplyToIndexDialogComponent} from './apply-to-index-dialog/apply-to-index-dialog.component';
 import {TagTextDialogComponent} from './tag-text-dialog/tag-text-dialog.component';
 

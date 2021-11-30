@@ -38,7 +38,7 @@ export class SearcherComponentService {
   private aggregationSubject = new Subject<{ globalAgg: any, agg: any, aggregationForm: string[] } | null>();
   // so query wouldnt be null (we use current query in aggs so we dont want null even if user hasnt searched everything,
   private savedSearchUpdate = new Subject<boolean>();
-  // we still want to be able to make aggs)
+  // we still want to be able to make aggs, query built with searcher constraints)
   private elasticQuerySubject = new BehaviorSubject<ElasticsearchQuery>(new ElasticsearchQuery());
   private isLoading = new BehaviorSubject<boolean>(false);
   private savedSearch = new Subject<SavedSearch | null>();

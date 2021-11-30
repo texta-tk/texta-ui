@@ -1,1 +1,4 @@
-<pre>{{result | json}}</pre>
+<div class="loading-shade" *ngIf="isLoadingResults ">
+  <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+</div>
+<app-epoch-report-graph [graphData]="this.result"></app-epoch-report-graph>

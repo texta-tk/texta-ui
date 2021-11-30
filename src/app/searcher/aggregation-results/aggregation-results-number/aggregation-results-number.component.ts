@@ -5,7 +5,7 @@ import {MatPaginator} from "@angular/material/paginator";
 import {SelectionModel} from "@angular/cdk/collections";
 import {MatDialog} from "@angular/material/dialog";
 import {SearcherComponentService} from "../../services/searcher-component.service";
-import {AddLexiconDialogComponent} from "../../../shared/components/dialogs/add-lexicon-dialog/add-lexicon-dialog.component";
+import {AddLexiconDialogComponent} from "../../../shared/shared-module/components/dialogs/add-lexicon-dialog/add-lexicon-dialog.component";
 interface TableElement {
   value: number;
   key: string;

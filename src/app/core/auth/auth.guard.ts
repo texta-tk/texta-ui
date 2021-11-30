@@ -15,7 +15,7 @@ import {map, mergeMap, take} from 'rxjs/operators';
 import {UserProfile} from '../../shared/types/UserProfile';
 import {HttpErrorResponse} from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
-import {LoginDialogComponent} from '../../shared/components/dialogs/login/login-dialog.component';
+import {LoginDialogComponent} from '../../shared/shared-module/components/dialogs/login/login-dialog.component';
 import {USERROLES} from '../../shared/types/UserAuth';
 import {LogService} from '../util/log.service';
 

@@ -8,7 +8,7 @@ import {debounceTime, startWith, switchMap, takeUntil} from 'rxjs/operators';
 import {Project} from '../shared/types/Project';
 import {HttpErrorResponse} from '@angular/common/http';
 import {MatDialog} from '@angular/material/dialog';
-import {ConfirmDialogComponent} from '../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {ConfirmDialogComponent} from '../shared/shared-module/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
 import {MatPaginator} from '@angular/material/paginator';

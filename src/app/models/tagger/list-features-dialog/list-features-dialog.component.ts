@@ -4,7 +4,7 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {TaggerService} from 'src/app/core/models/taggers/tagger.service';
 import {LogService} from 'src/app/core/util/log.service';
-import {AddLexiconDialogComponent} from '../../../shared/components/dialogs/add-lexicon-dialog/add-lexicon-dialog.component';
+import {AddLexiconDialogComponent} from '../../../shared/shared-module/components/dialogs/add-lexicon-dialog/add-lexicon-dialog.component';
 
 @Component({
   selector: 'app-list-features-dialog',

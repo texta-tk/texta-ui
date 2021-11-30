@@ -13,7 +13,7 @@ import {EditProjectDialogComponent} from './edit-project-dialog/edit-project-dia
 import {UserProfile} from '../shared/types/UserProfile';
 import {debounceTime, delay, filter, map, mergeMap, startWith, takeUntil, toArray} from 'rxjs/operators';
 import {UserService} from '../core/users/user.service';
-import {ConfirmDialogComponent} from '../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {ConfirmDialogComponent} from '../shared/shared-module/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {ProjectService} from '../core/projects/project.service';
 import {UserStore} from '../core/users/user.store';
 import {FormControl} from '@angular/forms';

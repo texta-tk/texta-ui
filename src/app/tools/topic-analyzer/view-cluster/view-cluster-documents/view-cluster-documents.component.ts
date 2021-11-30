@@ -19,7 +19,7 @@ import {TopicAnalyzerService} from '../../../../core/tools/topic-analyzer/topic-
 import {filter, switchMap, takeUntil} from 'rxjs/operators';
 import {Observable, of, Subject} from 'rxjs';
 import {LogService} from '../../../../core/util/log.service';
-import {ConfirmDialogComponent} from '../../../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {ConfirmDialogComponent} from '../../../../shared/shared-module/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {SelectionModel} from '@angular/cdk/collections';
 import {Project, ProjectIndex} from '../../../../shared/types/Project';
 import {SimilarClusterDialogComponent} from './similar-cluster-dialog/similar-cluster-dialog.component';

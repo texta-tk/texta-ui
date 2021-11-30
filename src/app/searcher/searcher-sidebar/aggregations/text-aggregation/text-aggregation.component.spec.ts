@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {TextAggregationComponent} from './text-aggregation.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
-import {SharedModule} from '../../../../shared/shared.module';
+import {SharedModule} from '../../../../shared/shared-module/shared.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {SearcherComponentService} from '../../../services/searcher-component.service';
 import {SearchServiceSpy} from '../../../services/searcher-component.service.spec';

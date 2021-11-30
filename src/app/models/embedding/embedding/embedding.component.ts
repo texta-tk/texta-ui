@@ -14,8 +14,8 @@ import {CreateEmbeddingDialogComponent} from './create-embedding-dialog/create-e
 import {LogService} from '../../../core/util/log.service';
 import {PhraseDialogComponent} from './phrase-dialog/phrase-dialog.component';
 import {SelectionModel} from '@angular/cdk/collections';
-import {QueryDialogComponent} from 'src/app/shared/components/dialogs/query-dialog/query-dialog.component';
-import {ConfirmDialogComponent} from 'src/app/shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {QueryDialogComponent} from 'src/app/shared/shared-module/components/dialogs/query-dialog/query-dialog.component';
+import {ConfirmDialogComponent} from 'src/app/shared/shared-module/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {expandRowAnimation} from '../../../shared/animations';
 import {EditEmbeddingDialogComponent} from './edit-embedding-dialog/edit-embedding-dialog.component';
 import {Index} from '../../../shared/types/Index';

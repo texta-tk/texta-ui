@@ -2,7 +2,7 @@ import { TestBed, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
 import {NavbarComponent} from './navbar/navbar.component';
-import {SharedModule} from './shared/shared.module';
+import {SharedModule} from './shared/shared-module/shared.module';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 
 describe('AppComponent', () => {

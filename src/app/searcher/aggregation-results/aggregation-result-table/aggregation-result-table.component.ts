@@ -4,7 +4,7 @@ import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatDialog} from '@angular/material/dialog';
-import {AddLexiconDialogComponent} from '../../../shared/components/dialogs/add-lexicon-dialog/add-lexicon-dialog.component';
+import {AddLexiconDialogComponent} from '../../../shared/shared-module/components/dialogs/add-lexicon-dialog/add-lexicon-dialog.component';
 import {SearcherComponentService} from '../../services/searcher-component.service';
 
 interface TableElement {

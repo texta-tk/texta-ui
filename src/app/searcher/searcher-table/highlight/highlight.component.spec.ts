@@ -1,7 +1,7 @@
 import {ComponentFixture, TestBed, waitForAsync} from '@angular/core/testing';
 
 import {HighlightComponent} from './highlight.component';
-import {SharedModule} from '../../../shared/shared.module';
+import {SharedModule} from '../../../shared/shared-module/shared.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {FactConstraint, FactTextInputGroup} from '../../searcher-sidebar/build-search/Constraints';
 import {HighlightSettings} from '../../../shared/SettingVars';

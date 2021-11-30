@@ -14,7 +14,7 @@ import {ActivatedRoute, CanDeactivate, NavigationStart, Router} from '@angular/r
 import {Embedding, EmbeddingPrediction} from '../../shared/types/tasks/Embedding';
 import {CanDeactivateComponent} from '../../core/guards/deactivate.guard';
 import {UtilityFunctions} from '../../shared/UtilityFunctions';
-import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {ConfirmDialogComponent} from '../../shared/shared-module/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 
 interface TextareaLexicon {

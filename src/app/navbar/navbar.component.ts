@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {UserStore} from '../core/users/user.store';
-import {LoginDialogComponent} from '../shared/components/dialogs/login/login-dialog.component';
+import {LoginDialogComponent} from '../shared/shared-module/components/dialogs/login/login-dialog.component';
 import {UserProfile} from '../shared/types/UserProfile';
 import {UserService} from '../core/users/user.service';
 import {LocalStorageService} from '../core/util/local-storage.service';
@@ -10,7 +10,7 @@ import {Project, ProjectIndex, ProjectResourceCounts} from '../shared/types/Proj
 import {FormControl} from '@angular/forms';
 import {ProjectStore} from '../core/projects/project.store';
 import {Subject} from 'rxjs';
-import {RegistrationDialogComponent} from '../shared/components/dialogs/registration/registration-dialog.component';
+import {RegistrationDialogComponent} from '../shared/shared-module/components/dialogs/registration/registration-dialog.component';
 import {LogService} from '../core/util/log.service';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {Router} from '@angular/router';

@@ -6,7 +6,7 @@
         <span>Current Search</span>
       </mat-panel-title>
       <mat-panel-description fxLayoutAlign="end start">
-        <button mat-icon-button class="flex-item-right panel-button" aria-label="view query" matTooltip="view query"
+        <button mat-icon-button class="flex-item-right panel-button" aria-label="view query" matTooltip="View searcher query"
                 (click)="openViewQueryDialog();$event.preventDefault();$event.stopPropagation()">
           <mat-icon>visibility</mat-icon>
         </button>
@@ -45,10 +45,14 @@
         <span> Aggregations </span>
       </mat-panel-title>
       <mat-panel-description fxLayoutAlign="end start">
+        <button mat-icon-button class="flex-item-right panel-button" aria-label="view query" matTooltip="View aggregation query"
+                (click)="openAggregationViewQueryDialog();$event.preventDefault();$event.stopPropagation()">
+          <mat-icon>visibility</mat-icon>
+        </button>
       </mat-panel-description>
     </mat-expansion-panel-header>
     <ng-template matExpansionPanelContent>
-      <app-aggregations></app-aggregations>
+      <app-aggregations (aggregationQueryChange)="aggregationElasticQuery = $event"></app-aggregations>
     </ng-template>
   </mat-expansion-panel>
   <div></div>

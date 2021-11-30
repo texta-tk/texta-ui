@@ -11,7 +11,7 @@ import {SelectionModel} from '@angular/cdk/collections';
 import {SimilarOptionsDialogComponent} from './similar-options-dialog/similar-options-dialog.component';
 import {Observable, of, Subject} from 'rxjs';
 import {switchMap, takeUntil} from 'rxjs/operators';
-import {ConfirmDialogComponent} from '../../../../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {ConfirmDialogComponent} from '../../../../../shared/shared-module/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {LocalStorageService} from '../../../../../core/util/local-storage.service';
 import {SignificantWordsWorker} from '../SignificantWordsWorker';
 import {ElasticSearchSourceResponse} from '../../../../../shared/types/Generic';
