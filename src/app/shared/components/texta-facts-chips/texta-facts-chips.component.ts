@@ -25,6 +25,7 @@ export class TextaFactsChipsComponent implements OnInit {
   factList: { factName: string, showing: boolean, factValues: { key: string, count: number }[], color: LegibleColor }[] = [];
   @Output() factValueClick = new EventEmitter<{ factName: string, factValue: string }>();
   @Output() factNameClick = new EventEmitter<string>();
+  @Input() factNameHover = 'add constraint';
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
               private ngZone: NgZone) {
