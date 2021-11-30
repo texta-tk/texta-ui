@@ -10,7 +10,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {LogService} from '../../core/util/log.service';
 import {debounceTime, startWith, switchMap, takeUntil} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
-import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {ConfirmDialogComponent} from '../../shared/shared-module/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {AnonymizerService} from './anonymizer.service';
 import {Index} from '../../shared/types/Index';
 import {Anonymizer} from './types/Anonymizer';

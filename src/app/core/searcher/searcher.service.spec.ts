@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { SearcherService } from './searcher.service';
 import {RouterTestingModule} from '@angular/router/testing';
-import {SharedModule} from '../../shared/shared.module';
+import {SharedModule} from '../../shared/shared-module/shared.module';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 
 describe('SearcherService', () => {

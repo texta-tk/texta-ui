@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {AggregationResultsDialogComponent} from './aggregation-results-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {RouterTestingModule} from '@angular/router/testing';
-import {SharedModule} from '../../../shared/shared.module';
+import {SharedModule} from '../../../shared/shared-module/shared.module';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {AggregationResultTableComponent} from '../aggregation-result-table/aggregation-result-table.component';

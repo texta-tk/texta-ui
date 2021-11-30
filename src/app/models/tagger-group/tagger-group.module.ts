@@ -7,7 +7,7 @@ import {TaggerGroupTagTextDialogComponent} from './tagger-group-tag-text-dialog/
 import {ModelsListDialogComponent} from './models-list-dialog/models-list-dialog.component';
 import {CreateTaggerGroupDialogComponent} from './create-tagger-group-dialog/create-tagger-group-dialog.component';
 import {TaggerGroupRoutingModule} from './tagger-group-routing.module';
-import {SharedModule} from '../../shared/shared.module';
+import {SharedModule} from '../../shared/shared-module/shared.module';
 import {ApplyToIndexDialogComponent} from './apply-to-index-dialog/apply-to-index-dialog.component';
 
 @NgModule({

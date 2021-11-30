@@ -1,5 +1,5 @@
 import {NgModule} from '@angular/core';
-import {SharedModule} from '../shared/shared.module';
+import {SharedModule} from '../shared/shared-module/shared.module';
 import {SearcherRoutingModule} from './searcher-routing.module';
 import {TextConstraintsComponent} from './searcher-sidebar/build-search/advanced-search/text-constraints/text-constraints.component';
 import {DateConstraintsComponent} from './searcher-sidebar/build-search/advanced-search/date-constraints/date-constraints.component';
@@ -27,13 +27,12 @@ import {AggregationResultFactsComponent} from './aggregation-results/aggregation
 import {GraphSelectedPortalComponent} from './aggregation-results/aggregation-results-chart/graph-selected-portal/graph-selected-portal.component';
 import {EditSavedSearchDialogComponent} from './searcher-sidebar/saved-searches/edit-saved-search-dialog/edit-saved-search-dialog.component';
 import {SearcherComponentService} from './services/searcher-component.service';
-import {PlotlyViaWindowModule} from 'angular-plotly.js';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import { BooleanConstraintsComponent } from './searcher-sidebar/build-search/advanced-search/boolean-constraints/boolean-constraints.component';
 import { ExportSearchDialogComponent } from './searcher-table/export-search-dialog/export-search-dialog.component';
-import { PlotDownloadDialogComponent } from './aggregation-results/aggregation-results-chart/plot-download-dialog/plot-download-dialog.component';
 import { NumberAggregationComponent } from './searcher-sidebar/aggregations/number-aggregation/number-aggregation.component';
 import { AggregationResultsNumberComponent } from './aggregation-results/aggregation-results-number/aggregation-results-number.component';
+import {AppPlotlyModule} from '../shared/plotly-module/app-plotly.module';
 
 @NgModule({
   declarations: [
@@ -63,13 +62,12 @@ import { AggregationResultsNumberComponent } from './aggregation-results/aggrega
     EditSavedSearchDialogComponent,
     BooleanConstraintsComponent,
     ExportSearchDialogComponent,
-    PlotDownloadDialogComponent,
     NumberAggregationComponent,
     AggregationResultsNumberComponent,
   ],
   imports: [
     SharedModule,
-    PlotlyViaWindowModule,
+    AppPlotlyModule,
     SearcherRoutingModule,
     DragDropModule
   ],

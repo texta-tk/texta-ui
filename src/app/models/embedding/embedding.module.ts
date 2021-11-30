@@ -1,5 +1,5 @@
 import {NgModule} from '@angular/core';
-import {SharedModule} from '../../shared/shared.module';
+import {SharedModule} from '../../shared/shared-module/shared.module';
 import {EmbeddingComponent} from './embedding/embedding.component';
 import {CreateEmbeddingDialogComponent} from './embedding/create-embedding-dialog/create-embedding-dialog.component';
 import {EmbeddingRoutingModule} from './embedding-routing.module';

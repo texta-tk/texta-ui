@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {CreateProjectDialogComponent} from './create-project-dialog.component';
 import {MatDialogRef} from '@angular/material/dialog';
-import {SharedModule} from '../../shared/shared.module';
+import {SharedModule} from '../../shared/shared-module/shared.module';
 import {RouterTestingModule} from '@angular/router/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {HttpClientTestingModule} from '@angular/common/http/testing';

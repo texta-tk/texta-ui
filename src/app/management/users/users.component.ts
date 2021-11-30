@@ -13,7 +13,7 @@ import {Router} from '@angular/router';
 import {UserStore} from '../../core/users/user.store';
 import {takeUntil} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
-import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {ConfirmDialogComponent} from '../../shared/shared-module/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {AppConfigService} from "../../core/util/app-config.service";
 
 @Component({

@@ -8,7 +8,7 @@ import {LogService} from '../../core/util/log.service';
 import {MatDialog} from '@angular/material/dialog';
 import {debounceTime, distinctUntilChanged, takeUntil} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
-import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {ConfirmDialogComponent} from '../../shared/shared-module/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {Index} from '../../shared/types/Index';
 import {CoreService} from '../../core/core.service';
 import {SelectionModel} from '@angular/cdk/collections';

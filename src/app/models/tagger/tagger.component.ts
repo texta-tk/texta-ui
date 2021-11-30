@@ -17,8 +17,8 @@ import {TagTextDialogComponent} from './tag-text-dialog/tag-text-dialog.componen
 import {TagDocDialogComponent} from './tag-doc-dialog/tag-doc-dialog.component';
 import {TagRandomDocDialogComponent} from './tag-random-doc-dialog/tag-random-doc-dialog.component';
 import {SelectionModel} from '@angular/cdk/collections';
-import {QueryDialogComponent} from 'src/app/shared/components/dialogs/query-dialog/query-dialog.component';
-import {ConfirmDialogComponent} from 'src/app/shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {QueryDialogComponent} from 'src/app/shared/shared-module/components/dialogs/query-dialog/query-dialog.component';
+import {ConfirmDialogComponent} from 'src/app/shared/shared-module/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {ListFeaturesDialogComponent} from './list-features-dialog/list-features-dialog.component';
 import {expandRowAnimation} from '../../shared/animations';
 import {EditTaggerDialogComponent} from './edit-tagger-dialog/edit-tagger-dialog.component';

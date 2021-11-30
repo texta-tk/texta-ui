@@ -5,7 +5,7 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatDialogRef} from '@angular/material/dialog';
-import {SharedModule} from '../../../shared/shared.module';
+import {SharedModule} from '../../../shared/shared-module/shared.module';
 
 describe('CreateLangDetectDialogComponent', () => {
   let component: CreateLangDetectDialogComponent;

@@ -4,7 +4,7 @@ import {ExportSearchDialogComponent} from './export-search-dialog.component';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {SearcherComponentService} from "../../services/searcher-component.service";
 import {SearchServiceSpy} from "../../services/searcher-component.service.spec";
-import {SharedModule} from "../../../shared/shared.module";
+import {SharedModule} from "../../../shared/shared-module/shared.module";
 import {HttpClientTestingModule} from "@angular/common/http/testing";
 import {RouterTestingModule} from "@angular/router/testing";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";

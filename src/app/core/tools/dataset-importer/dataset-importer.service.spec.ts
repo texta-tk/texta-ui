@@ -1,7 +1,7 @@
 import {TestBed} from '@angular/core/testing';
 
 import {DatasetImporterService} from './dataset-importer.service';
-import {SharedModule} from '../../../shared/shared.module';
+import {SharedModule} from '../../../shared/shared-module/shared.module';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 
 describe('DatasetImporterService', () => {

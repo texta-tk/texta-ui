@@ -12,14 +12,14 @@ import {take, takeUntil} from 'rxjs/operators';
 import {SaveSearchDialogComponent} from './dialogs/save-search-dialog/save-search-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {SavedSearchesComponent} from './saved-searches/saved-searches.component';
-import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {ConfirmDialogComponent} from '../../shared/shared-module/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {SearcherService} from '../../core/searcher/searcher.service';
 import {Project, ProjectState} from '../../shared/types/Project';
 import {ProjectStore} from '../../core/projects/project.store';
 import {LogService} from '../../core/util/log.service';
 import {SearcherComponentService} from '../services/searcher-component.service';
 import {SavedSearch} from '../../shared/types/SavedSearch';
-import {GenericDialogComponent} from '../../shared/components/dialogs/generic-dialog/generic-dialog.component';
+import {GenericDialogComponent} from '../../shared/shared-module/components/dialogs/generic-dialog/generic-dialog.component';
 import {LocalStorageService} from '../../core/util/local-storage.service';
 
 @Component({

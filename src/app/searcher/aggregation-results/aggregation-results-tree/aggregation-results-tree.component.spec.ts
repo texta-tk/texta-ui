@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {AggregationResultsTreeComponent} from './aggregation-results-tree.component';
 import {RouterTestingModule} from '@angular/router/testing';
-import {SharedModule} from '../../../shared/shared.module';
+import {SharedModule} from '../../../shared/shared-module/shared.module';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {DatePipe} from '@angular/common';

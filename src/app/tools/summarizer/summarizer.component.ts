@@ -11,12 +11,12 @@ import {CreateSummarizerDialogComponent} from './create-summarizer-dialog/create
 import {ProjectStore} from '../../core/projects/project.store';
 import {SummarizerService} from '../../core/tools/summarizer/summarizer.service';
 import {Project} from '../../shared/types/Project';
-import {ConfirmDialogComponent} from '../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {ConfirmDialogComponent} from '../../shared/shared-module/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {Summarizer} from '../../shared/types/tasks/Summarizer';
 import {expandRowAnimation} from '../../shared/animations';
 import {LogService} from '../../core/util/log.service';
 import {Index} from '../../shared/types/Index';
-import {QueryDialogComponent} from '../../shared/components/dialogs/query-dialog/query-dialog.component';
+import {QueryDialogComponent} from '../../shared/shared-module/components/dialogs/query-dialog/query-dialog.component';
 import {ApplySummarizerDialogComponent} from './apply-summarizer-dialog/apply-summarizer-dialog.component';
 
 @Component({

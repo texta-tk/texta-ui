@@ -1,7 +1,7 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {ApplyToIndexDialogComponent} from './apply-to-index-dialog.component';
-import {SharedModule} from '../../../shared/shared.module';
+import {SharedModule} from '../../../shared/shared-module/shared.module';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';

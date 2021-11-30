@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {ElasticsearchQuery, NumberConstraint} from '../../Constraints';
 import {FormControl} from '@angular/forms';
-import {FromToInput, FromToInputComponent} from '../../../../../shared/components/from-to-input/from-to-input.component';
+import {FromToInput, FromToInputComponent} from '../../../../../shared/shared-module/components/from-to-input/from-to-input.component';
 import {Subject} from 'rxjs';
 import {startWith, takeUntil} from 'rxjs/operators';
 

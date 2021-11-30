@@ -5,7 +5,7 @@ import {catchError, tap} from 'rxjs/operators';
 import {environment} from '../../../../../environments/environment';
 import {LogService} from '../../../util/log.service';
 import {ResultsWrapper} from '../../../../shared/types/Generic';
-import {BertTagger} from '../../../../shared/types/tasks/BertTagger';
+import {BertEpochReport, BertTagger} from '../../../../shared/types/tasks/BertTagger';
 import {AppConfigService} from '../../../util/app-config.service';
 
 @Injectable({
@@ -46,11 +46,11 @@ export class BertTaggerService {
       catchError(this.logService.handleError<unknown>('tagText')));
   }
 
-  bertEpochReport(projectId: number, taggerId: number): Observable<unknown | HttpErrorResponse> {
-    return this.http.get<unknown>(
+  bertEpochReport(projectId: number, taggerId: number): Observable<BertEpochReport[] | HttpErrorResponse> {
+    return this.http.get<BertEpochReport[]>(
       `${this.apiUrl}/projects/${projectId}/bert_taggers/${taggerId}/epoch_reports/`,
     ).pipe(tap(e => this.logService.logStatus(e, 'bertEpochReport')),
-      catchError(this.logService.handleError<unknown>('bertEpochReport')));
+      catchError(this.logService.handleError<BertEpochReport[]>('bertEpochReport')));
   }
 
   createBertTaggerTask(projectId: number, body: unknown): Observable<BertTagger | HttpErrorResponse> {

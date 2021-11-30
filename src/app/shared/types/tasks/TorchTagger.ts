@@ -30,3 +30,13 @@ export class TorchTagger {
   balance_to_max_limit: boolean;
   use_sentence_shuffle: boolean;
 }
+
+export interface TorchTaggerEpoch {
+  accuracy: number;
+  area_under_curve: number;
+  f1_score: number;
+  precision: number;
+  recall: number;
+  training_loss: number;
+  val_loss: number;
+}

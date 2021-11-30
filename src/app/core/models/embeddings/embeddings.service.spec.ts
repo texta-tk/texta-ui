@@ -1,7 +1,7 @@
 import {TestBed} from '@angular/core/testing';
 
 import {EmbeddingsService} from './embeddings.service';
-import {SharedModule} from '../../../shared/shared.module';
+import {SharedModule} from '../../../shared/shared-module/shared.module';
 import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 
