@@ -247,7 +247,10 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
       ...formData.maxBalanceFormControl ? {balance_to_max_limit: formData.maxBalanceFormControl} : {},
       ...(formData.posLabelFormControl && formData.factNameFormControl.values.length === 2) ?
         {pos_label: formData.posLabelFormControl} : {},
-      ...formData.checkPointModelFormControl ? {checkpoint_model: formData.checkPointModelFormControl.id} : {},
+      ...formData.checkPointModelFormControl ? {
+        checkpoint_model: formData.checkPointModelFormControl.id,
+        bert_model: formData.checkPointModelFormControl.bert_model
+      } : {},
       ...this.query ? {query: this.query} : {},
     };
     this.bertTaggerService.createBertTaggerTask(this.currentProject.id, body).subscribe(resp => {

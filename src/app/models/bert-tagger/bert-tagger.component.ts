@@ -163,7 +163,7 @@ export class BertTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onDelete(tagger: BertTagger, index: number): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: {confirmText: 'Delete', mainText: 'Are you sure you want to delete this Tagger?'}
+      data: {confirmText: 'Delete', mainText: 'Are you sure you want to delete this task?'}
     });
 
     dialogRef.afterClosed().subscribe(result => {
