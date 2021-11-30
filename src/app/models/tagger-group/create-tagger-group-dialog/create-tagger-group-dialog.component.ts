@@ -25,8 +25,7 @@ import {CoreService} from '../../../core/core.service';
   styleUrls: ['./create-tagger-group-dialog.component.scss']
 })
 export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, AfterViewInit {
-  defaultQuery = '{"query": {"match_all": {}}}';
-  query = this.defaultQuery;
+
 
   taggerGroupForm = new FormGroup({
     descriptionFormControl: new FormControl('', [
@@ -196,9 +195,6 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
     }
   }
 
-  onQueryChanged(query: string): void {
-    this.query = query ? query : this.defaultQuery;
-  }
 
   onSubmit(): void {
     const formData = this.taggerGroupForm.value;
@@ -217,7 +213,6 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
       ...formData?.taggerForm?.balanceFormControl ? {balance: formData.taggerForm.balanceFormControl} : {},
       ...formData?.taggerForm?.maxBalanceFormControl ? {balance_to_max_limit: formData.taggerForm.maxBalanceFormControl} : {},
       stop_words: formData?.taggerForm?.stopWordsFormControl.split('\n').filter((x: string) => !!x),
-      ...this.query ? {query: this.query} : {},
     };
 
     const body = {
