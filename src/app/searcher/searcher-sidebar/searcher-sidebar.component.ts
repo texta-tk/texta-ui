@@ -30,6 +30,7 @@ import {LocalStorageService} from '../../core/util/local-storage.service';
 })
 export class SearcherSidebarComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject();
+  aggregationElasticQuery = {};
   buildSearchExpanded = false;
   savedSearchesExpanded = false;
   aggregationsExpanded = false;
@@ -161,4 +162,13 @@ export class SearcherSidebarComponent implements OnInit, OnDestroy {
     }
   }
 
+  openAggregationViewQueryDialog(): void {
+    this.dialog.open(GenericDialogComponent, {
+      data: {
+        data: {query: this.aggregationElasticQuery}
+      },
+      maxHeight: '90vh',
+      maxWidth: '90vw'
+    });
+  }
 }

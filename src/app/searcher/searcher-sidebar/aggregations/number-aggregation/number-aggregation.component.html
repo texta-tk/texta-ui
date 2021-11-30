@@ -5,9 +5,9 @@
                 data-cy="appSearcherSidebarAggregationsNumberAggregationType"
                 [(ngModel)]="aggregationType"
                 name="aggregationNumberType" (selectionChange)="updateAggregations()">
-      <mat-option value="percentiles" selected>Percentiles</mat-option>
+      <mat-option value="extended_stats" selected>Extended stats</mat-option>
+      <mat-option value="percentiles" >Percentiles</mat-option>
 <!--      <mat-option value="boxplot">Boxplot</mat-option>-->
-      <mat-option value="extended_stats">Extended stats</mat-option>
     </mat-select>
   </mat-form-field>
 </div>

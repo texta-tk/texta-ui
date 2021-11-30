@@ -13,7 +13,7 @@ export class NumberAggregationComponent implements OnInit {
   @Input() aggregationObj: { aggregation: any };
   @Input() fieldsFormControl: FormControl;
   isMainAgg: boolean;
-  aggregationType: 'percentiles' | 'extended_stats' | 'boxplot' = 'percentiles';
+  aggregationType: 'percentiles' | 'extended_stats' | 'boxplot' = 'extended_stats';
   aggregationSize = 20;
   destroy$: Subject<boolean> = new Subject();
 

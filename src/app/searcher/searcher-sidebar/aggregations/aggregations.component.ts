@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
 import {pairwise, takeUntil} from 'rxjs/operators';
 import {Field, Project, ProjectIndex} from '../../../shared/types/Project';
 import {ProjectStore} from '../../../core/projects/project.store';
@@ -36,6 +36,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
   dateAlreadySelected = false;
   dateRelativeFrequency = false;
   fieldIndexMap: Map<string, string[]> = new Map<string, string[]>();
+  @Output() aggregationQueryChange = new EventEmitter<any>();
 
   constructor(private projectStore: ProjectStore,
               private searcherService: SearcherService,
@@ -144,6 +145,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
 
 
     this.searchService.setIsLoading(true);
+    this.aggregationQueryChange.next(body.query);
     // need 2 seperate requests to calculate relative frequency
     forkJoin({
       globalAgg: this.dateRelativeFrequency ? this.searcherService.search(this.searchQueryIncluded ?
@@ -168,7 +170,11 @@ export class AggregationsComponent implements OnInit, OnDestroy {
         }, this.currentProject.id) : of(null),
       agg: this.searcherService.search(body, this.currentProject.id)
     }).subscribe(resp => {
-      const aggResp = {globalAgg: {}, agg: {}, aggregationForm: this.aggregationList.map(x => x.formControl.value.path)};
+      const aggResp = {
+        globalAgg: {},
+        agg: {},
+        aggregationForm: this.aggregationList.map(x => x.formControl.value.path)
+      };
       if (resp.agg && !(resp.agg instanceof HttpErrorResponse)) {
         aggResp.agg = resp.agg;
       } else if (resp.agg instanceof HttpErrorResponse) {
