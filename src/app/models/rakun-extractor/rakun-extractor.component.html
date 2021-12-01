@@ -126,7 +126,7 @@
             <div class="flex-col m-l-r-5" fxFlex="50">
               <table class="simple-table">
                 <tr *ngIf="element.fasttext_embedding">
-                  <th class="mat-body-strong">FastText embedding</th>
+                  <th class="mat-body-strong">FastText embedding id</th>
                   <td>{{element.fasttext_embedding}}</td>
                 </tr>
                 <tr>
@@ -194,6 +194,9 @@
       </button>
     <button (click)="editStopwordsDialog(element)" data-cy="appRakunExtractorMenuStopWords" mat-menu-item>
       Stop words
+    </button>
+    <button (click)="editRakun(element)" data-cy="appRakunExtractorMenuEdit" mat-menu-item>
+      Edit
     </button>
     <button (click)="duplicateRakun(element)" data-cy="appRakunExtractorMenuRetrain" mat-menu-item>
       Duplicate

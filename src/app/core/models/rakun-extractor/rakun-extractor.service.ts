@@ -115,4 +115,10 @@ export class RakunExtractorService {
       tap(e => this.logService.logStatus(e, 'getStopWordsOptions')),
       catchError(this.logService.handleError('getStopWordsOptions')));
   }
+
+  patchRakunExtractor(projectId: number, rakunId: number, body: unknown): Observable<RakunExtractor | HttpErrorResponse> {
+    return this.http.patch<RakunExtractor>(`${this.apiUrl}/projects/${projectId}/rakun_extractors/${rakunId}/`, body).pipe(
+      tap(e => this.logService.logStatus(e, 'patchRakunExtractor')),
+      catchError(this.logService.handleError<RakunExtractor>('patchRakunExtractor')));
+  }
 }
