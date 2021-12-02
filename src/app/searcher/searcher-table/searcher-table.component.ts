@@ -27,6 +27,7 @@ import {ProjectService} from '../../core/projects/project.service';
 import {UtilityFunctions} from '../../shared/UtilityFunctions';
 import {ExportSearchDialogComponent} from "./export-search-dialog/export-search-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
+import {FactsFilterDialogComponent} from "./facts-filter-dialog/facts-filter-dialog.component";
 
 @Component({
   selector: 'app-searcher-table',
@@ -39,6 +40,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
   totalCountLength: number; // paginator max length with label
   // tslint:disable-next-line:no-any
   public tableData: MatTableDataSource<any> = new MatTableDataSource();
+  public displayedFacts: string[] | undefined = undefined;
   public displayedColumns: Field[] = [];
   public columnsToDisplay: string[] = [];
   public columnFormControl = new FormControl([]);
@@ -104,13 +106,12 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
       if (resp && resp.searchOptions) {
         this.searchOptions = resp.searchOptions;
         if (this.searchOptions.onlyShowMatchingColumns) {
-          const highlights = resp.searchContent.results.map(x => x.highlight).flat();
           const columnsToHighlight: string[] = [];
-          highlights.forEach(x => {
+          resp.searchContent.results.forEach(doc => {
             // tslint:disable-next-line:no-any
-            for (const col in x as any) {
+            for (const col in doc.highlight as any) {
               // tslint:disable-next-line:no-any
-              if ((x as any).hasOwnProperty(col)) {
+              if ((doc.highlight as any).hasOwnProperty(col)) {
                 columnsToHighlight.push(col);
               }
             }
@@ -284,4 +285,19 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     this.columnFormControl.setValue(this.columnsToDisplay);
   }
 
+  filterTextaFactsCol(): void {
+    this.dialog.open(FactsFilterDialogComponent, {
+      data: {
+        selectedFacts: this.displayedFacts,
+        currentProjectId: this.currentProject.id
+      },
+      maxHeight: '500px',
+      width: '450px'
+    }).afterClosed().subscribe(resp => {
+      if (resp) {
+        this.displayedFacts = resp;
+        console.log(this.displayedFacts);
+      }
+    });
+  }
 }

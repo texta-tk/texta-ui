@@ -31,8 +31,13 @@ export class TextaFactsChipsComponent implements OnInit {
               private ngZone: NgZone) {
   }
 
-  @Input() set facts(facts: HighlightSpan[]) {
+  @Input() set facts(data: { facts: HighlightSpan[], displayedFacts?: string[] }) {
     this.ngZone.runOutsideAngular(() => {
+      let facts = data.facts;
+      this.factList = [];
+      if (data.displayedFacts) {
+        facts = facts.filter(x => data.displayedFacts?.includes(x.fact));
+      }
       this.buildChipList(facts, () => this.ngZone.run(() => this.changeDetectorRef.markForCheck()));
     });
   }

@@ -55,7 +55,7 @@
         <td *matCellDef="let row" mat-cell>
           <ng-container *ngIf="(row._source[column] | isObject)"><!--pure pipe does memoization for us-->
             <ng-container *ngIf="column === 'texta_facts'">
-              <app-texta-facts-chips [facts]="row._source[column]" style="min-width: 200px"></app-texta-facts-chips>
+              <app-texta-facts-chips [facts]="{facts: row._source[column]}" style="min-width: 200px"></app-texta-facts-chips>
             </ng-container>
             <pre *ngIf="column !== 'texta_facts'">
                  {{row._source[column] | json}}
