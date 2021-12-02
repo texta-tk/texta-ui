@@ -1,0 +1,125 @@
+<h1 mat-dialog-title>Edit Rakun Extractor</h1>
+<mat-dialog-content>
+  <form (ngSubmit)="onSubmit(rakunExtractorForm.value)" [formGroup]="rakunExtractorForm" id="rakunExtractorForm" class="flex-col">
+    <mat-form-field data-cy="appRakunExtractorEditDialogDesc">
+      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
+             placeholder="Description" required>
+
+      <mat-error *ngIf="rakunExtractorForm.get('descriptionFormControl')?.hasError('required')">
+        Description is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Distance method</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="distanceMethodFormControl"
+                  panelClass="select-panel-reveal-input">
+        <mat-option *ngFor="let item of distanceMethods" [value]="item">
+          {{item ? item.display_name : 'None'}}
+        </mat-option>
+      </mat-select>
+      <mat-hint>{{rakunOptions?.actions?.POST?.distance_method?.help_text || ''}}</mat-hint>
+      <mat-error *ngIf="rakunExtractorForm.get('distanceMethodFormControl')?.hasError('noEmbeddings')">
+        fastText embedding missing from current project
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="fastTextEmbeddings.length > 0 && this.rakunExtractorForm?.get('distanceMethodFormControl')?.value?.value === 'fasttext'">
+      <mat-label>FastText Embedding</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="embeddingFormControl"
+                  panelClass="select-panel-reveal-input">
+        <mat-option *ngFor="let item of fastTextEmbeddings" [value]="item">
+          {{item.description}}
+        </mat-option>
+      </mat-select>
+      <mat-hint>{{rakunOptions?.actions?.POST?.fasttext_embedding?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input formControlName="numberOfKeywordsFormControl" matInput pattern="[1-9]\d*"
+             placeholder="Num keywords" step="1" min="0"
+             type="number">
+      <mat-hint>{{rakunOptions?.actions?.POST?.num_keywords?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input formControlName="maxOccurrenceFormControl" matInput pattern="[1-9]\d*"
+             placeholder="Max occurrence" step="1" min="0"
+             type="number">
+      <mat-hint>{{rakunOptions?.actions?.POST?.max_occurrence?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+    <div fxLayout="row" fxLayoutGap="24px">
+      <mat-form-field fxFlex="calc(50%-24px)">
+        <input formControlName="minTokensFormControl" matInput pattern="[1-9]\d*"
+               placeholder="Min tokens" step="1" min="1" max="3"
+               type="number">
+        <mat-hint>{{rakunOptions?.actions?.POST?.min_tokens?.help_text || ''}}</mat-hint>
+        <mat-error *ngIf="rakunExtractorForm.get('minTokensFormControl')?.hasError('min')">
+          Number must be between <strong>0 and 3</strong>
+        </mat-error>
+        <mat-error *ngIf="rakunExtractorForm.get('minTokensFormControl')?.hasError('max')">
+          Number must be between <strong>0 and 3</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field fxFlex="calc(50%-24px)">
+        <input formControlName="maxTokensFormControl" matInput pattern="[1-9]\d*"
+               placeholder="Max tokens" step="1" min="1" max="3"
+               type="number">
+        <mat-hint>{{rakunOptions?.actions?.POST?.max_tokens?.help_text || ''}}</mat-hint>
+        <mat-error *ngIf="rakunExtractorForm.get('maxTokensFormControl')?.hasError('min')">
+          Number must be between <strong>0 and 3</strong>
+        </mat-error>
+        <mat-error *ngIf="rakunExtractorForm.get('maxTokensFormControl')?.hasError('max')">
+          Number must be between <strong>0 and 3</strong>
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!--advanced -->
+    <mat-expansion-panel expanded="false">
+      <mat-expansion-panel-header>
+        <h3>Advanced settings</h3>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
+        <div fxLayout="column">
+          <mat-form-field class="advanced-setting">
+            <input formControlName="maxSimilarFormControl" matInput pattern="[1-9]\d*"
+                   placeholder="Max similar" step="1" min="0"
+                   type="number">
+            <mat-hint>{{rakunOptions?.actions?.POST?.max_similar?.help_text || ''}}</mat-hint>
+          </mat-form-field>
+          <mat-form-field style="margin-top: 12px" class="advanced-setting">
+            <input formControlName="distanceThresholdFormControl" matInput pattern="([0-9]*|[0-9]*[.]?)\d*"
+                   placeholder="Distance threshold" [step]="this.rakunExtractorForm?.get('distanceMethodFormControl')?.value?.value === 'fasttext' ? 0.1 : 1" min="0" [max]="this.rakunExtractorForm?.get('distanceMethodFormControl')?.value?.value === 'fasttext' ? 1 : 9999"
+                   type="number">
+            <mat-hint>{{rakunOptions?.actions?.POST?.distance_threshold?.help_text || ''}}</mat-hint>
+          </mat-form-field>
+          <mat-form-field class="advanced-setting">
+            <input formControlName="bigramCountThresholdFormControl" matInput pattern="[1-9]\d*"
+                   placeholder="Bigram count threshold" step="1" min="0"
+                   type="number">
+            <mat-hint>{{rakunOptions?.actions?.POST?.bigram_count_threshold?.help_text || ''}}</mat-hint>
+          </mat-form-field>
+          <mat-form-field  class="advanced-setting">
+            <input formControlName="pairDiffLengthFormControl" matInput pattern="[1-9]\d*"
+                   placeholder="Pair diff length" step="1" min="0"
+                   type="number">
+            <mat-hint>{{rakunOptions?.actions?.POST?.pair_diff_length?.help_text || ''}}</mat-hint>
+          </mat-form-field>
+        </div>
+      </ng-template>
+    </mat-expansion-panel>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <div class="flex-row max-width">
+    <div class="flex-item-left">
+      <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
+    </div>
+    <div class="flex-item-right">
+      <button [disabled]="!rakunExtractorForm.valid" form="rakunExtractorForm" data-cy="appRakunExtractorEditDialogSubmit" mat-button
+              type="submit">
+        Edit
+      </button>
+    </div>
+  </div>
+</mat-dialog-actions>

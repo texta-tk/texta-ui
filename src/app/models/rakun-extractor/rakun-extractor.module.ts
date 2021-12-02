@@ -7,6 +7,7 @@ import { ApplyToIndexDialogComponent } from './apply-to-index-dialog/apply-to-in
 import { ExtractFromTextDialogComponent } from './extract-from-text-dialog/extract-from-text-dialog.component';
 import { ExtractFromRandomDocDialogComponent } from './extract-from-random-doc-dialog/extract-from-random-doc-dialog.component';
 import { EditStopwordsDialogComponent } from './edit-stopwords-dialog/edit-stopwords-dialog.component';
+import { EditRakunExtractorDialogComponent } from './edit-rakun-extractor-dialog/edit-rakun-extractor-dialog.component';
 
 @NgModule({
     imports: [
@@ -19,7 +20,8 @@ import { EditStopwordsDialogComponent } from './edit-stopwords-dialog/edit-stopw
     ApplyToIndexDialogComponent,
     ExtractFromTextDialogComponent,
     ExtractFromRandomDocDialogComponent,
-    EditStopwordsDialogComponent
+    EditStopwordsDialogComponent,
+    EditRakunExtractorDialogComponent
     ],
     providers: [],
  })

@@ -1,0 +1,25 @@
+<h1 mat-dialog-title>Edit fact name visibility</h1>
+
+<mat-dialog-content>
+  <mat-form-field class="max-width">
+    <mat-label>Fact name</mat-label>
+    <mat-select [disableOptionCentering]="true" [(ngModel)]="displayedFacts"
+                multiple panelClass="select-panel-reveal-input">
+      <app-mat-option-select-all></app-mat-option-select-all>
+      <mat-option *ngFor="let fact of (projectFacts | async)" [value]="fact">
+        {{fact}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+</mat-dialog-content>
+<mat-dialog-actions fxLayout="row">
+  <div class="flex-item-left">
+    <button type="button" class="flex-item-left" mat-button mat-dialog-close="">Close</button>
+  </div>
+
+  <div class="flex-item-right">
+    <button mat-button data-cy="appSearcherExportResultsDialogSubmit" [mat-dialog-close]="displayedFacts">Apply
+    </button>
+  </div>
+</mat-dialog-actions>

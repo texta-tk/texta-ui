@@ -52,7 +52,7 @@
           </ng-container>
           <ng-container *ngIf="field === 'texta_facts'">
             <app-texta-facts-chips factNameHover=""
-              [facts]="result.document['texta_facts']"></app-texta-facts-chips>
+              [facts]="{facts: result.document['texta_facts']}"></app-texta-facts-chips>
           </ng-container>
         </ng-template>
       </mat-expansion-panel>

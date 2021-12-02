@@ -10,10 +10,12 @@
         <mat-label>Toggle Columns</mat-label>
         <app-project-field-select
           (openedChange)="onFieldSelectionChange($event)" data-cy="appSearcherTableColumnSelect"
-          [formControl]="columnFormControl" [multiple]="true" [projectFields]="projectFields"></app-project-field-select>
+          [formControl]="columnFormControl" [multiple]="true"
+          [projectFields]="projectFields"></app-project-field-select>
       </mat-form-field>
       <button (click)="drawerToggle.emit(true)" mat-stroked-button>Toggle drawer</button>
-      <button (click)="exportSearch()" data-cy="appSearcherTableExport" mat-stroked-button style="margin-left: 5px" [disabled]="!this.currentElasticQuery">
+      <button (click)="exportSearch()" data-cy="appSearcherTableExport" mat-stroked-button style="margin-left: 5px"
+              [disabled]="!this.currentElasticQuery">
         Export results
       </button>
       <mat-paginator (page)="pageChange($event)" [length]="paginatorLength" [pageSizeOptions]="[10, 20, 50]"
@@ -27,15 +29,25 @@
     <table [dataSource]="tableData" [trackBy]="trackByTableData" class="readable-table" mat-table matSort>
 
       <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column.path">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header><span [title]="column.path"
-                                                                    class="column-header-text">{{column.path}}</span>
-        </th>
+        <!--HEADER-->
+        <ng-container *ngIf="column.path !== 'texta_facts'">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header><span [title]="column.path"
+                                                                      class="column-header-text">{{column.path}}</span>
+          </th>
+        </ng-container>
+        <ng-container *ngIf="column.path === 'texta_facts'">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header><span [title]="column.path"
+                                                                      class="column-header-text">{{column.path}}
+            </span><button matTooltip="Filter fact names" mat-icon-button (click)="filterTextaFactsCol();$event.stopPropagation();"><mat-icon>visibility</mat-icon></button>
+          </th>
+        </ng-container>
+        <!--ROWS-->
         <td *matCellDef="let row" mat-cell>
           <ng-container *ngIf="(row.doc[column.path] | isObject)"><!--pure pipe does memoization for us-->
             <ng-container *ngIf="column.path === 'texta_facts'">
               <app-texta-facts-chips (factNameClick)="buildFactNameSearch($event)"
                                      (factValueClick)="buildFactValSearch($event)"
-                                     [facts]="row.doc[column.path]"></app-texta-facts-chips>
+                                     [facts]="{facts: row.doc[column.path], displayedFacts: displayedFacts}"></app-texta-facts-chips>
             </ng-container>
             <pre *ngIf="column.path !== 'texta_facts'">
                  {{row.doc[column.path] | json}}
