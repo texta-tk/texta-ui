@@ -66,7 +66,7 @@ export class ProjectStore {
       if (resp?.resourceCounts && !(resp.resourceCounts instanceof HttpErrorResponse)) {
         this.selectedProjectResourceCounts$.next(resp.resourceCounts);
       }
-      UtilityFunctions.logForkJoinErrors(resp, HttpErrorResponse, this.logService.snackBarError);
+      UtilityFunctions.logForkJoinErrors(resp, HttpErrorResponse, this.logService.snackBarError.bind(this.logService));
     });
   }
 

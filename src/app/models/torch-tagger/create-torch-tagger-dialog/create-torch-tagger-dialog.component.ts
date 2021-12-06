@@ -172,7 +172,7 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
             fieldsForm?.setValue(this.data.cloneElement.fields);
           }
         }
-        UtilityFunctions.logForkJoinErrors(resp, HttpErrorResponse, this.logService.snackBarError);
+        UtilityFunctions.logForkJoinErrors(resp, HttpErrorResponse, this.logService.snackBarError.bind(this.logService));
       }
     });
 

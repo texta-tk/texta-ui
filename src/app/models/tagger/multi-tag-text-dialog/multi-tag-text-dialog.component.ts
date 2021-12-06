@@ -78,7 +78,7 @@ export class MultiTagTextDialogComponent implements OnInit, OnDestroy {
         this.taggerOptions = resp;
       }
 
-      UtilityFunctions.logForkJoinErrors(resp, HttpErrorResponse, this.logService.snackBarError);
+      UtilityFunctions.logForkJoinErrors(resp, HttpErrorResponse, this.logService.snackBarError.bind(this.logService));
     });
   }
   fetchFn(pageNr: number, pageSize: number,

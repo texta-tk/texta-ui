@@ -113,7 +113,7 @@ export class CreateRakunExtractorDialogComponent implements OnInit, OnDestroy {
         this.fastTextEmbeddings = resp.embeddings.results.filter(x => x.embedding_type === 'FastTextEmbedding');
         this.rakunExtractorForm.get('embeddingFormControl')?.setValue(this.fastTextEmbeddings[0]);
       }
-      UtilityFunctions.logForkJoinErrors(resp, HttpErrorResponse, this.logService.snackBarError);
+      UtilityFunctions.logForkJoinErrors(resp, HttpErrorResponse, this.logService.snackBarError.bind(this.logService));
     });
   }
 

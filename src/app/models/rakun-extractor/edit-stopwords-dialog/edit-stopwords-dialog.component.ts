@@ -17,6 +17,7 @@ export class EditStopwordsDialogComponent  implements OnInit, OnDestroy {
   destroyed$ = new Subject<boolean>();
   // tslint:disable-next-line:no-any
   stopwordsOptions: any;
+  overWriteExisting = true;
 
   constructor(private dialogRef: MatDialogRef<EditStopwordsDialogComponent>,
               @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, rakunId: number; },
@@ -51,6 +52,7 @@ export class EditStopwordsDialogComponent  implements OnInit, OnDestroy {
     this.rakunExtractorService.postStopWords(this.data.currentProjectId, this.data.rakunId,
       {
         stopwords: this.stopWordsFormControl.value.split('\n').filter((x: string) => !!x),
+        overwrite_existing: this.overWriteExisting
       })
       .subscribe((resp: { 'stopwords': string } | HttpErrorResponse) => {
         if (resp && !(resp instanceof HttpErrorResponse)) {

@@ -116,7 +116,7 @@ export class CreateCRFExtractorDialogComponent implements OnInit, OnDestroy {
           fieldsForm?.setValue(this.data.cloneElement.mlp_field);
         }
       }
-      UtilityFunctions.logForkJoinErrors(resp, HttpErrorResponse, this.logService.snackBarError);
+      UtilityFunctions.logForkJoinErrors(resp, HttpErrorResponse, this.logService.snackBarError.bind(this.logService));
     });
 
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(currentProjIndices => {

@@ -199,7 +199,7 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
           fieldsForm?.setValue(this.data.cloneElement.fields);
         }
       }
-      UtilityFunctions.logForkJoinErrors(resp, HttpErrorResponse, this.logService.snackBarError);
+      UtilityFunctions.logForkJoinErrors(resp, HttpErrorResponse, this.logService.snackBarError.bind(this.logService));
     });
 
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$), switchMap(currentProjIndices => {
