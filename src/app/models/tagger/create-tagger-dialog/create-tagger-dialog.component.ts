@@ -194,7 +194,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
         this.taggerForm.get('stopWordsFormControl')?.setValue(resp.stopwords.stop_words.join('\n'));
       }
 
-      UtilityFunctions.logForkJoinErrors(resp, HttpErrorResponse, this.logService.snackBarError);
+      UtilityFunctions.logForkJoinErrors(resp, HttpErrorResponse, this.logService.snackBarError.bind(this.logService));
     });
 
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$), switchMap(currentProjIndices => {

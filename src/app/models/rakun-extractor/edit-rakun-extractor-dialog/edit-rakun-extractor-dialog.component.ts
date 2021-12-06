@@ -65,10 +65,10 @@ export class EditRakunExtractorDialogComponent implements OnInit, OnDestroy {
         numberOfKeywordsFormControl: new FormControl(this.data.element?.num_keywords || 25, [Validators.min(0)]),
         pairDiffLengthFormControl: new FormControl(this.data.element?.pair_diff_length || 2, [Validators.min(0)]),
         bigramCountThresholdFormControl: new FormControl(this.data.element?.bigram_count_threshold || 2, [Validators.min(0)]),
-        minTokensFormControl: new FormControl(this.data.element?.bigram_count_threshold || 1, [Validators.min(1), Validators.max(3)]),
-        maxTokensFormControl: new FormControl(this.data.element?.bigram_count_threshold || 1, [Validators.min(1), Validators.max(3)]),
-        maxSimilarFormControl: new FormControl(this.data.element?.bigram_count_threshold || 3, [Validators.min(0)]),
-        maxOccurrenceFormControl: new FormControl(this.data.element?.bigram_count_threshold || 3, [Validators.min(0)]),
+        minTokensFormControl: new FormControl(this.data.element?.min_tokens || 1, [Validators.min(1), Validators.max(3)]),
+        maxTokensFormControl: new FormControl(this.data.element?.max_tokens || 1, [Validators.min(1), Validators.max(3)]),
+        maxSimilarFormControl: new FormControl(this.data.element?.max_similar || 3, [Validators.min(0)]),
+        maxOccurrenceFormControl: new FormControl(this.data.element?.max_occurrence || 3, [Validators.min(0)]),
         embeddingFormControl: new FormControl(),
       });
     }
@@ -127,7 +127,7 @@ export class EditRakunExtractorDialogComponent implements OnInit, OnDestroy {
           this.rakunExtractorForm.get('embeddingFormControl')?.setValue(this.fastTextEmbeddings[0]);
         }
       }
-      UtilityFunctions.logForkJoinErrors(resp, HttpErrorResponse, this.logService.snackBarError);
+      UtilityFunctions.logForkJoinErrors(resp, HttpErrorResponse, this.logService.snackBarError.bind(this.logService));
     });
   }
 

@@ -2,6 +2,10 @@
   <app-textarea-lexicon [formControl]="stopWordsFormControl" placeholder="Stopwords (newline separated)"></app-textarea-lexicon>
   <mat-hint>{{stopwordsOptions?.actions?.POST?.stop_words?.help_text || ''}}</mat-hint>
 </mat-form-field>
+<mat-checkbox [(ngModel)]="overWriteExisting" style="margin-bottom: 10px; margin-top: 10px"
+              matTooltip="{{stopwordsOptions?.actions?.POST?.overwrite_existing?.help_text || ''}}"
+              matTooltipPosition="left">Overwrite existing
+</mat-checkbox>
 <div class="flex-col">
   <div class="flex-row">
     <div class="flex-item-left">
