@@ -69,10 +69,10 @@ Cypress.Commands.add('importTestTagger', (projectId) => {
   });
 });
 Cypress.Commands.add('importTestEmbedding', (projectId) => {
-  cy.fixture('embedding_model_24.zip', 'base64').then(x => {
+  cy.fixture('embedding_model_6.zip', 'base64').then(x => {
     const blob = Cypress.Blob.base64StringToBlob(x);
     let formData = new FormData();
-    formData.append('file', new File([blob], 'embedding_model_24.zip'));
+    formData.append('file', new File([blob], 'embedding_model_6.zip'));
     const xhr = new XMLHttpRequest();
     xhr.open('POST', `${Cypress.env('api_host')}${Cypress.env('api_basePath')}/projects/${projectId}/embeddings/import_model/`);
     xhr.setRequestHeader('Authorization', 'Token ' + JSON.parse(localStorage.getItem('user')).key);
@@ -80,10 +80,10 @@ Cypress.Commands.add('importTestEmbedding', (projectId) => {
   });
 });
 Cypress.Commands.add('importTestTorchTagger', (projectId) => {
-  cy.fixture('torchtagger_model_7.zip', 'base64').then(x => {
+  cy.fixture('torchtagger_model_5.zip', 'base64').then(x => {
     const blob = Cypress.Blob.base64StringToBlob(x);
     let formData = new FormData();
-    formData.append('file', new File([blob], 'torchtagger_model_7.zip'));
+    formData.append('file', new File([blob], 'torchtagger_model_5.zip'));
     const xhr = new XMLHttpRequest();
     xhr.open('POST', `${Cypress.env('api_host')}${Cypress.env('api_basePath')}/projects/${projectId}/torchtaggers/import_model/`);
     xhr.setRequestHeader('Authorization', 'Token ' + JSON.parse(localStorage.getItem('user')).key);
