@@ -79,17 +79,6 @@ Cypress.Commands.add('importTestEmbedding', (projectId) => {
     xhr.send(formData);
   });
 });
-Cypress.Commands.add('importTestTorchTagger', (projectId) => {
-  cy.fixture('torchtagger_model_5.zip', 'base64').then(x => {
-    const blob = Cypress.Blob.base64StringToBlob(x);
-    let formData = new FormData();
-    formData.append('file', new File([blob], 'torchtagger_model_5.zip'));
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', `${Cypress.env('api_host')}${Cypress.env('api_basePath')}/projects/${projectId}/torchtaggers/import_model/`);
-    xhr.setRequestHeader('Authorization', 'Token ' + JSON.parse(localStorage.getItem('user')).key);
-    xhr.send(formData);
-  });
-});
 Cypress.Commands.add('importTestTaggerGroup', (projectId) => {
   cy.fixture('tagger_group_101.zip', 'base64').then(x => {
     const blob = Cypress.Blob.base64StringToBlob(x);

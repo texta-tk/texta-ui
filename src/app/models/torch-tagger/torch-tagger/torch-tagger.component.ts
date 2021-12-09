@@ -60,17 +60,9 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
     // Check for updates after 30s every 30s
-    timer(30000, 30000).pipe(takeUntil(this.destroyed$), switchMap(_ =>
-      this.torchtaggerService.getTorchTaggers(this.currentProject.id,
-        `page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`)))
-      .subscribe(resp => {
-        if (resp && !(resp instanceof HttpErrorResponse)) {
-          this.refreshTorchTaggers(resp.results);
-        } else if (resp instanceof HttpErrorResponse) {
-          this.logService.snackBarError(resp, 5000);
-          this.isLoadingResults = false;
-        }
-      });
+    timer(30000, 30000).pipe(takeUntil(this.destroyed$)).subscribe(resp => {
+      this.updateTable.next(true);
+    });
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(resp => {
       if (resp) {
         this.currentProject = resp;
@@ -124,20 +116,6 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
         this.tableData.data = data.results;
       }
     });
-  }
-
-
-  refreshTorchTaggers(resp: TorchTagger[] | HttpErrorResponse): void {
-    if (resp && !(resp instanceof HttpErrorResponse)) {
-      if (resp.length > 0) {
-        resp.map(torchtagger => {
-          const indx = this.tableData.data.findIndex(x => x.id === torchtagger.id);
-          if (indx >= 0) {
-            this.tableData.data[indx].task = torchtagger.task;
-          }
-        });
-      }
-    }
   }
 
   retrainTagger(value: TorchTagger): void {
