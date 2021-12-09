@@ -5,14 +5,15 @@ describe('Torch Taggers should work', function () {
       cy.createTestProject().then(x => {
         assert.isNotNull(x.body.id, 'should have project id');
         cy.wrap(x.body.id).as('projectId');
+        cy.intercept('POST', '**/import_model/**').as('importModel');
+        cy.intercept('GET', '**user**').as('getUser');
+        cy.intercept('GET', '**get_fields**').as('getProjectIndices');
+        cy.intercept('GET', '**/torchtaggers/**').as('getTorchTaggers');
       });
     });
   });
 
   function initTorchTagger() {
-    cy.intercept('GET', '**user**').as('getUser');
-    cy.intercept('GET', '**get_fields**').as('getProjectIndices');
-    cy.intercept('GET', '**/torchtaggers/**').as('getTorchTaggers');
     cy.visit('/torch-taggers');
     cy.wait('@getUser')
     cy.wait('@getProjectIndices');
@@ -21,8 +22,8 @@ describe('Torch Taggers should work', function () {
     cy.get('mat-option').contains('integration_test_project').click();
   }
 
+
   it('should be able to create a new tagger', function () {
-    cy.intercept('POST', '**/import_model/**').as('importModel');
     cy.importTestEmbedding(this.projectId)
     cy.wait('@importModel', {timeout: 50000})
     initTorchTagger();
@@ -37,7 +38,7 @@ describe('Torch Taggers should work', function () {
       cy.closeCurrentCdkOverlay();
       cy.matFormFieldShouldHaveError(fields, 'required');
       cy.wrap(fields).click();
-      cy.get('.mat-option-text:nth(1)').should('be.visible').click();
+      cy.get('.mat-option-text').contains('comment_content').should('be.visible').click();
       cy.closeCurrentCdkOverlay();
       cy.wrap(fields).find('mat-error').should('have.length', 0)
     }));
@@ -70,14 +71,23 @@ describe('Torch Taggers should work', function () {
       assert.equal(created.response.body.task.status, 'created');
     });
 
-  });
-  it('extra_actions should work', function () {
+    cy.get('.mat-header-row > .cdk-column-author__username').should('be.visible').then(bb => {
+      cy.wrap([0, 0, 0, 0]).each(xy => { // hack to wait for task to complete
+        cy.wrap(bb).click();
+        cy.wait('@getTorchTaggers').then((intercepted) => {
+          console.log(intercepted)
+          if (intercepted?.response?.body?.results[0]?.task?.status === 'completed') {
+            assert.equal(intercepted?.response?.body?.results[0]?.task?.status, 'completed');
+            return true;
+          }else {
+            return cy.wait(5000);
+          }
+        });
+      })
+    });
 
-    cy.intercept('POST', '**/import_model/**').as('importModel');
-    cy.importTestTorchTagger(this.projectId)
-    cy.wait('@importModel', {timeout: 50000})
-    initTorchTagger();
-    cy.intercept('POST', '**/torchtaggers/**').as('postTorchTaggers');
+
+    cy.wait('@getTorchTaggers', {timeout: 50000});
     // tag text
     cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
     cy.get('[data-cy=appTorchTaggerMenuTagText]').should('be.visible').click();
@@ -90,15 +100,6 @@ describe('Torch Taggers should work', function () {
     // tag random doc
     cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
     cy.get('[data-cy=appTorchTaggerMenuTagRandomDoc]').should('be.visible').click();
-    cy.get('[data-cy=appTorchTaggerTagRandomDocDialogFields]').click().then((fields => {
-      cy.wrap(fields).should('have.class', 'mat-focused');
-      cy.closeCurrentCdkOverlay();
-      cy.matFormFieldShouldHaveError(fields, 'required');
-      cy.wrap(fields).click();
-      cy.get('.mat-option-text').contains('comment_content').should('be.visible').click();
-      cy.closeCurrentCdkOverlay();
-      cy.wrap(fields).find('mat-error').should('have.length', 0)
-    }));
     cy.get('[data-cy=appTorchTaggerTagRandomDocDialogSubmit]').should('be.visible').click();
     cy.wait('@postTorchTaggers').then(resp => {
       cy.wrap(resp).its('response.statusCode').should('eq', 200);
@@ -122,6 +123,7 @@ describe('Torch Taggers should work', function () {
     cy.get('[data-cy=appTorchTaggerMenuDelete]').should('be.visible').click();
     cy.get('[data-cy=appConfirmDialogSubmit]').should('be.visible').click();
     cy.wait('@deleteTorchTaggers');
+
   });
 
 });
