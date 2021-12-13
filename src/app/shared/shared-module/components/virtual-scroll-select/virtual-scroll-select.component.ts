@@ -30,7 +30,7 @@ interface Task {
   styleUrls: ['./virtual-scroll-select.component.scss'],
   providers: [{provide: MatFormFieldControl, useExisting: VirtualScrollSelectComponent}],
 })
-export class VirtualScrollSelectComponent<T extends Task> implements ControlValueAccessor, MatFormFieldControl<T[]>, OnInit, OnDestroy {
+export class VirtualScrollSelectComponent<T extends Task> implements ControlValueAccessor, MatFormFieldControl<T[] | T>, OnInit, OnDestroy {
   // tslint:disable:variable-name
   // tslint:disable:no-any
   @ViewChild('matSelectSearch') matSelectSearch: ElementRef;
@@ -54,11 +54,11 @@ export class VirtualScrollSelectComponent<T extends Task> implements ControlValu
   }
 
   @Input()
-  get value(): T[] {
+  get value(): T[] | T {
     return this.selectFormControl.value;
   }
 
-  set value(val: T[] | null) {
+  set value(val: T[] | T | null) {
     this.selectFormControl.setValue(val || []);
     this.stateChanges.next();
   }

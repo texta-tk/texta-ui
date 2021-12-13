@@ -95,6 +95,11 @@ const routes: Routes = [
     loadChildren: () => import('./tools/elastic-analyzer/elastic-analyzer.module').then(m => m.ElasticAnalyzerModule)
   },
   {
+    path: 'annotator',
+    canActivate: [AuthGuard, ProjectGuard],
+    loadChildren: () => import('./tools/annotator/annotator.module').then(m => m.AnnotatorModule)
+  },
+  {
     path: 'index-splitter',
     canActivate: [AuthGuard, ProjectGuard],
     loadChildren: () => import('./tools/index-splitter/index-splitter.module').then(m => m.IndexSplitterModule)

@@ -1,0 +1,14 @@
+
+
+:host {
+  overflow: hidden;
+}
+.mat-tab-body-content{
+  height: 100%;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+mat-tab-group{
+  height: 100%;
+}

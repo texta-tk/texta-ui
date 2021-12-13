@@ -1,0 +1,158 @@
+<h1 mat-dialog-title>New Annotator task</h1>
+<mat-dialog-content>
+  <form (ngSubmit)="onSubmit(annotatorForm.value)" [formGroup]="annotatorForm" class="flex-col" id="annotatorForm">
+    <mat-form-field data-cy="appAnnotatorCreateDialogDesc">
+      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
+             placeholder="Description" required>
+
+      <mat-error *ngIf="annotatorForm.get('descriptionFormControl')?.hasError('required')">
+        Description is <strong>required</strong>
+      </mat-error>
+      <mat-hint>{{annotatorOptions?.actions?.POST?.description?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+
+
+    <mat-form-field data-cy="appAnnotatorCreateDialogIndices">
+      <mat-label>Indices</mat-label>
+      <mat-select (openedChange)="indicesOpenedChange($event)" [disableOptionCentering]="true"
+                  formControlName="indicesFormControl" multiple panelClass="select-panel-reveal-input" required>
+        <app-mat-option-select-all></app-mat-option-select-all>
+        <mat-option *ngFor="let projectIndex of projectIndices" [value]="projectIndex">
+          {{projectIndex.index}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="annotatorForm.get('indicesFormControl')?.hasError('required')">
+        Select at least <strong>1 index</strong>
+      </mat-error>
+      <mat-hint>{{annotatorOptions?.actions?.POST?.indices?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Select Fields</mat-label>
+      <app-project-field-select [projectFields]="projectFields" [required]="true"
+                                formControlName="fieldsFormControl"></app-project-field-select>
+      <mat-error *ngIf="annotatorForm.get('fieldsFormControl')?.hasError('required')">
+        Field is <strong>required</strong>
+      </mat-error>
+      <mat-hint>{{annotatorOptions?.actions?.POST?.fields?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+    <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"
+                                   data-cy="appMLPCreateDialogQuery">
+    </app-saved-search-autocomplete>
+    <mat-form-field data-cy="appAnnotatorCreateDialogType">
+      <mat-label>Annotation type</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="annotationTypeFormControl"
+                  panelClass="select-panel-reveal-input" required>
+        <ng-container *ngIf="annotatorTypes">
+          <mat-option *ngFor="let item of annotatorTypes" [value]="item.value">
+            {{item.display_name}}
+          </mat-option>
+        </ng-container>
+      </mat-select>
+
+      <mat-error *ngIf="annotatorForm.get('annotationTypeFormControl')?.hasError('required')">
+        This field is <strong>required</strong>
+      </mat-error>
+      <mat-hint>{{annotatorOptions?.actions?.POST?.annotation_type?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+
+    <ng-container *ngIf="annotatorForm.get('annotationTypeFormControl')?.value === 'binary'">
+      <form formGroupName="binaryFormGroup" class="max-width flex-col">
+        <mat-form-field data-cy="appAnnotatorCreateDialogBinaryFactName">
+          <input [matAutocomplete]="autoName" aria-label="Fact name"
+                 formControlName="factNameFormControl"
+                 matInput
+                 placeholder="Fact name"
+                 required
+                 type="text">
+          <mat-autocomplete #autoName="matAutocomplete">
+            <mat-option *ngFor="let option of filteredProjectFacts | async"
+                        [value]="option">
+              {{option}}
+            </mat-option>
+          </mat-autocomplete>
+          <mat-error *ngIf="annotatorForm.get('binaryFormGroup')?.get('factNameFormControl')?.hasError('required')">
+            Fact name is <strong>required</strong>
+          </mat-error>
+          <mat-hint>{{annotatorOptions?.actions?.POST?.binary_configuration?.children?.fact_name?.help_text || ''}}</mat-hint>
+        </mat-form-field>
+        <mat-form-field data-cy="appAnnotatorCreateDialogBinaryPosVal">
+          <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="posValFormControl" matInput
+                 placeholder="Positive value" required>
+
+          <mat-error *ngIf="annotatorForm.get('binaryFormGroup')?.get('posValFormControl')?.hasError('required')">
+            Positive value is <strong>required</strong>
+          </mat-error>
+          <mat-hint>{{annotatorOptions?.actions?.POST?.binary_configuration?.children?.pos_value?.help_text || ''}}</mat-hint>
+        </mat-form-field>
+        <mat-form-field data-cy="appAnnotatorCreateDialogBinaryNegVal">
+          <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="negValFormControl" matInput
+                 placeholder="Negative value" required>
+
+          <mat-error *ngIf="annotatorForm.get('binaryFormGroup')?.get('negValFormControl')?.hasError('required')">
+            Negative value is <strong>required</strong>
+          </mat-error>
+          <mat-hint>{{annotatorOptions?.actions?.POST?.binary_configuration?.children?.neg_value?.help_text || ''}}</mat-hint>
+        </mat-form-field>
+      </form>
+    </ng-container>
+    <ng-container *ngIf="annotatorForm.get('annotationTypeFormControl')?.value === 'multilabel'">
+      <form formGroupName="multiLabelFormGroup" class="max-width flex-col">
+        <mat-form-field class="max-width" data-cy="appRegexTaggerGroupCreateDialogRegexTaggerGroups">
+          <mat-label>Labelset</mat-label>
+          <app-virtual-scroll-select [scrollableDataSource]="projectLabelSets" formControlName="labelSetFormControl" [multiple]="false"
+                                     required></app-virtual-scroll-select>
+          <mat-error>
+            Labelset is <strong>required</strong>
+          </mat-error>
+          <mat-hint>{{annotatorOptions?.actions?.POST?.multilabel_configuration?.children?.labelset?.help_text || ''}}</mat-hint>
+        </mat-form-field>
+      </form>
+    </ng-container>
+    <ng-container *ngIf="annotatorForm.get('annotationTypeFormControl')?.value === 'entity'">
+      <form formGroupName="entityFormGroup" class="max-width flex-col">
+        <mat-form-field data-cy="appAnnotatorCreateDialogEntityFactName">
+          <input [matAutocomplete]="autoName" aria-label="Fact name"
+                 formControlName="factNameFormControl"
+                 matInput
+                 placeholder="Fact name"
+                 required
+                 type="text">
+          <mat-autocomplete #autoName="matAutocomplete">
+            <mat-option *ngFor="let option of filteredProjectFacts | async"
+                        [value]="option">
+              {{option}}
+            </mat-option>
+          </mat-autocomplete>
+          <mat-error *ngIf="annotatorForm.get('entityFormGroup')?.get('factNameFormControl')?.hasError('required')">
+            Fact name is <strong>required</strong>
+          </mat-error>
+          <mat-hint>{{annotatorOptions?.actions?.POST?.binary_configuration?.children?.fact_name?.help_text || ''}}</mat-hint>
+        </mat-form-field>
+      </form>
+    </ng-container>
+    <mat-form-field>
+      <input formControlName="bulkSizeFormControl" matInput placeholder="Bulk size"
+             type="number">
+      <mat-hint>{{annotatorOptions?.actions?.POST?.bulk_size?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+    <mat-form-field>
+      <input formControlName="esTimeoutFormControl" matInput placeholder="Elasticsearch timeout"
+             type="number">
+      <mat-hint>{{annotatorOptions?.actions?.POST?.es_timeout?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <div class="flex-row max-width">
+    <div class="flex-item-left">
+      <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
+    </div>
+    <div class="flex-item-right">
+      <button [disabled]="!annotatorForm.valid" form="annotatorForm" data-cy="appAnnotatorCreateDialogSubmit" mat-button
+              type="submit">
+        Create
+      </button>
+    </div>
+  </div>
+</mat-dialog-actions>
