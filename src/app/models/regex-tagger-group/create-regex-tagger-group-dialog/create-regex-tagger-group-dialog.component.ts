@@ -12,10 +12,10 @@ import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers'
 import {ProjectService} from '../../../core/projects/project.service';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {LogService} from '../../../core/util/log.service';
-import {RegexTaggerService} from "../../../core/models/taggers/regex-tagger.service";
-import {RegexTagger} from "../../../shared/types/tasks/RegexTagger";
-import {ScrollableDataSource} from "../../../shared/ScrollableDataSource";
-import {ResultsWrapper} from "../../../shared/types/Generic";
+import {RegexTaggerService} from '../../../core/models/taggers/regex-tagger.service';
+import {RegexTagger} from '../../../shared/types/tasks/RegexTagger';
+import {ScrollableDataSource} from '../../../shared/ScrollableDataSource';
+import {ResultsWrapper} from '../../../shared/types/Generic';
 
 @Component({
   selector: 'app-create-regex-tagger-group-dialog',

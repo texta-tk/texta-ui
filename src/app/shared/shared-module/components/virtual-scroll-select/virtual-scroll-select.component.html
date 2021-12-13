@@ -21,7 +21,8 @@
                 [disabled]="!item?.description"
                 [value]="item">{{item?.description || 'Loading...'}}</mat-option>
   </cdk-virtual-scroll-viewport>
-  <mat-option *ngFor="let tagger of selectFormControl.value" [value]="tagger"
-              style="display: none">{{tagger?.description}}</mat-option>
-
+  <ng-container *ngIf="multiple">
+    <mat-option *ngFor="let tagger of selectFormControl.value" [value]="tagger"
+                style="display: none">{{tagger?.description}}</mat-option>
+  </ng-container>
 </mat-select>

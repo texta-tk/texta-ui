@@ -43,6 +43,7 @@ export class ProjectResourceCounts {
   num_search_query_taggers = 0;
   num_elastic_analyzers = 0;
   num_rakun_keyword_extractors = 0;
+  num_annotators = 0;
 }
 
 export interface ProjectFact {

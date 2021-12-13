@@ -50,7 +50,7 @@ export class LogService {
             this.snackBar.open(`${element}: ${error.error[element]}`, 'Close', {
               duration: time,
             });
-          } else if (typeof error.error[element].length === 'object') {
+          } else if (typeof error.error[element] === 'object') {
             this.snackBar.open(`${element}: ${error.error[element][0]}`, 'Close', {
               duration: time,
             });

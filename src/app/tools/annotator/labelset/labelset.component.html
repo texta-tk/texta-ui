@@ -1,0 +1,69 @@
+<div class="table-paginator-row">
+  <div class="loading-bar">
+    <mat-progress-bar *ngIf="isLoadingResults" mode="indeterminate"></mat-progress-bar>
+  </div>
+  <div class="paginator-row">
+    <button (click)="openCreateDialog()" class="paginator-margin-left"
+            color="primary" data-cy="appLabelSetCreateBtn" mat-raised-button>
+      CREATE
+    </button>
+    <button (click)="onDeleteAllSelected()" [disabled]="selectedRows.selected.length < 1"
+            class="new-resource-btn"
+            color="warn" data-cy="appLabelSetDeleteBtn"
+            mat-icon-button matTooltip="Delete selected">
+      <mat-icon>delete</mat-icon>
+    </button>
+    <mat-paginator [length]="resultsLength" [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
+    </mat-paginator>
+  </div>
+</div>
+
+<div [appScrollTop]="tableData" class="tasks-table overflow-auto">
+  <table [dataSource]="tableData" mat-table
+         matSort matSortDirection="asc"
+         multiTemplateDataRows>
+    <ng-container matColumnDef="select">
+      <th *matHeaderCellDef mat-header-cell>
+        <mat-checkbox (change)="$event ? masterToggle() : null"
+                      [checked]="selectedRows.hasValue() && isAllSelected()"
+                      [indeterminate]="selectedRows.hasValue() && !isAllSelected()">
+        </mat-checkbox>
+      </th>
+      <td *matCellDef="let row" mat-cell>
+        <mat-checkbox (change)="$event ? selectedRows.toggle(row) : null" (click)="$event.stopPropagation()"
+                      [checked]="selectedRows.isSelected(row)">
+        </mat-checkbox>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="category">
+      <th *matHeaderCellDef mat-header-cell mat-sort-header> Category</th>
+      <td *matCellDef="let element" mat-cell> {{element.category}}</td>
+    </ng-container>
+
+
+    <ng-container matColumnDef="expandedDetail">
+      <td *matCellDef="let element" [attr.colspan]="displayedColumns.length" mat-cell>
+        <div *ngIf="element == expandedElement" [@detailExpand] class="element-detail">
+          <div class="flex-col m-l-r-5" fxFlex="50">
+            <table class="simple-table">
+
+            </table>
+          </div>
+        </div>
+      </td>
+    </ng-container>
+
+
+    <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
+    <tr (click)="expandedElement = expandedElement === element ? null : element"
+        *matRowDef="let element; columns: displayedColumns;"
+        [class.expanded-row]="expandedElement === element"
+        class="element-row"
+        mat-row></tr>
+    <tr *matRowDef="let row; columns: ['expandedDetail']" class="detail-row" mat-row></tr>
+
+  </table>
+
+</div>
+
+
