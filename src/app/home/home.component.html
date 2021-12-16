@@ -10,10 +10,10 @@
 
         <mat-chip-list class="center-margin chip-list-space-evenly" disabled>
           <mat-chip [color]="health.services.elastic.alive ? 'primary' : 'accent'" selected>
-            Elasticsearch
+            Elasticsearch: {{health.services.elastic.status.version.number}}
           </mat-chip>
           <mat-chip [color]="health.services.redis.alive ? 'primary' : 'accent'" selected>
-            Redis
+            Redis: {{health.services.redis.version}}
           </mat-chip>
           <mat-chip color="primary" selected> API {{health.toolkit.version}}  </mat-chip>
           <mat-chip color="primary" selected> GUI {{frontVersion}}  </mat-chip>
