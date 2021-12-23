@@ -108,7 +108,7 @@ export class SearcherComponent implements OnInit, OnDestroy {
           indices: b$,
         }))).subscribe((resp) => {
         if (resp && resp.project) {
-          const url = `searcher/${resp.project.id}/${resp.indices !== null ? resp.indices.map(x => x.index).join(',') : ''}`;
+          const url = `/searcher/${resp.project.id}/${resp.indices !== null ? resp.indices.map(x => x.index).join(',') : ''}`;
           this.location.replaceState(url);
         }
       });
