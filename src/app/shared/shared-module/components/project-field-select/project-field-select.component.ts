@@ -46,11 +46,14 @@ export class ProjectFieldSelectComponent implements OnInit, OnDestroy, ControlVa
   focused = false;
   controlType = 'project-field-select';
   autofilled?: boolean | undefined;
+
+  @Input() valueOutPutType: 'object' | 'path' = 'path';
   // tslint:disable-next-line:no-input-rename
   @Input('aria-describedby') userAriaDescribedBy: string;
   fieldsUnique: Field[] = [];
   @ViewChild('select') selectCtrl: MatSelect;
   fieldIndexMap: Map<string, string[]> = new Map<string, string[]>();
+  pathAccessor = (x: Field) => x.path;
 
   constructor(private logService: LogService,
               private projectStore: ProjectStore,

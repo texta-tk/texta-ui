@@ -9,7 +9,7 @@ export interface Reindexer {
   new_index: string;
   random_size: number;
   task: TaskStatus;
-  field_type_parsed: string[];
+  field_type: {path: string, new_path_name: string, field_type: string}[];
 }
 
 export interface DatasetImporter {

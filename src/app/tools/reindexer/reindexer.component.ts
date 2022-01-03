@@ -17,6 +17,7 @@ import {ReindexerService} from '../../core/tools/reindexer/reindexer.service';
 import {CreateReindexerDialogComponent} from './create-reindexer-dialog/create-reindexer-dialog.component';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {MatSelectChange} from '@angular/material/select';
+import {ConfirmBulkDeleteDialogComponent} from "../../shared/shared-module/components/dialogs/confirm-bulk-delete-dialog/confirm-bulk-delete-dialog.component";
 
 @Component({
   selector: 'app-reindexer',
@@ -50,6 +51,7 @@ export class ReindexerComponent implements OnInit, OnDestroy {
   resultsLength: number;
 
   private updateTable = new Subject<boolean>();
+
   constructor(private projectStore: ProjectStore,
               private reindexerService: ReindexerService,
               public dialog: MatDialog,
@@ -119,8 +121,9 @@ export class ReindexerComponent implements OnInit, OnDestroy {
 
   openCreateDialog(): void {
     const dialogRef = this.dialog.open(CreateReindexerDialogComponent, {
-      maxHeight: '90%',
+      maxHeight: '90vh',
       width: '700px',
+      disableClose: true,
     });
     dialogRef.afterClosed().subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
@@ -167,11 +170,13 @@ export class ReindexerComponent implements OnInit, OnDestroy {
 
   onDeleteAllSelected(): void {
     if (this.selectedRows.selected.length > 0) {
-      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      const dialogRef = this.dialog.open(ConfirmBulkDeleteDialogComponent, {
         data: {
           confirmText: 'Delete',
-          mainText: `Are you sure you want to delete ${this.selectedRows.selected.length} re-indexers?`
-        }
+          mainText: `Delete the following Reindexer tasks`,
+          items: this.selectedRows.selected.map(x => x.description)
+        },
+        maxHeight: '90vh'
       });
 
       dialogRef.afterClosed().subscribe(result => {

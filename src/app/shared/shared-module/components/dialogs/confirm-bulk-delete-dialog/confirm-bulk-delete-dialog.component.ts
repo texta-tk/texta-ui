@@ -1,14 +1,13 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {ThemePalette} from '@angular/material/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {Index} from '../../../shared/types/Index';
 
 @Component({
   selector: 'app-confirm-delete-dialog',
-  templateUrl: './confirm-delete-dialog.component.html',
-  styleUrls: ['./confirm-delete-dialog.component.scss']
+  templateUrl: './confirm-bulk-delete-dialog.component.html',
+  styleUrls: ['./confirm-bulk-delete-dialog.component.scss']
 })
-export class ConfirmDeleteDialogComponent implements OnInit {
+export class ConfirmBulkDeleteDialogComponent implements OnInit {
   confirmText = 'Continue';
   cancelText = 'Cancel';
   mainText = 'Unsaved progress';
@@ -16,9 +15,9 @@ export class ConfirmDeleteDialogComponent implements OnInit {
   confirmBtnColor: ThemePalette = 'warn';
 
   constructor(
-    public dialogRef: MatDialogRef<ConfirmDeleteDialogComponent>,
+    public dialogRef: MatDialogRef<ConfirmBulkDeleteDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { confirmText: string, cancelText: string,
-      mainText: string, title: string, confirmBtnColor: ThemePalette, indices: Index[] }) {
+      mainText: string, title: string, confirmBtnColor: ThemePalette, items: string[] }) {
     this.confirmText = data.confirmText ? data.confirmText : this.confirmText;
     this.cancelText = data.cancelText ? data.cancelText : this.cancelText;
     this.mainText = data.mainText ? data.mainText : this.mainText;

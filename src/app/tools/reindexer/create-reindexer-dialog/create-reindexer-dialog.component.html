@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>New Reindexer</h1>
-<div mat-dialog-content>
-  <form fxLayout="column" [formGroup]="reindexerForm" (ngSubmit)="onSubmit(reindexerForm?.value)" fxLayoutGap="10px">
+<mat-dialog-content>
+  <form class="flex-col" [formGroup]="reindexerForm" (ngSubmit)="onSubmit(reindexerForm?.value)" id="reindexerForm">
     <mat-form-field data-cy="appReindexerCreateDialogDesc">
       <input matInput placeholder="Description" autocomplete="off" formControlName="descriptionFormControl"
              [errorStateMatcher]="matcher" required>
@@ -42,19 +42,31 @@
 
     <mat-form-field data-cy="appReindexerCreateDialogFields">
       <mat-label>Select Fields</mat-label>
-      <app-project-field-select [projectFields]="projectFields" [required]="true"
+      <app-project-field-select [valueOutPutType]="'object'" [projectFields]="projectFields" [required]="true"
+                                (openedChange)="fieldsOpenedChange($event)"
                                 formControlName="fieldsFormControl"></app-project-field-select>
       <mat-error *ngIf="reindexerForm?.get('fieldsFormControl')?.hasError('required')">
         Field is <strong>required</strong>
       </mat-error>
       <mat-hint>{{reindexerOptions?.actions?.POST?.fields?.help_text || ''}}</mat-hint>
     </mat-form-field>
+    <table class="simple-table m-top-10" *ngIf="fieldTypesModel.length > 0">
+      <tr>
+        <th class="mat-body-strong">Current Field Name</th>
+        <th class="mat-body-strong">New Field Name</th>
+        <th class="mat-body-strong" style="width: 75px">Field Type</th>
+      </tr>
+      <tr *ngFor="let field of fieldTypesModel">
+        <td><input class="max-width" style="box-sizing: border-box" [(ngModel)]="field.path" [ngModelOptions]="{standalone: true}" disabled></td>
+        <td><input class="max-width" style="box-sizing: border-box" [(ngModel)]="field.new_path_name" [ngModelOptions]="{standalone: true}"
+                   [disabled]="field.path === 'texta_facts'"></td>
+        <td><select [(ngModel)]="field.field_type" [ngModelOptions]="{standalone: true}"
+                    [disabled]="field.path === 'texta_facts'">
+          <option *ngFor="let option of supportedElasticTypes" [value]="option" [disabled]="option === 'mlp'">{{option}}</option>
+        </select></td>
+      </tr>
+    </table>
 
-    <mat-form-field>
-      <input matInput placeholder="Field types" autocomplete="off" formControlName="fieldTypesFormControl"
-             [errorStateMatcher]="matcher">
-      <mat-hint>{{reindexerOptions?.actions?.POST?.field_type?.help_text || ''}}</mat-hint>
-    </mat-form-field>
 
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"></app-saved-search-autocomplete>
 
@@ -66,25 +78,27 @@
       <mat-hint>{{reindexerOptions?.actions?.POST?.random_size?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
-    <mat-checkbox formControlName="addFactsMappingFormControl"
-                  matTooltip="{{reindexerOptions?.actions?.POST?.add_facts_mapping?.help_text || ''}}"
-                  matTooltipPosition="left">Add facts mapping
-    </mat-checkbox>
-
-    <div class="flex-col">
-      <div class="flex-row">
-        <div class="flex-item-left">
-          <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Close</button>
-        </div>
-        <div class="flex-item-right">
-          <button type="submit" [disabled]="!reindexerForm?.valid" mat-button data-cy="appReindexerCreateDialogSubmit">
-            Create
-          </button>
-        </div>
-      </div>
-
+    <div class="dialog-checkbox-fix">
+      <mat-checkbox formControlName="addFactsMappingFormControl"
+                    matTooltip="{{reindexerOptions?.actions?.POST?.add_facts_mapping?.help_text || ''}}"
+                    matTooltipPosition="left">Add facts mapping
+      </mat-checkbox>
     </div>
 
 
   </form>
-</div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <div class="flex-row max-width">
+    <div class="flex-item-left">
+      <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Close</button>
+    </div>
+    <div class="flex-item-right">
+      <button type="submit" form="reindexerForm" [disabled]="!reindexerForm?.valid" mat-button
+              data-cy="appReindexerCreateDialogSubmit">
+        Create
+      </button>
+    </div>
+  </div>
+</mat-dialog-actions>
