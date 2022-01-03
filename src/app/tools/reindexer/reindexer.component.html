@@ -1,4 +1,4 @@
-<div class="wrapper mat-elevation-z8">
+<div class="wrapper max-height" fxLayout="column">
   <div class="table-paginator-row">
     <div class="loading-bar">
       <mat-progress-bar *ngIf="isLoadingResults" mode="indeterminate"></mat-progress-bar>
@@ -9,7 +9,8 @@
               mat-raised-button>
         CREATE
       </button>
-      <button (click)="onDeleteAllSelected()" [disabled]="selectedRows.selected.length < 1" class="new-resource-btn" color="warn"
+      <button (click)="onDeleteAllSelected()" [disabled]="selectedRows.selected.length < 1" class="new-resource-btn"
+              color="warn"
               mat-icon-button matTooltip="Delete selected">
         <mat-icon>delete</mat-icon>
       </button>
@@ -32,9 +33,9 @@
     </div>
   </div>
 
-  <div class="table-container overflow-auto">
+  <div [appScrollTop]="tableData" class="table-container overflow-auto">
     <table [dataSource]="tableData" mat-table matSort
-           matSortActive="id" matSortDirection="desc" matSortDisableClear multiTemplateDataRows>
+           matSortActive="id" matSortDirection="desc" multiTemplateDataRows>
       <ng-container matColumnDef="select">
         <th *matHeaderCellDef mat-header-cell>
           <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selectedRows.hasValue() && isAllSelected()"
@@ -55,7 +56,8 @@
 
       <ng-container matColumnDef="author__username">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Author</th>
-        <td *matCellDef="let element" mat-cell [matTooltip]="element?.author?.username"> {{element?.author?.display_name}}</td>
+        <td *matCellDef="let element" mat-cell
+            [matTooltip]="element?.author?.username"> {{element?.author?.display_name}}</td>
       </ng-container>
 
       <ng-container matColumnDef="description">
@@ -76,7 +78,7 @@
       </ng-container>
       <ng-container matColumnDef="fields">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Fields</th>
-        <td *matCellDef="let element" mat-cell><span (click)="$event.stopPropagation();"
+        <td *matCellDef="let element" mat-cell><span
                                                      [title]="element.fields| join: '\n '">{{element.fields| join: ', '}}</span>
         </td>
       </ng-container>
@@ -98,11 +100,11 @@
       <ng-container matColumnDef="task__status">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Task</th>
         <td *matCellDef="let element" mat-cell style="min-width: 100px">
-          <mat-progress-bar
+          <mat-progress-bar *ngIf="element.task"
             [value]="element.task.progress"
             mode="determinate">
           </mat-progress-bar>
-          <mat-hint>{{element.task.status}} {{element.task.step}}</mat-hint>
+          <mat-hint *ngIf="element.task">{{element.task.status}} {{element.task.step}}</mat-hint>
         </td>
       </ng-container>
 
@@ -156,11 +158,17 @@
                   </tr>
                 </table>
               </div>
-              <div class="flex-col m-l-r-5">
-                <table class="simple-table">
+              <div class="flex-col m-l-r-5"  style="width: 100%; max-width: 700px">
+                <table class="simple-table" *ngIf="element.field_type.length > 0">
                   <tr>
-                    <th class="mat-body-strong">Fields Types</th>
-                    <td>{{element.fields_type_parsed}}</td>
+                    <th class="mat-body-strong">Current Field Name</th>
+                    <th class="mat-body-strong">New Field Name</th>
+                    <th class="mat-body-strong" style="width: 75px">Field Type</th>
+                  </tr>
+                  <tr *ngFor="let field of element.field_type">
+                    <td><input class="max-width" style="box-sizing: border-box" value="{{field.path}}"  disabled></td>
+                    <td><input class="max-width" style="box-sizing: border-box" value="{{field.new_path_name}}" disabled></td>
+                    <td><input class="max-width" style="box-sizing: border-box" value="{{field.field_type}}" disabled></td>
                   </tr>
                 </table>
               </div>
@@ -183,7 +191,8 @@
       </ng-container>
 
       <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
-      <tr (click)="expandedElement = expandedElement === element ? null : element" *matRowDef="let element; columns: displayedColumns;"
+      <tr (click)="expandedElement = expandedElement === element ? null : element"
+          *matRowDef="let element; columns: displayedColumns;"
           [class.expanded-row]="expandedElement === element"
           class="element-row"
           mat-row></tr>

@@ -42,3 +42,11 @@ mat-chip-list.chip-list-space-evenly {
     padding: 0 10px 0;
   }
 }
+// https://github.com/angular/components/issues/8798
+.dialog-checkbox-fix {
+  min-height: 50px;
+  display: flex;
+  >mat-checkbox{
+    align-self: center;
+  }
+}

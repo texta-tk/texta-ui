@@ -69,6 +69,7 @@ import {VirtualScrollSelectComponent} from './components/virtual-scroll-select/v
 import {FileInputComponent} from './components/file-input/file-input.component';
 import {ByteFormatPipe} from './pipes/byte-format.pipe';
 import {BreadcrumbComponent} from './components/breadcrumb/breadcrumb.component';
+import {ConfirmBulkDeleteDialogComponent} from './components/dialogs/confirm-bulk-delete-dialog/confirm-bulk-delete-dialog.component';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
@@ -101,6 +102,7 @@ import {BreadcrumbComponent} from './components/breadcrumb/breadcrumb.component'
     VirtualScrollSelectComponent,
     FileInputComponent,
     ByteFormatPipe,
+    ConfirmBulkDeleteDialogComponent,
   ],
   imports: [
     RouterModule,

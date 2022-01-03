@@ -3,11 +3,18 @@
             (selectionChange)="selectionChanged.next($event)"
             [formControl]="fieldFormControl" [multiple]="multiple" [required]="required"
             panelClass="select-panel-reveal-input">
-  <mat-select-trigger *ngIf="multiple">{{fieldFormControl?.value | join: ', '}}</mat-select-trigger>
-  <mat-select-trigger *ngIf="!multiple">{{fieldFormControl?.value}}</mat-select-trigger>
+
+  <mat-select-trigger *ngIf="multiple">
+    <ng-container *ngIf="valueOutPutType === 'path'">{{fieldFormControl?.value | join: ', '}}</ng-container>
+    <ng-container *ngIf="valueOutPutType === 'object'">{{fieldFormControl?.value | getPropertyList: pathAccessor  | join: ', '}}</ng-container>
+  </mat-select-trigger>
+  <mat-select-trigger *ngIf="!multiple">
+    <ng-container *ngIf="valueOutPutType === 'path'">{{fieldFormControl?.value}}</ng-container>
+    <ng-container *ngIf="valueOutPutType === 'object'">{{pathAccessor(fieldFormControl?.value)}}</ng-container>
+  </mat-select-trigger>
   <app-mat-option-select-all [multiple]="multiple"></app-mat-option-select-all>
   <mat-option *ngFor="let field of fieldsUnique" title="{{fieldIndexMap.get(field.path)?.join('\n')}}"
-              [value]="field.path">
+              [value]="valueOutPutType  === 'path' ? field.path : field">
     <ng-container *ngIf="field.type === 'fact'">
       {{field.path}}
     </ng-container>

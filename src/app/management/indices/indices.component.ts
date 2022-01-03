@@ -12,7 +12,7 @@ import {ConfirmDialogComponent} from '../../shared/shared-module/components/dial
 import {Index} from '../../shared/types/Index';
 import {CoreService} from '../../core/core.service';
 import {SelectionModel} from '@angular/cdk/collections';
-import {ConfirmDeleteDialogComponent} from './confirm-delete-dialog/confirm-delete-dialog.component';
+import {ConfirmBulkDeleteDialogComponent} from '../../shared/shared-module/components/dialogs/confirm-bulk-delete-dialog/confirm-bulk-delete-dialog.component';
 import {MatButtonToggleChange} from '@angular/material/button-toggle';
 import {EditDialogComponent} from './edit-dialog/edit-dialog.component';
 import {FormControl} from "@angular/forms";
@@ -143,8 +143,8 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         } else { // @ts-ignore
           if (searchString[key] && !data[key]) {
-                    return false;
-                  }
+            return false;
+          }
         }
       }
       // if no global search then done
@@ -169,11 +169,11 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onDeleteAllSelected(): void {
     if (this.selectedRows.selected.length > 0) {
-      const dialogRef = this.dialog.open(ConfirmDeleteDialogComponent, {
+      const dialogRef = this.dialog.open(ConfirmBulkDeleteDialogComponent, {
         data: {
           confirmText: 'Delete',
           mainText: `Delete the following indices`,
-          indices: this.selectedRows.selected
+          items: this.selectedRows.selected.map(x => x.name)
         },
         maxHeight: '90vh'
       });

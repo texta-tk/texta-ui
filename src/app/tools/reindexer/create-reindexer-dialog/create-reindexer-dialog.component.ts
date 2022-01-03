@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ReindexerService} from '../../../core/tools/reindexer/reindexer.service';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
@@ -8,17 +8,19 @@ import {Field, Project, ProjectIndex} from 'src/app/shared/types/Project';
 import {ProjectService} from 'src/app/core/projects/project.service';
 import {ProjectStore} from 'src/app/core/projects/project.store';
 import {filter, mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
-import {forkJoin, of} from 'rxjs';
+import {forkJoin, of, Subject} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../../../core/util/log.service';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
+
+type FieldTypesModel = { path: string, new_path_name: string, field_type: string };
 
 @Component({
   selector: 'app-create-reindexer-dialog',
   templateUrl: './create-reindexer-dialog.component.html',
   styleUrls: ['./create-reindexer-dialog.component.scss']
 })
-export class CreateReindexerDialogComponent implements OnInit {
+export class CreateReindexerDialogComponent implements OnInit, OnDestroy {
 
   reindexerForm = new FormGroup({
     descriptionFormControl: new FormControl('', [Validators.required]),
@@ -37,6 +39,9 @@ export class CreateReindexerDialogComponent implements OnInit {
   // tslint:disable-next-line:no-any
   reindexerOptions: any;
   currentProject: Project;
+  destroyed$: Subject<boolean> = new Subject<boolean>();
+  fieldTypesModel: FieldTypesModel[] = [];
+  supportedElasticTypes: string[] = ['boolean', 'date', 'fact', 'float', 'long', 'text', 'mlp'];
 
   constructor(private dialogRef: MatDialogRef<CreateReindexerDialogComponent>,
               private projectService: ProjectService,
@@ -75,6 +80,7 @@ export class CreateReindexerDialogComponent implements OnInit {
         this.projectIndices = projIndices;
       }
     });
+
   }
 
   onQueryChanged(query: string): void {
@@ -90,18 +96,17 @@ export class CreateReindexerDialogComponent implements OnInit {
   }
 
   onSubmit(formData: {
-    fieldsFormControl: string[]; descriptionFormControl: string;
+    fieldsFormControl: Field[]; descriptionFormControl: string;
     newNameFormControl: string; fieldTypesFormControl: string; indicesFormControl: { index: string }[]; randomSizeFormControl: number;
     addFactsMappingFormControl: boolean;
   }): void {
-    // temp
-    const fieldsToSend = formData.fieldsFormControl;
+    const fieldsToSend = formData.fieldsFormControl.map(x=>x.path);
     const body = {
       description: formData.descriptionFormControl,
       new_index: formData.newNameFormControl,
       fields: fieldsToSend,
-      field_type: formData.fieldTypesFormControl ? JSON.parse(formData.fieldTypesFormControl) : [],
-      indices: formData.indicesFormControl.map(x=>x.index),
+      field_type: this.fieldTypesModel ? this.fieldTypesModel : [],
+      indices: formData.indicesFormControl.map(x => x.index),
       ...this.query ? {query: this.query} : {},
       ...formData.randomSizeFormControl ? {random_size: formData.randomSizeFormControl} : {},
       add_facts_mapping: formData.addFactsMappingFormControl
@@ -124,4 +129,22 @@ export class CreateReindexerDialogComponent implements OnInit {
     this.dialogRef.close();
   }
 
+  ngOnDestroy(): void {
+    this.destroyed$.next();
+    this.destroyed$.complete();
+  }
+
+  fieldsOpenedChange($event: boolean): void {
+    // false is panel closed state
+    if (!$event) {
+      const val = this.reindexerForm.get('fieldsFormControl')?.value as Field[];
+      if (val) {
+        const newFieldModel: FieldTypesModel[] = [];
+        val.forEach(field => {
+          newFieldModel.push({path: field.path, new_path_name: field.path, field_type: field.type});
+        });
+        this.fieldTypesModel = newFieldModel;
+      }
+    }
+  }
 }
