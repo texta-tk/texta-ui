@@ -14,7 +14,8 @@ import {Project} from '../../shared/types/Project';
 import {ProjectStore} from '../../core/projects/project.store';
 import {AnnotatorService} from '../../core/tools/annotator/annotator.service';
 import {LogService} from '../../core/util/log.service';
-import {ConfirmDialogComponent} from "../../shared/shared-module/components/dialogs/confirm-dialog/confirm-dialog.component";
+import {ConfirmDialogComponent} from '../../shared/shared-module/components/dialogs/confirm-dialog/confirm-dialog.component';
+import {Index} from '../../shared/types/Index';
 
 @Component({
   selector: 'app-annotator',
@@ -28,7 +29,7 @@ export class AnnotatorComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: Annotator | null;
   public tableData: MatTableDataSource<Annotator> = new MatTableDataSource();
   selectedRows = new SelectionModel<Annotator>(true, []);
-  public displayedColumns = ['select', 'id', 'description', 'task__time_started', 'task__time_completed', 'task__status'];
+  public displayedColumns = ['select', 'id', 'description', 'author__username', 'index', 'annotation_type', 'total', 'annotated', 'skipped', 'validated'];
   public isLoadingResults = true;
 
   @ViewChild(MatSort) sort: MatSort;
@@ -37,7 +38,7 @@ export class AnnotatorComponent implements OnInit, OnDestroy, AfterViewInit {
   destroyed$: Subject<boolean> = new Subject<boolean>();
   currentProject: Project;
   private updateTable = new Subject<boolean>();
-
+  getIndicesName = (x: Index) => x.name;
   constructor(private projectStore: ProjectStore,
               private annotatorService: AnnotatorService,
               public dialog: MatDialog,
