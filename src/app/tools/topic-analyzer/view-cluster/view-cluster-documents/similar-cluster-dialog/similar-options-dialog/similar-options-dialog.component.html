@@ -47,12 +47,8 @@
       </mat-error>
     </mat-form-field>
     <mat-form-field>
-  <textarea cdkAutosizeMaxRows="10"
-            cdkAutosizeMinRows="1"
-            cdkTextareaAutosize
-            formControlName="stopWordsFormControl"
-            matInput placeholder="Stop words"></textarea>
-      <mat-hint>Newline separated</mat-hint>
+      <app-textarea-lexicon formControlName="stopWordsFormControl"
+                            placeholder="Stopwords (newline separated)"></app-textarea-lexicon>
     </mat-form-field>
     <mat-form-field data-cy="appTagMLTSize">
       <input [errorStateMatcher]="matcher" formControlName="sizeFormControl" matInput max="10000" pattern="[1-9]\d*"

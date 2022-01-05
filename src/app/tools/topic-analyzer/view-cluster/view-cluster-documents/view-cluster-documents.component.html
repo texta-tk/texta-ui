@@ -12,9 +12,8 @@
       </button>
       <button (click)="deleteCluster()" class="paginator-margin-left"
               color="warn" mat-raised-button
-              data-cy="appClusterDocumentsDelete"
-              matTooltip="Delete cluster">
-        Delete
+              data-cy="appClusterDocumentsDelete">
+        Delete cluster
       </button>
       <button (click)="moreLikeThis()" class="paginator-margin-left"
               color="primary" data-cy="appClusterDocumentsMLTBtn" mat-raised-button>
@@ -47,7 +46,7 @@
     </div>
   </div>
   <div class="table-container overflow-auto" [appScrollTop]="tableData">
-    <table [dataSource]="tableData" [trackBy]="trackById" class="readable-table" mat-table
+    <table [dataSource]="tableData" [trackBy]="trackById" class="readable-table" mat-table recycleRows
            matSort>
       <ng-container matColumnDef="select">
         <th *matHeaderCellDef mat-header-cell>

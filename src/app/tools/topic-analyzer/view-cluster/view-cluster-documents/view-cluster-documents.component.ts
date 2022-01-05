@@ -69,6 +69,7 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
     this.clusterDocumentsQueue$.pipe(takeUntil(this.destroyed$), switchMap(x => {
       if (x) {
         this.isLoadingResults = true;
+        this.changeDetectorRef.markForCheck();
         return x;
       }
       return of(null);
@@ -261,8 +262,8 @@ export class ViewClusterDocumentsComponent implements OnInit, AfterViewInit, OnD
     this.selectedRows.clear();
   }
 
-  trackById(index: number, val: ClusterDocument): number {
-    return val.id;
+  trackById(index: number, val: ClusterDocument): string {
+    return `${val.id}`;
   }
 
   ngOnDestroy(): void {

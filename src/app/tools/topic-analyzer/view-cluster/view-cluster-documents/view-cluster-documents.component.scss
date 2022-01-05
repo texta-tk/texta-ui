@@ -9,9 +9,10 @@ table {
   overflow: hidden;
 }
 .paginator-margin-left{
-  margin-left: 10px;
+  margin-left: 5px;
 }
 .paginator-row{
+  flex-wrap: wrap;
   mat-form-field{
     line-height: 1.6;
   }

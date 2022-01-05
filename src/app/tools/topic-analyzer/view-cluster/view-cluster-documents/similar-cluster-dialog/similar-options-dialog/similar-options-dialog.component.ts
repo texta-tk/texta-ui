@@ -18,7 +18,7 @@ export class SimilarOptionsDialogComponent implements OnInit {
     minDocFreqFormControl: new FormControl(5),
     minWordLengthFormControl: new FormControl(0),
     maxWordLengthFormControl: new FormControl(0),
-    stopWordsFormControl: new FormControl(),
+    stopWordsFormControl: new FormControl(''),
     sizeFormControl: new FormControl(25, [Validators.max(10000)]),
   });
 
@@ -59,7 +59,7 @@ export class SimilarOptionsDialogComponent implements OnInit {
       max_word_length: formData.maxWordLengthFormControl ? formData.maxWordLengthFormControl : 0,
       size: formData.sizeFormControl ? formData.sizeFormControl : 25,
       include_meta: true,
-      stop_words: formData.stopWordsFormControl ? formData.stopWordsFormControl.split('\n') : [],
+      stop_words: formData.stopWordsFormControl ? formData.stopWordsFormControl.split('\n').filter((x: string) => !!x) : [],
     };
     this.dialogRef.close(body);
   }
