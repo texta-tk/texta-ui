@@ -78,7 +78,7 @@ describe('should be able to build aggregations', function () {
     submitAndCheckTableResult();
     cy.get('[data-cy=appSearcherSidebarSavedSearches] .cdk-column-select:nth(1)').should('be.visible').click('left');
     submitAndCheckTableResult();
-    cy.get('app-aggregation-results .mat-tab-label').should('have.length', 2);
+    cy.get('app-aggregation-results .mat-tab-label').should('have.length', 3);
     cy.get('[data-cy=appSearcherSidebarSavedSearches] .cdk-column-select:nth(1)').should('be.visible').click('left');
 
     // check date aggregations
@@ -132,7 +132,7 @@ describe('should be able to build aggregations', function () {
     cy.get('[data-cy=appSearcherSidebarAggregationsSubmit]').scrollIntoView().click();
     cy.wait('@searcherQuery');
     cy.get('.mat-tree-node').should('be.visible');
-    cy.get('app-aggregation-results .mat-tab-label').should('have.length', 2);
+    cy.get('app-aggregation-results .mat-tab-label').should('have.length', 3);
 
     /* cy.get('.svg-container').should('be.visible'); */
   });

@@ -13,9 +13,17 @@ app-aggregation-results-chart {
   height: inherit;
   width: inherit;
 }
-::ng-deep .mat-tab-body-wrapper{
+::ng-deep .aggregation-results .mat-tab-body-wrapper{
   height: 100%;
 }
-::ng-deep .mat-tab-label{
+::ng-deep .aggregation-results .mat-tab-label{
   opacity: 1 !important;
+  min-width: 305px !important;
+}
+::ng-deep .aggregation-results .mat-tab-label:first-of-type {
+  min-width: 135px !important;
+  width: 135px !important;
+  flex-basis: initial !important;
+  flex-grow: initial !important;
+  color: initial !important;
 }
