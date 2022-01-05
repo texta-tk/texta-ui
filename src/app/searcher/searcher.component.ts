@@ -17,8 +17,8 @@ import {Location} from '@angular/common';
 import {ProjectStore} from '../core/projects/project.store';
 import {Project, ProjectIndex} from '../shared/types/Project';
 import {ProjectService} from '../core/projects/project.service';
-import {HttpErrorResponse} from "@angular/common/http";
-import {UtilityFunctions} from "../shared/UtilityFunctions";
+import {HttpErrorResponse} from '@angular/common/http';
+import {UtilityFunctions} from '../shared/UtilityFunctions';
 
 @Component({
   selector: 'app-searcher',

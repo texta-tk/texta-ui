@@ -1,12 +1,17 @@
-<div class="container">
+<div class="container aggregation-results">
 
   <div *ngIf="searchService.getIsLoading() | async" class="loading-shade">
     <mat-spinner></mat-spinner>
   </div>
   <ng-container *ngIf="aggregationData">
     <!--if not dateData-->
-    <mat-tab-group *ngIf="aggregationData.dateData && aggregationData.dateData.length === 0"
-                   mat-stretch-tabs>
+    <mat-tab-group *ngIf="aggregationData.dateData && aggregationData.dateData.length === 0" selectedIndex="1" #tabs
+                   mat-stretch-tabs animationDuration="0ms">
+      <mat-tab disabled>
+        <ng-template mat-tab-label>
+          <button (click)="toggleDrawer()" mat-stroked-button >Toggle drawer</button>
+        </ng-template>
+      </mat-tab>
       <mat-tab *ngFor="let tableAggregation of aggregationData.tableData" [label]="tableAggregation.name">
         <app-aggregation-result-table *ngIf="tableAggregation.tableData !== undefined" [docPath]="fieldPathList[0]"
                                       [tableData]="tableAggregation.tableData"></app-aggregation-result-table>
@@ -19,7 +24,8 @@
       <mat-tab *ngFor="let item of aggregationData.textaFactsTableData">
         <ng-container *ngIf="{ viewState: 'tree' } as state">
           <ng-template mat-tab-label>
-            {{item.name}}
+            <span title="{{item.name}}" style="max-width: 160px; text-overflow: ellipsis; overflow: hidden">
+            {{item.name}}</span>
             <button (click)="state.viewState = 'tree'" [color]="state.viewState === 'tree' ? 'primary' : undefined"
                     mat-icon-button>
               <mat-icon>account_tree</mat-icon>

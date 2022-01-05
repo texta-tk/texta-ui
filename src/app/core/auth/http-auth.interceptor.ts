@@ -47,7 +47,10 @@ export class HttpAuthInterceptor implements HttpInterceptor {
 
   handleHttpError(error: HttpErrorResponse, request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     if (error && error.status === 403) {
-
+      if(error.error.detail === 'Invalid token.'){
+        this.localStorageService.deleteUser();
+        location.reload();
+      }
     }
     if (error && error.status === 401) {
 

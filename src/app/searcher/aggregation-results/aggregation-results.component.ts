@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {SearcherComponentService} from '../services/searcher-component.service';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
@@ -46,7 +46,10 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   aggregationData: AggregationData;
   fieldPathList: string[] = [];
   timeLineYLabel = 'number of hits';
+  // tslint:disable-next-line:no-any
+  @ViewChild('tabs', {static: false}) tabs: any;
 
+  @Output() drawerToggle = new EventEmitter<boolean>();
   constructor(public searchService: SearcherComponentService, public dialog: MatDialog) {
   }
 
@@ -331,5 +334,12 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
         }
       }
     }
+  }
+
+  toggleDrawer(): void {
+    this.drawerToggle.emit(true);
+    setTimeout(() => {
+      this.tabs.realignInkBar();
+    }, 400);
   }
 }
