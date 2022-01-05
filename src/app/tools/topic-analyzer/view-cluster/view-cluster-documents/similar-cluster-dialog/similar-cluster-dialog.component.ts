@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {LogService} from '../../../../../core/util/log.service';
 import {MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
 import {TopicAnalyzerService} from '../../../../../core/tools/topic-analyzer/topic-analyzer.service';
@@ -40,6 +40,7 @@ export class SimilarClusterDialogComponent implements OnInit, AfterViewInit, OnD
   textaFactAccessor = (x: TextaFact) => x.fact;
   constructor(private clusterService: TopicAnalyzerService, private logService: LogService, private localStorageService: LocalStorageService,
               public dialog: MatDialog,
+              private changeDetectorRef: ChangeDetectorRef,
               @Inject(MAT_DIALOG_DATA) public data: {
                 clusterId: number,
                 clusteringId: number,
@@ -52,6 +53,7 @@ export class SimilarClusterDialogComponent implements OnInit, AfterViewInit, OnD
     this.moreLikeQuery$.pipe(takeUntil(this.destroyed$), switchMap(x => {
       if (x) {
         this.isLoadingResults = true;
+        this.changeDetectorRef.markForCheck();
         return x;
       }
       return of(null);

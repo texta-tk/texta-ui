@@ -21,7 +21,7 @@
 
   <div class="table-container overflow-auto" [appScrollTop]="tableData">
     <table mat-table [dataSource]="tableData"
-           matSort [trackBy]="trackById">
+           matSort [trackBy]="trackById" matSortDirection="asc" matSortActive="average_similarity">
       <ng-container matColumnDef="select">
         <th mat-header-cell *matHeaderCellDef>
           <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selectedRows.hasValue() && isAllSelected()"
