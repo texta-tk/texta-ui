@@ -20,14 +20,17 @@ mat-optgroup {
     padding-left: 30px;
   }
 }
-.mat-tooltip  {
+
+.mat-tooltip {
   white-space: pre-line;
 }
+
 mat-chip-list.chip-list-space-evenly {
   div {
     justify-content: space-evenly !important;
   }
 }
+
 // panelClass for mat dialog to remove padding
 .custom-no-padding-dialog .mat-dialog-container {
   padding: 0 !important;
@@ -42,11 +45,29 @@ mat-chip-list.chip-list-space-evenly {
     padding: 0 10px 0;
   }
 }
+
 // https://github.com/angular/components/issues/8798
 .dialog-checkbox-fix {
   min-height: 50px;
   display: flex;
-  >mat-checkbox{
+
+  > mat-checkbox {
     align-self: center;
+  }
+}
+
+.small-icon-button {
+  width: 30px !important;
+  height: 30px !important;
+  line-height: 28px !important;
+
+  .mat-icon {
+    width: 24px !important;
+    height: 26px !important;
+    line-height: 24px !important;
+  }
+
+  .material-icons {
+    font-size: 24px !important;
   }
 }

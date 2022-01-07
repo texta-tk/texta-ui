@@ -125,19 +125,36 @@
 
 
           <div fxLayout="row" fxLayoutGap="24px">
-            <mat-checkbox class="advanced-setting" formControlName="fuzzyMatchFormControl" fxFlex="calc(33%-24px)"
-                          matTooltip="{{regexTaggerOptions?.actions?.POST?.return_fuzzy_match?.help_text || ''}}">Return
-              fuzzy
-              match
-            </mat-checkbox>
-            <mat-checkbox class="advanced-setting" formControlName="ignoreCaseFormControl" fxFlex="calc(33%-24px)"
-                          matTooltip="{{regexTaggerOptions?.actions?.POST?.ignore_case?.help_text || ''}}">Ignore case
-            </mat-checkbox>
-            <mat-checkbox class="advanced-setting" formControlName="ignorePunctuationFormControl"
-                          fxFlex="calc(33%-24px)"
-                          matTooltip="{{regexTaggerOptions?.actions?.POST?.ignore_punctuation?.help_text || ''}}">Ignore
-              punctuation
-            </mat-checkbox>
+            <div class="checkbox-info-row" fxFlex="calc(33%-24px)">
+              <mat-checkbox class="advanced-setting" formControlName="fuzzyMatchFormControl">
+                Return fuzzy
+                match
+              </mat-checkbox>
+              <app-info-icon [textTemplate]="fuzzyTemplate" textTitle="Return fuzzy match">
+                <ng-template #fuzzyTemplate>
+                  <p>{{regexTaggerOptions?.actions?.POST?.return_fuzzy_match?.help_text || ''}}</p>
+                </ng-template>
+              </app-info-icon>
+            </div>
+            <div class="checkbox-info-row" fxFlex="calc(33%-24px)">
+              <mat-checkbox class="advanced-setting" formControlName="ignoreCaseFormControl">Ignore case
+              </mat-checkbox>
+              <app-info-icon [textTemplate]="ignoreCaseTemplate" textTitle="Ignore case">
+                <ng-template #ignoreCaseTemplate>
+                  <p>{{regexTaggerOptions?.actions?.POST?.ignore_case?.help_text || ''}}</p>
+                </ng-template>
+              </app-info-icon>
+            </div>
+            <div class="checkbox-info-row" fxFlex="calc(33%-24px)">
+              <mat-checkbox class="advanced-setting" formControlName="ignorePunctuationFormControl">Ignore
+                punctuation
+              </mat-checkbox>
+              <app-info-icon [textTemplate]="punctuationTemplate" textTitle="Ignore punctuation">
+                <ng-template #punctuationTemplate>
+                  <p>{{regexTaggerOptions?.actions?.POST?.ignore_punctuation?.help_text || ''}}</p>
+                </ng-template>
+              </app-info-icon>
+            </div>
           </div>
         </div>
       </ng-template>

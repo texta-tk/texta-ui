@@ -131,8 +131,9 @@
             <mat-hint>{{CRFOptions?.actions?.POST?.num_iter?.help_text || ''}}</mat-hint>
           </mat-form-field>
           <mat-form-field class="advanced-setting">
-            <input formControlName="cValuesFormControl" matInput pattern="^[+-]?((\d+\.?\d*)|(\.\d+))(?:[ \t]*,[ \t]*[+-]?((\d+\.?\d*)|(\.\d+)))+$"
-                   placeholder="C values" >
+            <input formControlName="cValuesFormControl" matInput
+                   pattern="^[+-]?((\d+\.?\d*)|(\.\d+))(?:[ \t]*,[ \t]*[+-]?((\d+\.?\d*)|(\.\d+)))+$"
+                   placeholder="C values">
             <mat-hint>{{CRFOptions?.actions?.POST?.c_values?.help_text || ''}}</mat-hint>
             <mat-error *ngIf="CRFExtractorForm.get('cValuesFormControl')?.hasError('pattern')">
               Format is incorrect, example format: 0.001, 0.1, 0.5
@@ -140,18 +141,22 @@
           </mat-form-field>
           <mat-form-field class="advanced-setting">
             <input formControlName="suffixLenFormControl" matInput pattern="\d+,\d+"
-                   placeholder="Suffix len" >
+                   placeholder="Suffix len">
             <mat-hint>{{CRFOptions?.actions?.POST?.suffix_len?.help_text || ''}}</mat-hint>
 
             <mat-error *ngIf="CRFExtractorForm.get('suffixLenFormControl')?.hasError('pattern')">
               Format is incorrect, example format: 2,3
             </mat-error>
           </mat-form-field>
-          <mat-checkbox formControlName="biasFormControl" style="margin-top: 1em;"
-                        matTooltip="{{CRFOptions?.actions?.POST?.bias?.help_text || ''}}"
-                        matTooltipPosition="left">Bias
-          </mat-checkbox>
-
+          <div class="checkbox-info-row">
+            <mat-checkbox formControlName="biasFormControl" style="margin-top: 1em;">Bias
+            </mat-checkbox>
+            <app-info-icon [textTemplate]="biasTemplate" textTitle="Bias">
+              <ng-template #biasTemplate>
+                <p>{{CRFOptions?.actions?.POST?.bias?.help_text || ''}}</p>
+              </ng-template>
+            </app-info-icon>
+          </div>
         </div>
       </ng-template>
     </mat-expansion-panel>

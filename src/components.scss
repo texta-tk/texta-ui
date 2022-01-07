@@ -86,4 +86,8 @@
 .mat-form-field.stretch-height .mat-form-field-infix {
   height: 100%
 }
-
+.checkbox-info-row{
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+}

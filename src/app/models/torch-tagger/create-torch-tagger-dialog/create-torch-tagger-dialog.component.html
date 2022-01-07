@@ -47,19 +47,29 @@
       </mat-select>
       <mat-hint>{{torchTaggerOptions?.actions?.POST?.fact_name?.help_text || ''}}</mat-hint>
     </mat-form-field>
-    <div class="flex-row">
-      <mat-checkbox formControlName="balanceFormControl"
-                    matTooltip="{{torchTaggerOptions?.actions?.POST?.balance?.help_text || ''}}"
-                    matTooltipPosition="left">Balance
+    <div class="checkbox-info-row">
+      <mat-checkbox formControlName="balanceFormControl">Balance
       </mat-checkbox>
-      <mat-checkbox class="m-l-15" formControlName="sentenceShuffleFormControl"
-                    matTooltip="{{torchTaggerOptions?.actions?.POST?.use_sentence_shuffle?.help_text || ''}}"
-                    matTooltipPosition="left">Use sentence shuffle
+      <app-info-icon [textTemplate]="balanceTemplate" textTitle="Balance">
+        <ng-template #balanceTemplate>
+          <p>{{torchTaggerOptions?.actions?.POST?.balance?.help_text || ''}}</p>
+        </ng-template>
+      </app-info-icon>
+      <mat-checkbox class="m-l-15" formControlName="sentenceShuffleFormControl">Use sentence shuffle
       </mat-checkbox>
-      <mat-checkbox class="m-l-15" formControlName="maxBalanceFormControl"
-                    matTooltip="{{torchTaggerOptions?.actions?.POST?.balance_to_max_limit?.help_text || ''}}"
-                    matTooltipPosition="left">Balance to max limit
+
+      <app-info-icon [textTemplate]="sentenceShuffle" textTitle="Use sentence shuffle">
+        <ng-template #sentenceShuffle>
+          <p>{{torchTaggerOptions?.actions?.POST?.use_sentence_shuffle?.help_text || ''}}</p>
+        </ng-template>
+      </app-info-icon>
+      <mat-checkbox class="m-l-15" formControlName="maxBalanceFormControl">Balance to max limit
       </mat-checkbox>
+      <app-info-icon [textTemplate]="balanceToMaxLimit" textTitle="Balance to max limit">
+        <ng-template #balanceToMaxLimit>
+          <p>{{torchTaggerOptions?.actions?.POST?.balance_to_max_limit?.help_text || ''}}</p>
+        </ng-template>
+      </app-info-icon>
     </div>
     <mat-form-field style="margin-top: 10px;"
                     *ngIf="this.torchTaggerForm.get('factNameFormControl')?.value?.values.length === 2">
@@ -74,7 +84,8 @@
       <mat-hint>{{torchTaggerOptions?.actions?.POST?.pos_label?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
-    <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)" [startingQuery]="query"></app-saved-search-autocomplete>
+    <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"
+                                   [startingQuery]="query"></app-saved-search-autocomplete>
     <mat-form-field data-cy="appTorchTaggerCreateDialogArchitecture">
       <mat-label>Model architecture</mat-label>
       <mat-select [disableOptionCentering]="true" formControlName="modelArchitectureFormControl"

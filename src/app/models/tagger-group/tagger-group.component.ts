@@ -151,7 +151,8 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
       data: {taggerGroupId: taggerGroup.id, currentProjectId: this.currentProject.id},
       maxHeight: '835px',
       width: '850px',
-      panelClass: 'custom-no-padding-dialog'
+      panelClass: 'custom-no-padding-dialog',
+      autoFocus: 'dialog'
     });
   }
 

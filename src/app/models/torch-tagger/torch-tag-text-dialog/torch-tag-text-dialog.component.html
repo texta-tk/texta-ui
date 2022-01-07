@@ -1,7 +1,15 @@
 <mat-form-field class="max-width">
   <input matInput placeholder="Tag text" #textInput>
 </mat-form-field>
-<mat-checkbox [(ngModel)]="lemmatize"  matTooltip="{{tagTextOptions?.actions?.POST?.lemmatize?.help_text || ''}}">Lemmatize</mat-checkbox>
+<div class="m-bot-10 checkbox-info-row">
+  <mat-checkbox [(ngModel)]="lemmatize" matTooltip="">Lemmatize</mat-checkbox>
+  <app-info-icon [textTemplate]="lemmatizeTemplate" textTitle="Lemmatize">
+    <ng-template #lemmatizeTemplate>
+      <p>{{tagTextOptions?.actions?.POST?.lemmatize?.help_text || ''}}</p>
+    </ng-template>
+  </app-info-icon>
+</div>
+
 <div *ngIf="result" class="m-top-10">
   <span class="mat-body-strong">Result: </span>{{result.result}}
   <br>
@@ -9,6 +17,9 @@
 </div>
 <div class="flex-col">
   <div class="flex-row">
+    <div class="flex-item-left">
+      <button type="button" mat-button mat-dialog-close="">Close</button>
+    </div>
     <div class="flex-item-right">
       <button type="submit" mat-button (click)="onSubmit(textInput.value)">Post</button>
     </div>

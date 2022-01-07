@@ -75,7 +75,8 @@
     <mat-form-field data-cy="appElasticAnalyzerCreateDialogLanguages">
       <mat-label>Stemmer language</mat-label>
       <mat-select [disableOptionCentering]="true" formControlName="languageFormControl"
-                  panelClass="select-panel-reveal-input" [required]="!!elasticAnalyzerForm?.get('languageFormControl')?.hasValidator(requiredValidator)">
+                  panelClass="select-panel-reveal-input"
+                  [required]="!!elasticAnalyzerForm?.get('languageFormControl')?.hasValidator(requiredValidator)">
         <ng-container *ngIf="stemmerLangs">
           <mat-option *ngFor="let item of stemmerLangs" [value]="item.value">
             {{item.display_name ? item.display_name : 'None'}}
@@ -89,15 +90,23 @@
       <mat-hint>{{elasticAnalyzerOptions?.actions?.POST?.stemmer_lang?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
-    <mat-checkbox class="m-bot-10 m-top-10" formControlName="detectLangFormControl"
-                  matTooltip="{{elasticAnalyzerOptions?.actions?.POST?.detect_lang?.help_text || ''}}"
-                  matTooltipPosition="left">Detect language
-    </mat-checkbox>
 
-    <mat-checkbox class="m-bot-10" formControlName="stripHtmlFormControl"
-                  matTooltip="{{elasticAnalyzerOptions?.actions?.POST?.strip_html?.help_text || ''}}"
-                  matTooltipPosition="left">Strip HTML
-    </mat-checkbox>
+    <div class="checkbox-info-row">
+      <mat-checkbox class="m-bot-10 m-top-10" formControlName="detectLangFormControl">Detect language
+      </mat-checkbox>
+      <app-info-icon [textTemplate]="detectTemplate" textTitle="Detect language">
+        <ng-template #detectTemplate><p>{{elasticAnalyzerOptions?.actions?.POST?.detect_lang?.help_text || ''}}</p>
+        </ng-template>
+      </app-info-icon>
+    </div>
+    <div class="checkbox-info-row">
+      <mat-checkbox class="m-bot-10" formControlName="stripHtmlFormControl">Strip HTML
+      </mat-checkbox>
+      <app-info-icon [textTemplate]="stripTemplate" textTitle="Strip HTML">
+        <ng-template #stripTemplate><p>{{elasticAnalyzerOptions?.actions?.POST?.strip_html?.help_text || ''}}</p>
+        </ng-template>
+      </app-info-icon>
+    </div>
 
     <!--advanced -->
     <mat-expansion-panel expanded="false">

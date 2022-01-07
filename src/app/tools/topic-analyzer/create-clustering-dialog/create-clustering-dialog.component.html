@@ -119,11 +119,13 @@
       </mat-form-field>
 
     </div>
-    <mat-checkbox formControlName="useLSIFormControl" style="margin-top: 2em"
-                  matTooltip="{{clusterOptions?.actions?.POST?.use_lsi?.help_text || ''}}" matTooltipPosition="left">Use
-      LSI
-    </mat-checkbox>
-
+    <div class="checkbox-info-row">
+      <mat-checkbox formControlName="useLSIFormControl" style="margin-top: 2em">Use LSI</mat-checkbox>
+      <app-info-icon [textTemplate]="lsiTemplate" textTitle="Use LSI">
+        <ng-template #lsiTemplate><p>{{clusterOptions?.actions?.POST?.use_lsi?.help_text || ''}}</p>
+        </ng-template>
+      </app-info-icon>
+    </div>
   </form>
 </div>
 <mat-dialog-actions>

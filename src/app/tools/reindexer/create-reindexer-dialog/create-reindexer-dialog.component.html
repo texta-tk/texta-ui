@@ -57,12 +57,15 @@
         <th class="mat-body-strong" style="width: 75px">Field Type</th>
       </tr>
       <tr *ngFor="let field of fieldTypesModel">
-        <td><input class="max-width" style="box-sizing: border-box" [(ngModel)]="field.path" [ngModelOptions]="{standalone: true}" disabled></td>
-        <td><input class="max-width" style="box-sizing: border-box" [(ngModel)]="field.new_path_name" [ngModelOptions]="{standalone: true}"
+        <td><input class="max-width" style="box-sizing: border-box" [(ngModel)]="field.path"
+                   [ngModelOptions]="{standalone: true}" disabled></td>
+        <td><input class="max-width" style="box-sizing: border-box" [(ngModel)]="field.new_path_name"
+                   [ngModelOptions]="{standalone: true}"
                    [disabled]="field.path === 'texta_facts'"></td>
         <td><select [(ngModel)]="field.field_type" [ngModelOptions]="{standalone: true}"
                     [disabled]="field.path === 'texta_facts'">
-          <option *ngFor="let option of supportedElasticTypes" [value]="option" [disabled]="option === 'mlp'">{{option}}</option>
+          <option *ngFor="let option of supportedElasticTypes" [value]="option"
+                  [disabled]="option === 'mlp'">{{option}}</option>
         </select></td>
       </tr>
     </table>
@@ -78,11 +81,14 @@
       <mat-hint>{{reindexerOptions?.actions?.POST?.random_size?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
-    <div class="dialog-checkbox-fix">
-      <mat-checkbox formControlName="addFactsMappingFormControl"
-                    matTooltip="{{reindexerOptions?.actions?.POST?.add_facts_mapping?.help_text || ''}}"
-                    matTooltipPosition="left">Add facts mapping
+    <div class="dialog-checkbox-fix checkbox-info-row align-items-center">
+      <mat-checkbox formControlName="addFactsMappingFormControl">Add facts mapping
       </mat-checkbox>
+      <app-info-icon [textTemplate]="factsMappingTemplate" textTitle="Add facts mapping">
+        <ng-template #factsMappingTemplate>
+          <p>{{reindexerOptions?.actions?.POST?.add_facts_mapping?.help_text || ''}}</p>
+        </ng-template>
+      </app-info-icon>
     </div>
 
 

@@ -75,7 +75,7 @@ export class MultiTagTextDialogComponent implements OnInit, OnDestroy {
       return of(null);
     }))).subscribe(resp => {
       if (resp && !(resp.options instanceof HttpErrorResponse)) {
-        this.taggerOptions = resp;
+        this.taggerOptions = resp.options;
       }
 
       UtilityFunctions.logForkJoinErrors(resp, HttpErrorResponse, this.logService.snackBarError.bind(this.logService));

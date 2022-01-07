@@ -60,10 +60,15 @@
              placeholder="Fact value">
       <mat-hint>{{regexTaggerOptions?.actions?.POST?.new_fact_value?.help_text || ''}}</mat-hint>
     </mat-form-field>
-    <mat-checkbox formControlName="addSpansFormControl"
-                  matTooltip="{{regexTaggerOptions?.actions?.POST?.add_spans?.help_text || ''}}"
-                  matTooltipPosition="left">Add spans
-    </mat-checkbox>
+    <div class="checkbox-info-row m-bot-10 m-top-10">
+      <mat-checkbox formControlName="addSpansFormControl">Add spans
+      </mat-checkbox>
+      <app-info-icon [textTemplate]="spanTemplate" textTitle="Add spans">
+        <ng-template #spanTemplate>
+          <p>{{regexTaggerOptions?.actions?.POST?.add_spans?.help_text || ''}}</p>
+        </ng-template>
+      </app-info-icon>
+    </div>
     <!--advanced -->
     <mat-expansion-panel expanded="false">
       <mat-expansion-panel-header>
