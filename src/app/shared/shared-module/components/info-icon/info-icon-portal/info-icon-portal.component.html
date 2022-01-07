@@ -1,0 +1,11 @@
+<div class="mat-tooltip flex-col">
+  <div class="flex-row align-items-center">
+    <h3 style="margin: 0">{{this.componentData.title}}</h3>
+    <button class="close-button small-icon-button" mat-icon-button (click)="closePortal()">
+      <mat-icon>clear</mat-icon>
+    </button>
+  </div>
+  <ng-container *ngTemplateOutlet="componentData.template">
+
+  </ng-container>
+</div>

@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>Edit Anonymizer</h1>
 <div mat-dialog-content>
-  <form (ngSubmit)="onSubmit(anonymizerForm.value)" [formGroup]="anonymizerForm" fxLayout="column" fxLayoutGap="10px">
+  <form (ngSubmit)="onSubmit(anonymizerForm.value)" [formGroup]="anonymizerForm" fxLayout="column">
     <mat-form-field data-cy="appAnonymizerCreateDialogDesc">
       <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
              placeholder="Description" required>
@@ -8,6 +8,7 @@
       <mat-error *ngIf="anonymizerForm.get('descriptionFormControl')?.hasError('required')">
         Description is <strong>required</strong>
       </mat-error>
+      <mat-hint>{{analyzerOptions?.actions?.POST?.description?.help_text || ''}}</mat-hint>
     </mat-form-field>
     <mat-form-field *ngIf="anonymizerForm.get('replaceMisspelledNamesFormControl')?.value">
       <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="misspellingThresholdFormControl"
@@ -23,18 +24,43 @@
       <mat-error *ngIf="anonymizerForm.get('misspellingThresholdFormControl')?.hasError('max')">
         Threshold must be between <strong>0 and 1</strong>
       </mat-error>
+      <mat-hint>{{analyzerOptions?.actions?.POST?.misspelling_threshold?.help_text || ''}}</mat-hint>
     </mat-form-field>
-    <mat-checkbox formControlName="replaceMisspelledNamesFormControl">Replace Misspelled
-      Names
-    </mat-checkbox>
-    <mat-checkbox formControlName="replaceSingleLastNamesFormControl">Replace Single Last
-      Names
-    </mat-checkbox>
-    <mat-checkbox formControlName="replaceSingleFirstNamesFormControl">Replace Single First
-      Names
-    </mat-checkbox><!--
-    <mat-checkbox formControlName="mimicCasingFormControl">Mimic casing</mat-checkbox>-->
-    <mat-checkbox formControlName="autoAdjustThresholdFormControl">Auto Adjust Threshold</mat-checkbox>
+    <div class="checkbox-info-row" style="margin-top: 30px">
+      <mat-checkbox formControlName="replaceMisspelledNamesFormControl">Replace Misspelled Names</mat-checkbox>
+      <app-info-icon [textTemplate]="misspelledTemplate" textTitle="Replace Misspelled Names">
+        <ng-template #misspelledTemplate>
+          <p>{{analyzerOptions?.actions?.POST?.replace_misspelled_names?.help_text || ''}}</p>
+        </ng-template>
+      </app-info-icon>
+    </div>
+
+    <div class="checkbox-info-row">
+      <mat-checkbox formControlName="replaceSingleLastNamesFormControl">Replace Single Last Names</mat-checkbox>
+      <app-info-icon [textTemplate]="singleLastNamesTemplate" textTitle="Replace Single Last Names">
+        <ng-template #singleLastNamesTemplate>
+          <p>{{analyzerOptions?.actions?.POST?.replace_single_last_names?.help_text || ''}}</p>
+        </ng-template>
+      </app-info-icon>
+    </div>
+    <div class="checkbox-info-row">
+      <mat-checkbox formControlName="replaceSingleFirstNamesFormControl">Replace Single First Names
+      </mat-checkbox>
+      <app-info-icon [textTemplate]="singleFirstNamesTemplate" textTitle="Replace Single First Names">
+        <ng-template #singleFirstNamesTemplate>
+          <p>{{analyzerOptions?.actions?.POST?.replace_single_first_names?.help_text || ''}}</p>
+        </ng-template>
+      </app-info-icon>
+    </div>
+    <div class="checkbox-info-row">
+      <mat-checkbox formControlName="autoAdjustThresholdFormControl">Auto Adjust Threshold
+      </mat-checkbox>
+      <app-info-icon [textTemplate]="autoAdjustTemplate" textTitle="Auto Adjust Threshold">
+        <ng-template #autoAdjustTemplate>
+          <p>{{analyzerOptions?.actions?.POST?.auto_adjust_threshold?.help_text || ''}}</p>
+        </ng-template>
+      </app-info-icon>
+    </div>
     <div class="flex-col m-top-10">
       <div class="flex-row">
         <div class="flex-item-left">

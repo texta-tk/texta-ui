@@ -11,16 +11,28 @@
       <app-virtual-scroll-select [scrollableDataSource]="taggers" [formControl]="taggerSelectionFormControl"></app-virtual-scroll-select>
       <mat-hint>{{taggerOptions?.actions?.POST?.taggers?.help_text || ''}}</mat-hint>
     </mat-form-field>
-    <div class="flex-row" style="margin-bottom: 10px;">
-      <mat-checkbox [(ngModel)]="formModel.lemmatize"
-                    matTooltip="{{taggerOptions?.actions?.POST?.lemmatize?.help_text || ''}}">Lemmatize
+    <div class="checkbox-info-row m-bot-10">
+      <mat-checkbox [(ngModel)]="formModel.lemmatize">Lemmatize
       </mat-checkbox>
-      <mat-checkbox [(ngModel)]="formModel.feedback" class="m-l-15"
-                    matTooltip="{{taggerOptions?.actions?.POST?.feedback_enabled?.help_text || ''}}">Feedback
+      <app-info-icon [textTemplate]="lemmatizeTemplate" textTitle="Lemmatize">
+        <ng-template #lemmatizeTemplate>
+          <p>{{taggerOptions?.actions?.POST?.lemmatize?.help_text || ''}}</p>
+        </ng-template>
+      </app-info-icon>
+      <mat-checkbox [(ngModel)]="formModel.feedback" class="m-l-15">Feedback
       </mat-checkbox>
-      <mat-checkbox [(ngModel)]="formModel.hideFalse" class="m-l-15"
-                    matTooltip="{{taggerOptions?.actions?.POST?.hide_false?.help_text || ''}}">Hide false
+      <app-info-icon [textTemplate]="feedbackTemplate" textTitle="Feedback">
+        <ng-template #feedbackTemplate>
+          <p>{{taggerOptions?.actions?.POST?.feedback_enabled?.help_text || ''}}</p>
+        </ng-template>
+      </app-info-icon>
+      <mat-checkbox [(ngModel)]="formModel.hideFalse" class="m-l-15">Hide false
       </mat-checkbox>
+      <app-info-icon [textTemplate]="hideFalseTemplate" textTitle="Hide false">
+        <ng-template #hideFalseTemplate>
+          <p>{{taggerOptions?.actions?.POST?.hide_false?.help_text || ''}}</p>
+        </ng-template>
+      </app-info-icon>
     </div>
     <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
   </div>

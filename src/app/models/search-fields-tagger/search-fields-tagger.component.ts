@@ -95,7 +95,7 @@ export class SearchFieldsTaggerComponent implements OnInit, OnDestroy, AfterView
 
   openCreateDialog(): void {
     const dialogRef = this.dialog.open(CreateSearchFieldsTaggerDialogComponent, {
-      maxHeight: '650px',
+      maxHeight: '90vh',
       width: '700px',
     });
     dialogRef.afterClosed().subscribe(resp => {

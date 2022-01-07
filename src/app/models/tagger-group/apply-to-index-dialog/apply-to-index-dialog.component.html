@@ -63,16 +63,24 @@
              type="number">
       <mat-hint>{{taggerGroupOptions?.actions?.POST?.max_tags?.help_text || ''}}</mat-hint>
     </mat-form-field>
-    <div class="flex-row" style="margin-top: 0.5em">
-      <mat-checkbox formControlName="lemmatizeFormControl"
-                    matTooltip="{{taggerGroupOptions?.actions?.POST?.lemmatize?.help_text || ''}}"
-                    matTooltipPosition="left">Lemmatize
+    <div class="checkbox-info-row m-top-5">
+      <mat-checkbox formControlName="lemmatizeFormControl">Lemmatize
       </mat-checkbox>
-      <mat-checkbox style="margin-left: 15px" formControlName="nerFormControl"
-                    matTooltip="{{taggerGroupOptions?.actions?.POST?.use_ner?.help_text || ''}}"
-                    matTooltipPosition="left">Use ner
+      <app-info-icon [textTemplate]="lemmatizeTemplate" textTitle="Lemmatize">
+        <ng-template #lemmatizeTemplate>
+          <p>{{taggerGroupOptions?.actions?.POST?.lemmatize?.help_text || ''}}</p>
+        </ng-template>
+      </app-info-icon>
+
+      <mat-checkbox style="margin-left: 15px" formControlName="nerFormControl">Use NER
       </mat-checkbox>
+      <app-info-icon [textTemplate]="nerTemplate" textTitle="Use NER">
+        <ng-template #nerTemplate>
+          <p>{{taggerGroupOptions?.actions?.POST?.use_ner?.help_text || ''}}</p>
+        </ng-template>
+      </app-info-icon>
     </div>
+
     <!--advanced -->
     <mat-expansion-panel expanded="false">
       <mat-expansion-panel-header>

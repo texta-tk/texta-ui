@@ -127,7 +127,7 @@ export class AnonymizerComponent implements OnInit, OnDestroy, AfterViewInit {
   openEditDialog(element: Anonymizer): void {
     const dialogRef = this.dialog.open(EditAnonymizerDialogComponent, {
       maxHeight: '90vh',
-      width: '800px',
+      width: '500px',
       disableClose: true,
       data: element,
     });

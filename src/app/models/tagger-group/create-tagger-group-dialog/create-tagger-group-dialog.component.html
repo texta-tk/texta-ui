@@ -21,16 +21,24 @@
       </mat-select>
       <mat-hint>{{taggerGroupOptions?.actions?.POST?.fact_name?.help_text || ''}}</mat-hint>
     </mat-form-field>
-    <div class="flex-row" formGroupName="taggerForm">
-      <mat-checkbox formControlName="balanceFormControl"
-                    matTooltip="{{taggerGroupOptions?.actions?.POST?.tagger?.children?.balance?.help_text || ''}}"
-                    matTooltipPosition="left">Balance
+    <div class="checkbox-info-row m-top-5" formGroupName="taggerForm">
+      <mat-checkbox formControlName="balanceFormControl">Balance
       </mat-checkbox>
-      <mat-checkbox class="m-l-15" formControlName="maxBalanceFormControl"
-                    matTooltip="{{taggerGroupOptions?.actions?.POST?.tagger?.children?.balance_to_max_limit?.help_text || ''}}"
-                    matTooltipPosition="left">Balance to max limit
+      <app-info-icon [textTemplate]="balanceTemplate" textTitle="Balance">
+        <ng-template #balanceTemplate>
+          <p>{{taggerGroupOptions?.actions?.POST?.tagger?.children?.balance?.help_text || ''}}</p>
+        </ng-template>
+      </app-info-icon>
+
+      <mat-checkbox class="m-l-15" formControlName="maxBalanceFormControl">Balance to max limit
       </mat-checkbox>
+      <app-info-icon [textTemplate]="balanceToMaxLimit" textTitle="Balance to max limit">
+        <ng-template #balanceToMaxLimit>
+          <p>{{taggerGroupOptions?.actions?.POST?.tagger?.children?.balance_to_max_limit?.help_text || ''}}</p>
+        </ng-template>
+      </app-info-icon>
     </div>
+
     <mat-form-field class="m-top-10">
       <input formControlName="taggerGroupMinSampleSizeFormControl" matInput placeholder="Minimum sample size" step="50"
              type="number">
@@ -94,10 +102,15 @@
         </mat-select>
         <mat-hint>{{taggerGroupOptions?.actions?.POST?.tagger?.children?.snowball_language?.help_text || ''}}</mat-hint>
       </mat-form-field>
-      <mat-checkbox class="m-bot-10" formControlName="detectLangFormControl"
-                    matTooltip="{{taggerGroupOptions?.actions?.POST?.tagger?.children?.detect_lang?.help_text || ''}}"
-                    matTooltipPosition="left">Detect language
-      </mat-checkbox>
+      <div class="checkbox-info-row m-bot-5 m-top-5">
+        <mat-checkbox formControlName="detectLangFormControl">Detect language
+        </mat-checkbox>
+        <app-info-icon [textTemplate]="detectLangTemplate" textTitle="Detect language">
+          <ng-template #detectLangTemplate>
+            <p>{{taggerGroupOptions?.actions?.POST?.tagger?.children?.detect_lang?.help_text || ''}}</p>
+          </ng-template>
+        </app-info-icon>
+      </div>
       <mat-form-field>
         <mat-label>Scoring Function</mat-label>
         <mat-select [disableOptionCentering]="true" formControlName="scoringFormControl"
@@ -152,11 +165,15 @@
 
         <mat-hint>{{taggerGroupOptions?.actions?.POST?.tagger?.children?.negative_multiplier?.help_text || ''}}</mat-hint>
       </mat-form-field>
-      <mat-checkbox formControlName="ignoreNumbersFormControl"
-                    matTooltip="{{taggerGroupOptions?.actions?.POST?.tagger?.children?.ignore_numbers?.help_text || ''}}"
-                    matTooltipPosition="left">Ignore numbers
-      </mat-checkbox>
-
+      <div class="checkbox-info-row m-bot-5 m-top-5">
+        <mat-checkbox formControlName="ignoreNumbersFormControl">Ignore numbers
+        </mat-checkbox>
+        <app-info-icon [textTemplate]="ignoreNumbersTemplate" textTitle="Ignore numbers">
+          <ng-template #ignoreNumbersTemplate>
+            <p>{{taggerGroupOptions?.actions?.POST?.tagger?.children?.ignore_numbers?.help_text || ''}}</p>
+          </ng-template>
+        </app-info-icon>
+      </div>
     </div>
 
   </form>

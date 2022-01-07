@@ -70,6 +70,8 @@ import {FileInputComponent} from './components/file-input/file-input.component';
 import {ByteFormatPipe} from './pipes/byte-format.pipe';
 import {BreadcrumbComponent} from './components/breadcrumb/breadcrumb.component';
 import {ConfirmBulkDeleteDialogComponent} from './components/dialogs/confirm-bulk-delete-dialog/confirm-bulk-delete-dialog.component';
+import {InfoIconComponent} from './components/info-icon/info-icon.component';
+import {InfoIconPortalComponent} from './components/info-icon/info-icon-portal/info-icon-portal.component';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
@@ -103,6 +105,8 @@ import {ConfirmBulkDeleteDialogComponent} from './components/dialogs/confirm-bul
     FileInputComponent,
     ByteFormatPipe,
     ConfirmBulkDeleteDialogComponent,
+    InfoIconComponent,
+    InfoIconPortalComponent,
   ],
   imports: [
     RouterModule,
@@ -208,6 +212,7 @@ import {ConfirmBulkDeleteDialogComponent} from './components/dialogs/confirm-bul
     VirtualScrollSelectComponent,
     FileInputComponent,
     ByteFormatPipe,
+    InfoIconComponent,
   ],
   providers: [FocusMonitor]
 })

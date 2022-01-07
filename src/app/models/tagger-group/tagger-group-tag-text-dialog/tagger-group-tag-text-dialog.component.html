@@ -13,8 +13,23 @@
   <input matInput type="number" placeholder="Number of Similar docs" #nSimilarDocsInput [(ngModel)]="nSimilarDocs">
   <mat-hint>{{tagTextOptions?.actions?.POST?.n_similar_docs?.help_text || ''}}</mat-hint>
 </mat-form-field>
-<mat-checkbox [(ngModel)]="lemmatize"  matTooltip="{{tagTextOptions?.actions?.POST?.lemmatize?.help_text || ''}}">Lemmatize</mat-checkbox>
-<mat-checkbox [(ngModel)]="ner" class="m-l-15" matTooltip="{{tagTextOptions?.actions?.POST?.use_ner?.help_text || ''}}" >Use NER</mat-checkbox>
+<div class="checkbox-info-row m-top-5">
+  <mat-checkbox [(ngModel)]="lemmatize">Lemmatize
+  </mat-checkbox>
+  <app-info-icon [textTemplate]="lemmatizeTemplate" textTitle="Lemmatize">
+    <ng-template #lemmatizeTemplate>
+      <p>{{tagTextOptions?.actions?.POST?.lemmatize?.help_text || ''}}</p>
+    </ng-template>
+  </app-info-icon>
+
+  <mat-checkbox style="margin-left: 15px" [(ngModel)]="ner">Use NER
+  </mat-checkbox>
+  <app-info-icon [textTemplate]="nerTemplate" textTitle="Use NER">
+    <ng-template #nerTemplate>
+      <p>{{tagTextOptions?.actions?.POST?.use_ner?.help_text || ''}}</p>
+    </ng-template>
+  </app-info-icon>
+</div>
 <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
 <div class="m-top-10" *ngIf="!isLoading && results && results.length < 1">
   <span class="mat-hint"> <i>No results</i></span>

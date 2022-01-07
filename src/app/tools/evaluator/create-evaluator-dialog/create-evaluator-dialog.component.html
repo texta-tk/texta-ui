@@ -114,12 +114,14 @@
                                                          href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.precision_score.html">here</a>
       </mat-hint>
     </mat-form-field>
-    <mat-checkbox formControlName="addIndividualFormControl" style="margin-top: 1em"
-                  *ngIf="!evaluatorForm.get('predictedFactValueFormControl')?.value
-          && !evaluatorForm.get('trueFactValueFormControl')?.value"
-                  matTooltip="{{evaluatorOptions?.actions?.POST?.add_individual_results?.help_text || ''}}"
-                  matTooltipPosition="left">Add individual results
-    </mat-checkbox>
+    <div class="checkbox-info-row"  *ngIf="!evaluatorForm.get('predictedFactValueFormControl')?.value
+          && !evaluatorForm.get('trueFactValueFormControl')?.value">
+      <mat-checkbox formControlName="addIndividualFormControl" style="margin-top: 1em">Add individual results</mat-checkbox>
+      <app-info-icon [textTemplate]="resultsTemplate" textTitle="Add individual results">
+        <ng-template #resultsTemplate><p>{{evaluatorOptions?.actions?.POST?.add_individual_results?.help_text || ''}}</p>
+        </ng-template>
+      </app-info-icon>
+    </div>
     <!--advanced -->
     <mat-expansion-panel expanded="false">
       <mat-expansion-panel-header>
