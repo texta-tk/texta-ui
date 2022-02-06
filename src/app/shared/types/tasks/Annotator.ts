@@ -7,7 +7,7 @@ interface Index {
   name: string;
 }
 
- interface AnnotatorUser {
+export interface AnnotatorUser {
   url: string;
   id: number;
   username: string;
@@ -26,21 +26,22 @@ interface Index {
   };
 }
 
- interface BinaryConfiguration {
+interface BinaryConfiguration {
   id: number;
   fact_name: string;
   pos_value: string;
   neg_value: string;
 }
 
- interface MultilabelConfiguration {
+interface MultilabelConfiguration {
   id: number;
   labelset: number;
 }
 
- interface EntityConfiguration {
+interface EntityConfiguration {
   fact_name: string;
 }
+
 export interface Annotator {
   id: number;
   url: string;

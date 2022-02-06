@@ -1,0 +1,42 @@
+<h1 mat-dialog-title>Edit</h1>
+<div mat-dialog-content>
+  <form (ngSubmit)="onSubmit(annotatorForm.value)" [formGroup]="annotatorForm" class="flex-col" id="annotatorFormId">
+    <mat-form-field class="max-width">
+      <input [errorStateMatcher]="matcher" autocomplete="off" matInput
+             placeholder="Description" required formControlName="descriptionFormControl">
+      <mat-error *ngIf="annotatorForm.get('descriptionFormControl')?.hasError('required')">
+        Description is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field *ngIf="currentUser?.is_superuser" data-cy="appAnnotatorEditDialogUsers">
+      <mat-label>Users</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="usersFormControl"
+                  multiple panelClass="select-panel-reveal-input">
+        <mat-option *ngFor="let item of users" [value]="item.username" [matTooltip]="item.username">
+          {{item.display_name}}
+        </mat-option>
+      </mat-select>
+      <mat-hint>List of users with access to this annotator task</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="!currentUser?.is_superuser" class="max-width" floatLabel="never">
+      <textarea class="max-width" formControlName="usersFormControl"
+                matInput
+                placeholder="Users">
+      </textarea>
+      <mat-hint>List of users with access to this annotator task (newline separated)</mat-hint>
+    </mat-form-field>
+  </form>
+</div>
+<div class="flex-col max-width" mat-dialog-actions>
+  <div class="flex-row max-width">
+    <div class="flex-item-left">
+      <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
+    </div>
+    <div class="flex-item-right">
+      <button [disabled]="!annotatorForm.valid" class="max-width" form="annotatorFormId" mat-stroked-button
+              type="submit">Save changes
+      </button>
+    </div>
+  </div>
+</div>

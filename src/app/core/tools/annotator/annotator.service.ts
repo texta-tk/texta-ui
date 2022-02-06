@@ -6,7 +6,7 @@ import {AppConfigService} from '../../util/app-config.service';
 import {LogService} from '../../util/log.service';
 import {ResultsWrapper} from '../../../shared/types/Generic';
 import {Annotator} from '../../../shared/types/tasks/Annotator';
-import {LabelSet} from "../../../shared/types/tasks/LabelSet";
+import {LabelSet} from '../../../shared/types/tasks/LabelSet';
 
 @Injectable({
   providedIn: 'root'
@@ -35,6 +35,23 @@ export class AnnotatorService {
     (`${this.apiUrl}/projects/${projectId}/annotator/bulk_delete/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'bulkDeleteAnnotatorTasks')),
       catchError(this.logService.handleError<{ 'num_deleted': number, 'deleted_types': { string: number }[] }>('bulkDeleteAnnotatorTasks')));
+  }
+
+  patchAnnotator(body: {}, projectId: number, annotatorId: number): Observable<Annotator | HttpErrorResponse> {
+    return this.http.patch<Annotator>(
+      `${this.apiUrl}/projects/${projectId}/annotator/${annotatorId}/`,
+      body
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'patchAnnotator')),
+      catchError(this.logService.handleError<Annotator>('patchAnnotator')));
+  }
+
+  deleteAnnotator(projectId: number, annotatorId: number): Observable<{ message: string } | HttpErrorResponse> {
+    return this.http.delete<{ message: string }>(
+      `${this.apiUrl}/projects/${projectId}/annotator/${annotatorId}/`
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'deleteAnnotator')),
+      catchError(this.logService.handleError<{ message: string }>('deleteAnnotator')));
   }
 
   // tslint:disable-next-line:no-any

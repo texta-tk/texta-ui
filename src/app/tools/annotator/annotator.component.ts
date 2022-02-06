@@ -16,6 +16,7 @@ import {AnnotatorService} from '../../core/tools/annotator/annotator.service';
 import {LogService} from '../../core/util/log.service';
 import {ConfirmDialogComponent} from '../../shared/shared-module/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {Index} from '../../shared/types/Index';
+import {EditAnnotatorDialogComponent} from './edit-annotator-dialog/edit-annotator-dialog.component';
 
 @Component({
   selector: 'app-annotator',
@@ -29,7 +30,7 @@ export class AnnotatorComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: Annotator | null;
   public tableData: MatTableDataSource<Annotator> = new MatTableDataSource();
   selectedRows = new SelectionModel<Annotator>(true, []);
-  public displayedColumns = ['select', 'id', 'description', 'author__username', 'index', 'annotation_type', 'total', 'annotated', 'skipped', 'validated'];
+  public displayedColumns = ['select', 'id', 'description', 'author__username', 'users_count', 'index', 'annotation_type', 'total', 'annotated', 'skipped', 'validated', 'Modify'];
   public isLoadingResults = true;
 
   @ViewChild(MatSort) sort: MatSort;
@@ -39,6 +40,7 @@ export class AnnotatorComponent implements OnInit, OnDestroy, AfterViewInit {
   currentProject: Project;
   private updateTable = new Subject<boolean>();
   getIndicesName = (x: Index) => x.name;
+
   constructor(private projectStore: ProjectStore,
               private annotatorService: AnnotatorService,
               public dialog: MatDialog,
@@ -153,5 +155,34 @@ export class AnnotatorComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy(): void {
     this.destroyed$.next(true);
     this.destroyed$.complete();
+  }
+
+  onDelete(element: Annotator, i: number): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {confirmText: 'Delete', mainText: 'Are you sure you want to delete this annotator task?'}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.annotatorService.deleteAnnotator(this.currentProject.id, element.id).subscribe(() => {
+          this.logService.snackBarMessage(`Deleted annotator task: ${element.description}`, 2000);
+          this.updateTable.next();
+          this.projectStore.refreshSelectedProjectResourceCounts();
+        });
+      }
+    });
+  }
+
+  edit(element: Annotator): void {
+    this.dialog.open(EditAnnotatorDialogComponent, {
+      width: '750px',
+      data: element
+    }).afterClosed().subscribe((x: Annotator | HttpErrorResponse) => {
+      if (x && !(x instanceof HttpErrorResponse)) {
+        this.updateTable.next();
+      } else if (x) {
+        this.logService.snackBarError(x, 3000);
+      }
+    });
   }
 }

@@ -11,6 +11,40 @@
       <mat-hint>{{annotatorOptions?.actions?.POST?.description?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
+    <mat-form-field *ngIf="currentUser?.is_superuser" data-cy="appAnnotatorCreateDialogUsers">
+      <mat-label>Users</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="usersFormControl"
+                  multiple panelClass="select-panel-reveal-input">
+        <mat-option *ngFor="let item of users" [value]="item.username" [matTooltip]="item.username">
+          {{item.display_name}}
+        </mat-option>
+      </mat-select>
+      <mat-hint>List of users with access to this annotator task</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="!currentUser?.is_superuser" class="max-width" floatLabel="never">
+      <textarea class="max-width" formControlName="usersFormControl"
+                matInput
+                placeholder="Users">
+      </textarea>
+      <mat-hint>List of users with access to this annotator task (newline separated)</mat-hint>
+    </mat-form-field>
+    <mat-form-field data-cy="appAnnotatorCreateDialogType">
+      <mat-label>Annotation type</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="annotationTypeFormControl"
+                  panelClass="select-panel-reveal-input" required>
+        <ng-container *ngIf="annotatorTypes">
+          <mat-option *ngFor="let item of annotatorTypes" [value]="item.value">
+            {{item.display_name}}
+          </mat-option>
+        </ng-container>
+      </mat-select>
+
+      <mat-error *ngIf="annotatorForm.get('annotationTypeFormControl')?.hasError('required')">
+        This field is <strong>required</strong>
+      </mat-error>
+      <mat-hint>{{annotatorOptions?.actions?.POST?.annotation_type?.help_text || ''}}</mat-hint>
+    </mat-form-field>
 
     <mat-form-field data-cy="appAnnotatorCreateDialogIndices">
       <mat-label>Indices</mat-label>
@@ -39,22 +73,7 @@
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"
                                    data-cy="appMLPCreateDialogQuery">
     </app-saved-search-autocomplete>
-    <mat-form-field data-cy="appAnnotatorCreateDialogType">
-      <mat-label>Annotation type</mat-label>
-      <mat-select [disableOptionCentering]="true" formControlName="annotationTypeFormControl"
-                  panelClass="select-panel-reveal-input" required>
-        <ng-container *ngIf="annotatorTypes">
-          <mat-option *ngFor="let item of annotatorTypes" [value]="item.value">
-            {{item.display_name}}
-          </mat-option>
-        </ng-container>
-      </mat-select>
 
-      <mat-error *ngIf="annotatorForm.get('annotationTypeFormControl')?.hasError('required')">
-        This field is <strong>required</strong>
-      </mat-error>
-      <mat-hint>{{annotatorOptions?.actions?.POST?.annotation_type?.help_text || ''}}</mat-hint>
-    </mat-form-field>
 
     <ng-container *ngIf="annotatorForm.get('annotationTypeFormControl')?.value === 'binary'">
       <form formGroupName="binaryFormGroup" class="max-width flex-col">

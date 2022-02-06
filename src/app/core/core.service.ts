@@ -9,7 +9,7 @@ import {Index} from '../shared/types/Index';
 import {ResultsWrapper} from '../shared/types/Generic';
 import {CoreVariables} from '../shared/types/CoreVariables';
 import {AppConfigService} from './util/app-config.service';
-import {CeleryCountTasks, CeleryStatus} from "../shared/types/Celery";
+import {CeleryCountTasks, CeleryStatus} from '../shared/types/Celery';
 
 @Injectable({
   providedIn: 'root'

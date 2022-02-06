@@ -20,7 +20,7 @@ import {FormControl} from '@angular/forms';
 import {MatOption} from '@angular/material/core';
 import {KeyValue} from '@angular/common';
 import {AppConfigService} from '../core/util/app-config.service';
-import {UtilityFunctions} from "../shared/UtilityFunctions";
+import {UtilityFunctions} from '../shared/UtilityFunctions';
 
 @Component({
   selector: 'app-project',

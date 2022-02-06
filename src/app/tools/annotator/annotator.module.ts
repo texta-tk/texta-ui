@@ -5,6 +5,7 @@ import {AnnotatorRoutingModule} from './annotator-routing.module';
 import { LabelsetComponent } from './labelset/labelset.component';
 import {SharedModule} from "../../shared/shared-module/shared.module";
 import { CreateLabelsetDialogComponent } from './labelset/create-labelset-dialog/create-labelset-dialog.component';
+import { EditAnnotatorDialogComponent } from './edit-annotator-dialog/edit-annotator-dialog.component';
 
 @NgModule({
     imports: [
@@ -15,7 +16,8 @@ import { CreateLabelsetDialogComponent } from './labelset/create-labelset-dialog
     AnnotatorComponent,
     CreateAnnotatorDialogComponent,
     LabelsetComponent,
-    CreateLabelsetDialogComponent
+    CreateLabelsetDialogComponent,
+    EditAnnotatorDialogComponent
     ],
     providers: [],
  })

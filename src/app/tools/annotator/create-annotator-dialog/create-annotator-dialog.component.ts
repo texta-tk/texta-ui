@@ -13,15 +13,19 @@ import {LogService} from '../../../core/util/log.service';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 import {Choice} from '../../../shared/types/tasks/Embedding';
-import {LabelSet} from "../../../shared/types/tasks/LabelSet";
-import {ResultsWrapper} from "../../../shared/types/Generic";
-import {ScrollableDataSource} from "../../../shared/ScrollableDataSource";
+import {LabelSet} from '../../../shared/types/tasks/LabelSet';
+import {ResultsWrapper} from '../../../shared/types/Generic';
+import {ScrollableDataSource} from '../../../shared/ScrollableDataSource';
+import {UserStore} from '../../../core/users/user.store';
+import {UserProfile} from '../../../shared/types/UserProfile';
+import {UserService} from '../../../core/users/user.service';
 
 interface OnSubmitParams {
   descriptionFormControl: string;
   indicesFormControl: ProjectIndex[];
   fieldsFormControl: string;
   annotationTypeFormControl: 'binary' | 'multilabel' | 'entity';
+  usersFormControl: string[] | string;
   binaryFormGroup: {
     factNameFormControl: string;
     posValFormControl: string;
@@ -48,6 +52,7 @@ export class CreateAnnotatorDialogComponent implements OnInit, OnDestroy {
 
   annotatorForm = new FormGroup({
     descriptionFormControl: new FormControl('', [Validators.required]),
+    usersFormControl: new FormControl(),
     indicesFormControl: new FormControl([], [Validators.required]),
     fieldsFormControl: new FormControl([], [Validators.required]),
     annotationTypeFormControl: new FormControl('', [Validators.required]),
@@ -78,9 +83,13 @@ export class CreateAnnotatorDialogComponent implements OnInit, OnDestroy {
   projectFacts: string[] = [];
   filteredProjectFacts: Observable<string[]>;
   projectLabelSets: ScrollableDataSource<{ id: number; description: string; values: string[] }>;
+  users: UserProfile[];
+  currentUser: UserProfile;
 
   constructor(private dialogRef: MatDialogRef<CreateAnnotatorDialogComponent>,
               private projectService: ProjectService,
+              private userStore: UserStore,
+              private userService: UserService,
               private annotatorService: AnnotatorService,
               private logService: LogService,
               private projectStore: ProjectStore) {
@@ -90,6 +99,7 @@ export class CreateAnnotatorDialogComponent implements OnInit, OnDestroy {
     this.projectStore.getCurrentProject().pipe(take(1), switchMap(proj => {
       if (proj) {
         this.currentProject = proj;
+        this.users = UtilityFunctions.sortByStringProperty(proj.users, (x => x.username));
         this.projectLabelSets = new ScrollableDataSource(this.fetchFn, this);
         return forkJoin({
           annotatorOptions: this.annotatorService.getAnnotatorOptions(proj.id),
@@ -111,6 +121,11 @@ export class CreateAnnotatorDialogComponent implements OnInit, OnDestroy {
       UtilityFunctions.logForkJoinErrors(resp, HttpErrorResponse, this.logService.snackBarError.bind(this.logService));
     });
 
+    this.userStore.getCurrentUser().pipe(take(1)).subscribe(resp => {
+      if (resp) {
+        this.currentUser = resp;
+      }
+    });
 
     this.projectStore.getProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(projIndices => {
       if (projIndices) {
@@ -163,6 +178,7 @@ export class CreateAnnotatorDialogComponent implements OnInit, OnDestroy {
       fields: formData.fieldsFormControl,
       ...this.query ? {query: this.query} : {},
       annotation_type: formData.annotationTypeFormControl,
+      annotating_users: this.currentUser.is_superuser ? formData.usersFormControl || [] : this.newLineStringToList(formData.usersFormControl as string),
       ...formData.annotationTypeFormControl === 'binary' ?
         {
           binary_configuration: {
@@ -192,6 +208,16 @@ export class CreateAnnotatorDialogComponent implements OnInit, OnDestroy {
         this.logService.snackBarError(resp, 5000);
       }
     });
+  }
+
+  newLineStringToList(stringWithNewLines: string): string[] {
+    if (stringWithNewLines && stringWithNewLines.length !== 0) {
+      const stringList = stringWithNewLines.split('\n');
+      // filter out empty values
+      return stringList.filter(x => x !== '');
+    } else {
+      return [];
+    }
   }
 
   getFactsForIndices(val: ProjectIndex[]): void {
