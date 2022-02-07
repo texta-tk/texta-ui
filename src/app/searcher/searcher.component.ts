@@ -19,6 +19,9 @@ import {Project, ProjectIndex} from '../shared/types/Project';
 import {ProjectService} from '../core/projects/project.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {UtilityFunctions} from '../shared/UtilityFunctions';
+import {UserStore} from '../core/users/user.store';
+import {UserProfile} from '../shared/types/UserProfile';
+import {LogService} from '../core/util/log.service';
 
 @Component({
   selector: 'app-searcher',
@@ -36,26 +39,31 @@ export class SearcherComponent implements OnInit, OnDestroy {
   selectedIndices: ProjectIndex[] = [];
   projectIndices: ProjectIndex[] = [];
   projects: Project[] = [];
+  currentUser: UserProfile;
   routeParamProjId: number;
   routeParamIndices: string[] = [];
 
   constructor(private searchService: SearcherComponentService, private route: ActivatedRoute, private router: Router, private location: Location,
+              private userStore: UserStore,
+              private logService: LogService,
               private projectStore: ProjectStore, private projectService: ProjectService) {
   }
 
   ngOnInit(): void {
 
     forkJoin({
+      currentUser: this.userStore.getCurrentUser().pipe(filter(x => !!x), take(1)),
       projects: this.projectStore.getProjects().pipe(filter(x => !!x), take(1)),
       selectedProject: this.projectStore.getCurrentProject().pipe(filter(x => !!x), take(1)),
       selectedIndices: this.projectStore.getSelectedProjectIndices().pipe(filter(x => !!x), take(1)),
       projectIndices: this.projectStore.getProjectIndices().pipe(filter(x => !!x), take(1)),
     }).pipe(switchMap(data => {
-      if (data.projects && data.selectedProject && data.selectedIndices) {
+      if (data.projects && data.selectedProject && data.selectedIndices && data.currentUser) {
         this.projects = data.projects;
         this.selectedProject = data.selectedProject;
         this.selectedIndices = data.selectedIndices;
         this.projectIndices = data.projectIndices as ProjectIndex[];
+        this.currentUser = data.currentUser;
         return this.route.params;
       }
       return of(null);
@@ -77,10 +85,24 @@ export class SearcherComponent implements OnInit, OnDestroy {
           this.projectInUrl = project;
           // if the currently active project is the same one as in the url (localstorage data matched url)
           // then dont request extra stuff that we already have
-          if (this.routeParamIndices.length > 0 && !UtilityFunctions.arrayValuesEqual(this.routeParamIndices, this.selectedIndices.map(x => x.index))) {
-            return this.selectedProject.id === project.id ? of(this.projectIndices) : this.projectService.getProjectIndices(project.id);
+          if (this.selectedProject.id === project.id) {
+            return of(this.projectIndices);
           } else if (this.selectedProject.id !== project.id) {
-            this.projectStore.setCurrentProject(project);
+            if (UtilityFunctions.isUserInProject(this.currentUser, project)) {
+              this.projectStore.setCurrentProject(project);
+              return this.projectService.getProjectIndices(project.id);
+            } else { // if project exists that means the user has the rights to join the project (superuser status etc)
+              return this.projectService.addUsersToProject([this.currentUser.username], project.id).pipe(switchMap(resp => {
+                if (resp instanceof HttpErrorResponse) {
+                  this.logService.snackBarError(resp, 5000);
+                } else if (resp) {
+                  this.projectStore.refreshProjects();
+                  this.projectStore.setCurrentProject(project);
+                  return this.projectStore.getCurrentProject().pipe(filter(x => x?.id === project.id), take(1), switchMap(g => this.projectStore.getProjectIndices().pipe(take(1))));
+                }
+                return of(null);
+              }));
+            }
           }
         }
       }
@@ -88,13 +110,7 @@ export class SearcherComponent implements OnInit, OnDestroy {
     })).subscribe(projectIndices => {
       if (projectIndices && !(projectIndices instanceof HttpErrorResponse)) {
         const indices = projectIndices.filter(x => this.routeParamIndices.includes(x.index));
-        if (this.selectedProject.id !== this.projectInUrl.id) {
-          // going to take selectedindices from localstorage when setting new project
-          this.projectStore.setIndicesSelectionLocalStorage(this.projectInUrl, indices);
-          this.projectStore.setCurrentProject(this.projectInUrl);
-        } else {
-          this.projectStore.setSelectedProjectIndices(indices);
-        }
+        this.projectStore.setSelectedProjectIndices(indices.length > 0 ? indices : projectIndices);
       }
 
       combineLatest(
