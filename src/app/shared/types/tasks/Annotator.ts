@@ -13,8 +13,8 @@ export interface AnnotatorUser {
   username: string;
   email: string;
   display_name: string;
-  date_joined: Date;
-  last_login: Date;
+  date_joined: string;
+  last_login: string;
   is_superuser: boolean;
   profile: {
     first_name?: string;
@@ -53,9 +53,9 @@ export interface Annotator {
   query: string;
   annotation_type: string;
   annotator_users: AnnotatorUser[];
-  created_at: Date;
-  modified_at: Date;
-  completed_at: Date;
+  created_at: string;
+  modified_at: string;
+  completed_at: string;
   total: number;
   annotated: number;
   skipped: number;

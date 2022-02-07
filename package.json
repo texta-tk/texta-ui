@@ -1,6 +1,6 @@
 {
   "name": "texta",
-  "version": "1.6.32",
+  "version": "1.6.33",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -27,6 +27,7 @@
     "@angular/flex-layout": "^12.0.0-beta.35",
     "@angular/forms": "~13.0.0",
     "@angular/material": "^13.0.0",
+    "@angular/material-moment-adapter": "^13.2.1",
     "@angular/platform-browser": "~13.0.0",
     "@angular/platform-browser-dynamic": "~13.0.0",
     "@angular/router": "~13.0.0",
@@ -36,6 +37,7 @@
     "core-js": "^3.19.1",
     "http-server": "^14.0.0",
     "linkify-it": "^3.0.3",
+    "moment": "^2.29.1",
     "ngx-mat-select-search": "^3.3.2",
     "plotly.js": "^1.58.5",
     "rxjs": "^6.5.5",
@@ -44,6 +46,7 @@
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
+    "@angular-builders/custom-webpack": "^13.1.0",
     "@angular-devkit/build-angular": "^13.0.1",
     "@angular/cli": "~13.0.1",
     "@angular/compiler-cli": "~13.0.0",
@@ -64,6 +67,7 @@
     "karma-coverage-istanbul-reporter": "~3.0.2",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "^1.7.0",
+    "moment-locales-webpack-plugin": "^1.2.0",
     "npm-run-all": "^4.1.5",
     "ts-node": "~7.0.0",
     "tslint": "~6.1.0",

@@ -13,8 +13,9 @@ import {map, take} from 'rxjs/operators';
 import {UtilityFunctions} from '../../shared/UtilityFunctions';
 import {Project} from '../../shared/types/Project';
 import {LocalStorageService} from '../../core/util/local-storage.service';
-import {AggregationForm} from '../searcher-sidebar/aggregations/aggregations.component';
+import * as _moment from 'moment';
 
+const moment = _moment;
 @Injectable()
 export class SearcherComponentService {
   public savedSearchSelection = new SelectionModel<SavedSearch>(true, []);
@@ -200,9 +201,9 @@ export class SearcherComponentService {
       if (typeof constraint.query_constraints !== 'string') {
         const dateConstraint = constraintList.find(y => y instanceof DateConstraint && y.fields.length === 1 && y.fields[0].path === dateColPath);
         if (dateConstraint instanceof DateConstraint) {
-          dateConstraint.dateFromFormControl.setValue(new Date(key));
+          dateConstraint.dateFromFormControl.setValue(moment.utc(key));
         } else {
-          const constraintBluePrint = {fields: [{path: dateColPath, type: 'date'}], dateFrom: new Date(key)};
+          const constraintBluePrint = {fields: [{path: dateColPath, type: 'date'}], dateFrom: moment.utc(key)};
           constraint.query_constraints.push(constraintBluePrint);
         }
         constraint.query_constraints.push(...UtilityFunctions.convertConstraintListToJson(constraintList));

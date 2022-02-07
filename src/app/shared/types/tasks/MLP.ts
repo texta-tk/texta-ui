@@ -14,8 +14,8 @@ interface Task {
   progress: number;
   step: string;
   errors: string;
-  time_started: Date;
-  last_update: Date;
+  time_started: string;
+  last_update: string;
   // tslint:disable-next-line:no-any
   time_completed?: any;
   total: number;

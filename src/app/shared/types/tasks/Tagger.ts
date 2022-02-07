@@ -61,8 +61,8 @@ export interface Author {
   username: string;
   email: string;
   display_name: string;
-  date_joined: Date;
-  last_login: Date;
+  date_joined: string;
+  last_login: string;
   is_superuser: boolean;
   profile: Profile;
 }

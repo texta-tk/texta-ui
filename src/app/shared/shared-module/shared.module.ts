@@ -25,7 +25,6 @@ import {ScrollingModule} from '@angular/cdk/scrolling';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatDatepickerModule} from '@angular/material/datepicker';
-import {MatNativeDateModule} from '@angular/material/core';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatSliderModule} from '@angular/material/slider';
 import {FlexLayoutModule} from '@angular/flex-layout';
@@ -72,6 +71,7 @@ import {BreadcrumbComponent} from './components/breadcrumb/breadcrumb.component'
 import {ConfirmBulkDeleteDialogComponent} from './components/dialogs/confirm-bulk-delete-dialog/confirm-bulk-delete-dialog.component';
 import {InfoIconComponent} from './components/info-icon/info-icon.component';
 import {InfoIconPortalComponent} from './components/info-icon/info-icon-portal/info-icon-portal.component';
+import { MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
@@ -138,7 +138,7 @@ import {InfoIconPortalComponent} from './components/info-icon/info-icon-portal/i
     MatProgressBarModule,
     MatExpansionModule,
     MatDatepickerModule,
-    MatNativeDateModule,
+    MatMomentDateModule,
     MatTooltipModule,
     MatSliderModule,
     MatTreeModule,
@@ -179,7 +179,7 @@ import {InfoIconPortalComponent} from './components/info-icon/info-icon-portal/i
     MatProgressBarModule,
     MatExpansionModule,
     MatDatepickerModule,
-    MatNativeDateModule,
+    MatMomentDateModule,
     MatTooltipModule,
     MatSliderModule,
     MatTreeModule,
@@ -214,7 +214,7 @@ import {InfoIconPortalComponent} from './components/info-icon/info-icon-portal/i
     ByteFormatPipe,
     InfoIconComponent,
   ],
-  providers: [FocusMonitor]
+  providers: [FocusMonitor, {provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: {useUtc: true}}]
 })
 export class SharedModule {
 }

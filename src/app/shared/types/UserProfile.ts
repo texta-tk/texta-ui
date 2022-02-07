@@ -9,7 +9,7 @@ export class UserProfile {
   date_joined: string;
   is_superuser = false;
   display_name = '';
-  last_login: Date;
+  last_login: string;
   // only sometimes?? nullable
   active_project?: '';
   profile: {
