@@ -2,6 +2,7 @@
   [formControl]="textareaFormControl"
   [required]="required"
   [placeholder]="placeholder"
+  (blur)="onTouched();this.stateChanges.next()"
   (input)="_handleInput()" cdkTextareaAutosize cdkAutosizeMinRows="5" cdkAutosizeMaxRows="35" matInput></textarea>
 <a (click)="$event.stopPropagation();"
    [matMenuTriggerData]="{data: textareaFormControl}" [matMenuTriggerFor]="menu"

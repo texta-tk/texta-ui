@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>Edit</h1>
 <div mat-dialog-content>
   <form (ngSubmit)="onSubmit(annotatorForm.value)" [formGroup]="annotatorForm" class="flex-col" id="annotatorFormId">
-    <mat-form-field class="max-width">
+    <mat-form-field class="max-width" data-cy="appAnnotatorEditDialogDesc">
       <input [errorStateMatcher]="matcher" autocomplete="off" matInput
              placeholder="Description" required formControlName="descriptionFormControl">
       <mat-error *ngIf="annotatorForm.get('descriptionFormControl')?.hasError('required')">
@@ -34,7 +34,7 @@
       <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
     </div>
     <div class="flex-item-right">
-      <button [disabled]="!annotatorForm.valid" class="max-width" form="annotatorFormId" mat-stroked-button
+      <button [disabled]="!annotatorForm.valid" class="max-width" form="annotatorFormId"  data-cy="appAnnotatorEditDialogSubmit" mat-stroked-button
               type="submit">Save changes
       </button>
     </div>

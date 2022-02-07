@@ -21,6 +21,8 @@ import {AbstractControl, ControlValueAccessor, FormBuilder, FormControl, NgContr
 import {MAT_FORM_FIELD, MatFormField, MatFormFieldControl} from '@angular/material/form-field';
 import {FocusMonitor} from '@angular/cdk/a11y';
 import {coerceBooleanProperty} from '@angular/cdk/coercion';
+import {ErrorStateMatcher} from '@angular/material/core';
+import {LiveErrorStateMatcher} from '../../../CustomerErrorStateMatchers';
 
 @Component({
   selector: 'app-textarea-lexicon',
@@ -31,7 +33,7 @@ import {coerceBooleanProperty} from '@angular/cdk/coercion';
 })
 export class TextareaLexiconComponent implements OnInit, OnDestroy, ControlValueAccessor, MatFormFieldControl<string> {
   static nextId = 0;
-  textareaFormControl: FormControl = new FormControl('');
+  textareaFormControl: FormControl;
   currentProject: Project;
   lexicons = new BehaviorSubject<Lexicon[]>([]);
   loadingLexicons = new BehaviorSubject(true);
@@ -40,7 +42,7 @@ export class TextareaLexiconComponent implements OnInit, OnDestroy, ControlValue
   stateChanges = new Subject<void>();
   @HostBinding() id = `textarea-lexicon-input-${TextareaLexiconComponent.nextId++}`;
   focused = false;
-  errorState = false;
+
   controlType = 'textarea-lexicon-input';
   autofilled?: boolean | undefined;
   // tslint:disable-next-line:no-input-rename
@@ -58,6 +60,7 @@ export class TextareaLexiconComponent implements OnInit, OnDestroy, ControlValue
       this.stateChanges.next();
     });
     if (this.ngControl != null) {
+      this.textareaFormControl = new FormControl('', this.ngControl.validator);
       this.ngControl.valueAccessor = this;
     }
 
@@ -78,6 +81,10 @@ export class TextareaLexiconComponent implements OnInit, OnDestroy, ControlValue
 
   get empty(): boolean {
     return !this.textareaFormControl.value;
+  }
+
+  get errorState(): boolean {
+    return this.ngControl.errors !== null && this.textareaFormControl.touched;
   }
 
   @HostBinding('class.floating')

@@ -90,6 +90,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
           this.tableData.data = projects;
           this.isLoadingResults = false;
         }
+        this.changeDetectorRef.markForCheck();
       }
     });
     this.userStore.getCurrentUser().pipe(takeUntil(this.destroyed$)).subscribe(user => {

@@ -14,8 +14,10 @@ import {Observable, of} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
 import {ProjectStore} from '../projects/project.store';
 import {filter, map, skip, skipWhile, switchMap, take, takeUntil, takeWhile} from 'rxjs/operators';
-import {ProjectGuardDialogComponent} from '../../shared/shared-module/components/dialogs/project-guard-dialog/project-guard-dialog.component';
-import {UserStore} from "../users/user.store";
+import {
+  ProjectGuardDialogComponent
+} from '../../shared/shared-module/components/dialogs/project-guard-dialog/project-guard-dialog.component';
+import {UserStore} from '../users/user.store';
 
 @Injectable({
   providedIn: 'root'
@@ -31,6 +33,15 @@ export class ProjectGuard implements CanActivate, CanActivateChild {
       if (projs && projs.length === 0) {
         return this.dialog.open(ProjectGuardDialogComponent).afterClosed().pipe(map(result => {
           return result;
+        }));
+      } else if (projs && projs.length > 0) {
+        return this.projectStore.getCurrentProject().pipe(take(1), switchMap(x => {
+          if (x) {
+            return of(true);
+          } else {
+            this.projectStore.setCurrentProject(projs[0]);
+            return of(true);
+          }
         }));
       } else {
         return this.projectStore.getCurrentProject().pipe(skipWhile(x => x === null), take(1), switchMap(x => {
