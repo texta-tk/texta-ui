@@ -10,9 +10,9 @@
   <div class="checkbox-info-row m-bot-10">
   <mat-checkbox [(ngModel)]="this.data.use_gpu" >Use GPU
   </mat-checkbox>
-  <app-info-icon [textTemplate]="sentenceShuffle" textTitle="Use GPU">
-    <ng-template #sentenceShuffle>
-      <p>{{bertOptions?.actions?.POST?.use_sentence_shuffle?.help_text || ''}}</p>
+  <app-info-icon [textTemplate]="useGpuTemplate" textTitle="Use GPU">
+    <ng-template #useGpuTemplate>
+      <p>{{bertOptions?.actions?.POST?.use_gpu?.help_text || ''}}</p>
     </ng-template>
   </app-info-icon>
   </div>
