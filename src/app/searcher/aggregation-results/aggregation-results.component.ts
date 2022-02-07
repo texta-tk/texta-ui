@@ -5,6 +5,10 @@ import {Subject} from 'rxjs';
 import {MatTableDataSource} from '@angular/material/table';
 import {AggregationResultsDialogComponent} from './aggregation-results-dialog/aggregation-results-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
+import * as _moment from 'moment';
+import {Moment} from 'moment';
+
+const moment = _moment;
 
 export interface AggregationData {
 
@@ -50,6 +54,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   @ViewChild('tabs', {static: false}) tabs: any;
 
   @Output() drawerToggle = new EventEmitter<boolean>();
+
   constructor(public searchService: SearcherComponentService, public dialog: MatDialog) {
   }
 
@@ -59,14 +64,14 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
       return (x.buckets);
     }
     return null;
-  }
+  };
 
   formatDateData(buckets: { key_as_string: string, key: number, doc_count: number }[]): { value: number, name: string; epoch: number; }[] {
     const dateData: { value: number, name: string; epoch: number; }[] = [];
     for (const element of buckets) {
       dateData.push({
         value: element.doc_count,
-        name: new Date(element.key).toISOString(),
+        name: moment.utc(element.key).toISOString(),
         epoch: element.key,
       });
     }
@@ -76,13 +81,13 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
   formatDateDataExtraBucket(buckets: {
     key_as_string: string, key: number, doc_count: number,
     buckets: unknown
-  }[]): { value: number, name: Date; epoch: number; }[] {
+  }[]): { value: number, name: string; epoch: number; }[] {
     // tslint:disable-next-line:no-any
     const dateData: any[] = [];
     for (const element of buckets) {
       dateData.push({
         value: element.doc_count,
-        name: new Date(element.key).toISOString(),
+        name: moment.utc(element.key).toISOString(),
         epoch: element.key,
         extra: {buckets: element.buckets}
       });
@@ -142,7 +147,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
         } else if (rootAggPropKeys.includes('agg_number_extended_stats') || aggKey === 'agg_number_extended_stats') {
           rootAggObj = this.navNestedAggByKey(rootAggObj, 'agg_number_extended_stats');
           this.populateAggData(rootAggObj, aggKey, (x => x.numberData), 'agg_number_extended_stats', aggData);
-        }else if (rootAggPropKeys.includes('agg_string_stats') || aggKey === 'agg_string_stats') {
+        } else if (rootAggPropKeys.includes('agg_string_stats') || aggKey === 'agg_string_stats') {
           rootAggObj = this.navNestedAggByKey(rootAggObj, 'agg_string_stats');
           this.populateAggData(rootAggObj, aggKey, (x => x.numberData), 'agg_string_stats', aggData);
         }
@@ -276,7 +281,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
         tableData: new MatTableDataSource(values),
         name: aggName === aggregationType ? MAIN_AGG_NAME : aggName
       });
-    }else if (aggregationType === 'agg_string_stats') {
+    } else if (aggregationType === 'agg_string_stats') {
       const values: { key: string; value: number }[] = [];
       for (const property in formattedData) {
         values.push({key: property, value: formattedData[property]});

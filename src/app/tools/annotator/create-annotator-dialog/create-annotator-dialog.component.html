@@ -61,7 +61,7 @@
       <mat-hint>{{annotatorOptions?.actions?.POST?.indices?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field data-cy="appAnnotatorCreateDialogFields">
       <mat-label>Select Fields</mat-label>
       <app-project-field-select [projectFields]="projectFields" [required]="true"
                                 formControlName="fieldsFormControl"></app-project-field-select>
@@ -117,7 +117,7 @@
     </ng-container>
     <ng-container *ngIf="annotatorForm.get('annotationTypeFormControl')?.value === 'multilabel'">
       <form formGroupName="multiLabelFormGroup" class="max-width flex-col">
-        <mat-form-field class="max-width" data-cy="appRegexTaggerGroupCreateDialogRegexTaggerGroups">
+        <mat-form-field class="max-width" data-cy="appAnnotatorCreateDialogMultilabelSets">
           <mat-label>Labelset</mat-label>
           <app-virtual-scroll-select [scrollableDataSource]="projectLabelSets" formControlName="labelSetFormControl" [multiple]="false"
                                      required></app-virtual-scroll-select>

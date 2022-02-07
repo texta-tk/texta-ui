@@ -7,7 +7,10 @@ import {ProjectStore} from '../../../../../core/projects/project.store';
 import {SearcherService} from '../../../../../core/searcher/searcher.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Project} from '../../../../../shared/types/Project';
+import * as _moment from 'moment';
+import {Moment} from 'moment';
 
+const moment = _moment;
 @Component({
   selector: 'app-date-constraints',
   templateUrl: './date-constraints.component.html',
@@ -23,8 +26,8 @@ export class DateConstraintsComponent implements OnInit, OnDestroy {
   destroyed$: Subject<boolean> = new Subject<boolean>();
   // tslint:disable-next-line:no-any
   constraintQuery: any = {bool: {must: []}};
-  public minDate: Date;
-  public maxDate: Date;
+  public minDate: Moment;
+  public maxDate: Moment;
 
 
   constructor(private projectStore: ProjectStore, private searcherService: SearcherService) {
@@ -89,18 +92,18 @@ export class DateConstraintsComponent implements OnInit, OnDestroy {
         return of(null);
       })).subscribe(resp => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
-          let minDate: Date | undefined;
-          let maxDate: Date | undefined;
+          let minDate: Moment | undefined;
+          let maxDate: Moment | undefined;
           for (const prop in resp.aggs) {
             if (resp.aggs.hasOwnProperty(prop)) {
               if (prop.includes('min_date')) {
                 if ((minDate && resp.aggs[prop].value < minDate) || !minDate) {
-                  minDate = new Date(resp.aggs[prop].value);
+                  minDate = moment.utc(resp.aggs[prop].value);
                 }
               }
               if (prop.includes('max_date')) {
                 if ((maxDate && resp.aggs[prop].value > maxDate) || !maxDate) {
-                  maxDate = new Date(resp.aggs[prop].value);
+                  maxDate = moment.utc(resp.aggs[prop].value);
                 }
               }
             }
@@ -123,8 +126,7 @@ export class DateConstraintsComponent implements OnInit, OnDestroy {
 
   }
 
-
-  makeDateQuery(fieldPaths: string[], fromValue: string, toValue: string): void {
+  makeDateQuery(fieldPaths: string[], fromValue: Moment, toValue: Moment): void {
     this.constraintQuery.bool.must.splice(0, this.constraintQuery.bool.must.length);
     const fromDate = {gte: fromValue};
     const toDate = {lte: toValue};

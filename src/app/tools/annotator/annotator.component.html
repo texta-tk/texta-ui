@@ -28,7 +28,7 @@
                  multiTemplateDataRows>
             <ng-container matColumnDef="select">
               <th *matHeaderCellDef mat-header-cell>
-                <mat-checkbox (change)="$event ? masterToggle() : null"
+                <mat-checkbox (change)="$event ? masterToggle() : null" data-cy="appAnnotatorBulkDeleteSelectAll"
                               [checked]="selectedRows.hasValue() && isAllSelected()"
                               [indeterminate]="selectedRows.hasValue() && !isAllSelected()">
                 </mat-checkbox>
@@ -136,7 +136,7 @@
                 </div>
               </td>
             </ng-container>
-            <ng-container matColumnDef="Modify">
+            <ng-container matColumnDef="actions">
               <th mat-header-cell class="center-header-cell" *matHeaderCellDef>Actions</th>
               <td mat-cell *matCellDef="let element; let i = dataIndex" (click)="$event.stopPropagation();">
 
@@ -171,7 +171,7 @@
 <mat-menu #editMenu="matMenu">
   <ng-template matMenuContent let-element="element" let-i="i">
     <button mat-menu-item (click)="edit(element)" data-cy="appAnnotatorMenuEdit">
-      Edit users
+      Edit
     </button>
     <button mat-menu-item (click)="onDelete(element, i)" data-cy="appAnnotatorMenuDelete">
       Delete

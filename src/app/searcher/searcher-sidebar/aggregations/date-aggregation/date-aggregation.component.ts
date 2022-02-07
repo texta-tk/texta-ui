@@ -7,7 +7,10 @@ import {DatePipe} from '@angular/common';
 import {SearcherService} from '../../../../core/searcher/searcher.service';
 import {ProjectStore} from '../../../../core/projects/project.store';
 import {HttpErrorResponse} from '@angular/common/http';
+import * as _moment from 'moment';
+import {Moment} from 'moment';
 
+const moment = _moment;
 @Component({
   selector: 'app-date-aggregation',
   templateUrl: './date-aggregation.component.html',
@@ -29,8 +32,8 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
   pipe = new DatePipe('en_US');
   dateRangeDays = false;
   dateRangeWeek = false;
-  maxDate: Date;
-  minDate: Date;
+  maxDate: Moment;
+  minDate: Moment;
   dateFromFormControl: FormControl = new FormControl();
   dateToFormControl: FormControl = new FormControl();
 
@@ -68,9 +71,9 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
     })).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         // tslint:disable-next-line:no-any
-        this.minDate = new Date((resp as any).aggs.min_date.value);
+        this.minDate = moment.utc((resp as any).aggs.min_date.value);
         // tslint:disable-next-line:no-any
-        this.maxDate = new Date((resp as any).aggs.max_date.value);
+        this.maxDate = moment.utc((resp as any).aggs.max_date.value);
         this.dateFromFormControl.setValue(this.minDate);
         this.dateToFormControl.setValue(this.maxDate);
         this.makeDateAggregation(this.minDate, this.maxDate);
@@ -80,7 +83,7 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
     this.relativeFrequency.emit(false);
   }
 
-  makeDateAggregation(startDate: Date, toDate: Date): void {
+  makeDateAggregation(startDate: Moment, toDate: Moment): void {
     this.checkDateInterval(startDate, toDate);
     this.dateRangeFrom.range = {[this.fieldsFormControl.value.path]: {gte: startDate}};
     this.dateRangeTo.range = {[this.fieldsFormControl.value.path]: {lte: toDate}};
@@ -108,10 +111,10 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
     this.aggregationObj.aggregation = returnquery;
   }
 
-  dateRangeDaysSmallerThan(goal: number, startDate: Date, toDate: Date): boolean {
+  dateRangeDaysSmallerThan(goal: number, startDate: Moment, toDate: Moment): boolean {
     toDate = toDate ? toDate : this.maxDate;
     startDate = startDate ? startDate : this.minDate;
-    const differenceTime = toDate.getTime() - startDate.getTime();
+    const differenceTime = toDate.valueOf() - startDate.valueOf();
     const differenceInDays = differenceTime / (1000 * 3600 * 24);
     return differenceInDays < goal;
   }
@@ -121,7 +124,7 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  private checkDateInterval(startDate: Date, toDate: Date): void {
+  private checkDateInterval(startDate: Moment, toDate: Moment): void {
     // limit interval based on daterange
     this.dateRangeDays = this.dateRangeDaysSmallerThan(365, startDate, toDate);
     this.dateRangeWeek = this.dateRangeDaysSmallerThan(1095, startDate, toDate);

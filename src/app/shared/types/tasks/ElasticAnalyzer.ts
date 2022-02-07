@@ -11,9 +11,9 @@ interface Task {
   progress: number;
   step: string;
   errors: string;
-  time_started: Date;
-  last_update: Date;
-  time_completed?: any;
+  time_started: string;
+  last_update: string;
+  time_completed?: string;
   total: number;
   num_processed: number;
 }

@@ -27,7 +27,7 @@ import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers'
 export class EditAnnotatorDialogComponent implements OnInit {
   annotatorForm = new FormGroup({
     descriptionFormControl: new FormControl(this.data?.description || ''),
-    usersFormControl: new FormControl( []),
+    usersFormControl: new FormControl([]),
   });
   users: UserProfile[];
   currentUser: UserProfile;
@@ -78,9 +78,10 @@ export class EditAnnotatorDialogComponent implements OnInit {
     }
   }
 
-  onSubmit(formData: { usersFormControl: string[] | string }): void {
+  onSubmit(formData: { usersFormControl: string[] | string, descriptionFormControl: string }): void {
     const body = {
       annotating_users: this.currentUser.is_superuser ? formData.usersFormControl || [] : this.newLineStringToList(formData.usersFormControl as string),
+      description: formData.descriptionFormControl
     };
     this.annotatorService.patchAnnotator(body, this.currentProject.id, this.data.id).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {

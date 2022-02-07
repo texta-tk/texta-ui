@@ -27,6 +27,8 @@ export class ProjectStore {
   // tslint:disable-next-line:variable-name
   private _currentUser: UserProfile;
 
+  private refreshProjectsQueue$: Subject<boolean> = new Subject();
+
   constructor(private projectService: ProjectService,
               private logService: LogService,
               private localStorageService: LocalStorageService,
@@ -68,19 +70,23 @@ export class ProjectStore {
       }
       UtilityFunctions.logForkJoinErrors(resp, HttpErrorResponse, this.logService.snackBarError.bind(this.logService));
     });
+    // switchmap to cancel previous request
+    this.refreshProjectsQueue$.pipe(switchMap(resp => {
+      return forkJoin({projects: this.projectService.getProjects(), refreshSelection: of(resp)});
+    })).subscribe(resp => {
+      if (resp.projects && !(resp.projects instanceof HttpErrorResponse)) {
+        this.projects$.next(resp.projects);
+        if (resp.refreshSelection) {
+          this.getLocalStorageProjectSelection(resp.projects);
+        }
+      } else {
+        this.logService.snackBarError(resp.projects, 5000);
+      }
+    });
   }
 
   refreshProjects(refreshSelection?: boolean): void {
-    this.projectService.getProjects().subscribe(resp => {
-      if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.projects$.next(resp);
-        if (refreshSelection) {
-          this.getLocalStorageProjectSelection(resp);
-        }
-      } else {
-        this.logService.snackBarError(resp, 5000);
-      }
-    });
+    this.refreshProjectsQueue$.next(refreshSelection);
   }
 
   refreshSelectedProjectResourceCounts(): void {

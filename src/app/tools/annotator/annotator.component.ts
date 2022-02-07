@@ -30,7 +30,7 @@ export class AnnotatorComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: Annotator | null;
   public tableData: MatTableDataSource<Annotator> = new MatTableDataSource();
   selectedRows = new SelectionModel<Annotator>(true, []);
-  public displayedColumns = ['select', 'id', 'description', 'author__username', 'users_count', 'index', 'annotation_type', 'total', 'annotated', 'skipped', 'validated', 'Modify'];
+  public displayedColumns = ['select', 'id', 'description', 'author__username', 'users_count', 'index', 'annotation_type', 'total', 'annotated', 'skipped', 'validated', 'actions'];
   public isLoadingResults = true;
 
   @ViewChild(MatSort) sort: MatSort;
@@ -166,7 +166,7 @@ export class AnnotatorComponent implements OnInit, OnDestroy, AfterViewInit {
       if (result) {
         this.annotatorService.deleteAnnotator(this.currentProject.id, element.id).subscribe(() => {
           this.logService.snackBarMessage(`Deleted annotator task: ${element.description}`, 2000);
-          this.updateTable.next();
+          this.updateTable.next(true);
           this.projectStore.refreshSelectedProjectResourceCounts();
         });
       }
@@ -179,7 +179,7 @@ export class AnnotatorComponent implements OnInit, OnDestroy, AfterViewInit {
       data: element
     }).afterClosed().subscribe((x: Annotator | HttpErrorResponse) => {
       if (x && !(x instanceof HttpErrorResponse)) {
-        this.updateTable.next();
+        this.updateTable.next(true);
       } else if (x) {
         this.logService.snackBarError(x, 3000);
       }
