@@ -128,15 +128,11 @@ export class DateConstraintsComponent implements OnInit, OnDestroy {
 
   makeDateQuery(fieldPaths: string[], fromValue: Moment, toValue: Moment): void {
     this.constraintQuery.bool.must.splice(0, this.constraintQuery.bool.must.length);
-    const fromDate = {gte: fromValue};
-    const toDate = {lte: toValue};
+    fromValue = moment(fromValue);
+    toValue = moment(toValue);
+    const dateQuery = {gte: fromValue.startOf('day'), lte: toValue.endOf('day')};
     for (const field of fieldPaths) {
-      if (fromValue) {
-        this.constraintQuery.bool.must.push({range: {[field]: fromDate}});
-      }
-      if (toValue) {
-        this.constraintQuery.bool.must.push({range: {[field]: toDate}});
-      }
+      this.constraintQuery.bool.must.push({range: {[field]: dateQuery}});
     }
   }
 

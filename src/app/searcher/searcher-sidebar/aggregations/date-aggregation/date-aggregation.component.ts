@@ -84,9 +84,9 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
   }
 
   makeDateAggregation(startDate: Moment, toDate: Moment): void {
-    this.checkDateInterval(startDate, toDate);
-    this.dateRangeFrom.range = {[this.fieldsFormControl.value.path]: {gte: startDate}};
-    this.dateRangeTo.range = {[this.fieldsFormControl.value.path]: {lte: toDate}};
+    this.checkDateInterval(startDate.startOf('day'), toDate.endOf('day'));
+    this.dateRangeFrom.range = {[this.fieldsFormControl.value.path]: {gte: startDate.startOf('day')}};
+    this.dateRangeTo.range = {[this.fieldsFormControl.value.path]: {lte: toDate.endOf('day')}};
     // tslint:disable-next-line:no-any
     let returnquery: { [key: string]: any };
     returnquery = {
@@ -99,8 +99,8 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
               interval: this.dateInterval,
               min_doc_count: 0,
               extended_bounds: {
-                min: startDate,
-                max: toDate
+                min: startDate.startOf('day'),
+                max: toDate.endOf('day')
               }
             }
           }
