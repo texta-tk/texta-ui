@@ -10,12 +10,11 @@ import {TaggerService} from '../../../core/models/taggers/tagger.service';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {filter, mergeMap, switchMap, take, takeUntil, takeWhile} from 'rxjs/operators';
 import {BehaviorSubject, forkJoin, merge, of, Subject} from 'rxjs';
-import {TaggerOptions} from '../../../shared/types/tasks/TaggerOptions';
+import {Choice3, TaggerOptions} from '../../../shared/types/tasks/TaggerOptions';
 import {LogService} from '../../../core/util/log.service';
 import {Choice, Embedding} from '../../../shared/types/tasks/Embedding';
 import {EmbeddingsService} from '../../../core/models/embeddings/embeddings.service';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
-import {ResultsWrapper} from '../../../shared/types/Generic';
 import {CoreService} from '../../../core/core.service';
 import {Tagger} from '../../../shared/types/tasks/Tagger';
 
@@ -24,6 +23,7 @@ interface OnSubmitParams {
   indicesFormControl: ProjectIndex[];
   fieldsFormControl: string[];
   embeddingFormControl: Embedding;
+  analyzerFormControl: Choice;
   vectorizerFormControl: Choice;
   classifierFormControl: Choice;
   stopWordsFormControl: string;
@@ -60,6 +60,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
     snowballFormControl: new FormControl(),
     stopWordsFormControl: new FormControl(''),
     scoringFormControl: new FormControl(),
+    analyzerFormControl: new FormControl([Validators.required]),
     vectorizerFormControl: new FormControl([Validators.required]),
     classifierFormControl: new FormControl([Validators.required]),
     sampleSizeFormControl: new FormControl(this.data?.cloneTagger?.maximum_sample_size || 10000, [Validators.required]),
@@ -259,6 +260,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
       ...formData.scoringFormControl ? {scoring_function: formData.scoringFormControl.value} : {},
       ...formData.factNameFormControl ? {fact_name: formData.factNameFormControl.name} : {},
       ignore_numbers: formData.ignoreNumbersFormControl,
+      analyzer: formData.analyzerFormControl.value,
       minimum_sample_size: formData.minSampleSizeFormControl,
       negative_multiplier: formData.negativeMultiplierFormControl,
       ...formData.detectLangFormControl ? {detect_lang: formData.detectLangFormControl} : {},
@@ -284,6 +286,16 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
   }
 
   setDefaultFormValues(options: TaggerOptions): void {
+    const analyzer = this.taggerForm.get('analyzerFormControl');
+    if (analyzer) {
+      if (this.data?.cloneTagger?.analyzer) {
+        const analyzerVal = options.actions.POST.analyzer.choices.find(x => x.display_name === this.data.cloneTagger.analyzer);
+        analyzer.setValue(analyzerVal);
+      } else {
+        analyzer.setValue(options.actions.POST.analyzer.choices[0]);
+      }
+    }
+
     const vectorizer = this.taggerForm.get('vectorizerFormControl');
     if (vectorizer) {
       if (this.data?.cloneTagger?.vectorizer) {

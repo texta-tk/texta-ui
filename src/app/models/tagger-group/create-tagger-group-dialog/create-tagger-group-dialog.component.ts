@@ -40,6 +40,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
       embeddingFormControl: new FormControl(),
       snowballFormControl: new FormControl(),
       scoringFormControl: new FormControl(),
+      analyzerFormControl: new FormControl([Validators.required]),
       vectorizerFormControl: new FormControl([Validators.required]),
       classifierFormControl: new FormControl([Validators.required]),
       sampleSizeFormControl: new FormControl(10000, [Validators.required]),
@@ -203,6 +204,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
       indices: formData.taggerForm.indicesFormControl.map((x: ProjectIndex) => [{name: x.index}]).flat(),
       ...formData?.taggerForm?.snowballFormControl ? {snowball_language: formData.taggerForm.snowballFormControl} : {},
       scoring_function: formData.taggerForm.scoringFormControl.value,
+      analyzer:  formData.taggerForm.analyzerFormControl.value,
       vectorizer: formData.taggerForm.vectorizerFormControl.value,
       classifier: formData.taggerForm.classifierFormControl.value,
       maximum_sample_size: formData.taggerForm.sampleSizeFormControl,
@@ -237,6 +239,10 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
     const taggerForm = this.taggerGroupForm.get('taggerForm');
 
     if (taggerForm) {
+      const analyzer = taggerForm.get('analyzerFormControl');
+      if (analyzer) {
+        analyzer.setValue(options.actions.POST.tagger.children.analyzer.choices[0]);
+      }
       const vectorizer = taggerForm.get('vectorizerFormControl');
       if (vectorizer) {
         vectorizer.setValue(options.actions.POST.tagger.children.vectorizer.choices[0]);

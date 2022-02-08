@@ -18,6 +18,7 @@ export class Tagger {
   num_negatives: number;
   feature_selector: string;
   stop_words: string;
+  analyzer: string;
   maximum_sample_size: number;
   negative_multiplier: number;
   location: string;
