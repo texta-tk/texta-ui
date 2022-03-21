@@ -12,3 +12,20 @@
 mat-tab-group{
   height: 100%;
 }
+
+.element-detail {
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+}
+
+tr.element-row:not(.expanded-row):hover {
+  background: #eeeeee;
+}
+
+tr.element-row:not(.expanded-row):active {
+  background: #efefef;
+}
+.mat-column-task__status {
+  max-width: 160px;
+}

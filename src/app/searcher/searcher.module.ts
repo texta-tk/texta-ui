@@ -18,7 +18,6 @@ import {TextAggregationComponent} from './searcher-sidebar/aggregations/text-agg
 import {AggregationResultTableComponent} from './aggregation-results/aggregation-result-table/aggregation-result-table.component';
 import {AggregationResultsDialogComponent} from './aggregation-results/aggregation-results-dialog/aggregation-results-dialog.component';
 import {AggregationResultsTreeComponent} from './aggregation-results/aggregation-results-tree/aggregation-results-tree.component';
-import {DatePipe} from '@angular/common';
 import {AggregationResultsChartComponent} from './aggregation-results/aggregation-results-chart/aggregation-results-chart.component';
 import {SimpleSearchComponent} from './searcher-sidebar/build-search/simple-search/simple-search.component';
 import {AdvancedSearchComponent} from './searcher-sidebar/build-search/advanced-search/advanced-search.component';
@@ -76,7 +75,7 @@ import { FactsFilterDialogComponent } from './searcher-table/facts-filter-dialog
   exports: [
     HighlightComponent
   ],
-  providers: [SearcherComponentService, DatePipe]
+  providers: [SearcherComponentService]
 })
 export class SearcherModule {
   constructor() {

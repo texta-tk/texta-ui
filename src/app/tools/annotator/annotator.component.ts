@@ -17,6 +17,7 @@ import {LogService} from '../../core/util/log.service';
 import {ConfirmDialogComponent} from '../../shared/shared-module/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {Index} from '../../shared/types/Index';
 import {EditAnnotatorDialogComponent} from './edit-annotator-dialog/edit-annotator-dialog.component';
+import {QueryDialogComponent} from '../../shared/shared-module/components/dialogs/query-dialog/query-dialog.component';
 
 @Component({
   selector: 'app-annotator',
@@ -30,7 +31,7 @@ export class AnnotatorComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: Annotator | null;
   public tableData: MatTableDataSource<Annotator> = new MatTableDataSource();
   selectedRows = new SelectionModel<Annotator>(true, []);
-  public displayedColumns = ['select', 'id', 'description', 'author__username', 'users_count', 'index', 'annotation_type', 'total', 'annotated', 'skipped', 'validated', 'actions'];
+  public displayedColumns = ['select', 'id', 'description', 'author__username', 'users_count', 'index', 'annotation_type', 'total', 'annotated', 'skipped', 'validated', 'task__status', 'actions'];
   public isLoadingResults = true;
 
   @ViewChild(MatSort) sort: MatSort;
@@ -183,6 +184,14 @@ export class AnnotatorComponent implements OnInit, OnDestroy, AfterViewInit {
       } else if (x) {
         this.logService.snackBarError(x, 3000);
       }
+    });
+  }
+
+  openQueryDialog(query: string): void {
+    this.dialog.open(QueryDialogComponent, {
+      data: {query},
+      maxHeight: '965px',
+      width: '700px',
     });
   }
 }

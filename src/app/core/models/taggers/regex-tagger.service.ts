@@ -28,7 +28,12 @@ export class RegexTaggerService {
       tap(e => this.logService.logStatus(e, 'getRegexTaggers')),
       catchError(this.logService.handleError<ResultsWrapper<RegexTagger>>('getRegexTaggers')));
   }
-
+  getRegexTaggerById(projectId: number, regexId: number): Observable<RegexTagger| HttpErrorResponse> {
+    return this.http.get<RegexTagger>(`${this.apiUrl}/projects/${projectId}/regex_taggers/${regexId}/`,
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'getRegexTaggerById')),
+      catchError(this.logService.handleError<RegexTagger>('getRegexTaggerById')));
+  }
   tagDoc(projectId: number, groupId: number, body: unknown): Observable<{ matches: unknown } | HttpErrorResponse> {
     return this.http.post<{ matches: unknown }>(`${this.apiUrl}/projects/${projectId}/regex_taggers/${groupId}/tag_doc/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'tagDoc')),

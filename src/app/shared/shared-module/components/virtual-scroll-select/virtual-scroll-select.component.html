@@ -12,6 +12,12 @@
                            noEntriesFoundLabel="No entries"
                            placeholderLabel="Search"></ngx-mat-select-search>
   </mat-option>
+  <mat-select-trigger>
+    {{select.value[0]?.description ? select.value[0].description : 'Loading...'}}
+    <span *ngIf="select.value?.length > 1" class="additional-selection">
+        (+{{select.value.length - 1}} {{select.value?.length === 2 ? 'other' : 'others'}})
+      </span>
+  </mat-select-trigger>
   <cdk-virtual-scroll-viewport #cdkVirtualScrollViewport itemSize="48"
                                [style.height.px]="(scrollableDataSource.length >= 7 ? 7 : scrollableDataSource.length)*48"
                                [minBufferPx]="8*48"

@@ -100,8 +100,7 @@ export class MLPComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
   openQueryDialog(query: unknown): void {
-    query = JSON.stringify(query);
-    const dialogRef = this.dialog.open(QueryDialogComponent, {
+    this.dialog.open(QueryDialogComponent, {
       data: {query},
       maxHeight: '965px',
       width: '700px',

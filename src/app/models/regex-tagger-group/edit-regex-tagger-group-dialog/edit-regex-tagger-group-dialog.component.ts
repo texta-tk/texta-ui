@@ -14,8 +14,8 @@ import {ProjectStore} from '../../../core/projects/project.store';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
 import {RegexTaggerGroup} from '../../../shared/types/tasks/RegexTaggerGroup';
-import {ScrollableDataSource} from "../../../shared/ScrollableDataSource";
-import {ResultsWrapper} from "../../../shared/types/Generic";
+import {ScrollableDataSource} from '../../../shared/ScrollableDataSource';
+import {ResultsWrapper} from '../../../shared/types/Generic';
 
 @Component({
   selector: 'app-edit-regex-tagger-group-dialog',
@@ -26,7 +26,7 @@ export class EditRegexTaggerGroupDialogComponent implements OnInit, OnDestroy {
 
   regexTaggerGroupForm = new FormGroup({
     descriptionFormControl: new FormControl(this.data?.description || '', [Validators.required]),
-    regexTaggersFormControl: new FormControl(this.data?.tagger_info || [], [Validators.required])
+    regexTaggersFormControl: new FormControl([], [Validators.required])
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
@@ -36,6 +36,8 @@ export class EditRegexTaggerGroupDialogComponent implements OnInit, OnDestroy {
   projectRegexTaggers: ScrollableDataSource<RegexTagger>;
   // tslint:disable-next-line:no-any
   regexTaggerGroupOptions: any;
+  // number = projectId
+  getFirstRegexTagger$: Subject<number> = new Subject();
 
   constructor(private dialogRef: MatDialogRef<EditRegexTaggerGroupDialogComponent>,
               @Inject(MAT_DIALOG_DATA) public data: RegexTaggerGroup,
@@ -48,9 +50,31 @@ export class EditRegexTaggerGroupDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.getFirstRegexTagger$.pipe(takeUntil(this.destroyed$), switchMap(resp => {
+      if (this.data?.regex_taggers.length > 0 && resp) {
+        const ids = this.data.regex_taggers.flatMap(x => [{id: x}]);
+        this.regexTaggerGroupForm.get('regexTaggersFormControl')?.setValue(ids);
+        return this.regexTaggerService.getRegexTaggerById(resp, ids[0].id);
+      } else {
+        return of(null);
+      }
+    })).subscribe(resp => {
+      if (resp && !(resp instanceof HttpErrorResponse)) {
+        const form = this.regexTaggerGroupForm.get('regexTaggersFormControl');
+        if (form) {
+          const newVal = form.value;
+          newVal[0] = resp;
+          form.setValue(newVal);
+        }
+      } else if (resp) {
+        this.logService.snackBarError(resp);
+      }
+    });
+
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), switchMap(proj => {
       if (proj) {
         this.currentProject = proj;
+        this.getFirstRegexTagger$.next(proj.id);
         this.projectRegexTaggers = new ScrollableDataSource(this.fetchFn, this);
         return this.regexTaggerGroupService.getRegexTaggerGroupOptions(proj.id);
       }
@@ -62,6 +86,7 @@ export class EditRegexTaggerGroupDialogComponent implements OnInit, OnDestroy {
         this.logService.snackBarError(x);
       }
     });
+
   }
 
   fetchFn(pageNr: number, pageSize: number,

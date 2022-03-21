@@ -35,7 +35,6 @@ export function initializeApp(appConfigService: AppConfigService): () => Promise
   providers: [
     {provide: APP_INITIALIZER, useFactory: initializeApp, deps: [AppConfigService], multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: HttpAuthInterceptor, multi: true},
-    {provide: DATE_PIPE_DEFAULT_TIMEZONE, useValue: '+0000'}
   ],
 
   bootstrap: [AppComponent]

@@ -10,7 +10,6 @@ import {SearchServiceSpy} from '../services/searcher-component.service.spec';
 import {AggregationResultTableComponent} from './aggregation-result-table/aggregation-result-table.component';
 import {AggregationResultsTreeComponent} from './aggregation-results-tree/aggregation-results-tree.component';
 import {AggregationResultsDialogComponent} from './aggregation-results-dialog/aggregation-results-dialog.component';
-import {DatePipe} from '@angular/common';
 import {AggregationResultsChartComponent} from './aggregation-results-chart/aggregation-results-chart.component';
 
 describe('AggregationResultsComponent', () => {
@@ -23,7 +22,7 @@ describe('AggregationResultsComponent', () => {
         AggregationResultsDialogComponent, AggregationResultsChartComponent],
       imports: [
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule,
-      ], providers: [DatePipe]
+      ]
     }).overrideComponent(AggregationResultsComponent, {
       set: {
         providers: [

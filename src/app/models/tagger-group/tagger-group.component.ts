@@ -64,7 +64,9 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(resp => {
+
       if (resp) {
+        this.isLoadingResults = true;
         this.currentProject = resp;
         if (this.paginator) {
           this.paginator.pageIndex = 0;

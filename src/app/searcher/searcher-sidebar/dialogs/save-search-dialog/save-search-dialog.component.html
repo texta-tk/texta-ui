@@ -18,13 +18,16 @@
   </mat-form-field>
   <mat-form-field *ngIf="method === 'new'" class="max-width" data-cy="appSearcherSidebarSaveSearchDesc">
     <input #ctrl="ngModel" [(ngModel)]="newDesc" [errorStateMatcher]="matcher" autocomplete="off" cdkFocusInitial
+           (keyup.enter)="onSubmit()"
            matInput placeholder="Description" required>
     <mat-error *ngIf="ctrl?.hasError('required')">
       Description is <strong>required</strong>
     </mat-error>
   </mat-form-field>
 </mat-dialog-content>
-
+<mat-error *ngIf="!latestSearch">
+  No search to save!
+</mat-error>
 <mat-dialog-actions fxLayout="row">
   <div class="flex-item-left">
     <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Cancel</button>

@@ -3,7 +3,6 @@ import {FormControl, FormGroup} from '@angular/forms';
 import {debounceTime, distinctUntilChanged, startWith, switchMap, take, takeUntil} from 'rxjs/operators';
 import {SearcherComponentService} from '../../../services/searcher-component.service';
 import {forkJoin, of, Subject} from 'rxjs';
-import {DatePipe} from '@angular/common';
 import {SearcherService} from '../../../../core/searcher/searcher.service';
 import {ProjectStore} from '../../../../core/projects/project.store';
 import {HttpErrorResponse} from '@angular/common/http';
@@ -29,7 +28,6 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
   // tslint:disable-next-line:no-any
   dateRangeTo: { range?: any } = {range: {}};
   destroy$: Subject<boolean> = new Subject();
-  pipe = new DatePipe('en_US');
   dateRangeDays = false;
   dateRangeWeek = false;
   maxDate: Moment;
