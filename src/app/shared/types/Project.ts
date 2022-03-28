@@ -106,10 +106,10 @@ export class ProjectIndex {
 // for the project/{id}/heath endpoint
 export interface Health {
   host: {
-    cpu: { percent: number; count: number; };
-    gpu: { count: number; devices: { id: number; memory: { free: number, total: number, used: number, unit: string }, name: string }[] };
-    memory: { free: number, total: number, used: number, unit: string };
-    disk: { free: number, total: number, used: number, unit: string };
+    cpu?: { percent: number; count: number; };
+    gpu?: { count: number; devices: { id: number; memory: { free: number, total: number, used: number, unit: string }, name: string }[] };
+    memory?: { free: number, total: number, used: number, unit: string };
+    disk?: { free: number, total: number, used: number, unit: string };
   };
   toolkit: {
     active_tasks: number;
@@ -117,7 +117,7 @@ export interface Health {
     available_langs: string[];
   };
   services: {
-    elastic: {
+    elastic?: {
       url: string;
       alive: boolean;
       disk: { free: number, total: number, used: number, unit: string, host: string }[];
@@ -139,8 +139,8 @@ export interface Health {
         tagline: string;
       };
     };
-    mlp: { url: string, alive: boolean, status: { loaded_entities: string[], version: string, service: string } };
-    redis: { alive: boolean, version: number, expired_keys: number, used_memory: string, total_memory: string };
+    mlp?: { url: string, alive: boolean, status: { loaded_entities: string[], version: string, service: string } };
+    redis?: { alive: boolean, version: number, expired_keys: number, used_memory: string, total_memory: string };
   };
 }
 

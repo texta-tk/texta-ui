@@ -7,7 +7,7 @@ import {of, Subject, Subscription} from 'rxjs';
 import projectPackage from '../../../package.json';
 import {CoreService} from '../core/core.service';
 import {switchMap, takeUntil} from 'rxjs/operators';
-import {CeleryCountTasks} from "../shared/types/Celery";
+import {CeleryCountTasks} from '../shared/types/Celery';
 
 
 @Component({

@@ -2,76 +2,76 @@
   <div class="project-table" fxFlex="60%">
     <app-project></app-project>
   </div>
-  <div class="health-wrapper" fxFlex="40%">
+  <div *ngIf="health?.services"  class="health-wrapper" fxFlex="40%">
     <mat-progress-spinner *ngIf="isLoading" mode="indeterminate"
                           style="margin: auto; margin-top: 20%"></mat-progress-spinner>
-    <div *ngIf="health?.services" data-cy="appHomeHealth">
+    <div data-cy="appHomeHealth">
       <mat-card class="service-status-card center-margin" fxLayout="row wrap" fxLayoutGap="5px">
 
         <mat-chip-list class="center-margin chip-list-space-evenly" disabled>
-          <mat-chip [color]="health.services.elastic.alive ? 'primary' : 'accent'" selected>
-            Elasticsearch: {{health.services.elastic.status.version.number}}
+          <mat-chip [color]="health?.services?.elastic?.alive ? 'primary' : 'accent'" selected>
+            Elasticsearch: {{health?.services?.elastic?.status?.version?.number}}
           </mat-chip>
-          <mat-chip [color]="health.services.redis.alive ? 'primary' : 'accent'" selected>
-            Redis: {{health.services.redis.version}}
+          <mat-chip [color]="health?.services?.redis?.alive ? 'primary' : 'accent'" selected>
+            Redis: {{health?.services?.redis?.version}}
           </mat-chip>
-          <mat-chip color="primary" selected> API {{health.toolkit.version}}  </mat-chip>
+          <mat-chip color="primary" selected> API {{health?.toolkit?.version}}  </mat-chip>
           <mat-chip color="primary" selected> GUI {{frontVersion}}  </mat-chip>
           <mat-chip color="primary" selected
-                    title="Available languages: {{'\n'+health.toolkit.available_langs.join('\n')}}">
-            Languages: {{health.toolkit.available_langs.length}}
+                    title="Available languages: {{'\n'+health?.toolkit?.available_langs?.join('\n')}}">
+            Languages: {{health?.toolkit?.available_langs?.length}}
           </mat-chip>
         </mat-chip-list>
       </mat-card>
 
       <mat-card class="usage-card center-margin" fxLayout="row wrap">
-        <div fxFlex="1 0 125px">
+        <div fxFlex="1 0 125px" *ngIf="health?.host?.disk">
           <h4 class="mat-h4 center-text"> DISK SPACE </h4>
           <mat-progress-spinner
-            [color]="((health.host.disk.used / health.host.disk.total) * 100) < 90 ? 'primary' : 'warn'"
+            [color]="(((health.host.disk?.used || 0) / (health.host.disk?.total || 0))* 100) < 90 ? 'primary' : 'warn'"
             [mode]="'determinate'"
-            [value]="(health.host.disk.used / health.host.disk.total) * 100"
+            [value]="((health.host.disk?.used || 0) / (health.host.disk?.total || 0)) * 100"
             class="center-margin"
           >
           </mat-progress-spinner>
           <div style="position:relative; top: -60px;">
             <span
-              class="block center-text">{{(((health.host.disk.used / health.host.disk.total) * 100))| number:'1.0-0' }}
+              class="block center-text">{{(((health.host.disk?.used || 0) / (health.host.disk?.total || 0)) * 100)| number:'1.0-0' }}
               % </span>
           </div>
-          <span class="mat-hint mat-small center-text block"> {{health.host.disk.used | number}}
-            /  {{health.host.disk.total| number}} {{health.host.disk.unit}} </span>
+          <span class="mat-hint mat-small center-text block"> {{health?.host?.disk?.used | number}}
+            /  {{health?.host?.disk?.total| number}} {{health?.host?.disk?.unit}} </span>
         </div>
 
-        <div fxFlex="1 0 125px">
+        <div fxFlex="1 0 125px" *ngIf="health?.host?.memory">
           <h4 class="mat-h4 center-text">MEMORY</h4>
           <mat-progress-spinner
-            [color]="((health.host.memory.used / health.host.memory.total) * 100) < 90 ? 'primary' : 'warn'"
+            [color]="(((health.host.memory?.used || 0) / (health.host.memory?.total || 0)) * 100) < 90 ? 'primary' : 'warn'"
             [mode]="'determinate'"
-            [value]="(health.host.memory.used / health.host.memory.total) * 100"
+            [value]="((health.host.memory?.used || 0) / (health.host.memory?.total || 0)) * 100"
             class="center-margin"
           >
           </mat-progress-spinner>
           <div style="position:relative; top: -60px;">
             <span
-              class="block center-text">{{((health.host.memory.used / health.host.memory.total) * 100)| number:'1.0-0' }}
+              class="block center-text">{{(((health.host.memory?.used || 0) / (health.host.memory?.total || 0)) * 100)| number:'1.0-0' }}
               % </span>
           </div>
-          <span class="mat-hint mat-small center-text block">  {{health.host.memory.used | number}}
-            /  {{health.host.memory.total| number}} {{health.host.memory.unit}} </span>
+          <span class="mat-hint mat-small center-text block">  {{health.host.memory?.used | number}}
+            /  {{health.host.memory?.total| number}} {{health?.host?.memory?.unit}} </span>
         </div>
 
-        <div fxFlex="1 0 125px" matTooltip="CPUs: {{health.host.cpu.count}}">
+        <div fxFlex="1 0 125px" matTooltip="CPUs: {{health?.host?.cpu?.count}}" *ngIf="health?.host?.cpu">
           <h4 class="mat-h4 center-text"> CPU USAGE </h4>
           <mat-progress-spinner
-            [color]="health.host.cpu.percent < 90 ? 'primary' : 'warn'"
+            [color]="(health.host.cpu?.percent|| 0) < 90 ? 'primary' : 'warn'"
             [mode]="'determinate'"
-            [value]="health.host.cpu.percent"
+            [value]="health.host.cpu?.percent || 0"
             class="center-margin"
           >
           </mat-progress-spinner>
           <div style="position:relative; top: -60px">
-            <span class="block center-text">{{health.host.cpu.percent}}%</span>
+            <span class="block center-text">{{health.host.cpu?.percent || 0}}%</span>
           </div>
         </div>
       </mat-card>
@@ -107,7 +107,7 @@
       </mat-card>
 
 
-      <mat-card *ngIf="health.host.gpu.devices.length > 0" class="usage-card center-margin" fxLayout="row wrap"
+      <mat-card *ngIf="(health?.host?.gpu?.devices?.length || 0) > 0" class="usage-card center-margin" fxLayout="row wrap"
                 style="max-height: 350px; overflow: auto;">
         <table class="simple-table">
           <tr>
@@ -116,7 +116,7 @@
             <th>Total Memory</th>
           </tr>
 
-          <tr *ngFor="let item of health.host.gpu.devices; let i =index">
+          <tr *ngFor="let item of health.host.gpu!.devices; let i =index">
             <td>{{item.name}}</td>
             <td
               style.background="linear-gradient(90deg, {{((item.memory.used / item.memory.total) * 100) < 95 ? 'lightgreen' : '#ff6961'}} {{(item.memory.used / item.memory.total) * 100}}%, #FFF {{(item.memory.used / item.memory.total) * 100}}%)">{{item.memory.used | number}} {{item.memory.unit}}
@@ -135,8 +135,8 @@
             <th>Disk Size</th>
           </tr>
 
-          <tr *ngFor="let item of health.services.elastic.disk; let i =index">
-            <td>{{item.host}}</td>
+          <tr *ngFor="let item of health?.services?.elastic?.disk; let i =index">
+            <td>{{item?.host}}</td>
             <td
               style.background="linear-gradient(90deg, {{((item.used / item.total) * 100) < 85 ? 'lightgreen' : '#ff6961'}} {{(item.used / item.total) * 100}}%, #FFF {{(item.used / item.total) * 100}}%)">{{item.used}} {{item.unit}}
               ({{(item.used / item.total)| percent}})
