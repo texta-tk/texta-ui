@@ -13,7 +13,7 @@
     <ng-container *ngIf="valueOutPutType === 'object'">{{pathAccessor(fieldFormControl?.value)}}</ng-container>
   </mat-select-trigger>
   <app-mat-option-select-all [multiple]="multiple"></app-mat-option-select-all>
-  <mat-option *ngFor="let field of fieldsUnique" title="{{fieldIndexMap.get(field.path)?.join('\n')}}"
+  <mat-option *ngFor="let field of fieldsUnique" title="Index: {{fieldIndexMap.get(field.path)?.join(', ')}}&#013;Field: {{field.path}}"
               [value]="valueOutPutType  === 'path' ? field.path : field">
     <ng-container *ngIf="field.type === 'fact'">
       {{field.path}}
