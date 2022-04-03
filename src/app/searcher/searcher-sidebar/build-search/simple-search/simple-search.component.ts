@@ -93,6 +93,11 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
         }
       }
     });
+
+    this.searchFormControl.valueChanges.pipe(takeUntil(this.destroy$), debounceTime(SearcherOptions.SEARCH_DEBOUNCE_TIME)).subscribe(val => {
+      this.makeQuery(val);
+    });
+
   }
 
   makeQuery(value: string): void {

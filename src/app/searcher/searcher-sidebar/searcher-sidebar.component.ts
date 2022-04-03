@@ -125,16 +125,9 @@ export class SearcherSidebarComponent implements OnInit, OnDestroy {
   }
 
   openSaveSearchDialog(): void {
-    this.searchComponentService.getElasticQuery().pipe(take(1)).subscribe(x => {
-      if (x) {
-        this.dialog.open(SaveSearchDialogComponent, {
-          maxHeight: '300px',
-          width: '500px',
-          data: {
-            query: x.elasticSearchQuery.query
-          },
-        });
-      }
+    this.dialog.open(SaveSearchDialogComponent, {
+      maxHeight: '300px',
+      width: '500px',
     });
   }
 

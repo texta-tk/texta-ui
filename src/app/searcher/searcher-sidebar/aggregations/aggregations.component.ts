@@ -1,5 +1,5 @@
 import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
-import {pairwise, takeUntil} from 'rxjs/operators';
+import {debounceTime, pairwise, takeUntil} from 'rxjs/operators';
 import {Field, Project, ProjectIndex} from '../../../shared/types/Project';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {BehaviorSubject, forkJoin, of, Subject} from 'rxjs';
@@ -84,7 +84,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
         this.addNewAggregation();
       }
     });
-    this.searchService.getElasticQuery().pipe(takeUntil(this.destroy$)).subscribe((query: ElasticsearchQuery | null) => {
+    this.searchService.getElasticQuery().pipe(takeUntil(this.destroy$), debounceTime(150)).subscribe((query: ElasticsearchQuery | null) => {
       if (query) {
         this.searcherElasticSearchQuery = query.elasticSearchQuery;
       }

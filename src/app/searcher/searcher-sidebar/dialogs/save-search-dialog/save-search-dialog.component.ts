@@ -14,6 +14,7 @@ import {LogService} from '../../../../core/util/log.service';
 import {SearcherComponentService} from '../../../services/searcher-component.service';
 import {Constraint, ElasticsearchQuery} from '../../build-search/Constraints';
 import {Search} from '../../../../shared/types/Search';
+import {LocalStorageService} from '../../../../core/util/local-storage.service';
 
 @Component({
   selector: 'app-save-search-dialog',
@@ -31,11 +32,11 @@ export class SaveSearchDialogComponent implements OnInit {
   method: 'existing' | 'new' = 'new';
   elasticSearchQuery: ElasticsearchQuery;
   constraints: Constraint[] = [];
-  latestSearch: Search;
 
   constructor(private dialogRef: MatDialogRef<SaveSearchDialogComponent>, private searcherService: SearcherService,
               private logService: LogService,
               private searcherComponentService: SearcherComponentService,
+              private localStorageService: LocalStorageService,
               private projectStore: ProjectStore) {
   }
 
@@ -64,22 +65,19 @@ export class SaveSearchDialogComponent implements OnInit {
         this.constraints = constraints;
       }
     });
-    this.searcherComponentService.getSearch().pipe(takeUntil(this.destroyed$)).subscribe(search => {
-      if (search) {
-        this.latestSearch = search;
-      }
-    });
   }
 
   onSubmit(): void {
-    if (this.currentProject?.id && this.latestSearch) {
-      // onlyShowMatchingColumns is a simple search option, kinda hacky way to know if it was a simple or advanced search
-      const constraints = this.latestSearch.searchOptions.onlyShowMatchingColumns ? [] : this.constraints;
+    if (this.currentProject?.id) {
+
+      // kinda hacky way to know if it was a simple or advanced search ( 1 is simple search)
+      const state = this.localStorageService.getProjectState(this.currentProject);
+      const constraints = state?.searcher?.searcherType === 1 ? [] : this.constraints;
       if (this.method === 'existing' && this.selectedSearch?.id) {
         this.searcherService.patchSavedSearch(this.currentProject.id, this.selectedSearch.id, constraints,
           this.elasticSearchQuery.elasticSearchQuery).subscribe(resp => {
           if (resp && !(resp instanceof HttpErrorResponse)) {
-            this.logService.snackBarMessage('Updated saved search: ' + this.selectedSearch.description, 5000);
+            this.logService.snackBarMessage('Updated saved query: ' + this.selectedSearch.description, 5000);
             this.searcherComponentService.nextSavedSearchUpdate();
             this.closeDialog();
           } else if (resp) {

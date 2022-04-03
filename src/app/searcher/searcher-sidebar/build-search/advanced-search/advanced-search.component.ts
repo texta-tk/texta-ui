@@ -27,8 +27,6 @@ import {LexiconService} from '../../../../core/lexicon/lexicon.service';
 import {UserProfile} from '../../../../shared/types/UserProfile';
 import {Lexicon} from '../../../../shared/types/Lexicon';
 import {SearcherComponentService} from '../../../services/searcher-component.service';
-import {LocalStorageService} from '../../../../core/util/local-storage.service';
-
 @Component({
   selector: 'app-advanced-search',
   templateUrl: './advanced-search.component.html',
@@ -231,9 +229,12 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
 
   searchOnChange(event: ElasticsearchQuery): void {
     // dont want left focus events
-    if (event === this.elasticQuery && this.searchOptions.liveSearch) {
-      // reset page when we change query
-      this.elasticQuery.elasticSearchQuery.from = 0;
+    if (event === this.elasticQuery) {
+      this.searchService.nextElasticQuery(this.elasticQuery);
+      if (this.searchOptions.liveSearch) {
+        // reset page when we change query
+        this.elasticQuery.elasticSearchQuery.from = 0;
+      }
     }
   }
 
