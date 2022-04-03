@@ -119,11 +119,11 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
     this.destroyed$.complete();
   }
 
-
-  openCreateDialog(): void {
+  openCreateDialog(cloneTagger?: TaggerGroup): void {
     const dialogRef = this.dialog.open(CreateTaggerGroupDialogComponent, {
       maxHeight: '90vh',
       width: '700px',
+      data: {cloneTagger: cloneTagger ? cloneTagger : undefined},
       disableClose: true
     });
     dialogRef.afterClosed().subscribe((resp: TaggerGroup) => {
