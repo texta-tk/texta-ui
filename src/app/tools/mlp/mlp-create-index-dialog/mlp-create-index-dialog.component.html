@@ -45,11 +45,10 @@
       <mat-label>Analyzers</mat-label>
       <mat-select [disableOptionCentering]="true" formControlName="analyzersFormControl"
                   multiple panelClass="select-panel-reveal-input" required>
-        <ng-container *ngIf="analyzers">
-          <mat-option *ngFor="let item of analyzers" [value]="item.value">
-            {{item.display_name}}
-          </mat-option>
-        </ng-container>
+        <app-mat-option-select-all></app-mat-option-select-all>
+        <mat-option *ngFor="let item of analyzers" [value]="item.value">
+          {{item.display_name}}
+        </mat-option>
       </mat-select>
 
       <mat-error *ngIf="MLPForm.get('analyzersFormControl')?.hasError('required')">
