@@ -90,8 +90,8 @@ export interface TaggerParams {
   maximum_sample_size?: number;
   negative_multiplier?: number;
   snowball_language?: string;
-  embedding?: number;
-  indices?: Index[];
+  embedding?: {name: string, id: number};
+  indices?: string[];
 }
 
 export interface SumSize {

@@ -33,7 +33,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy {
       Validators.required,
     ]),
     factNameFormControl: new FormControl(),
-    taggerGroupMinSampleSizeFormControl: new FormControl(50, [Validators.required]),
+    taggerGroupMinSampleSizeFormControl: new FormControl(this.data?.cloneTagger?.minimum_sample_size || 50, [Validators.required]),
     taggerForm: new FormGroup({
       fieldsFormControl: new FormControl([], [Validators.required]),
       indicesFormControl: new FormControl([], [Validators.required]),
@@ -131,39 +131,16 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy {
         factNameForm?.setValue(facts.find(x => x.name === this.data.cloneTagger.fact_name));
       }
     });
-    this.projectStore.getProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(projIndices => {
-      if (projIndices) {
-        this.projectIndices = projIndices;
-        if (this.data.cloneTagger?.tagger_params?.fields && this.data.cloneTagger?.tagger_params?.indices) {
-          const taggerForm = this.taggerGroupForm.get('taggerForm');
-          const indexInstances = projIndices.filter(x => this.data.cloneTagger.tagger_params.indices?.some(y => y.name === x.index));
-          const indicesForm = taggerForm?.get('indicesFormControl');
-          indicesForm?.setValue(indexInstances);
-          this.indicesOpenedChange(false); // refreshes the field and fact selection data
-          const fieldsForm = taggerForm?.get('fieldsFormControl');
-          fieldsForm?.setValue(this.data.cloneTagger.tagger_params.fields);
-        }
-      }
-    });
-
-    this.coreService.getSnowballLanguages().subscribe(resp => {
-      if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.snowballLanguages = resp;
-        if (this.data?.cloneTagger?.tagger_params?.snowball_language) {
-          this.taggerGroupForm.get('taggerForm')?.get('snowballFormControl')?.setValue(this.data?.cloneTagger?.tagger_params?.snowball_language);
-        }
-      } else {
-        this.logService.snackBarError(resp);
-      }
-    });
 
     this.projectStore.getCurrentProject().pipe(take(1), mergeMap(currentProject => {
       if (currentProject) {
         this.currentProject = currentProject;
         return forkJoin(
           {
+            snowBallLanguages: this.coreService.getSnowballLanguages(),
             taggerOptions: this.taggerGroupService.getTaggerGroupOptions(currentProject.id),
             embeddings: this.embeddingService.getEmbeddings(currentProject.id),
+            projectIndices: this.projectStore.getProjectIndices().pipe(take(1)), // take 1 to complete observable
           });
       } else {
         return of(null);
@@ -177,15 +154,33 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy {
         if (!(resp.embeddings instanceof HttpErrorResponse)) {
           this.embeddings = resp.embeddings.results;
           if (this.data?.cloneTagger?.tagger_params?.embedding) {
-            const foundEmbedding = this.embeddings.find(x => x.id === this.data.cloneTagger?.tagger_params?.embedding);
+            const foundEmbedding = this.embeddings.find(x => x.id === this.data.cloneTagger?.tagger_params?.embedding?.id);
             if (foundEmbedding) {
               this.taggerGroupForm.get('taggerForm')?.get('embeddingFormControl')?.setValue(foundEmbedding);
             }
           }
         }
+        if (!(resp.snowBallLanguages instanceof HttpErrorResponse)) {
+            this.snowballLanguages = resp.snowBallLanguages;
+            if (this.data?.cloneTagger?.tagger_params?.snowball_language) {
+              this.taggerGroupForm.get('taggerForm')?.get('snowballFormControl')?.setValue(this.data?.cloneTagger?.tagger_params?.snowball_language);
+            }
+          }
+
+        if (resp?.projectIndices && !(resp.projectIndices instanceof HttpErrorResponse)) {
+          this.projectIndices = resp.projectIndices;
+          if (this.data.cloneTagger?.tagger_params?.fields && this.data.cloneTagger?.tagger_params?.indices) {
+            const taggerForm = this.taggerGroupForm.get('taggerForm');
+            const indexInstances = resp.projectIndices.filter(x => this.data.cloneTagger.tagger_params.indices?.some(y => y === x.index));
+            const indicesForm = taggerForm?.get('indicesFormControl');
+            indicesForm?.setValue(indexInstances);
+            this.indicesOpenedChange(false); // refreshes the field and fact selection data
+            const fieldsForm = taggerForm?.get('fieldsFormControl');
+            fieldsForm?.setValue(this.data.cloneTagger.tagger_params.fields);
+          }
+        }
       }
     });
-
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$), switchMap(currentProjIndices => {
       if (this.currentProject?.id && currentProjIndices && !this.data.cloneTagger) {
         const indicesForm = this.taggerGroupForm.get('taggerForm')?.get('indicesFormControl');
@@ -253,7 +248,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy {
 
     const body = {
       description: formData.descriptionFormControl,
-      ...formData.factNameFormControl ? {fact_name: formData.factNameFormControl} : {},
+      ...formData.factNameFormControl ? {fact_name: formData.factNameFormControl.name} : {},
       minimum_sample_size: formData.taggerGroupMinSampleSizeFormControl,
       tagger: taggerBody
     };
@@ -268,6 +263,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy {
     }
   }
 
+  // tslint:disable-next-line:no-any
   setDefaultFormValues(options: any): void {
     const taggerForm = this.taggerGroupForm.get('taggerForm');
 

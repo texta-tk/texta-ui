@@ -15,7 +15,7 @@
       <mat-select [disableOptionCentering]="true" formControlName="factNameFormControl"
                   panelClass="select-panel-reveal-input">
         <mat-option>None</mat-option>
-        <mat-option *ngFor="let fact of projectFacts | async" [value]="fact.name">
+        <mat-option *ngFor="let fact of projectFacts | async" [value]="fact">
           {{fact.name}}
         </mat-option>
       </mat-select>
