@@ -259,6 +259,7 @@ export class BertTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
             } else if (resp instanceof HttpErrorResponse) {
               this.logService.snackBarError(resp, 5000);
             }
+            this.updateTable.next();
           });
       }
     });
@@ -270,6 +271,10 @@ export class BertTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
       data: tagger,
       maxHeight: '90vh',
       width: '700px',
+    }).afterClosed().subscribe(resp => {
+      if (resp) {
+        this.updateTable.next();
+      }
     });
   }
 

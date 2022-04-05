@@ -1,10 +1,10 @@
-import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Field, Project, ProjectFact, ProjectIndex} from '../../../shared/types/Project';
-import {mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
+import {filter, mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
 import {LogService} from '../../../core/util/log.service';
 import {TaggerOptions} from '../../../shared/types/tasks/TaggerOptions';
 import {ErrorStateMatcher} from '@angular/material/core';
-import {MatDialogRef} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {HttpErrorResponse} from '@angular/common/http';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ProjectService} from '../../../core/projects/project.service';
@@ -18,21 +18,22 @@ import {TaggerGroupService} from '../../../core/models/taggers/tagger-group.serv
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 import {MatSelect} from '@angular/material/select';
 import {CoreService} from '../../../core/core.service';
+import {Tagger, TaggerGroup} from '../../../shared/types/tasks/Tagger';
 
 @Component({
   selector: 'app-create-tagger-group-dialog',
   templateUrl: './create-tagger-group-dialog.component.html',
   styleUrls: ['./create-tagger-group-dialog.component.scss']
 })
-export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, AfterViewInit {
+export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy {
 
 
   taggerGroupForm = new FormGroup({
-    descriptionFormControl: new FormControl('', [
+    descriptionFormControl: new FormControl(this.data?.cloneTagger?.description || '', [
       Validators.required,
     ]),
     factNameFormControl: new FormControl(),
-    taggerGroupMinSampleSizeFormControl: new FormControl(50, [Validators.required]),
+    taggerGroupMinSampleSizeFormControl: new FormControl(this.data?.cloneTagger?.minimum_sample_size || 50, [Validators.required]),
     taggerForm: new FormGroup({
       fieldsFormControl: new FormControl([], [Validators.required]),
       indicesFormControl: new FormControl([], [Validators.required]),
@@ -43,12 +44,20 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
       analyzerFormControl: new FormControl([Validators.required]),
       vectorizerFormControl: new FormControl([Validators.required]),
       classifierFormControl: new FormControl([Validators.required]),
-      sampleSizeFormControl: new FormControl(10000, [Validators.required]),
-      negativeMultiplierFormControl: new FormControl(1.0, [Validators.required]),
-      ignoreNumbersFormControl: new FormControl(true),
-      detectLangFormControl: new FormControl(false),
-      balanceFormControl: new FormControl({value: false, disabled: true}),
-      maxBalanceFormControl: new FormControl({value: false, disabled: true}),
+      sampleSizeFormControl: new FormControl(this.data?.cloneTagger?.tagger_params?.maximum_sample_size || 10000, [Validators.required]),
+      negativeMultiplierFormControl: new FormControl(this.data?.cloneTagger?.tagger_params?.negative_multiplier || 1.0, [Validators.required]),
+      ignoreNumbersFormControl: new FormControl(
+        this.data?.cloneTagger?.tagger_params?.ignore_numbers !== undefined ? this.data.cloneTagger.tagger_params.ignore_numbers : true),
+      detectLangFormControl: new FormControl(
+        this.data?.cloneTagger?.tagger_params?.detect_lang !== undefined ? this.data?.cloneTagger?.tagger_params?.detect_lang : false),
+      balanceFormControl: new FormControl({
+        value: this.data?.cloneTagger?.tagger_params?.balance !== undefined ? this.data?.cloneTagger?.tagger_params?.balance : false,
+        disabled: true
+      }),
+      maxBalanceFormControl: new FormControl({
+        value: this.data?.cloneTagger?.tagger_params?.balance_to_max_limit !== undefined ? this.data?.cloneTagger?.tagger_params?.balance_to_max_limit : false,
+        disabled: true
+      }),
     })
   });
 
@@ -57,7 +66,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
   taggerGroupOptions: any;
   embeddings: Embedding[];
   projectFields: ProjectIndex[];
-  projectFacts: string[];
+  projectFacts: Subject<{ name: string, values: string[] }[]> = new Subject();
   currentProject: Project;
   destroyed$ = new Subject<boolean>();
   fieldsUnique: Field[] = [];
@@ -70,6 +79,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
               private logService: LogService,
               private projectService: ProjectService,
               private coreService: CoreService,
+              @Inject(MAT_DIALOG_DATA) public data: { cloneTagger: TaggerGroup },
               private embeddingService: EmbeddingsService,
               private projectStore: ProjectStore) {
   }
@@ -115,18 +125,10 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
 
   ngOnInit(): void {
     this.initFormControlListeners();
-
-    this.projectStore.getProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(projIndices => {
-      if (projIndices) {
-        this.projectIndices = projIndices;
-      }
-    });
-
-    this.coreService.getSnowballLanguages().subscribe(resp => {
-      if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.snowballLanguages = resp;
-      } else {
-        this.logService.snackBarError(resp);
+    this.projectFacts.pipe(filter(x => x[0]?.name !== 'Loading...'), take(1)).subscribe(facts => {
+      if (facts && this.data?.cloneTagger?.fact_name) {
+        const factNameForm = this.taggerGroupForm.get('factNameFormControl');
+        factNameForm?.setValue(facts.find(x => x.name === this.data.cloneTagger.fact_name));
       }
     });
 
@@ -135,8 +137,10 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
         this.currentProject = currentProject;
         return forkJoin(
           {
+            snowBallLanguages: this.coreService.getSnowballLanguages(),
             taggerOptions: this.taggerGroupService.getTaggerGroupOptions(currentProject.id),
             embeddings: this.embeddingService.getEmbeddings(currentProject.id),
+            projectIndices: this.projectStore.getProjectIndices().pipe(take(1)), // take 1 to complete observable
           });
       } else {
         return of(null);
@@ -149,40 +153,49 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
         }
         if (!(resp.embeddings instanceof HttpErrorResponse)) {
           this.embeddings = resp.embeddings.results;
+          if (this.data?.cloneTagger?.tagger_params?.embedding) {
+            const foundEmbedding = this.embeddings.find(x => x.id === this.data.cloneTagger?.tagger_params?.embedding?.id);
+            if (foundEmbedding) {
+              this.taggerGroupForm.get('taggerForm')?.get('embeddingFormControl')?.setValue(foundEmbedding);
+            }
+          }
+        }
+        if (!(resp.snowBallLanguages instanceof HttpErrorResponse)) {
+            this.snowballLanguages = resp.snowBallLanguages;
+            if (this.data?.cloneTagger?.tagger_params?.snowball_language) {
+              this.taggerGroupForm.get('taggerForm')?.get('snowballFormControl')?.setValue(this.data?.cloneTagger?.tagger_params?.snowball_language);
+            }
+          }
+
+        if (resp?.projectIndices && !(resp.projectIndices instanceof HttpErrorResponse)) {
+          this.projectIndices = resp.projectIndices;
+          if (this.data.cloneTagger?.tagger_params?.fields && this.data.cloneTagger?.tagger_params?.indices) {
+            const taggerForm = this.taggerGroupForm.get('taggerForm');
+            const indexInstances = resp.projectIndices.filter(x => this.data.cloneTagger.tagger_params.indices?.some(y => y === x.index));
+            const indicesForm = taggerForm?.get('indicesFormControl');
+            indicesForm?.setValue(indexInstances);
+            this.indicesOpenedChange(false); // refreshes the field and fact selection data
+            const fieldsForm = taggerForm?.get('fieldsFormControl');
+            fieldsForm?.setValue(this.data.cloneTagger.tagger_params.fields);
+          }
         }
       }
     });
-
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$), switchMap(currentProjIndices => {
-      this.projectFacts = ['Loading...'];
-      if (this.currentProject?.id && currentProjIndices) {
+      if (this.currentProject?.id && currentProjIndices && !this.data.cloneTagger) {
         const indicesForm = this.taggerGroupForm.get('taggerForm')?.get('indicesFormControl');
         indicesForm?.setValue(currentProjIndices);
         this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
-        return this.projectService.getProjectFacts(this.currentProject.id, currentProjIndices.map(x => [{name: x.index}]).flat());
+        this.projectFacts.next([{name: 'Loading...', values: []}]);
+        return this.projectService.getProjectFacts(this.currentProject.id, currentProjIndices.map(x => [{name: x.index}]).flat(), true);
       } else {
         return of(null);
       }
     })).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.projectFacts = resp;
+        this.projectFacts.next(resp);
       } else if (resp) {
         this.logService.snackBarError(resp, 4000);
-      }
-    });
-  }
-
-  ngAfterViewInit(): void {
-    this.indicesSelect.openedChange.pipe(takeUntil(this.destroyed$), switchMap(opened => {
-      if (!opened && this.indicesSelect.value) {
-        this.projectFacts = ['Loading...'];
-        return this.projectService.getProjectFacts(
-          this.currentProject.id, this.indicesSelect.value.map((x: ProjectIndex) => [{name: x.index}]).flat());
-      }
-      return of(null);
-    })).subscribe(resp => {
-      if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.projectFacts = resp;
       }
     });
   }
@@ -193,6 +206,22 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && indicesForm?.value && !UtilityFunctions.arrayValuesEqual(indicesForm?.value, this.projectFields, (x => x.index))) {
       this.projectFields = ProjectIndex.cleanProjectIndicesFields(indicesForm.value, ['text'], []);
+      this.getFactsForIndices(indicesForm?.value);
+    }
+  }
+
+  getFactsForIndices(val: ProjectIndex[]): void {
+    if (val.length > 0) {
+      this.projectFacts.next([{name: 'Loading...', values: []}]);
+      this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat(), true).pipe(takeUntil(this.projectFacts)).subscribe(resp => {
+        if (resp && !(resp instanceof HttpErrorResponse)) {
+          this.projectFacts.next(resp);
+        } else {
+          this.logService.snackBarError(resp);
+        }
+      });
+    } else {
+      this.projectFacts.next([]);
     }
   }
 
@@ -204,7 +233,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
       indices: formData.taggerForm.indicesFormControl.map((x: ProjectIndex) => [{name: x.index}]).flat(),
       ...formData?.taggerForm?.snowballFormControl ? {snowball_language: formData.taggerForm.snowballFormControl} : {},
       scoring_function: formData.taggerForm.scoringFormControl.value,
-      analyzer:  formData.taggerForm.analyzerFormControl.value,
+      analyzer: formData.taggerForm.analyzerFormControl.value,
       vectorizer: formData.taggerForm.vectorizerFormControl.value,
       classifier: formData.taggerForm.classifierFormControl.value,
       maximum_sample_size: formData.taggerForm.sampleSizeFormControl,
@@ -219,7 +248,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
 
     const body = {
       description: formData.descriptionFormControl,
-      ...formData.factNameFormControl ? {fact_name: formData.factNameFormControl} : {},
+      ...formData.factNameFormControl ? {fact_name: formData.factNameFormControl.name} : {},
       minimum_sample_size: formData.taggerGroupMinSampleSizeFormControl,
       tagger: taggerBody
     };
@@ -240,19 +269,38 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy, Afte
 
     if (taggerForm) {
       const analyzer = taggerForm.get('analyzerFormControl');
-      if (analyzer) {
+      if (this.data?.cloneTagger?.tagger_params?.analyzer && analyzer) {
+        const analyzerVal = options.actions.POST.tagger.children.analyzer.choices.find(
+          (x: { display_name: string | undefined; }) => x.display_name === this.data.cloneTagger.tagger_params.analyzer);
+        analyzer.setValue(analyzerVal);
+      } else if (analyzer) {
         analyzer.setValue(options.actions.POST.tagger.children.analyzer.choices[0]);
       }
+
       const vectorizer = taggerForm.get('vectorizerFormControl');
-      if (vectorizer) {
+      if (vectorizer && this.data?.cloneTagger?.tagger_params?.vectorizer) {
+        const vectorizerVal = options.actions.POST.tagger.children.vectorizer.choices.find(
+          (x: { display_name: string; }) => x.display_name === this.data.cloneTagger.tagger_params.vectorizer);
+        vectorizer.setValue(vectorizerVal);
+      } else if (vectorizer) {
         vectorizer.setValue(options.actions.POST.tagger.children.vectorizer.choices[0]);
       }
+
       const classifier = taggerForm.get('classifierFormControl');
-      if (classifier) {
+      if (classifier && this.data?.cloneTagger?.tagger_params?.classifier) {
+        const classifierVal = options.actions.POST.tagger.children.classifier.choices.find(
+          (x: { display_name: string; }) => x.display_name === this.data.cloneTagger.tagger_params.classifier);
+        classifier.setValue(classifierVal);
+      } else if (classifier) {
         classifier.setValue(options.actions.POST.tagger.children.classifier.choices[0]);
       }
+
       const scoringFunction = taggerForm.get('scoringFormControl');
-      if (scoringFunction) {
+      if (scoringFunction && this.data?.cloneTagger?.tagger_params?.scoring_function) {
+        const scoringFunctionVal = options.actions.POST.tagger.children.scoring_function.choices.find(
+          (x: { display_name: string | undefined; }) => x.display_name === this.data.cloneTagger.tagger_params.scoring_function);
+        scoringFunction.setValue(scoringFunctionVal);
+      } else if (scoringFunction) {
         scoringFunction.setValue(options.actions.POST.tagger.children.scoring_function.choices[0]);
       }
     }

@@ -278,7 +278,7 @@
 
 <mat-menu #editMenu="matMenu">
   <ng-template let-element="element" let-i="i" matMenuContent>
-    <ng-container *ngIf="element.task && element.task.status === 'completed'">
+    <ng-container *ngIf="(element.task && element.task.status === 'completed') || element.accuracy">
       <button (click)="epochReportDialog(element)" data-cy="appBertTaggerMenuEpoch" mat-menu-item>
         Epoch reports
       </button>

@@ -14,7 +14,7 @@
                   [formControl]="aggregation.formControl">
         <mat-select-trigger>{{aggregation?.formControl?.value?.path}}</mat-select-trigger>
         <mat-option *ngFor="let fields of (fieldsFiltered | async)" [value]="fields"
-                    title="{{fieldIndexMap.get(fields.path)?.join('\n')}}"
+                    title="Index: {{fieldIndexMap.get(fields.path)?.join(', ')}}&#013;Field: {{fields.path}}"
                     [disabled]="(fields.type === 'date' && aggregation.formControl.value.type !== 'date' && dateAlreadySelected) ||
                     ((fields.type === 'long' || fields.type === 'float') && aggregationList.length > 1)">
           <ng-container *ngIf="fields.type === 'fact'">

@@ -39,7 +39,7 @@ export class MLPCreateIndexDialogComponent implements OnInit, OnDestroy {
   fieldsUnique: Field[] = [];
   projectIndices: ProjectIndex[] = [];
   projectFields: ProjectIndex[];
-  analyzers: Choice[];
+  analyzers: Choice[] = [];
   // tslint:disable-next-line:no-any
   mlpOptions: any;
 
@@ -74,7 +74,7 @@ export class MLPCreateIndexDialogComponent implements OnInit, OnDestroy {
     })).subscribe((resp: MLPOptions | HttpErrorResponse | null) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.mlpOptions = resp;
-        this.analyzers = resp.actions.POST.analyzers.choices;
+        this.analyzers = resp.actions.POST.analyzers.choices || [];
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       }

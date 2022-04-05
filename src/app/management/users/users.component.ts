@@ -82,7 +82,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
         confirmText: 'Delete',
-        mainText: `Are you sure you want to delete this user?`
+        mainText: `Are you sure you want to delete ${user.display_name}`
       }
     });
 

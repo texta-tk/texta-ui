@@ -91,6 +91,13 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
   }
 
   saveTypeSelection(saveType: 1 | 2): void {
+    // update query when changing tabs
+    if (saveType === 1) {
+      this.simpleSearchComponent.makeQuery(this.simpleSearchComponent.searchFormControl.value);
+    } else {
+      this.advancedSearchComponent.searchOnChange(this.advancedSearchComponent.elasticQuery);
+    }
+
     const state = this.localStorageService.getProjectState(this.currentProject);
     if (state?.searcher?.searcherType) {
       state.searcher.searcherType = saveType;

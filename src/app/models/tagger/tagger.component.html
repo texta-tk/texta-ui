@@ -269,7 +269,7 @@
 </div>
 <mat-menu #editMenu="matMenu">
   <ng-template let-element="element" let-i="i" matMenuContent>
-    <ng-container *ngIf="element.task && element.task.status === 'completed'">
+    <ng-container *ngIf="(element.task && element.task.status === 'completed') || element.f1_score">
       <button (click)="listFeatures(element)" data-cy="appTaggerMenuListFeatures" mat-menu-item>
         List features
       </button>

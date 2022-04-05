@@ -3,7 +3,7 @@ import {ElasticsearchQuery} from '../../build-search/Constraints';
 import {FormControl} from '@angular/forms';
 import {Subject} from 'rxjs';
 import {SearcherComponentService} from '../../../services/searcher-component.service';
-import {takeUntil} from 'rxjs/operators';
+import {debounceTime, takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-text-aggregation',
@@ -33,8 +33,8 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // every time we get new search result refresh the query
-    this.searchService.getElasticQuery().pipe(takeUntil(this.destroy$)).subscribe((query: ElasticsearchQuery | null) => {
+    // every time we get new query refresh
+    this.searchService.getElasticQuery().pipe(takeUntil(this.destroy$), debounceTime(150)).subscribe((query: ElasticsearchQuery | null) => {
       if (query) {
         this.updateAggregations();
       }

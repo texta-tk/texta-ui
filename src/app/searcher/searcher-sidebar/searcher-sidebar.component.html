@@ -3,17 +3,17 @@
     [expanded]="buildSearchExpanded" #buildSearchPanel>
     <mat-expansion-panel-header (click)="expandBuildSearchPanel()">
       <mat-panel-title>
-        <span>Current Search</span>
+        <span>Search Constraints</span>
       </mat-panel-title>
       <mat-panel-description fxLayoutAlign="end start">
-        <button mat-icon-button class="flex-item-right panel-button" aria-label="view query" matTooltip="View searcher query"
+        <button mat-icon-button class="flex-item-right panel-button" aria-label="view query" matTooltip="View query"
                 (click)="openViewQueryDialog();$event.preventDefault();$event.stopPropagation()">
           <mat-icon>visibility</mat-icon>
         </button>
         <button mat-icon-button class="flex-item-right panel-button"
                 data-cy="appSearcherSidebarSaveSearchButton"
-                aria-label="save search"
-                matTooltip="Save current search"
+                aria-label="save query"
+                matTooltip="Save current query"
                 (click)="openSaveSearchDialog();$event.preventDefault();$event.stopPropagation()">
           <mat-icon>save</mat-icon>
         </button>
@@ -25,10 +25,10 @@
   <mat-expansion-panel [expanded]="savedSearchesExpanded" #savedSearchesPanel>
     <mat-expansion-panel-header (click)="expandSavedSearchesPanel()">
       <mat-panel-title>
-        <span> Saved Searches </span>
+        <span> Saved Queries </span>
       </mat-panel-title>
       <mat-panel-description fxLayoutAlign="end start">
-        <button mat-icon-button class="flex-item-right panel-button" aria-label="delete search"
+        <button mat-icon-button class="flex-item-right panel-button" aria-label="delete query"
                 data-cy="appSearcherSidebarDeleteSavedSearches"
                 (click)="onDeleteAllSelected();$event.preventDefault();$event.stopPropagation()">
           <mat-icon>delete</mat-icon>

@@ -284,6 +284,10 @@
     <button (click)="onModelsRetrain(element)" mat-menu-item>
       Retrain
     </button>
+    <button (click)="openCreateDialog(element)" data-cy="appTaggerGroupMenuClone" mat-menu-item
+            matTooltip="Fill a new create window with the same parameters">
+      Clone & Edit
+    </button>
     <button (click)="edit(element)" data-cy="appTaggerGroupMenuEdit" mat-menu-item>
       Edit
     </button>

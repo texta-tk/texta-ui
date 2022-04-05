@@ -57,7 +57,6 @@ export class SearcherComponentService {
   }
 
   // when we search_by_query, the response is passed as a Search Object to the table component through this function
-  // also used in aggregations, to know, when to request a new query via getElasticQuery() (we got results so the query is viable to use)
   public nextSearch(search: Search | null): void {
     this.searchSubject.next(search);
   }

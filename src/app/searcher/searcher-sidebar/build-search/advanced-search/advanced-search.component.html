@@ -5,7 +5,7 @@
               multiple (openedChange)="onOpenedChange($event)"
               (selectionChange)="onSelectionChange($event)">
     <mat-select-trigger>{{fieldsFormControl?.value | getPropertyList: pathAccessor | join: ', '}}</mat-select-trigger>
-    <mat-option *ngFor="let fields of (fieldsFiltered|async);trackBy:trackByPath" [value]="fields" title="{{fieldIndexMap.get(fields.path)?.join('\n')}}">
+    <mat-option *ngFor="let fields of (fieldsFiltered|async);trackBy:trackByPath" [value]="fields" title="Index: {{fieldIndexMap.get(fields.path)?.join(', ')}}&#013;Field: {{fields.path}}">
       <ng-container *ngIf="fields.type === 'fact' || fields.type === 'factName'">
         <ng-container *ngIf="fields.type === 'fact'">{{fields.path}}[fact_value]</ng-container>
         <ng-container *ngIf="fields.type === 'factName'">{{fields.path}}[fact_name]</ng-container>

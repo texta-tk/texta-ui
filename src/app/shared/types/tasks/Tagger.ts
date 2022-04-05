@@ -84,6 +84,14 @@ export interface TaggerParams {
   ignore_numbers: boolean;
   balance: boolean;
   balance_to_max_limit: boolean;
+  analyzer: string;
+  detect_lang?: boolean;
+  scoring_function?: string;
+  maximum_sample_size?: number;
+  negative_multiplier?: number;
+  snowball_language?: string;
+  embedding?: {name: string, id: number};
+  indices?: string[];
 }
 
 export interface SumSize {
@@ -113,13 +121,12 @@ export interface TaggerGroup {
 }
 
 
-
 // For endpoints such as 'projects/{projectId}/tagger_groups/{taggerGroupId}/models_list/'
 export class LightTagger {
-    tag = '';
-    url = '';
-    status: TaskStatus;
-    id: number;
+  tag = '';
+  url = '';
+  status: TaskStatus;
+  id: number;
 }
 
 
