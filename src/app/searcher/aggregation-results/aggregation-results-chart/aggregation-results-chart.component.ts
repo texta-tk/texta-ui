@@ -16,8 +16,8 @@ import {Subject} from 'rxjs';
 import {PlotlyComponent, PlotlyService} from 'angular-plotly.js';
 import {ChangeDetectorRef, Component, Injector, Input, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
-import {MatDialog, MatDialogRef} from "@angular/material/dialog";
-import {PlotDownloadDialogComponent} from "../../../shared/plotly-module/plot-download-dialog/plot-download-dialog.component";
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {PlotDownloadDialogComponent} from '../../../shared/plotly-module/plot-download-dialog/plot-download-dialog.component';
 import * as _moment from 'moment';
 
 const moment = _moment;
@@ -120,7 +120,7 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
               y: series.map(x => x.value),
               customData: series,
               // limit hover text to 20 rows, if it doesnt fit graph plotly wont show
-              hovertext: series.map(x => x?.extra?.buckets.slice(0, 20).map(y => `${y.key.slice(0, 30)}:<b>${y.doc_count}</b><br>`).join('')),
+              hovertext: series.map(x => x?.extra?.buckets.slice(0, 20).map(y => `${y.key.slice(0, 30)}:<b style="color: ${y.doc_count_error_upper_bound ? 'yellow' : 'white'}">${y.doc_count}</b><br>`).join('')),
               type: 'scattergl',
               mode,
               /*          line: {shape: 'spline'},*/

@@ -18,7 +18,14 @@
       </ng-container>
       <ng-container matColumnDef="doc_count">
         <th *matHeaderCellDef mat-header-cell>Doc count</th>
-        <td *matCellDef="let element" class="table-row" mat-cell><span>{{element.doc_count}}</span>
+        <td *matCellDef="let element" class="table-row" mat-cell>
+          <div class="flex-row align-items-center" style="align-items: center;justify-content: space-between; min-width: 50px">
+            <mat-icon *ngIf="element.doc_count_error_upper_bound"
+                      matTooltip="{{'Doc counts are approximate! \n Upper bound error: '+element.doc_count_error_upper_bound+'\n Increasing aggregation size might result in more accurate results.'}}">
+              warning_amber
+            </mat-icon>
+          <span>{{element.doc_count}}</span>
+          </div>
         </td>
       </ng-container>
       <!-- Header row first group -->

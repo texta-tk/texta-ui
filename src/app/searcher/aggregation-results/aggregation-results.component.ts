@@ -25,7 +25,7 @@ export interface AggregationData {
     name: string
   }[];
   // tslint:disable-next-line:max-line-length
-  dateData?: { series: { value: number; name: string; epoch: number; extra?: { buckets: { key: string; doc_count: number }[] } }[], name: string }[];
+  dateData?: { series: { value: number; name: string; epoch: number; extra?: { buckets: { key: string; doc_count: number; doc_count_error_upper_bound: number }[] } }[], name: string }[];
   // tslint:disable-next-line:no-any
   numberData?: any[];
   // only used when aggregating over texta_facts only
