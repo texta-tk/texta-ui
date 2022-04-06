@@ -4,7 +4,7 @@ import { CreateIndexSplitterDialogComponent } from './create-index-splitter-dial
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MatDialogRef} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {SharedModule} from "../../../shared/shared-module/shared.module";
 
 describe('CreateIndexSplitterDialogComponent', () => {
@@ -13,6 +13,7 @@ describe('CreateIndexSplitterDialogComponent', () => {
   const mockDialogRef = {
     close: jasmine.createSpy('close')
   };
+  const data = {cloneIndexSplitter: undefined};
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
@@ -22,6 +23,10 @@ describe('CreateIndexSplitterDialogComponent', () => {
         {
           provide: MatDialogRef,
           useValue: mockDialogRef
+        },
+        {
+          provide: MAT_DIALOG_DATA,
+          useValue: data
         }],
       declarations: [ CreateIndexSplitterDialogComponent ]
     })
