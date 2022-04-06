@@ -13,10 +13,13 @@
                            placeholderLabel="Search"></ngx-mat-select-search>
   </mat-option>
   <mat-select-trigger>
-    {{select.value[0]?.description ? select.value[0].description : 'Loading...'}}
-    <span *ngIf="select.value?.length > 1" class="additional-selection">
+    <ng-container *ngIf="multiple">
+      {{select.value[0]?.[this.triggerAccessor] ? select.value[0][this.triggerAccessor] : 'Loading...'}}
+      <span *ngIf="select.value?.length > 1" class="additional-selection">
         (+{{select.value.length - 1}} {{select.value?.length === 2 ? 'other' : 'others'}})
       </span>
+    </ng-container>
+    <ng-container *ngIf="!multiple">{{select.value?.[this.triggerAccessor] ? select.value[triggerAccessor] : '[Object]'}}</ng-container>
   </mat-select-trigger>
   <cdk-virtual-scroll-viewport #cdkVirtualScrollViewport itemSize="48"
                                [style.height.px]="(scrollableDataSource.length >= 7 ? 7 : scrollableDataSource.length)*48"
@@ -24,11 +27,11 @@
                                [maxBufferPx]="16*48"
                                class="example-viewport">
     <mat-option *cdkVirtualFor="let item of scrollableDataSource" [title]="'Id: '+item?.id || ''"
-                [disabled]="!item?.description"
-                [value]="item">{{item?.description || 'Loading...'}}</mat-option>
+                [disabled]="!item?.[triggerAccessor]"
+                [value]="item">{{item?.[triggerAccessor] || 'Loading...'}}</mat-option>
   </cdk-virtual-scroll-viewport>
   <ng-container *ngIf="multiple">
-    <mat-option *ngFor="let tagger of selectFormControl.value" [value]="tagger"
-                style="display: none">{{tagger?.description}}</mat-option>
+    <mat-option *ngFor="let element of selectFormControl.value" [value]="element"
+                style="display: none">{{element?.[this.triggerAccessor]}}</mat-option>
   </ng-container>
 </mat-select>

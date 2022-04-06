@@ -82,7 +82,7 @@ export class CreateAnnotatorDialogComponent implements OnInit, OnDestroy {
   annotatorTypes: Choice[];
   projectFacts: string[] = [];
   filteredProjectFacts: Observable<string[]>;
-  projectLabelSets: ScrollableDataSource<{ id: number; description: string; values: string[] }>;
+  projectLabelSets: ScrollableDataSource<LabelSet>;
   users: UserProfile[];
   currentUser: UserProfile;
 
@@ -158,17 +158,8 @@ export class CreateAnnotatorDialogComponent implements OnInit, OnDestroy {
 
 
   fetchFn(pageNr: number, pageSize: number,
-          filterParam: string, context: this): Observable<ResultsWrapper<{ id: number; description: string; values: string[] }> | HttpErrorResponse> {
-    return context.annotatorService.getLabelSets(context.currentProject.id, `${filterParam}&page=${pageNr + 1}&page_size=${pageSize}`).pipe(
-      map((resp) => {
-        if (!(resp instanceof HttpErrorResponse)) {
-          return {
-            count: resp.count,
-            results: resp.results.flatMap(x => [{id: x.id, description: x.category, values: x.values}])
-          };
-        }
-        return resp;
-      })) as Observable<ResultsWrapper<{ id: number; description: string; values: string[] }> | HttpErrorResponse>;
+          filterParam: string, context: this): Observable<ResultsWrapper<LabelSet> | HttpErrorResponse> {
+    return context.annotatorService.getLabelSets(context.currentProject.id, `${filterParam}&page=${pageNr + 1}&page_size=${pageSize}`);
   }
 
   onSubmit(formData: OnSubmitParams): void {
