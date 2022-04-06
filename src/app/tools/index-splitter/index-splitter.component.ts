@@ -30,7 +30,7 @@ export class IndexSplitterComponent implements OnInit, OnDestroy, AfterViewInit 
   expandedElement: IndexSplitter | null;
   public tableData: MatTableDataSource<IndexSplitter> = new MatTableDataSource();
   selectedRows = new SelectionModel<IndexSplitter>(true, []);
-  public displayedColumns = ['select', 'id', 'author', 'description', 'test_index', 'train_index', 'distribution', 'task__time_started', 'task__time_completed', 'task__status'];
+  public displayedColumns = ['select', 'id', 'author', 'description', 'test_index', 'train_index', 'distribution', 'task__time_started', 'task__time_completed', 'task__status', 'actions'];
   public isLoadingResults = true;
 
   @ViewChild(MatSort) sort: MatSort;
@@ -41,6 +41,7 @@ export class IndexSplitterComponent implements OnInit, OnDestroy, AfterViewInit 
   private updateTable = new Subject<boolean>();
 
   public getIndexName = (x: Index) => x.name;
+
   constructor(private projectStore: ProjectStore,
               private indexSplitterService: IndexSplitterService,
               public dialog: MatDialog,
@@ -104,16 +105,34 @@ export class IndexSplitterComponent implements OnInit, OnDestroy, AfterViewInit 
     });
   }
 
-  openCreateDialog(): void {
+  openCreateDialog(element?: IndexSplitter): void {
     const dialogRef = this.dialog.open(CreateIndexSplitterDialogComponent, {
       maxHeight: '90vh',
       width: '700px',
       disableClose: true,
+      data: {cloneIndexSplitter: element ? element : undefined},
     });
     dialogRef.afterClosed().subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.updateTable.next(true);
+        this.logService.snackBarMessage(`Created Index Splitter ${resp.description}`, 2000);
         this.projectStore.refreshSelectedProjectResourceCounts();
+      }
+    });
+  }
+
+  onDelete(indexSplitter: IndexSplitter): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {confirmText: 'Delete', mainText: 'Are you sure you want to delete ' + indexSplitter.description}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.indexSplitterService.deleteIndexSplitter(this.currentProject.id, indexSplitter.id).subscribe(() => {
+          this.logService.snackBarMessage(`Deleted Index Splitter ${indexSplitter.description}`, 2000);
+          this.updateTable.next(true);
+          this.projectStore.refreshSelectedProjectResourceCounts();
+        });
       }
     });
   }

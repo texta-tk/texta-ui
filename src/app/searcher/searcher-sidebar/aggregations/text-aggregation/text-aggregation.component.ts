@@ -73,6 +73,7 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
               field:
                 `${this.fieldsFormControl.value.path}.fact`,
               size: this.aggregationSize,
+              ...this.aggregationType === 'terms' ? {show_term_doc_count_error: true} : {}
             },
             aggs: {
               top_reverse_nested: {
@@ -84,6 +85,7 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
                     `${this.fieldsFormControl.value.path}.str_val`,
                   size: this.aggregationSize,
                   order: {'fact_val_reverse.doc_count': 'desc'},
+                  ...this.aggregationType === 'terms' ? {show_term_doc_count_error: true} : {}
                 },
                 aggs: {fact_val_reverse: {reverse_nested: {}}}
               }
@@ -106,6 +108,7 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
               `${this.fieldsFormControl.value.path}${
                 this.aggregationType === 'significant_terms' || this.aggregationType === 'terms' ? '.keyword' : ''}`,
             size: this.aggregationSize,
+            ...this.aggregationType === 'terms' ? {show_term_doc_count_error: true} : {}
           }
         }
       };

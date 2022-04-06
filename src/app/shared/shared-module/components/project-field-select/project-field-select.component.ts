@@ -88,7 +88,11 @@ export class ProjectFieldSelectComponent implements OnInit, OnDestroy, ControlVa
       this.fieldsUnique = UtilityFunctions.getDistinctByProperty<Field>(this._projectFields.map(x => x.fields).flat(), (x => x.path));
       // when changing indices remember selected fields only if they also exist in the new indices
       if (this.value && Array.isArray(this.value)) {
-        this.value = this.value.filter(val => this.fieldsUnique.find(x => x.path === val));
+        if (this.valueOutPutType === 'object') {
+          this.value = this.fieldsUnique.filter(x => this.value?.includes(x.path));
+        } else {
+          this.value = this.value.filter(val => this.fieldsUnique.find(x => x.path === val));
+        }
       }
       if (this.fieldsUnique.length > 0) {
         this.fieldsUnique.push(this.fieldsUnique.splice(this.fieldsUnique.findIndex(x => x.type === 'fact'), 1)[0]);
@@ -104,11 +108,11 @@ export class ProjectFieldSelectComponent implements OnInit, OnDestroy, ControlVa
   }
 
   @Input()
-  get value(): string[] | null {
+  get value(): string[]  | null {
     return this.fieldFormControl.value;
   }
 
-  set value(fields: string[] | null) {
+  set value(fields: string[] | Field[] | null) {
     this.fieldFormControl.setValue(fields);
     this.stateChanges.next();
   }

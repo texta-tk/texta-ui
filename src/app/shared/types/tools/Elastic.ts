@@ -8,7 +8,10 @@ export interface Reindexer {
   query: string;
   new_index: string;
   random_size: number;
+  indices: string[];
+  fields: string[];
   task: TaskStatus;
+  add_facts_mapping: boolean;
   field_type: {path: string, new_path_name: string, field_type: string}[];
 }
 

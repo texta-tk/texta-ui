@@ -34,7 +34,7 @@
       <mat-hint>{{indexSplitterOptions?.actions?.POST?.fields?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
-    <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"
+    <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)" [startingQuery]="query"
                                    data-cy="appIndexSplitterCreateDialogQuery">
     </app-saved-search-autocomplete>
 
@@ -77,8 +77,8 @@
                     [disableOptionCentering]="true"
                     formControlName="factFormControl"
                     panelClass="select-panel-reveal-input">
-          <mat-option *ngFor="let fact of projectFacts" [value]="fact" title="{{fact}}">
-            {{fact}}
+          <mat-option *ngFor="let fact of projectFacts | async" [value]="fact" title="{{fact}}">
+            {{fact.name}}
           </mat-option>
         </mat-select>
         <mat-hint>{{indexSplitterOptions?.actions?.POST?.fact?.help_text || ''}}</mat-hint>
@@ -110,8 +110,8 @@
             {{item.display_name}}
           </mat-option>
         </ng-container>
-        <mat-hint>{{indexSplitterOptions?.actions?.POST?.distribution?.help_text || ''}}</mat-hint>
       </mat-select>
+      <mat-hint>{{indexSplitterOptions?.actions?.POST?.distribution?.help_text || ''}}</mat-hint>
     </mat-form-field>
     <mat-form-field>
       <input autocomplete="off" formControlName="customDistributionFormControl" matInput

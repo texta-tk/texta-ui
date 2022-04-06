@@ -86,6 +86,16 @@
         </td>
       </ng-container>
 
+      <ng-container matColumnDef="actions">
+        <th *matHeaderCellDef class="center-header-cell" mat-header-cell>Actions</th>
+        <td (click)="$event.stopPropagation();" *matCellDef="let element; let i = dataIndex" mat-cell>
+          <button [matMenuTriggerData]="{element: element, i:i}" [matMenuTriggerFor]="editMenu" color="primary"
+                  mat-icon-button>
+            <mat-icon aria-label="Actions">more_vert</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
 
       <ng-container matColumnDef="expandedDetail">
         <td *matCellDef="let element" [attr.colspan]="displayedColumns.length" mat-cell>
@@ -179,8 +189,18 @@
       <tr *matRowDef="let row; columns: ['expandedDetail']" class="detail-row" mat-row></tr>
 
     </table>
-
   </div>
-
-
 </div>
+
+<mat-menu #editMenu="matMenu">
+  <ng-template let-element="element" let-i="i" matMenuContent>
+    <button (click)="openCreateDialog(element)" data-cy="appIndexSplitterMenuClone" mat-menu-item
+            matTooltip="Fill a new create window with the same parameters">
+      Clone & Edit
+    </button>
+    <mat-divider></mat-divider>
+    <button (click)="onDelete(element)" data-cy="appTaggerMenuDelete" mat-menu-item>
+      Delete
+    </button>
+  </ng-template>
+</mat-menu>

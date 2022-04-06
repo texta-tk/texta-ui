@@ -36,7 +36,7 @@ export class VirtualScrollSelectComponent<T extends Task> implements ControlValu
   @ViewChild('matSelectSearch') matSelectSearch: ElementRef;
   searchFocused = false;
   @ViewChild('select') selectCtrl: MatSelect;
-
+  @Input() triggerAccessor = 'description';
   constructor(@Self() public ngControl: NgControl,
               private _elementRef: ElementRef<HTMLElement>,
               private _focusMonitor: FocusMonitor,
@@ -152,7 +152,7 @@ export class VirtualScrollSelectComponent<T extends Task> implements ControlValu
     this.descriptionFilterControl.valueChanges
         .pipe(takeUntil(this.destroyed$), debounceTime(300), distinctUntilChanged())
         .subscribe((val) => {
-          this.scrollableDataSource.filter(`&description=${val}`);
+          this.scrollableDataSource.filter(`&${this.triggerAccessor}=${val}`);
         });
     this.selectFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(val => {
       this.onChange(val);

@@ -3,17 +3,25 @@
     <!-- This is the tree node template for leaf nodes -->
     <mat-tree-node *matTreeNodeDef="let node;" matTreeNodeToggle>
       <li class="mat-tree-node">
-        <ng-container *ngIf="node.key_as_string">
-          ({{node.doc_count}}) {{node.key_as_string}}
-        </ng-container>
-        <ng-container *ngIf="!node.key_as_string">
-          <ng-container *ngIf="!node.fact_val_reverse">
-          ({{node.doc_count}}) {{node.key}}
+        <div class="flex-row align-items-center">
+          <mat-icon *ngIf="node.doc_count_error_upper_bound"
+                    matTooltip="{{'Doc counts are approximate! \n Upper bound error: '+node.doc_count_error_upper_bound+'\n Increasing aggregation size might result in more accurate results.'}}">
+            warning_amber
+          </mat-icon>
+          <ng-container *ngIf="node.key_as_string">
+            ({{node.doc_count}}) {{node.key_as_string}}
           </ng-container>
-          <ng-container *ngIf="node.fact_val_reverse">
-            <button mat-button (click)="makeSearch(node)" title="Add to search constraint">({{node.fact_val_reverse.doc_count}}) {{node.key}}</button>
+          <ng-container *ngIf="!node.key_as_string">
+            <ng-container *ngIf="!node.fact_val_reverse">
+              ({{node.doc_count}}) {{node.key}}
+            </ng-container>
+            <ng-container *ngIf="node.fact_val_reverse">
+              <button mat-button (click)="makeSearch(node)" title="Add to search constraint">
+                ({{node.fact_val_reverse.doc_count}}) {{node.key}}
+              </button>
+            </ng-container>
           </ng-container>
-        </ng-container>
+        </div>
       </li>
     </mat-tree-node>
     <!-- This is the tree node template for expandable nodes -->
@@ -32,14 +40,37 @@
           <ng-container *ngIf="!node.key_as_string">
             <ng-container *ngIf="!node.top_reverse_nested"> <!-- text > leaf node -->
               <ng-container *ngIf="!node.fact_val_reverse">
-                ({{node.doc_count}}) {{node.key}}
+                <div class="flex-row align-items-center">
+                  <mat-icon *ngIf="node.doc_count_error_upper_bound"
+                            matTooltip="{{'Doc counts are approximate! \n Upper bound error: '+node.doc_count_error_upper_bound+'\n Increasing aggregation size might result in more accurate results.'}}">
+                    warning_amber
+                  </mat-icon>
+                  ({{node.doc_count}}) {{node.key}}
+                </div>
               </ng-container>
               <ng-container *ngIf="node.fact_val_reverse"> <!-- fact_value > leaf node -->
-                <button mat-button (click)="makeSearch(node)" title="Add to search constraint">({{node.fact_val_reverse.doc_count}}) {{node.key}}</button>
+                <button mat-button (click)="makeSearch(node)" title="Add to search constraint">
+                  <div class="flex-row align-items-center">
+                    <mat-icon *ngIf="node.doc_count_error_upper_bound"
+                              matTooltip="{{'Doc counts are approximate! \n Upper bound error: '+node.doc_count_error_upper_bound+'\n Increasing aggregation size might result in more accurate results.'}}">
+                      warning_amber
+                    </mat-icon>
+                    ({{node.fact_val_reverse.doc_count}}) {{node.key}}
+                  </div>
+                </button>
               </ng-container>
             </ng-container>
             <ng-container *ngIf="node.top_reverse_nested"> <!-- fact name > leaf node -->
-              <button mat-button (click)="makeFactNameConstraint(node)" title="Add to search constraint">({{node.top_reverse_nested.doc_count}}) {{node.key}}</button>
+              <button mat-button (click)="makeFactNameConstraint(node)" title="Add to search constraint">
+
+                <div class="flex-row align-items-center">
+                  <mat-icon *ngIf="node.doc_count_error_upper_bound"
+                            matTooltip="{{'Doc counts are approximate! \n Upper bound error: '+node.doc_count_error_upper_bound+'\n Increasing aggregation size might result in more accurate results.'}}">
+                    warning_amber
+                  </mat-icon>
+                  ({{node.top_reverse_nested.doc_count}}) {{node.key}}
+                </div>
+              </button>
             </ng-container>
           </ng-container>
           <button mat-icon-button (click)="openDialog(node, depth)">
@@ -53,4 +84,6 @@
     </mat-nested-tree-node>
   </mat-tree>
 </ng-container>
-<ng-container *ngIf="!dataSource">No results for this aggregation. (make sure the query you are aggregating on has results)</ng-container>
+<ng-container *ngIf="!dataSource">No results for this aggregation. (make sure the query you are aggregating on has
+  results)
+</ng-container>

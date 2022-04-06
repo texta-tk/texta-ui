@@ -12,6 +12,10 @@ table {
   padding-right: 16px;
 }
 .cdk-column-doc_count{
+  div{
+    align-items: center;
+    justify-content: space-between;
+  }
   min-width: 80px;
 }
 

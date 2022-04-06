@@ -44,8 +44,11 @@
       <ng-container matColumnDef="doc_count">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Doc Count</th>
         <td *matCellDef="let element" mat-cell>
+          <div class="flex-row">
           <ng-container *ngIf="element.top_reverse_nested">{{element.top_reverse_nested.doc_count}}</ng-container>
           <ng-container *ngIf="!element.top_reverse_nested">{{element.doc_count}}</ng-container>
+          <ng-container *ngIf="element.doc_count_error_upper_bound"><mat-icon matTooltip="{{'Doc count is approximate! \n Upper bound error: '+element.doc_count_error_upper_bound+'\n Increasing aggregation size might result in more accurate results.'}}">warning_amber</mat-icon></ng-container>
+          </div>
         </td>
         <td mat-footer-cell *matFooterCellDef> {{getTotalCost()}} </td>
       </ng-container>
