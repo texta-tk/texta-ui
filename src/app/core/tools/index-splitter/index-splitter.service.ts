@@ -44,4 +44,11 @@ export class IndexSplitterService {
       tap(e => this.logService.logStatus(e, 'getIndexSplitterOptions')),
       catchError(this.logService.handleError<IndexSplitterOptions>('getIndexSplitterOptions')));
   }
+
+  deleteIndexSplitter(projectId: number, indexSplitter: number): Observable<unknown | HttpErrorResponse> {
+    return this.http.delete(`${this.apiUrl}/projects/${projectId}/elastic/index_splitter/${indexSplitter}/`).pipe(
+      tap(e => this.logService.logStatus(e, 'deleteIndexSplitter')),
+      catchError(this.logService.handleError<unknown>('deleteIndexSplitter')));
+  }
+
 }

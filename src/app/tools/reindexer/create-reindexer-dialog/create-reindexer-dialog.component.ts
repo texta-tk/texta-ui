@@ -1,8 +1,8 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {ReindexerService} from '../../../core/tools/reindexer/reindexer.service';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
-import {MatDialogRef} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {LiveErrorStateMatcher} from 'src/app/shared/CustomerErrorStateMatchers';
 import {Field, Project, ProjectIndex} from 'src/app/shared/types/Project';
 import {ProjectService} from 'src/app/core/projects/project.service';
@@ -12,6 +12,8 @@ import {forkJoin, of, Subject} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../../../core/util/log.service';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
+import {IndexSplitter} from '../../../shared/types/tasks/IndexSplitter';
+import {Reindexer} from '../../../shared/types/tools/Elastic';
 
 type FieldTypesModel = { path: string, new_path_name: string, field_type: string };
 
@@ -22,17 +24,18 @@ type FieldTypesModel = { path: string, new_path_name: string, field_type: string
 })
 export class CreateReindexerDialogComponent implements OnInit, OnDestroy {
 
+  defaultQuery = '{"query": {"match_all": {}}}';
+  query = this.data?.cloneElement?.query || this.defaultQuery;
+
   reindexerForm = new FormGroup({
-    descriptionFormControl: new FormControl('', [Validators.required]),
-    newNameFormControl: new FormControl('', [Validators.required]),
-    randomSizeFormControl: new FormControl(''),
+    descriptionFormControl: new FormControl(this.data?.cloneElement?.description || '', [Validators.required]),
+    newNameFormControl: new FormControl(this.data?.cloneElement?.new_index || '', [Validators.required]),
+    randomSizeFormControl: new FormControl(this.data?.cloneElement?.random_size || ''),
     fieldsFormControl: new FormControl([], [Validators.required]),
     fieldTypesFormControl: new FormControl(''),
     indicesFormControl: new FormControl([], [Validators.required]),
-    addFactsMappingFormControl: new FormControl(false)
+    addFactsMappingFormControl: new FormControl(this.data?.cloneElement?.add_facts_mapping !== undefined ? this.data?.cloneElement?.add_facts_mapping : false)
   });
-  defaultQuery = '{"query": {"match_all": {}}}';
-  query = this.defaultQuery;
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   projectIndices: ProjectIndex[];
   projectFields: ProjectIndex[] = [];
@@ -47,6 +50,7 @@ export class CreateReindexerDialogComponent implements OnInit, OnDestroy {
               private projectService: ProjectService,
               private reindexerService: ReindexerService,
               private logService: LogService,
+              @Inject(MAT_DIALOG_DATA) public data: { cloneElement: Reindexer },
               private projectStore: ProjectStore) {
   }
 
@@ -55,7 +59,10 @@ export class CreateReindexerDialogComponent implements OnInit, OnDestroy {
     this.projectStore.getCurrentProject().pipe(take(1), switchMap(currentProject => {
       if (currentProject) {
         this.currentProject = currentProject;
-        return this.reindexerService.getReindexerOptions(currentProject.id);
+        return forkJoin({
+          reindexerOptions: this.reindexerService.getReindexerOptions(currentProject.id),
+          projectIndices: this.projectStore.getProjectIndices().pipe(take(1)), // take 1 to complete observable
+        });
       } else {
         return of(null);
       }
@@ -67,20 +74,31 @@ export class CreateReindexerDialogComponent implements OnInit, OnDestroy {
           this.logService.snackBarError(resp, 2000);
         }
       }
+      if (resp?.reindexerOptions && !(resp?.reindexerOptions instanceof HttpErrorResponse)) {
+        this.reindexerOptions = resp?.reindexerOptions;
+      }
+      if (resp?.projectIndices && !(resp.projectIndices instanceof HttpErrorResponse)) {
+        this.projectIndices = resp.projectIndices;
+        if (this.data.cloneElement) {
+          const indexInstances = resp.projectIndices.filter(x => this.data.cloneElement.indices.some(y => y === x.index));
+          const indicesForm = this.reindexerForm.get('indicesFormControl');
+          indicesForm?.setValue(indexInstances);
+          this.indicesOpenedChange(false); // refreshes the field and fact selection data
+          const fieldsForm = this.reindexerForm.get('fieldsFormControl');
+          fieldsForm?.setValue(this.data.cloneElement.fields);
+          this.fieldTypesModel = this.data.cloneElement.field_type;
+        }
+      }
+      UtilityFunctions.logForkJoinErrors(resp, HttpErrorResponse, this.logService.snackBarError.bind(this.logService));
     });
+
     this.projectStore.getSelectedProjectIndices().pipe(take(1), filter(x => !!x)).subscribe(currentProjIndices => {
-      if (currentProjIndices) {
+      if (this.currentProject?.id && currentProjIndices && !this.data.cloneElement) {
         const indicesForm = this.reindexerForm.get('indicesFormControl');
         indicesForm?.setValue(currentProjIndices);
         this.projectFields = currentProjIndices;
       }
     });
-    this.projectStore.getProjectIndices().pipe(take(1), filter(x => !!x)).subscribe(projIndices => {
-      if (projIndices) {
-        this.projectIndices = projIndices;
-      }
-    });
-
   }
 
   onQueryChanged(query: string): void {
@@ -100,7 +118,7 @@ export class CreateReindexerDialogComponent implements OnInit, OnDestroy {
     newNameFormControl: string; fieldTypesFormControl: string; indicesFormControl: { index: string }[]; randomSizeFormControl: number;
     addFactsMappingFormControl: boolean;
   }): void {
-    const fieldsToSend = formData.fieldsFormControl.map(x=>x.path);
+    const fieldsToSend = formData.fieldsFormControl.map(x => x.path);
     const body = {
       description: formData.descriptionFormControl,
       new_index: formData.newNameFormControl,

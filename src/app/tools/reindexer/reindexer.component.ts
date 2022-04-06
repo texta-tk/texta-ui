@@ -119,11 +119,12 @@ export class ReindexerComponent implements OnInit, OnDestroy {
     this.destroyed$.complete();
   }
 
-  openCreateDialog(): void {
+  openCreateDialog(element?: Reindexer): void {
     const dialogRef = this.dialog.open(CreateReindexerDialogComponent, {
       maxHeight: '90vh',
       width: '700px',
       disableClose: true,
+      data: {cloneElement: element ? element : undefined},
     });
     dialogRef.afterClosed().subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {

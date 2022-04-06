@@ -1,4 +1,5 @@
 import {UserProfile} from '../UserProfile';
+import {Index} from '../Index';
 
 export interface Task {
   id: number;
@@ -26,6 +27,7 @@ export interface IndexSplitter {
   test_size: number;
   fact: string;
   str_val: string;
+  indices: Index[];
   distribution: string;
   custom_distribution: string;
   task: Task;

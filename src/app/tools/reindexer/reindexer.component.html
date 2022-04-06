@@ -205,6 +205,11 @@
 </div>
 <mat-menu #editMenu="matMenu">
   <ng-template let-element="element" let-i="i" matMenuContent>
+    <button (click)="openCreateDialog(element)" data-cy="appReindexerMenuClone" mat-menu-item
+            matTooltip="Fill a new create window with the same parameters">
+      Clone & Edit
+    </button>
+    <mat-divider></mat-divider>
     <button (click)="onDelete(element, i)" data-cy="appReindexerMenuDelete" mat-menu-item>
       Delete
     </button>
