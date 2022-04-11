@@ -28,6 +28,14 @@ export class ScrollableDataSource<T> extends DataSource<T> {
     super();
   }
 
+  getFirstElementInCache(): T | null {
+    if (length > 0) {
+      return this._cachedData[0];
+    }
+    return null;
+  }
+
+
   connect(collectionViewer: CollectionViewer): Observable<T[]> {
     this.fetchFirstPage();
     this.collectionViewer = collectionViewer;

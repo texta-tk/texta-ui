@@ -1,0 +1,39 @@
+<h1 mat-dialog-title>Merge lexicons</h1>
+<div mat-dialog-content>
+  <form (ngSubmit)="onSubmit(mergeForm.value)" [formGroup]="mergeForm" class="flex-col" id="mergeFormId">
+    <mat-form-field class="max-width" data-cy="appMergeLexiconDialogTarget">
+      <mat-label>Target Lexicon</mat-label>
+      <app-virtual-scroll-select [scrollableDataSource]="lexicons" formControlName="targetFormControl"
+                                 [multiple]="false"
+                                 required></app-virtual-scroll-select>
+      <mat-error>
+        This field is <strong>required</strong>
+      </mat-error>
+      <mat-hint>Lexicon to merge into</mat-hint>
+    </mat-form-field>
+    <mat-form-field class="max-width" data-cy="appMergeLexiconDialogSource">
+      <mat-label>Source Lexicon</mat-label>
+      <app-virtual-scroll-select [scrollableDataSource]="lexicons" formControlName="sourceFormControl" [multiple]="true"
+                                 required></app-virtual-scroll-select>
+      <mat-error>
+        This field is <strong>required</strong>
+      </mat-error>
+      <mat-hint>Lexicons to merge from</mat-hint>
+    </mat-form-field>
+      <mat-radio-group  formControlName="mergeOptionFormControl" data-cy="appMergeLexiconDialogType" class="radio-grp max-width">
+        <mat-radio-button class="radio-btn" value="positive">Only merge positives</mat-radio-button>
+        <mat-radio-button class="radio-btn" value="entire">Merge entire lexicon</mat-radio-button>
+      </mat-radio-group>
+  </form>
+</div>
+<div class="flex-row max-width" mat-dialog-actions>
+  <div class="flex-item-left">
+    <button mat-button mat-dialog-close type="button" data-cy="appMergeLexiconDialogClose">Close</button>
+  </div>
+  <div class="flex-item-right">
+    <button [disabled]="!mergeForm.valid || (isLoading | async)" class="max-width" form="mergeFormId" data-cy="appMergeLexiconDialogSubmit"
+            mat-button
+            type="submit">Submit
+    </button>
+  </div>
+</div>

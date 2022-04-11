@@ -60,8 +60,11 @@ describe('Topic Analyzer should work', function () {
     });
     cy.wait(500);
     cy.get('[data-cy=appClusteringViewClustersButton]').click();
+    cy.wait(500);
     cy.get('.cdk-column-significant_words:nth(1)').click();
+    cy.wait(500);
     cy.get('.cdk-column-comment_content').should('be.visible');
+    cy.wait(500);
     cy.get('[data-cy=appClusterDocumentsMLTBtn]').click();
 
     cy.wait('@postClustering').its('response.body').should('have.length.gte', 1);
@@ -110,6 +113,7 @@ describe('Topic Analyzer should work', function () {
       .should('have.property', 'message');
     cy.get('.breadcrumb > :nth-child(1) .action-text').click();
     cy.wait('@getClustering');
+    cy.wait(500);
     cy.get('.mat-header-cell.mat-column-select > mat-checkbox').click();
     cy.get('[data-cy=appClusteringDeleteBtn]').click();
     cy.get('[type="submit"]').click();

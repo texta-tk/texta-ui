@@ -13,6 +13,7 @@ import {MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
 import {MatPaginator} from '@angular/material/paginator';
 import {CreateLexiconDialogComponentComponent} from './create-lexicon-dialog-component/create-lexicon-dialog-component.component';
+import {MergeLexiconDialogComponent} from './merge-lexicon-dialog/merge-lexicon-dialog.component';
 
 
 @Component({
@@ -123,5 +124,15 @@ export class LexiconMinerComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy(): void {
     this.destroyed$.next(true);
     this.destroyed$.complete();
+  }
+
+  openLexiconMerge(): void {
+    this.dialog.open(MergeLexiconDialogComponent, {
+      maxHeight: '90vh',
+      width: '400px',
+      autoFocus: false
+    }).afterClosed().subscribe(resp => {
+      this.updateTable.next(true);
+    });
   }
 }

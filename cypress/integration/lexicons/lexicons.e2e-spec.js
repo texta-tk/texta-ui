@@ -24,9 +24,18 @@ describe('lexicons should work', function () {
       cy.wait('@getLexicons')
       cy.get('[data-cy=appNavbarProjectSelect]').click();
       cy.get('mat-option').contains('integration_test_project').click();
+
       cy.get('[data-cy=appLexiconCreateBtn]').click();
 
       cy.get('[data-cy=appLexiconCreateDialogDesc]').should('be.visible').click().type('testLex');
+      cy.get('[type="submit"]').click();
+      cy.wait('@postLexicons').then(created => {
+        expect(created.response.statusCode).to.eq(201);
+      });
+
+      cy.get('[data-cy=appLexiconCreateBtn]').click();
+
+      cy.get('[data-cy=appLexiconCreateDialogDesc]').should('be.visible').click().type('testLex2');
       cy.get('[type="submit"]').click();
       cy.wait('@postLexicons').then(created => {
         expect(created.response.statusCode).to.eq(201);
@@ -48,6 +57,25 @@ describe('lexicons should work', function () {
       });
       cy.get('.breadcrumb > :nth-child(1)').click();
       cy.wait('@getLexicons');
+
+      cy.get('[data-cy=appLexiconMergeBtn]').click();
+      cy.wait('@getLexicons');
+      cy.wait(200);
+
+      cy.get('[data-cy=appMergeLexiconDialogTarget]').click();
+      cy.get('mat-option:nth(1)').click()
+      cy.closeCurrentCdkOverlay();
+
+      cy.get('[data-cy=appMergeLexiconDialogSource]').click();
+      cy.get('mat-option:last()').click()
+      cy.closeCurrentCdkOverlay();
+
+      cy.get('[type="submit"]').click();
+      cy.wait('@patchLexicons').then(intercepted => {
+        cy.wrap(intercepted).its('response.statusCode').should('eq', 200);
+      });
+      cy.get('[data-cy=appMergeLexiconDialogClose]').click();
+
       cy.get('[data-cy=appLexiconMenuDelete]:first()').click();
       cy.get('[type="submit"]').click();
       cy.wait('@deleteLexicons').then(intercepted => {
