@@ -18,6 +18,7 @@ import {ConfirmDialogComponent} from '../../shared/shared-module/components/dial
 import {Index} from '../../shared/types/Index';
 import {EditAnnotatorDialogComponent} from './edit-annotator-dialog/edit-annotator-dialog.component';
 import {QueryDialogComponent} from '../../shared/shared-module/components/dialogs/query-dialog/query-dialog.component';
+import {AppConfigService} from '../../core/util/app-config.service';
 
 @Component({
   selector: 'app-annotator',
@@ -33,6 +34,7 @@ export class AnnotatorComponent implements OnInit, OnDestroy, AfterViewInit {
   selectedRows = new SelectionModel<Annotator>(true, []);
   public displayedColumns = ['select', 'id', 'description', 'author__username', 'users_count', 'index', 'annotation_type', 'total', 'annotated', 'skipped', 'validated', 'task__status', 'actions'];
   public isLoadingResults = true;
+  public annotatorUrl = AppConfigService.settings.annotatorUrl;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -45,6 +47,7 @@ export class AnnotatorComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(private projectStore: ProjectStore,
               private annotatorService: AnnotatorService,
               public dialog: MatDialog,
+              private configService: AppConfigService,
               private logService: LogService) {
   }
 
@@ -193,5 +196,9 @@ export class AnnotatorComponent implements OnInit, OnDestroy, AfterViewInit {
       maxHeight: '965px',
       width: '700px',
     });
+  }
+
+  openAnnotatorView(): void {
+    window.open(`${this.annotatorUrl}`, '_blank');
   }
 }

@@ -16,6 +16,7 @@
   <mat-option *ngFor="let field of fieldsUnique" title="Index: {{fieldIndexMap.get(field.path)?.join(', ')}}&#013;Field: {{field.path}}"
               [value]="valueOutPutType  === 'path' ? field.path : field">
     <ng-container *ngIf="field.type === 'fact'">
+      <mat-icon>fact_check</mat-icon>
       {{field.path}}
     </ng-container>
     <ng-container *ngIf="field.type === 'date'">

@@ -18,6 +18,7 @@
                     [disabled]="(fields.type === 'date' && aggregation.formControl.value.type !== 'date' && dateAlreadySelected) ||
                     ((fields.type === 'long' || fields.type === 'float') && aggregationList.length > 1)">
           <ng-container *ngIf="fields.type === 'fact'">
+            <mat-icon>fact_check</mat-icon>
             {{fields.path}}
           </ng-container>
           <ng-container *ngIf="fields.type === 'date'">

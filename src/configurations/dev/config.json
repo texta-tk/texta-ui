@@ -1,6 +1,7 @@
 {
   "apiHost":"http://localhost:8000",
   "apiBasePath":"/api/v2",
+  "annotatorUrl":"",
   "logging":true,
   "fileFieldReplace":"texta_filepath",
   "useCloudFoundryUAA":true,
