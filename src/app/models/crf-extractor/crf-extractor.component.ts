@@ -18,6 +18,7 @@ import {LogService} from '../../core/util/log.service';
 import {QueryDialogComponent} from '../../shared/shared-module/components/dialogs/query-dialog/query-dialog.component';
 import {ApplyToIndexDialogComponent} from './apply-to-index-dialog/apply-to-index-dialog.component';
 import {TagTextDialogComponent} from './tag-text-dialog/tag-text-dialog.component';
+import {Index} from '../../shared/types/Index';
 
 @Component({
   selector: 'app-crf-extractor',
@@ -40,6 +41,8 @@ export class CRFExtractorComponent implements OnInit, OnDestroy, AfterViewInit {
   destroyed$: Subject<boolean> = new Subject<boolean>();
   currentProject: Project;
   private updateTable = new Subject<boolean>();
+
+  getIndicesName = (x: Index) => x.name;
 
   constructor(private projectStore: ProjectStore,
               private cRFExtractorService: CRFExtractorService,

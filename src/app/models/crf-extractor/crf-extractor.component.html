@@ -162,6 +162,10 @@
             <div class="flex-col m-l-r-5" fxFlex="33">
               <table class="simple-table">
                 <tr>
+                  <th class="mat-body-strong">Indices</th>
+                  <td>{{element.indices | getPropertyList: getIndicesName | join: ', '}}</td>
+                </tr>
+                <tr>
                   <th class="mat-body-strong">Feature fields</th>
                   <td>{{element.feature_fields}}</td>
                 </tr>
