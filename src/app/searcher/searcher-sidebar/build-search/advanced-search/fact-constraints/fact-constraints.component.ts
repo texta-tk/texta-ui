@@ -174,7 +174,7 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(stopConditions$), switchMap(currentProjIndices => {
       if (this.currentProject?.id && currentProjIndices) {
         this.projectFacts.next(['Loading...']);
-        return this.projectService.getProjectFacts(this.currentProject.id, currentProjIndices.map(x => [{name: x.index}]).flat());
+        return this.projectService.getProjectFacts(this.currentProject.id, currentProjIndices.map(x => [{name: x.index}]).flat(), false, false);
       } else {
         return of(null);
       }

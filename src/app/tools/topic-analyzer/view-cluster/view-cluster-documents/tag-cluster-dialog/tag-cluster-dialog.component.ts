@@ -62,7 +62,7 @@ export class TagClusterDialogComponent implements OnInit, OnDestroy {
       if (this.currentProject?.id && !(cluster instanceof HttpErrorResponse) && cluster) {
         this.indices = cluster.indices;
         this.projectFacts = ['Loading...'];
-        return this.projectService.getProjectFacts(this.currentProject.id, cluster.indices.map(x => [{name: x.name}]).flat());
+        return this.projectService.getProjectFacts(this.currentProject.id, cluster.indices.map(x => [{name: x.name}]).flat(), false, false);
       } else {
         return of(null);
       }

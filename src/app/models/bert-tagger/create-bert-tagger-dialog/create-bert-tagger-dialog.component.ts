@@ -208,7 +208,7 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
         indicesForm?.setValue(currentProjIndices);
         this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
         this.projectFacts.next([{name: 'Loading...', values: []}]);
-        return this.projectService.getProjectFacts(this.currentProject.id, currentProjIndices.map(x => [{name: x.index}]).flat(), true);
+        return this.projectService.getProjectFacts(this.currentProject.id, currentProjIndices.map(x => [{name: x.index}]).flat(), true, false);
       } else {
         return of(null);
       }
@@ -276,7 +276,7 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
   getFactsForIndices(val: ProjectIndex[]): void {
     if (val.length > 0) {
       this.projectFacts.next([{name: 'Loading...', values: []}]);
-      this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat(), true).subscribe(resp => {
+      this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat(), true, false).subscribe(resp => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
           this.projectFacts.next(resp);
         } else {

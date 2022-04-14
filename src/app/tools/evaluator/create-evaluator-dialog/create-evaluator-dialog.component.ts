@@ -99,7 +99,7 @@ export class CreateEvaluatorDialogComponent implements OnInit, OnDestroy {
         indicesForm?.setValue(currentProjIndices);
         this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
         this.projectFacts = ['Loading...'];
-        return this.projectService.getProjectFacts(this.currentProject.id, currentProjIndices.map(x => [{name: x.index}]).flat());
+        return this.projectService.getProjectFacts(this.currentProject.id, currentProjIndices.map(x => [{name: x.index}]).flat(), false, false);
       } else {
         return of(null);
       }
@@ -184,7 +184,7 @@ export class CreateEvaluatorDialogComponent implements OnInit, OnDestroy {
     this.predictedFactValueOptions = [];
     if (val.length > 0) {
       this.projectFacts = ['Loading...'];
-      this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat()).subscribe(resp => {
+      this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat(), false, false).subscribe(resp => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
           this.projectFacts = resp;
         } else {

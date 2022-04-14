@@ -214,7 +214,7 @@ export class CreateAnnotatorDialogComponent implements OnInit, OnDestroy {
   getFactsForIndices(val: ProjectIndex[]): void {
     if (val.length > 0) {
       this.projectFacts = [];
-      this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat()).pipe(takeUntil(this.destroyed$)).subscribe(resp => {
+      this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat(), false, false).pipe(takeUntil(this.destroyed$)).subscribe(resp => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
           this.projectFacts = resp;
         } else {

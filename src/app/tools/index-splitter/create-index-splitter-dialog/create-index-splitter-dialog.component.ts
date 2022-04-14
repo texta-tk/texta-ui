@@ -128,7 +128,7 @@ export class CreateIndexSplitterDialogComponent implements OnInit, OnDestroy {
         indicesForm?.setValue(currentProjIndices);
         this.projectFields = currentProjIndices;
         this.projectFacts.next([{name: 'Loading...', values: []}]);
-        return this.projectService.getProjectFacts(this.currentProject.id, currentProjIndices.map(x => [{name: x.index}]).flat(), true);
+        return this.projectService.getProjectFacts(this.currentProject.id, currentProjIndices.map(x => [{name: x.index}]).flat(), true, false);
       } else {
         return of(null);
       }
@@ -202,7 +202,7 @@ export class CreateIndexSplitterDialogComponent implements OnInit, OnDestroy {
   getFactsForIndices(val: ProjectIndex[]): void {
     if (val.length > 0) {
       this.projectFacts.next([{name: 'Loading...', values: []}]);
-      this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat(), true).pipe(takeUntil(this.projectFacts)).subscribe(resp => {
+      this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat(), true, false).pipe(takeUntil(this.projectFacts)).subscribe(resp => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
           this.projectFacts.next(resp);
         } else {

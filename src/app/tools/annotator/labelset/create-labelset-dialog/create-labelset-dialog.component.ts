@@ -81,7 +81,7 @@ export class CreateLabelsetDialogComponent implements OnInit {
         const indicesForm = this.labelSetForm.get('indicesFormControl');
         indicesForm?.setValue(currentProjIndices);
         this.projectFacts.next(['Loading...']);
-        return this.projectService.getProjectFacts(this.currentProject.id, currentProjIndices.map(x => [{name: x.index}]).flat(), false);
+        return this.projectService.getProjectFacts(this.currentProject.id, currentProjIndices.map(x => [{name: x.index}]).flat(), false, false);
       } else {
         return of(null);
       }
@@ -105,7 +105,7 @@ export class CreateLabelsetDialogComponent implements OnInit {
   getFactsForIndices(val: ProjectIndex[]): void {
     if (val.length > 0) {
       this.projectFacts.next(['Loading...']);
-      this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat(), false).subscribe(resp => {
+      this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat(), false, false).subscribe(resp => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
           this.projectFacts.next(resp);
         } else {

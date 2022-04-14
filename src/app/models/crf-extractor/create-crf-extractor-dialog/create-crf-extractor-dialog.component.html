@@ -28,14 +28,26 @@
     </mat-form-field>
 
     <mat-form-field data-cy="appCRFExtractorCreateDialogFields">
-      <mat-label>MLP field</mat-label>
-      <app-project-field-select [projectFields]="projectFields" [required]="true" [multiple]=false
+      <app-project-field-select (openedChange)="fieldOpenedChange($event)" [projectFields]="projectFields" [required]="true" [multiple]=false
+                                placeholder="MLP field"
                                 formControlName="mlpFieldsFormControl"></app-project-field-select>
       <mat-error *ngIf="CRFExtractorForm.get('mlpFieldsFormControl')?.hasError('required')">
         Field is <strong>required</strong>
       </mat-error>
       <mat-hint>{{CRFOptions?.actions?.POST?.mlp_field?.help_text || ''}}</mat-hint>
     </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Labels</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="labelsFormControl"
+                  panelClass="select-panel-reveal-input" multiple>
+        <mat-option *ngFor="let item of projectFacts" [value]="item">
+          {{item}}
+        </mat-option>
+      </mat-select>
+      <mat-hint>{{CRFOptions?.actions?.POST?.labels?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+    <mat-progress-bar style="margin-bottom: -4px" *ngIf="loadingLabels$ | async" mode="indeterminate"></mat-progress-bar>
 
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)" [startingQuery]="query"
                                    data-cy="appCRFExtractorCreateDialogQuery"></app-saved-search-autocomplete>
@@ -50,19 +62,6 @@
         </mat-option>
       </mat-select>
       <mat-hint>{{CRFOptions?.actions?.POST?.embedding?.help_text || ''}}</mat-hint>
-    </mat-form-field>
-
-    <mat-form-field>
-      <mat-label>Labels</mat-label>
-      <mat-select [disableOptionCentering]="true" formControlName="labelsFormControl"
-                  panelClass="select-panel-reveal-input" multiple>
-        <ng-container *ngIf="CRFOptions">
-          <mat-option *ngFor="let item of labelDefaults" [value]="item">
-            {{item}}
-          </mat-option>
-        </ng-container>
-      </mat-select>
-      <mat-hint>{{CRFOptions?.actions?.POST?.labels?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
     <mat-form-field data-cy="appCRFExtractorCreateDialogFeatureFields">

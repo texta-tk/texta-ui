@@ -9,9 +9,17 @@ describe('Topic Analyzer should work', function () {
         cy.intercept('GET', '**user**').as('getUser');
         cy.intercept('GET', '**get_fields**').as('getProjectIndices');
         cy.intercept('GET', '**/topic_analyzer/?ordering?**').as('getClustering');
+        cy.intercept('POST', '**/topic_analyzer/').as('postClustering');
+        cy.intercept('POST', '**/more_like_cluster/').as('postMoreLikeCluster');
         cy.intercept('DELETE', '**/topic_analyzer/**').as('deleteClustering');
-        cy.intercept('POST', '**/topic_analyzer/**').as('postClustering');
         cy.intercept('PATCH', '**/topic_analyzer/**').as('patchClustering');
+        cy.intercept('GET', '**/clusters/**').as('getClusters');
+        cy.intercept('GET', '**/view_clusters/').as('getClusteringClusters');
+        cy.intercept('POST', '**/expand_cluster/').as('postExpandCluster');
+        cy.intercept('POST', '**/tag_cluster/').as('postTagCluster');
+        cy.intercept('POST', '**/remove_documents/').as('postRemoveDocuments');
+        cy.intercept('POST', '**/bulk_delete_clusters/').as('postBulkDeleteClusters');
+        cy.intercept('POST', '**/topic_analyzer/bulk_delete/').as('postBulkDeleteTopicAnalyzers');
       });
     });
   });
@@ -58,22 +66,21 @@ describe('Topic Analyzer should work', function () {
         });
       })
     });
-    cy.wait(500);
+
     cy.get('[data-cy=appClusteringViewClustersButton]').click();
-    cy.wait(500);
+    cy.wait('@getClusteringClusters');
     cy.get('.cdk-column-significant_words:nth(1)').click();
-    cy.wait(500);
+    cy.wait('@getClusters');
     cy.get('.cdk-column-comment_content').should('be.visible');
     cy.wait(500);
     cy.get('[data-cy=appClusterDocumentsMLTBtn]').click();
 
-    cy.wait('@postClustering').its('response.body').should('have.length.gte', 1);
+    cy.wait('@postMoreLikeCluster').its('response.body').should('have.length.gte', 1);
     cy.get('app-similar-cluster-dialog .mat-header-cell.mat-column-select').should('be.visible').click();
     cy.get('[data-cy=appClusterSimilarTableAddToCluster]').should('be.visible').click();
     cy.get('[type="submit"]').click();
-    cy.wait('@postClustering').its('response.body')
+    cy.wait('@postExpandCluster').its('response.body')
       .should('have.property', 'message');
-    cy.intercept('GET', '**/clusters/**').as('getClusters');
     cy.closeCurrentCdkOverlay();
     cy.closeCurrentCdkOverlay();
     cy.wait('@getClusters');
@@ -93,23 +100,23 @@ describe('Topic Analyzer should work', function () {
       cy.wrap(docPaths).find('mat-error').should('have.length', 0)
     }));
     cy.get('[data-cy=appTagClusterSubmit]').click();
-    cy.wait('@postClustering').its('response.body').should('deep.equal', {
+    cy.wait('@postTagCluster').its('response.body').should('deep.equal', {
       message: 'Successfully started adding fact test to the documents! This might take a bit depending on the clusters size'
     });
     cy.get('.mat-header-cell.mat-column-select').click();
     cy.get('[data-cy=appClusterDocumentsDeleteBtn]').click();
     cy.get('[type="submit"]').click();
-    cy.wait('@postClustering').its('response.body').should('deep.equal', {
+    cy.wait('@postRemoveDocuments').its('response.body').should('deep.equal', {
       message: 'Documents successfully removed from the cluster!'
     });
 
-    cy.intercept('GET', '**/view_clusters/').as('getClusteringClusters');
     cy.get('.breadcrumb > :nth-child(2) .action-text').click();
     cy.wait('@getClusteringClusters');
+    cy.wait(500);
     cy.get('.mat-header-cell.mat-column-select > mat-checkbox').click();
     cy.get('[data-cy=appClustersDeleteBtn]').click();
     cy.get('[type="submit"]').click();
-    cy.wait('@postClustering').its('response.body')
+    cy.wait('@postBulkDeleteClusters').its('response.body')
       .should('have.property', 'message');
     cy.get('.breadcrumb > :nth-child(1) .action-text').click();
     cy.wait('@getClustering');
@@ -117,7 +124,7 @@ describe('Topic Analyzer should work', function () {
     cy.get('.mat-header-cell.mat-column-select > mat-checkbox').click();
     cy.get('[data-cy=appClusteringDeleteBtn]').click();
     cy.get('[type="submit"]').click();
-    cy.wait('@postClustering').its('response.body')
+    cy.wait('@postBulkDeleteTopicAnalyzers').its('response.body')
       .should('have.property', 'num_deleted');
     // appClusterDocumentsTagBtn
     // test extra actions

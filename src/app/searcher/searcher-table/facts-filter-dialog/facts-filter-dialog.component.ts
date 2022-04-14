@@ -30,7 +30,8 @@ export class FactsFilterDialogComponent implements OnInit, OnDestroy {
       this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$), switchMap(currentProjIndices => {
         if (currentProjIndices) {
           this.projectFacts.next(['Loading...']);
-          return this.projectService.getProjectFacts(this.data.currentProjectId, currentProjIndices.map(x => [{name: x.index}]).flat());
+          return this.projectService.getProjectFacts(this.data.currentProjectId,
+            currentProjIndices.map(x => [{name: x.index}]).flat(), false, false);
         } else {
           return of(null);
         }

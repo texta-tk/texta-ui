@@ -118,7 +118,7 @@ export class ProjectFieldSelectComponent implements OnInit, OnDestroy, ControlVa
   }
 
   get empty(): boolean {
-    return this.fieldFormControl?.value?.length === 0;
+    return !this.fieldFormControl.value || this.fieldFormControl.value.length === 0;
   }
 
   @HostBinding('class.floating')

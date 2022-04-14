@@ -63,8 +63,10 @@ export class CreateCRFExtractorDialogComponent implements OnInit, OnDestroy {
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   currentProject: Project;
   destroyed$: Subject<boolean> = new Subject<boolean>();
+  loadingLabels$: Subject<boolean> = new Subject<boolean>();
   projectIndices: ProjectIndex[] = [];
   projectFields: ProjectIndex[];
+  projectFacts: string[] = [];
   // tslint:disable-next-line:no-any
   CRFOptions: any;
   embeddings: Embedding[];
@@ -111,9 +113,12 @@ export class CreateCRFExtractorDialogComponent implements OnInit, OnDestroy {
           const indexInstances = resp.projectIndices.filter(x => this.data.cloneElement.indices.some(y => y.name === x.index));
           const indicesForm = this.CRFExtractorForm.get('indicesFormControl');
           indicesForm?.setValue(indexInstances);
-          this.indicesOpenedChange(false); // refreshes the field and fact selection data
+          this.indicesOpenedChange(false); // sets projectfields array intializing field selection
           const fieldsForm = this.CRFExtractorForm.get('mlpFieldsFormControl');
           fieldsForm?.setValue(this.data.cloneElement.mlp_field);
+          this.getFactsForFields(indexInstances, this.data.cloneElement.mlp_field);
+          const labelsForm = this.CRFExtractorForm.get('labelsFormControl');
+          labelsForm?.setValue(this.data.cloneElement.labels);
         }
       }
       UtilityFunctions.logForkJoinErrors(resp, HttpErrorResponse, this.logService.snackBarError.bind(this.logService));
@@ -162,6 +167,25 @@ export class CreateCRFExtractorDialogComponent implements OnInit, OnDestroy {
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && indicesForm?.value && !UtilityFunctions.arrayValuesEqual(indicesForm?.value, this.projectFields, (x => x.index))) {
       this.projectFields = ProjectIndex.cleanProjectIndicesFields(indicesForm.value, ['mlp'], []);
+      this.CRFExtractorForm.get('mlpFieldsFormControl')?.reset();
+      this.projectFacts = [];
+    }
+  }
+
+  getFactsForFields(val: ProjectIndex[], mlpField: string): void {
+    if (val.length > 0) {
+      this.projectFacts = [];
+      this.loadingLabels$.next(true);
+      this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat(), false, false, true, mlpField).pipe(takeUntil(this.destroyed$)).subscribe(resp => {
+        if (resp && !(resp instanceof HttpErrorResponse)) {
+          this.projectFacts = resp;
+        } else {
+          this.logService.snackBarError(resp);
+        }
+        this.loadingLabels$.next(false);
+      });
+    } else {
+      this.projectFacts = [];
     }
   }
 
@@ -205,15 +229,13 @@ export class CreateCRFExtractorDialogComponent implements OnInit, OnDestroy {
       }
     }
 
-    const labelForm = this.CRFExtractorForm.get('labelsFormControl');
-    if (labelForm) {
-      if (this.data?.cloneElement?.labels) {
-        labelForm.setValue(this.data?.cloneElement?.labels);
-      } else {
-        labelForm.setValue(['GPE', 'ORG', 'PER', 'LOC']);
-      }
-    }
-
   }
 
+  fieldOpenedChange(opened: boolean): void {
+    const labelsForm = this.CRFExtractorForm.get('mlpFieldsFormControl');
+    // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
+    if (!opened && labelsForm?.value && (!UtilityFunctions.arrayValuesEqual(labelsForm?.value, this.projectFacts) || this.projectFacts.length === 0)) {
+      this.getFactsForFields(this.CRFExtractorForm.get('indicesFormControl')?.value, labelsForm.value);
+    }
+  }
 }

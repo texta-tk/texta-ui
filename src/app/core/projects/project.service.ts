@@ -142,14 +142,20 @@ export class ProjectService {
       catchError(this.logService.handleError<string[]>('projectFactValueAutoComplete')));
   }
 
-  getProjectFacts(id: number, indices: unknown, outputType: true): Observable<{ name: string, values: string[] }[] | HttpErrorResponse>;
-  getProjectFacts(id: number, indices: unknown, outputType?: boolean): Observable<string[] | HttpErrorResponse>;
+  getProjectFacts(id: number, indices: unknown, includeValues: true, includeDocPath: true, excludeZeroSpans?: boolean, mlpDocPath?: string): Observable<{ name: string, values: { value: string, doc_path: string }[] }[] | HttpErrorResponse>;
+  getProjectFacts(id: number, indices: unknown, includeValues: true, includeDocPath: false, excludeZeroSpans?: boolean, mlpDocPath?: string): Observable<{ name: string, values: string[] }[] | HttpErrorResponse>;
+  getProjectFacts(id: number, indices: unknown, includeValues: false, includeDocPath: false, excludeZeroSpans?: boolean, mlpDocPath?: string): Observable<string[] | HttpErrorResponse>;
   // tslint:disable-next-line:no-any
-  getProjectFacts(id: number, indices: unknown, outputType?: boolean): Observable<any |
+  getProjectFacts(id: number, indices: unknown, includeValues: boolean, includeDocPath: boolean, excludeZeroSpans?: boolean, mlpDocPath?: string): Observable<any |
     HttpErrorResponse> {
     // tslint:disable-next-line:no-any
     return this.http.post<any>(
-      `${this.apiUrl}/projects/${id}/elastic/get_facts/`, {indices, output_type: !!outputType}
+      `${this.apiUrl}/projects/${id}/elastic/get_facts/`, {
+        indices,
+        include_values: includeValues,
+        exclude_zero_spans: !!excludeZeroSpans,
+        doc_path: includeDocPath, ...mlpDocPath ? {mlp_doc_path: mlpDocPath} : {}
+      }
     ).pipe(
       tap(e => this.logService.logStatus(e, 'get Project Facts')),
       catchError(this.logService.handleError('getProjectFacts')));
