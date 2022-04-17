@@ -36,7 +36,11 @@
 
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)">
     </app-saved-search-autocomplete>
-
+    <mat-form-field data-cy="appCRFExtractorApplyDialogLabelSuffix">
+      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="labelSuffixFormControl" matInput
+             placeholder="Label suffix" >
+      <mat-hint>{{crfOptions?.actions?.POST?.label_suffix?.help_text || ''}}</mat-hint>
+    </mat-form-field>
     <!--advanced -->
     <mat-expansion-panel expanded="false" style="margin-top: 1em">
       <mat-expansion-panel-header>

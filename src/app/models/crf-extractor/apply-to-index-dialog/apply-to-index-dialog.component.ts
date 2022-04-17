@@ -21,6 +21,7 @@ interface SubmitFormModel {
   esTimeoutFormControl: number;
   bulkSizeFormControl: number;
   maxChunkSizeFormControl: number;
+  labelSuffixFormControl: string;
 }
 
 @Component({
@@ -38,6 +39,7 @@ export class ApplyToIndexDialogComponent implements OnInit, OnDestroy {
     esTimeoutFormControl: new FormControl(10),
     bulkSizeFormControl: new FormControl(100),
     maxChunkSizeFormControl: new FormControl(104857600),
+    labelSuffixFormControl: new FormControl(),
 
   });
 
@@ -106,6 +108,7 @@ export class ApplyToIndexDialogComponent implements OnInit, OnDestroy {
       ...formData.esTimeoutFormControl ? {es_timeout: formData.esTimeoutFormControl} : {},
       ...formData.factNameFormControl ? {new_fact_name: formData.factNameFormControl} : {},
       ...formData.bulkSizeFormControl ? {bulk_size: formData.bulkSizeFormControl} : {},
+      ...formData.labelSuffixFormControl ? {label_suffix: formData.labelSuffixFormControl} : {},
     };
     this.crfExtractorService.applyToIndex(this.currentProject.id, this.data.id, body).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
