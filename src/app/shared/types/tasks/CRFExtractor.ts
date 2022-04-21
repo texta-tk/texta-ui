@@ -41,6 +41,7 @@ export interface CRFExtractor {
   feature_fields: string[];
   context_feature_fields: string[];
   feature_extractors: string[];
+  context_feature_extractors: string[];
   embedding?: number;
   recall: number;
   f1_score: number;

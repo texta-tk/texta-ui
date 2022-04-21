@@ -30,6 +30,7 @@ interface OnSubmitParams {
   featureFieldsFormControl: { value: string; display_value: string }[];
   contextFeatureFieldsFormControl: { value: string; display_value: string }[];
   featureExtractorsFormControl: { value: string; display_value: string }[];
+  contextFeatureExtractorsFormControl: { value: string; display_value: string }[];
   embeddingFormControl: Embedding;
 }
 
@@ -57,6 +58,7 @@ export class CreateCRFExtractorDialogComponent implements OnInit, OnDestroy {
     featureFieldsFormControl: new FormControl(),
     contextFeatureFieldsFormControl: new FormControl(),
     featureExtractorsFormControl: new FormControl(),
+    contextFeatureExtractorsFormControl: new FormControl(),
     embeddingFormControl: new FormControl(),
   });
 
@@ -149,6 +151,7 @@ export class CreateCRFExtractorDialogComponent implements OnInit, OnDestroy {
       ...formData.featureFieldsFormControl ? {feature_fields: formData.featureFieldsFormControl.map(x => x.value)} : {},
       ...formData.contextFeatureFieldsFormControl ? {context_feature_fields: formData.contextFeatureFieldsFormControl.map(x => x.value)} : {},
       ...formData.featureExtractorsFormControl ? {feature_extractors: formData.featureExtractorsFormControl.map(x => x.value)} : {},
+      ...formData.contextFeatureExtractorsFormControl ? {context_feature_extractors: formData.contextFeatureExtractorsFormControl.map(x => x.value)} : {},
       embedding: formData.embeddingFormControl ? formData.embeddingFormControl.id : null,
     };
 
@@ -228,7 +231,15 @@ export class CreateCRFExtractorDialogComponent implements OnInit, OnDestroy {
         featureExtractors.setValue(options.actions.POST.feature_extractors.choices);
       }
     }
-
+    const contextFeatureExtractors = this.CRFExtractorForm.get('contextFeatureExtractorsFormControl');
+    if (contextFeatureExtractors) {
+      if (this.data?.cloneElement?.context_feature_extractors) {
+        const val = options.actions.POST.context_feature_extractors.choices.filter((x: { display_name: string; }) => this.data.cloneElement.context_feature_extractors.includes(x.display_name));
+        contextFeatureExtractors.setValue(val);
+      } else {
+        contextFeatureExtractors.setValue(options.actions.POST.context_feature_extractors.choices);
+      }
+    }
   }
 
   fieldOpenedChange(opened: boolean): void {
