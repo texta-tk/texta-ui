@@ -67,6 +67,7 @@ export class HighlightComponent {
     this._highlightConfig = highlightConfig;
     this.makeHighlightArray(highlightConfig);
   }
+
   static linkify = new LinkifyIt();
   static readonly HYPERLINKS_COL = AppConfigService.settings.fileFieldReplace; // hosted_filepath
   highlightArray: HighlightObject[] = [];
@@ -904,7 +905,8 @@ export class HighlightComponent {
       this.renderer2.setProperty(s, 'title', `${highlight.span?.fact} ${highlight.span?.str_val}`);
       this.renderer2.appendChild(s, t);
       this.renderer2.appendChild(wrapper, s);
-    } else if (highlight.nested) {
+    }
+    if (highlight.nested) {
       this.renderFactTemplate(wrapper, highlight);
     }
   }
