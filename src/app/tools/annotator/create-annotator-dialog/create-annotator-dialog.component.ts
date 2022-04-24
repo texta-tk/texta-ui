@@ -23,7 +23,8 @@ import {UserService} from '../../../core/users/user.service';
 interface OnSubmitParams {
   descriptionFormControl: string;
   indicesFormControl: ProjectIndex[];
-  fieldsFormControl: string;
+  fieldsFormControl: string[];
+  fieldsEntityFormControl: string;
   annotationTypeFormControl: 'binary' | 'multilabel' | 'entity';
   usersFormControl: string[] | string;
   binaryFormGroup: {
@@ -52,9 +53,11 @@ export class CreateAnnotatorDialogComponent implements OnInit, OnDestroy {
 
   annotatorForm = new FormGroup({
     descriptionFormControl: new FormControl('', [Validators.required]),
-    usersFormControl: new FormControl([],[Validators.required]),
+    usersFormControl: new FormControl([], [Validators.required]),
     indicesFormControl: new FormControl([], [Validators.required]),
     fieldsFormControl: new FormControl([], [Validators.required]),
+    // entity single field only
+    fieldsEntityFormControl: new FormControl('', [Validators.required]),
     annotationTypeFormControl: new FormControl('', [Validators.required]),
     binaryFormGroup: new FormGroup({
       factNameFormControl: new FormControl('', [Validators.required]),
@@ -135,14 +138,20 @@ export class CreateAnnotatorDialogComponent implements OnInit, OnDestroy {
 
     this.annotatorForm?.get('annotationTypeFormControl')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(val => {
       if (val === 'binary') {
+        this.annotatorForm.get('fieldsFormControl')?.enable();
+        this.annotatorForm.get('fieldsEntityFormControl')?.disable();
         this.annotatorForm.get('binaryFormGroup')?.enable();
         this.annotatorForm.get('multiLabelFormGroup')?.disable();
         this.annotatorForm.get('entityFormGroup')?.disable();
       } else if (val === 'multilabel') {
+        this.annotatorForm.get('fieldsFormControl')?.enable();
+        this.annotatorForm.get('fieldsEntityFormControl')?.disable();
         this.annotatorForm.get('binaryFormGroup')?.disable();
         this.annotatorForm.get('multiLabelFormGroup')?.enable();
         this.annotatorForm.get('entityFormGroup')?.disable();
       } else if (val === 'entity') {
+        this.annotatorForm.get('fieldsEntityFormControl')?.enable();
+        this.annotatorForm.get('fieldsFormControl')?.disable();
         this.annotatorForm.get('binaryFormGroup')?.disable();
         this.annotatorForm.get('multiLabelFormGroup')?.disable();
         this.annotatorForm.get('entityFormGroup')?.enable();
@@ -166,7 +175,7 @@ export class CreateAnnotatorDialogComponent implements OnInit, OnDestroy {
     const body = {
       description: formData.descriptionFormControl,
       indices: formData.indicesFormControl.map(x => [{name: x.index}]).flat(),
-      fields: formData.fieldsFormControl,
+      fields: formData.annotationTypeFormControl === 'entity' ? [formData.fieldsEntityFormControl] : formData.fieldsFormControl,
       ...this.query ? {query: this.query} : {},
       annotation_type: formData.annotationTypeFormControl,
       annotating_users: this.currentUser.is_superuser ? formData.usersFormControl || [] : this.newLineStringToList(formData.usersFormControl as string),

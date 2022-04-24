@@ -63,8 +63,8 @@
       </mat-error>
       <mat-hint>{{annotatorOptions?.actions?.POST?.indices?.help_text || ''}}</mat-hint>
     </mat-form-field>
-
-    <mat-form-field data-cy="appAnnotatorCreateDialogFields">
+    <mat-form-field data-cy="appAnnotatorCreateDialogFieldsMultiple"
+                    [ngClass]="{'hidden':annotatorForm.get('annotationTypeFormControl')?.value === 'entity'}">
       <mat-label>Select Fields</mat-label>
       <app-project-field-select [projectFields]="projectFields" [required]="true"
                                 formControlName="fieldsFormControl"></app-project-field-select>
@@ -73,6 +73,19 @@
       </mat-error>
       <mat-hint>{{annotatorOptions?.actions?.POST?.fields?.help_text || ''}}</mat-hint>
     </mat-form-field>
+
+
+    <mat-form-field data-cy="appAnnotatorCreateDialogFieldsSingle"
+                    [ngClass]="{'hidden':annotatorForm.get('annotationTypeFormControl')?.value !== 'entity'}">
+      <mat-label>Select Fields</mat-label>
+      <app-project-field-select [projectFields]="projectFields" [required]="true" [multiple]="false"
+                                formControlName="fieldsEntityFormControl"></app-project-field-select>
+      <mat-error *ngIf="annotatorForm.get('fieldsEntityFormControl')?.hasError('required')">
+        Field is <strong>required</strong>
+      </mat-error>
+      <mat-hint>{{annotatorOptions?.actions?.POST?.fields?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+
     <app-saved-search-autocomplete (queryChanged)="onQueryChanged($event)"
                                    data-cy="appMLPCreateDialogQuery">
     </app-saved-search-autocomplete>
@@ -122,7 +135,8 @@
       <form formGroupName="multiLabelFormGroup" class="max-width flex-col">
         <mat-form-field class="max-width" data-cy="appAnnotatorCreateDialogMultilabelSets">
           <mat-label>Labelset</mat-label>
-          <app-virtual-scroll-select triggerAccessor="category" [scrollableDataSource]="projectLabelSets" formControlName="labelSetFormControl" [multiple]="false"
+          <app-virtual-scroll-select triggerAccessor="category" [scrollableDataSource]="projectLabelSets"
+                                     formControlName="labelSetFormControl" [multiple]="false"
                                      required></app-virtual-scroll-select>
           <mat-error>
             Labelset is <strong>required</strong>

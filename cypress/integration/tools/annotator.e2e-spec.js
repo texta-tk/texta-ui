@@ -32,6 +32,17 @@ describe('Annotator should work', function () {
       cy.matFormFieldShouldHaveError(desc, 'required');
       cy.wrap(desc).type('testAnnotator');
     }));
+
+    cy.get('[data-cy=appAnnotatorCreateDialogUsers]').click().then((users => {
+      cy.wrap(users).should('have.class', 'mat-focused');
+      cy.closeCurrentCdkOverlay();
+      cy.matFormFieldShouldHaveError(users, 'required');
+      cy.wrap(users).click();
+      cy.get('.mat-option-text').contains('admin').click();
+      cy.closeCurrentCdkOverlay();
+      cy.wrap(users).find('mat-error').should('have.length', 0);
+    }));
+
     cy.get('[data-cy=appAnnotatorCreateDialogType]').click().then((analyzers => {
       cy.wrap(analyzers).should('have.class', 'mat-focused');
       cy.closeCurrentCdkOverlay();
@@ -42,7 +53,7 @@ describe('Annotator should work', function () {
       cy.wrap(analyzers).find('mat-error').should('have.length', 0);
     }));
 
-    cy.get('[data-cy=appAnnotatorCreateDialogFields]').click().then((fields => {
+    cy.get('[data-cy=appAnnotatorCreateDialogFieldsMultiple]').click().then((fields => {
       cy.wrap(fields).should('have.class', 'mat-focused');
       cy.closeCurrentCdkOverlay();
       cy.matFormFieldShouldHaveError(fields, 'required');
@@ -146,6 +157,17 @@ describe('Annotator should work', function () {
       cy.matFormFieldShouldHaveError(desc, 'required');
       cy.wrap(desc).type('testAnnotator');
     }));
+
+    cy.get('[data-cy=appAnnotatorCreateDialogUsers]').click().then((users => {
+      cy.wrap(users).should('have.class', 'mat-focused');
+      cy.closeCurrentCdkOverlay();
+      cy.matFormFieldShouldHaveError(users, 'required');
+      cy.wrap(users).click();
+      cy.get('.mat-option-text').contains('admin').click();
+      cy.closeCurrentCdkOverlay();
+      cy.wrap(users).find('mat-error').should('have.length', 0);
+    }));
+
     cy.get('[data-cy=appAnnotatorCreateDialogType]').click().then((analyzers => {
       cy.wrap(analyzers).should('have.class', 'mat-focused');
       cy.closeCurrentCdkOverlay();
@@ -156,7 +178,7 @@ describe('Annotator should work', function () {
       cy.wrap(analyzers).find('mat-error').should('have.length', 0);
     }));
 
-    cy.get('[data-cy=appAnnotatorCreateDialogFields]').click().then((fields => {
+    cy.get('[data-cy=appAnnotatorCreateDialogFieldsMultiple]').click().then((fields => {
       cy.wrap(fields).should('have.class', 'mat-focused');
       cy.closeCurrentCdkOverlay();
       cy.matFormFieldShouldHaveError(fields, 'required');
@@ -230,6 +252,17 @@ describe('Annotator should work', function () {
       cy.matFormFieldShouldHaveError(desc, 'required');
       cy.wrap(desc).type('testAnnotator');
     }));
+
+    cy.get('[data-cy=appAnnotatorCreateDialogUsers]').click().then((users => {
+      cy.wrap(users).should('have.class', 'mat-focused');
+      cy.closeCurrentCdkOverlay();
+      cy.matFormFieldShouldHaveError(users, 'required');
+      cy.wrap(users).click();
+      cy.get('.mat-option-text').contains('admin').click();
+      cy.closeCurrentCdkOverlay();
+      cy.wrap(users).find('mat-error').should('have.length', 0);
+    }));
+
     cy.get('[data-cy=appAnnotatorCreateDialogType]').click().then((analyzers => {
       cy.wrap(analyzers).should('have.class', 'mat-focused');
       cy.closeCurrentCdkOverlay();
@@ -240,7 +273,7 @@ describe('Annotator should work', function () {
       cy.wrap(analyzers).find('mat-error').should('have.length', 0);
     }));
 
-    cy.get('[data-cy=appAnnotatorCreateDialogFields]').click().then((fields => {
+    cy.get('[data-cy=appAnnotatorCreateDialogFieldsSingle]').click().then((fields => {
       cy.wrap(fields).should('have.class', 'mat-focused');
       cy.closeCurrentCdkOverlay();
       cy.matFormFieldShouldHaveError(fields, 'required');
@@ -264,7 +297,7 @@ describe('Annotator should work', function () {
     });
     cy.wait('@getAnnotator');
   }
-  it('Entity annotator create/edit should work with labelset', function () {
+  it('Entity annotator create/edit should work', function () {
 
     initPage();
     createEntityAnnotatorTask();
