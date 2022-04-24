@@ -19,6 +19,9 @@
           {{item.display_name}}
         </mat-option>
       </mat-select>
+      <mat-error *ngIf="annotatorForm.get('usersFormControl')?.hasError('required')">
+        This field is <strong>required</strong>
+      </mat-error>
       <mat-hint>List of users with access to this annotator task</mat-hint>
     </mat-form-field>
 

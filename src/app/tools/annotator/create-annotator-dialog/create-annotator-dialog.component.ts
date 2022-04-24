@@ -52,7 +52,7 @@ export class CreateAnnotatorDialogComponent implements OnInit, OnDestroy {
 
   annotatorForm = new FormGroup({
     descriptionFormControl: new FormControl('', [Validators.required]),
-    usersFormControl: new FormControl(),
+    usersFormControl: new FormControl([],[Validators.required]),
     indicesFormControl: new FormControl([], [Validators.required]),
     fieldsFormControl: new FormControl([], [Validators.required]),
     annotationTypeFormControl: new FormControl('', [Validators.required]),
