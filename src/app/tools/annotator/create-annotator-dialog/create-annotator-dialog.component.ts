@@ -240,7 +240,9 @@ export class CreateAnnotatorDialogComponent implements OnInit, OnDestroy {
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && indicesForm?.value && !UtilityFunctions.arrayValuesEqual(indicesForm?.value, this.projectFields, (x => x.index))) {
       this.projectFields = ProjectIndex.cleanProjectIndicesFields(indicesForm.value, ['text'], []);
-      this.getFactsForIndices(indicesForm?.value);
+      if (this.annotatorForm?.get('annotationTypeFormControl')?.value !== 'entity') {
+        this.getFactsForIndices(indicesForm?.value);
+      }
     }
   }
 
@@ -256,5 +258,29 @@ export class CreateAnnotatorDialogComponent implements OnInit, OnDestroy {
   filter(val: string): string[] {
     return this.projectFacts.filter(option =>
       option.toLowerCase().indexOf(val.toLowerCase()) === 0);
+  }
+
+  getFactsForField(field: string, indices: ProjectIndex[]): void {
+    if (field && indices.length > 0) {
+      this.projectFacts = [];
+      this.projectService.getProjectFacts(this.currentProject.id, indices.map((x: ProjectIndex) => [{name: x.index}]).flat(), true, true, true).pipe(takeUntil(this.destroyed$)).subscribe(resp => {
+        if (resp && !(resp instanceof HttpErrorResponse)) {
+          // todo implement doc_path filtering when backend supports it
+          this.projectFacts = resp.map(x => x.name);
+        } else {
+          this.logService.snackBarError(resp);
+        }
+      });
+    } else {
+      this.projectFacts = [];
+    }
+  }
+
+  entityFieldsOpenedChange(opened: boolean): void {
+    const fieldForm = this.annotatorForm.get('fieldsEntityFormControl');
+    if (!opened && fieldForm?.value) {
+      this.getFactsForField(fieldForm?.value, this.annotatorForm.get('indicesFormControl')?.value);
+    }
+
   }
 }

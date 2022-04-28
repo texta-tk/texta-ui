@@ -79,6 +79,7 @@
                     [ngClass]="{'hidden':annotatorForm.get('annotationTypeFormControl')?.value !== 'entity'}">
       <mat-label>Select Fields</mat-label>
       <app-project-field-select [projectFields]="projectFields" [required]="true" [multiple]="false"
+                                (openedChange)="entityFieldsOpenedChange($event)"
                                 formControlName="fieldsEntityFormControl"></app-project-field-select>
       <mat-error *ngIf="annotatorForm.get('fieldsEntityFormControl')?.hasError('required')">
         Field is <strong>required</strong>

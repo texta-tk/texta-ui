@@ -6,7 +6,7 @@ describe('Crf-extractor should work', function () {
       cy.createTestProject(["texta_crf_test_index"]).then(x => {
         assert.isNotNull(x.body.id, 'should have project id');
         cy.wrap(x.body.id).as('projectId');
-        cy.intercept('GET', '**user**').as('getUser');
+        cy.intercept('GET', '**user/').as('getUser');
         cy.intercept('GET', '**get_fields**').as('getProjectIndices');
         cy.intercept('GET', '**/crf_extractors/**').as('getCrfExtractors');
         cy.intercept('POST', '**/crf_extractors/**').as('postCrfExtractor');
@@ -102,7 +102,7 @@ describe('Crf-extractor should work', function () {
         });
       })
     });
-    cy.wait(5000);
+    cy.wait(1000);
     extractText();
     applyToIndex();
 

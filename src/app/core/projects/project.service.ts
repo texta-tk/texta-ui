@@ -154,7 +154,7 @@ export class ProjectService {
         indices,
         include_values: includeValues,
         exclude_zero_spans: !!excludeZeroSpans,
-        doc_path: includeDocPath, ...mlpDocPath ? {mlp_doc_path: mlpDocPath} : {}
+        include_doc_path: includeDocPath, ...mlpDocPath ? {mlp_doc_path: mlpDocPath} : {}
       }
     ).pipe(
       tap(e => this.logService.logStatus(e, 'get Project Facts')),
