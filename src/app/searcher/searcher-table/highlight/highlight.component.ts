@@ -471,8 +471,16 @@ export class HighlightComponent {
     if (highlightConfig.onlyHighlightMatching && fieldFacts.length > 0) {
       fieldFacts = this.getOnlyMatchingFacts(fieldFacts, highlightConfig);
     }
-    fieldFacts = UtilityFunctions.getDistinctByProperty<HighlightSpan>(fieldFacts, (x => x.spans));
-    return fieldFacts;
+    const distinct: HighlightSpan[] = [];
+    const unique = new Set();
+    for (const el of fieldFacts) {
+      const accessor = `${el.spans} | ${el.sent_index}`;
+      if (!unique.has(accessor)) {
+        distinct.push(el);
+        unique.add(accessor);
+      }
+    }
+    return distinct;
   }
 
   getOnlyMatchingFacts(fieldFacts: HighlightSpan[], highlightConfig: HighlightConfig): HighlightSpan[] {

@@ -73,8 +73,8 @@ Cypress:
     - pip3 install elasticsearch==7.10.1
     - npm run cy:verify
     - npm run cy:info
-    - python3 import_test_data.py
     - sh wait_for_uaa.sh
+    - python3 import_test_data.py
   script:
     - npm run cypress:ci
   artifacts:

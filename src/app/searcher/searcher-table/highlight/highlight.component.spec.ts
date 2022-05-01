@@ -118,6 +118,59 @@ describe('HighlightComponent', () => {
 
     expect(highlightedText).toContain('Lenin');
   });
+
+  it('should highlight multiple sent_ndex facts correctly', () => {
+    const jsonData = {
+      text: 'John is new here \n John doesnt care \n Hello Sam get out of my head get out of my head \n herro Sam get out of my head', texta_facts: [
+        {
+          str_val: 'John',
+          spans: '[[0, 4]]',
+          sent_index: 0,
+          fact: 'PER',
+          doc_path: 'text'
+        },
+        {
+          str_val: 'John',
+          spans: '[[0, 4]]',
+          sent_index: 1,
+          fact: 'PER',
+          doc_path: 'text'
+        },
+        {
+          str_val: 'get',
+          spans: '[[10, 13]]',
+          sent_index: 2,
+          fact: 'PER',
+          doc_path: 'text'
+        },
+        {
+          str_val: 'get',
+          spans: '[[10, 13]]',
+          sent_index: 3,
+          fact: 'PER',
+          doc_path: 'text'
+        },
+      ]
+    };
+
+    component.highlightConfig = {
+      searcherHighlight: {},
+      data: jsonData,
+      highlightTextaFacts: true,
+      highlightHyperlinks: true,
+      currentColumn: 'text',
+    };
+    console.log(component.highlightArray);
+    const highlightedText: string[] = [];
+    for (const element of component.highlightArray) {
+      if (element.highlighted) {
+        highlightedText.push(element.text);
+      }
+    }
+
+    fixture.detectChanges();
+    expect(highlightedText).toEqual(jasmine.arrayContaining(['John', 'John', 'get', 'get']));
+  });
   describe('tests with nested facts', () => {
     let jsonData: { text: string; texta_facts: { str_val: string; spans: string; fact: string; doc_path: string; }[]; };
     beforeEach(() => {
