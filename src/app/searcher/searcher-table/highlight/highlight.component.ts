@@ -843,20 +843,27 @@ export class HighlightComponent {
     return null;
   }
 
-  private sortByStartLowestSpan(a: HighlightSpan, b: HighlightSpan): -1 | 1 {
+  private sortByStartLowestSpan(a: HighlightSpan, b: HighlightSpan): -1 | 1 | 0 {
     if (a.sent_index !== undefined && b.sent_index !== undefined) {
       if (a.sent_index === b.sent_index) {
         if (a.spans[0] === b.spans[0]) {
-          return (a.spans[1] < b.spans[1]) ? -1 : 1; // sort by last span instead (need this for nested facts order)
+          if (a.spans[1] === b.spans[1]) {
+            return 0; // keep order, searcher highlights should be before fact ones, so don't change order
+          } else {
+            return (a.spans[1] < b.spans[1]) ? -1 : 1; // sort by last span instead (need this for nested facts order)
+          }
         } else {
           return (a.spans[0] < b.spans[0]) ? -1 : 1;
         }
       } else {
         return (a.sent_index < b.sent_index) ? -1 : 1;
       }
-
     } else if (a.spans[0] === b.spans[0]) {
-      return (a.spans[1] < b.spans[1]) ? -1 : 1; // sort by last span instead (need this for nested facts order)
+      if (a.spans[1] === b.spans[1]) {
+        return 0;
+      } else {
+        return (a.spans[1] < b.spans[1]) ? -1 : 1; // sort by last span instead (need this for nested facts order)
+      }
     } else {
       return (a.spans[0] < b.spans[0]) ? -1 : 1;
     }
@@ -897,7 +904,7 @@ export class HighlightComponent {
     this.renderer2.appendChild(this.el.nativeElement, wrapper);
   }
 
-  private renderFactTemplate(wrapper: any, highlight: HighlightObject): void {
+  private renderNestedFactTemplate(wrapper: any, highlight: HighlightObject): void {
     if (highlight.span?.urlSpan) {
       const a = this.renderer2.createElement('a');
       const t = this.renderer2.createText(highlight.text);
@@ -910,23 +917,26 @@ export class HighlightComponent {
       this.renderer2.setStyle(s, 'background-color', highlight?.color?.backgroundColor);
       this.renderer2.setStyle(s, 'color', highlight?.color?.textColor);
       this.renderer2.setStyle(s, 'cursor', 'pointer');
-      this.renderer2.setProperty(s, 'title', `${highlight.span?.fact} ${highlight.span?.str_val}`);
+      this.renderer2.setProperty(s, 'title', `${highlight.span?.fact ? highlight.span?.fact + ' | ' : ''}${highlight.span?.str_val}`);
       this.renderer2.appendChild(s, t);
       this.renderer2.appendChild(wrapper, s);
     }
     if (highlight.nested) {
-      this.renderFactTemplate(wrapper, highlight);
+      this.renderNestedFactTemplate(wrapper, highlight.nested);
     }
   }
 
   private renderHighlightTemplate(wrapper: any, highlight: HighlightObject): void {
-    if (highlight.highlighted && !highlight.span?.searcherHighlight && !highlight.span?.urlSpan) {
+
+    if (highlight.nested) {
+      this.renderNestedFactTemplate(wrapper, highlight);
+    } else if (highlight.highlighted && !highlight.span?.searcherHighlight && !highlight.span?.urlSpan) {
       const s = this.renderer2.createElement('span');
       const t = this.renderer2.createText(highlight.text);
       this.renderer2.setStyle(s, 'background-color', highlight?.color?.backgroundColor);
       this.renderer2.setStyle(s, 'color', highlight?.color?.textColor);
       this.renderer2.setStyle(s, 'cursor', 'pointer');
-      this.renderer2.setProperty(s, 'title', `${highlight.span?.fact}`);
+      this.renderer2.setProperty(s, 'title', `${highlight.span?.fact} | ${highlight.span?.str_val}`);
       this.renderer2.appendChild(s, t);
       this.renderer2.appendChild(wrapper, s);
     } else if (highlight.highlighted && highlight.span?.searcherHighlight) {
@@ -935,7 +945,7 @@ export class HighlightComponent {
       this.renderer2.setStyle(s, 'background-color', highlight?.color?.backgroundColor);
       this.renderer2.setStyle(s, 'color', highlight?.color?.textColor);
       this.renderer2.setStyle(s, 'cursor', 'pointer');
-      this.renderer2.setProperty(s, 'title', `${highlight.span?.fact} ${highlight.span?.str_val}`);
+      this.renderer2.setProperty(s, 'title', `${highlight.span?.str_val}`);
       this.renderer2.appendChild(s, t);
       this.renderer2.appendChild(wrapper, s);
     } else if (highlight.highlighted && highlight.span?.urlSpan) {
@@ -945,8 +955,6 @@ export class HighlightComponent {
       this.renderer2.setProperty(a, 'href', highlight.text);
       this.renderer2.appendChild(a, t);
       this.renderer2.appendChild(wrapper, a);
-    } else if (highlight.nested) {
-      this.renderFactTemplate(wrapper, highlight);
     } else if (!highlight.highlighted) {
       const t = this.renderer2.createText(highlight.text);
       this.renderer2.appendChild(wrapper, t);

@@ -554,20 +554,27 @@ export class GenericHighlighterComponent<T extends HighlightSpan> {
     return null;
   }
 
-  private sortByStartLowestSpan(a: T, b: T): -1 | 1 {
+  private sortByStartLowestSpan(a: HighlightSpan, b: HighlightSpan): -1 | 1 | 0 {
     if (a.sent_index !== undefined && b.sent_index !== undefined) {
       if (a.sent_index === b.sent_index) {
         if (a.spans[0] === b.spans[0]) {
-          return (a.spans[1] < b.spans[1]) ? -1 : 1; // sort by last span instead (need this for nested facts order)
+          if (a.spans[1] === b.spans[1]) {
+            return 0; // keep order, searcher highlights should be before fact ones, so don't change order
+          } else {
+            return (a.spans[1] < b.spans[1]) ? -1 : 1; // sort by last span instead (need this for nested facts order)
+          }
         } else {
           return (a.spans[0] < b.spans[0]) ? -1 : 1;
         }
       } else {
         return (a.sent_index < b.sent_index) ? -1 : 1;
       }
-
     } else if (a.spans[0] === b.spans[0]) {
-      return (a.spans[1] < b.spans[1]) ? -1 : 1; // sort by last span instead (need this for nested facts order)
+      if (a.spans[1] === b.spans[1]) {
+        return 0;
+      } else {
+        return (a.spans[1] < b.spans[1]) ? -1 : 1; // sort by last span instead (need this for nested facts order)
+      }
     } else {
       return (a.spans[0] < b.spans[0]) ? -1 : 1;
     }
