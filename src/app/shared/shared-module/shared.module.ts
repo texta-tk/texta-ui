@@ -71,7 +71,7 @@ import {BreadcrumbComponent} from './components/breadcrumb/breadcrumb.component'
 import {ConfirmBulkDeleteDialogComponent} from './components/dialogs/confirm-bulk-delete-dialog/confirm-bulk-delete-dialog.component';
 import {InfoIconComponent} from './components/info-icon/info-icon.component';
 import {InfoIconPortalComponent} from './components/info-icon/info-icon-portal/info-icon-portal.component';
-import { MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
+import {MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS} from '@angular/material-moment-adapter';
 
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,

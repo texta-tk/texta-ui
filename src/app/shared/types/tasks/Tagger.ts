@@ -10,6 +10,7 @@ export class Tagger {
   description: string;
   project: number;
   author: UserProfile;
+  confusion_matrix: string;
   query: string;
   fields: string[];
   embedding: number;

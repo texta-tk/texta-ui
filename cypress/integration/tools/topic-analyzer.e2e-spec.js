@@ -26,6 +26,7 @@ describe('Topic Analyzer should work', function () {
 
   function initClusteringPage() {
     cy.visit('/topic-analyzer');
+    cy.wait('@getUser');
     cy.wait('@getProjectIndices');
     cy.wait('@getClustering');
   }
@@ -44,7 +45,7 @@ describe('Topic Analyzer should work', function () {
       cy.closeCurrentCdkOverlay();
       cy.matFormFieldShouldHaveError(fields, 'required');
       cy.wrap(fields).click();
-      cy.get('.mat-option-text').contains('comment_content').click();
+      cy.get('.mat-option-text').contains(new RegExp(' comment_content ', '')).click();
       cy.closeCurrentCdkOverlay();
       cy.wrap(fields).find('mat-error').should('have.length', 0)
     }));
