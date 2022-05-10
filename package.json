@@ -39,7 +39,6 @@
     "linkify-it": "^3.0.3",
     "moment": "^2.29.3",
     "ngx-mat-select-search": "^4.1.1",
-    "plotly.js-dist-min": "^2.12.1",
     "rxjs": "^6.5.5",
     "sass": "^1.43.4",
     "tslib": "^2.3.1",
