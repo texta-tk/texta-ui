@@ -22,6 +22,7 @@ import {EpochReportsDialogComponent} from '../epoch-reports-dialog/epoch-reports
 import {ApplyToIndexDialogComponent} from '../apply-to-index-dialog/apply-to-index-dialog.component';
 import {MatSelectChange} from '@angular/material/select';
 import {TagRandomDocComponent} from '../tag-random-doc/tag-random-doc.component';
+import {ConfusionMatrixDialogComponent} from '../../../shared/plotly-module/confusion-matrix-dialog/confusion-matrix-dialog.component';
 
 @Component({
   selector: 'app-torch-tagger',
@@ -266,6 +267,16 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  openConfusionMatrix(element: TorchTagger): void {
+    const parsed = JSON.parse(element.confusion_matrix);
+    if (parsed) {
+      this.dialog.open(ConfusionMatrixDialogComponent, {
+        height: parsed[0].length > 2 ? '90vh' : '800px',
+        width: parsed[0].length > 2 ? '90vw' : '800px',
+        data: element,
+      });
+    }
+  }
 
   tagTextDialog(tagger: TorchTagger): void {
     this.dialog.open(TorchTagTextDialogComponent, {

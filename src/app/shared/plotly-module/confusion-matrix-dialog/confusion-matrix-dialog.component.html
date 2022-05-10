@@ -1,0 +1,7 @@
+<div style="margin-top: -4px; height: 4px">
+  <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+</div>
+<ng-container *ngIf="element">
+  <app-confusion-matrix-graph
+    [graphData]="{confusion_matrix: element.confusion_matrix, labels: 'none'}"></app-confusion-matrix-graph>
+</ng-container>

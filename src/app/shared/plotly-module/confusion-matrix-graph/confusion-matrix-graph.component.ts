@@ -14,15 +14,13 @@ import {PlotEditDataDialogComponent} from '../plot-edit-data-dialog/plot-edit-da
 export class ConfusionMatrixGraphComponent {
   result: unknown;
   revision = 0;
-  resizable = true;
   // tslint:disable-next-line:no-any
   confMatrixData: any;
   icon1 = downloadIcon;
   icon2 = editDataIcon;
 
-  @Input() set graphData(val: { confusion_matrix: string | number[][], labels: string, resizable: boolean }) {
+  @Input() set graphData(val: { confusion_matrix: string | number[][], labels: string}) {
     if (val?.confusion_matrix) {
-      this.resizable = val.resizable;
       let confMatrix = typeof val.confusion_matrix === 'string' ? JSON.parse(val.confusion_matrix) : val.confusion_matrix;
       confMatrix = confMatrix.reverse();
       const xvals: string[] = [];
