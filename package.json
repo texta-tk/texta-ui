@@ -32,7 +32,7 @@
     "@angular/platform-browser-dynamic": "~13.3.6",
     "@angular/router": "~13.3.6",
     "@fontsource/roboto": "^4.5.1",
-    "@swimlane/ngx-charts": "^18.0.1",
+    "@swimlane/ngx-charts": "^20.1.0",
     "angular-plotly.js": "^4.0.4",
     "core-js": "^3.19.1",
     "http-server": "^14.0.0",
