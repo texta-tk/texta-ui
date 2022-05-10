@@ -11,12 +11,14 @@ describe('dataset-importer should work', function () {
       });
     });
   });
-  function initImporterPage(){
+
+  function initImporterPage() {
     cy.visit('/dataset-importer');
     cy.wait('@getProjectIndices');
     cy.get('[data-cy=appNavbarProjectSelect]').click();
     cy.get('mat-option').contains('integration_test_project').click();
   }
+
   it('should be able to create a new dataset task', function () {
     initImporterPage();
     cy.intercept('POST', '**/dataset_imports/**').as('postDatasets');
@@ -31,11 +33,9 @@ describe('dataset-importer should work', function () {
       cy.matFormFieldShouldHaveError(name, 'required');
       cy.wrap(name).type('new_index');
     }));
-    cy.get('input[type=file]').attachFile({
-      filePath: "testSample.csv",
-    });
+    cy.get('input[type=file]').selectFile('cypress/fixtures/testSample.csv', {force: true});
     cy.get('[data-cy=appDatasetImporterCreateDialogSubmit]').should('be.visible').click();
-    cy.wait('@postDatasets').then(created=>{
+    cy.wait('@postDatasets').then(created => {
       expect(created.response.statusCode).to.eq(201);
       assert.equal(created.response.body.task.status, 'created');
       cy.intercept('DELETE', '**/dataset_imports/**').as('deleteDatasets');
