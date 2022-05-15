@@ -11,6 +11,7 @@ import {TaggerRoutingModule} from './tagger-routing.module';
 import {TaggerComponent} from './tagger.component';
 import { ApplyToIndexDialogComponent } from './apply-to-index-dialog/apply-to-index-dialog.component';
 import { MultiTagTextDialogComponent } from './multi-tag-text-dialog/multi-tag-text-dialog.component';
+import {AppPlotlyModule} from '../../shared/plotly-module/app-plotly.module';
 
 
 @NgModule({
@@ -28,6 +29,7 @@ import { MultiTagTextDialogComponent } from './multi-tag-text-dialog/multi-tag-t
   ],
   imports: [
     SharedModule,
+    AppPlotlyModule,
     TaggerRoutingModule,
   ],
 })

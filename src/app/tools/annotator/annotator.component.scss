@@ -17,6 +17,7 @@ mat-tab-group{
   overflow: hidden;
   display: flex;
   flex-direction: row;
+  background-color: ivory;
 }
 
 tr.element-row:not(.expanded-row):hover {
@@ -28,4 +29,15 @@ tr.element-row:not(.expanded-row):active {
 }
 .mat-column-task__status {
   max-width: 160px;
+}
+.mat-column-fields, .mat-column-index{
+  text-overflow: ellipsis;
+  max-width: 130px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.mat-column-actions {
+  width: 60px;
+  text-align: center;
 }

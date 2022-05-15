@@ -22,6 +22,8 @@ import {EditBertTaggerDialogComponent} from './edit-bert-tagger-dialog/edit-bert
 import {EpochReportsDialogComponent} from './epoch-reports-dialog/epoch-reports-dialog.component';
 import {QueryDialogComponent} from '../../shared/shared-module/components/dialogs/query-dialog/query-dialog.component';
 import {ApplyToIndexDialogComponent} from './apply-to-index-dialog/apply-to-index-dialog.component';
+import {Tagger} from '../../shared/types/tasks/Tagger';
+import {ConfusionMatrixDialogComponent} from '../../shared/plotly-module/confusion-matrix-dialog/confusion-matrix-dialog.component';
 
 @Component({
   selector: 'app-bert-tagger',
@@ -276,6 +278,17 @@ export class BertTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
         this.updateTable.next();
       }
     });
+  }
+
+  openConfusionMatrix(element: BertTagger): void {
+    const parsed = JSON.parse(element.confusion_matrix);
+    if (parsed) {
+      this.dialog.open(ConfusionMatrixDialogComponent, {
+        height: parsed[0].length > 2 ? '90vh' : '800px',
+        width: parsed[0].length > 2 ? '90vw' : '800px',
+        data: element,
+      });
+    }
   }
 
   ngOnDestroy(): void {

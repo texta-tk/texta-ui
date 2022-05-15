@@ -68,7 +68,7 @@ describe('taggers should work', function () {
         cy.closeCurrentCdkOverlay();
         cy.matFormFieldShouldHaveError(fields, 'required');
         cy.wrap(fields).click();
-        cy.get('.mat-option-text').contains('comment_content').should('be.visible').click();
+        cy.get('.mat-option-text').contains(new RegExp(' comment_content ', '')).click();
         cy.closeCurrentCdkOverlay();
         cy.wrap(fields).find('mat-error').should('have.length', 0)
       }));
@@ -118,7 +118,7 @@ describe('taggers should work', function () {
       cy.closeCurrentCdkOverlay();
       cy.matFormFieldShouldHaveError(fields, 'required');
       cy.wrap(fields).click();
-      cy.get('.mat-option-text').contains('comment_content').click();
+      cy.get('.mat-option-text').contains(new RegExp(' comment_content ', '')).click();
       cy.closeCurrentCdkOverlay();
       cy.wrap(fields).find('mat-error').should('have.length', 0)
     }));
@@ -145,12 +145,6 @@ describe('taggers should work', function () {
           return cy.wait(2000);
         });
       })
-    });
-    cy.wait('@getTaggers', {timeout: 50000});
-    cy.get('.element-row > .cdk-column-fields').click();
-    cy.get('.element-plot').should('be.visible').and(($img) => {
-      // "naturalWidth" and "naturalHeight" are set when the image loads
-      expect($img[0].naturalWidth).to.be.greaterThan(0)
     });
   });
 });

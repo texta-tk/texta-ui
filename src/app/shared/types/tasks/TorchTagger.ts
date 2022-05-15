@@ -14,6 +14,7 @@ export class TorchTagger {
   f1_score: number;
   precision: number;
   recall: number;
+  confusion_matrix: string;
   indices: Index[];
   accuracy: number;
   model_architecture: string;

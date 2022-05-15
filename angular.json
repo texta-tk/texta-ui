@@ -49,7 +49,7 @@
               "src/styles.scss"
             ],
             "scripts": [
-              "node_modules/plotly.js/dist/plotly-gl2d.min.js"
+              "plotly-custom.min.js"
             ],
             "webWorkerTsConfig": "tsconfig.worker.json",
             "vendorChunk": true,

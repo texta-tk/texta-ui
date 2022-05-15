@@ -113,7 +113,6 @@
         <td *matCellDef="let element" [attr.colspan]="displayedColumns.length" mat-cell>
           <div *ngIf="element == expandedElement" [@detailExpand] class="element-detail">
             <div class="flex-row element-detail-plot-fields">
-              <div *ngIf="element.plot"><img [src]="element.plot" alt="tagger plot" class="element-plot"></div>
               <div class="flex-col m-l-r-5">
                 <table class="simple-table">
                   <tr *ngIf="element?.fact_name">
@@ -284,6 +283,9 @@
       </button>
       <button (click)="tagRandomDocDialog(element)" data-cy="appTaggerMenuTagRandomDoc" mat-menu-item>
         Tag random doc
+      </button>
+      <button (click)="openConfusionMatrix(element)" data-cy="appTaggerMenuConfusionMatrix" mat-menu-item>
+        Confusion matrix
       </button>
       <button (click)="edit(element)" data-cy="appTaggerMenuEdit" mat-menu-item>
         Edit

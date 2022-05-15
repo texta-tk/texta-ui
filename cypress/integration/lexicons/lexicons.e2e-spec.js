@@ -64,7 +64,6 @@ describe('lexicons should work', function () {
 
       cy.get('[data-cy=appMergeLexiconDialogTarget]').click();
       cy.get('mat-option:nth(1)').click()
-      cy.closeCurrentCdkOverlay();
 
       cy.get('[data-cy=appMergeLexiconDialogSource]').click();
       cy.get('mat-option:last()').click()

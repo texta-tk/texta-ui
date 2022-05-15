@@ -8,3 +8,8 @@ export interface ElasticSearchSourceResponse {
   _source: unknown;
   _type: string;
 }
+export interface ROCData {
+  false_positive_rate: number[];
+  true_positive_rate: number[];
+  epoch: number;
+}

@@ -29,10 +29,10 @@ import {AppConfigService} from '../../core/util/app-config.service';
   ]
 })
 export class AnnotatorComponent implements OnInit, OnDestroy, AfterViewInit {
-  expandedElement: Annotator | null;
-  public tableData: MatTableDataSource<Annotator> = new MatTableDataSource();
-  selectedRows = new SelectionModel<Annotator>(true, []);
-  public displayedColumns = ['select', 'id', 'description', 'author__username', 'users_count', 'index', 'annotation_type', 'total', 'annotated', 'skipped', 'validated', 'task__status', 'actions'];
+  expandedElement: { parent: Annotator, children: Annotator[] } | null;
+  public tableData: MatTableDataSource<{ parent: Annotator, children: Annotator[] }> = new MatTableDataSource();
+  selectedRows = new SelectionModel<{ parent: Annotator, children: Annotator[] }>(true, []);
+  public displayedColumns = ['select', 'id', 'description', 'author__username', 'users_count', 'index', 'annotation_type', 'type_info', 'total', 'fields', 'query', 'created_at', 'task__status', 'actions'];
   public isLoadingResults = true;
   public annotatorUrl = AppConfigService.settings.annotatorUrl;
 
@@ -82,7 +82,7 @@ export class AnnotatorComponent implements OnInit, OnDestroy, AfterViewInit {
         switchMap(proj => {
           if (proj) {
             const sortDirection = this.sort.direction === 'desc' ? '-' : '';
-            return this.annotatorService.getAnnotatorTasks(
+            return this.annotatorService.getAnnotatorGroups(
               this.currentProject.id,
               // Add 1 to to index because Material paginator starts from 0 and DRF paginator from 1
               `ordering=${sortDirection}${this.sort.active}&page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`);
@@ -125,28 +125,29 @@ export class AnnotatorComponent implements OnInit, OnDestroy, AfterViewInit {
   masterToggle(): void {
     this.isAllSelected() ?
       this.selectedRows.clear() :
-      (this.tableData.data as Annotator[]).forEach(row => this.selectedRows.select(row));
+      (this.tableData.data).forEach(row => this.selectedRows.select(row));
   }
 
 
   onDeleteAllSelected(): void {
     if (this.selectedRows.selected.length > 0) {
+      const selectedChildCount = this.selectedRows.selected.map(x => x.children.length).reduce((a, b) => a + b, 0);
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         data: {
           confirmText: 'Delete',
-          mainText: `Are you sure you want to delete ${this.selectedRows.selected.length} Tasks?`
+          mainText: `Are you sure you want to delete ${this.selectedRows.selected.length} parent tasks and ${selectedChildCount} child tasks?`
         }
       });
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
 
-          const idsToDelete = this.selectedRows.selected.map((annotator: Annotator) => annotator.id);
+          const idsToDelete = this.selectedRows.selected.map((annotator: { parent: Annotator, children: Annotator[] }) => annotator.parent.id);
           const body = {ids: idsToDelete};
           this.isLoadingResults = true;
 
           this.annotatorService.bulkDeleteAnnotatorTasks(this.currentProject.id, body).subscribe(() => {
-            this.logService.snackBarMessage(`Deleted ${this.selectedRows.selected.length} Tasks.`, 2000);
+            this.logService.snackBarMessage(`Deleted ${this.selectedRows.selected.length + selectedChildCount} Tasks.`, 2000);
             this.selectedRows.clear();
             this.updateTable.next(true);
             this.projectStore.refreshSelectedProjectResourceCounts();
@@ -161,7 +162,7 @@ export class AnnotatorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.destroyed$.complete();
   }
 
-  onDelete(element: Annotator, i: number): void {
+  onDelete(element: Annotator): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {confirmText: 'Delete', mainText: 'Are you sure you want to delete this annotator task?'}
     });
@@ -200,5 +201,21 @@ export class AnnotatorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   openAnnotatorView(): void {
     window.open(`${this.annotatorUrl}`, '_blank');
+  }
+
+  onDeleteParent(parent: Annotator): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {confirmText: 'Delete', mainText: 'Delete this annotator task and all of its child tasks?'}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.annotatorService.bulkDeleteAnnotatorTasks(this.currentProject.id, {ids: [parent.id]}).subscribe(() => {
+          this.logService.snackBarMessage(`Deleted annotator task: ${parent.description}`, 2000);
+          this.updateTable.next(true);
+          this.projectStore.refreshSelectedProjectResourceCounts();
+        });
+      }
+    });
   }
 }

@@ -44,68 +44,87 @@
             </ng-container>
             <ng-container matColumnDef="id">
               <th *matHeaderCellDef mat-header-cell mat-sort-header> Id</th>
-              <td *matCellDef="let element" mat-cell> {{element.id}}</td>
+              <td *matCellDef="let element" mat-cell> {{element.parent.id}}</td>
             </ng-container>
             <ng-container matColumnDef="description">
               <th *matHeaderCellDef mat-header-cell mat-sort-header> Description</th>
-              <td *matCellDef="let element" mat-cell> {{element.description}}</td>
+              <td *matCellDef="let element" mat-cell> {{element.parent.description}}</td>
             </ng-container>
             <ng-container matColumnDef="author__username">
               <th *matHeaderCellDef mat-header-cell mat-sort-header> Author</th>
               <td *matCellDef="let element" mat-cell
-                  [matTooltip]="element?.author?.username"> {{element?.author?.display_name}}</td>
+                  [matTooltip]="element.parent?.author?.username"> {{element.parent?.author?.display_name}}</td>
             </ng-container>
             <ng-container matColumnDef="users_count">
               <th *matHeaderCellDef mat-header-cell mat-sort-header>Users</th>
               <td *matCellDef="let element" mat-cell>
-                <button *ngIf="element.annotator_users" (click)="$event.stopPropagation()"
-                        [disabled]="element.annotator_users.length === 0"
-                        [matMenuTriggerData]="{element: element}"
-                        [matMenuTriggerFor]="userMenu"
-                        mat-stroked-button>
-                  {{ element.annotator_users.length }}
-                </button>
+                {{ element.children.length }}
               </td>
             </ng-container>
             <ng-container matColumnDef="index">
               <th *matHeaderCellDef mat-header-cell mat-sort-header> Index</th>
               <td *matCellDef="let element"
-                  mat-cell> {{element.indices | getPropertyList: getIndicesName | join: ', '}}</td>
+                  [title]="(element.parent.indices | getPropertyList: getIndicesName  | join: '\n')"
+                  mat-cell> {{element.parent.indices | getPropertyList: getIndicesName | join: ', '}}</td>
             </ng-container>
             <ng-container matColumnDef="annotation_type">
-              <th *matHeaderCellDef mat-header-cell mat-sort-header> Annotation Type</th>
-              <td *matCellDef="let element" mat-cell> {{element.annotation_type}}</td>
+              <th *matHeaderCellDef mat-header-cell mat-sort-header> Type</th>
+              <td *matCellDef="let element" mat-cell> {{element.parent.annotation_type}}</td>
+            </ng-container>
+            <ng-container matColumnDef="type_info">
+              <th *matHeaderCellDef mat-header-cell mat-sort-header> Labelset/Fact</th>
+              <td *matCellDef="let element" mat-cell>
+                <ng-container *ngIf="element.parent?.entity_configuration">
+                  <span
+                    [title]="element.parent?.entity_configuration?.fact_name">{{element.parent?.entity_configuration?.fact_name}}</span>
+                </ng-container>
+                <ng-container *ngIf="element.parent?.multilabel_configuration">
+                  <span
+                    [title]="'Labelset ID: ' + element.parent.multilabel_configuration.labelset">{{element.parent?.multilabel_configuration?.labelset}}</span>
+                </ng-container>
+                <ng-container *ngIf="element.parent?.binary_configuration">
+                  <span
+                    [title]="'Negative Value: '+ element.parent.binary_configuration.neg_value + '\n Positive Value:'+ element.parent.binary_configuration.pos_value">
+                    {{element.parent?.binary_configuration?.fact_name}}</span>
+                </ng-container>
+              </td>
             </ng-container>
             <ng-container matColumnDef="total">
               <th *matHeaderCellDef mat-header-cell mat-sort-header> Total</th>
-              <td *matCellDef="let element" mat-cell> {{element.total}}</td>
+              <td *matCellDef="let element" mat-cell> {{element.parent.total}}</td>
             </ng-container>
-            <ng-container matColumnDef="annotated">
-              <th *matHeaderCellDef mat-header-cell mat-sort-header> Annotated</th>
-              <td *matCellDef="let element" mat-cell> {{element.annotated}}</td>
+            <ng-container matColumnDef="fields">
+              <th *matHeaderCellDef mat-header-cell mat-sort-header> Fields</th>
+              <td *matCellDef="let element" mat-cell class="fields-tab"
+                  [title]="(element.parent.fields | join: '\n')"> {{element.parent.fields | join:', '}}</td>
             </ng-container>
-            <ng-container matColumnDef="skipped">
-              <th *matHeaderCellDef mat-header-cell mat-sort-header> Skipped</th>
-              <td *matCellDef="let element" mat-cell> {{element.skipped}}</td>
+            <ng-container matColumnDef="query">
+              <th *matHeaderCellDef mat-header-cell mat-sort-header> Query</th>
+              <td *matCellDef="let element" mat-cell><span
+                (click)="openQueryDialog(element.parent.query); $event.stopPropagation()"
+                class="action-text mat-body-strong pointer">Show Query</span></td>
             </ng-container>
-            <ng-container matColumnDef="validated">
-              <th *matHeaderCellDef mat-header-cell mat-sort-header> Validated</th>
-              <td *matCellDef="let element" mat-cell> {{element.validated}}</td>
+
+            <ng-container matColumnDef="created_at">
+              <th *matHeaderCellDef mat-header-cell mat-sort-header>Created</th>
+              <td *matCellDef="let element" mat-cell> {{element.parent.created_at | date:'y-M-d H:mm:ss'}}</td>
             </ng-container>
             <ng-container matColumnDef="task__status">
               <th *matHeaderCellDef mat-header-cell mat-sort-header> Task</th>
-              <td *matCellDef="let element" mat-cell>
-                <mat-progress-bar *ngIf="element.task && element.task.status === 'running'"
+              <td *matCellDef="let element" mat-cell [matTooltip]="element.parent.task.errors"
+                  [matTooltipDisabled]="element.parent.task.errors === '[]'">
+                <mat-progress-bar *ngIf="element.parent.task && element.parent.task.status === 'running'"
                                   mode="indeterminate">
                 </mat-progress-bar>
-                <mat-progress-bar *ngIf="element.task && element.task.status === 'completed'"
+                <mat-progress-bar *ngIf="element.parent.task && element.parent.task.status === 'completed'"
                                   mode="determinate" value="100">
                 </mat-progress-bar>
 
-                <mat-progress-bar *ngIf="element.task && element.task.status === 'failed'"
+                <mat-progress-bar *ngIf="element.parent.task && element.parent.task.status === 'failed'"
                                   mode="determinate" value="0">
                 </mat-progress-bar>
-                <mat-hint *ngIf="element.task">{{element.task.status}}</mat-hint>
+                <mat-hint *ngIf="element.parent.task">{{element.parent.task.status}}</mat-hint>
+
               </td>
             </ng-container>
 
@@ -124,104 +143,35 @@
             <ng-container matColumnDef="expandedDetail">
               <td *matCellDef="let element" [attr.colspan]="displayedColumns.length" mat-cell>
                 <div *ngIf="element == expandedElement" [@detailExpand] class="element-detail">
-                  <div class="flex-col m-l-r-5">
-                    <table class="simple-table" *ngIf="element.entity_configuration">
-                      <tr *ngIf="element?.entity_configuration?.fact_name">
-                        <th class="mat-body-strong">Fact Name</th>
-                        <td>{{element?.entity_configuration?.fact_name}}</td>
-                      </tr>
-                    </table>
 
-                    <table class="simple-table" *ngIf="element.multilabel_configuration">
-                      <tr *ngIf="element?.multilabel_configuration?.id">
-                        <th class="mat-body-strong">ID</th>
-                        <td>{{element?.multilabel_configuration?.id}}</td>
-                      </tr>
-                      <tr *ngIf="element?.multilabel_configuration?.labelset">
-                        <th class="mat-body-strong">Labelset</th>
-                        <td>{{element?.multilabel_configuration?.labelset}}</td>
-                      </tr>
-                    </table>
-
-                    <table class="simple-table" *ngIf="element.binary_configuration">
-
-                      <tr *ngIf="element?.binary_configuration?.id">
-                        <th class="mat-body-strong">ID</th>
-                        <td>{{element?.binary_configuration?.id}}</td>
-                      </tr>
-                      <tr *ngIf="element?.binary_configuration?.fact_name">
-                        <th class="mat-body-strong">Fact Name</th>
-                        <td>{{element?.binary_configuration?.fact_name}}</td>
-                      </tr>
-                      <tr *ngIf="element?.binary_configuration?.neg_value">
-                        <th class="mat-body-strong">Negative Value</th>
-                        <td>{{element?.binary_configuration?.neg_value}}</td>
-                      </tr>
-                      <tr *ngIf="element?.binary_configuration?.pos_value">
-                        <th class="mat-body-strong">Positive Value</th>
-                        <td>{{element?.binary_configuration?.pos_value}}</td>
-                      </tr>
-                    </table>
-                  </div>
-
-                  <div class="flex-col m-l-r-5">
+                  <div class="flex-col m-l-r-5" fxFlex="100">
                     <table class="simple-table">
                       <tr>
-                        <th class="mat-body-strong">Created at</th>
-                        <td>{{element.created_at | date:'y-M-d H:mm:ss'}}</td>
+                        <th class="mat-body-strong">Id</th>
+                        <th class="mat-body-strong">User</th>
+                        <th class="mat-body-strong">Total</th>
+                        <th class="mat-body-strong">Annotated</th>
+                        <th class="mat-body-strong">Skipped</th>
+                        <th class="mat-body-strong">Created</th>
+                        <th class="mat-body-strong">Modified</th>
+                        <th class="mat-body-strong">Completed</th>
+                        <th class="mat-body-strong" style="min-width: 60px; text-align: center; width: 60px">Delete</th>
                       </tr>
-                      <tr>
-                        <th class="mat-body-strong">Bulk size</th>
-                        <td>{{element.bulk_size}}</td>
-                      </tr>
-                      <tr>
-                        <th class="mat-body-strong">ES timeout</th>
-                        <td>{{element.es_timeout}}</td>
-                      </tr>
-                      <tr>
-                        <th class="mat-body-strong">Add facts mapping</th>
-                        <td>{{element.add_facts_mapping}}</td>
-                      </tr>
-                      <tr>
-                        <th class="mat-body-strong">Query</th>
-                        <td><span (click)="openQueryDialog(element.query);$event.stopPropagation();"
-                                  class="action-text mat-body-strong pointer">Show Query</span></td>
-                      </tr>
-                    </table>
-                  </div>
-
-                  <div class="flex-col m-l-r-5">
-                    <table class="simple-table" *ngIf="element.task">
-                      <tr>
-                        <th class="mat-body-strong">Task id</th>
-                        <td>{{element.task.id}}</td>
-                      </tr>
-                      <tr>
-                        <th class="mat-body-strong">Status</th>
-                        <td>{{element.task.status}}</td>
-                      </tr>
-                      <tr>
-                        <th class="mat-body-strong">Errors</th>
-                        <td>{{element.task.errors}}</td>
-                      </tr>
-                      <tr>
-                        <th class="mat-body-strong">Time started</th>
-                        <td>{{element.task.time_started | date:'y-M-d H:mm:ss'}}</td>
-                      </tr>
-                      <tr>
-                        <th class="mat-body-strong">Time completed</th>
-                        <td>{{element.task.completed | date:'y-M-d H:mm:ss'}}</td>
-                      </tr>
-                    </table>
-                  </div>
-                  <div class="flex-col m-l-r-5">
-                    <table class="simple-table">
-                      <tr>
-                        <th class="mat-body-strong">Fields</th>
-                      </tr>
-                      <tr *ngFor="let field of element.fields">
-                        <td>{{field}}</td>
-                      </tr>
+                      <ng-container *ngFor="let task of element.children;">
+                        <tr role="row" class="inner-element-row">
+                          <td>{{task.id}}</td>
+                          <td>{{task.annotator_users[0].display_name}}</td>
+                          <td>{{task.total}}</td>
+                          <td>{{task.annotated}}</td>
+                          <td>{{task.skipped}}</td>
+                          <td>{{task.created_at | date:'y-M-d H:mm:ss'}}</td>
+                          <td>{{task.modified_at | date:'y-M-d H:mm:ss'}}</td>
+                          <td>{{task.completed_at | date:'y-M-d H:mm:ss'}}</td>
+                          <td style="min-width: 60px; text-align: center; width: 60px; padding: 0">
+                            <button (click)="onDelete(task)" color="warn" mat-icon-button><mat-icon>cancel</mat-icon></button>
+                          </td>
+                        </tr>
+                      </ng-container>
                     </table>
                   </div>
                 </div>
@@ -246,32 +196,14 @@
       </div>
     </mat-tab>
   </mat-tab-group>
-
-
 </div>
 <mat-menu #editMenu="matMenu">
   <ng-template matMenuContent let-element="element" let-i="i">
-    <button mat-menu-item (click)="edit(element)" data-cy="appAnnotatorMenuEdit">
+    <button mat-menu-item (click)="edit(element.parent)" data-cy="appAnnotatorMenuEdit">
       Edit
     </button>
-    <button mat-menu-item (click)="onDelete(element, i)" data-cy="appAnnotatorMenuDelete">
+    <button mat-menu-item (click)="onDeleteParent(element.parent)" data-cy="appAnnotatorMenuDelete">
       Delete
     </button>
-  </ng-template>
-</mat-menu>
-<mat-menu #userMenu="matMenu">
-  <ng-template let-element="element" matMenuContent>
-    <ng-container *ngFor="let user of element.annotator_users">
-      <button *ngIf="user.display_name" [matMenuTriggerFor]="userDetailed" mat-menu-item>
-        {{ user.display_name }}
-      </button>
-      <mat-menu #userDetailed="matMenu">
-        <button mat-menu-item>Email: {{ user.email }}</button>
-        <button mat-menu-item>
-          Joined: {{ user.date_joined | date }}
-        </button>
-        <button mat-menu-item>ID: {{ user.id }}</button>
-      </mat-menu>
-    </ng-container>
   </ng-template>
 </mat-menu>

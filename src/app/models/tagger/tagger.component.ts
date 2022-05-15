@@ -26,6 +26,9 @@ import {Index} from '../../shared/types/Index';
 import {ApplyToIndexDialogComponent} from './apply-to-index-dialog/apply-to-index-dialog.component';
 import {MatSelectChange} from '@angular/material/select';
 import {MultiTagTextDialogComponent} from './multi-tag-text-dialog/multi-tag-text-dialog.component';
+import {
+  ConfusionMatrixDialogComponent
+} from '../../shared/plotly-module/confusion-matrix-dialog/confusion-matrix-dialog.component';
 
 @Component({
   selector: 'app-tagger',
@@ -354,5 +357,16 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
       maxHeight: '90vh',
       width: '700px',
     });
+  }
+
+  openConfusionMatrix(element: Tagger): void {
+    const parsed = JSON.parse(element.confusion_matrix);
+    if (parsed) {
+      this.dialog.open(ConfusionMatrixDialogComponent, {
+        height: parsed[0].length > 2 ? '90vh' : '800px',
+        width: parsed[0].length > 2 ? '90vw' : '800px',
+        data: element,
+      });
+    }
   }
 }

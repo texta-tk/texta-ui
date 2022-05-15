@@ -66,12 +66,12 @@ describe('should be able to build aggregations', function () {
 
     // check text aggregations
     cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]').should('be.visible').click();
-    cy.get('mat-option').contains('comment_content').scrollIntoView().should('be.visible').click();
-    cy.closeCurrentCdkOverlay();
+
+    cy.get('.mat-option-text').contains(new RegExp(' comment_content ', '')).scrollIntoView().should('be.visible').click();
+
     submitAndCheckTableResult();
     cy.get('[data-cy=appSearcherSidebarAggregationsTextAggregationType]').should('be.visible').click();
     cy.get('mat-option').contains('significant items').should('be.visible').click();
-    cy.closeCurrentCdkOverlay();
     submitAndCheckTableResult();
     cy.get('[data-cy=appSearcherSidebarAggregationsTextAggregationType]').click();
     cy.get('mat-option').contains('significant words').should('be.visible').click();
@@ -83,7 +83,7 @@ describe('should be able to build aggregations', function () {
 
     // check date aggregations
     cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]').should('be.visible').click();
-    cy.get('mat-option').contains('@timestamp').scrollIntoView().should('be.visible').click();
+    cy.get('.mat-option-text').contains('@timestamp').scrollIntoView().click();
     cy.wait('@searcherQuery');
     submitAndCheckGraphResult(1);
     cy.get('[data-cy=appSearcherSidebarSavedSearches] .cdk-column-select:nth(1)').should('be.visible').click('left');
@@ -101,31 +101,30 @@ describe('should be able to build aggregations', function () {
     cy.get('[data-cy=appSearcherSidebarAggregationsPanel]').should('be.visible').click();
     cy.get('[data-cy=appSearcherSidebarAggregationsAddNew]').scrollIntoView().click();
     cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]:last()').scrollIntoView().click();
-    cy.get('mat-option').contains('comment_content').scrollIntoView().click();
+    cy.get('.mat-option-text').contains(new RegExp(' comment_content ', '')).scrollIntoView().click();
     submitAndCheckTreeResult(2);
     cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]:last()').scrollIntoView().click();
     cy.get('mat-option').contains('@timestamp').scrollIntoView().click();
     cy.wait('@searcherQuery');
     submitAndCheckTreeResult(2);
     cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]:last()').scrollIntoView().click();
-    cy.get('mat-option').contains('comment_subject').scrollIntoView().click();
+    cy.get('.mat-option-text').contains('comment_subject').scrollIntoView().click();
     cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]:first()').scrollIntoView().click();
-    cy.get('mat-option').contains('@timestamp').scrollIntoView().click();
+    cy.get('.mat-option-text').contains('@timestamp').scrollIntoView().click();
     cy.wait('@searcherQuery');
     submitAndCheckGraphResult(1);
     cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]:first()').scrollIntoView().click();
-    cy.get('mat-option').contains('comment_subject').scrollIntoView().click();
-    cy.closeCurrentCdkOverlay();
+    cy.get('.mat-option-text').contains('comment_subject').scrollIntoView().click();
     cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]:last()').scrollIntoView().click();
-    cy.get('mat-option').contains('@timestamp').scrollIntoView().click();
+    cy.get('.mat-option-text').contains('@timestamp').scrollIntoView().click();
     cy.wait('@searcherQuery');
     submitAndCheckTreeResult(1);
     cy.get('[data-cy=appSearcherSidebarAggregationsAddNew]').scrollIntoView().click();
     cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]:last()').scrollIntoView().click();
-    cy.get('mat-option').contains('comment_content').scrollIntoView().click();
+    cy.get('.mat-option-text').contains(new RegExp(' comment_content ', '')).scrollIntoView().click();
     submitAndCheckTreeResult(2);
     cy.get('[data-cy=appSearcherSidebarAggregationsSelectField]:first()').click();
-    cy.get('mat-option').contains('texta_facts').scrollIntoView().click();
+    cy.get('.mat-option-text').contains('texta_facts').scrollIntoView().click();
     submitAndCheckTreeResult(3);
     cy.get('[data-cy=appSearcherSidebarSavedSearches] .cdk-column-select:nth(1)').scrollIntoView().click('left');
     cy.wait(50);

@@ -24,6 +24,12 @@ export class AnnotatorService {
       catchError(this.logService.handleError<ResultsWrapper<Annotator>>('getAnnotatorTasks')));
   }
 
+  getAnnotatorGroups(projectId: number, params = ''): Observable<ResultsWrapper<{parent: Annotator, children: Annotator[]}> | HttpErrorResponse> {
+    return this.http.get<ResultsWrapper<{parent: Annotator, children: Annotator[]}>>(`${this.apiUrl}/projects/${projectId}/annotator_groups/?${params}`).pipe(
+      tap(e => this.logService.logStatus(e, 'getAnnotatorGroups')),
+      catchError(this.logService.handleError<ResultsWrapper<{parent: Annotator, children: Annotator[]}>>('getAnnotatorGroups')));
+  }
+
   createAnnotatorTask(projectId: number, body: unknown): Observable<Annotator | HttpErrorResponse> {
     return this.http.post<Annotator>(`${this.apiUrl}/projects/${projectId}/annotator/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'createAnnotatorTask')),
