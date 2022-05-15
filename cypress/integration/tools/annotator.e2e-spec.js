@@ -8,7 +8,7 @@ describe('Annotator should work', function () {
         cy.wrap(x.body.id).as('projectId');
         cy.intercept('GET', '**user**').as('getUser');
         cy.intercept('GET', '**get_fields**').as('getProjectIndices');
-        cy.intercept('GET', '**/annotator/**').as('getAnnotator');
+        cy.intercept('GET', '**/annotator_groups/**').as('getAnnotator');
         cy.intercept('DELETE', '**/annotator/**').as('deleteAnnotator');
         cy.intercept('POST', '**/annotator/bulk_delete').as('bulkDeleteAnnotator');
         cy.intercept('POST', '**/annotator/').as('postAnnotator');
