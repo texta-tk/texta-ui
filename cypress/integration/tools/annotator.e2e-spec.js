@@ -95,7 +95,7 @@ describe('Annotator should work', function () {
     createBinaryAnnotatorTask();
 
     // edit
-    cy.get('.cdk-column-actions:nth(1)').click('left');
+    cy.get('.cdk-column-actions:nth(1)').click();
     cy.get('[data-cy=appAnnotatorMenuEdit]').click();
     cy.get('[data-cy=appAnnotatorEditDialogDesc]').then((desc => {
       cy.wrap(desc).should('have.class', 'mat-focused').type('b').find('input').clear();
@@ -110,11 +110,11 @@ describe('Annotator should work', function () {
 
     // delete
     createBinaryAnnotatorTask();
-    cy.get('.cdk-column-actions:nth(1)').click('left');
+    cy.get('.cdk-column-actions:nth(1)').click();
     cy.get('[data-cy=appAnnotatorMenuDelete]').click();
     cy.get('[data-cy=appConfirmDialogSubmit]').click();
-    cy.wait('@deleteAnnotator').then(created => {
-      expect(created.response.statusCode).to.eq(204);
+    cy.wait('@bulkDeleteAnnotator').then(created => {
+      expect(created.response.statusCode).to.eq(200);
     });
     cy.wait('@getAnnotator');
 
@@ -211,7 +211,7 @@ describe('Annotator should work', function () {
     createMultilabelAnnotatorTask();
 
     // edit
-    cy.get('.cdk-column-actions:nth(1)').click('left');
+    cy.get('.cdk-column-actions:nth(1)').click();
     cy.get('[data-cy=appAnnotatorMenuEdit]').click();
     cy.get('[data-cy=appAnnotatorEditDialogDesc]').then((desc => {
       cy.wrap(desc).should('have.class', 'mat-focused').type('b').find('input').clear();
@@ -226,11 +226,11 @@ describe('Annotator should work', function () {
 
     // delete
     createMultilabelAnnotatorTask();
-    cy.get('.cdk-column-actions:nth(1)').click('left');
+    cy.get('.cdk-column-actions:nth(1)').click();
     cy.get('[data-cy=appAnnotatorMenuDelete]').click();
     cy.get('[data-cy=appConfirmDialogSubmit]').click();
-    cy.wait('@deleteAnnotator').then(created => {
-      expect(created.response.statusCode).to.eq(204);
+    cy.wait('@bulkDeleteAnnotator').then(created => {
+      expect(created.response.statusCode).to.eq(200);
     });
     cy.wait('@getAnnotator');
 
@@ -303,7 +303,7 @@ describe('Annotator should work', function () {
     createEntityAnnotatorTask();
 
     // edit
-    cy.get('.cdk-column-actions:nth(1)').click('left');
+    cy.get('.cdk-column-actions:nth(1)').click();
     cy.get('[data-cy=appAnnotatorMenuEdit]').click();
     cy.get('[data-cy=appAnnotatorEditDialogDesc]').then((desc => {
       cy.wrap(desc).should('have.class', 'mat-focused').type('b').find('input').clear();
@@ -318,11 +318,11 @@ describe('Annotator should work', function () {
 
     // delete
     createEntityAnnotatorTask();
-    cy.get('.cdk-column-actions:nth(1)').click('left');
+    cy.get('.cdk-column-actions:nth(1)').click();
     cy.get('[data-cy=appAnnotatorMenuDelete]').click();
     cy.get('[data-cy=appConfirmDialogSubmit]').click();
-    cy.wait('@deleteAnnotator').then(created => {
-      expect(created.response.statusCode).to.eq(204);
+    cy.wait('@bulkDeleteAnnotator').then(created => {
+      expect(created.response.statusCode).to.eq(200);
     });
     cy.wait('@getAnnotator');
 
