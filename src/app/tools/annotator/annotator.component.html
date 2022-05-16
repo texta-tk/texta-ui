@@ -153,8 +153,8 @@
                         <th class="mat-body-strong">Annotated</th>
                         <th class="mat-body-strong">Skipped</th>
                         <th class="mat-body-strong">Created</th>
-                        <th class="mat-body-strong">Modified</th>
                         <th class="mat-body-strong">Completed</th>
+                        <th class="mat-body-strong">Index</th>
                         <th class="mat-body-strong" style="min-width: 60px; text-align: center; width: 60px">Delete</th>
                       </tr>
                       <ng-container *ngFor="let task of element.children;">
@@ -166,7 +166,9 @@
                           <td>{{task.skipped}}</td>
                           <td>{{task.created_at | date:'y-M-d H:mm:ss'}}</td>
                           <td>{{task.modified_at | date:'y-M-d H:mm:ss'}}</td>
-                          <td>{{task.completed_at | date:'y-M-d H:mm:ss'}}</td>
+                          <td class="mat-column-index" [title]="(task.indices | getPropertyList: getIndicesName  | join: '\n')">
+                            {{task.indices | getPropertyList: getIndicesName | join: ', '}}
+                          </td>
                           <td style="min-width: 60px; text-align: center; width: 60px; padding: 0">
                             <button (click)="onDelete(task)" color="warn" mat-icon-button><mat-icon>cancel</mat-icon></button>
                           </td>

@@ -20,7 +20,7 @@ describe('/oauth and uaa auth tests', function () {
       // Navigate to the UAA login
       cy.get('[data-cy=appSharedLoginDialogUaaLogin]').should('exist').click();
       cy.url().should("include", "uaa/login");
-
+      cy.intercept('POST', '/uaa/login.do').as('loginDo');
       // Get the uaa users fixture
       cy.fixture("uaa-user").then(uaaUser => {
         // Get the "email" (actually username) form field
