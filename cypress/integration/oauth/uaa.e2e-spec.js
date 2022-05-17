@@ -20,8 +20,8 @@ describe('/oauth and uaa auth tests', function () {
       // Get the uaa users fixture
       cy.fixture("uaa-user").then(uaaUser => {
         // Get the "email" (actually username) form field
-        cy.get('[name="username"]').should('exist').type(uaaUser.username);
-        cy.get('[name="password"]').should('exist').type(uaaUser.password);
+        cy.get('[name="username"]').should('exist').type('test');
+        cy.get('[name="password"]').should('exist').type('test');
         // Click the login button
         cy.get('.island-button').should('exist').click();
         cy.wait('@loginDo').then(x => {
