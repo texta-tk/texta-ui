@@ -63,14 +63,13 @@ Karma:
   - ci-test
 
 Cypress:
-  image: cypress/base:14.17.6
+  image: cypress/base:14.17.0
   stage: e2e-test
   tags:
     - ci-test
   before_script:
     - npm ci
     - apt-get update && apt-get install python3-pip -y
-    - apt-get install curl -y
     - pip3 install elasticsearch==7.10.1
     - npm run cy:verify
     - npm run cy:info
