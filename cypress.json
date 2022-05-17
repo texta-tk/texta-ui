@@ -5,6 +5,7 @@
   "viewportWidth": 1920,
   "env": {
     "api_host": "http://texta-rest",
+    "uaa_url": "http://texta-uaa:8080",
     "api_basePath": "/api/v2",
     "test_uaa": true
   },
