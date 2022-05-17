@@ -70,6 +70,7 @@ Cypress:
   before_script:
     - npm ci
     - apt-get update && apt-get install python3-pip -y
+    - apt-get install curl
     - pip3 install elasticsearch==7.10.1
     - npm run cy:verify
     - npm run cy:info
