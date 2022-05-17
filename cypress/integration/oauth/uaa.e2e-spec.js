@@ -15,28 +15,32 @@ describe('/oauth and uaa auth tests', function () {
       cy.visit('/');
       // Navigate to the UAA login
       cy.get('[data-cy=appSharedLoginDialogUaaLogin]').should('exist').click();
-      cy.url().should("include", "uaa/login");
+      // Click the login button
       cy.intercept('POST', '/uaa/login.do').as('loginDo');
-      // Get the uaa users fixture
-      cy.fixture("uaa-user").then(uaaUser => {
-        // Get the "email" (actually username) form field
-        cy.get('[name="username"]').should('exist').type('test');
-        cy.get('[name="password"]').should('exist').type('test');
-        // Click the login button
-        cy.get('.island-button').should('exist').click();
-        cy.wait('@loginDo').then(x => {
-          expect(x.response.statusCode).to.eq(302);
-        });
-        cy.wait(5000);
-        cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible').click();
-        // Logout
-        cy.intercept('POST', 'logout').as('logout');
-        cy.get('[data-cy=appNavbarlogOutMenuItem]').should('be.visible').click();
-        cy.wait('@logout');
+      cy.url().should("include", "uaa/login");
+      cy.origin(Cypress.env('api_host')+'/uaa/login', () => {
+        // Get the uaa users fixture
+        cy.visit(Cypress.env('api_host')+'/uaa/login');
+        cy.fixture("uaa-user").then(uaaUser => {
+          // Get the "email" (actually username) form field
+          cy.get('[name="username"]').should('exist').type('test');
+          cy.get('[name="password"]').should('exist').type('test');
+          cy.get('.island-button').should('exist').click();
 
-        // Verify logged out
-        cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('not.exist');
+        });
       });
+      cy.wait('@loginDo').then(x => {
+        expect(x.response.statusCode).to.eq(302);
+      });
+      cy.wait(5000);
+      cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible').click();
+      // Logout
+      cy.intercept('POST', 'logout').as('logout');
+      cy.get('[data-cy=appNavbarlogOutMenuItem]').should('be.visible').click();
+      cy.wait('@logout');
+
+      // Verify logged out
+      cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('not.exist');
     })
   });
 
