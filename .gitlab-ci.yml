@@ -63,7 +63,7 @@ Karma:
   - ci-test
 
 Cypress:
-  image: cypress/browsers:node14.17.6-chrome100-ff98
+  image: cypress/browsers:node14.17.0-chrome91-ff89
   stage: e2e-test
   tags:
     - ci-test
