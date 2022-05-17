@@ -12,15 +12,9 @@ describe('/oauth and uaa auth tests', function () {
     // Verify logged in
 
     cy.session('test', () => {
-      cy.visit('/');
-      // Navigate to the UAA login
-      cy.get('[data-cy=appSharedLoginDialogUaaLogin]').should('exist').click();
-      // Click the login button
       cy.intercept('POST', '/uaa/login.do').as('loginDo');
-      cy.url().should("include", "uaa/login");
-      cy.origin(Cypress.env('uaa_url')+'/uaa/login', () => {
-        // Get the uaa users fixture
-        cy.visit(Cypress.env('uaa_url')+'/uaa/login');
+      cy.origin(Cypress.env('uaa_url'), () => {
+        cy.visit('/uaa/login');
         cy.fixture("uaa-user").then(uaaUser => {
           // Get the "email" (actually username) form field
           cy.get('[name="username"]').should('exist').type('test');
@@ -32,6 +26,8 @@ describe('/oauth and uaa auth tests', function () {
       cy.wait('@loginDo').then(x => {
         expect(x.response.statusCode).to.eq(302);
       });
+      cy.visit('/')
+      cy.get('[data-cy=appSharedLoginDialogUaaLogin]').should('exist').click();
       cy.wait(5000);
       cy.get('[data-cy=appNavbarLoggedInUserMenu]').should('be.visible').click();
       // Logout
