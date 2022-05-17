@@ -1,5 +1,6 @@
 {
   "baseUrl": "http://localhost:4200/#",
+  "video": false,
   "env": {
     "api_host": "http://texta-rest",
     "uaa_url": "http://texta-uaa:8080",
