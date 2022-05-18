@@ -20,7 +20,7 @@ describe('/oauth and uaa auth tests', function () {
       // Navigate to the UAA login
       cy.get('[data-cy=appSharedLoginDialogUaaLogin]').should('exist').click();
       cy.url().should("include", "uaa/login");
-      cy.intercept('POST', '/uaa/login.do').as('loginDo');
+
       // Get the uaa users fixture
       cy.fixture("uaa-user").then(uaaUser => {
         // Get the "email" (actually username) form field
@@ -28,9 +28,6 @@ describe('/oauth and uaa auth tests', function () {
         cy.get('[name="password"]').should('exist').type(uaaUser.password);
         // Click the login button
         cy.get('.island-button').should('exist').click();
-        cy.wait('@loginDo').then(x => {
-          expect(x.response.statusCode).to.eq(302);
-        });
       });
       cy.wait(5000);
     }

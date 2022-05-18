@@ -33,7 +33,9 @@ describe('dataset-importer should work', function () {
       cy.matFormFieldShouldHaveError(name, 'required');
       cy.wrap(name).type('new_index');
     }));
-    cy.get('input[type=file]').selectFile('cypress/fixtures/testSample.csv', {force: true});
+    cy.get('input[type=file]').attachFile({
+      filePath: "testSample.csv",
+    });
     cy.get('[data-cy=appDatasetImporterCreateDialogSubmit]').should('be.visible').click();
     cy.wait('@postDatasets').then(created => {
       expect(created.response.statusCode).to.eq(201);
