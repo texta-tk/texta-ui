@@ -19,27 +19,20 @@ export class ConfusionMatrixGraphComponent {
   icon1 = downloadIcon;
   icon2 = editDataIcon;
 
-  @Input() set graphData(val: { confusion_matrix: string | number[][], labels: string}) {
+  @Input() set graphData(val: { confusion_matrix: string | number[][], labels: string[] }) {
     if (val?.confusion_matrix) {
       let confMatrix = typeof val.confusion_matrix === 'string' ? JSON.parse(val.confusion_matrix) : val.confusion_matrix;
       confMatrix = confMatrix.reverse();
-      const xvals: string[] = [];
-      const yvals: string[] = [];
-      for (const item of confMatrix) {
-        yvals.push((Math.random() + 1).toString(36).substring(7));
-        if (xvals.length === 0) {
-          for (const yval of item) {
-            xvals.push((Math.random() + 1).toString(36).substring(7));
-          }
-        }
-      }
+      const xvals: string[] = [...val.labels];
+      // heatmap renders the labels from bottom to up so reverse them to get correct ordering for confusion matrix
+      const yvals: string[] = [...val.labels].reverse();
       this.confMatrixData = {
         z: confMatrix,
         x: xvals,
         y: yvals,
         colorscale: [[0, '#f7fbff'], [1, '#103269']],
         type: 'heatmap',
-        hovertemplate: `Predicted: %{x}<br>True: %{y}<br>Z: %{z}<extra></extra>`,
+        hovertemplate: `Predicted: %{x}<br>True: %{y}<br>Amount: %{z}<extra></extra>`,
         showscale: false,
       };
 
@@ -75,6 +68,7 @@ export class ConfusionMatrixGraphComponent {
             size: 18,
           }
         },
+        automargin: true,
       }
     },
     config: {

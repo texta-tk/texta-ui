@@ -282,12 +282,14 @@ export class BertTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   openConfusionMatrix(element: BertTagger): void {
     const parsed = JSON.parse(element.confusion_matrix);
-    if (parsed) {
+    if (parsed && parsed.length > 0) {
       this.dialog.open(ConfusionMatrixDialogComponent, {
         height: parsed[0].length > 2 ? '90vh' : '800px',
         width: parsed[0].length > 2 ? '90vw' : '800px',
         data: element,
       });
+    } else {
+      this.logService.snackBarMessage('Confusion matrix is empty!', 2000);
     }
   }
 

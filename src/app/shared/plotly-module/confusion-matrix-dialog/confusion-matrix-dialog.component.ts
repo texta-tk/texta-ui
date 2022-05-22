@@ -9,11 +9,11 @@ import {Tagger} from '../../types/tasks/Tagger';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ConfusionMatrixDialogComponent implements OnInit {
-  element: { confusion_matrix: string | number[][] } | undefined;
+  element: { confusion_matrix: string | number[][], classes: string[] } | undefined;
   isLoading = true;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: { confusion_matrix: string | number[][] }, private cdr: ChangeDetectorRef) {
+    @Inject(MAT_DIALOG_DATA) public data: { confusion_matrix: string | number[][], classes: string[] }, private cdr: ChangeDetectorRef) {
   }
 
   ngOnInit(): void {

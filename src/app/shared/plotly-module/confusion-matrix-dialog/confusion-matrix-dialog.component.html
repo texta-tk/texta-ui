@@ -3,5 +3,5 @@
 </div>
 <ng-container *ngIf="element">
   <app-confusion-matrix-graph
-    [graphData]="{confusion_matrix: element.confusion_matrix, labels: 'none'}"></app-confusion-matrix-graph>
+    [graphData]="{confusion_matrix: element.confusion_matrix, labels: element.classes}"></app-confusion-matrix-graph>
 </ng-container>

@@ -13,8 +13,8 @@ export class PlotEditDataDialogComponent implements OnInit {
   objectMap: any = {};
 
   constructor(
-    // tslint:disable-next-line:no-any
-    @Inject(MAT_DIALOG_DATA) public data: any, private dialogRef: MatDialogRef<PlotEditDataDialogComponent>) {
+      // tslint:disable-next-line:no-any
+      @Inject(MAT_DIALOG_DATA) public data: any, private dialogRef: MatDialogRef<PlotEditDataDialogComponent>) {
   }
 
   ngOnInit(): void {
@@ -22,7 +22,12 @@ export class PlotEditDataDialogComponent implements OnInit {
     this.objectKeys.forEach(x => {
       const type = typeof this.data[x];
       if (this.isArrayOfStrings(this.data[x])) {
-        this.objectMap[x] = this.stringListToString(this.data[x]);
+        // heatmap y vals are reversed, if this component finds other uses refactor heatmap editing
+        if (x === 'y') {
+          this.objectMap[x] = this.stringListToString(this.data[x].reverse());
+        } else {
+          this.objectMap[x] = this.stringListToString(this.data[x]);
+        }
       }
       this.typeMap.set(x, type);
     });
@@ -48,7 +53,11 @@ export class PlotEditDataDialogComponent implements OnInit {
   onCloseDialog(): void {
     const keys = Object.keys(this.objectMap);
     for (const key of keys) {
-      this.data[key] = this.newLineStringToList(this.objectMap[key] as string, this.data[key].length);
+      if (key === 'y') {
+        this.data[key] = this.newLineStringToList(this.objectMap[key] as string, this.data[key].length).reverse();
+      } else {
+        this.data[key] = this.newLineStringToList(this.objectMap[key] as string, this.data[key].length);
+      }
     }
     this.dialogRef.close(this.data);
   }
