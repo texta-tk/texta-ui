@@ -125,7 +125,12 @@ export class AnnotatorComponent implements OnInit, OnDestroy, AfterViewInit {
   masterToggle(): void {
     this.isAllSelected() ?
       this.selectedRows.clear() :
-      (this.tableData.data).forEach(row => this.selectedRows.select(row));
+      // tslint:disable-next-line:no-any
+      (this.tableData.data).forEach((row: any) => {
+        if (row?.parent?.task?.status !== 'running') {
+          this.selectedRows.select(row);
+        }
+      });
   }
 
 
@@ -142,8 +147,8 @@ export class AnnotatorComponent implements OnInit, OnDestroy, AfterViewInit {
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
 
-          const idsToDelete = this.selectedRows.selected.map((annotator: { parent: Annotator, children: Annotator[] }) => annotator.parent.id);
-          const body = {ids: idsToDelete};
+          const idsToDelete = this.selectedRows.selected.map((annotator: { parent: Annotator, children: Annotator[] }) => [annotator.parent.id, ...annotator.children.map(x => x.id)]);
+          const body = {ids: idsToDelete.flat()};
           this.isLoadingResults = true;
 
           this.annotatorService.bulkDeleteAnnotatorTasks(this.currentProject.id, body).subscribe(() => {
@@ -203,15 +208,15 @@ export class AnnotatorComponent implements OnInit, OnDestroy, AfterViewInit {
     window.open(`${this.annotatorUrl}`, '_blank');
   }
 
-  onDeleteParent(parent: Annotator): void {
+  onDeleteParent(annotator: { parent: Annotator, children: Annotator[] }): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {confirmText: 'Delete', mainText: 'Delete this annotator task and all of its child tasks?'}
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.annotatorService.bulkDeleteAnnotatorTasks(this.currentProject.id, {ids: [parent.id]}).subscribe(() => {
-          this.logService.snackBarMessage(`Deleted annotator task: ${parent.description}`, 2000);
+        this.annotatorService.bulkDeleteAnnotatorTasks(this.currentProject.id, {ids: [annotator.parent.id, ...annotator.children.map(x => x.id)].flat()}).subscribe(() => {
+          this.logService.snackBarMessage(`Deleted annotator task: ${annotator.parent.description}`, 2000);
           this.updateTable.next(true);
           this.projectStore.refreshSelectedProjectResourceCounts();
         });

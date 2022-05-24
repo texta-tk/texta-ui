@@ -24,16 +24,22 @@ export class AnnotatorService {
       catchError(this.logService.handleError<ResultsWrapper<Annotator>>('getAnnotatorTasks')));
   }
 
-  getAnnotatorGroups(projectId: number, params = ''): Observable<ResultsWrapper<{parent: Annotator, children: Annotator[]}> | HttpErrorResponse> {
-    return this.http.get<ResultsWrapper<{parent: Annotator, children: Annotator[]}>>(`${this.apiUrl}/projects/${projectId}/annotator_groups/?${params}`).pipe(
+  getAnnotatorGroups(projectId: number, params = ''): Observable<ResultsWrapper<{parent: Annotator, children: Annotator[], id: number}> | HttpErrorResponse> {
+    return this.http.get<ResultsWrapper<{parent: Annotator, children: Annotator[], id: number}>>(`${this.apiUrl}/projects/${projectId}/annotator_groups/?${params}`).pipe(
       tap(e => this.logService.logStatus(e, 'getAnnotatorGroups')),
-      catchError(this.logService.handleError<ResultsWrapper<{parent: Annotator, children: Annotator[]}>>('getAnnotatorGroups')));
+      catchError(this.logService.handleError<ResultsWrapper<{parent: Annotator, children: Annotator[], id: number}>>('getAnnotatorGroups')));
   }
 
   createAnnotatorTask(projectId: number, body: unknown): Observable<Annotator | HttpErrorResponse> {
     return this.http.post<Annotator>(`${this.apiUrl}/projects/${projectId}/annotator/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'createAnnotatorTask')),
       catchError(this.logService.handleError<Annotator>('createAnnotatorTask')));
+  }
+
+  bulkDeleteAnnotatorGroups(projectId: number, body: unknown): Observable<unknown | HttpErrorResponse> {
+    return this.http.post<unknown>(`${this.apiUrl}/projects/${projectId}/annotator_groups/bulk_delete/`, body).pipe(
+      tap(e => this.logService.logStatus(e, 'bulkDeleteAnnotatorGroups')),
+      catchError(this.logService.handleError<unknown>('bulkDeleteAnnotatorGroups')));
   }
 
   bulkDeleteAnnotatorTasks(projectId: number, body: unknown): Observable<{ 'num_deleted': number, 'deleted_types': { string: number }[] } | HttpErrorResponse> {

@@ -109,24 +109,24 @@ describe('Annotator should work', function () {
     cy.wait('@getAnnotator');
 
     // delete
-    createBinaryAnnotatorTask();
+/*    createBinaryAnnotatorTask();
     cy.get('.cdk-column-actions:nth(1)').click();
     cy.get('[data-cy=appAnnotatorMenuDelete]').click();
     cy.get('[data-cy=appConfirmDialogSubmit]').click();
     cy.wait('@bulkDeleteAnnotator').then(created => {
       expect(created.response.statusCode).to.eq(200);
     });
-    cy.wait('@getAnnotator');
+    cy.wait('@getAnnotator');*/
 
     // bulk delete
-    cy.get('[data-cy=appAnnotatorBulkDeleteSelectAll]').click()
+/*    cy.get('[data-cy=appAnnotatorBulkDeleteSelectAll]').click()
     cy.get('[data-cy=appAnnotatorDeleteBtn]').click();
 
     cy.get('[data-cy=appConfirmDialogSubmit]').click();
     cy.wait('@bulkDeleteAnnotator').then(created => {
       expect(created.response.statusCode).to.eq(200);
     });
-    cy.wait('@getAnnotator');
+    cy.wait('@getAnnotator');*/
   });
 
   function createLabelset() {
@@ -225,6 +225,7 @@ describe('Annotator should work', function () {
     cy.wait('@getAnnotator');
 
     // delete
+/*
     createMultilabelAnnotatorTask();
     cy.get('.cdk-column-actions:nth(1)').click();
     cy.get('[data-cy=appAnnotatorMenuDelete]').click();
@@ -233,16 +234,17 @@ describe('Annotator should work', function () {
       expect(created.response.statusCode).to.eq(200);
     });
     cy.wait('@getAnnotator');
+*/
 
     // bulk delete
-    cy.get('[data-cy=appAnnotatorBulkDeleteSelectAll]').click()
+/*    cy.get('[data-cy=appAnnotatorBulkDeleteSelectAll]').click()
     cy.get('[data-cy=appAnnotatorDeleteBtn]').click();
 
     cy.get('[data-cy=appConfirmDialogSubmit]').click();
     cy.wait('@bulkDeleteAnnotator').then(created => {
       expect(created.response.statusCode).to.eq(200);
     });
-    cy.wait('@getAnnotator');
+    cy.wait('@getAnnotator');*/
   });
 
   function createEntityAnnotatorTask() {
@@ -317,23 +319,23 @@ describe('Annotator should work', function () {
     cy.wait('@getAnnotator');
 
     // delete
-    createEntityAnnotatorTask();
+/*    createEntityAnnotatorTask();
     cy.get('.cdk-column-actions:nth(1)').click();
     cy.get('[data-cy=appAnnotatorMenuDelete]').click();
     cy.get('[data-cy=appConfirmDialogSubmit]').click();
     cy.wait('@bulkDeleteAnnotator').then(created => {
       expect(created.response.statusCode).to.eq(200);
     });
-    cy.wait('@getAnnotator');
+    cy.wait('@getAnnotator');*/
 
     // bulk delete
-    cy.get('[data-cy=appAnnotatorBulkDeleteSelectAll]').click()
+/*    cy.get('[data-cy=appAnnotatorBulkDeleteSelectAll]').click()
     cy.get('[data-cy=appAnnotatorDeleteBtn]').click();
 
     cy.get('[data-cy=appConfirmDialogSubmit]').click();
     cy.wait('@bulkDeleteAnnotator').then(created => {
       expect(created.response.statusCode).to.eq(200);
     });
-    cy.wait('@getAnnotator');
+    cy.wait('@getAnnotator');*/
   });
 });

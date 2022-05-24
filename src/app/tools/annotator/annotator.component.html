@@ -37,7 +37,7 @@
                 </mat-checkbox>
               </th>
               <td *matCellDef="let row" mat-cell>
-                <mat-checkbox (change)="$event ? selectedRows.toggle(row) : null" (click)="$event.stopPropagation()"
+                <mat-checkbox [disabled]="row?.parent?.task?.status === 'running'" (change)="$event ? selectedRows.toggle(row) : null" (click)="$event.stopPropagation()"
                               [checked]="selectedRows.isSelected(row)">
                 </mat-checkbox>
               </td>
@@ -204,7 +204,7 @@
     <button mat-menu-item (click)="edit(element.parent)" data-cy="appAnnotatorMenuEdit">
       Edit
     </button>
-    <button mat-menu-item (click)="onDeleteParent(element.parent)" data-cy="appAnnotatorMenuDelete">
+    <button [disabled]="element?.parent?.task?.status === 'running'" mat-menu-item (click)="onDeleteParent(element)" data-cy="appAnnotatorMenuDelete">
       Delete
     </button>
   </ng-template>
