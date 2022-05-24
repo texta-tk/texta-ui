@@ -1,11 +1,13 @@
-.mat-tooltip{
+.custom-tooltip{
   color: #fff;
   border-radius: 4px;
   max-width: 250px;
-  padding-left: 8px;
-  padding-right: 8px;
+  padding: 8px;
   overflow: hidden;
   text-overflow: ellipsis;
+  background: rgba(97, 97, 97, 0.9);
+  white-space: pre-line;
+  font-size: 12px;
 }
 
 .close-button {
