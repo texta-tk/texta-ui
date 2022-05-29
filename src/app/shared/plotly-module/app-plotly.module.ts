@@ -6,7 +6,7 @@ import {PlotDownloadDialogComponent} from './plot-download-dialog/plot-download-
 import {SharedModule} from '../shared-module/shared.module';
 import { ConfusionMatrixGraphComponent } from './confusion-matrix-graph/confusion-matrix-graph.component';
 import {ConfusionMatrixDialogComponent} from './confusion-matrix-dialog/confusion-matrix-dialog.component';
-import { PlotEditDataDialogComponent } from './plot-edit-data-dialog/plot-edit-data-dialog.component';
+import { EditConfusionMatrixDialogComponent } from './confusion-matrix-graph/edit-confusion-matrix-dialog/edit-confusion-matrix-dialog.component';
 
 
 @NgModule({
@@ -15,7 +15,7 @@ import { PlotEditDataDialogComponent } from './plot-edit-data-dialog/plot-edit-d
     PlotDownloadDialogComponent,
     ConfusionMatrixGraphComponent,
     ConfusionMatrixDialogComponent,
-    PlotEditDataDialogComponent
+    EditConfusionMatrixDialogComponent
   ],
   imports: [
     SharedModule,

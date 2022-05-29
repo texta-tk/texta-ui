@@ -1,15 +1,16 @@
 <mat-dialog-content>
   <div class="flex-col">
+
+    <mat-form-field>
+      <mat-label>Classes</mat-label>
+      <textarea rows="6" matInput [(ngModel)]="classes">
+        </textarea>
+      <mat-hint>each entry separated by newline</mat-hint>
+    </mat-form-field>
     <ng-container *ngFor="let item of objectKeys">
       <mat-form-field *ngIf="typeMap.get(item) === 'string'">
         <mat-label>{{item}}</mat-label>
         <input matInput [(ngModel)]="data[item]">
-      </mat-form-field>
-      <mat-form-field *ngIf="typeMap.get(item) === 'object' && objectMap[item]">
-        <mat-label>{{item}}</mat-label>
-        <textarea rows="6" matInput [(ngModel)]="objectMap[item]">
-        </textarea>
-        <mat-hint>each entry separated by newline</mat-hint>
       </mat-form-field>
       <div class="dialog-checkbox-fix" *ngIf="typeMap.get(item) === 'boolean'">
         <mat-checkbox  [(ngModel)]="data[item]">{{item}}</mat-checkbox>

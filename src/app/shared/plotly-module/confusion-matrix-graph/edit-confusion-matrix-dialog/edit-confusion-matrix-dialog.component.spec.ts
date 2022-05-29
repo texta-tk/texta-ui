@@ -1,12 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PlotEditDataDialogComponent } from './plot-edit-data-dialog.component';
-import {SharedModule} from '../../shared-module/shared.module';
+import { EditConfusionMatrixDialogComponent } from './edit-confusion-matrix-dialog.component';
+import {SharedModule} from '../../../shared-module/shared.module';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
-describe('PlotEditDataDialogComponent', () => {
-  let component: PlotEditDataDialogComponent;
-  let fixture: ComponentFixture<PlotEditDataDialogComponent>;
+describe('EditConfusionMatrixDialogComponent', () => {
+  let component: EditConfusionMatrixDialogComponent;
+  let fixture: ComponentFixture<EditConfusionMatrixDialogComponent>;
 
   const mockDialogRef = {
     close: jasmine.createSpy('close')
@@ -14,8 +15,8 @@ describe('PlotEditDataDialogComponent', () => {
   const data = {};
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PlotEditDataDialogComponent ],
-      imports: [SharedModule],
+      declarations: [ EditConfusionMatrixDialogComponent ],
+      imports: [SharedModule, BrowserAnimationsModule],
       providers: [
         {
           provide: MatDialogRef,
@@ -30,7 +31,7 @@ describe('PlotEditDataDialogComponent', () => {
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PlotEditDataDialogComponent);
+    fixture = TestBed.createComponent(EditConfusionMatrixDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

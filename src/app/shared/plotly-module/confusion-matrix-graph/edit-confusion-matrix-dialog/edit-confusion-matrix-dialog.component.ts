@@ -1,34 +1,31 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {LogService} from '../../../../core/util/log.service';
 
 @Component({
-  selector: 'app-plot-edit-data-dialog',
-  templateUrl: './plot-edit-data-dialog.component.html',
-  styleUrls: ['./plot-edit-data-dialog.component.scss']
+  selector: 'app-edit-confusion-matrix-dialog',
+  templateUrl: './edit-confusion-matrix-dialog.component.html',
+  styleUrls: ['./edit-confusion-matrix-dialog.component.scss']
 })
-export class PlotEditDataDialogComponent implements OnInit {
+export class EditConfusionMatrixDialogComponent implements OnInit {
   objectKeys: string[] = [];
   typeMap: Map<string, string> = new Map<string, string>();
   // tslint:disable-next-line:no-any
   objectMap: any = {};
+  classes: string;
 
   constructor(
-      // tslint:disable-next-line:no-any
-      @Inject(MAT_DIALOG_DATA) public data: any, private dialogRef: MatDialogRef<PlotEditDataDialogComponent>) {
+    // tslint:disable-next-line:no-any
+    @Inject(MAT_DIALOG_DATA) public data: any, private dialogRef: MatDialogRef<EditConfusionMatrixDialogComponent>, private logService: LogService) {
   }
 
   ngOnInit(): void {
     this.objectKeys = Object.keys(this.data).filter(x => x !== 'type');
+    if (this.data?.x) {
+      this.classes = this.stringListToString(this.data.x);
+    }
     this.objectKeys.forEach(x => {
       const type = typeof this.data[x];
-      if (this.isArrayOfStrings(this.data[x])) {
-        // heatmap y vals are reversed, if this component finds other uses refactor heatmap editing
-        if (x === 'y') {
-          this.objectMap[x] = this.stringListToString(this.data[x].reverse());
-        } else {
-          this.objectMap[x] = this.stringListToString(this.data[x]);
-        }
-      }
       this.typeMap.set(x, type);
     });
   }
@@ -51,15 +48,15 @@ export class PlotEditDataDialogComponent implements OnInit {
 
   // tslint:disable-next-line:no-any
   onCloseDialog(): void {
-    const keys = Object.keys(this.objectMap);
-    for (const key of keys) {
-      if (key === 'y') {
-        this.data[key] = this.newLineStringToList(this.objectMap[key] as string, this.data[key].length).reverse();
-      } else {
-        this.data[key] = this.newLineStringToList(this.objectMap[key] as string, this.data[key].length);
-      }
+    const labels = this.newLineStringToList(this.classes, this.data.y.length);
+    if (labels.length === this.data.x.length) {
+      // heatmap renders the labels from bottom to up so reverse them to get correct ordering for confusion matrix
+      this.data.y = [...labels].reverse();
+      this.data.x = [...labels];
+      this.dialogRef.close(this.data);
+    }else{
+      this.logService.snackBarMessage(`Number of classes should be ${this.data.y.length}`, 2000);
     }
-    this.dialogRef.close(this.data);
   }
 
   // tslint:disable-next-line:no-any

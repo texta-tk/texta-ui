@@ -3,7 +3,7 @@ import {PlotDownloadDialogComponent} from '../plot-download-dialog/plot-download
 import {MatDialog} from '@angular/material/dialog';
 import {PlotlyService} from 'angular-plotly.js';
 import {downloadIcon, editDataIcon} from '../icons';
-import {PlotEditDataDialogComponent} from '../plot-edit-data-dialog/plot-edit-data-dialog.component';
+import {EditConfusionMatrixDialogComponent} from './edit-confusion-matrix-dialog/edit-confusion-matrix-dialog.component';
 
 @Component({
   selector: 'app-confusion-matrix-graph',
@@ -21,21 +21,11 @@ export class ConfusionMatrixGraphComponent {
 
   @Input() set graphData(val: { confusion_matrix: string | number[][], labels: string[] }) {
     if (val?.confusion_matrix) {
-      let confMatrix = typeof val.confusion_matrix === 'string' ? JSON.parse(val.confusion_matrix) : val.confusion_matrix;
-      confMatrix = confMatrix.reverse();
-      const xvals: string[] = [...val.labels];
-      // heatmap renders the labels from bottom to up so reverse them to get correct ordering for confusion matrix
-      const yvals: string[] = [...val.labels].reverse();
-      this.confMatrixData = {
-        z: confMatrix,
-        x: xvals,
-        y: yvals,
-        colorscale: [[0, '#f7fbff'], [1, '#103269']],
-        type: 'heatmap',
-        hovertemplate: `Predicted: %{x}<br>True: %{y}<br>Amount: %{z}<extra></extra>`,
-        showscale: false,
-      };
-
+      this.confMatrixData = this.createConfMatrixTrace(val);
+      if(val.labels.length > 10){
+        this.graph.layout.xaxis.tickfont.size = 12;
+        this.graph.layout.yaxis.tickfont.size = 12;
+      }
       this.graph.data = [this.confMatrixData, this.createTextTrace(this.confMatrixData.z, this.confMatrixData.y, this.confMatrixData.x)];
       this.revision += 1;
       this.cdrRef.detectChanges();
@@ -59,6 +49,9 @@ export class ConfusionMatrixGraphComponent {
             size: 18,
           },
         },
+        tickfont: {
+          size: 18,
+        },
         side: 'top'
       },
       yaxis: {
@@ -67,6 +60,9 @@ export class ConfusionMatrixGraphComponent {
           font: {
             size: 18,
           }
+        },
+        tickfont: {
+          size: 18,
         },
         automargin: true,
       }
@@ -90,10 +86,16 @@ export class ConfusionMatrixGraphComponent {
           name: 'Edit plot data',
           icon: this.icon2,
           click: () => {
-            this.dialog.open(PlotEditDataDialogComponent, {width: '500px', data: this.confMatrixData}).afterClosed().subscribe(resp => {
-              this.graph.data = [this.confMatrixData, this.createTextTrace(this.confMatrixData.z, this.confMatrixData.y, this.confMatrixData.x)];
-              this.revision += 1;
-              this.cdrRef.detectChanges();
+            this.dialog.open(EditConfusionMatrixDialogComponent, {
+              width: '500px',
+              data: this.confMatrixData
+            }).afterClosed().subscribe(resp => {
+              if (resp) {
+                this.confMatrixData = resp;
+                this.graph.data = [resp, this.createTextTrace(resp.z, resp.y, resp.x)];
+                this.revision += 1;
+                this.cdrRef.detectChanges();
+              }
             });
           }
         },
@@ -144,6 +146,26 @@ export class ConfusionMatrixGraphComponent {
     const reportGraph = this.plotlyService.getInstanceByDivId('graph');
     const plotly = await this.plotlyService.getPlotly();
     plotly.downloadImage(reportGraph, config);
+  }
+
+  private createConfMatrixTrace(val: { confusion_matrix: string | number[][], labels: string[] }): any {
+    if (val?.confusion_matrix) {
+      let confMatrix = typeof val.confusion_matrix === 'string' ? JSON.parse(val.confusion_matrix) : val.confusion_matrix;
+      confMatrix = confMatrix.reverse();
+      const xvals: string[] = [...val.labels];
+      // heatmap renders the labels from bottom to up so reverse them to get correct ordering for confusion matrix
+      const yvals: string[] = [...val.labels].reverse();
+      return {
+        z: confMatrix,
+        x: xvals,
+        y: yvals,
+        colorscale: [[0, '#f7fbff'], [1, '#103269']],
+        type: 'heatmap',
+        hovertemplate: `Predicted: %{x}<br>True: %{y}<br>Amount: %{z}<extra></extra>`,
+        showscale: false,
+      };
+    }
+    return {};
   }
 
 }
