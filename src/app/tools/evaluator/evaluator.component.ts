@@ -20,6 +20,7 @@ import {Index} from '../../shared/types/Index';
 import {IndividualResultsDialogComponent} from './individual-results-dialog/individual-results-dialog.component';
 import {FilteredAverageDialogComponent} from './filtered-average-dialog/filtered-average-dialog.component';
 import {EditEvaluatorDialogComponent} from './edit-evaluator-dialog/edit-evaluator-dialog.component';
+import {MisclassifiedExamplesDialogComponent} from './misclassified-examples-dialog/misclassified-examples-dialog.component';
 
 @Component({
   selector: 'app-evaluator',
@@ -100,11 +101,12 @@ export class EvaluatorComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  openCreateDialog(): void {
+  openCreateDialog(type: 'binary' | 'multilabel' | 'entity'): void {
     const dialogRef = this.dialog.open(CreateEvaluatorDialogComponent, {
       maxHeight: '90vh',
       width: '750px',
       disableClose: true,
+      data: type
     });
     dialogRef.afterClosed().subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
@@ -239,6 +241,14 @@ export class EvaluatorComponent implements OnInit, OnDestroy, AfterViewInit {
       } else if (x) {
         this.logService.snackBarError(x, 3000);
       }
+    });
+  }
+
+  openMisclassifiedExamples(element: Evaluator): void {
+    this.dialog.open(MisclassifiedExamplesDialogComponent, {
+      data: {currentProjectId: this.currentProject.id, evaluatorId: element.id},
+      maxHeight: '90vh',
+      width: '700px',
     });
   }
 }

@@ -45,6 +45,12 @@ export class EvaluatorService {
       catchError(this.logService.handleError<Evaluator>('evaluatorIndividualResults')));
   }
 
+  getEvaluatorMisclassifiedExamples(projectId: number, evaluatorId: number): Observable<unknown | HttpErrorResponse> {
+    return this.http.get<Evaluator>(`${this.apiUrl}/projects/${projectId}/evaluators/${evaluatorId}/misclassified_examples/`).pipe(
+      tap(e => this.logService.logStatus(e, 'getEvaluatorMisclassifiedExamples')),
+      catchError(this.logService.handleError<Evaluator>('getEvaluatorMisclassifiedExamples')));
+  }
+
   evaluatorFilteredAverage(projectId: number, evaluatorId: number, body: unknown): Observable<{ precision: number; recall: number; f1_score: number; accuracy: number; count: number; } | HttpErrorResponse> {
     return this.http.post<{ precision: number; recall: number; f1_score: number; accuracy: number; count: number; }>(`${this.apiUrl}/projects/${projectId}/evaluators/${evaluatorId}/filtered_average/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'evaluatorFilteredAverage')),

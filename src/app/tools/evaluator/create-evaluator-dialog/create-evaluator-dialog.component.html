@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>New Evaluator task</h1>
+<h1 mat-dialog-title>New {{this.data | titlecase}} Evaluator</h1>
 <mat-dialog-content>
   <form (ngSubmit)="onSubmit(evaluatorForm.value)" [formGroup]="evaluatorForm" id="createForm" class="flex-col">
     <mat-form-field data-cy="appEvaluatorCreateDialogDesc">
@@ -46,7 +46,7 @@
         </mat-error>
         <mat-hint>{{evaluatorOptions?.actions?.POST?.true_fact?.help_text || ''}}</mat-hint>
       </mat-form-field>
-      <mat-form-field class="m-l-15" data-cy="appEvaluatorCreateDialogTrueFactValue" fxFlex>
+      <mat-form-field class="m-l-15" data-cy="appEvaluatorCreateDialogTrueFactValue" fxFlex *ngIf="this.data === 'binary'">
         <input [matAutocomplete]="trueVal"
                formControlName="trueFactValueFormControl"
                matInput
@@ -59,6 +59,10 @@
             {{option}}
           </mat-option>
         </mat-autocomplete>
+
+        <mat-error *ngIf="evaluatorForm.get('trueFactValueFormControl')?.hasError('required')">
+          This field is <strong>required</strong>
+        </mat-error>
         <mat-hint>{{evaluatorOptions?.actions?.POST?.true_fact_value?.help_text || ''}}</mat-hint>
       </mat-form-field>
     </div>
@@ -79,7 +83,7 @@
         </mat-error>
         <mat-hint>{{evaluatorOptions?.actions?.POST?.predicted_fact?.help_text || ''}}</mat-hint>
       </mat-form-field>
-      <mat-form-field class="m-l-15" data-cy="appEvaluatorCreateDialogPredictedFactValue" fxFlex>
+      <mat-form-field class="m-l-15" data-cy="appEvaluatorCreateDialogPredictedFactValue" fxFlex *ngIf="this.data === 'binary'">
         <input [matAutocomplete]="predictedVal"
                formControlName="predictedFactValueFormControl"
                matInput
@@ -92,10 +96,13 @@
             {{option}}
           </mat-option>
         </mat-autocomplete>
+        <mat-error *ngIf="evaluatorForm.get('predictedFactValueFormControl')?.hasError('required')">
+          This field is <strong>required</strong>
+        </mat-error>
         <mat-hint>{{evaluatorOptions?.actions?.POST?.predicted_fact_value?.help_text || ''}}</mat-hint>
       </mat-form-field>
     </div>
-    <mat-form-field>
+    <mat-form-field *ngIf="this.data !== 'entity'">
       <mat-label>Average function</mat-label>
       <mat-select [disableOptionCentering]="true" formControlName="averageFunctionFormControl"
                   panelClass="select-panel-reveal-input">
@@ -114,14 +121,50 @@
                                                          href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.precision_score.html">here</a>
       </mat-hint>
     </mat-form-field>
-    <div class="checkbox-info-row"  *ngIf="!evaluatorForm.get('predictedFactValueFormControl')?.value
-          && !evaluatorForm.get('trueFactValueFormControl')?.value">
+    <mat-form-field data-cy="appEvaluatorCreateDialogEntityField" fxFlex *ngIf="this.data === 'entity'">
+      <mat-label>Field</mat-label>
+      <mat-select [disableOptionCentering]="true"
+                  formControlName="fieldFormControl"
+                  panelClass="select-panel-reveal-input" required>
+        <mat-option *ngFor="let path of entityFieldDocPathOptions" [value]="path">
+          {{path}}
+        </mat-option>
+      </mat-select>
+
+      <mat-error *ngIf="evaluatorForm.get('fieldFormControl')?.hasError('required')">
+        <ng-container *ngIf="entityFieldDocPathOptions.length === 0">
+          True Fact Name and Predicted Fact Name have to share at least 1 doc path
+        </ng-container>
+        <ng-container *ngIf="entityFieldDocPathOptions.length !== 0">
+          This field is <strong>required</strong>
+        </ng-container>
+      </mat-error>
+      <mat-hint>{{evaluatorOptions?.actions?.POST?.field?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+
+    <div class="checkbox-info-row"  *ngIf="this.data === 'multilabel'">
       <mat-checkbox formControlName="addIndividualFormControl" style="margin-top: 1em">Add individual results</mat-checkbox>
       <app-info-icon [textTemplate]="resultsTemplate" textTitle="Add individual results">
         <ng-template #resultsTemplate><p>{{evaluatorOptions?.actions?.POST?.add_individual_results?.help_text || ''}}</p>
         </ng-template>
       </app-info-icon>
     </div>
+    <div class="checkbox-info-row"  *ngIf="this.data === 'entity'">
+      <mat-checkbox formControlName="addMisclassifiedFormControl" style="margin-top: 1em">Add misclassified examples
+      </mat-checkbox>
+      <app-info-icon [textTemplate]="misClassifiedTemplate" textTitle="Add misclassified examples">
+        <ng-template #misClassifiedTemplate><p>{{evaluatorOptions?.actions?.POST?.add_misclassified_examples?.help_text || ''}}</p>
+        </ng-template>
+      </app-info-icon>
+    </div>
+    <div class="checkbox-info-row"  *ngIf="this.data === 'entity'">
+      <mat-checkbox formControlName="tokenBasedFormControl" style="margin-top: 1em">Token based</mat-checkbox>
+      <app-info-icon [textTemplate]="tokenTemplate" textTitle="Token based">
+        <ng-template #tokenTemplate><p>{{evaluatorOptions?.actions?.POST?.token_based?.help_text || ''}}</p>
+        </ng-template>
+      </app-info-icon>
+    </div>
+
     <!--advanced -->
     <mat-expansion-panel expanded="false">
       <mat-expansion-panel-header>

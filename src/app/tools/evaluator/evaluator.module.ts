@@ -6,6 +6,7 @@ import {SharedModule} from '../../shared/shared-module/shared.module';
 import { IndividualResultsDialogComponent } from './individual-results-dialog/individual-results-dialog.component';
 import { FilteredAverageDialogComponent } from './filtered-average-dialog/filtered-average-dialog.component';
 import { EditEvaluatorDialogComponent } from './edit-evaluator-dialog/edit-evaluator-dialog.component';
+import { MisclassifiedExamplesDialogComponent } from './misclassified-examples-dialog/misclassified-examples-dialog.component';
 
 @NgModule({
     imports: [
@@ -17,7 +18,8 @@ import { EditEvaluatorDialogComponent } from './edit-evaluator-dialog/edit-evalu
     CreateEvaluatorDialogComponent,
     IndividualResultsDialogComponent,
     FilteredAverageDialogComponent,
-    EditEvaluatorDialogComponent
+    EditEvaluatorDialogComponent,
+    MisclassifiedExamplesDialogComponent
     ],
     providers: [],
  })

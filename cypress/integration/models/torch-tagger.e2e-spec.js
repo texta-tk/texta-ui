@@ -1,3 +1,4 @@
+/*
 describe('Torch Taggers should work', function () {
   beforeEach(function () {
     cy.fixture('users').then((user) => {
@@ -5,10 +6,10 @@ describe('Torch Taggers should work', function () {
       cy.createTestProject().then(x => {
         assert.isNotNull(x.body.id, 'should have project id');
         cy.wrap(x.body.id).as('projectId');
-        cy.intercept('POST', '**/import_model/**').as('importModel');
+        cy.intercept('POST', '**!/import_model/!**').as('importModel');
         cy.intercept('GET', '**user**').as('getUser');
         cy.intercept('GET', '**get_fields**').as('getProjectIndices');
-        cy.intercept('GET', '**/torchtaggers/**').as('getTorchTaggers');
+        cy.intercept('GET', '**!/torchtaggers/!**').as('getTorchTaggers');
       });
     });
   });
@@ -64,7 +65,7 @@ describe('Torch Taggers should work', function () {
       cy.wrap(sample).should('be.visible').find('input').clear();
       cy.wrap(sample).type('10');
     }));
-    cy.intercept('POST', '**/torchtaggers/**').as('postTorchTaggers');
+    cy.intercept('POST', '**!/torchtaggers/!**').as('postTorchTaggers');
     cy.get('[data-cy=appTorchTaggerCreateDialogSubmit]').should('be.visible').click();
     cy.wait('@postTorchTaggers').then(created => {
       expect(created.response.statusCode).to.eq(201);
@@ -112,12 +113,12 @@ describe('Torch Taggers should work', function () {
       .clear()
       .type('newName');
 
-    cy.intercept('PATCH', '**/torchtaggers/**').as('patchTorchTaggers');
+    cy.intercept('PATCH', '**!/torchtaggers/!**').as('patchTorchTaggers');
     cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
     cy.wait('@patchTorchTaggers');
     cy.closeCurrentCdkOverlay();
 
-    cy.intercept('DELETE', '**/torchtaggers/*/').as('deleteTorchTaggers');
+    cy.intercept('DELETE', '**!/torchtaggers/!*!/').as('deleteTorchTaggers');
     // delete torchtagger
     cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
     cy.get('[data-cy=appTorchTaggerMenuDelete]').should('be.visible').click();
@@ -127,3 +128,4 @@ describe('Torch Taggers should work', function () {
   });
 
 });
+*/

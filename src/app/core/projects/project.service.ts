@@ -161,6 +161,12 @@ export class ProjectService {
       catchError(this.logService.handleError('getProjectFacts')));
   }
 
+  elasticAggregateFacts(id: number, body: unknown): Observable<string[] | HttpErrorResponse> {
+    return this.http.post<string[]>(`${this.apiUrl}/projects/${id}/elastic/aggregate_facts/`, body).pipe(
+      tap(e => this.logService.logStatus(e, 'elasticAggregateFacts')),
+      catchError(this.logService.handleError<string[]>('elasticAggregateFacts')));
+  }
+
   getResourceCounts(projId: number): Observable<ProjectResourceCounts | HttpErrorResponse> {
     return this.http.get<ProjectResourceCounts>(`${this.apiUrl}/projects/${projId}/get_resource_counts/`).pipe(
       tap(e => this.logService.logStatus(e, 'get Project Resource Counts')),

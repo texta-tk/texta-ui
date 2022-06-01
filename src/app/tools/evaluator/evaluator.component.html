@@ -4,9 +4,10 @@
       <mat-progress-bar *ngIf="isLoadingResults" mode="indeterminate"></mat-progress-bar>
     </div>
     <div class="paginator-row">
-      <button (click)="openCreateDialog()" class="paginator-margin-left"
-              color="primary" data-cy="appEvaluatorCreateBtn" mat-raised-button>
-        CREATE
+      <button class="paginator-margin-left" mat-raised-button color="primary" style="padding-right: 7px"
+              data-cy="appEvaluatorCreateBtn"
+              [matMenuTriggerFor]="createMenu">
+        <span>CREATE<mat-icon style="vertical-align: middle">arrow_drop_down</mat-icon></span>
       </button>
       <button (click)="onDeleteAllSelected()" [disabled]="selectedRows.selected.length < 1" class="new-resource-btn"
               color="warn" data-cy="appEvaluatorDeleteBtn"
@@ -269,13 +270,17 @@
 <mat-menu #actionsMenu="matMenu">
   <ng-template let-element="element" let-i="i" matMenuContent>
     <ng-container *ngIf="element.task && element.task.status === 'completed'">
-      <button (click)="openIndividualResults(element)" *ngIf="element.evaluation_type === 'multilabel'"
+      <button (click)="openIndividualResults(element)" *ngIf="element.evaluation_type === 'multilabel' && element.add_individual_results"
               data-cy="appEvaluatorMenuIndividualResults" mat-menu-item>
         Individual results
       </button>
-      <button (click)="openFilteredAverage(element)" *ngIf="element.evaluation_type === 'multilabel'"
+      <button (click)="openFilteredAverage(element)" *ngIf="element.evaluation_type === 'multilabel' && element.add_individual_results"
               data-cy="appEvaluatorMenuFilteredAverage" mat-menu-item>
         Filtered average
+      </button>
+      <button (click)="openMisclassifiedExamples(element)" *ngIf="element.evaluation_type === 'entity' && element.add_misclassified_examples"
+              data-cy="appEvaluatorMenuMisclassifiedExamples" mat-menu-item>
+        Misclassified examples
       </button>
     </ng-container>
     <button (click)="onEdit(element)" data-cy="appEvaluatorMenuEdit" mat-menu-item>
@@ -287,6 +292,20 @@
     <mat-divider></mat-divider>
     <button (click)="onDelete(element, i)" data-cy="appEvaluatorMenuDelete" mat-menu-item>
       Delete
+    </button>
+  </ng-template>
+</mat-menu>
+
+<mat-menu #createMenu="matMenu">
+  <ng-template matMenuContent>
+    <button (click)="openCreateDialog('binary')" mat-menu-item data-cy="appEvaluatorCreateBtnMenuBinary">
+      Binary
+    </button>
+    <button (click)="openCreateDialog('multilabel')" mat-menu-item data-cy="appEvaluatorCreateBtnMenuMultilabel">
+      Multilabel
+    </button>
+    <button (click)="openCreateDialog('entity')" mat-menu-item data-cy="appEvaluatorCreateBtnMenuEntity">
+      Entity
     </button>
   </ng-template>
 </mat-menu>
