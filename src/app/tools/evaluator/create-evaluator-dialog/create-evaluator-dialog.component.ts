@@ -1,5 +1,5 @@
-import {ChangeDetectorRef, Component, DoCheck, OnDestroy, OnInit} from '@angular/core';
-import {MatDialogRef} from '@angular/material/dialog';
+import {ChangeDetectorRef, Component, DoCheck, Inject, OnDestroy, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {of, Subject} from 'rxjs';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {debounceTime, mergeMap, switchMap, takeUntil} from 'rxjs/operators';
@@ -14,6 +14,8 @@ import {ProjectStore} from '../../../core/projects/project.store';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 import {MatSelectChange} from '@angular/material/select';
 import {Choice} from '../../../shared/types/tasks/Embedding';
+import {Evaluator} from '../../../shared/types/tasks/Evaluator';
+import {CoreService} from '../../../core/core.service';
 
 interface OnSubmitParams {
   descriptionFormControl: string;
@@ -26,6 +28,9 @@ interface OnSubmitParams {
   addIndividualFormControl: boolean;
   esTimeoutFormControl: number;
   scrollSizeFormControl: number;
+  addMisclassifiedFormControl: boolean;
+  tokenBasedFormControl: boolean;
+  fieldFormControl: string;
 }
 
 @Component({
@@ -46,6 +51,9 @@ export class CreateEvaluatorDialogComponent implements OnInit, OnDestroy {
     predictedFactValueFormControl: new FormControl({value: '', disabled: true}),
     averageFunctionFormControl: new FormControl([]),
     addIndividualFormControl: new FormControl(true),
+    addMisclassifiedFormControl: new FormControl(true),
+    tokenBasedFormControl: new FormControl(true),
+    fieldFormControl: new FormControl(''),
     esTimeoutFormControl: new FormControl(10),
     scrollSizeFormControl: new FormControl(500),
   });
@@ -63,15 +71,56 @@ export class CreateEvaluatorDialogComponent implements OnInit, OnDestroy {
   // tslint:disable-next-line:no-any
   evaluatorOptions: any;
 
+  trueFactNameDocPaths: string[] = [];
+  predictedFactNameDocPaths: string[] = [];
+  entityFieldDocPathOptions: string[] = [];
+
   constructor(private dialogRef: MatDialogRef<CreateEvaluatorDialogComponent>,
               private projectService: ProjectService,
               private chd: ChangeDetectorRef,
+              @Inject(MAT_DIALOG_DATA) public data: 'binary' | 'multilabel' | 'entity',
               private evaluatorService: EvaluatorService,
               private logService: LogService,
               private projectStore: ProjectStore) {
   }
 
   ngOnInit(): void {
+    if (this.data === 'binary') {
+      this.evaluatorForm.get('trueFactValueFormControl')?.setValidators([Validators.required]);
+      this.evaluatorForm.get('predictedFactValueFormControl')?.setValidators([Validators.required]);
+    }
+    if (this.data === 'entity') {
+      this.evaluatorForm.get('trueFactNameFormControl')?.valueChanges.pipe(takeUntil(this.destroyed$), debounceTime(100), switchMap(val => {
+        if (this.currentProject && val) {
+          return this.projectService.elasticAggregateFacts(this.currentProject.id, {
+            key_field: 'fact',
+            value_field: 'doc_path',
+            filter_by_key: val
+          });
+        }
+        return of(null);
+      })).subscribe(resp => {
+        if (resp && !(resp instanceof HttpErrorResponse)) {
+          this.trueFactNameDocPaths = resp;
+          this.setEntityFieldDocPathOptions();
+        }
+      });
+      this.evaluatorForm.get('predictedFactNameFormControl')?.valueChanges.pipe(takeUntil(this.destroyed$), debounceTime(100), switchMap(val => {
+        if (this.currentProject && val) {
+          return this.projectService.elasticAggregateFacts(this.currentProject.id, {
+            key_field: 'fact',
+            value_field: 'doc_path',
+            filter_by_key: val
+          });
+        }
+        return of(null);
+      })).subscribe(resp => {
+        if (resp && !(resp instanceof HttpErrorResponse)) {
+          this.predictedFactNameDocPaths = resp;
+          this.setEntityFieldDocPathOptions();
+        }
+      });
+    }
 
     this.projectStore.getProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe(projIndices => {
       if (projIndices) {
@@ -157,12 +206,16 @@ export class CreateEvaluatorDialogComponent implements OnInit, OnDestroy {
       ...this.query ? {query: this.query} : {},
       true_fact: formData.trueFactNameFormControl,
       predicted_fact: formData.predictedFactNameFormControl,
-      ...formData.trueFactValueFormControl ? {true_fact_value: formData.trueFactValueFormControl} : {},
-      ...formData.predictedFactValueFormControl ? {predicted_fact_value: formData.predictedFactValueFormControl} : {},
-      average_function: formData.averageFunctionFormControl,
+      ...this.data === 'binary' ? {true_fact_value: formData.trueFactValueFormControl} : {},
+      ...this.data === 'binary' ? {predicted_fact_value: formData.predictedFactValueFormControl} : {},
+      ...this.data === 'multilabel' ? {add_individual_results: formData.addIndividualFormControl} : {},
+      ...this.data !== 'entity' ? {average_function: formData.averageFunctionFormControl} : {},
+      ...this.data === 'entity' ? {add_misclassified_examples: formData.addMisclassifiedFormControl} : {},
+      ...this.data === 'entity' ? {token_based: formData.tokenBasedFormControl} : {},
+      ...this.data === 'entity' ? formData.fieldFormControl ? {field: formData.fieldFormControl} : {} : {},
       scroll_size: formData.scrollSizeFormControl,
       es_timeout: formData.esTimeoutFormControl,
-      add_individual_results: formData.addIndividualFormControl
+      evaluation_type: this.data,
     };
 
     this.evaluatorService.createEvaluatorTask(this.currentProject.id, body).subscribe(resp => {
@@ -215,5 +268,21 @@ export class CreateEvaluatorDialogComponent implements OnInit, OnDestroy {
       trueFactVal.enable();
       trueFactVal.setValue('');
     }
+  }
+
+  setEntityFieldDocPathOptions(): void {
+    this.entityFieldDocPathOptions = [];
+    const fieldFormControl = this.evaluatorForm.get('fieldFormControl');
+    fieldFormControl?.reset();
+    fieldFormControl?.markAsTouched();
+    this.trueFactNameDocPaths.forEach(x => {
+      if (this.predictedFactNameDocPaths.includes(x)) {
+        this.entityFieldDocPathOptions.push(x);
+      }
+    });
+    if (this.entityFieldDocPathOptions.length === 1) {
+      fieldFormControl?.setValue(this.entityFieldDocPathOptions[0]);
+    }
+    console.log(this.evaluatorForm);
   }
 }

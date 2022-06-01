@@ -25,6 +25,7 @@ describe('Evaluator should work', function () {
   it('Evaluators should work', function () {
     initEvaluatorPage();
     cy.get('[data-cy=appEvaluatorCreateBtn]').should('be.visible').click();
+    cy.get('[data-cy=appEvaluatorCreateBtnMenuMultilabel]').click()
     cy.get('[data-cy=appEvaluatorCreateDialogDesc]').then((desc => {
       cy.wrap(desc).should('have.class', 'mat-focused').type('b').find('input').clear();
       cy.matFormFieldShouldHaveError(desc, 'required');
