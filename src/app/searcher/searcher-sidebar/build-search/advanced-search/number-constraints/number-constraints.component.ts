@@ -79,7 +79,7 @@ export class NumberConstraintsComponent implements OnInit, OnDestroy, AfterViewI
         range: {
           [field]: {
             gte: fromTo.from,
-            lte: fromTo.to
+            ...(fromTo.to === '') ? {} : {lte: fromTo.to}
           }
         }
       });

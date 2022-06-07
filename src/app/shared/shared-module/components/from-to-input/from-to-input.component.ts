@@ -7,7 +7,7 @@ import {takeUntil} from 'rxjs/operators';
 import {MatFormFieldControl} from '@angular/material/form-field';
 
 export class FromToInput {
-  constructor(public from: number, public to: number) {
+  constructor(public from: '' | number, public to: '' | number) {
   }
 }
 
@@ -34,8 +34,8 @@ export class FromToInputComponent implements ControlValueAccessor, MatFormFieldC
   id = `app-from-to-input-${FromToInputComponent.nextId++}`;
   describedBy = '';
 
-  previousFrom = 0;
-  previousTo = 0;
+  previousFrom: '' | number = 0;
+  previousTo: '' | number = 0;
   readonly autofilled: boolean;
 
   @HostBinding('class.host-floating-label') hostLabel: boolean;
@@ -119,15 +119,13 @@ export class FromToInputComponent implements ControlValueAccessor, MatFormFieldC
     if (from >= 0 && to >= from) {
       return new FromToInput(Number(from), Number(to));
     } else {
-      return new FromToInput(Number(from), Number(from));
+      return new FromToInput(Number(from), to === '' ? '' : Number(to));
     }
   }
 
   set value(tel: FromToInput | null) {
     const {from, to} = tel || new FromToInput(0, 0);
     this.parts.setValue({from, to});
-    this.checkValidators.next();
-    this.stateChanges.next();
   }
 
   onChange = (_: any) => {
@@ -144,20 +142,25 @@ export class FromToInputComponent implements ControlValueAccessor, MatFormFieldC
     if (this.ngControl && this.ngControl.control) {
       this.ngControl.control.setValue({from, to});
     }
-    this.previousFrom = +from;
-    this.previousTo = +to;
+    this.previousFrom = from === '' ? '' : +from;
+    this.previousTo = to === '' ? '' : +to;
   }
 
   onTouched = () => {
     const from = Number(this.parts.value.from);
     let to = Number(this.parts.value.to);
+
     if (!isNaN(from) && !isNaN(to)) {
       if (to < from) {
-        to = from;
-        if (this.ngControl && this.ngControl.control) {
-          this.ngControl.control.setValue({from, to});
+        if (to !== 0) {
+          to = from;
         }
-        this.writeValue(new FromToInput(from, to));
+        // if "to" is 0 and "from" > "to": convert it to infinite number
+        const toVal = (to === 0) ? '' : to;
+        if (this.ngControl && this.ngControl.control) {
+          this.ngControl.control.setValue({from, toVal});
+        }
+        this.writeValue(new FromToInput(from, toVal));
       }
     }
     this.parts.markAsTouched();
