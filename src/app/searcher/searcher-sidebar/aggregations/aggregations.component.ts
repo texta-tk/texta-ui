@@ -69,7 +69,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
     });
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroy$)).subscribe(projectFields => {
       if (projectFields) {
-        this.projectFields = ProjectIndex.cleanProjectIndicesFields(projectFields, ['fact', 'text', 'date', 'long', 'float'], []);
+        this.projectFields = ProjectIndex.cleanProjectIndicesFields(projectFields, ['fact', 'text', 'date', 'long', 'float', 'boolean'], []);
         this.fieldIndexMap = ProjectIndex.getFieldToIndexMap(projectFields);
         const distinct = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(x => x.fields).flat(), (x => x.path));
         const textaFactIndex = distinct.findIndex(item => item.type === 'fact');
@@ -243,6 +243,10 @@ export class AggregationsComponent implements OnInit, OnDestroy {
 
   fieldTypeDate(val: Field): boolean {
     return (val && (val.type === 'date'));
+  }
+  
+  fieldTypeBool(val: Field): boolean {
+    return (val && (val.type === 'boolean'));
   }
 
   removeAggregation(index: number): void {

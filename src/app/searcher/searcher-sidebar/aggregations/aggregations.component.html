@@ -33,6 +33,10 @@
             <mat-icon>pin</mat-icon>
             {{fields.path}}
           </ng-container>
+          <ng-container *ngIf="fields.type === 'boolean'">
+            <mat-icon>flaky</mat-icon>
+            {{fields.path}}
+          </ng-container>
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -51,6 +55,11 @@
         [fieldsFormControl]="aggregation.formControl"
         [aggregationObj]="aggregation" (relativeFrequency)="onRelativeFrequency($event)">
       </app-date-aggregation>
+    </ng-container>
+    <ng-container *ngIf="fieldTypeBool(aggregation.formControl.value)">
+      <app-bool-aggregation
+        [fieldsFormControl]="aggregation.formControl"
+        [aggregationObj]="aggregation"></app-bool-aggregation>
     </ng-container>
     <ng-container *ngIf="fieldTypeNumber(aggregation.formControl.value)">
       <app-number-aggregation

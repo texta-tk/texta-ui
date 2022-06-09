@@ -33,6 +33,7 @@ import { NumberAggregationComponent } from './searcher-sidebar/aggregations/numb
 import { AggregationResultsNumberComponent } from './aggregation-results/aggregation-results-number/aggregation-results-number.component';
 import {AppPlotlyModule} from '../shared/plotly-module/app-plotly.module';
 import { FactsFilterDialogComponent } from './searcher-table/facts-filter-dialog/facts-filter-dialog.component';
+import { BoolAggregationComponent } from './searcher-sidebar/aggregations/bool-aggregation/bool-aggregation.component';
 
 @NgModule({
   declarations: [
@@ -65,6 +66,7 @@ import { FactsFilterDialogComponent } from './searcher-table/facts-filter-dialog
     NumberAggregationComponent,
     AggregationResultsNumberComponent,
     FactsFilterDialogComponent,
+    BoolAggregationComponent,
   ],
   imports: [
     SharedModule,
