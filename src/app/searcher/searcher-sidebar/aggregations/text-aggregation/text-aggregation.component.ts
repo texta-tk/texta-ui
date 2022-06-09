@@ -18,6 +18,7 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
   isMainAgg: boolean;
   aggregationType: 'terms' | 'significant_text' | 'significant_terms' | 'string_stats' = 'terms';
   aggregationSize = 20;
+  minDocCount = 1;
   destroy$: Subject<boolean> = new Subject();
 
   constructor(
@@ -87,7 +88,16 @@ export class TextAggregationComponent implements OnInit, OnDestroy {
                   order: {'fact_val_reverse.doc_count': 'desc'},
                   ...this.aggregationType === 'terms' ? {show_term_doc_count_error: true} : {}
                 },
-                aggs: {fact_val_reverse: {reverse_nested: {}}}
+                aggs: {fact_val_reverse: {reverse_nested: {}},
+                    fact_val_reverse_bucket_filter: {
+                      bucket_selector: {
+                        buckets_path: {
+                          totalDocs: 'fact_val_reverse._count'
+                        },
+                        script: `params.totalDocs >= ${this.minDocCount}`
+                      }
+                    }
+                  }
               }
             }
           }

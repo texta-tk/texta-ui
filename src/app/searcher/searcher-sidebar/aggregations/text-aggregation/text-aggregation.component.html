@@ -6,13 +6,24 @@
                 [(ngModel)]="aggregationType"
                 name="aggregationTextType" (selectionChange)="updateAggregations()">
       <mat-option value="terms" selected>frequent items</mat-option>
-      <mat-option value="significant_terms" *ngIf="fieldsFormControl?.value?.type !== 'fact' && isMainAgg" matTooltip="Mainly used alongside search constraints or as a sub aggregation, optimized for fields that consist of keywords">significant items
+      <mat-option value="significant_terms" *ngIf="fieldsFormControl?.value?.type !== 'fact' && isMainAgg"
+                  matTooltip="Mainly used alongside search constraints or as a sub aggregation, optimized for fields that consist of keywords">
+        significant items
       </mat-option>
-      <mat-option value="significant_text" *ngIf="fieldsFormControl?.value?.type !== 'fact'  && isMainAgg" matTooltip="Mainly used alongside search constraints or as a sub aggregation, optimized for free-text fields">significant words
+      <mat-option value="significant_text" *ngIf="fieldsFormControl?.value?.type !== 'fact'  && isMainAgg"
+                  matTooltip="Mainly used alongside search constraints or as a sub aggregation, optimized for free-text fields">
+        significant words
       </mat-option>
-      <mat-option value="string_stats" *ngIf="fieldsFormControl?.value?.type !== 'fact'  && notSubAgg" matTooltip="Computes statistics over string values extracted from the aggregated documents (ES 7.11+)">string stats
+      <mat-option value="string_stats" *ngIf="fieldsFormControl?.value?.type !== 'fact'  && notSubAgg"
+                  matTooltip="Computes statistics over string values extracted from the aggregated documents (ES 7.11+)">
+        string stats
       </mat-option>
     </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="max-width" *ngIf="fieldsFormControl?.value?.type === 'fact'">
+    <mat-label>Min number of documents</mat-label>
+    <input type="number" min="1" matInput class="max-width" [(ngModel)]="minDocCount"
+           (change)="updateAggregations()">
   </mat-form-field>
   <mat-label>Aggregation size</mat-label>
   <mat-slider class="max-width" min="5" max="500" step="5" [(ngModel)]="aggregationSize"
