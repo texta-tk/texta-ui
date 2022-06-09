@@ -215,7 +215,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
         if (firstLevelAgg === 'aggs') {
           aggInner = aggregation.aggs;
           return this.getInnerMostAggs(aggInner);
-        } else {
+        } else if(!aggregation[firstLevelAgg].hasOwnProperty('bucket_selector')) {
           inCaseNoAggsFound = firstLevelAgg;
         }
       }
