@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
-import {forkJoin, Observable, of, Subject} from 'rxjs';
+import {forkJoin, merge, Observable, of, Subject} from 'rxjs';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {filter, map, mergeMap, startWith, switchMap, take, takeUntil} from 'rxjs/operators';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
@@ -88,6 +88,7 @@ export class CreateAnnotatorDialogComponent implements OnInit, OnDestroy {
   projectLabelSets: ScrollableDataSource<LabelSet>;
   users: UserProfile[];
   currentUser: UserProfile;
+  updateFacts$ = new Subject<''>();
 
   constructor(private dialogRef: MatDialogRef<CreateAnnotatorDialogComponent>,
               private projectService: ProjectService,
@@ -157,8 +158,9 @@ export class CreateAnnotatorDialogComponent implements OnInit, OnDestroy {
         this.annotatorForm.get('entityFormGroup')?.enable();
       }
     });
-
-    this.filteredProjectFacts = this.annotatorForm?.get('binaryFormGroup')?.get('factNameFormControl')?.valueChanges
+    const binaryValueChanges = this.annotatorForm?.get('binaryFormGroup')?.get('factNameFormControl')?.valueChanges ||  of(null);
+    const entityvalueChanges = this.annotatorForm?.get('entityFormGroup')?.get('factNameFormControl')?.valueChanges ||  of(null);
+    this.filteredProjectFacts = merge(binaryValueChanges, entityvalueChanges, this.updateFacts$)
       .pipe(takeUntil(this.destroyed$),
         startWith(''),
         map(val => this.filter(val))
@@ -226,6 +228,7 @@ export class CreateAnnotatorDialogComponent implements OnInit, OnDestroy {
       this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat(), false, false).pipe(takeUntil(this.destroyed$)).subscribe(resp => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
           this.projectFacts = resp;
+          this.updateFacts$.next('');
         } else {
           this.logService.snackBarError(resp);
         }
@@ -263,10 +266,16 @@ export class CreateAnnotatorDialogComponent implements OnInit, OnDestroy {
   getFactsForField(field: string, indices: ProjectIndex[]): void {
     if (field && indices.length > 0) {
       this.projectFacts = [];
-      this.projectService.getProjectFacts(this.currentProject.id, indices.map((x: ProjectIndex) => [{name: x.index}]).flat(), true, true, true).pipe(takeUntil(this.destroyed$)).subscribe(resp => {
+
+      const body = {
+        key_field: 'doc_path',
+        value_field: 'fact',
+        filter_by_key: field,
+      };
+      this.projectService.elasticAggregateFacts(this.currentProject.id, body).pipe(takeUntil(this.destroyed$)).subscribe(resp => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
-          // todo implement doc_path filtering when backend supports it
-          this.projectFacts = resp.map(x => x.name);
+          this.projectFacts = resp;
+          this.updateFacts$.next(''); // reflect changes in the fact menu instantly
         } else {
           this.logService.snackBarError(resp);
         }
