@@ -6,6 +6,7 @@ import {AppConfigService} from '../../util/app-config.service';
 import {LogService} from '../../util/log.service';
 import {CRFExtractor} from '../../../shared/types/tasks/CRFExtractor';
 import {ResultsWrapper} from '../../../shared/types/Generic';
+import {Evaluator} from '../../../shared/types/tasks/Evaluator';
 
 @Injectable({
   providedIn: 'root'
@@ -27,6 +28,14 @@ export class CRFExtractorService {
     return this.http.post<CRFExtractor>(`${this.apiUrl}/projects/${projectId}/crf_extractors/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'createCRFExtractorTask')),
       catchError(this.logService.handleError<CRFExtractor>('createCRFExtractorTask')));
+  }
+
+  editCRFExtractorTask(body: unknown, projectId: number, crfId: number): Observable<unknown | HttpErrorResponse> {
+    return this.http.patch<unknown>(
+      `${this.apiUrl}/projects/${projectId}/crf_extractors/${crfId}/`, body
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'editCRFExtractorTask')),
+      catchError(this.logService.handleError<unknown>('editCRFExtractorTask')));
   }
 
   bulkDeleteCRFExtractorTasks(projectId: number, body: unknown): Observable<{ 'num_deleted': number, 'deleted_types': { string: number }[] } | HttpErrorResponse> {

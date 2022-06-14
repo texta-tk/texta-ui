@@ -19,6 +19,7 @@ import {QueryDialogComponent} from '../../shared/shared-module/components/dialog
 import {ApplyToIndexDialogComponent} from './apply-to-index-dialog/apply-to-index-dialog.component';
 import {TagTextDialogComponent} from './tag-text-dialog/tag-text-dialog.component';
 import {Index} from '../../shared/types/Index';
+import {EditCrfDialogComponent} from './edit-crf-dialog/edit-crf-dialog.component';
 
 @Component({
   selector: 'app-crf-extractor',
@@ -226,6 +227,20 @@ export class CRFExtractorComponent implements OnInit, OnDestroy, AfterViewInit {
             this.logService.snackBarError(resp, 5000);
           }
         });
+      }
+    });
+  }
+
+  onEdit(element: CRFExtractor): void {
+    this.dialog.open(EditCrfDialogComponent, {
+      data: element,
+      maxHeight: '90vh',
+      width: '500px',
+    }).afterClosed().subscribe((x: CRFExtractor | HttpErrorResponse) => {
+      if (x && !(x instanceof HttpErrorResponse)) {
+        element.description = x.description;
+      } else if (x) {
+        this.logService.snackBarError(x, 3000);
       }
     });
   }

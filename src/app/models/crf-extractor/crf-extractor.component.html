@@ -238,8 +238,11 @@
       </button>
     </ng-container>
     <button (click)="openCreateDialog(element)" data-cy="appCRFExtractorMenuClone" mat-menu-item
-            matTooltip="Fill a new create window with the same parameters">
+            >
       Clone & Edit
+    </button>
+    <button (click)="onEdit(element)" data-cy="appCRFExtractorMenuEdit" mat-menu-item>
+      Edit
     </button>
     <button (click)="retrainCRF(element)" data-cy="appCRFExtractorMenuRetrain" mat-menu-item>
       Retrain

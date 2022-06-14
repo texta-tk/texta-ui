@@ -10,6 +10,7 @@ describe('Crf-extractor should work', function () {
         cy.intercept('GET', '**get_fields**').as('getProjectIndices');
         cy.intercept('GET', '**/crf_extractors/**').as('getCrfExtractors');
         cy.intercept('POST', '**/crf_extractors/**').as('postCrfExtractor');
+        cy.intercept('PATCH', '**/crf_extractors/**/').as('patchCrfExtractor');
       });
     });
   });
@@ -106,10 +107,20 @@ describe('Crf-extractor should work', function () {
     extractText();
     applyToIndex();
 
+    cy.get('.cdk-column-actions:nth(1)').should('be.visible').click();
+    cy.get('[data-cy=appCRFExtractorMenuEdit]').should('be.visible').click();
+    cy.get('[data-cy=appCrfEditDialogDesc]').should('be.visible').click()
+      .clear()
+      .type('newName');
+    cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
+    cy.wait('@patchCrfExtractor').its('response.statusCode').should('eq', 200);
+
     cy.get('.cdk-column-actions:nth(1)').click();
     cy.get('[data-cy=appCRFExtractorMenuDelete]').click();
     cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
     cy.get('.cdk-column-actions').should('have.length', 1);
+
+
 
   });
 });
