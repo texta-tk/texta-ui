@@ -29,7 +29,7 @@ export interface IndexSplitter {
   str_val: string;
   indices: Index[];
   distribution: string;
-  custom_distribution: string;
+  custom_distribution: { [key: string]: number };
   task: Task;
 }
 

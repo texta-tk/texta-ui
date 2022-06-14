@@ -113,9 +113,10 @@
       </mat-select>
       <mat-hint>{{indexSplitterOptions?.actions?.POST?.distribution?.help_text || ''}}</mat-hint>
     </mat-form-field>
-    <mat-form-field>
+    <mat-form-field *ngIf="indexSplitterForm?.get('distributionFormControl')?.value?.display_name === 'custom'">
+      <mat-label>Custom distribution</mat-label>
       <input autocomplete="off" formControlName="customDistributionFormControl" matInput
-             placeholder="Custom distribution">
+             placeholder='{"Label": 2, "Label2" : 5}'>
       <mat-hint>{{indexSplitterOptions?.actions?.POST?.custom_distribution?.help_text || ''}}</mat-hint>
     </mat-form-field>
   </form>

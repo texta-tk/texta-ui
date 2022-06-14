@@ -50,7 +50,7 @@ export class CreateIndexSplitterDialogComponent implements OnInit, OnDestroy {
     factFormControl: new FormControl(''),
     strValFormControl: new FormControl({value: '', disabled: true}),
     distributionFormControl: new FormControl(''),
-    customDistributionFormControl: new FormControl(this.data?.cloneIndexSplitter?.custom_distribution || ''),
+    customDistributionFormControl: new FormControl(this.data?.cloneIndexSplitter?.custom_distribution ? JSON.stringify(this.data?.cloneIndexSplitter?.custom_distribution) : ''),
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
@@ -174,7 +174,7 @@ export class CreateIndexSplitterDialogComponent implements OnInit, OnDestroy {
       ...formData.factFormControl ? {fact: formData.factFormControl.name} : {},
       ...formData.strValFormControl ? {str_val: formData.strValFormControl} : {},
       distribution: formData.distributionFormControl.value,
-      custom_distribution: formData.customDistributionFormControl,
+      ...formData.customDistributionFormControl ? {custom_distribution: formData.customDistributionFormControl} : {},
       ...this.query ? {query: this.query} : {},
     };
 
