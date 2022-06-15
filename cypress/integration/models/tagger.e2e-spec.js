@@ -30,7 +30,7 @@ describe('taggers should work', function () {
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
       cy.get('[data-cy=appTaggerMenuListFeatures]').should('be.visible').click();
       cy.wait('@postTagger');
-      cy.get('.mat-list-item-content').should('have.length', 8);
+      cy.get('.mat-list-item-content').should('have.length', 100);
       cy.closeCurrentCdkOverlay();
       // Stop words
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
