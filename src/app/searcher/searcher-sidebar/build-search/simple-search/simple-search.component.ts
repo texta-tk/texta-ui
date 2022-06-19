@@ -70,9 +70,8 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
       this.searcherComponentService.setIsLoading(false);
       if (result && !(result instanceof HttpErrorResponse)) {
         this.searcherComponentService.nextSearch(new Search(result, this.elasticSearchQuery, {
-          liveSearch: true,
           onlyShowMatchingColumns: true,
-          showShortVersion: this.showShortVersion,
+          showShortVersion: {wordContextDistance: this.showShortVersion, highlightedFacts: []},
           highlightSearcherMatches: this.highlightSearcherMatches,
           highlightTextaFacts: this.highlightTextaFacts,
           onlyHighlightMatching: this.highlightMatching ? [] : undefined

@@ -6,11 +6,10 @@ import {
   NumberConstraint,
   TextConstraint
 } from '../searcher/searcher-sidebar/build-search/Constraints';
-import {HttpErrorResponse} from "@angular/common/http";
-import {UserProfile} from "./types/UserProfile";
-import {Project} from "./types/Project";
-import {AppConfigService} from "../core/util/app-config.service";
-import {coerceBooleanProperty} from "@angular/cdk/coercion";
+import {UserProfile} from './types/UserProfile';
+import {Project} from './types/Project';
+import {AppConfigService} from '../core/util/app-config.service';
+import {coerceBooleanProperty} from '@angular/cdk/coercion';
 
 export interface LegibleColor {
   backgroundColor: string;
@@ -144,24 +143,24 @@ export class UtilityFunctions {
         });
       }
       if (constraint instanceof FactConstraint) {
-        // tslint:disable-next-line:no-any
-        const inputGroupArrayJson: any[] = [];
-        for (const inputGroup of constraint.inputGroupArray) {
-          inputGroupArrayJson.push({
-            factTextOperator: inputGroup.factTextOperatorFormControl.value,
-            factTextName: inputGroup.factTextFactNameFormControl.value,
-            factTextInput: inputGroup.factTextInputFormControl.value
-          });
+        let inputGroupArrayJson;
+        if (constraint.inputGroupArray !== undefined) {
+          inputGroupArrayJson = [];
+          for (const inputGroup of constraint.inputGroupArray) {
+            inputGroupArrayJson.push({
+              factTextOperator: inputGroup.factTextOperatorFormControl.value,
+              factTextName: inputGroup.factTextFactNameFormControl.value,
+              factTextInput: inputGroup.factTextInputFormControl.value
+            });
+          }
         }
-
         outPutJson.push({
           fields: constraint.fields,
           factName: constraint.factNameFormControl.value,
           factNameOperator: constraint.factNameOperatorFormControl.value,
-          factTextOperator: constraint.factTextOperatorFormControl.value,
-          inputGroup: inputGroupArrayJson
-        })
-        ;
+          factTextOperator: constraint.factValueOperatorFormControl.value,
+          inputGroup: inputGroupArrayJson // undefined = fact name constraint
+        });
       }
     }
     return outPutJson;

@@ -95,7 +95,7 @@ export class BuildSearchComponent implements OnInit, OnDestroy {
     if (saveType === 1) {
       this.simpleSearchComponent.makeQuery(this.simpleSearchComponent.searchFormControl.value);
     } else {
-      this.advancedSearchComponent.searchOnChange(this.advancedSearchComponent.elasticQuery);
+      this.advancedSearchComponent.updateElasticQuery(this.advancedSearchComponent.elasticQuery);
     }
 
     const state = this.localStorageService.getProjectState(this.currentProject);

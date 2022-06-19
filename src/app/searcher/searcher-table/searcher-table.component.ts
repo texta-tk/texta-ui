@@ -46,7 +46,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
   public columnFormControl = new FormControl([]);
   public isLoadingResults = false;
   public paginatorLength: number;
-  public searchOptions: SearchOptions = {liveSearch: true, highlightTextaFacts: true, highlightSearcherMatches: true};
+  public searchOptions: SearchOptions = {highlightTextaFacts: true, highlightSearcherMatches: true};
   public currentElasticQuery: ElasticsearchQuery;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
@@ -104,6 +104,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
 
     this.searchService.getSearch().pipe(takeUntil(this.destroy$)).subscribe(resp => {
       if (resp && resp.searchOptions) {
+        console.table(resp.searchOptions.showShortVersion?.highlightedFacts);
         this.searchOptions = resp.searchOptions;
         if (this.searchOptions.onlyShowMatchingColumns) {
           const columnsToHighlight: string[] = [];

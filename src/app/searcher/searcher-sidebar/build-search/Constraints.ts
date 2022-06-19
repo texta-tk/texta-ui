@@ -6,6 +6,7 @@ import {HighlightSettings} from '../../../shared/SettingVars';
 import * as _moment from 'moment';
 
 const moment = _moment;
+
 export class Constraint {
   fields: Field[];
 
@@ -81,17 +82,16 @@ export class DateConstraint extends Constraint {
 export class FactConstraint extends Constraint {
   factNameOperatorFormControl = new FormControl();
   factNameFormControl = new FormControl();
-  factTextOperatorFormControl = new FormControl();
-  inputGroupArray: FactTextInputGroup[] = [];
-  isFactValue: boolean;
+  factValueOperatorFormControl = new FormControl();
+  inputGroupArray: FactTextInputGroup[] | undefined; // will always be undefined with factName type
 
-  constructor(fields: Field[], factNameOperator?: string, factName?: string, factTextOperator?: string,
+  constructor(fields: Field[], isFactValue: boolean, factNameOperator?: string, factName?: string, factTextOperator?: string,
               inputGroupArray?: FactTextInputGroup[]) {
     super(fields);
-    this.factTextOperatorFormControl.setValue(factTextOperator ? factTextOperator : 'must');
+    this.factValueOperatorFormControl.setValue(factTextOperator ? factTextOperator : 'must');
     this.factNameOperatorFormControl.setValue(factNameOperator ? factNameOperator : 'must');
     this.factNameFormControl.setValue(factName ? factName : []);
-    this.inputGroupArray = inputGroupArray ? inputGroupArray : [];
+    this.inputGroupArray = isFactValue ? inputGroupArray || [] : undefined;
   }
 }
 

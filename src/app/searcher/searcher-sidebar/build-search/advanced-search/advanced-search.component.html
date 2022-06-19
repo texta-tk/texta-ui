@@ -41,24 +41,24 @@
   </div>
   <div class="content" *ngIf="isTextConstraint(constraint)" data-cy="appSearcherSideBarBuildSearchTextConstraint">
     <app-text-constraints [textConstraint]="$any(constraint)" [elasticSearchQuery]="elasticQuery"
-                          (constraintChanged)="searchOnChange($event)"></app-text-constraints>
+                          (constraintChanged)="updateElasticQuery($event)"></app-text-constraints>
   </div>
   <div class="content" *ngIf="isDateConstraint(constraint)" data-cy="appSearcherSideBarBuildSearchDateConstraint">
     <app-date-constraints [dateConstraint]="$any(constraint)" [elasticSearchQuery]="elasticQuery"
                           [currentProject]="currentProject"
-                          (constraintChanged)="searchOnChange($event)"></app-date-constraints>
+                          (constraintChanged)="updateElasticQuery($event)"></app-date-constraints>
   </div>
   <div class="content" *ngIf="isFactNameConstraint(constraint)" data-cy="appSearcherSideBarBuildSearchFactConstraint">
     <app-fact-constraints [factConstraint]="$any(constraint)" [elasticSearchQuery]="elasticQuery" [indices]="selectedIndices"
                           [currentProject]="currentProject"
-                          (constraintChanged)="searchOnChange($event)"></app-fact-constraints>
+                          (constraintChanged)="updateElasticQuery($event)"></app-fact-constraints>
   </div>
   <div class="content" *ngIf="isNumberConstraint(constraint)" data-cy="appSearcherSideBarBuildSearchNumberConstraint">
     <app-number-constraints [numberConstraint]="$any(constraint)" [elasticSearchQuery]="elasticQuery"
-                          (constraintChanged)="searchOnChange($event)"></app-number-constraints>
+                          (constraintChanged)="updateElasticQuery($event)"></app-number-constraints>
   </div>
   <div class="content" *ngIf="isBooleanConstraint(constraint)" data-cy="appSearcherSideBarBuildSearchBooleanConstraint">
     <app-boolean-constraints [booleanConstraint]="$any(constraint)" [elasticSearchQuery]="elasticQuery"
-                            (constraintChanged)="searchOnChange($event)"></app-boolean-constraints>
+                            (constraintChanged)="updateElasticQuery($event)"></app-boolean-constraints>
   </div>
 </div>
