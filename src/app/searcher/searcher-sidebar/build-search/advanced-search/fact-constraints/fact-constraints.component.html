@@ -1,4 +1,4 @@
-<div *ngIf="!(_factConstraint?.inputGroupArray && _factConstraint.inputGroupArray.length>0)" fxLayout="row">
+<div *ngIf="_factConstraint?.inputGroupArray === undefined" fxLayout="row">
   <mat-form-field class="margin-right" fxFlex="40" data-cy="appSearcherSideBarBuildSearchFactNameOperator">
     <mat-label>Operator</mat-label>
     <mat-select [disableOptionCentering]="true" [formControl]="factNameOperatorFormControl"
@@ -19,11 +19,11 @@
   </mat-form-field>
 </div>
 
-<div *ngIf="_factConstraint?.inputGroupArray && _factConstraint.inputGroupArray.length>0" fxLayout="column">
+<div *ngIf="_factConstraint?.inputGroupArray !== undefined" fxLayout="column">
   <div fxLayout="row">
     <mat-form-field fxFlex="25" data-cy="appSearcherSideBarBuildSearchFactValueOperator">
       <mat-label>Operator</mat-label>
-      <mat-select [disableOptionCentering]="true" [formControl]="factTextOperatorFormControl"
+      <mat-select [disableOptionCentering]="true" [formControl]="factValueOperatorFormControl"
                   panelClass="select-panel-reveal-input">
         <mat-option value="must">and</mat-option>
         <mat-option value="should">or</mat-option>

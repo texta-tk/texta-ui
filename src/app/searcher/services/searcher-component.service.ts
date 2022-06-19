@@ -16,11 +16,22 @@ import {LocalStorageService} from '../../core/util/local-storage.service';
 import * as _moment from 'moment';
 
 const moment = _moment;
+
 @Injectable()
 export class SearcherComponentService {
   public savedSearchSelection = new SelectionModel<SavedSearch>(true, []);
   // building fact constraints
-  private constraintBluePrint = {
+  private readonly constraintBluePrint: {
+    factTextOperator: string;
+    inputGroup: {
+      factTextOperator: string;
+      factTextName: string;
+      factTextInput: string;
+    }[] | undefined;
+    fields: { path: string; type: string }[];
+    factName: string[];
+    factNameOperator: string
+  } = {
     fields: [{
       path: 'texta_facts',
       type: 'fact'
@@ -103,6 +114,7 @@ export class SearcherComponentService {
     return this.savedSearch.asObservable();
   }
 
+  // NB! this object is mutated via references :(
   public nextAdvancedSearchConstraints$(constraintList: Constraint[]): void {
     this.advancedSearchConstraints$.next(constraintList);
   }
@@ -116,15 +128,20 @@ export class SearcherComponentService {
     constraint.query_constraints = [];
     this.getAdvancedSearchConstraints$().pipe(take(1)).subscribe(constraintList => {
       if (typeof constraint.query_constraints !== 'string') {
-        const factConstraint = constraintList.find(y => y instanceof FactConstraint && y.inputGroupArray.length > 0);
+        const factConstraint = constraintList.find(y => y instanceof FactConstraint && y.inputGroupArray !== undefined) as FactConstraint;
         // inputGroup means its a fact_val constraint
-        if (factConstraint instanceof FactConstraint && factConstraint.inputGroupArray.length > 0) {
+        if (factConstraint && factConstraint.inputGroupArray) {
           if (!factConstraint.inputGroupArray.some(group => group.factTextFactNameFormControl.value === factName &&
             group.factTextInputFormControl.value === factValue)) {
             factConstraint.inputGroupArray.push(new FactTextInputGroup('must', factName, factValue));
           }
         } else {
           const constraintBluePrint = {...this.constraintBluePrint};
+          constraintBluePrint.inputGroup = [{
+            factTextOperator: 'must',
+            factTextName: 'texta-facts-chips-placeholder',
+            factTextInput: 'texta-facts-chips-placeholder'
+          }];
           constraintBluePrint.inputGroup[0].factTextInput = factValue;
           constraintBluePrint.inputGroup[0].factTextName = factName;
           constraint.query_constraints.push(constraintBluePrint);
@@ -166,16 +183,16 @@ export class SearcherComponentService {
     constraint.query_constraints = [];
     this.getAdvancedSearchConstraints$().pipe(take(1)).subscribe(constraintList => {
       if (typeof constraint.query_constraints !== 'string') {
-        const factConstraint = constraintList.find(y => y instanceof FactConstraint && !(y.inputGroupArray.length > 0));
+        const factConstraint = constraintList.find(y => y instanceof FactConstraint && y.inputGroupArray === undefined) as FactConstraint;
         // inputGroup means its a fact_val constraint
-        if (factConstraint instanceof FactConstraint && (factConstraint.isFactValue || factConstraint.inputGroupArray.length === 0)) {
+        if (factConstraint) {
           if (!factConstraint.factNameFormControl.value.includes(fact)) {
             factConstraint.factNameFormControl.setValue([fact, ...factConstraint.factNameFormControl.value]);
           }
         } else {
           const constraintBluePrint = {...this.constraintBluePrint};
           constraintBluePrint.factName = [fact];
-          constraintBluePrint.inputGroup = [];
+          constraintBluePrint.inputGroup = undefined; // this makes it a fact-name constraint
           constraint.query_constraints.push(constraintBluePrint);
         }
         constraint.query_constraints.push(...UtilityFunctions.convertConstraintListToJson(constraintList));

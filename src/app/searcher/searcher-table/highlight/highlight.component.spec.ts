@@ -202,6 +202,12 @@ describe('HighlightComponent', () => {
             doc_path: 'text'
           },
           {
+            str_val: 'Eesti',
+            spans: '[[43, 48]]',
+            fact: 'ORG',
+            doc_path: 'text'
+          },
+          {
             str_val: 'Eesti Energia',
             spans: '[[43, 56]]',
             fact: 'ORG',
@@ -470,7 +476,7 @@ describe('HighlightComponent', () => {
         onlyHighlightMatching: [new FactConstraint([{
           path: 'texta_facts',
           type: 'fact'
-        }], 'must', 'PER', 'must')]
+        }], false, 'must', 'PER', 'must')]
       };
       console.log(component.highlightArray);
       const highlightedText: string[] = [];
@@ -499,7 +505,7 @@ describe('HighlightComponent', () => {
         onlyHighlightMatching: [new FactConstraint([{
           path: 'texta_facts',
           type: 'fact'
-        }], 'must', '', 'must', [new FactTextInputGroup('must', 'LOC', 'Eesti')])]
+        }], true, 'must', '', 'must', [new FactTextInputGroup('must', 'LOC', 'Eesti')])]
       };
       console.log(component.highlightArray);
       const highlightedText: string[] = [];
@@ -548,7 +554,7 @@ describe('HighlightComponent', () => {
         data: jsonData,
         highlightTextaFacts: true,
         highlightHyperlinks: true,
-        showShortVersion: 3,
+        showShortVersion: {wordContextDistance: 3, highlightedFacts: []},
         currentColumn: 'text',
       };
       console.log(JSON.parse(JSON.stringify(component.highlightArray, replaceColor)));
@@ -565,7 +571,7 @@ describe('HighlightComponent', () => {
         data: jsonData,
         highlightTextaFacts: true,
         highlightHyperlinks: true,
-        showShortVersion: 3,
+        showShortVersion: {wordContextDistance: 3, highlightedFacts: []},
         currentColumn: 'text',
       };
       console.log(JSON.parse(JSON.stringify(component.highlightArray, replaceColor)));
@@ -583,7 +589,7 @@ describe('HighlightComponent', () => {
         data: jsonData,
         highlightTextaFacts: true,
         highlightHyperlinks: true,
-        showShortVersion: 1,
+        showShortVersion: {wordContextDistance: 1, highlightedFacts: []},
         currentColumn: 'text',
       };
       console.log(JSON.parse(JSON.stringify(component.highlightArray, replaceColor)));
@@ -605,7 +611,7 @@ describe('HighlightComponent', () => {
         data: dataJ,
         highlightTextaFacts: true,
         highlightHyperlinks: true,
-        showShortVersion: 3,
+        showShortVersion: {wordContextDistance: 3, highlightedFacts: []},
         currentColumn: 'ArticleBody_mlp.text',
       };
       console.log(JSON.parse(JSON.stringify(component.highlightArray, replaceColor)));

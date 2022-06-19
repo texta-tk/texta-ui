@@ -17,7 +17,7 @@ import {BehaviorSubject, of, Subject} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {UtilityFunctions} from '../../../../shared/UtilityFunctions';
 import {SearcherOptions} from '../../../SearcherOptions';
-import {Search, SearchOptions} from '../../../../shared/types/Search';
+import {ConstraintHighlightedFact, Search, SearchOptions, ShowShortVersionData} from '../../../../shared/types/Search';
 import {MatSelectChange} from '@angular/material/select';
 import {ProjectService} from '../../../../core/projects/project.service';
 import {ProjectStore} from '../../../../core/projects/project.store';
@@ -27,6 +27,7 @@ import {LexiconService} from '../../../../core/lexicon/lexicon.service';
 import {UserProfile} from '../../../../shared/types/UserProfile';
 import {Lexicon} from '../../../../shared/types/Lexicon';
 import {SearcherComponentService} from '../../../services/searcher-component.service';
+
 @Component({
   selector: 'app-advanced-search',
   templateUrl: './advanced-search.component.html',
@@ -41,11 +42,6 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
   currentUser: UserProfile;
   // building the whole search query onto this
   elasticQuery: ElasticsearchQuery = new ElasticsearchQuery();
-  searchOptions: SearchOptions = {
-    liveSearch: true,
-    highlightTextaFacts: true,
-    highlightSearcherMatches: true,
-  };
   @Input() highlightMatching: boolean;
   @Input() showShortVersion: number;
   @Input() highlightSearcherMatches: boolean;
@@ -125,15 +121,15 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     })).subscribe(result => {
       this.searchService.setIsLoading(false);
       if (result && !(result instanceof HttpErrorResponse)) {
-        if (this.highlightMatching) {
-          this.searchOptions.onlyHighlightMatching = this.constraintList.filter(x => x instanceof FactConstraint) as FactConstraint[];
-        } else {
-          this.searchOptions.onlyHighlightMatching = undefined;
-        }
-        this.searchOptions.showShortVersion = this.showShortVersion;
-        this.searchOptions.highlightSearcherMatches = this.highlightSearcherMatches;
-        this.searchOptions.highlightTextaFacts = this.highlightTextaFacts;
-        this.searchService.nextSearch(new Search(result, this.elasticQuery, this.searchOptions));
+        const searchOptions: SearchOptions = {
+          highlightTextaFacts: this.highlightTextaFacts,
+          highlightSearcherMatches: this.highlightSearcherMatches,
+          ...this.showShortVersion ? {showShortVersion: this.makeShowShortVersionObject()} : {},
+          ...this.highlightMatching
+            ? {onlyHighlightMatching: this.constraintList.filter(x => x instanceof FactConstraint) as FactConstraint[]}
+            : {}
+        };
+        this.searchService.nextSearch(new Search(result, this.elasticQuery, searchOptions));
       }
     });
 
@@ -169,11 +165,11 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
       } else if (formFields[0].type === 'boolean') {
         this.constraintList.push(new BooleanConstraint(formFields, true));
       } else if (formFields[0].path === 'texta_facts') {
-        const newFactConstraint = new FactConstraint(formFields);
         if (formFields[0].type !== 'factName') {
-          newFactConstraint.isFactValue = true;
+          this.constraintList.push(new FactConstraint(formFields, true));
+        } else {
+          this.constraintList.push(new FactConstraint(formFields, false));
         }
-        this.constraintList.push(newFactConstraint);
       }
       this.updateFieldsToHighlight(this.constraintList);
       this.checkMinimumMatch(); // query minimum_should_match
@@ -223,18 +219,11 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     return item.path;
   }
 
-  trackByIndex(index: number, item: unknown): number {
-    return index;
-  }
-
-  searchOnChange(event: ElasticsearchQuery): void {
+  updateElasticQuery(query: ElasticsearchQuery): void {
     // dont want left focus events
-    if (event === this.elasticQuery) {
+    // query should always match component elasticQuery
+    if (query === this.elasticQuery) {
       this.searchService.nextElasticQuery(this.elasticQuery);
-      if (this.searchOptions.liveSearch) {
-        // reset page when we change query
-        this.elasticQuery.elasticSearchQuery.from = 0;
-      }
     }
   }
 
@@ -282,15 +271,17 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
         } else if (this.mappingNumeric.includes(formFields[0].type)) {
           this.constraintList.push(new NumberConstraint(formFields, constraint.fromToInput, constraint.operator));
         } else {
-          const inputGroupArray: FactTextInputGroup[] = [];
-          if (constraint.hasOwnProperty('inputGroup')) {
+          if (constraint.hasOwnProperty('inputGroup') && constraint.inputGroup !== undefined) {
+            const inputGroupArray: FactTextInputGroup[] = [];
             for (const factTextGroup of constraint.inputGroup) {
               inputGroupArray.push(
                 new FactTextInputGroup(factTextGroup.factTextOperator, factTextGroup.factTextName, factTextGroup.factTextInput));
             }
+            this.constraintList.push(new FactConstraint(formFields, true,
+              constraint.factNameOperator, constraint.factName, constraint.factTextOperator, inputGroupArray));
+          } else {
+            this.constraintList.push(new FactConstraint(formFields, false, constraint.factNameOperator, constraint.factName));
           }
-          this.constraintList.push(
-            new FactConstraint(formFields, constraint.factNameOperator, constraint.factName, constraint.factTextOperator, inputGroupArray));
         }
       }
     }
@@ -299,7 +290,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
     this.changeDetectorRef.detectChanges(); // dont use markforcheck because we need updates immediately, so we can update elasticquery
     this.searchService.nextElasticQuery(this.elasticQuery);
     // since we changed the object reference of constraintList update the subject,
-    // for example this is used in fact-chips to create constraints
+    // for example this is used in fact-chips to create constraints, saved queries etc
     this.searchService.nextAdvancedSearchConstraints$(this.constraintList);
   }
 
@@ -309,4 +300,44 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy {
   }
 
 
+  private makeShowShortVersionObject(): ShowShortVersionData {
+    const outPutArr: ConstraintHighlightedFact[] = [];
+    if (this.constraintList) {
+      const factConstraints = this.constraintList.filter(x => x instanceof FactConstraint) as FactConstraint[];
+      factConstraints.forEach(constraint => {
+        // means fact name
+        if (constraint.inputGroupArray === undefined) {
+          if (constraint.factNameFormControl.value.length && constraint.factNameOperatorFormControl.value !== 'must_not') {
+            constraint.factNameFormControl.value.forEach((val: string) => {
+              outPutArr.push({
+                fact: val,
+              });
+            });
+          }
+        } else {// fact val
+          if (constraint.inputGroupArray.length) {
+            constraint.inputGroupArray.forEach(inptGrp => {
+              // if parent is must not and inptGrp is must not it means match so include those rare cases
+              if (constraint.factValueOperatorFormControl.value === 'must_not') {
+                if (inptGrp.factTextOperatorFormControl.value === 'must_not') {
+                  outPutArr.push({
+                    fact: inptGrp.factTextFactNameFormControl.value,
+                    factValue: inptGrp.factTextInputFormControl.value
+                  });
+                }
+              } else {
+                if (inptGrp.factTextOperatorFormControl.value !== 'must_not') {
+                  outPutArr.push({
+                    fact: inptGrp.factTextFactNameFormControl.value,
+                    factValue: inptGrp.factTextInputFormControl.value
+                  });
+                }
+              }
+            });
+          }
+        }
+      });
+    }
+    return {wordContextDistance: this.showShortVersion, highlightedFacts: outPutArr};
+  }
 }

@@ -1,4 +1,4 @@
-import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
+import {ComponentFixture, fakeAsync, TestBed, tick, waitForAsync} from '@angular/core/testing';
 
 import {FactConstraintsComponent} from './fact-constraints.component';
 import {SharedModule} from '../../../../../shared/shared-module/shared.module';
@@ -40,7 +40,7 @@ describe('FactConstraintsComponent', () => {
     fixture = TestBed.createComponent(FactConstraintsComponent);
     component = fixture.componentInstance;
     component.elasticSearchQuery = new ElasticsearchQuery();
-    component.factConstraint = new FactConstraint([{path: 'test', type: 'fact'}]);
+    component.factConstraint = new FactConstraint([{path: 'test', type: 'fact'}], true);
     fixture.detectChanges();
   });
 
@@ -57,24 +57,30 @@ describe('FactConstraintsComponent', () => {
   });
 
   it('should not be able to select inputgroup fact value unless fact name', () => {
-    for (const inputGroup of component._factConstraint.inputGroupArray) {
-      expect(inputGroup.factTextInputFormControl.disabled).toBeTruthy();
+    expect(component._factConstraint?.inputGroupArray?.length).toBeGreaterThan(0);
+    if (component._factConstraint?.inputGroupArray) {
+      for (const inputGroup of component._factConstraint.inputGroupArray) {
+        expect(inputGroup.factTextInputFormControl.disabled).toBeTruthy();
+      }
     }
   });
 
   it('inputgroup should generate correct query when fact name, value', fakeAsync(() => {
     component.currentProject = new Project();
-    for (const inputGroup of component._factConstraint.inputGroupArray) {
-      inputGroup.factTextFactNameFormControl.setValue('PER');
-      inputGroup.factTextInputFormControl.setValue('Putin');
-      tick(200);
-      expect(inputGroup.filteredOptions.length).toBeGreaterThan(0);
-      component.changeFactValue(inputGroup.filteredOptions[0], inputGroup);
-      for (const query of innerNestedAccessor(inputGroup.formQuery)) {
-        if (query.match.hasOwnProperty('texta_facts.fact')) {
-          expect(query.match['texta_facts.fact']).toEqual('PER', 'expected fact name to be PER');
-        } else {
-          expect(query.match['texta_facts.str_val']).toEqual('Putin', 'expected fact value to be Putin');
+    expect(component._factConstraint?.inputGroupArray?.length).toBeGreaterThan(0);
+    if (component._factConstraint?.inputGroupArray) {
+      for (const inputGroup of component._factConstraint.inputGroupArray) {
+        inputGroup.factTextFactNameFormControl.setValue('PER');
+        inputGroup.factTextInputFormControl.setValue('Putin');
+        tick(200);
+        expect(inputGroup.filteredOptions.length).toBeGreaterThan(0);
+        component.changeFactValue(inputGroup.filteredOptions[0], inputGroup);
+        for (const query of innerNestedAccessor(inputGroup.formQuery)) {
+          if (query.match.hasOwnProperty('texta_facts.fact')) {
+            expect(query.match['texta_facts.fact']).toEqual('PER', 'expected fact name to be PER');
+          } else {
+            expect(query.match['texta_facts.str_val']).toEqual('Putin', 'expected fact value to be Putin');
+          }
         }
       }
     }
@@ -82,15 +88,18 @@ describe('FactConstraintsComponent', () => {
 
   it('inputgroup operator should generate correct query', fakeAsync(() => {
     component.currentProject = new Project();
-    for (const inputGroup of component._factConstraint.inputGroupArray) {
-      inputGroup.factTextFactNameFormControl.setValue('PER');
-      inputGroup.factTextInputFormControl.setValue('Putin');
-      tick(200);
-      component.changeFactValue(inputGroup.filteredOptions[0], inputGroup);
-      const operators: ['must', 'must_not', 'should'] = ['must', 'must_not', 'should'];
-      for (const operator of operators) {
-        inputGroup.factTextOperatorFormControl.setValue(operator);
-        expect(innerFactAccessor(inputGroup.query, 0, operator, true).length).toBeGreaterThan(0);
+    expect(component._factConstraint?.inputGroupArray?.length).toBeGreaterThan(0);
+    if (component._factConstraint?.inputGroupArray) {
+      for (const inputGroup of component._factConstraint.inputGroupArray) {
+        inputGroup.factTextFactNameFormControl.setValue('PER');
+        inputGroup.factTextInputFormControl.setValue('Putin');
+        tick(200);
+        component.changeFactValue(inputGroup.filteredOptions[0], inputGroup);
+        const operators: ['must', 'must_not', 'should'] = ['must', 'must_not', 'should'];
+        for (const operator of operators) {
+          inputGroup.factTextOperatorFormControl.setValue(operator);
+          expect(innerFactAccessor(inputGroup.query, 0, operator, true).length).toBeGreaterThan(0);
+        }
       }
     }
   }));

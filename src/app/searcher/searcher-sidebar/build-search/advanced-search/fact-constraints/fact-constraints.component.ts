@@ -28,7 +28,7 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
   destroyed$: Subject<boolean> = new Subject<boolean>();
   factNameOperatorFormControl = new FormControl();
   factNameFormControl = new FormControl();
-  factTextOperatorFormControl = new FormControl();
+  factValueOperatorFormControl = new FormControl();
   inputGroupQueryArray: unknown[] = [];
   formQueryBluePrint = {
     nested: {
@@ -66,12 +66,15 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
       this._factConstraint = value;
       this.factNameOperatorFormControl = this._factConstraint.factNameOperatorFormControl;
       this.factNameFormControl = this._factConstraint.factNameFormControl;
-      this.factTextOperatorFormControl = this._factConstraint.factTextOperatorFormControl;
-      if (this._factConstraint.isFactValue) { // saved searches work because im checking inputGroupArray length in html
-        this.createGroupListeners();
-      } else {
-        for (const inputGroup of this._factConstraint.inputGroupArray) { // saved search, already has array
-          this.createGroupListeners(inputGroup);
+      this.factValueOperatorFormControl = this._factConstraint.factValueOperatorFormControl;
+      // undefined means its fact name constraint
+      if (this._factConstraint.inputGroupArray !== undefined) { // saved searches work because im checking inputGroupArray length in html
+        if (this._factConstraint.inputGroupArray.length === 0) {
+          this.createGroupListeners();
+        } else {
+          for (const inputGroup of this._factConstraint.inputGroupArray) { // saved search, already has array
+            this.createGroupListeners(inputGroup);
+          }
         }
       }
     }
@@ -79,69 +82,71 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
 
   // attach valuechanges listeners to formcontrols, and populate with savedsearch data if there is any
   public createGroupListeners(inputGroup?: FactTextInputGroup): void {
-    if (!inputGroup) {
-      inputGroup = new FactTextInputGroup();
-      inputGroup.formQuery.nested.inner_hits.name = `${FactConstraintsComponent.componentCount}_??`;
-      this._factConstraint.inputGroupArray.push(inputGroup);
-      // cant select when factname is null
-      inputGroup.factTextInputFormControl.disable();
-    } else { // set default values selected already when we have inputgroup
-      this.changeFactValue(inputGroup.factTextInputFormControl.value, inputGroup);
-    }
-
-    inputGroup.query.bool = {[this.factTextOperatorFormControl.value]: inputGroup.formQuery};
-    this.inputGroupQueryArray.push(inputGroup.query);
-    inputGroup.factTextOperatorFormControl.valueChanges.pipe(
-      takeUntil(this.destroyed$),
-      startWith(inputGroup.factTextOperatorFormControl.value as string)).subscribe(val => {
-      if (val) {
-        // todo fix in TS 3.7
-        // tslint:disable-next-line:no-non-null-assertion
-        inputGroup!.query!.bool = {[val]: inputGroup!.formQuery};
+    if (this._factConstraint.inputGroupArray) {
+      if (!inputGroup) {
+        inputGroup = new FactTextInputGroup();
+        inputGroup.formQuery.nested.inner_hits.name = `${FactConstraintsComponent.componentCount}_??`;
+        this._factConstraint.inputGroupArray.push(inputGroup);
+        // cant select when factname is null
+        inputGroup.factTextInputFormControl.disable();
+      } else { // set default values selected already when we have inputgroup
+        this.changeFactValue(inputGroup.factTextInputFormControl.value, inputGroup);
       }
-    });
-    inputGroup.factTextFactNameFormControl.valueChanges.pipe(
-      takeUntil(this.destroyed$),
-      startWith(inputGroup.factTextFactNameFormControl.value as string),
-      pairwise()).subscribe(([prev, next]: [string, string]) => {
-      if (next) {
-        // todo fix in TS 3.7
-        // tslint:disable-next-line:no-non-null-assertion
-        inputGroup!.factTextInputFormControl.enable();
-        // set inital value to autocomplete after selecting a new fact name
-        if (next !== prev) {
+
+      inputGroup.query.bool = {[this.factValueOperatorFormControl.value]: inputGroup.formQuery};
+      this.inputGroupQueryArray.push(inputGroup.query);
+      inputGroup.factTextOperatorFormControl.valueChanges.pipe(
+        takeUntil(this.destroyed$),
+        startWith(inputGroup.factTextOperatorFormControl.value as string)).subscribe(val => {
+        if (val) {
           // todo fix in TS 3.7
           // tslint:disable-next-line:no-non-null-assertion
-          inputGroup!.factTextInputFormControl.setValue('');
+          inputGroup!.query!.bool = {[val]: inputGroup!.formQuery};
         }
-      }
-    });
-    inputGroup.factTextInputFormControl.valueChanges.pipe(
-      takeUntil(this.destroyed$),
-      debounceTime(100),
-      switchMap(value => {
-        if (inputGroup) {
-          this.changeFactValue(value, inputGroup);
-        }
-        // todo fix in TS 3.7
-        // tslint:disable-next-line:no-non-null-assertion
-        if ((value || value === '' && inputGroup!.factTextFactNameFormControl.value) && this.currentProject && inputGroup) {
-          inputGroup.filteredOptions = ['Loading...'];
-          inputGroup.isLoadingOptions = true;
-          return this.projectService.projectFactValueAutoComplete(this.currentProject.id,
+      });
+      inputGroup.factTextFactNameFormControl.valueChanges.pipe(
+        takeUntil(this.destroyed$),
+        startWith(inputGroup.factTextFactNameFormControl.value as string),
+        pairwise()).subscribe(([prev, next]: [string, string]) => {
+        if (next) {
+          // todo fix in TS 3.7
+          // tslint:disable-next-line:no-non-null-assertion
+          inputGroup!.factTextInputFormControl.enable();
+          // set inital value to autocomplete after selecting a new fact name
+          if (next !== prev) {
             // todo fix in TS 3.7
             // tslint:disable-next-line:no-non-null-assertion
-            inputGroup!.factTextFactNameFormControl.value, 10, value, this.indices);
+            inputGroup!.factTextInputFormControl.setValue('');
+          }
         }
-        return of(null);
-      })).subscribe(val => {
-      if (val && !(val instanceof HttpErrorResponse) && inputGroup) {
-        inputGroup.isLoadingOptions = false;
-        inputGroup.filteredOptions = val;
-        this.changeDetectorRef.detectChanges();
-        // if it returned something then it means its a valid value
-      }
-    });
+      });
+      inputGroup.factTextInputFormControl.valueChanges.pipe(
+        takeUntil(this.destroyed$),
+        debounceTime(100),
+        switchMap(value => {
+          if (inputGroup) {
+            this.changeFactValue(value, inputGroup);
+          }
+          // todo fix in TS 3.7
+          // tslint:disable-next-line:no-non-null-assertion
+          if ((value || value === '' && inputGroup!.factTextFactNameFormControl.value) && this.currentProject && inputGroup) {
+            inputGroup.filteredOptions = ['Loading...'];
+            inputGroup.isLoadingOptions = true;
+            return this.projectService.projectFactValueAutoComplete(this.currentProject.id,
+              // todo fix in TS 3.7
+              // tslint:disable-next-line:no-non-null-assertion
+              inputGroup!.factTextFactNameFormControl.value, 10, value, this.indices);
+          }
+          return of(null);
+        })).subscribe(val => {
+        if (val && !(val instanceof HttpErrorResponse) && inputGroup) {
+          inputGroup.isLoadingOptions = false;
+          inputGroup.filteredOptions = val;
+          this.changeDetectorRef.detectChanges();
+          // if it returned something then it means its a valid value
+        }
+      });
+    }
   }
 
   changeFactValue(val: MatAutocompleteSelectedEvent | string, inputGroup: FactTextInputGroup): void {
@@ -156,15 +161,17 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
   }
 
   public deleteInputGroup(inputGroup: FactTextInputGroup): void {
-    const queryIndex = this.inputGroupQueryArray.indexOf(inputGroup.query, 0);
-    if (queryIndex > -1) {
-      this.inputGroupQueryArray.splice(queryIndex, 1);
+    if (this._factConstraint.inputGroupArray) {
+      const queryIndex = this.inputGroupQueryArray.indexOf(inputGroup.query, 0);
+      if (queryIndex > -1) {
+        this.inputGroupQueryArray.splice(queryIndex, 1);
+      }
+      const index = this._factConstraint.inputGroupArray.indexOf(inputGroup, 0);
+      if (index > -1) {
+        this._factConstraint.inputGroupArray.splice(index, 1);
+      }
+      this.constraintChanged.emit(this.elasticSearchQuery);
     }
-    const index = this._factConstraint.inputGroupArray.indexOf(inputGroup, 0);
-    if (index > -1) {
-      this._factConstraint.inputGroupArray.splice(index, 1);
-    }
-    this.constraintChanged.emit(this.elasticSearchQuery);
   }
 
 
@@ -223,12 +230,12 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
           }
         }
       });
-      this.inputGroupQuery.bool = {[this.factTextOperatorFormControl.value]: this.inputGroupQueryArray};
+      this.inputGroupQuery.bool = {[this.factValueOperatorFormControl.value]: this.inputGroupQueryArray};
       // todo fix in TS 3.7
       // tslint:disable-next-line:no-non-null-assertion
       this.elasticSearchQuery!.elasticSearchQuery!.query!.bool!.must.push(this.inputGroupQuery);
-      this.factTextOperatorFormControl.valueChanges.pipe(
-        startWith(this.factTextOperatorFormControl.value as string, this.factTextOperatorFormControl.value as string),
+      this.factValueOperatorFormControl.valueChanges.pipe(
+        startWith(this.factValueOperatorFormControl.value as string, this.factValueOperatorFormControl.value as string),
         pairwise(),
         takeUntil(this.destroyed$)).subscribe((value: string[]) => {
         this.inputGroupQuery.bool = {[value[1]]: this.inputGroupQueryArray};

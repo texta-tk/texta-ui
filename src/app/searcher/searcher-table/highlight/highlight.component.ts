@@ -13,6 +13,7 @@ import {LegibleColor, UtilityFunctions} from '../../../shared/UtilityFunctions';
 import {HighlightSettings} from '../../../shared/SettingVars';
 import {environment} from '../../../../environments/environment';
 import {AppConfigService} from '../../../core/util/app-config.service';
+import {ConstraintHighlightedFact, ShowShortVersionData} from '../../../shared/types/Search';
 
 // tslint:disable:no-any
 export interface HighlightSpan {
@@ -32,7 +33,7 @@ export interface HighlightConfig {
   onlyHighlightMatching?: FactConstraint[];
   highlightTextaFacts: boolean;
   highlightHyperlinks: boolean;
-  showShortVersion?: number | undefined;
+  showShortVersion?: ShowShortVersionData;
   data: any;
 }
 
@@ -453,8 +454,10 @@ export class HighlightComponent {
       ];
       const colors = HighlightComponent.generateColorsForFacts(highlightTerms);
       const highlights = this.makeHighLights(highlightConfig.data[highlightConfig.currentColumn], highlightTerms, colors);
+
       if (highlightConfig.showShortVersion) {
-        this.highlightArray = HighlightComponent.makeShowShortVersion(highlightConfig.showShortVersion, highlights,
+        this.convertSearchedFactsToSearcherHighlights(highlightConfig.showShortVersion.highlightedFacts, highlights);
+        this.highlightArray = HighlightComponent.makeShowShortVersion(highlightConfig.showShortVersion.wordContextDistance, highlights,
           highlightConfig.data[highlightConfig.currentColumn]);
       } else {
         this.highlightArray = highlights;
@@ -463,6 +466,27 @@ export class HighlightComponent {
       this.highlightArray = [];
     }
     this.renderDom(this.highlightArray);
+  }
+
+  // so showshortversion would know which facts to focus on
+  /*** Note: mutates the input highlights array for performance reasons ***/
+  private convertSearchedFactsToSearcherHighlights(highlightedFacts: ConstraintHighlightedFact[], highlights: HighlightObject[]): void {
+    highlightedFacts.forEach(x => {
+      // need to match both
+      if (x.fact && x.factValue) {
+        for (const y of highlights) {
+          if (y.span?.fact === x.fact && y.span.str_val === x.factValue) {
+            y.span.searcherHighlight = true;
+          }
+        }
+      } else if (x.fact) { // factname search
+        for (const y of highlights) {
+          if (y.span?.fact === x.fact) {
+            y.span.searcherHighlight = true;
+          }
+        }
+      }
+    });
   }
 
   constructFactArray(highlightConfig: HighlightConfig): HighlightSpan[] {
@@ -474,6 +498,10 @@ export class HighlightComponent {
     const distinct: HighlightSpan[] = [];
     const unique = new Set();
     for (const el of fieldFacts) {
+      // if a term is highlighted multiple times by different facts it will only choose one of them
+      // in those cases showshortversion might not highlight the fact if its not chosen first
+      // a way around this is to enable show only matching facts
+      // todo?
       const accessor = `${el.spans} | ${el.sent_index}`;
       if (!unique.has(accessor)) {
         distinct.push(el);
@@ -488,18 +516,20 @@ export class HighlightComponent {
       // if these exist match all facts of the type, PER, LOC, ORG etc. gets all unique global fact names
       const globalFacts = [...new Set([].concat.apply([], highlightConfig.onlyHighlightMatching.map(x => x.factNameFormControl.value)))];
       // get all unique fact names and their values as an object
-      // @ts-ignore
-      const factValues = [...new Set([].concat.apply([], (highlightConfig.onlyHighlightMatching.map(x => x.inputGroupArray.map(y => {
-        return {value: y.factTextInputFormControl.value, name: y.factTextFactNameFormControl.value};
-      })))))] as { value: string, name: string }[];
+      const factValues: { value: string, name: string }[] = [...new Set(([] as { value: string, name: string }[]).concat.apply([], highlightConfig.onlyHighlightMatching.map(x => {
+        if (x.inputGroupArray) {
+          return x.inputGroupArray.map(y => {
+            return {value: y.factTextInputFormControl.value, name: y.factTextFactNameFormControl.value};
+          });
+        }
+        return [];
+      })))];
       return JSON.parse(JSON.stringify(fieldFacts.filter((fact: HighlightSpan) => {
         // @ts-ignore
         if (globalFacts.includes(fact.fact)) {
           return fact;
-        } else if (factValues.find(x => x.name === fact.fact)) {
-          if (factValues.find(x => x.value === fact.str_val)) {
-            return fact;
-          }
+        } else if (factValues.find(x => x.name === fact.fact && x.value === fact.str_val)) {
+          return fact;
         }
       })));
     }
@@ -544,6 +574,7 @@ export class HighlightComponent {
     } else {
       sentenceSplit[0] = originalText;
     }
+
     for (let sentenceIndex = 0; sentenceIndex <= sentenceSplit.length - 1; sentenceIndex++) {
       const sentenceText = sentenceSplit[sentenceIndex];
       const sentenceIndexFacts = isSentenceSplit ? facts.filter(x => x.sent_index === sentenceIndex) : facts;
@@ -586,6 +617,10 @@ export class HighlightComponent {
         // that means there was no way for it to be added into the highlightarray,
         // push non fact text into array
         highlightArray.push({text: factText, highlighted: false});
+        // add newlines that we removed by splitting to keep document format
+        if (sentenceSplit.length > 1) {
+          highlightArray.push({text: ' \n ', highlighted: false});
+        }
         factText = '';
       }
     }
