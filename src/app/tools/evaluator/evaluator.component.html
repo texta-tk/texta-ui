@@ -234,6 +234,10 @@
                     <th class="mat-body-strong">Scores imprecise</th>
                     <td>{{element.scores_imprecise}}</td>
                   </tr>
+                  <tr *ngIf="element.evaluation_type === 'entity'">
+                    <th class="mat-body-strong">Token Based</th>
+                    <td>{{element.token_based}}</td>
+                  </tr>
                 </table>
               </div>
             </div>
