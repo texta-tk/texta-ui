@@ -135,10 +135,11 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  openCreateDialog(): void {
+  openCreateDialog(cloneTagger?: RegexTagger): void {
     const dialogRef = this.dialog.open(CreateRegexTaggerDialogComponent, {
       maxHeight: '90vh',
       width: '800px',
+      data: {cloneTagger: cloneTagger ? cloneTagger : undefined},
       disableClose: true
     });
     dialogRef.afterClosed().subscribe((resp: RegexTagger) => {

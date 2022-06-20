@@ -1,5 +1,5 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {MatDialogRef} from '@angular/material/dialog';
+import {Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {LogService} from '../../../core/util/log.service';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {RegexTaggerService} from '../../../core/models/taggers/regex-tagger.service';
@@ -13,6 +13,7 @@ import {switchMap, takeUntil} from 'rxjs/operators';
 import {Project} from '../../../shared/types/Project';
 import {forkJoin, of, Subject} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
+import {RegexTagger} from '../../../shared/types/tasks/RegexTagger';
 
 @Component({
   selector: 'app-create-regex-tagger-dialog',
@@ -21,35 +22,35 @@ import {HttpErrorResponse} from '@angular/common/http';
 })
 export class CreateRegexTaggerDialogComponent implements OnInit, OnDestroy {
   regexTaggerForm = new FormGroup({
-    descriptionFormControl: new FormControl('', [
+    descriptionFormControl: new FormControl(this.data?.cloneTagger?.description || '', [
       Validators.required,
     ]),
     lexiconFormControl: new FormControl('', [
       Validators.required,
     ]),
     counterLexiconFormControl: new FormControl(''),
-    operatorFormControl: new FormControl('or', [
+    operatorFormControl: new FormControl(this.data?.cloneTagger?.operator || 'or', [
       Validators.required,
     ]),
-    matchTypeFormControl: new FormControl('prefix', [
+    matchTypeFormControl: new FormControl(this.data?.cloneTagger?.match_type || 'prefix', [
       Validators.required,
     ]),
-    requiredWordsFormControl: new FormControl(1, [
+    requiredWordsFormControl: new FormControl(this.data?.cloneTagger?.required_words || 1, [
       Validators.required, Validators.min(0), Validators.max(1)
     ]),
-    phraseSlopFormControl: new FormControl(0, [
+    phraseSlopFormControl: new FormControl(this.data?.cloneTagger?.phrase_slop || 0, [
       Validators.required,
     ]),
-    counterSlopFormControl: new FormControl(0, [
+    counterSlopFormControl: new FormControl(this.data?.cloneTagger?.counter_slop || 0, [
       Validators.required,
     ]),
-    allowedEditsFormControl: new FormControl(0, [
+    allowedEditsFormControl: new FormControl(this.data?.cloneTagger?.n_allowed_edits || 0, [
       Validators.required,
     ]),
 
-    fuzzyMatchFormControl: new FormControl(true),
-    ignoreCaseFormControl: new FormControl(true),
-    ignorePunctuationFormControl: new FormControl(false),
+    fuzzyMatchFormControl: new FormControl(this.data?.cloneTagger?.return_fuzzy_match !== false),
+    ignoreCaseFormControl: new FormControl(this.data?.cloneTagger?.ignore_case !== false),
+    ignorePunctuationFormControl: new FormControl(this.data?.cloneTagger?.ignore_punctuation !== false),
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
@@ -63,12 +64,26 @@ export class CreateRegexTaggerDialogComponent implements OnInit, OnDestroy {
 
   constructor(private dialogRef: MatDialogRef<CreateRegexTaggerDialogComponent>,
               private regexTaggerService: RegexTaggerService,
+              @Inject(MAT_DIALOG_DATA) public data: { cloneTagger: RegexTagger },
               private logService: LogService,
               private lexiconService: LexiconService,
               private projectStore: ProjectStore) {
   }
 
+  private populateFormControlsWithCloneData(tagger: RegexTagger): void {
+    if(tagger.lexicon){
+      this.regexTaggerForm.get('lexiconFormControl')?.setValue(tagger.lexicon.join('\n'));
+    }
+    if(tagger.counter_lexicon){
+      this.regexTaggerForm.get('counterLexiconFormControl')?.setValue(tagger.counter_lexicon.join('\n'));
+    }
+  }
+
   ngOnInit(): void {
+    if (this.data.cloneTagger) {
+      this.populateFormControlsWithCloneData(this.data.cloneTagger);
+    }
+
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), switchMap(currentProject => {
       if (currentProject) {
         this.currentProject = currentProject;

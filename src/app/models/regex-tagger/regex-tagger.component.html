@@ -178,6 +178,9 @@
     <button (click)="duplicateRegexTagger(element);" mat-menu-item>
       Duplicate
     </button>
+    <button (click)="openCreateDialog(element)" data-cy="appRegexTaggerMenuClone" mat-menu-item>
+      Clone & Edit
+    </button>
     <mat-divider></mat-divider>
     <button (click)="onDelete(element, i)" data-cy="appRegexTaggerMenuDelete" mat-menu-item>
       Delete
