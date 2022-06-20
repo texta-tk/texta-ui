@@ -1,11 +1,11 @@
 <ng-container>
   <div fxLayout="row" style="align-items: baseline">
-    <h1 fxFlex mat-dialog-title>Showing {{size}} features out of {{result ? result.total_features : '...' }}</h1>
+    <h1 fxFlex mat-dialog-title>Showing {{responseSize}} features out of {{result ? result.total_features : 0 }}</h1>
 
     <mat-form-field fxFlex="10">
-      <input [(ngModel)]="size" matInput placeholder="size" type="number">
+      <input [(ngModel)]="fetchSize" matInput placeholder="size" type="number" min="0">
     </mat-form-field>
-    <button (click)="fetchFeatures(size)" [disabled]="isLoading" color="primary" mat-raised-button
+    <button (click)="fetchFeatures(fetchSize)" [disabled]="isLoading" color="primary" mat-raised-button
             style="margin-left: 10px">Apply
     </button>
   </div>

@@ -71,7 +71,7 @@ export class SimpleSearchComponent implements OnInit, OnDestroy {
       if (result && !(result instanceof HttpErrorResponse)) {
         this.searcherComponentService.nextSearch(new Search(result, this.elasticSearchQuery, {
           onlyShowMatchingColumns: true,
-          showShortVersion: {wordContextDistance: this.showShortVersion, highlightedFacts: []},
+          ...this.showShortVersion ? {showShortVersion: {wordContextDistance: this.showShortVersion, highlightedFacts: []}} : {},
           highlightSearcherMatches: this.highlightSearcherMatches,
           highlightTextaFacts: this.highlightTextaFacts,
           onlyHighlightMatching: this.highlightMatching ? [] : undefined

@@ -13,7 +13,8 @@ import {AddLexiconDialogComponent} from '../../../shared/shared-module/component
 })
 export class ListFeaturesDialogComponent implements OnInit {
   result: ListFeaturesResponse;
-  size = 100;
+  responseSize = 0;
+  fetchSize = 100;
   isLoading: boolean;
   selectedOptions: string[] = [];
 
@@ -25,7 +26,7 @@ export class ListFeaturesDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.fetchFeatures(this.size);
+    this.fetchFeatures(this.fetchSize);
     this.taggerService.getStopWords(this.data.currentProjectId, this.data.taggerId).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.selectedOptions = resp.stop_words;
@@ -41,6 +42,7 @@ export class ListFeaturesDialogComponent implements OnInit {
       this.data.taggerId, size).subscribe((resp: ListFeaturesResponse | HttpErrorResponse) => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.result = resp;
+        this.responseSize = resp.showing_features;
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 4000);
       }
