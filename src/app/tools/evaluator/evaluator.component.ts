@@ -204,7 +204,7 @@ export class EvaluatorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dialog.open(FilteredAverageDialogComponent, {
       data: {currentProjectId: this.currentProject.id, evaluatorId: element.id},
       maxHeight: '90vh',
-      maxWidth: '700px',
+      maxWidth: '80vw',
     });
   }
 
