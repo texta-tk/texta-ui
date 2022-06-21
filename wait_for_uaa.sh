@@ -9,12 +9,12 @@ until $(curl --output /dev/null --silent --head --fail "$TEXTA_UAA_URL"); do
 done
 echo "UAA server running."
 
-export TEXTA_HEALTH_URL="${TEXTA_HEALTH_URL:-http://texta-rest/api/v2/health/}"
+export TEXTA_HEALTH_URL="${TEXTA_HEALTH_URL:-http://texta-rest/api/v2/health}"
 
 # wait for server to start
 until $(curl --output /dev/null --silent --head --fail "$TEXTA_HEALTH_URL"); do
-    echo "Waiting for texta-rest backend."
-    sleep 5
+  echo "Waiting for texta-rest backend."
+  sleep 5
 done
 echo "texta-rest backend running."
 
