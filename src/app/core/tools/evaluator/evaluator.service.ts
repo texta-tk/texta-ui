@@ -5,7 +5,7 @@ import {catchError, tap} from 'rxjs/operators';
 import {environment} from '../../../../environments/environment';
 import {LogService} from '../../util/log.service';
 import {ResultsWrapper} from '../../../shared/types/Generic';
-import {Evaluator} from '../../../shared/types/tasks/Evaluator';
+import {Evaluator, EvaluatorIndividualResults} from '../../../shared/types/tasks/Evaluator';
 import {AppConfigService} from '../../util/app-config.service';
 
 @Injectable({
@@ -39,10 +39,10 @@ export class EvaluatorService {
       catchError(this.logService.handleError<unknown>('retrainEvaluator')));
   }
 
-  evaluatorIndividualResults(projectId: number, evaluatorId: number, body: unknown): Observable<unknown | HttpErrorResponse> {
-    return this.http.post<Evaluator>(`${this.apiUrl}/projects/${projectId}/evaluators/${evaluatorId}/individual_results/`, body).pipe(
+  evaluatorIndividualResults(projectId: number, evaluatorId: number, body: unknown): Observable<{total: number, filtered_results: EvaluatorIndividualResults} | HttpErrorResponse> {
+    return this.http.post<{total: number, filtered_results: EvaluatorIndividualResults}>(`${this.apiUrl}/projects/${projectId}/evaluators/${evaluatorId}/individual_results/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'evaluatorIndividualResults')),
-      catchError(this.logService.handleError<Evaluator>('evaluatorIndividualResults')));
+      catchError(this.logService.handleError<{total: number, filtered_results: EvaluatorIndividualResults}>('evaluatorIndividualResults')));
   }
 
   getEvaluatorMisclassifiedExamples(projectId: number, evaluatorId: number): Observable<unknown | HttpErrorResponse> {

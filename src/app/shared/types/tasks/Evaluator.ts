@@ -26,3 +26,14 @@ export interface Evaluator {
   task: Task;
   fields: string[];
 }
+export interface IndividualResults{
+  precision: number;
+  recall: number;
+  f1_score: number;
+  accuracy: number;
+  confusion_matrix: number[][];
+  count: number;
+}
+export interface EvaluatorIndividualResults {
+  [key: string]: IndividualResults;
+}

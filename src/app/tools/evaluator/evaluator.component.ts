@@ -196,7 +196,8 @@ export class EvaluatorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dialog.open(IndividualResultsDialogComponent, {
       data: {currentProjectId: this.currentProject.id, evaluatorId: element.id},
       maxHeight: '90vh',
-      width: '700px',
+      width: '860px',
+      panelClass: 'custom-flex-dialog'
     });
   }
 

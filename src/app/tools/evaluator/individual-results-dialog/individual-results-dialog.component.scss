@@ -1,0 +1,44 @@
+:host{
+  width: 100%;
+}
+.results-wrapper {
+  overflow: auto;
+}
+
+.mat-row {
+  height: auto;
+}
+
+.mat-cell {
+  padding: 2px 2px 2px 0;
+}
+
+.mat-column-alphabetic >span {
+  width: 240px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.mat-column-precision {
+  width: 70px;
+}
+
+.mat-column-f1_score {
+  width: 70px;
+}
+
+.mat-column-accuracy {
+  width: 70px;
+}
+
+.mat-column-count {
+  width: 70px;
+}
+.mat-column-conf_matrix {
+  width: 100px;
+  text-align: center;
+}
+.mat-column-recall {
+  width: 70px;
+}

@@ -36,6 +36,11 @@ mat-chip-list.chip-list-space-evenly {
   padding: 0 !important;
 }
 
+// panelClass for mat dialog for display flex (scrollable table uses)
+.custom-flex-dialog .mat-dialog-container {
+  display: flex;
+}
+
 .expansion-panel-less-padding {
   mat-expansion-panel-header {
     padding: 0 10px;
