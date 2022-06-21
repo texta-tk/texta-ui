@@ -20,6 +20,7 @@ import {ApplyToIndexDialogComponent} from './apply-to-index-dialog/apply-to-inde
 import {TagTextDialogComponent} from './tag-text-dialog/tag-text-dialog.component';
 import {Index} from '../../shared/types/Index';
 import {EditCrfDialogComponent} from './edit-crf-dialog/edit-crf-dialog.component';
+import {ListFeaturesDialogComponent} from './list-features-dialog/list-features-dialog.component';
 
 @Component({
   selector: 'app-crf-extractor',
@@ -242,6 +243,16 @@ export class CRFExtractorComponent implements OnInit, OnDestroy, AfterViewInit {
       } else if (x) {
         this.logService.snackBarError(x, 3000);
       }
+    });
+  }
+
+
+  listFeatures(element: CRFExtractor): void {
+    this.dialog.open(ListFeaturesDialogComponent, {
+      data: {elementId: element.id, currentProjectId: this.currentProject.id},
+      maxHeight: '665px',
+      width: '700px',
+      autoFocus: false
     });
   }
 }

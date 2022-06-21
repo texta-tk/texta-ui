@@ -1,0 +1,23 @@
+<ng-container>
+  <div fxLayout="row" style="align-items: baseline">
+    <h1 fxFlex mat-dialog-title>Showing {{responseSize}} features out of {{responseTotalSize ? responseTotalSize : 0 }}</h1>
+
+    <mat-button-toggle-group  [(ngModel)]="featureType">
+      <mat-button-toggle value="positive">Positive</mat-button-toggle>
+      <mat-button-toggle value="negative">Negative</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+
+  <mat-divider></mat-divider>
+  <div style="height: 4px">
+    <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+  </div>
+  <mat-dialog-content *ngIf="result" class="results-wrapper">
+    <mat-list>
+      <mat-list-item *ngFor="let  feature of result.features[this.featureType]" >
+        <div matLine><span class="mat-body-strong">Feature: </span>{{feature.feature}}</div>
+        <div matLine><span class="mat-body-strong">Coefficient: </span>{{feature.coefficient}}</div>
+      </mat-list-item>
+    </mat-list>
+  </mat-dialog-content>
+</ng-container>

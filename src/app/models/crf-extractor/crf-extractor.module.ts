@@ -6,6 +6,7 @@ import {SharedModule} from '../../shared/shared-module/shared.module';
 import {TagTextDialogComponent} from './tag-text-dialog/tag-text-dialog.component';
 import {ApplyToIndexDialogComponent} from './apply-to-index-dialog/apply-to-index-dialog.component';
 import {EditCrfDialogComponent} from './edit-crf-dialog/edit-crf-dialog.component';
+import { ListFeaturesDialogComponent } from './list-features-dialog/list-features-dialog.component';
 
 @NgModule({
   imports: [
@@ -17,7 +18,8 @@ import {EditCrfDialogComponent} from './edit-crf-dialog/edit-crf-dialog.componen
     CreateCRFExtractorDialogComponent,
     TagTextDialogComponent,
     ApplyToIndexDialogComponent,
-    EditCrfDialogComponent
+    EditCrfDialogComponent,
+    ListFeaturesDialogComponent
   ],
   providers: [],
 })

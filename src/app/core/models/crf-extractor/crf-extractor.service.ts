@@ -4,9 +4,8 @@ import {Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
 import {AppConfigService} from '../../util/app-config.service';
 import {LogService} from '../../util/log.service';
-import {CRFExtractor} from '../../../shared/types/tasks/CRFExtractor';
+import {CRFExtractor, CRFListFeatures} from '../../../shared/types/tasks/CRFExtractor';
 import {ResultsWrapper} from '../../../shared/types/Generic';
-import {Evaluator} from '../../../shared/types/tasks/Evaluator';
 
 @Injectable({
   providedIn: 'root'
@@ -98,4 +97,9 @@ export class CRFExtractorService {
       catchError(this.logService.handleError<unknown>('retrainCRF')));
   }
 
+  listCRFFeatures(projectId: number, instanceId: number): Observable<CRFListFeatures | HttpErrorResponse> {
+    return this.http.get<CRFListFeatures>(`${this.apiUrl}/projects/${projectId}/crf_extractors/${instanceId}/list_features/`).pipe(
+      tap(e => this.logService.logStatus(e, 'listCRFFeatures')),
+      catchError(this.logService.handleError<CRFListFeatures>('listCRFFeatures')));
+  }
 }

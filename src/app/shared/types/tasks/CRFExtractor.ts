@@ -47,3 +47,23 @@ export interface CRFExtractor {
   f1_score: number;
   precision: number;
 }
+
+
+export interface CRFFeature {
+  feature: string;
+  coefficient: number;
+  label: string;
+}
+
+interface CRFFeatures {
+  positive: CRFFeature[];
+  negative: CRFFeature[];
+}
+
+export interface CRFListFeatures {
+  features: CRFFeatures;
+  total_features: number;
+  showing_features: number;
+}
+
+
