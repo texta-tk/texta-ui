@@ -5,7 +5,7 @@ import {catchError, tap} from 'rxjs/operators';
 import {environment} from '../../../../environments/environment';
 import {LogService} from '../../util/log.service';
 import {ResultsWrapper} from '../../../shared/types/Generic';
-import {Evaluator, EvaluatorIndividualResults} from '../../../shared/types/tasks/Evaluator';
+import {Evaluator, EvaluatorIndividualResults, EvaluatorMisclassifiedExamplesResults} from '../../../shared/types/tasks/Evaluator';
 import {AppConfigService} from '../../util/app-config.service';
 
 @Injectable({
@@ -46,9 +46,15 @@ export class EvaluatorService {
   }
 
   getEvaluatorMisclassifiedExamples(projectId: number, evaluatorId: number): Observable<unknown | HttpErrorResponse> {
-    return this.http.get<Evaluator>(`${this.apiUrl}/projects/${projectId}/evaluators/${evaluatorId}/misclassified_examples/`).pipe(
+    return this.http.get<unknown>(`${this.apiUrl}/projects/${projectId}/evaluators/${evaluatorId}/misclassified_examples/`).pipe(
       tap(e => this.logService.logStatus(e, 'getEvaluatorMisclassifiedExamples')),
-      catchError(this.logService.handleError<Evaluator>('getEvaluatorMisclassifiedExamples')));
+      catchError(this.logService.handleError<unknown>('getEvaluatorMisclassifiedExamples')));
+  }
+
+  postEvaluatorMisclassifiedExamples(projectId: number, evaluatorId: number, body: unknown): Observable<EvaluatorMisclassifiedExamplesResults | HttpErrorResponse> {
+    return this.http.post<EvaluatorMisclassifiedExamplesResults>(`${this.apiUrl}/projects/${projectId}/evaluators/${evaluatorId}/misclassified_examples/`, body).pipe(
+      tap(e => this.logService.logStatus(e, 'postEvaluatorMisclassifiedExamples')),
+      catchError(this.logService.handleError<EvaluatorMisclassifiedExamplesResults>('postEvaluatorMisclassifiedExamples')));
   }
 
   evaluatorFilteredAverage(projectId: number, evaluatorId: number, body: unknown): Observable<{ precision: number; recall: number; f1_score: number; accuracy: number; count: number; } | HttpErrorResponse> {

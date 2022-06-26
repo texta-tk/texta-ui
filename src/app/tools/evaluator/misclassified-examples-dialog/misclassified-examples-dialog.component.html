@@ -1,3 +1,103 @@
-<pre>
-{{results | json}}
-</pre>
+<div class="flex-col mat-typography" style="height: 100%; width: 100%">
+  <form (ngSubmit)="onSubmit(paramForm.value)" [formGroup]="paramForm" class="flex-row" style="align-items: baseline"
+        id="paramForm">
+
+    <div class="flex-row" style="align-items: baseline">
+      <mat-form-field style="width: 100px">
+        <input formControlName="minCount" matInput placeholder="Min count"
+               type="number" min="0">
+
+      </mat-form-field>
+      <app-info-icon [textTemplate]="minTemplate" textTitle="Min count">
+        <ng-template #minTemplate><p>Minimum frequency of the misclassified values to return.</p>
+        </ng-template>
+      </app-info-icon>
+    </div>
+    <div class="flex-row m-l-15" style="align-items: baseline">
+      <mat-form-field style="width: 100px">
+        <input formControlName="maxCount" matInput placeholder="Max count"
+               type="number" min="0">
+
+      </mat-form-field>
+      <app-info-icon [textTemplate]="maxTemplate" textTitle="Max count">
+        <ng-template #maxTemplate><p>Maximum frequency of the misclassified values to return.</p>
+        </ng-template>
+      </app-info-icon>
+    </div>
+    <mat-form-field class="m-l-15 max-width" style="max-width: 350px;">
+      <mat-label>Top n</mat-label>
+      <input formControlName="topN" matInput>
+      <mat-hint>Number of values to return per class.
+      </mat-hint>
+    </mat-form-field>
+
+    <button style="margin-left: auto" form="paramForm" type="submit" color="primary" mat-raised-button>
+      Get results
+    </button>
+  </form>
+  <div style="height: 4px; background: transparent">
+    <mat-progress-bar *ngIf="isLoadingResults" mode="indeterminate"></mat-progress-bar>
+  </div>
+  <div class="flex-row" *ngIf="results">
+    <mat-button-toggle-group style="font-size: 13px" [(ngModel)]="featureType">
+      <mat-button-toggle value="substrings">Substrings
+        <span>({{results.substrings.filtered_unique_count}}/{{results.substrings.total_unique_count}})</span>
+      </mat-button-toggle>
+      <mat-button-toggle value="superstrings">Super Strings
+        <span>({{results.superstrings.filtered_unique_count}}/{{results.superstrings.total_unique_count}})</span>
+      </mat-button-toggle>
+      <mat-button-toggle value="partial">Partial
+        <span>({{results.partial.filtered_unique_count}}/{{results.partial.total_unique_count}})</span>
+      </mat-button-toggle>
+      <mat-button-toggle value="false_negatives">False Negatives
+        <span>({{results.false_negatives.filtered_unique_count}}/{{results.false_negatives.total_unique_count}})</span>
+      </mat-button-toggle>
+      <mat-button-toggle value="false_positives">False Positives
+        <span>({{results.false_positives.filtered_unique_count}}/{{results.false_positives.total_unique_count}})</span>
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+    <mat-button-toggle-group style="font-size: 13px; margin-left: auto" [(ngModel)]="viewType">
+      <mat-button-toggle value="list">List</mat-button-toggle>
+      <mat-button-toggle value="table">Table</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+  <div class="flex-col results-wrapper" *ngIf="results">
+    <mat-list dense *ngIf="viewType === 'list'">
+      <mat-list-item *ngFor="let  val of results[featureType].values">
+        <div *ngIf="val.value | isObject">
+          <div matLine><span style="font-weight: bold">Pred: </span>{{val.value.pred}}</div>
+          <div matLine><span style="font-weight: bold">True: </span>{{val.value.true}}</div>
+          <div matLine><span>Count: </span>{{val.count}}</div>
+        </div>
+        <div *ngIf="!(val.value | isObject)">
+          <div matLine><span style="font-weight: bold">Value: </span>{{val.value}}</div>
+          <div matLine><span>Count: </span>{{val.count}}</div>
+        </div>
+        <mat-divider></mat-divider>
+      </mat-list-item>
+    </mat-list>
+    <div *ngIf="viewType === 'table'">
+      <table *ngIf="results[featureType].values.length > 0" class="simple-table overflow-auto">
+        <tr *ngIf="results[featureType].values[0] && results[featureType].values[0].value | isObject">
+          <th class="mat-body-strong">Predicted</th>
+          <th class="mat-body-strong">True</th>
+          <th class="mat-body-strong">Count</th>
+        </tr>
+        <tr *ngIf="results[featureType].values[0] && !(results[featureType].values[0].value | isObject)">
+          <th class="mat-body-strong">Value</th>
+          <th class="mat-body-strong">Count</th>
+        </tr>
+        <tr *ngFor="let  val of results[featureType].values">
+          <ng-container *ngIf="val.value | isObject">
+            <td>{{val.value.pred}}</td>
+            <td>{{val.value.true}}</td>
+            <td>{{val.count}}</td>
+          </ng-container>
+          <ng-container *ngIf="!(val.value | isObject)">
+            <td>{{val.value}}</td>
+            <td>{{val.count}}</td>
+          </ng-container>
+        </tr>
+      </table>
+    </div>
+  </div>

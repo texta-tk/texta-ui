@@ -1,0 +1,12 @@
+:host{
+  width: 100%;
+}
+.results-wrapper {
+  overflow: auto;
+}
+.mat-cell {
+  padding: 2px 2px 2px 0;
+}
+:host ::ng-deep .mat-list-item-content {
+  padding-left: 0 !important;
+}
