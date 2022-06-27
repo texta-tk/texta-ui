@@ -11,6 +11,9 @@
     </mat-hint>
   </mat-form-field>
 
+  <div style="height: 4px; background-color: white">
+    <mat-progress-bar *ngIf="isDownloading" mode="indeterminate"></mat-progress-bar>
+  </div>
 </mat-dialog-content>
 <mat-dialog-actions>
   <div class="flex-col max-width">
@@ -19,7 +22,7 @@
         <button class="flex-item-left" mat-button mat-dialog-close="" type="button">Close</button>
       </div>
       <div class="flex-item-right">
-        <button (click)="onSubmit()" [disabled]="modelName == ''" mat-button type="submit">Submit</button>
+        <button (click)="onSubmit()" [disabled]="isDownloading || modelName == ''" mat-button type="submit">Submit</button>
       </div>
     </div>
 

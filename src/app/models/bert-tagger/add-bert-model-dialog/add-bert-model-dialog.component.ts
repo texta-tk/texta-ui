@@ -15,7 +15,7 @@ import {LogService} from '../../../core/util/log.service';
 })
 export class AddBertModelDialogComponent implements OnInit {
   modelName: string;
-
+  isDownloading = false;
   constructor(private bertService: BertTaggerService, private projectStore: ProjectStore, private logService: LogService) {
   }
 
@@ -25,6 +25,7 @@ export class AddBertModelDialogComponent implements OnInit {
   onSubmit(): void {
     this.projectStore.getCurrentProject().pipe(take(1), mergeMap(project => {
       if (project) {
+        this.isDownloading = true;
         return this.bertService.downloadBertModel(project.id, this.modelName);
       }
       return of(null);
@@ -34,6 +35,7 @@ export class AddBertModelDialogComponent implements OnInit {
       }else{
         this.logService.snackBarMessage(resp || '', 5000);
       }
+      this.isDownloading = false;
     });
 
 
