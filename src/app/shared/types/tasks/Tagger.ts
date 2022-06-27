@@ -27,7 +27,7 @@ export class Tagger {
   recall: number;
   f1_score: number;
   num_features: number;
-  tagger_groups: string[];
+  tagger_groups: { description: string }[];
   indices: Index[];
   ignore_numbers: boolean;
   scoring_function: string;

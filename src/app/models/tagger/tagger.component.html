@@ -21,6 +21,11 @@
         <mat-icon matSuffix>search</mat-icon>
         <input (keyup)="applyFilter($event.target, 'description')" matInput placeholder="Filter description">
       </mat-form-field>
+
+      <mat-form-field class="m-l-15">
+        <mat-icon matSuffix>search</mat-icon>
+        <input (keyup)="applyFilter($event.target, 'tg_description')" matInput placeholder="Filter Tagger Group desc.">
+      </mat-form-field>
       <mat-form-field class="m-l-15">
         <mat-label>Filter task status</mat-label>
         <mat-select (selectionChange)="applyFilter($event, 'task_status')">
@@ -59,6 +64,10 @@
       <ng-container matColumnDef="description">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Description</th>
         <td *matCellDef="let element" mat-cell> {{element.description}}</td>
+      </ng-container>
+      <ng-container matColumnDef="tg__description">
+        <th *matHeaderCellDef mat-header-cell > Tagger Group Desc.</th>
+        <td *matCellDef="let element" mat-cell> {{(element.tagger_groups | getPropertyList: getTaggerGroupDesc) | join: ','}}</td>
       </ng-container>
       <ng-container matColumnDef="task__time_started">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Time started</th>
@@ -228,7 +237,7 @@
                   </tr>
                   <tr>
                     <th class="mat-body-strong">Tagger groups</th>
-                    <td>{{element.tagger_groups | join: ', '}}</td>
+                    <td>{{element.tagger_groups | json}}</td>
                   </tr>
                 </table>
               </div>

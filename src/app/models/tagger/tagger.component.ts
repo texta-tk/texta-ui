@@ -43,7 +43,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: Tagger | null;
   public tableData: MatTableDataSource<Tagger> = new MatTableDataSource();
   selectedRows = new SelectionModel<Tagger>(true, []);
-  public displayedColumns = ['select', 'id', 'author__username', 'description', 'fields', 'task__time_started',
+  public displayedColumns = ['select', 'id', 'author__username', 'description', 'tg__description',  'fields', 'task__time_started',
     'task__time_completed', 'f1_score', 'precision', 'recall', 'task__status', 'Modify'];
   public isLoadingResults = true;
 
@@ -66,6 +66,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   getIndicesName = (x: Index) => x.name;
+  getTaggerGroupDesc = (x: {description: string}) => x.description;
 
   ngOnInit(): void {
     this.tableData.sort = this.sort;
