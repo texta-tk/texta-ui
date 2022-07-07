@@ -34,6 +34,13 @@
           </mat-checkbox>
         </td>
       </ng-container>
+      <ng-container matColumnDef="is_favorited">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> <div class="favorite-th-cell"><mat-icon>star_outlined</mat-icon></div></th>
+        <td *matCellDef="let element" mat-cell><button mat-icon-button (click)="toggleRowFavorite(element);$event.stopPropagation()">
+          <mat-icon *ngIf="!element.is_favorited" [ngClass]="{'star-active': element.is_favorited}">star_outlined</mat-icon>
+          <mat-icon *ngIf="element.is_favorited" class="star-icon-active">star</mat-icon>
+        </button></td>
+      </ng-container>
       <ng-container matColumnDef="id">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Id</th>
         <td *matCellDef="let element" mat-cell> {{element.id}}</td>

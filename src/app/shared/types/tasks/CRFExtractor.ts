@@ -46,6 +46,7 @@ export interface CRFExtractor {
   recall: number;
   f1_score: number;
   precision: number;
+  is_favorited: boolean;
 }
 
 

@@ -91,3 +91,13 @@
   flex-direction: row;
   align-items: baseline;
 }
+.favorite-th-cell{
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.star-icon-active{
+  color: #f1c758;
+}

@@ -37,7 +37,7 @@ export class BertTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: BertTagger | null;
   public tableData: MatTableDataSource<BertTagger> = new MatTableDataSource();
   selectedRows = new SelectionModel<BertTagger>(true, []);
-  public displayedColumns = ['select', 'id', 'author__username', 'description', 'fields', 'task__time_started',
+  public displayedColumns = ['select', 'is_favorited', 'id', 'author__username', 'description', 'fields', 'task__time_started',
     'task__time_completed', 'f1_score', 'precision', 'recall', 'task__status', 'actions'];
   public isLoadingResults = true;
 
@@ -47,6 +47,7 @@ export class BertTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   destroyed$: Subject<boolean> = new Subject<boolean>();
   currentProject: Project;
   private updateTable = new Subject<boolean>();
+  patchFavoriteRowQueue: Subject<BertTagger> = new Subject();
 
   constructor(private projectStore: ProjectStore,
               private bertTaggerService: BertTaggerService,
@@ -57,7 +58,11 @@ export class BertTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   getIndicesName = (x: Index) => x.name;
 
   ngOnInit(): void {
-
+    this.patchFavoriteRowQueue.pipe(takeUntil(this.destroyed$), debounceTime(50)).subscribe(row => {
+      if (this.currentProject) {
+        this.bertTaggerService.addFavoriteBertTagger(this.currentProject.id, row.id).subscribe();
+      }
+    });
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(x => {
@@ -296,5 +301,10 @@ export class BertTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy(): void {
     this.destroyed$.next(true);
     this.destroyed$.complete();
+  }
+
+  toggleRowFavorite(element: BertTagger): void {
+    element.is_favorited = !element.is_favorited;
+    this.patchFavoriteRowQueue.next(element);
   }
 }

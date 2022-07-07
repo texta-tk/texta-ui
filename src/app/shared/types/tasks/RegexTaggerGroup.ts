@@ -11,6 +11,7 @@ export interface RegexTaggerGroup {
   task: TaskStatus;
   description: string;
   tagger_info: RegexTagger[];
+  is_favorited: boolean;
 }
 
 export interface Match {

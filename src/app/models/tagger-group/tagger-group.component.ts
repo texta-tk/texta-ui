@@ -36,7 +36,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: TaggerGroup | null;
   public tableData: MatTableDataSource<TaggerGroup> = new MatTableDataSource();
   selectedRows = new SelectionModel<TaggerGroup>(true, []);
-  public displayedColumns = ['select', 'id', 'author__username', 'description', 'fact_name', 'minimum_sample_size',
+  public displayedColumns = ['select', 'is_favorited', 'id', 'author__username', 'description', 'fact_name', 'minimum_sample_size',
     'num_tags', 'f1_score', 'precision', 'recall', 'progress', 'Modify'];
   public isLoadingResults = true;
 
@@ -51,6 +51,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
   destroyed$ = new Subject<boolean>();
   resultsLength: number;
   private updateTable = new Subject<boolean>();
+  patchFavoriteRowQueue: Subject<TaggerGroup> = new Subject();
 
   constructor(public dialog: MatDialog,
               private projectStore: ProjectStore,
@@ -61,6 +62,12 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
   getIndicesName = (x: Index) => x.name;
 
   ngOnInit(): void {
+    this.patchFavoriteRowQueue.pipe(takeUntil(this.destroyed$), debounceTime(50)).subscribe(row => {
+      if (this.currentProject) {
+        this.taggerGroupService.addFavoriteTaggerGrp(this.currentProject.id, row.id).subscribe();
+      }
+    });
+
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(resp => {
@@ -294,5 +301,9 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
       maxHeight: '90vh',
       width: '700px',
     });
+  }
+  toggleRowFavorite(element: TaggerGroup): void {
+    element.is_favorited = !element.is_favorited;
+    this.patchFavoriteRowQueue.next(element);
   }
 }

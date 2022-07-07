@@ -103,4 +103,11 @@ export class RegexTaggerGroupService {
       catchError(this.logService.handleError('getTagRdocOptions')));
   }
 
+  addFavoriteRegexTaggerGrp(projectId: number, taggerId: number): Observable<unknown | HttpErrorResponse> {
+    return this.http.post<unknown>(
+      `${this.apiUrl}/projects/${projectId}/regex_tagger_groups/${taggerId}/add_favorite/`, {}
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'addFavoriteRegexTaggerGrp')),
+      catchError(this.logService.handleError<unknown>('addFavoriteRegexTaggerGrp')));
+  }
 }

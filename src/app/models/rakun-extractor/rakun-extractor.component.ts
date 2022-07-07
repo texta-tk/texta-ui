@@ -33,7 +33,7 @@ export class RakunExtractorComponent implements OnInit, OnDestroy, AfterViewInit
   expandedElement: RakunExtractor | null;
   public tableData: MatTableDataSource<RakunExtractor> = new MatTableDataSource();
   selectedRows = new SelectionModel<RakunExtractor>(true, []);
-  public displayedColumns = ['select', 'id', 'description', 'distance_method', 'num_keywords', 'min_tokens', 'max_tokens', 'task__time_started', 'task__time_completed', 'task__status', 'actions'];
+  public displayedColumns = ['select', 'is_favorited', 'id', 'description', 'distance_method', 'num_keywords', 'min_tokens', 'max_tokens', 'task__time_started', 'task__time_completed', 'task__status', 'actions'];
   public isLoadingResults = true;
 
   @ViewChild(MatSort) sort: MatSort;
@@ -42,6 +42,7 @@ export class RakunExtractorComponent implements OnInit, OnDestroy, AfterViewInit
   destroyed$: Subject<boolean> = new Subject<boolean>();
   currentProject: Project;
   private updateTable = new Subject<boolean>();
+  patchFavoriteRowQueue: Subject<RakunExtractor> = new Subject();
 
   constructor(private projectStore: ProjectStore,
               private rakunExtractorService: RakunExtractorService,
@@ -50,7 +51,11 @@ export class RakunExtractorComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   ngOnInit(): void {
-
+    this.patchFavoriteRowQueue.pipe(takeUntil(this.destroyed$), debounceTime(50)).subscribe(row => {
+      if (this.currentProject) {
+        this.rakunExtractorService.addFavoriteRakun(this.currentProject.id, row.id).subscribe();
+      }
+    });
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(x => {
@@ -240,5 +245,9 @@ export class RakunExtractorComponent implements OnInit, OnDestroy, AfterViewInit
         this.updateTable.next();
       }
     });
+  }
+  toggleRowFavorite(element: RakunExtractor): void {
+    element.is_favorited = !element.is_favorited;
+    this.patchFavoriteRowQueue.next(element);
   }
 }

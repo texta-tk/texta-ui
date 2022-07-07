@@ -121,4 +121,12 @@ export class RakunExtractorService {
       tap(e => this.logService.logStatus(e, 'patchRakunExtractor')),
       catchError(this.logService.handleError<RakunExtractor>('patchRakunExtractor')));
   }
+
+  addFavoriteRakun(projectId: number, id: number): Observable<unknown | HttpErrorResponse> {
+    return this.http.post<unknown>(
+      `${this.apiUrl}/projects/${projectId}/rakun_extractors/${id}/add_favorite/`, {}
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'addFavoriteRakun')),
+      catchError(this.logService.handleError<unknown>('addFavoriteRakun')));
+  }
 }

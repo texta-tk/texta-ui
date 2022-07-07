@@ -41,6 +41,7 @@ export class Tagger {
   detect_lang: boolean;
   balance: boolean;
   balance_to_max_limit: boolean;
+  is_favorited: boolean;
 }
 
 export enum TaggerVectorizerChoices {
@@ -119,6 +120,7 @@ export interface TaggerGroup {
   tagger_params: TaggerParams;
   tagger_statistics: TaggerStatistics;
   task?: TaskStatus;
+  is_favorited: boolean;
 }
 
 

@@ -102,4 +102,12 @@ export class CRFExtractorService {
       tap(e => this.logService.logStatus(e, 'listCRFFeatures')),
       catchError(this.logService.handleError<CRFListFeatures>('listCRFFeatures')));
   }
+
+  addFavoriteCRF(projectId: number, id: number): Observable<unknown | HttpErrorResponse> {
+    return this.http.post<unknown>(
+      `${this.apiUrl}/projects/${projectId}/crf_extractors/${id}/add_favorite/`, {}
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'addFavoriteCRF')),
+      catchError(this.logService.handleError<unknown>('addFavoriteCRF')));
+  }
 }

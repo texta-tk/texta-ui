@@ -36,6 +36,14 @@ export class TaggerGroupService {
       catchError(this.logService.handleError<TaggerGroup>('createTaggerGroup')));
   }
 
+  addFavoriteTaggerGrp(projectId: number, taggerId: number): Observable<unknown | HttpErrorResponse> {
+    return this.http.post<unknown>(
+      `${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/${taggerId}/add_favorite/`, {}
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'addFavoriteTaggerGrp')),
+      catchError(this.logService.handleError<unknown>('addFavoriteTaggerGrp')));
+  }
+
   editTaggerGroup(body: unknown, projectId: number, taggerId: number): Observable<TaggerGroup | HttpErrorResponse> {
     return this.http.patch<TaggerGroup>(
       `${this.apiUrl}/projects/${projectId}/${this.apiEndpoint}/${taggerId}/`, body

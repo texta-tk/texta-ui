@@ -37,4 +37,5 @@ export interface RakunExtractor  {
   max_occurrence: number;
   fasttext_embedding?: Embedding;
   task?: Task;
+  is_favorited: boolean;
 }

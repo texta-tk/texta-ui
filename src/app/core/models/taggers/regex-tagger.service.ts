@@ -126,4 +126,12 @@ export class RegexTaggerService {
       tap(e => this.logService.logStatus(e, 'getMultiTagTextOptions')),
       catchError(this.logService.handleError('getMultiTagTextOptions')));
   }
+
+  addFavoriteRegexTagger(projectId: number, taggerId: number): Observable<unknown | HttpErrorResponse> {
+    return this.http.post<unknown>(
+      `${this.apiUrl}/projects/${projectId}/regex_taggers/${taggerId}/add_favorite/`, {}
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'addFavoriteRegexTagger')),
+      catchError(this.logService.handleError<unknown>('addFavoriteRegexTagger')));
+  }
 }

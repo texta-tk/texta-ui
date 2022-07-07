@@ -30,6 +30,7 @@ export class TorchTagger {
   balance: boolean;
   balance_to_max_limit: boolean;
   use_sentence_shuffle: boolean;
+  is_favorited: boolean;
 }
 
 export interface TorchTaggerEpoch {

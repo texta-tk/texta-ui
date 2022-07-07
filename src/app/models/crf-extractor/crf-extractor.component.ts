@@ -34,7 +34,7 @@ export class CRFExtractorComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: CRFExtractor | null;
   public tableData: MatTableDataSource<CRFExtractor> = new MatTableDataSource();
   selectedRows = new SelectionModel<CRFExtractor>(true, []);
-  public displayedColumns = ['select', 'id', 'author__username', 'description', 'mlp_field', 'task__time_started', 'task__time_completed', 'f1_score', 'precision', 'recall', 'task__status', 'actions'];
+  public displayedColumns = ['select', 'is_favorited', 'id', 'author__username', 'description', 'mlp_field', 'task__time_started', 'task__time_completed', 'f1_score', 'precision', 'recall', 'task__status', 'actions'];
   public isLoadingResults = true;
 
   @ViewChild(MatSort) sort: MatSort;
@@ -44,6 +44,7 @@ export class CRFExtractorComponent implements OnInit, OnDestroy, AfterViewInit {
   currentProject: Project;
   private updateTable = new Subject<boolean>();
 
+  patchFavoriteRowQueue: Subject<CRFExtractor> = new Subject();
   getIndicesName = (x: Index) => x.name;
 
   constructor(private projectStore: ProjectStore,
@@ -53,7 +54,11 @@ export class CRFExtractorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
-
+    this.patchFavoriteRowQueue.pipe(takeUntil(this.destroyed$), debounceTime(50)).subscribe(row => {
+      if (this.currentProject) {
+        this.cRFExtractorService.addFavoriteCRF(this.currentProject.id, row.id).subscribe();
+      }
+    });
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(x => {
@@ -254,5 +259,10 @@ export class CRFExtractorComponent implements OnInit, OnDestroy, AfterViewInit {
       width: '700px',
       autoFocus: false
     });
+  }
+
+  toggleRowFavorite(element: CRFExtractor): void {
+    element.is_favorited = !element.is_favorited;
+    this.patchFavoriteRowQueue.next(element);
   }
 }

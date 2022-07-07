@@ -127,4 +127,12 @@ export class BertTaggerService {
       tap(e => this.logService.logStatus(e, 'tagTextOptions')),
       catchError(this.logService.handleError('tagTextOptions')));
   }
+
+  addFavoriteBertTagger(projectId: number, taggerId: number): Observable<unknown | HttpErrorResponse> {
+    return this.http.post<unknown>(
+      `${this.apiUrl}/projects/${projectId}/bert_taggers/${taggerId}/add_favorite/`, {}
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'addFavoriteBertTagger')),
+      catchError(this.logService.handleError<unknown>('addFavoriteBertTagger')));
+  }
 }

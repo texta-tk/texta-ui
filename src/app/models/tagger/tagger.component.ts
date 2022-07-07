@@ -43,7 +43,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: Tagger | null;
   public tableData: MatTableDataSource<Tagger> = new MatTableDataSource();
   selectedRows = new SelectionModel<Tagger>(true, []);
-  public displayedColumns = ['select', 'id', 'author__username', 'description', 'tg__description',  'fields', 'task__time_started',
+  public displayedColumns = ['select', 'is_favorited', 'id', 'author__username', 'description', 'tg__description', 'fields', 'task__time_started',
     'task__time_completed', 'f1_score', 'precision', 'recall', 'task__status', 'Modify'];
   public isLoadingResults = true;
 
@@ -58,6 +58,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   currentProject: Project;
   destroyed$ = new Subject<boolean>();
   private updateTable = new Subject<boolean>();
+  patchFavoriteRowQueue: Subject<Tagger> = new Subject();
 
   constructor(private projectStore: ProjectStore,
               private taggerService: TaggerService,
@@ -66,9 +67,15 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   getIndicesName = (x: Index) => x.name;
-  getTaggerGroupDesc = (x: {description: string}) => x.description;
+  getTaggerGroupDesc = (x: { description: string }) => x.description;
 
   ngOnInit(): void {
+    this.patchFavoriteRowQueue.pipe(takeUntil(this.destroyed$), debounceTime(50)).subscribe(row => {
+      if (this.currentProject) {
+        this.taggerService.addFavoriteTagger(this.currentProject.id, row.id).subscribe();
+      }
+    });
+
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
 
@@ -371,5 +378,10 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     } else {
       this.logService.snackBarMessage('Confusion matrix is empty!', 2000);
     }
+  }
+
+  toggleRowFavorite(element: Tagger): void {
+    element.is_favorited = !element.is_favorited;
+    this.patchFavoriteRowQueue.next(element);
   }
 }

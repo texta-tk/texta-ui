@@ -34,7 +34,7 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: TorchTagger | null;
   public tableData: MatTableDataSource<TorchTagger> = new MatTableDataSource();
   selectedRows = new SelectionModel<TorchTagger>(true, []);
-  public displayedColumns = ['select', 'id', 'author__username', 'description', 'fields', 'task__time_started',
+  public displayedColumns = ['select', 'is_favorited', 'id', 'author__username', 'description', 'fields', 'task__time_started',
     'task__time_completed', 'f1_score', 'precision', 'recall', 'task__status', 'Modify'];
   public isLoadingResults = true;
 
@@ -48,7 +48,7 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   currentProject: Project;
   destroyed$ = new Subject<boolean>();
   private updateTable = new Subject<boolean>();
-
+  patchFavoriteRowQueue: Subject<TorchTagger> = new Subject();
 
   constructor(private projectStore: ProjectStore,
               private torchtaggerService: TorchTaggerService,
@@ -57,7 +57,11 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
-
+    this.patchFavoriteRowQueue.pipe(takeUntil(this.destroyed$), debounceTime(50)).subscribe(row => {
+      if (this.currentProject) {
+        this.torchtaggerService.addFavoriteTorchTagger(this.currentProject.id, row.id).subscribe();
+      }
+    });
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
     // Check for updates after 30s every 30s
@@ -303,5 +307,10 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
       disableClose: true,
       data: {currentProjectId: this.currentProject.id, tagger: element}
     });
+  }
+
+  toggleRowFavorite(element: TorchTagger): void {
+    element.is_favorited = !element.is_favorited;
+    this.patchFavoriteRowQueue.next(element);
   }
 }

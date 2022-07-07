@@ -42,6 +42,14 @@ export class TaggerService {
       catchError(this.logService.handleError<Tagger>('editTagger')));
   }
 
+  addFavoriteTagger(projectId: number, taggerId: number): Observable<unknown | HttpErrorResponse> {
+    return this.http.post<unknown>(
+      `${this.apiUrl}/projects/${projectId}/taggers/${taggerId}/add_favorite/`, {}
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'addFavoriteTagger')),
+      catchError(this.logService.handleError<unknown>('addFavoriteTagger')));
+  }
+
   getTaggerById(id: number, projectId: number): Observable<Tagger | HttpErrorResponse> {
     return this.http.get<Tagger>(
       `${this.apiUrl}/projects/${projectId}/taggers/${id}`,

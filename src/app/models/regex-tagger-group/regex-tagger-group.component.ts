@@ -20,7 +20,7 @@ import {ApplyTaggerGroupDialogComponent} from './apply-tagger-group-dialog/apply
 import {TagTextDialogComponent} from './tag-text-dialog/tag-text-dialog.component';
 import {TagRandomDocComponent} from './tag-random-doc/tag-random-doc.component';
 import {EditRegexTaggerGroupDialogComponent} from './edit-regex-tagger-group-dialog/edit-regex-tagger-group-dialog.component';
-import {MatSelectChange} from "@angular/material/select";
+import {MatSelectChange} from '@angular/material/select';
 
 @Component({
   selector: 'app-regex-tagger-group',
@@ -34,7 +34,7 @@ export class RegexTaggerGroupComponent implements OnInit, OnDestroy, AfterViewIn
   expandedElements: [boolean, boolean[]][] = [];
   public tableData: MatTableDataSource<RegexTaggerGroup> = new MatTableDataSource();
   selectedRows = new SelectionModel<RegexTaggerGroup>(true, []);
-  public displayedColumns = ['select', 'id', 'author', 'description', 'regex_taggers', 'task__status', 'actions'];
+  public displayedColumns = ['select', 'is_favorited', 'id', 'author', 'description', 'regex_taggers', 'task__status', 'actions'];
   public isLoadingResults = true;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -46,6 +46,7 @@ export class RegexTaggerGroupComponent implements OnInit, OnDestroy, AfterViewIn
   inputFilterQuery = '';
   filteringValues: { [key: string]: string } = {};
   private updateTable = new Subject<boolean>();
+  patchFavoriteRowQueue: Subject<RegexTaggerGroup> = new Subject();
 
   constructor(private projectStore: ProjectStore,
               private regexTaggerGroupService: RegexTaggerGroupService,
@@ -54,6 +55,12 @@ export class RegexTaggerGroupComponent implements OnInit, OnDestroy, AfterViewIn
   }
 
   ngOnInit(): void {
+    this.patchFavoriteRowQueue.pipe(takeUntil(this.destroyed$), debounceTime(50)).subscribe(row => {
+      if (this.currentProject) {
+        this.regexTaggerGroupService.addFavoriteRegexTaggerGrp(this.currentProject.id, row.id).subscribe();
+      }
+    });
+
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(x => {
@@ -247,5 +254,10 @@ export class RegexTaggerGroupComponent implements OnInit, OnDestroy, AfterViewIn
   ngOnDestroy(): void {
     this.destroyed$.next(true);
     this.destroyed$.complete();
+  }
+
+  toggleRowFavorite(element: RegexTaggerGroup): void {
+    element.is_favorited = !element.is_favorited;
+    this.patchFavoriteRowQueue.next(element);
   }
 }

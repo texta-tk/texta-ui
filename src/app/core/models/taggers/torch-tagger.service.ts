@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import {environment} from 'src/environments/environment';
 import {TorchTagger, TorchTaggerEpoch} from '../../../shared/types/tasks/TorchTagger';
 import {LogService} from '../../util/log.service';
 import {Observable} from 'rxjs';
@@ -7,7 +6,6 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {catchError, tap} from 'rxjs/operators';
 import {ResultsWrapper} from '../../../shared/types/Generic';
 import {AppConfigService} from '../../util/app-config.service';
-import {RegexTaggerTagRandomDocResult} from "../../../shared/types/tasks/RegexTaggerGroup";
 
 @Injectable({
   providedIn: 'root'
@@ -104,5 +102,13 @@ export class TorchTaggerService {
     return this.http.post<any>(`${this.apiUrl}/projects/${currentProjectId}/torchtaggers/${id}/tag_random_doc/`, body).pipe(
       tap(e => this.logService.logStatus(e, 'tagRandomDoc')),
       catchError(this.logService.handleError<any>('tagRandomDoc')));
+  }
+
+  addFavoriteTorchTagger(projectId: number, taggerId: number): Observable<unknown | HttpErrorResponse> {
+    return this.http.post<unknown>(
+      `${this.apiUrl}/projects/${projectId}/torchtaggers/${taggerId}/add_favorite/`, {}
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'addFavoriteTorchTagger')),
+      catchError(this.logService.handleError<unknown>('addFavoriteTorchTagger')));
   }
 }

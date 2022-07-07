@@ -20,7 +20,7 @@ import {EditRegexTaggerDialogComponent} from './edit-regex-tagger-dialog/edit-re
 import {TagTextDialogComponent} from './tag-text-dialog/tag-text-dialog.component';
 import {TagRandomDocComponent} from './tag-random-doc/tag-random-doc.component';
 import {ApplyToIndexDialogComponent} from './apply-to-index-dialog/apply-to-index-dialog.component';
-import {MatSelectChange} from "@angular/material/select";
+import {MatSelectChange} from '@angular/material/select';
 
 @Component({
   selector: 'app-regex-tagger',
@@ -31,7 +31,7 @@ import {MatSelectChange} from "@angular/material/select";
   ]
 })
 export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
-  public displayedColumns = ['select', 'id', 'description', 'operator', 'matchType', 'requiredWords', 'phraseSlop',
+  public displayedColumns = ['select', 'is_favorited',  'id', 'description', 'operator', 'matchType', 'requiredWords', 'phraseSlop',
     'counterSlop', 'nAllowedEdits', 'fuzzy', 'ignoreCase', 'ignorePunctuation', 'task__status', 'actions'];
   public isLoadingResults = true;
   public tableData: MatTableDataSource<RegexTagger> = new MatTableDataSource();
@@ -41,6 +41,7 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElements: boolean[] = [];
   currentProject: Project;
   patchRowQueue: Subject<RegexTagger> = new Subject();
+  patchFavoriteRowQueue: Subject<RegexTagger> = new Subject();
   resultsLength: number;
   filteredSubject = new Subject();
   // For custom filtering, such as text search in description
@@ -62,6 +63,11 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.patchRowQueue.pipe(takeUntil(this.destroyed$), debounceTime(50)).subscribe(row => {
       if (this.currentProject) {
         this.regexTaggerService.patchRegexTagger(this.currentProject.id, row.id, row).subscribe();
+      }
+    });
+    this.patchFavoriteRowQueue.pipe(takeUntil(this.destroyed$), debounceTime(50)).subscribe(row => {
+      if (this.currentProject) {
+        this.regexTaggerService.addFavoriteRegexTagger(this.currentProject.id, row.id).subscribe();
       }
     });
   }
@@ -280,6 +286,9 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.destroyed$.next(true);
     this.destroyed$.complete();
   }
-
+  toggleRowFavorite(element: RegexTagger): void {
+    element.is_favorited = !element.is_favorited;
+    this.patchFavoriteRowQueue.next(element);
+  }
 
 }

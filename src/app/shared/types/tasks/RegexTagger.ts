@@ -14,4 +14,5 @@ export class RegexTagger {
   return_fuzzy_match: boolean;
   ignore_case: boolean;
   ignore_punctuation: boolean;
+  is_favorited: boolean;
 }
