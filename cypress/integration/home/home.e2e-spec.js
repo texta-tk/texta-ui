@@ -8,8 +8,8 @@ describe('/health and project table tests', function () {
   it('should check if /health endpoint stats are visible', function () {
     cy.intercept('GET', 'health').as('health');
     cy.visit('/');
-    cy.wait('@health', {timeout: 30000});
-    cy.get('[data-cy=appHomeHealth]').should('be.visible');
+    cy.get('[data-cy=appHomeLoadHealthBtn]').click();
+    cy.wait('@health', {timeout: 30000}).its('response.statusCode').should('eq', 200);
   });
   it('should be able to create a project', function () {
     cy.visit('/');

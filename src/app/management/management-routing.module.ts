@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {AuthGuard} from '../core/auth/auth.guard';
+import {AuthGuard} from '../core/guards/auth.guard';
 import {ManagementComponent} from './management.component';
 import {CeleryComponent} from './celery/celery.component';
 import {CoreVariablesComponent} from './core-variables/core-variables.component';

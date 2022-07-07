@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
-import {AuthGuard} from './core/auth/auth.guard';
+import {AuthGuard} from './core/guards/auth.guard';
 import {USERROLES} from './shared/types/UserAuth';
 import {ProjectGuard} from './core/guards/project.guard';
 

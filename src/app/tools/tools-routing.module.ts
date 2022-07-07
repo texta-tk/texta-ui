@@ -3,7 +3,7 @@ import {ReindexerComponent} from './reindexer/reindexer.component';
 import {RouterModule, Routes} from '@angular/router';
 import {DatasetImporterComponent} from './dataset-importer/dataset-importer.component';
 import {MLPComponent} from './mlp/mlp.component';
-import {AuthGuard} from '../core/auth/auth.guard';
+import {AuthGuard} from '../core/guards/auth.guard';
 import {AnonymizerComponent} from './anonymizer/anonymizer.component';
 import {IndexSplitterComponent} from './index-splitter/index-splitter.component';
 import {ProjectGuard} from '../core/guards/project.guard';

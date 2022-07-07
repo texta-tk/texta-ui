@@ -6,32 +6,42 @@
 
 .health-wrapper {
   border-left: 1px solid #e0e0e0;
-
+  >div{
+    max-width: 785px;
+    margin: auto;
+  }
   .mat-chip.mat-standard-chip.mat-chip-disabled {
     opacity: 1;
   }
 }
 
-
-.usage-card {
-  max-width: 725px;
-  margin-bottom: 10px;
-}
-
-.service-status-card {
-  margin-top: 10px;
-  max-width: 725px;
-  margin-bottom: 10px;
-}
-
 .counts-card {
-  max-width: 725px;
   margin-bottom: 10px;
 }
 
 .count-text {
   font-size: 30px;
 }
-.project-table{
+
+.project-table {
   min-width: 785px;
+}
+
+.celery-info {
+  position: relative;
+  margin-top: 1rem;
+}
+
+.health-info {
+  position: relative;
+  mat-card {
+    margin-top: 1rem;
+  }
+  mat-card:first-child {
+    margin-top: 0;
+  }
+}
+
+mat-card {
+  box-sizing: border-box;
 }
