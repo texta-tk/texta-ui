@@ -4,7 +4,7 @@ import {EvaluatorService} from '../../../core/tools/evaluator/evaluator.service'
 import {LogService} from '../../../core/util/log.service';
 import {EvaluatorIndividualResults, IndividualResults} from '../../../shared/types/tasks/Evaluator';
 import {HttpErrorResponse} from '@angular/common/http';
-import {FormBuilder} from '@angular/forms';
+import {UntypedFormBuilder} from '@angular/forms';
 import {debounceTime, delay, switchMap} from 'rxjs/operators';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
@@ -40,7 +40,7 @@ export class IndividualResultsDialogComponent implements OnInit, AfterViewInit {
   }> | undefined = undefined;
 
   constructor(
-    private logService: LogService, private fb: FormBuilder,
+    private logService: LogService, private fb: UntypedFormBuilder,
     private dialog: MatDialog,
     private evaluatorService: EvaluatorService,
     @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, evaluatorId: number; }) {

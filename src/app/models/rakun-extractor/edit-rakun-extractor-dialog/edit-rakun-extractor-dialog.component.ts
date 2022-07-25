@@ -11,7 +11,7 @@ import {Project, ProjectIndex} from '../../../shared/types/Project';
 import {forkJoin, of, Subject} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {Choice, Embedding} from '../../../shared/types/tasks/Embedding';
@@ -37,7 +37,7 @@ interface OnSubmitParams {
   styleUrls: ['./edit-rakun-extractor-dialog.component.scss']
 })
 export class EditRakunExtractorDialogComponent implements OnInit, OnDestroy {
-  rakunExtractorForm!: FormGroup;
+  rakunExtractorForm!: UntypedFormGroup;
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   currentProject: Project;
@@ -45,7 +45,7 @@ export class EditRakunExtractorDialogComponent implements OnInit, OnDestroy {
   projectIndices: ProjectIndex[] = [];
   projectFields: ProjectIndex[];
   // tslint:disable-next-line:no-any
-  rakunOptions: any;
+  rakunOptions: any | undefined;
   fastTextEmbeddings: Embedding[] = [];
   embeddings: Embedding[];
   distanceMethods: Choice[] = [];
@@ -58,18 +58,18 @@ export class EditRakunExtractorDialogComponent implements OnInit, OnDestroy {
               @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, element: RakunExtractor; },
               private projectStore: ProjectStore) {
     if (this.data) {
-      this.rakunExtractorForm = new FormGroup({
-        descriptionFormControl: new FormControl(this.data.element?.description || '', [Validators.required]),
-        distanceMethodFormControl: new FormControl(''),
-        distanceThresholdFormControl: new FormControl(this.data.element?.distance_threshold || 2, [Validators.min(0)]),
-        numberOfKeywordsFormControl: new FormControl(this.data.element?.num_keywords || 25, [Validators.min(0)]),
-        pairDiffLengthFormControl: new FormControl(this.data.element?.pair_diff_length || 2, [Validators.min(0)]),
-        bigramCountThresholdFormControl: new FormControl(this.data.element?.bigram_count_threshold || 2, [Validators.min(0)]),
-        minTokensFormControl: new FormControl(this.data.element?.min_tokens || 1, [Validators.min(1), Validators.max(3)]),
-        maxTokensFormControl: new FormControl(this.data.element?.max_tokens || 1, [Validators.min(1), Validators.max(3)]),
-        maxSimilarFormControl: new FormControl(this.data.element?.max_similar || 3, [Validators.min(0)]),
-        maxOccurrenceFormControl: new FormControl(this.data.element?.max_occurrence || 3, [Validators.min(0)]),
-        embeddingFormControl: new FormControl(),
+      this.rakunExtractorForm = new UntypedFormGroup({
+        descriptionFormControl: new UntypedFormControl(this.data.element?.description || '', [Validators.required]),
+        distanceMethodFormControl: new UntypedFormControl(''),
+        distanceThresholdFormControl: new UntypedFormControl(this.data.element?.distance_threshold || 2, [Validators.min(0)]),
+        numberOfKeywordsFormControl: new UntypedFormControl(this.data.element?.num_keywords || 25, [Validators.min(0)]),
+        pairDiffLengthFormControl: new UntypedFormControl(this.data.element?.pair_diff_length || 2, [Validators.min(0)]),
+        bigramCountThresholdFormControl: new UntypedFormControl(this.data.element?.bigram_count_threshold || 2, [Validators.min(0)]),
+        minTokensFormControl: new UntypedFormControl(this.data.element?.min_tokens || 1, [Validators.min(1), Validators.max(3)]),
+        maxTokensFormControl: new UntypedFormControl(this.data.element?.max_tokens || 1, [Validators.min(1), Validators.max(3)]),
+        maxSimilarFormControl: new UntypedFormControl(this.data.element?.max_similar || 3, [Validators.min(0)]),
+        maxOccurrenceFormControl: new UntypedFormControl(this.data.element?.max_occurrence || 3, [Validators.min(0)]),
+        embeddingFormControl: new UntypedFormControl(),
       });
     }
   }

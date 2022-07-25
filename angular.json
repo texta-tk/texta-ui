@@ -196,6 +196,5 @@
       "projectType": "application",
       "prefix": "texta-schematics"
     }
-  },
-  "defaultProject": "texta"
+  }
 }

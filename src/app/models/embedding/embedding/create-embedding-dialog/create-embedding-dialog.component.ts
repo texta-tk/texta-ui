@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {MatDialogRef} from '@angular/material/dialog';
 import {EmbeddingsService} from '../../../../core/models/embeddings/embeddings.service';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {LiveErrorStateMatcher} from '../../../../shared/CustomerErrorStateMatchers';
 import {mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
 import {of, Subject} from 'rxjs';
@@ -33,18 +33,18 @@ interface OnSubmitParams {
 })
 export class CreateEmbeddingDialogComponent implements OnInit {
 
-  embeddingForm = new FormGroup({
-    descriptionFormControl: new FormControl('', [
+  embeddingForm = new UntypedFormGroup({
+    descriptionFormControl: new UntypedFormControl('', [
       Validators.required,
     ]),
-    indicesFormControl: new FormControl([], [Validators.required]),
-    fieldsFormControl: new FormControl([], [Validators.required]),
-    embeddingTypeFormControl: new FormControl(),
-    dimensionsFormControl: new FormControl(100, [Validators.required]),
-    frequencyFormControl: new FormControl(5, [Validators.required]),
-    epochFormControl: new FormControl(5, [Validators.required]),
-    windowSizeFormControl: new FormControl(5, [Validators.required]),
-    usePhraserFormControl: new FormControl(false)
+    indicesFormControl: new UntypedFormControl([], [Validators.required]),
+    fieldsFormControl: new UntypedFormControl([], [Validators.required]),
+    embeddingTypeFormControl: new UntypedFormControl(),
+    dimensionsFormControl: new UntypedFormControl(100, [Validators.required]),
+    frequencyFormControl: new UntypedFormControl(5, [Validators.required]),
+    epochFormControl: new UntypedFormControl(5, [Validators.required]),
+    windowSizeFormControl: new UntypedFormControl(5, [Validators.required]),
+    usePhraserFormControl: new UntypedFormControl(false)
 
   });
   defaultQuery = '{"query": {"match_all": {}}}';
@@ -54,7 +54,7 @@ export class CreateEmbeddingDialogComponent implements OnInit {
   projectFields: ProjectIndex[];
   destroyed$ = new Subject<boolean>();
   projectIndices: ProjectIndex[] = [];
-  embeddingOptions: EmbeddingOptions;
+  embeddingOptions: EmbeddingOptions | undefined;
 
   constructor(private dialogRef: MatDialogRef<CreateEmbeddingDialogComponent>,
               private projectService: ProjectService,

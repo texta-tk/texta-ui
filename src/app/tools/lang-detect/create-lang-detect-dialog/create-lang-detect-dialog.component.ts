@@ -3,7 +3,7 @@ import {MatDialogRef} from '@angular/material/dialog';
 import {of, Subject} from 'rxjs';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {mergeMap, takeUntil} from 'rxjs/operators';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Project, ProjectIndex} from '../../../shared/types/Project';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
@@ -22,10 +22,10 @@ import {MLPOptions} from '../../../shared/types/tasks/MLPOptions';
 export class CreateLangDetectDialogComponent implements OnInit, OnDestroy {
   defaultQuery = '{"query": {"match_all": {}}}';
   query = this.defaultQuery;
-  langDetectForm = new FormGroup({
-    descriptionFormControl: new FormControl('', [Validators.required]),
-    indicesFormControl: new FormControl([], [Validators.required]),
-    fieldsFormControl: new FormControl('', [Validators.required]),
+  langDetectForm = new UntypedFormGroup({
+    descriptionFormControl: new UntypedFormControl('', [Validators.required]),
+    indicesFormControl: new UntypedFormControl([], [Validators.required]),
+    fieldsFormControl: new UntypedFormControl('', [Validators.required]),
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();

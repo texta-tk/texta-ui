@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {Subject} from 'rxjs';
 import {SearcherComponentService} from '../../../services/searcher-component.service';
 import {takeUntil} from "rxjs/operators";
@@ -11,7 +11,7 @@ import {takeUntil} from "rxjs/operators";
 })
 export class NumberAggregationComponent implements OnInit {
   @Input() aggregationObj: { aggregation: any };
-  @Input() fieldsFormControl: FormControl;
+  @Input() fieldsFormControl: UntypedFormControl;
   isMainAgg: boolean;
   aggregationType: 'percentiles' | 'extended_stats' | 'boxplot' = 'extended_stats';
   aggregationSize = 20;

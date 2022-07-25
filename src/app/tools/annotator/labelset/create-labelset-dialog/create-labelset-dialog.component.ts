@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {LiveErrorStateMatcher} from '../../../../shared/CustomerErrorStateMatchers';
 import {Lexicon} from '../../../../shared/types/Lexicon';
@@ -31,12 +31,12 @@ interface OnSubmitParams {
 })
 export class CreateLabelsetDialogComponent implements OnInit {
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
-  labelSetForm = new FormGroup({
-    indicesFormControl: new FormControl([]),
-    categoryFormControl: new FormControl('', [Validators.required]),
-    factNameFormControl: new FormControl(),
-    valueLimitFormControl: new FormControl(500, [Validators.required, Validators.max(10000), Validators.min(0)]),
-    valuesFormControl: new FormControl('', [Validators.required]),
+  labelSetForm = new UntypedFormGroup({
+    indicesFormControl: new UntypedFormControl([]),
+    categoryFormControl: new UntypedFormControl('', [Validators.required]),
+    factNameFormControl: new UntypedFormControl(),
+    valueLimitFormControl: new UntypedFormControl(500, [Validators.required, Validators.max(10000), Validators.min(0)]),
+    valuesFormControl: new UntypedFormControl('', [Validators.required]),
   });
   currentProject: Project;
   destroyed$: Subject<boolean> = new Subject();

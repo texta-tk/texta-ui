@@ -3,7 +3,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {LogService} from '../../../core/util/log.service';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {RegexTaggerService} from '../../../core/models/taggers/regex-tagger.service';
-import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {Lexicon} from '../../../shared/types/Lexicon';
@@ -21,36 +21,36 @@ import {RegexTagger} from '../../../shared/types/tasks/RegexTagger';
   styleUrls: ['./create-regex-tagger-dialog.component.scss']
 })
 export class CreateRegexTaggerDialogComponent implements OnInit, OnDestroy {
-  regexTaggerForm = new FormGroup({
-    descriptionFormControl: new FormControl(this.data?.cloneTagger?.description || '', [
+  regexTaggerForm = new UntypedFormGroup({
+    descriptionFormControl: new UntypedFormControl(this.data?.cloneTagger?.description || '', [
       Validators.required,
     ]),
-    lexiconFormControl: new FormControl('', [
+    lexiconFormControl: new UntypedFormControl('', [
       Validators.required,
     ]),
-    counterLexiconFormControl: new FormControl(''),
-    operatorFormControl: new FormControl(this.data?.cloneTagger?.operator || 'or', [
+    counterLexiconFormControl: new UntypedFormControl(''),
+    operatorFormControl: new UntypedFormControl(this.data?.cloneTagger?.operator || 'or', [
       Validators.required,
     ]),
-    matchTypeFormControl: new FormControl(this.data?.cloneTagger?.match_type || 'prefix', [
+    matchTypeFormControl: new UntypedFormControl(this.data?.cloneTagger?.match_type || 'prefix', [
       Validators.required,
     ]),
-    requiredWordsFormControl: new FormControl(this.data?.cloneTagger?.required_words || 1, [
+    requiredWordsFormControl: new UntypedFormControl(this.data?.cloneTagger?.required_words || 1, [
       Validators.required, Validators.min(0), Validators.max(1)
     ]),
-    phraseSlopFormControl: new FormControl(this.data?.cloneTagger?.phrase_slop || 0, [
+    phraseSlopFormControl: new UntypedFormControl(this.data?.cloneTagger?.phrase_slop || 0, [
       Validators.required,
     ]),
-    counterSlopFormControl: new FormControl(this.data?.cloneTagger?.counter_slop || 0, [
+    counterSlopFormControl: new UntypedFormControl(this.data?.cloneTagger?.counter_slop || 0, [
       Validators.required,
     ]),
-    allowedEditsFormControl: new FormControl(this.data?.cloneTagger?.n_allowed_edits || 0, [
+    allowedEditsFormControl: new UntypedFormControl(this.data?.cloneTagger?.n_allowed_edits || 0, [
       Validators.required,
     ]),
 
-    fuzzyMatchFormControl: new FormControl(this.data?.cloneTagger?.return_fuzzy_match !== false),
-    ignoreCaseFormControl: new FormControl(this.data?.cloneTagger?.ignore_case !== false),
-    ignorePunctuationFormControl: new FormControl(this.data?.cloneTagger?.ignore_punctuation !== false),
+    fuzzyMatchFormControl: new UntypedFormControl(this.data?.cloneTagger?.return_fuzzy_match !== false),
+    ignoreCaseFormControl: new UntypedFormControl(this.data?.cloneTagger?.ignore_case !== false),
+    ignorePunctuationFormControl: new UntypedFormControl(this.data?.cloneTagger?.ignore_punctuation !== false),
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();

@@ -1,5 +1,5 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {Project} from '../../../shared/types/Project';
@@ -24,9 +24,9 @@ import {ResultsWrapper} from '../../../shared/types/Generic';
 })
 export class EditRegexTaggerGroupDialogComponent implements OnInit, OnDestroy {
 
-  regexTaggerGroupForm = new FormGroup({
-    descriptionFormControl: new FormControl(this.data?.description || '', [Validators.required]),
-    regexTaggersFormControl: new FormControl([], [Validators.required])
+  regexTaggerGroupForm = new UntypedFormGroup({
+    descriptionFormControl: new UntypedFormControl(this.data?.description || '', [Validators.required]),
+    regexTaggersFormControl: new UntypedFormControl([], [Validators.required])
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();

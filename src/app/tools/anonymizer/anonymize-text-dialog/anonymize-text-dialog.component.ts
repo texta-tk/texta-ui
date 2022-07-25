@@ -5,7 +5,7 @@ import {
   OnDestroy,
   OnInit, ViewChild,
 } from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {Project} from '../../../shared/types/Project';
@@ -25,9 +25,9 @@ import {HttpErrorResponse} from "@angular/common/http";
   styleUrls: ['./anonymize-text-dialog.component.scss']
 })
 export class AnonymizeTextDialogComponent implements OnInit, OnDestroy {
-  anonymizerForm: FormGroup = new FormGroup({
-    textFormControl: new FormControl('', [Validators.required]),
-    namesFormControl: new FormControl('', [Validators.required]),
+  anonymizerForm: UntypedFormGroup = new UntypedFormGroup({
+    textFormControl: new UntypedFormControl('', [Validators.required]),
+    namesFormControl: new UntypedFormControl('', [Validators.required]),
   });
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   currentProject: Project;

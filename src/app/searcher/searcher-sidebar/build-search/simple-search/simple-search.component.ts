@@ -1,5 +1,5 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {debounceTime, switchMap, takeUntil} from 'rxjs/operators';
 import {Project, ProjectIndex} from '../../../../shared/types/Project';
 import {ProjectStore} from '../../../../core/projects/project.store';
@@ -21,7 +21,7 @@ import {LocalStorageService} from '../../../../core/util/local-storage.service';
   styleUrls: ['./simple-search.component.scss']
 })
 export class SimpleSearchComponent implements OnInit, OnDestroy {
-  searchFormControl = new FormControl();
+  searchFormControl = new UntypedFormControl();
   destroy$ = new Subject<boolean>();
   projectFields: ProjectIndex[];
   currentProject: Project;

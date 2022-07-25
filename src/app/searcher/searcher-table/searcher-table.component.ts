@@ -13,7 +13,7 @@ import {Search, SearchOptions} from '../../shared/types/Search';
 import {MatPaginator, MatPaginatorIntl, PageEvent} from '@angular/material/paginator';
 import {MatSort, Sort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {forkJoin, of, Subject} from 'rxjs';
 import {debounceTime, delay, distinctUntilChanged, filter, switchMap, take, takeUntil} from 'rxjs/operators';
 import {ProjectStore} from '../../core/projects/project.store';
@@ -43,7 +43,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
   public displayedFacts: string[] | undefined = undefined;
   public displayedColumns: Field[] = [];
   public columnsToDisplay: string[] = [];
-  public columnFormControl = new FormControl([]);
+  public columnFormControl = new UntypedFormControl([]);
   public isLoadingResults = false;
   public paginatorLength: number;
   public searchOptions: SearchOptions = {highlightTextaFacts: true, highlightSearcherMatches: true};

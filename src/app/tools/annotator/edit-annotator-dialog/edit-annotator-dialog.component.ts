@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ProjectService} from '../../../core/projects/project.service';
 import {UserStore} from '../../../core/users/user.store';
@@ -21,8 +21,8 @@ import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers'
   styleUrls: ['./edit-annotator-dialog.component.scss']
 })
 export class EditAnnotatorDialogComponent implements OnInit {
-  annotatorForm = new FormGroup({
-    descriptionFormControl: new FormControl(this.data?.description || ''),
+  annotatorForm = new UntypedFormGroup({
+    descriptionFormControl: new UntypedFormControl(this.data?.description || ''),
   });
   currentProject: Project;
   destroyed$: Subject<boolean> = new Subject<boolean>();

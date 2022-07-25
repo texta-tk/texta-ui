@@ -75,22 +75,22 @@
         <mat-card *ngIf="health" class="service-status-card center-margin" fxLayout="row wrap" fxLayoutGap="5px">
 
           <mat-chip-list class="center-margin chip-list-space-evenly" disabled>
-            <mat-chip [color]="health?.services?.elastic?.alive ? 'primary' : 'accent'" selected>
-              Elasticsearch: {{health?.services?.elastic?.status?.version?.number}}
+            <mat-chip [color]="health.services.elastic?.alive ? 'primary' : 'accent'" selected>
+              Elasticsearch: {{health.services.elastic?.status?.version?.number}}
             </mat-chip>
-            <mat-chip [color]="health?.services?.redis?.alive ? 'primary' : 'accent'" selected>
-              Redis: {{health?.services?.redis?.version}}
+            <mat-chip [color]="health.services.redis?.alive ? 'primary' : 'accent'" selected>
+              Redis: {{health.services.redis?.version}}
             </mat-chip>
-            <mat-chip color="primary" selected> API {{health?.toolkit?.version}}  </mat-chip>
+            <mat-chip color="primary" selected> API {{health.toolkit.version}}  </mat-chip>
             <mat-chip color="primary" selected> GUI {{frontVersion}}  </mat-chip>
             <mat-chip color="primary" selected
-                      title="Available languages: {{'\n'+health?.toolkit?.available_langs?.join('\n')}}">
-              Languages: {{health?.toolkit?.available_langs?.length}}
+                      title="Available languages: {{'\n'+health.toolkit.available_langs.join('\n')}}">
+              Languages: {{health.toolkit.available_langs.length}}
             </mat-chip>
           </mat-chip-list>
         </mat-card>
         <mat-card *ngIf="health" class="usage-card center-margin" fxLayout="row wrap">
-          <div fxFlex="1 0 125px" *ngIf="health?.host?.disk">
+          <div fxFlex="1 0 125px" *ngIf="health.host?.disk">
             <h4 class="mat-h4 center-text"> DISK SPACE </h4>
             <mat-progress-spinner
               [color]="(((health.host.disk?.used || 0) / (health.host.disk?.total || 0))* 100) < 90 ? 'primary' : 'warn'"
@@ -104,8 +104,8 @@
               class="block center-text">{{(((health.host.disk?.used || 0) / (health.host.disk?.total || 0)) * 100)| number:'1.0-0' }}
               % </span>
             </div>
-            <span class="mat-hint mat-small center-text block"> {{health?.host?.disk?.used | number}}
-              /  {{health?.host?.disk?.total| number}} {{health?.host?.disk?.unit}} </span>
+            <span class="mat-hint mat-small center-text block"> {{health.host.disk?.used | number}}
+              /  {{health.host.disk?.total| number}} {{health.host.disk?.unit}} </span>
           </div>
 
           <div fxFlex="1 0 125px" *ngIf="health?.host?.memory">
@@ -123,10 +123,10 @@
               % </span>
             </div>
             <span class="mat-hint mat-small center-text block">  {{health.host.memory?.used | number}}
-              /  {{health.host.memory?.total| number}} {{health?.host?.memory?.unit}} </span>
+              /  {{health.host.memory?.total| number}} {{health.host.memory?.unit}} </span>
           </div>
 
-          <div fxFlex="1 0 125px" matTooltip="CPUs: {{health?.host?.cpu?.count}}" *ngIf="health?.host?.cpu">
+          <div fxFlex="1 0 125px" matTooltip="CPUs: {{health.host.cpu?.count}}" *ngIf="health?.host?.cpu">
             <h4 class="mat-h4 center-text"> CPU USAGE </h4>
             <mat-progress-spinner
               [color]="(health.host.cpu?.percent|| 0) < 90 ? 'primary' : 'warn'"
@@ -140,7 +140,7 @@
             </div>
           </div>
         </mat-card>
-        <mat-card *ngIf="health && (health?.host?.gpu?.devices?.length || 0) > 0" class="usage-card center-margin"
+        <mat-card *ngIf="health && (health.host?.gpu?.devices?.length || 0) > 0" class="usage-card center-margin"
                   fxLayout="row wrap"
                   style="max-height: 350px; overflow: auto;">
           <table class="simple-table">
@@ -168,7 +168,7 @@
               <th>Disk Size</th>
             </tr>
 
-            <tr *ngFor="let item of health?.services?.elastic?.disk; let i =index">
+            <tr *ngFor="let item of health.services.elastic?.disk; let i =index">
               <td>{{item?.host}}</td>
               <td
                 style.background="linear-gradient(90deg, {{((item.used / item.total) * 100) < 85 ? 'lightgreen' : '#ff6961'}} {{(item.used / item.total) * 100}}%, #FFF {{(item.used / item.total) * 100}}%)">{{item.used}} {{item.unit}}
@@ -231,21 +231,21 @@
 
             <tr>
               <td>MLP Queue</td>
-              <td>{{ celeryInfo ? celeryInfo?.mlp_queue?.active : 'Loading...'}}</td>
-              <td>{{ celeryInfo ? celeryInfo?.mlp_queue?.scheduled : 'Loading...'}}</td>
-              <td>{{ celeryInfo ? celeryInfo?.mlp_queue?.reserved : 'Loading...'}}</td>
+              <td>{{ celeryInfo ? celeryInfo.mlp_queue.active : 'Loading...'}}</td>
+              <td>{{ celeryInfo ? celeryInfo.mlp_queue.scheduled : 'Loading...'}}</td>
+              <td>{{ celeryInfo ? celeryInfo.mlp_queue.reserved : 'Loading...'}}</td>
             </tr>
             <tr>
               <td>Short Term</td>
-              <td>{{ celeryInfo ? celeryInfo?.short_term_tasks?.active : 'Loading...'}}</td>
-              <td>{{ celeryInfo ? celeryInfo?.short_term_tasks?.scheduled : 'Loading...'}}</td>
-              <td>{{ celeryInfo ? celeryInfo?.short_term_tasks?.reserved : 'Loading...'}}</td>
+              <td>{{ celeryInfo ? celeryInfo.short_term_tasks.active : 'Loading...'}}</td>
+              <td>{{ celeryInfo ? celeryInfo.short_term_tasks.scheduled : 'Loading...'}}</td>
+              <td>{{ celeryInfo ? celeryInfo.short_term_tasks.reserved : 'Loading...'}}</td>
             </tr>
             <tr>
               <td>Long Term</td>
-              <td>{{ celeryInfo ? celeryInfo?.long_term_tasks?.active : 'Loading...'}}</td>
-              <td>{{ celeryInfo ? celeryInfo?.long_term_tasks?.scheduled : 'Loading...'}}</td>
-              <td>{{ celeryInfo ? celeryInfo?.long_term_tasks?.reserved : 'Loading...'}}</td>
+              <td>{{ celeryInfo ? celeryInfo.long_term_tasks.active : 'Loading...'}}</td>
+              <td>{{ celeryInfo ? celeryInfo.long_term_tasks.scheduled : 'Loading...'}}</td>
+              <td>{{ celeryInfo ? celeryInfo.long_term_tasks.reserved : 'Loading...'}}</td>
             </tr>
           </table>
         </mat-card>

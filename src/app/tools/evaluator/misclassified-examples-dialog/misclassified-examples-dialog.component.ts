@@ -5,7 +5,7 @@ import {MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
 import {MatTableDataSource} from '@angular/material/table';
 import {EvaluatorMisclassifiedExamplesResults, IndividualResults} from '../../../shared/types/tasks/Evaluator';
 import {MatSort} from '@angular/material/sort';
-import {FormBuilder} from '@angular/forms';
+import {UntypedFormBuilder} from '@angular/forms';
 import {HttpErrorResponse} from '@angular/common/http';
 import {debounceTime, switchMap} from 'rxjs/operators';
 import {ConfusionMatrixDialogComponent} from '../../../shared/plotly-module/confusion-matrix-dialog/confusion-matrix-dialog.component';
@@ -44,7 +44,7 @@ export class MisclassifiedExamplesDialogComponent {
   viewType: 'list' | 'table' = 'list';
 
   constructor(
-    private logService: LogService, private fb: FormBuilder,
+    private logService: LogService, private fb: UntypedFormBuilder,
     private dialog: MatDialog,
     private evaluatorService: EvaluatorService,
     @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, evaluatorId: number; }) {

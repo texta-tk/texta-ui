@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {of, Subject} from 'rxjs';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {Project} from '../../../shared/types/Project';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
@@ -26,10 +26,10 @@ export class ApplySummarizerDialogComponent implements OnInit, OnDestroy {
     display_name: string;
   }[];
   destroyed$: Subject<boolean> = new Subject<boolean>();
-  summarizerForm = new FormGroup({
-    textFormControl: new FormControl('', [Validators.required]),
-    algorithmsFormControl: new FormControl([]),
-    ratioFormControl: new FormControl(0.2)
+  summarizerForm = new UntypedFormGroup({
+    textFormControl: new UntypedFormControl('', [Validators.required]),
+    algorithmsFormControl: new UntypedFormControl([]),
+    ratioFormControl: new UntypedFormControl(0.2)
   });
   currentProject: Project;
   result: { lexrank: string; textrank: string };

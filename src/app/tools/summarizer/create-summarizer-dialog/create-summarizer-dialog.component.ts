@@ -3,7 +3,7 @@ import {MatDialogRef} from '@angular/material/dialog';
 import {of, Subject} from 'rxjs';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {mergeMap, takeUntil} from 'rxjs/operators';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {Project, ProjectIndex} from '../../../shared/types/Project';
@@ -20,12 +20,12 @@ import {LogService} from '../../../core/util/log.service';
 })
 export class CreateSummarizerDialogComponent implements OnInit, OnDestroy {
 
-  summarizerForm = new FormGroup({
-    descriptionFormControl: new FormControl('', [Validators.required]),
-    indicesFormControl: new FormControl([], [Validators.required]),
-    fieldsFormControl: new FormControl([], [Validators.required]),
-    algorithmsFormControl: new FormControl([]),
-    ratioFormControl: new FormControl(0.2, [Validators.min(0), Validators.max(100)])
+  summarizerForm = new UntypedFormGroup({
+    descriptionFormControl: new UntypedFormControl('', [Validators.required]),
+    indicesFormControl: new UntypedFormControl([], [Validators.required]),
+    fieldsFormControl: new UntypedFormControl([], [Validators.required]),
+    algorithmsFormControl: new UntypedFormControl([]),
+    ratioFormControl: new UntypedFormControl(0.2, [Validators.min(0), Validators.max(100)])
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();

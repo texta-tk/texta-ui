@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormControl, FormGroup} from '@angular/forms';
 import {debounceTime, distinctUntilChanged, startWith, switchMap, take, takeUntil} from 'rxjs/operators';
 import {SearcherComponentService} from '../../../services/searcher-component.service';
 import {forkJoin, of, Subject} from 'rxjs';
@@ -18,7 +18,7 @@ const moment = _moment;
 export class DateAggregationComponent implements OnInit, OnDestroy {
   // tslint:disable-next-line:no-any
   @Input() aggregationObj: { aggregation: any };
-  @Input() fieldsFormControl: FormControl;
+  @Input() fieldsFormControl: UntypedFormControl;
   @Input() notSubAgg: boolean;
   dateInterval = 'year';
   @Output() relativeFrequency = new EventEmitter<boolean>();
@@ -32,8 +32,8 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
   dateRangeWeek = false;
   maxDate: Moment;
   minDate: Moment;
-  dateFromFormControl: FormControl = new FormControl();
-  dateToFormControl: FormControl = new FormControl();
+  dateFromFormControl: UntypedFormControl = new UntypedFormControl();
+  dateToFormControl: UntypedFormControl = new UntypedFormControl();
 
   constructor(
     private searchService: SearcherComponentService,

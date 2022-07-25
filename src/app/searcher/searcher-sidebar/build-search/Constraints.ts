@@ -1,5 +1,5 @@
 import {Field} from '../../../shared/types/Project';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {Lexicon} from '../../../shared/types/Lexicon';
 import {FromToInput} from '../../../shared/shared-module/components/from-to-input/from-to-input.component';
 import {HighlightSettings} from '../../../shared/SettingVars';
@@ -17,8 +17,8 @@ export class Constraint {
 }
 
 export class BooleanConstraint extends Constraint {
-  booleanValueFormControl = new FormControl();
-  operatorFormControl = new FormControl();
+  booleanValueFormControl = new UntypedFormControl();
+  operatorFormControl = new UntypedFormControl();
 
   constructor(fields: Field[], booleanValue: boolean, operator?: undefined) {
     super(fields);
@@ -29,13 +29,13 @@ export class BooleanConstraint extends Constraint {
 }
 
 export class TextConstraint extends Constraint {
-  textAreaFormControl = new FormControl();
-  slopFormControl = new FormControl();
-  matchFormControl = new FormControl();
-  operatorFormControl = new FormControl();
-  fuzzinessFormControl = new FormControl();
-  prefixLengthFormControl = new FormControl();
-  ignoreCaseFormControl = new FormControl();
+  textAreaFormControl = new UntypedFormControl();
+  slopFormControl = new UntypedFormControl();
+  matchFormControl = new UntypedFormControl();
+  operatorFormControl = new UntypedFormControl();
+  fuzzinessFormControl = new UntypedFormControl();
+  prefixLengthFormControl = new UntypedFormControl();
+  ignoreCaseFormControl = new UntypedFormControl();
   lexicons: Lexicon[];
 
   constructor(fields: Field[], lexicons?: Lexicon[], match?: undefined, text?: undefined, operator?: undefined, slop?: undefined, fuzziness?: undefined, prefixLength?: undefined, ignoreCase?: undefined) {
@@ -56,7 +56,7 @@ export class TextConstraint extends Constraint {
 
 export class NumberConstraint extends Constraint {
   fromToInput: FromToInput;
-  operatorFormControl = new FormControl();
+  operatorFormControl = new UntypedFormControl();
 
   constructor(fields: Field[], fromTo?: FromToInput, operator?: undefined) {
     super(fields);
@@ -69,8 +69,8 @@ export class NumberConstraint extends Constraint {
 }
 
 export class DateConstraint extends Constraint {
-  dateFromFormControl = new FormControl();
-  dateToFormControl = new FormControl();
+  dateFromFormControl = new UntypedFormControl();
+  dateToFormControl = new UntypedFormControl();
 
   constructor(fields: Field[], dateFrom?: undefined, dateTo?: undefined) {
     super(fields);
@@ -80,9 +80,9 @@ export class DateConstraint extends Constraint {
 }
 
 export class FactConstraint extends Constraint {
-  factNameOperatorFormControl = new FormControl();
-  factNameFormControl = new FormControl();
-  factValueOperatorFormControl = new FormControl();
+  factNameOperatorFormControl = new UntypedFormControl();
+  factNameFormControl = new UntypedFormControl();
+  factValueOperatorFormControl = new UntypedFormControl();
   inputGroupArray: FactTextInputGroup[] | undefined; // will always be undefined with factName type
 
   constructor(fields: Field[], isFactValue: boolean, factNameOperator?: string, factName?: string, factTextOperator?: string,
@@ -96,9 +96,9 @@ export class FactConstraint extends Constraint {
 }
 
 export class FactTextInputGroup {
-  factTextOperatorFormControl = new FormControl();
-  factTextFactNameFormControl = new FormControl();
-  factTextInputFormControl = new FormControl();
+  factTextOperatorFormControl = new UntypedFormControl();
+  factTextFactNameFormControl = new UntypedFormControl();
+  factTextInputFormControl = new UntypedFormControl();
   filteredOptions: string[] = [];
   isLoadingOptions = false;
   query = {

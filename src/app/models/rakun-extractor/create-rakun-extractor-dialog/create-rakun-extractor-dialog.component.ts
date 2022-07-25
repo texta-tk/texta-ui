@@ -3,7 +3,7 @@ import {MatDialogRef} from '@angular/material/dialog';
 import {forkJoin, of, Subject} from 'rxjs';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {mergeMap, skip, switchMap, take, takeUntil} from 'rxjs/operators';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {Project, ProjectIndex} from '../../../shared/types/Project';
@@ -35,19 +35,19 @@ interface OnSubmitParams{
 })
 export class CreateRakunExtractorDialogComponent implements OnInit, OnDestroy {
 
-  rakunExtractorForm = new FormGroup({
-    descriptionFormControl: new FormControl('', [Validators.required]),
-    distanceMethodFormControl: new FormControl(''),
-    distanceThresholdFormControl: new FormControl(2, [Validators.min(0)]),
-    numberOfKeywordsFormControl: new FormControl(25, [Validators.min(0)]),
-    pairDiffLengthFormControl: new FormControl(2, [Validators.min(0)]),
-    stopWordsFormControl: new FormControl(''),
-    bigramCountThresholdFormControl: new FormControl(2, [Validators.min(0)]),
-    minTokensFormControl: new FormControl(1, [Validators.min(1), Validators.max(3)]),
-    maxTokensFormControl: new FormControl(1, [Validators.min(1), Validators.max(3)]),
-    maxSimilarFormControl: new FormControl(3, [Validators.min(0)]),
-    maxOccurrenceFormControl: new FormControl(3, [Validators.min(0)]),
-    embeddingFormControl: new FormControl(),
+  rakunExtractorForm = new UntypedFormGroup({
+    descriptionFormControl: new UntypedFormControl('', [Validators.required]),
+    distanceMethodFormControl: new UntypedFormControl(''),
+    distanceThresholdFormControl: new UntypedFormControl(2, [Validators.min(0)]),
+    numberOfKeywordsFormControl: new UntypedFormControl(25, [Validators.min(0)]),
+    pairDiffLengthFormControl: new UntypedFormControl(2, [Validators.min(0)]),
+    stopWordsFormControl: new UntypedFormControl(''),
+    bigramCountThresholdFormControl: new UntypedFormControl(2, [Validators.min(0)]),
+    minTokensFormControl: new UntypedFormControl(1, [Validators.min(1), Validators.max(3)]),
+    maxTokensFormControl: new UntypedFormControl(1, [Validators.min(1), Validators.max(3)]),
+    maxSimilarFormControl: new UntypedFormControl(3, [Validators.min(0)]),
+    maxOccurrenceFormControl: new UntypedFormControl(3, [Validators.min(0)]),
+    embeddingFormControl: new UntypedFormControl(),
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
@@ -56,7 +56,7 @@ export class CreateRakunExtractorDialogComponent implements OnInit, OnDestroy {
   projectIndices: ProjectIndex[] = [];
   projectFields: ProjectIndex[];
   // tslint:disable-next-line:no-any
-  rakunOptions: any;
+  rakunOptions: any | undefined;
   fastTextEmbeddings: Embedding[] = [];
   embeddings: Embedding[];
   distanceMethods: Choice[] = [];

@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {BooleanConstraint, ElasticsearchQuery,} from '../../Constraints';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {Subject} from 'rxjs';
 import {Field} from "../../../../../shared/types/Project";
 import {takeUntil} from "rxjs/operators";
@@ -15,14 +15,14 @@ export class BooleanConstraintsComponent implements OnInit, OnDestroy {
   @Input() elasticSearchQuery: ElasticsearchQuery;
   @Output() constraintChanged = new EventEmitter<ElasticsearchQuery>(); // search as you type, emit changes
 
-  operatorFormControl = new FormControl();
+  operatorFormControl = new UntypedFormControl();
   destroyed$: Subject<boolean> = new Subject<boolean>();
   // tslint:disable-next-line:no-any
   constraintQuery: any = {};
   formQueries: unknown[] = [];
   // tslint:disable-next-line:variable-name
   public _booleanConstraint: BooleanConstraint;
-  booleanValueFormControl = new FormControl();
+  booleanValueFormControl = new UntypedFormControl();
 
   @Input() set booleanConstraint(value: BooleanConstraint) {
     if (value) {

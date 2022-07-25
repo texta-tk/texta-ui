@@ -1,5 +1,5 @@
 import {Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {Lexicon} from '../../../shared/types/Lexicon';
@@ -21,7 +21,7 @@ import {RegexTagger} from '../../../shared/types/tasks/RegexTagger';
   styleUrls: ['./edit-regex-tagger-dialog.component.scss']
 })
 export class EditRegexTaggerDialogComponent implements OnInit, OnDestroy {
-  regexTaggerForm: FormGroup;
+  regexTaggerForm: UntypedFormGroup;
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
 
@@ -39,36 +39,36 @@ export class EditRegexTaggerDialogComponent implements OnInit, OnDestroy {
               private lexiconService: LexiconService,
               private projectStore: ProjectStore) {
     if (this.data) {
-      this.regexTaggerForm = new FormGroup({
-        descriptionFormControl: new FormControl(this.data.description, [
+      this.regexTaggerForm = new UntypedFormGroup({
+        descriptionFormControl: new UntypedFormControl(this.data.description, [
           Validators.required,
         ]),
-        lexiconFormControl: new FormControl(this.stringListToString(this.data.lexicon), [
+        lexiconFormControl: new UntypedFormControl(this.stringListToString(this.data.lexicon), [
           Validators.required,
         ]),
-        counterLexiconFormControl: new FormControl(this.stringListToString(this.data.counter_lexicon)),
-        operatorFormControl: new FormControl(this.data.operator, [
+        counterLexiconFormControl: new UntypedFormControl(this.stringListToString(this.data.counter_lexicon)),
+        operatorFormControl: new UntypedFormControl(this.data.operator, [
           Validators.required,
         ]),
-        matchTypeFormControl: new FormControl(this.data.match_type, [
+        matchTypeFormControl: new UntypedFormControl(this.data.match_type, [
           Validators.required,
         ]),
-        requiredWordsFormControl: new FormControl(this.data.required_words, [
+        requiredWordsFormControl: new UntypedFormControl(this.data.required_words, [
           Validators.required, Validators.min(0), Validators.max(1)
         ]),
-        phraseSlopFormControl: new FormControl(this.data.phrase_slop, [
+        phraseSlopFormControl: new UntypedFormControl(this.data.phrase_slop, [
           Validators.required,
         ]),
-        counterSlopFormControl: new FormControl(this.data.counter_slop, [
+        counterSlopFormControl: new UntypedFormControl(this.data.counter_slop, [
           Validators.required,
         ]),
-        allowedEditsFormControl: new FormControl(this.data.n_allowed_edits, [
+        allowedEditsFormControl: new UntypedFormControl(this.data.n_allowed_edits, [
           Validators.required,
         ]),
 
-        fuzzyMatchFormControl: new FormControl(this.data.return_fuzzy_match),
-        ignoreCaseFormControl: new FormControl(this.data.ignore_case),
-        ignorePunctuationFormControl: new FormControl(this.data.ignore_punctuation),
+        fuzzyMatchFormControl: new UntypedFormControl(this.data.return_fuzzy_match),
+        ignoreCaseFormControl: new UntypedFormControl(this.data.ignore_case),
+        ignorePunctuationFormControl: new UntypedFormControl(this.data.ignore_punctuation),
       });
     }
   }

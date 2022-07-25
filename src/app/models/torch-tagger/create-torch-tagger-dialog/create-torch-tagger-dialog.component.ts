@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {LiveErrorStateMatcher} from 'src/app/shared/CustomerErrorStateMatchers';
@@ -44,27 +44,27 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
   defaultQuery = '{"query": {"match_all": {}}}';
   query = this.data?.cloneElement?.query || this.defaultQuery;
 
-  torchTaggerForm = new FormGroup({
-    descriptionFormControl: new FormControl(this.data?.cloneElement?.description || '', [Validators.required]),
-    indicesFormControl: new FormControl([], [Validators.required]),
-    fieldsFormControl: new FormControl([], [Validators.required]),
-    embeddingFormControl: new FormControl('', [Validators.required]),
-    sampleSizeFormControl: new FormControl(this.data?.cloneElement?.maximum_sample_size || 10000, [Validators.required]),
-    minSampleSizeFormControl: new FormControl(this.data?.cloneElement?.minimum_sample_size || 50, [Validators.required]),
-    factNameFormControl: new FormControl(),
-    modelArchitectureFormControl: new FormControl('', [Validators.required]),
-    numEpochsFormControl: new FormControl(this.data?.cloneElement?.num_epochs || 5, [Validators.required]),
-    posLabelFormControl: new FormControl(this.data?.cloneElement?.pos_label || ''),
+  torchTaggerForm = new UntypedFormGroup({
+    descriptionFormControl: new UntypedFormControl(this.data?.cloneElement?.description || '', [Validators.required]),
+    indicesFormControl: new UntypedFormControl([], [Validators.required]),
+    fieldsFormControl: new UntypedFormControl([], [Validators.required]),
+    embeddingFormControl: new UntypedFormControl('', [Validators.required]),
+    sampleSizeFormControl: new UntypedFormControl(this.data?.cloneElement?.maximum_sample_size || 10000, [Validators.required]),
+    minSampleSizeFormControl: new UntypedFormControl(this.data?.cloneElement?.minimum_sample_size || 50, [Validators.required]),
+    factNameFormControl: new UntypedFormControl(),
+    modelArchitectureFormControl: new UntypedFormControl('', [Validators.required]),
+    numEpochsFormControl: new UntypedFormControl(this.data?.cloneElement?.num_epochs || 5, [Validators.required]),
+    posLabelFormControl: new UntypedFormControl(this.data?.cloneElement?.pos_label || ''),
 
-    balanceFormControl: new FormControl({
+    balanceFormControl: new UntypedFormControl({
       value: this.data?.cloneElement?.balance !== undefined ? this.data?.cloneElement?.balance : false,
       disabled: true
     }),
-    sentenceShuffleFormControl: new FormControl({
+    sentenceShuffleFormControl: new UntypedFormControl({
       value: this.data?.cloneElement?.use_sentence_shuffle !== undefined ? this.data?.cloneElement?.use_sentence_shuffle : false,
       disabled: true
     }),
-    maxBalanceFormControl: new FormControl({
+    maxBalanceFormControl: new UntypedFormControl({
       value: this.data?.cloneElement?.balance_to_max_limit !== undefined ? this.data?.cloneElement?.balance_to_max_limit : false,
       disabled: true
     }),

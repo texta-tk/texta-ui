@@ -3,7 +3,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {forkJoin, of, Subject} from 'rxjs';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Field, Project, ProjectIndex} from '../../../shared/types/Project';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
@@ -44,22 +44,22 @@ export class CreateCRFExtractorDialogComponent implements OnInit, OnDestroy {
   defaultQuery = '{"query": {"match_all": {}}}';
   query = this.data?.cloneElement?.query || this.defaultQuery;
   labelDefaults = ['GPE', 'ORG', 'PER', 'LOC'];
-  CRFExtractorForm = new FormGroup({
-    descriptionFormControl: new FormControl(this.data?.cloneElement?.description || '', [Validators.required]),
-    indicesFormControl: new FormControl([], [Validators.required]),
-    mlpFieldsFormControl: new FormControl('', [Validators.required]),
-    windowSizeFormControl: new FormControl(this.data?.cloneElement?.window_size || 2),
-    testSizeFormControl: new FormControl(this.data?.cloneElement?.test_size || 0.3),
-    numIterFormControl: new FormControl(this.data?.cloneElement?.num_iter || 100),
-    cValuesFormControl: new FormControl(this.data?.cloneElement?.c_values.toString() || '0.001, 0.1, 0.5'),
-    biasFormControl: new FormControl(this.data?.cloneElement?.bias !== undefined ? this.data?.cloneElement?.bias : true),
-    suffixLenFormControl: new FormControl(this.data?.cloneElement?.suffix_len.toString() || '2,2'),
-    labelsFormControl: new FormControl(),
-    featureFieldsFormControl: new FormControl(),
-    contextFeatureFieldsFormControl: new FormControl(),
-    featureExtractorsFormControl: new FormControl(),
-    contextFeatureExtractorsFormControl: new FormControl(),
-    embeddingFormControl: new FormControl(),
+  CRFExtractorForm = new UntypedFormGroup({
+    descriptionFormControl: new UntypedFormControl(this.data?.cloneElement?.description || '', [Validators.required]),
+    indicesFormControl: new UntypedFormControl([], [Validators.required]),
+    mlpFieldsFormControl: new UntypedFormControl('', [Validators.required]),
+    windowSizeFormControl: new UntypedFormControl(this.data?.cloneElement?.window_size || 2),
+    testSizeFormControl: new UntypedFormControl(this.data?.cloneElement?.test_size || 0.3),
+    numIterFormControl: new UntypedFormControl(this.data?.cloneElement?.num_iter || 100),
+    cValuesFormControl: new UntypedFormControl(this.data?.cloneElement?.c_values.toString() || '0.001, 0.1, 0.5'),
+    biasFormControl: new UntypedFormControl(this.data?.cloneElement?.bias !== undefined ? this.data?.cloneElement?.bias : true),
+    suffixLenFormControl: new UntypedFormControl(this.data?.cloneElement?.suffix_len.toString() || '2,2'),
+    labelsFormControl: new UntypedFormControl(),
+    featureFieldsFormControl: new UntypedFormControl(),
+    contextFeatureFieldsFormControl: new UntypedFormControl(),
+    featureExtractorsFormControl: new UntypedFormControl(),
+    contextFeatureExtractorsFormControl: new UntypedFormControl(),
+    embeddingFormControl: new UntypedFormControl(),
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();

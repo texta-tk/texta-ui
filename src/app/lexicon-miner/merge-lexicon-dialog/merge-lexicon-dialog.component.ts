@@ -2,7 +2,7 @@ import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
 import {LogService} from '../../core/util/log.service';
 import {ProjectStore} from '../../core/projects/project.store';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {LexiconService} from '../../core/lexicon/lexicon.service';
 import {ScrollableDataSource} from '../../shared/ScrollableDataSource';
 import {Lexicon} from '../../shared/types/Lexicon';
@@ -34,10 +34,10 @@ interface LexTypes {
   styleUrls: ['./merge-lexicon-dialog.component.scss']
 })
 export class MergeLexiconDialogComponent implements OnInit {
-  mergeForm = new FormGroup({
-    targetFormControl: new FormControl(null, [Validators.required]),
-    sourceFormControl: new FormControl([], [Validators.required]),
-    mergeOptionFormControl: new FormControl('positive', [Validators.required])
+  mergeForm = new UntypedFormGroup({
+    targetFormControl: new UntypedFormControl(null, [Validators.required]),
+    sourceFormControl: new UntypedFormControl([], [Validators.required]),
+    mergeOptionFormControl: new UntypedFormControl('positive', [Validators.required])
   });
 
   lexicons: ScrollableDataSource<Lexicon>;

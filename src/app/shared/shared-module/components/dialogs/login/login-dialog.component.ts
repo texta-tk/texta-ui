@@ -1,5 +1,5 @@
 import {Component, Inject} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {LiveErrorStateMatcher} from '../../../../CustomerErrorStateMatchers';
 import {HttpErrorResponse} from '@angular/common/http';
@@ -22,11 +22,11 @@ import {AppConfigService} from '../../../../../core/util/app-config.service';
 })
 export class LoginDialogComponent {
 
-  profileForm = new FormGroup({
-    usernameFormControl: new FormControl('', [
+  profileForm = new UntypedFormGroup({
+    usernameFormControl: new UntypedFormControl('', [
       Validators.required,
     ]),
-    passwordFormControl: new FormControl('', [
+    passwordFormControl: new UntypedFormControl('', [
       Validators.required,
     ])
   });

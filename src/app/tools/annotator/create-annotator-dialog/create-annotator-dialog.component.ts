@@ -3,7 +3,7 @@ import {MatDialogRef} from '@angular/material/dialog';
 import {forkJoin, merge, Observable, of, Subject} from 'rxjs';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {filter, map, mergeMap, startWith, switchMap, take, takeUntil} from 'rxjs/operators';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {Project, ProjectIndex} from '../../../shared/types/Project';
@@ -51,28 +51,28 @@ export class CreateAnnotatorDialogComponent implements OnInit, OnDestroy {
   defaultQuery = '{"query": {"match_all": {}}}';
   query: unknown = this.defaultQuery;
 
-  annotatorForm = new FormGroup({
-    descriptionFormControl: new FormControl('', [Validators.required]),
-    usersFormControl: new FormControl([], [Validators.required]),
-    indicesFormControl: new FormControl([], [Validators.required]),
-    fieldsFormControl: new FormControl([], [Validators.required]),
+  annotatorForm = new UntypedFormGroup({
+    descriptionFormControl: new UntypedFormControl('', [Validators.required]),
+    usersFormControl: new UntypedFormControl([], [Validators.required]),
+    indicesFormControl: new UntypedFormControl([], [Validators.required]),
+    fieldsFormControl: new UntypedFormControl([], [Validators.required]),
     // entity single field only
-    fieldsEntityFormControl: new FormControl('', [Validators.required]),
-    annotationTypeFormControl: new FormControl('', [Validators.required]),
-    binaryFormGroup: new FormGroup({
-      factNameFormControl: new FormControl('', [Validators.required]),
-      posValFormControl: new FormControl('', [Validators.required]),
-      negValFormControl: new FormControl('', [Validators.required])
+    fieldsEntityFormControl: new UntypedFormControl('', [Validators.required]),
+    annotationTypeFormControl: new UntypedFormControl('', [Validators.required]),
+    binaryFormGroup: new UntypedFormGroup({
+      factNameFormControl: new UntypedFormControl('', [Validators.required]),
+      posValFormControl: new UntypedFormControl('', [Validators.required]),
+      negValFormControl: new UntypedFormControl('', [Validators.required])
     }),
-    multiLabelFormGroup: new FormGroup({
-      labelSetFormControl: new FormControl('', [Validators.required]),
+    multiLabelFormGroup: new UntypedFormGroup({
+      labelSetFormControl: new UntypedFormControl('', [Validators.required]),
     }),
-    entityFormGroup: new FormGroup({
-      factNameFormControl: new FormControl('', [Validators.required])
+    entityFormGroup: new UntypedFormGroup({
+      factNameFormControl: new UntypedFormControl('', [Validators.required])
     }),
 
-    esTimeoutFormControl: new FormControl(100),
-    bulkSizeFormControl: new FormControl(10),
+    esTimeoutFormControl: new UntypedFormControl(100),
+    bulkSizeFormControl: new UntypedFormControl(10),
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();

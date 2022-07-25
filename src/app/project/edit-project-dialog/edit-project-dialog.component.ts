@@ -3,7 +3,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {Project} from '../../shared/types/Project';
 import {ProjectStore} from '../../core/projects/project.store';
 import {ProjectService} from '../../core/projects/project.service';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LogService} from '../../core/util/log.service';
 import {UserService} from '../../core/users/user.service';
@@ -34,17 +34,17 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
   PROJECT_ADMIN_SCOPE = AppConfigService.settings.uaaConf.admin_scope;
   // @ts-ignore
   public filteredIndices: BehaviorSubject<{ id: number, name: string }[] | null> = new BehaviorSubject(null);
-  indicesFilterFormControl = new FormControl();
+  indicesFilterFormControl = new UntypedFormControl();
   indices: { id: number, name: string }[] = [];
   users: UserProfile[] = [];
   currentProject: Project;
-  projectForm = new FormGroup({
-    titleFormControl: new FormControl('', [
+  projectForm = new UntypedFormGroup({
+    titleFormControl: new UntypedFormControl('', [
       Validators.required,
     ]),
-    indicesFormControl: new FormControl([]),
-    usersFormControl: new FormControl(),
-    administratorsFormControl: new FormControl([]),
+    indicesFormControl: new UntypedFormControl([]),
+    usersFormControl: new UntypedFormControl(),
+    administratorsFormControl: new UntypedFormControl([]),
   });
   destroyed$: Subject<boolean> = new Subject<boolean>();
   currentUser: UserProfile;
@@ -112,7 +112,7 @@ export class EditProjectDialogComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     if (this.useUAA) {
-      this.projectForm.addControl('scopeFormControl', new FormControl([]));
+      this.projectForm.addControl('scopeFormControl', new UntypedFormControl([]));
     }
 
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(proj => {

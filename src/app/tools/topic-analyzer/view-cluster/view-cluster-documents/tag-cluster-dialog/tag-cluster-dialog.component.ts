@@ -2,7 +2,7 @@ import {AfterViewInit, Component, Inject, OnDestroy, OnInit} from '@angular/core
 import {TopicAnalyzerService} from '../../../../../core/tools/topic-analyzer/topic-analyzer.service';
 import {LogService} from '../../../../../core/util/log.service';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {LiveErrorStateMatcher} from '../../../../../shared/CustomerErrorStateMatchers';
 import {HttpErrorResponse} from '@angular/common/http';
@@ -22,10 +22,10 @@ import {Index} from '../../../../../shared/types/Index';
   styleUrls: ['./tag-cluster-dialog.component.scss']
 })
 export class TagClusterDialogComponent implements OnInit, OnDestroy {
-  tagForm = new FormGroup({
-    nameFormControl: new FormControl('', [Validators.required]),
-    strValFormControl: new FormControl({value: '', disabled: true}, [Validators.required]),
-    docPathFormControl: new FormControl('', [Validators.required]),
+  tagForm = new UntypedFormGroup({
+    nameFormControl: new UntypedFormControl('', [Validators.required]),
+    strValFormControl: new UntypedFormControl({value: '', disabled: true}, [Validators.required]),
+    docPathFormControl: new UntypedFormControl('', [Validators.required]),
   });
   isLoading = false;
   factValOptions: string[] = [];

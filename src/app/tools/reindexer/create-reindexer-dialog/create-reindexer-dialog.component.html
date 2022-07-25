@@ -1,11 +1,11 @@
 <h1 mat-dialog-title>New Reindexer</h1>
 <mat-dialog-content>
-  <form class="flex-col" [formGroup]="reindexerForm" (ngSubmit)="onSubmit(reindexerForm?.value)" id="reindexerForm">
+  <form class="flex-col" [formGroup]="reindexerForm" (ngSubmit)="onSubmit(reindexerForm.value)" id="reindexerForm">
     <mat-form-field data-cy="appReindexerCreateDialogDesc">
       <input matInput placeholder="Description" autocomplete="off" formControlName="descriptionFormControl"
              [errorStateMatcher]="matcher" required>
 
-      <mat-error *ngIf="reindexerForm?.get('descriptionFormControl')?.hasError('required')">
+      <mat-error *ngIf="reindexerForm.get('descriptionFormControl')?.hasError('required')">
         Description is <strong>required</strong>
       </mat-error>
       <mat-hint>{{reindexerOptions?.actions?.POST?.description?.help_text || ''}}</mat-hint>
@@ -14,10 +14,10 @@
       <input matInput placeholder="New index name" autocomplete="off" formControlName="newNameFormControl"
              [errorStateMatcher]="matcher" required>
 
-      <mat-error *ngIf="reindexerForm?.get('newNameFormControl')?.hasError('required')">
+      <mat-error *ngIf="reindexerForm.get('newNameFormControl')?.hasError('required')">
         New index name is <strong>required</strong>
       </mat-error>
-      <mat-error *ngIf="reindexerForm?.get('newNameFormControl')?.hasError('alreadyExists')">
+      <mat-error *ngIf="reindexerForm.get('newNameFormControl')?.hasError('alreadyExists')">
         This index name is already in use
       </mat-error>
       <mat-hint>{{reindexerOptions?.actions?.POST?.new_index?.help_text || ''}}</mat-hint>
@@ -33,7 +33,7 @@
           {{projectIndex.index}}
         </mat-option>
       </mat-select>
-      <mat-error *ngIf="reindexerForm?.get('indicesFormControl')?.hasError('required')">
+      <mat-error *ngIf="reindexerForm.get('indicesFormControl')?.hasError('required')">
         Index is <strong>required</strong>
       </mat-error>
       <mat-hint>{{reindexerOptions?.actions?.POST?.indices?.help_text || ''}}</mat-hint>
@@ -45,7 +45,7 @@
       <app-project-field-select [valueOutPutType]="'object'" [projectFields]="projectFields" [required]="true"
                                 (openedChange)="fieldsOpenedChange($event)"
                                 formControlName="fieldsFormControl"></app-project-field-select>
-      <mat-error *ngIf="reindexerForm?.get('fieldsFormControl')?.hasError('required')">
+      <mat-error *ngIf="reindexerForm.get('fieldsFormControl')?.hasError('required')">
         Field is <strong>required</strong>
       </mat-error>
       <mat-hint>{{reindexerOptions?.actions?.POST?.fields?.help_text || ''}}</mat-hint>
@@ -101,7 +101,7 @@
       <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Close</button>
     </div>
     <div class="flex-item-right">
-      <button type="submit" form="reindexerForm" [disabled]="!reindexerForm?.valid" mat-button
+      <button type="submit" form="reindexerForm" [disabled]="!reindexerForm.valid" mat-button
               data-cy="appReindexerCreateDialogSubmit">
         Create
       </button>

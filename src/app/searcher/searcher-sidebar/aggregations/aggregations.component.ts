@@ -3,7 +3,7 @@ import {debounceTime, pairwise, takeUntil} from 'rxjs/operators';
 import {Field, Project, ProjectIndex} from '../../../shared/types/Project';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {BehaviorSubject, forkJoin, of, Subject} from 'rxjs';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {SearcherService} from '../../../core/searcher/searcher.service';
 import {SearcherComponentService} from '../../services/searcher-component.service';
 import {HttpErrorResponse} from '@angular/common/http';
@@ -14,7 +14,7 @@ import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 // tslint:disable:no-any
 export interface AggregationForm {
   aggregation: any;
-  formControl: FormControl;
+  formControl: UntypedFormControl;
   formDestroy: Subject<boolean>;
 }
 
@@ -46,7 +46,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
   }
 
   addNewAggregation(): void {
-    const form = new FormControl();
+    const form = new UntypedFormControl();
     const formDestroy = new Subject<boolean>();
     form.valueChanges.pipe(takeUntil(formDestroy), pairwise()).subscribe(([old, val]) => {
       if (val && val.type === 'date') { // making a second date aggregation would add no value

@@ -6,7 +6,7 @@ import {TaggerOptions} from '../../../shared/types/tasks/TaggerOptions';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {HttpErrorResponse} from '@angular/common/http';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ProjectService} from '../../../core/projects/project.service';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
@@ -28,33 +28,33 @@ import {Tagger, TaggerGroup} from '../../../shared/types/tasks/Tagger';
 export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy {
 
 
-  taggerGroupForm = new FormGroup({
-    descriptionFormControl: new FormControl(this.data?.cloneTagger?.description || '', [
+  taggerGroupForm = new UntypedFormGroup({
+    descriptionFormControl: new UntypedFormControl(this.data?.cloneTagger?.description || '', [
       Validators.required,
     ]),
-    factNameFormControl: new FormControl(),
-    taggerGroupMinSampleSizeFormControl: new FormControl(this.data?.cloneTagger?.minimum_sample_size || 50, [Validators.required]),
-    taggerForm: new FormGroup({
-      fieldsFormControl: new FormControl([], [Validators.required]),
-      indicesFormControl: new FormControl([], [Validators.required]),
-      stopWordsFormControl: new FormControl(''),
-      embeddingFormControl: new FormControl(),
-      snowballFormControl: new FormControl(),
-      scoringFormControl: new FormControl(),
-      analyzerFormControl: new FormControl([Validators.required]),
-      vectorizerFormControl: new FormControl([Validators.required]),
-      classifierFormControl: new FormControl([Validators.required]),
-      sampleSizeFormControl: new FormControl(this.data?.cloneTagger?.tagger_params?.maximum_sample_size || 10000, [Validators.required]),
-      negativeMultiplierFormControl: new FormControl(this.data?.cloneTagger?.tagger_params?.negative_multiplier || 1.0, [Validators.required]),
-      ignoreNumbersFormControl: new FormControl(
+    factNameFormControl: new UntypedFormControl(),
+    taggerGroupMinSampleSizeFormControl: new UntypedFormControl(this.data?.cloneTagger?.minimum_sample_size || 50, [Validators.required]),
+    taggerForm: new UntypedFormGroup({
+      fieldsFormControl: new UntypedFormControl([], [Validators.required]),
+      indicesFormControl: new UntypedFormControl([], [Validators.required]),
+      stopWordsFormControl: new UntypedFormControl(''),
+      embeddingFormControl: new UntypedFormControl(),
+      snowballFormControl: new UntypedFormControl(),
+      scoringFormControl: new UntypedFormControl(),
+      analyzerFormControl: new UntypedFormControl([Validators.required]),
+      vectorizerFormControl: new UntypedFormControl([Validators.required]),
+      classifierFormControl: new UntypedFormControl([Validators.required]),
+      sampleSizeFormControl: new UntypedFormControl(this.data?.cloneTagger?.tagger_params?.maximum_sample_size || 10000, [Validators.required]),
+      negativeMultiplierFormControl: new UntypedFormControl(this.data?.cloneTagger?.tagger_params?.negative_multiplier || 1.0, [Validators.required]),
+      ignoreNumbersFormControl: new UntypedFormControl(
         this.data?.cloneTagger?.tagger_params?.ignore_numbers !== undefined ? this.data.cloneTagger.tagger_params.ignore_numbers : true),
-      detectLangFormControl: new FormControl(
+      detectLangFormControl: new UntypedFormControl(
         this.data?.cloneTagger?.tagger_params?.detect_lang !== undefined ? this.data?.cloneTagger?.tagger_params?.detect_lang : false),
-      balanceFormControl: new FormControl({
+      balanceFormControl: new UntypedFormControl({
         value: this.data?.cloneTagger?.tagger_params?.balance !== undefined ? this.data?.cloneTagger?.tagger_params?.balance : false,
         disabled: true
       }),
-      maxBalanceFormControl: new FormControl({
+      maxBalanceFormControl: new UntypedFormControl({
         value: this.data?.cloneTagger?.tagger_params?.balance_to_max_limit !== undefined ? this.data?.cloneTagger?.tagger_params?.balance_to_max_limit : false,
         disabled: true
       }),

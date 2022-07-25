@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {Field, Project, ProjectIndex} from '../../../shared/types/Project';
@@ -24,11 +24,11 @@ export class ApplyTaggerGroupDialogComponent implements OnInit, OnDestroy {
   defaultQuery = '{"query": {"match_all": {}}}';
   query = this.defaultQuery;
 
-  regexTaggerGroupForm = new FormGroup({
-    descriptionFormControl: new FormControl('', [Validators.required]),
-    indicesFormControl: new FormControl([], [Validators.required]),
-    fieldsFormControl: new FormControl([], [Validators.required]),
-    regexTaggersFormControl: new FormControl([], [Validators.required])
+  regexTaggerGroupForm = new UntypedFormGroup({
+    descriptionFormControl: new UntypedFormControl('', [Validators.required]),
+    indicesFormControl: new UntypedFormControl([], [Validators.required]),
+    fieldsFormControl: new UntypedFormControl([], [Validators.required]),
+    regexTaggersFormControl: new UntypedFormControl([], [Validators.required])
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();

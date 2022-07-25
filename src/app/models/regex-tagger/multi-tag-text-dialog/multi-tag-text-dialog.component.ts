@@ -12,7 +12,7 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {LegibleColor, UtilityFunctions} from '../../../shared/UtilityFunctions';
 import {ScrollableDataSource} from '../../../shared/ScrollableDataSource';
 import {ResultsWrapper} from '../../../shared/types/Generic';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {HighlightSettings} from "../../../shared/SettingVars";
 import {RegexTaggerGroupMultiTagTextResult, Tag} from "../../../shared/types/tasks/RegexTaggerGroup";
 
@@ -33,7 +33,7 @@ type CustomMatch = {
 export class MultiTagTextDialogComponent implements OnInit, OnDestroy {
   text = '';
   taggers: ScrollableDataSource<RegexTagger>;
-  taggerSelectionFormControl = new FormControl([]);
+  taggerSelectionFormControl = new UntypedFormControl([]);
   currentProject: Project;
   destroyed$: Subject<boolean> = new Subject();
 

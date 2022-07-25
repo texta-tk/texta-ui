@@ -17,6 +17,7 @@ import {MatFormFieldControl} from '@angular/material/form-field';
 import {FocusMonitor} from '@angular/cdk/a11y';
 import {coerceBooleanProperty} from '@angular/cdk/coercion';
 import {FileInput, FileInputMixinBase} from '../../../types/file-input';
+import {Subject} from 'rxjs';
 // tslint:disable:variable-name
 // tslint:disable:no-any
 
@@ -132,7 +133,7 @@ export class FileInputComponent extends FileInputMixinBase implements MatFormFie
     @Optional() public _parentForm: NgForm,
     @Optional() public _parentFormGroup: FormGroupDirective,
   ) {
-    super(_defaultErrorStateMatcher, _parentForm, _parentFormGroup, ngControl);
+    super(_defaultErrorStateMatcher, _parentForm, _parentFormGroup, ngControl, new Subject<void>());
 
     if (this.ngControl != null) {
       this.ngControl.valueAccessor = this;

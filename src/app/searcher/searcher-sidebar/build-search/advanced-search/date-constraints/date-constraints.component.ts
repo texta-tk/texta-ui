@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {DateConstraint, ElasticsearchQuery} from '../../Constraints';
-import {FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormControl, FormGroup} from '@angular/forms';
 import {debounceTime, distinctUntilChanged, min, pairwise, skip, startWith, switchMap, take, takeUntil} from 'rxjs/operators';
 import {forkJoin, merge, of, Subject} from 'rxjs';
 import {ProjectStore} from '../../../../../core/projects/project.store';
@@ -21,8 +21,8 @@ export class DateConstraintsComponent implements OnInit, OnDestroy {
   @Input() elasticSearchQuery: ElasticsearchQuery;
   @Input() currentProject: Project;
   @Output() constraintChanged = new EventEmitter<ElasticsearchQuery>(); // search as you type, emit changes
-  dateFromFormControl: FormControl = new FormControl();
-  dateToFormControl: FormControl = new FormControl();
+  dateFromFormControl: UntypedFormControl = new UntypedFormControl();
+  dateToFormControl: UntypedFormControl = new UntypedFormControl();
   destroyed$: Subject<boolean> = new Subject<boolean>();
   // tslint:disable-next-line:no-any
   constraintQuery: any = {bool: {must: []}};

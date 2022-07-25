@@ -16,7 +16,7 @@ import {UserService} from '../core/users/user.service';
 import {ConfirmDialogComponent} from '../shared/shared-module/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {ProjectService} from '../core/projects/project.service';
 import {UserStore} from '../core/users/user.store';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {MatOption} from '@angular/material/core';
 import {KeyValue} from '@angular/common';
 import {AppConfigService} from '../core/util/app-config.service';
@@ -41,8 +41,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
   public currentUser: UserProfile;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-  public authorFilterControl = new FormControl();
-  public titleFilterControl = new FormControl();
+  public authorFilterControl = new UntypedFormControl();
+  public titleFilterControl = new UntypedFormControl();
   private currentProject: Project;
 
   constructor(

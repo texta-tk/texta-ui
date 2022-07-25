@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {Field, Project, ProjectIndex} from '../../../shared/types/Project';
@@ -27,26 +27,26 @@ export class CreateClusteringDialogComponent implements OnInit, OnDestroy {
   defaultQuery = '{"query": {"match_all": {}}}';
   query = this.defaultQuery;
 
-  clusterForm = new FormGroup({
-    descriptionFormControl: new FormControl('', [
+  clusterForm = new UntypedFormGroup({
+    descriptionFormControl: new UntypedFormControl('', [
       Validators.required,
     ]),
-    keywordFilterFormControl: new FormControl(''),
-    indicesFormControl: new FormControl([], [Validators.required]),
-    numClusterFormControl: new FormControl(10),
-    clusteringAlgorithmFormControl: new FormControl(),
-    vectorizerFormControl: new FormControl(),
-    embeddingFormControl: new FormControl(),
-    numDimsFormControl: new FormControl(1000),
-    useLSIFormControl: new FormControl(false),
-    numTopicsFormControl: new FormControl(50),
-    stopWordsFormControl: new FormControl(''),
-    fieldsFormControl: new FormControl([], [Validators.required]),
-    documentLimitFormControl: new FormControl(100),
+    keywordFilterFormControl: new UntypedFormControl(''),
+    indicesFormControl: new UntypedFormControl([], [Validators.required]),
+    numClusterFormControl: new UntypedFormControl(10),
+    clusteringAlgorithmFormControl: new UntypedFormControl(),
+    vectorizerFormControl: new UntypedFormControl(),
+    embeddingFormControl: new UntypedFormControl(),
+    numDimsFormControl: new UntypedFormControl(1000),
+    useLSIFormControl: new UntypedFormControl(false),
+    numTopicsFormControl: new UntypedFormControl(50),
+    stopWordsFormControl: new UntypedFormControl(''),
+    fieldsFormControl: new UntypedFormControl([], [Validators.required]),
+    documentLimitFormControl: new UntypedFormControl(100),
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
-  clusterOptions: ClusterOptions;
+  clusterOptions: ClusterOptions | undefined;
   projectFields: ProjectIndex[];
   currentProject: Project;
   destroyed$ = new Subject<boolean>();

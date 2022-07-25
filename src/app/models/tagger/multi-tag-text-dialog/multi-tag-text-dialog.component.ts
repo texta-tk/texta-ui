@@ -10,7 +10,7 @@ import {Project} from '../../../shared/types/Project';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 import {ResultsWrapper} from '../../../shared/types/Generic';
 import {ScrollableDataSource} from '../../../shared/ScrollableDataSource';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 
 interface FormModel {
   text: string;
@@ -31,7 +31,7 @@ export class MultiTagTextDialogComponent implements OnInit, OnDestroy {
   currentProject: Project;
   formModel = {text: '', selectedTaggers: [], lemmatize: false, feedback: false, hideFalse: false};
   taggers: ScrollableDataSource<Tagger>;
-  taggerSelectionFormControl = new FormControl([]);
+  taggerSelectionFormControl = new UntypedFormControl([]);
   // tslint:disable-next-line:no-any
   taggerOptions: any;
   destroyed$: Subject<boolean> = new Subject();

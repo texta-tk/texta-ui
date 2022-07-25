@@ -3,7 +3,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {forkJoin, merge, of, Subject} from 'rxjs';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {filter, mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {Field, Project, ProjectFact, ProjectIndex} from '../../../shared/types/Project';
@@ -46,41 +46,41 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
   defaultQuery = '{"query": {"match_all": {}}}';
   query = this.data?.cloneElement?.query || this.defaultQuery;
 
-  bertTaggerForm = new FormGroup({
-    descriptionFormControl: new FormControl(this.data?.cloneElement?.description || '', [
+  bertTaggerForm = new UntypedFormGroup({
+    descriptionFormControl: new UntypedFormControl(this.data?.cloneElement?.description || '', [
       Validators.required,
     ]),
-    indicesFormControl: new FormControl([], [Validators.required]),
-    fieldsFormControl: new FormControl([], [Validators.required]),
-    factNameFormControl: new FormControl(),
-    sampleSizeFormControl: new FormControl(this.data?.cloneElement?.maximum_sample_size || 10000, [Validators.required]),
-    minSampleSizeFormControl: new FormControl(this.data?.cloneElement?.minimum_sample_size || 50, [Validators.required]),
-    negativeMultiplierFormControl: new FormControl(this.data?.cloneElement?.negative_multiplier || 1.0, [Validators.required]),
-    maxLengthFormControl: new FormControl(this.data?.cloneElement?.max_length || 64, [Validators.required]),
-    bertModelFormControl: new FormControl([Validators.required]),
+    indicesFormControl: new UntypedFormControl([], [Validators.required]),
+    fieldsFormControl: new UntypedFormControl([], [Validators.required]),
+    factNameFormControl: new UntypedFormControl(),
+    sampleSizeFormControl: new UntypedFormControl(this.data?.cloneElement?.maximum_sample_size || 10000, [Validators.required]),
+    minSampleSizeFormControl: new UntypedFormControl(this.data?.cloneElement?.minimum_sample_size || 50, [Validators.required]),
+    negativeMultiplierFormControl: new UntypedFormControl(this.data?.cloneElement?.negative_multiplier || 1.0, [Validators.required]),
+    maxLengthFormControl: new UntypedFormControl(this.data?.cloneElement?.max_length || 64, [Validators.required]),
+    bertModelFormControl: new UntypedFormControl([Validators.required]),
 
 
-    balanceFormControl: new FormControl({
+    balanceFormControl: new UntypedFormControl({
       value: this.data?.cloneElement?.balance !== undefined ? this.data?.cloneElement?.balance : false,
       disabled: true
     }),
-    sentenceShuffleFormControl: new FormControl({
+    sentenceShuffleFormControl: new UntypedFormControl({
       value: this.data?.cloneElement?.use_sentence_shuffle !== undefined ? this.data?.cloneElement?.use_sentence_shuffle : false,
       disabled: true
     }),
-    maxBalanceFormControl: new FormControl({
+    maxBalanceFormControl: new UntypedFormControl({
       value: this.data?.cloneElement?.balance_to_max_limit !== undefined ? this.data?.cloneElement?.balance_to_max_limit : false,
       disabled: true
     }),
-    useGpuFormControl: new FormControl(this.data?.cloneElement?.use_gpu !== undefined ? this.data?.cloneElement?.use_gpu : true),
+    useGpuFormControl: new UntypedFormControl(this.data?.cloneElement?.use_gpu !== undefined ? this.data?.cloneElement?.use_gpu : true),
     // advanced
-    numEpochsFormControl: new FormControl(this.data?.cloneElement?.num_epochs || 2, [Validators.required]),
-    posLabelFormControl: new FormControl(this.data?.cloneElement?.pos_label || ''),
-    learningRateFormControl: new FormControl(this.data?.cloneElement?.learning_rate || 2e-5, [Validators.required]),
-    epsFormControl: new FormControl(this.data?.cloneElement?.eps || 1e-8, [Validators.required]),
-    batchSizeFormControl: new FormControl(this.data?.cloneElement?.batch_size || 32, [Validators.required]),
-    splitRatioFormControl: new FormControl(this.data?.cloneElement?.split_ratio || 0.8, [Validators.required]),
-    checkPointModelFormControl: new FormControl(),
+    numEpochsFormControl: new UntypedFormControl(this.data?.cloneElement?.num_epochs || 2, [Validators.required]),
+    posLabelFormControl: new UntypedFormControl(this.data?.cloneElement?.pos_label || ''),
+    learningRateFormControl: new UntypedFormControl(this.data?.cloneElement?.learning_rate || 2e-5, [Validators.required]),
+    epsFormControl: new UntypedFormControl(this.data?.cloneElement?.eps || 1e-8, [Validators.required]),
+    batchSizeFormControl: new UntypedFormControl(this.data?.cloneElement?.batch_size || 32, [Validators.required]),
+    splitRatioFormControl: new UntypedFormControl(this.data?.cloneElement?.split_ratio || 0.8, [Validators.required]),
+    checkPointModelFormControl: new UntypedFormControl(),
 
   });
 

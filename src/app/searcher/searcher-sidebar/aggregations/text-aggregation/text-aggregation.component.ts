@@ -1,6 +1,6 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {ElasticsearchQuery} from '../../build-search/Constraints';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {Subject} from 'rxjs';
 import {SearcherComponentService} from '../../../services/searcher-component.service';
 import {debounceTime, takeUntil} from 'rxjs/operators';
@@ -13,7 +13,7 @@ import {debounceTime, takeUntil} from 'rxjs/operators';
 export class TextAggregationComponent implements OnInit, OnDestroy {
   // tslint:disable:no-any
   @Input() aggregationObj: { aggregation: any };
-  @Input() fieldsFormControl: FormControl;
+  @Input() fieldsFormControl: UntypedFormControl;
   @Input() notSubAgg: boolean;
   isMainAgg: boolean;
   aggregationType: 'terms' | 'significant_text' | 'significant_terms' | 'string_stats' = 'terms';

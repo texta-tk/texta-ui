@@ -3,7 +3,7 @@ import {LogService} from '../../../core/util/log.service';
 import {EvaluatorService} from '../../../core/tools/evaluator/evaluator.service';
 import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {HttpErrorResponse} from "@angular/common/http";
-import {FormControl} from "@angular/forms";
+import {UntypedFormControl} from "@angular/forms";
 
 @Component({
   selector: 'app-filtered-average-dialog',
@@ -29,8 +29,8 @@ export class FilteredAverageDialogComponent implements OnInit {
     f1_score: {min_score: 0, max_score: 1},
     accuracy: {min_score: 0, max_score: 1},
   };
-  minCountFormControl = new FormControl(1);
-  maxCountFormControl = new FormControl();
+  minCountFormControl = new UntypedFormControl(1);
+  maxCountFormControl = new UntypedFormControl();
 
   constructor(
     private logService: LogService,

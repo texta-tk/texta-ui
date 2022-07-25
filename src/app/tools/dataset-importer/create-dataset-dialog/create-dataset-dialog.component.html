@@ -1,11 +1,11 @@
 <h1 mat-dialog-title>New Dataset</h1>
 <div mat-dialog-content>
-  <form class="flex-col" [formGroup]="importerForm" (ngSubmit)="onSubmit(importerForm?.value)">
+  <form class="flex-col" [formGroup]="importerForm" (ngSubmit)="onSubmit(importerForm.value)">
     <mat-form-field data-cy="appDatasetImporterCreateDialogDesc">
       <input matInput placeholder="Task description" autocomplete="off" formControlName="descriptionFormControl"
              [errorStateMatcher]="matcher" required>
 
-      <mat-error *ngIf="importerForm?.get('descriptionFormControl')?.hasError('required')">
+      <mat-error *ngIf="importerForm.get('descriptionFormControl')?.hasError('required')">
         Task description is <strong>required</strong>
       </mat-error>
       <mat-hint>{{dataSetImporterOptions?.actions?.POST?.description?.help_text || ''}}</mat-hint>
@@ -14,16 +14,16 @@
       <input matInput placeholder="Dataset name" autocomplete="off" formControlName="newNameFormControl"
              [errorStateMatcher]="matcher" required>
 
-      <mat-error *ngIf="importerForm?.get('newNameFormControl')?.hasError('required')">
+      <mat-error *ngIf="importerForm.get('newNameFormControl')?.hasError('required')">
         Dataset name is <strong>required</strong>
       </mat-error>
-      <mat-error *ngIf="importerForm?.get('newNameFormControl')?.hasError('notLowerCase')">
+      <mat-error *ngIf="importerForm.get('newNameFormControl')?.hasError('notLowerCase')">
         Uppercase characters are not allowed
       </mat-error>
-      <mat-error *ngIf="importerForm?.get('newNameFormControl')?.hasError('wildCard')">
+      <mat-error *ngIf="importerForm.get('newNameFormControl')?.hasError('wildCard')">
         Wildcards are not allowed in Index operations
       </mat-error>
-      <mat-error *ngIf="importerForm?.get('newNameFormControl')?.hasError('colon')">
+      <mat-error *ngIf="importerForm.get('newNameFormControl')?.hasError('colon')">
         ':' symbols are not allowed in Index names
       </mat-error>
       <mat-hint>{{dataSetImporterOptions?.actions?.POST?.index?.help_text || ''}}</mat-hint>
@@ -63,7 +63,7 @@
           <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Cancel</button>
         </div>
         <div class="flex-item-right">
-          <button type="submit" [disabled]="!importerForm?.valid || uploadedBytes !== totalBytes" mat-button
+          <button type="submit" [disabled]="!importerForm.valid || uploadedBytes !== totalBytes" mat-button
                   data-cy="appDatasetImporterCreateDialogSubmit">{{uploadedBytes !== totalBytes ? 'Uploading...' : 'Create'}}
           </button>
         </div>

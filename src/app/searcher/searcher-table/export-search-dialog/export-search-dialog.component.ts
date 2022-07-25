@@ -7,7 +7,7 @@ import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {Field, Project, ProjectIndex} from '../../../shared/types/Project';
 import {ElasticsearchQuery} from '../../searcher-sidebar/build-search/Constraints';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {ProjectService} from '../../../core/projects/project.service';
 import {HttpErrorResponse} from '@angular/common/http';
 
@@ -22,7 +22,7 @@ export class ExportSearchDialogComponent implements OnInit, AfterViewInit, OnDes
   currentProject: Project;
   destroyed$: Subject<boolean> = new Subject<boolean>();
   elasticSearchQuery: ElasticsearchQuery;
-  public columnFormControl = new FormControl([]);
+  public columnFormControl = new UntypedFormControl([]);
   public projectFields: ProjectIndex[];
 
   constructor(private dialogRef: MatDialogRef<ExportSearchDialogComponent>,
