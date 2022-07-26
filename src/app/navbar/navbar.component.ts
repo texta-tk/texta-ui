@@ -15,8 +15,7 @@ import {LogService} from '../core/util/log.service';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {EditProjectDialogComponent} from '../project/edit-project-dialog/edit-project-dialog.component';
-import {AppConfigService} from '../core/util/app-config.service';
-import {UtilityFunctions} from "../shared/UtilityFunctions";
+import {UtilityFunctions} from '../shared/UtilityFunctions';
 
 @Component({
   selector: 'app-navbar',
@@ -29,7 +28,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   projects: Project[];
   projectFields: ProjectIndex[] = [];
   projectControl = new UntypedFormControl();
-  projectFieldsControl = new UntypedFormControl([]);
+  projectIndicesControl = new UntypedFormControl([]);
   currentProject: Project;
   projectResourceCounts: ProjectResourceCounts = new ProjectResourceCounts();
   destroyed$: Subject<boolean> = new Subject<boolean>();
@@ -67,9 +66,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
     });
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroyed$)).subscribe((indices: ProjectIndex[] | null) => {
       if (indices && indices.filter(x => this.currentProject.indices.find(y => y.name === x.index))) {
-        this.projectFieldsControl.setValue(indices);
+        this.projectIndicesControl.setValue(indices);
       } else {
-        this.projectFieldsControl.setValue([]);
+        this.projectIndicesControl.setValue([]);
       }
     });
 
@@ -114,7 +113,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     if (!value) {
       // get the current facts based on the selected indices
       // searcher uses this
-      this.projectStore.setSelectedProjectIndices(this.projectFieldsControl.value);
+      this.projectStore.setSelectedProjectIndices(this.projectIndicesControl.value);
     }
   }
 

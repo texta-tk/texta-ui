@@ -1,6 +1,6 @@
 {
   "name": "texta",
-  "version": "1.6.82",
+  "version": "1.6.83",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

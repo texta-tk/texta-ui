@@ -26,7 +26,7 @@ export class CacheInterceptor implements HttpInterceptor {
     if (request.method === 'POST') {
       cachedResponse = this.cacheService.get(request);
     }
-    if (cachedResponse && cachedResponse.dateCached.isAfter(moment().utc().subtract(30, 'seconds'))){
+    if (cachedResponse && cachedResponse.dateCached.isAfter(moment().utc().subtract(120, 'seconds'))){
       return of(cachedResponse.response.clone());
     }
     return next.handle(request)

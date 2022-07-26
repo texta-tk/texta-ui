@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {AbstractControl, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {LiveErrorStateMatcher} from '../../../../shared/CustomerErrorStateMatchers';
@@ -29,7 +29,7 @@ interface OnSubmitParams {
   templateUrl: './create-labelset-dialog.component.html',
   styleUrls: ['./create-labelset-dialog.component.scss']
 })
-export class CreateLabelsetDialogComponent implements OnInit {
+export class CreateLabelsetDialogComponent implements OnInit, OnDestroy {
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   labelSetForm = new UntypedFormGroup({
     indicesFormControl: new UntypedFormControl([]),
@@ -136,5 +136,10 @@ export class CreateLabelsetDialogComponent implements OnInit {
         }
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed$.next(true);
+    this.destroyed$.complete()
   }
 }
