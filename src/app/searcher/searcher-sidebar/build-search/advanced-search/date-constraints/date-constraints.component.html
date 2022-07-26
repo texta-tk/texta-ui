@@ -6,11 +6,13 @@
            [formControl]="dateFromFormControl">
     <mat-datepicker-toggle matSuffix [for]="from"></mat-datepicker-toggle>
     <mat-datepicker #from></mat-datepicker>
+    <mat-hint>DD/MM/YYYY</mat-hint>
   </mat-form-field>
   <mat-form-field fxFlex="calc(50%-20px)">
     <input [min]="minDate" [max]="maxDate" id="dateTo" data-cy="appSearcherSideBarBuildSearchDateConstraintEnd" matInput
            [matDatepicker]="to" placeholder="To" [formControl]="dateToFormControl">
     <mat-datepicker-toggle matSuffix [for]="to"></mat-datepicker-toggle>
     <mat-datepicker #to></mat-datepicker>
+    <mat-hint>DD/MM/YYYY</mat-hint>
   </mat-form-field>
 </div>

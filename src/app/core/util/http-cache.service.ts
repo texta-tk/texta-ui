@@ -1,23 +1,19 @@
 import {Injectable} from '@angular/core';
 import {HttpRequest, HttpResponse} from '@angular/common/http';
 import {LogService} from './log.service';
-
-import * as _moment from 'moment';
-import {Moment} from 'moment';
-
-const moment = _moment;
+import {DateTime} from 'luxon';
 @Injectable({
   providedIn: 'root'
 })
 export class HttpCacheService {
-  cache: { [key: string]: { response: HttpResponse<unknown>, dateCached: Moment } } = {};
+  cache: { [key: string]: { response: HttpResponse<unknown>, dateCached: DateTime } } = {};
   cachableRoutes = ['/elastic/get_facts/'];
 
   constructor() {
   }
 
   // tslint:disable-next-line:no-any
-  get(req: HttpRequest<unknown>): { response: HttpResponse<unknown>, dateCached: Moment } | undefined {
+  get(req: HttpRequest<unknown>): { response: HttpResponse<unknown>, dateCached: DateTime } | undefined {
     const hash = this.getHashViaBody(JSON.stringify(req.body));
     const cachedItem = this.cache[hash];
     if (cachedItem) {
@@ -29,7 +25,7 @@ export class HttpCacheService {
     const shouldCache = this.shouldCache(req.urlWithParams);
     if (shouldCache) {
       const hash = this.getHashViaBody(JSON.stringify(req.body));
-      this.cache[hash] = {response: res, dateCached: moment.utc(moment.now())};
+      this.cache[hash] = {response: res, dateCached: DateTime.utc()};
     }
   }
 

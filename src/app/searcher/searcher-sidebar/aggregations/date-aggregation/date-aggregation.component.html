@@ -9,6 +9,7 @@
              placeholder="From">
       <mat-datepicker-toggle [for]="from" matSuffix></mat-datepicker-toggle>
       <mat-datepicker #from></mat-datepicker>
+      <mat-hint>DD/MM/YYYY</mat-hint>
     </mat-form-field>
     <mat-form-field appearance="outline">
       <input (dateChange)="makeDateAggregation(dateFromFormControl.value, dateToFormControl.value)"
@@ -17,6 +18,7 @@
              placeholder="To">
       <mat-datepicker-toggle [for]="to" matSuffix></mat-datepicker-toggle>
       <mat-datepicker #to></mat-datepicker>
+      <mat-hint>DD/MM/YYYY</mat-hint>
     </mat-form-field>
   </div>
 

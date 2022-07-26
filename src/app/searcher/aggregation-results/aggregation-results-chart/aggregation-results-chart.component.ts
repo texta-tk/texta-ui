@@ -18,9 +18,8 @@ import {ChangeDetectorRef, Component, Injector, Input, NgZone, OnDestroy, OnInit
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {PlotDownloadDialogComponent} from '../../../shared/plotly-module/plot-download-dialog/plot-download-dialog.component';
-import * as _moment from 'moment';
+import {DateTime} from 'luxon';
 
-const moment = _moment;
 @Component({
   selector: 'app-aggregation-results-chart',
   templateUrl: './aggregation-results-chart.component.html',
@@ -116,7 +115,7 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
             this.textColPath = this.docPaths[1];
             this.dateColPath = this.docPaths[0];
             this.graph.data.push({
-              x: series.map(x => moment.utc(x.epoch).format('yyyy-MM-DD HH:mm:ss')),
+              x: series.map(x => DateTime.fromMillis(x.epoch, {zone: 'utc'}).toISO()),
               y: series.map(x => x.value),
               customData: series,
               // limit hover text to 20 rows, if it doesnt fit graph plotly wont show
@@ -129,7 +128,7 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
           } else {
             this.dateColPath = this.docPaths[0];
             this.graph.data.push({ // regular plots, no nesting, saved searches
-              x: series.map(x => moment.utc(x.epoch).format('yyyy-MM-DD HH:mm:ss')),
+              x: series.map(x => DateTime.fromMillis(x.epoch, {zone: 'utc'}).toISO()),
               y: series.map(x => x.value),
               type: 'scattergl',
               mode,
@@ -148,7 +147,7 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
         const mode = el.series.length > 100 ? 'lines+points' : 'lines+points+markers';
         const series = el.series;
         this.graph.data.push({
-          x: series.map(x => moment.utc(x.epoch).format('yyyy-MM-DD HH:mm:ss')),
+          x: series.map(x => DateTime.fromMillis(x.epoch, {zone: 'utc'}).toISO()),
           y: series.map(x => x.value),
           type: 'scattergl',
           mode,

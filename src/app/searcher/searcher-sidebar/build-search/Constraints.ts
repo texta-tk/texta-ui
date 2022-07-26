@@ -3,9 +3,8 @@ import {UntypedFormControl} from '@angular/forms';
 import {Lexicon} from '../../../shared/types/Lexicon';
 import {FromToInput} from '../../../shared/shared-module/components/from-to-input/from-to-input.component';
 import {HighlightSettings} from '../../../shared/SettingVars';
-import * as _moment from 'moment';
+import {DateTime} from 'luxon';
 
-const moment = _moment;
 
 export class Constraint {
   fields: Field[];
@@ -74,8 +73,8 @@ export class DateConstraint extends Constraint {
 
   constructor(fields: Field[], dateFrom?: undefined, dateTo?: undefined) {
     super(fields);
-    this.dateFromFormControl.setValue(dateFrom ? moment.utc(dateFrom) : '');
-    this.dateToFormControl.setValue(dateTo ? moment.utc(dateTo) : '');
+    this.dateFromFormControl.setValue(dateFrom ? DateTime.fromISO(dateFrom, {zone: 'utc'}) : '');
+    this.dateToFormControl.setValue(dateTo ?  DateTime.fromISO(dateTo, {zone: 'utc'}) : '');
   }
 }
 

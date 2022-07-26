@@ -5,11 +5,7 @@ import {Subject} from 'rxjs';
 import {MatTableDataSource} from '@angular/material/table';
 import {AggregationResultsDialogComponent} from './aggregation-results-dialog/aggregation-results-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
-import * as _moment from 'moment';
-import {Moment} from 'moment';
-
-const moment = _moment;
-
+import {DateTime} from 'luxon';
 export interface AggregationData {
 
   treeData?: {
@@ -71,7 +67,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     for (const element of buckets) {
       dateData.push({
         value: element.doc_count,
-        name: moment.utc(element.key).toISOString(),
+        name: DateTime.fromMillis(element.key, {zone: 'utc'}).toISO(),
         epoch: element.key,
       });
     }
@@ -87,7 +83,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     for (const element of buckets) {
       dateData.push({
         value: element.doc_count,
-        name: moment.utc(element.key).toISOString(),
+        name: DateTime.fromMillis(element.key, {zone: 'utc'}).toISO(),
         epoch: element.key,
         extra: {buckets: element.buckets}
       });
