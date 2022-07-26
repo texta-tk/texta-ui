@@ -100,7 +100,7 @@ build:
     - npm ci
     - apt-get update && apt-get install jq -y
   script:
-    - ng build --prod
+    - ng build --configuration=production
     - mkdir release
     - tar -czvf release/texta-rest-front-latest.tar.gz dist/TEXTA
     - export FRONT_VERSION=$(jq .version package.json | sed -s s'/"//'g)
