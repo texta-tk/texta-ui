@@ -81,7 +81,7 @@ export class AggregationResultsChartComponent implements OnInit, OnDestroy {
         },
         hoverdistance: -1,
         yaxis: this.graph?.layout.yaxis || {title: {text: this.title}},
-        xaxis: {type: 'date'},
+        xaxis: {type: 'date', hoverformat: '%d/%m/%Y, %A'},
         legend: {
           orientation: 'h',
           xanchor: 'center',
