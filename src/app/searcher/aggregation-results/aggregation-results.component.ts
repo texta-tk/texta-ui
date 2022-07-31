@@ -6,6 +6,7 @@ import {MatTableDataSource} from '@angular/material/table';
 import {AggregationResultsDialogComponent} from './aggregation-results-dialog/aggregation-results-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {DateTime} from 'luxon';
+
 export interface AggregationData {
 
   treeData?: {
@@ -244,7 +245,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
           aggData.treeData.push({
             name: aggName === aggregationType ? MAIN_AGG_NAME : aggName,
             // tslint:disable-next-line:no-any
-            histoBuckets: formattedData.histoBuckets && this.determineDepthOfObject(formattedData, (x: any) => x.buckets) === 3 ? formattedData.histoBuckets : [],
+            ...(formattedData.histoBuckets && this.determineDepthOfObject(formattedData, (x: any) => x.buckets) === 3) ? {histoBuckets: formattedData.histoBuckets} : {},
             treeData: this.bucketAccessor(formattedData)
           });
         }

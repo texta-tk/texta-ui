@@ -1,6 +1,7 @@
 import {Search} from '../../shared/types/Search';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {
+  BooleanConstraint,
   Constraint, DateConstraint,
   ElasticsearchQuery,
   FactConstraint,
@@ -166,6 +167,26 @@ export class SearcherComponentService {
           }
         } else {
           const constraintBluePrint = {fields: [{path: docPath, type: 'text'}], text: constraintValue};
+          constraint.query_constraints.push(constraintBluePrint);
+        }
+        constraint.query_constraints.push(...UtilityFunctions.convertConstraintListToJson(constraintList));
+        constraint.query_constraints = JSON.stringify(constraint.query_constraints);
+        this.nextSavedSearch(constraint);
+      }
+    });
+  }
+
+  public createBooleanConstraint(docPath: string, constraintValue: number | boolean): void {
+    const constraint = new SavedSearch();
+    constraint.query_constraints = [];
+    this.getAdvancedSearchConstraints$().pipe(take(1)).subscribe(constraintList => {
+      if (typeof constraint.query_constraints !== 'string') {
+        const boolConstraint = constraintList.find(y => y instanceof BooleanConstraint && y.fields.length === 1 && y.fields[0].path === docPath);
+
+        if (boolConstraint instanceof BooleanConstraint) {
+          boolConstraint.booleanValueFormControl.setValue(!!constraintValue);
+        } else {
+          const constraintBluePrint = {fields: [{path: docPath, type: 'boolean'}], booleanValue: !!constraintValue};
           constraint.query_constraints.push(constraintBluePrint);
         }
         constraint.query_constraints.push(...UtilityFunctions.convertConstraintListToJson(constraintList));
