@@ -40,6 +40,12 @@ export class CoreService {
       catchError(this.logService.handleError<string[]>('getSnowballLanguages')));
   }
 
+  postSnowballStemmer(body: unknown): Observable<{ text: string, language: string } | HttpErrorResponse> {
+    return this.http.post<{ text: string, language: string }>(`${this.apiUrl}/elastic/snowball/`, body).pipe(
+      tap(e => this.logService.logStatus(e, 'postSnowballStemmer')),
+      catchError(this.logService.handleError<{ text: string, language: string }>('postSnowballStemmer')));
+  }
+
   bulkDeleteElasticIndices(indices: number[]): Observable<{ num_deleted: number, deleted_types: unknown } | HttpErrorResponse> {
     return this.http.post<{ num_deleted: number, deleted_types: unknown }>(`${this.apiUrl}/elastic/index/bulk_delete/`, {ids: indices}).pipe(
       tap(e => this.logService.logStatus(e, 'bulkDeleteElasticIndices')),

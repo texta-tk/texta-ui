@@ -17,6 +17,7 @@ import {LogService} from '../../core/util/log.service';
 import {ElasticAnalyzerService} from '../../core/tools/elastic-analyzer/elastic-analyzer.service';
 import {QueryDialogComponent} from '../../shared/shared-module/components/dialogs/query-dialog/query-dialog.component';
 import {Index} from '../../shared/types/Index';
+import {ApplyStemmerTextDialogComponent} from './apply-stemmer-text-dialog/apply-stemmer-text-dialog.component';
 
 @Component({
   selector: 'app-elastic-analyzer',
@@ -169,5 +170,12 @@ export class ElasticAnalyzerComponent implements OnInit, OnDestroy, AfterViewIni
   ngOnDestroy(): void {
     this.destroyed$.next(true);
     this.destroyed$.complete();
+  }
+
+  openApplyStemmer(): void {
+    this.dialog.open(ApplyStemmerTextDialogComponent, {
+      maxHeight: '80vh',
+      width: '700px',
+    });
   }
 }

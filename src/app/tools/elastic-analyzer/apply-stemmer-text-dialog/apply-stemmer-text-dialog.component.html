@@ -1,0 +1,60 @@
+<h1 mat-dialog-title>Apply stemmer to text</h1>
+<div mat-dialog-content>
+  <form (ngSubmit)="onSubmit()" [formGroup]="stemmerForm" class="flex-col">
+    <mat-form-field class="max-width" data-cy="appElasticStemmerApplyDialogText">
+      <textarea [errorStateMatcher]="matcher" formControlName="text" matInput placeholder="Text" rows="6"
+                required></textarea>
+      <mat-error *ngIf="stemmerForm.get('text')?.hasError('required')">
+        Text is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field data-cy="appElasticStemmerApplyDialogLanguage">
+      <mat-label>Language</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="language"
+                  panelClass="select-panel-reveal-input">
+        <ng-container *ngIf="languages">
+          <mat-option *ngFor="let item of languages" [value]="item">
+            {{item}}
+          </mat-option>
+        </ng-container>
+      </mat-select>
+      <mat-error *ngIf="stemmerForm.get('language')?.hasError('required')">
+        Language is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+    <div *ngIf="result" class="m-bot-10">
+      <mat-accordion multi displayMode="flat">
+        <mat-expansion-panel *ngIf="result.text" expanded>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Text
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          {{result.text}}
+        </mat-expansion-panel>
+
+        <mat-expansion-panel *ngIf="result.language" expanded>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Language
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          {{result.language}}
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+    <div class="flex-col">
+      <div class="flex-row">
+        <div class="flex-item-left">
+          <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
+        </div>
+        <div class="flex-item-right">
+          <button [disabled]="!stemmerForm.valid" data-cy="appElasticStemmerApplyDialogSubmit" mat-button type="submit">
+            Apply
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
