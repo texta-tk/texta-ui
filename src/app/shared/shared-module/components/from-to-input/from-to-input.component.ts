@@ -1,5 +1,5 @@
 import {Component, ElementRef, HostBinding, Input, OnDestroy, OnInit, Optional, Self} from '@angular/core';
-import {ControlValueAccessor, FormBuilder, FormGroup, NgControl, ValidatorFn} from '@angular/forms';
+import {ControlValueAccessor, UntypedFormBuilder, UntypedFormGroup, NgControl, ValidatorFn} from '@angular/forms';
 import {Subject} from 'rxjs';
 import {coerceBooleanProperty} from '@angular/cdk/coercion';
 import {FocusMonitor} from '@angular/cdk/a11y';
@@ -21,7 +21,7 @@ export class FromToInput {
 })
 export class FromToInputComponent implements ControlValueAccessor, MatFormFieldControl<FromToInput>, OnDestroy, OnInit {
   static nextId = 0;
-  parts: FormGroup;
+  parts: UntypedFormGroup;
   stateChanges = new Subject<void>();
 
   checkValidators = new Subject<void>();
@@ -43,7 +43,7 @@ export class FromToInputComponent implements ControlValueAccessor, MatFormFieldC
   @HostBinding('attr.aria-describedby') hostAria = this.describedBy;
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private _focusMonitor: FocusMonitor,
     private _elementRef: ElementRef<HTMLElement>,
     @Optional() @Self() public ngControl: NgControl) {

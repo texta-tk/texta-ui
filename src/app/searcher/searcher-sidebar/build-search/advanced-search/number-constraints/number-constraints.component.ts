@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {ElasticsearchQuery, NumberConstraint} from '../../Constraints';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {FromToInput, FromToInputComponent} from '../../../../../shared/shared-module/components/from-to-input/from-to-input.component';
 import {Subject} from 'rxjs';
 import {startWith, takeUntil} from 'rxjs/operators';
@@ -15,7 +15,7 @@ export class NumberConstraintsComponent implements OnInit, OnDestroy, AfterViewI
   @Input() elasticSearchQuery: ElasticsearchQuery;
   @Output() constraintChanged = new EventEmitter<ElasticsearchQuery>(); // search as you type, emit changes
   @ViewChild(FromToInputComponent) fromToInput: FromToInputComponent;
-  operatorFormControl = new FormControl();
+  operatorFormControl = new UntypedFormControl();
 
   destroyed$: Subject<boolean> = new Subject<boolean>();
   // tslint:disable-next-line:no-any

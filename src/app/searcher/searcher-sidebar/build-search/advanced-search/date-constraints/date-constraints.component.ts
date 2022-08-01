@@ -1,16 +1,14 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {DateConstraint, ElasticsearchQuery} from '../../Constraints';
-import {FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormControl, FormGroup} from '@angular/forms';
 import {debounceTime, distinctUntilChanged, min, pairwise, skip, startWith, switchMap, take, takeUntil} from 'rxjs/operators';
 import {forkJoin, merge, of, Subject} from 'rxjs';
 import {ProjectStore} from '../../../../../core/projects/project.store';
 import {SearcherService} from '../../../../../core/searcher/searcher.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Project} from '../../../../../shared/types/Project';
-import * as _moment from 'moment';
-import {Moment} from 'moment';
+import {DateTime} from 'luxon';
 
-const moment = _moment;
 @Component({
   selector: 'app-date-constraints',
   templateUrl: './date-constraints.component.html',
@@ -21,13 +19,13 @@ export class DateConstraintsComponent implements OnInit, OnDestroy {
   @Input() elasticSearchQuery: ElasticsearchQuery;
   @Input() currentProject: Project;
   @Output() constraintChanged = new EventEmitter<ElasticsearchQuery>(); // search as you type, emit changes
-  dateFromFormControl: FormControl = new FormControl();
-  dateToFormControl: FormControl = new FormControl();
+  dateFromFormControl: UntypedFormControl = new UntypedFormControl();
+  dateToFormControl: UntypedFormControl = new UntypedFormControl();
   destroyed$: Subject<boolean> = new Subject<boolean>();
   // tslint:disable-next-line:no-any
   constraintQuery: any = {bool: {must: []}};
-  public minDate: Moment;
-  public maxDate: Moment;
+  public minDate: DateTime;
+  public maxDate: DateTime;
 
 
   constructor(private projectStore: ProjectStore, private searcherService: SearcherService) {
@@ -82,9 +80,9 @@ export class DateConstraintsComponent implements OnInit, OnDestroy {
           let index = 0;
           for (const field of fieldPaths) {
             // @ts-ignore
-            queryMinMax.query.aggs['min_date' + index] = {min: {field, format: 'yyyy-MM-dd'}};
+            queryMinMax.query.aggs['min_date' + index] = {min: {field}};
             // @ts-ignore
-            queryMinMax.query.aggs['max_date' + index] = {max: {field, format: 'yyyy-MM-dd'}};
+            queryMinMax.query.aggs['max_date' + index] = {max: {field}};
             index++;
           }
           return this.searcherService.search(queryMinMax, this.currentProject.id);
@@ -92,18 +90,18 @@ export class DateConstraintsComponent implements OnInit, OnDestroy {
         return of(null);
       })).subscribe(resp => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
-          let minDate: Moment | undefined;
-          let maxDate: Moment | undefined;
+          let minDate: DateTime | undefined;
+          let maxDate: DateTime | undefined;
           for (const prop in resp.aggs) {
             if (resp.aggs.hasOwnProperty(prop)) {
               if (prop.includes('min_date')) {
                 if ((minDate && resp.aggs[prop].value < minDate) || !minDate) {
-                  minDate = moment.utc(resp.aggs[prop].value);
+                  minDate = DateTime.fromMillis(resp.aggs[prop].value, {zone: 'utc'});
                 }
               }
               if (prop.includes('max_date')) {
                 if ((maxDate && resp.aggs[prop].value > maxDate) || !maxDate) {
-                  maxDate = moment.utc(resp.aggs[prop].value);
+                  maxDate = DateTime.fromMillis(resp.aggs[prop].value, {zone: 'utc'});
                 }
               }
             }
@@ -126,11 +124,12 @@ export class DateConstraintsComponent implements OnInit, OnDestroy {
 
   }
 
-  makeDateQuery(fieldPaths: string[], fromValue: Moment, toValue: Moment): void {
+  makeDateQuery(fieldPaths: string[], fromValue: DateTime, toValue: DateTime): void {
     this.constraintQuery.bool.must.splice(0, this.constraintQuery.bool.must.length);
-    fromValue = moment(fromValue);
-    toValue = moment(toValue);
-    const dateQuery = {gte: fromValue.startOf('day'), lte: toValue.endOf('day')};
+    const dateQuery = {
+      ...fromValue ? {gte: fromValue.startOf('day')} : {},
+      ...toValue ? {lte: toValue.endOf('day')} : {}
+    };
     for (const field of fieldPaths) {
       this.constraintQuery.bool.must.push({range: {[field]: dateQuery}});
     }

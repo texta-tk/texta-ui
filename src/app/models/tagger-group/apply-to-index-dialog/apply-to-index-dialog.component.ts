@@ -1,5 +1,5 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {Field, Project, ProjectIndex} from '../../../shared/types/Project';
@@ -38,19 +38,19 @@ export class ApplyToIndexDialogComponent implements OnInit, OnDestroy {
   defaultQuery = '{"query": {"match_all": {}}}';
   query = this.defaultQuery;
 
-  applyForm = new FormGroup({
-    descriptionFormControl: new FormControl('', [Validators.required]),
-    indicesFormControl: new FormControl([], [Validators.required]),
-    fieldsFormControl: new FormControl([], [Validators.required]),
-    factNameFormControl: new FormControl('', [Validators.required]),
-    lemmatizeFormControl: new FormControl(),
-    maxTagsFormControl: new FormControl(),
-    nerFormControl: new FormControl(),
-    nSimilarFormControl: new FormControl(),
-    nCandidateFormControl: new FormControl(),
-    esTimeoutFormControl: new FormControl(),
-    bulkSizeFormControl: new FormControl(),
-    chunkSizeFormControl: new FormControl(),
+  applyForm = new UntypedFormGroup({
+    descriptionFormControl: new UntypedFormControl('', [Validators.required]),
+    indicesFormControl: new UntypedFormControl([], [Validators.required]),
+    fieldsFormControl: new UntypedFormControl([], [Validators.required]),
+    factNameFormControl: new UntypedFormControl('', [Validators.required]),
+    lemmatizeFormControl: new UntypedFormControl(),
+    maxTagsFormControl: new UntypedFormControl(),
+    nerFormControl: new UntypedFormControl(),
+    nSimilarFormControl: new UntypedFormControl(),
+    nCandidateFormControl: new UntypedFormControl(),
+    esTimeoutFormControl: new UntypedFormControl(),
+    bulkSizeFormControl: new UntypedFormControl(),
+    chunkSizeFormControl: new UntypedFormControl(),
 
   });
 

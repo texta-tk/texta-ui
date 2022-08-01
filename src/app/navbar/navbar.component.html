@@ -162,7 +162,7 @@
       <mat-form-field *ngIf="projectFields" class="dropdown-select">
         <mat-select (openedChange)="indexSelectionOpenedChange($event)" [compareWith]="compareIndices"
                     [disableOptionCentering]="true"
-                    [formControl]="projectFieldsControl" data-cy="appNavbarProjectFieldsSelect"
+                    [formControl]="projectIndicesControl" data-cy="appNavbarProjectFieldsSelect"
                     multiple
                     panelClass="select-panel-reveal-input"
                     placeholder="Indices">

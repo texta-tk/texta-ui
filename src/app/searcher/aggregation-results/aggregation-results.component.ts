@@ -5,10 +5,7 @@ import {Subject} from 'rxjs';
 import {MatTableDataSource} from '@angular/material/table';
 import {AggregationResultsDialogComponent} from './aggregation-results-dialog/aggregation-results-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
-import * as _moment from 'moment';
-import {Moment} from 'moment';
-
-const moment = _moment;
+import {DateTime} from 'luxon';
 
 export interface AggregationData {
 
@@ -71,7 +68,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     for (const element of buckets) {
       dateData.push({
         value: element.doc_count,
-        name: moment.utc(element.key).toISOString(),
+        name: DateTime.fromMillis(element.key, {zone: 'utc'}).toISO(),
         epoch: element.key,
       });
     }
@@ -87,7 +84,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
     for (const element of buckets) {
       dateData.push({
         value: element.doc_count,
-        name: moment.utc(element.key).toISOString(),
+        name: DateTime.fromMillis(element.key, {zone: 'utc'}).toISO(),
         epoch: element.key,
         extra: {buckets: element.buckets}
       });
@@ -248,7 +245,7 @@ export class AggregationResultsComponent implements OnInit, OnDestroy {
           aggData.treeData.push({
             name: aggName === aggregationType ? MAIN_AGG_NAME : aggName,
             // tslint:disable-next-line:no-any
-            histoBuckets: formattedData.histoBuckets && this.determineDepthOfObject(formattedData, (x: any) => x.buckets) === 3 ? formattedData.histoBuckets : [],
+            ...(formattedData.histoBuckets && this.determineDepthOfObject(formattedData, (x: any) => x.buckets) === 3) ? {histoBuckets: formattedData.histoBuckets} : {},
             treeData: this.bucketAccessor(formattedData)
           });
         }

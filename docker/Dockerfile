@@ -7,7 +7,7 @@ WORKDIR /build
 RUN npm install -g @angular/cli
 RUN npm install
 # build
-RUN ng build --prod
+RUN ng build --configuration=production
 
 # start clean image
 FROM nginx:latest

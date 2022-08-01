@@ -2,7 +2,7 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {TopicAnalyzerService} from '../../../../../../core/tools/topic-analyzer/topic-analyzer.service';
 import {LogService} from '../../../../../../core/util/log.service';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {LiveErrorStateMatcher} from '../../../../../../shared/CustomerErrorStateMatchers';
 
@@ -12,14 +12,14 @@ import {LiveErrorStateMatcher} from '../../../../../../shared/CustomerErrorState
   styleUrls: ['./similar-options-dialog.component.scss']
 })
 export class SimilarOptionsDialogComponent implements OnInit {
-  optionsForm = new FormGroup({
-    minTermFreqFormControl: new FormControl(1),
-    maxQueryTermsFormControl: new FormControl(12),
-    minDocFreqFormControl: new FormControl(5),
-    minWordLengthFormControl: new FormControl(0),
-    maxWordLengthFormControl: new FormControl(0),
-    stopWordsFormControl: new FormControl(''),
-    sizeFormControl: new FormControl(25, [Validators.max(10000)]),
+  optionsForm = new UntypedFormGroup({
+    minTermFreqFormControl: new UntypedFormControl(1),
+    maxQueryTermsFormControl: new UntypedFormControl(12),
+    minDocFreqFormControl: new UntypedFormControl(5),
+    minWordLengthFormControl: new UntypedFormControl(0),
+    maxWordLengthFormControl: new UntypedFormControl(0),
+    stopWordsFormControl: new UntypedFormControl(''),
+    sizeFormControl: new UntypedFormControl(25, [Validators.max(10000)]),
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();

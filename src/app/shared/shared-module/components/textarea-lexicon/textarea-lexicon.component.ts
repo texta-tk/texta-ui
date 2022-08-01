@@ -17,7 +17,7 @@ import {ProjectStore} from '../../../../core/projects/project.store';
 import {Project} from '../../../types/Project';
 import {Lexicon} from '../../../types/Lexicon';
 import {MatMenuTrigger} from '@angular/material/menu';
-import {AbstractControl, ControlValueAccessor, FormBuilder, FormControl, NgControl} from '@angular/forms';
+import {AbstractControl, ControlValueAccessor, UntypedFormBuilder, UntypedFormControl, NgControl} from '@angular/forms';
 import {MAT_FORM_FIELD, MatFormField, MatFormFieldControl} from '@angular/material/form-field';
 import {FocusMonitor} from '@angular/cdk/a11y';
 import {coerceBooleanProperty} from '@angular/cdk/coercion';
@@ -33,7 +33,7 @@ import {LiveErrorStateMatcher} from '../../../CustomerErrorStateMatchers';
 })
 export class TextareaLexiconComponent implements OnInit, OnDestroy, ControlValueAccessor, MatFormFieldControl<string> {
   static nextId = 0;
-  textareaFormControl: FormControl;
+  textareaFormControl: UntypedFormControl;
   currentProject: Project;
   lexicons = new BehaviorSubject<Lexicon[]>([]);
   loadingLexicons = new BehaviorSubject(true);
@@ -51,7 +51,7 @@ export class TextareaLexiconComponent implements OnInit, OnDestroy, ControlValue
   constructor(private logService: LogService,
               private lexiconService: LexiconService,
               private projectStore: ProjectStore,
-              fb: FormBuilder, private fm: FocusMonitor, private elRef: ElementRef<HTMLElement>,
+              fb: UntypedFormBuilder, private fm: FocusMonitor, private elRef: ElementRef<HTMLElement>,
               // tslint:disable-next-line:variable-name
               @Optional() @Inject(MAT_FORM_FIELD) public _formField: MatFormField,
               @Self() public ngControl: NgControl) {
@@ -60,7 +60,7 @@ export class TextareaLexiconComponent implements OnInit, OnDestroy, ControlValue
       this.stateChanges.next();
     });
     if (this.ngControl != null) {
-      this.textareaFormControl = new FormControl('', this.ngControl.validator);
+      this.textareaFormControl = new UntypedFormControl('', this.ngControl.validator);
       this.ngControl.valueAccessor = this;
     }
 

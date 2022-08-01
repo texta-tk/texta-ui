@@ -10,6 +10,7 @@ import {SearcherComponentService} from '../../services/searcher-component.servic
 interface TableElement {
   doc_count: number;
   key: string;
+  key_as_string: string;
   top_reverse_nested: { doc_count: number };
 }
 
@@ -65,9 +66,11 @@ export class AggregationResultTableComponent {
     });
   }
 
-  createConstraint(key: string): void {
-    if (this.docPath) {
+  createConstraint(key: string | number): void {
+    if (this.docPath && typeof key === 'string') {
       this.searcherComponentService.createTextConstraint(this.docPath, key);
+    } else if (this.docPath && typeof key === 'number') {
+      this.searcherComponentService.createBooleanConstraint(this.docPath, key);
     }
   }
 

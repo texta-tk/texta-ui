@@ -1,15 +1,13 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormControl, FormGroup} from '@angular/forms';
 import {debounceTime, distinctUntilChanged, startWith, switchMap, take, takeUntil} from 'rxjs/operators';
 import {SearcherComponentService} from '../../../services/searcher-component.service';
 import {forkJoin, of, Subject} from 'rxjs';
 import {SearcherService} from '../../../../core/searcher/searcher.service';
 import {ProjectStore} from '../../../../core/projects/project.store';
 import {HttpErrorResponse} from '@angular/common/http';
-import * as _moment from 'moment';
-import {Moment} from 'moment';
+import {DateTime} from 'luxon';
 
-const moment = _moment;
 @Component({
   selector: 'app-date-aggregation',
   templateUrl: './date-aggregation.component.html',
@@ -18,7 +16,7 @@ const moment = _moment;
 export class DateAggregationComponent implements OnInit, OnDestroy {
   // tslint:disable-next-line:no-any
   @Input() aggregationObj: { aggregation: any };
-  @Input() fieldsFormControl: FormControl;
+  @Input() fieldsFormControl: UntypedFormControl;
   @Input() notSubAgg: boolean;
   dateInterval = 'year';
   @Output() relativeFrequency = new EventEmitter<boolean>();
@@ -30,10 +28,10 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject();
   dateRangeDays = false;
   dateRangeWeek = false;
-  maxDate: Moment;
-  minDate: Moment;
-  dateFromFormControl: FormControl = new FormControl();
-  dateToFormControl: FormControl = new FormControl();
+  maxDate: DateTime;
+  minDate: DateTime;
+  dateFromFormControl: UntypedFormControl = new UntypedFormControl();
+  dateToFormControl: UntypedFormControl = new UntypedFormControl();
 
   constructor(
     private searchService: SearcherComponentService,
@@ -54,8 +52,8 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
             return this.searcherService.search({
               query: {
                 aggs: {
-                  min_date: {min: {field: this.fieldsFormControl.value.path, format: 'yyyy-MM-dd'}},
-                  max_date: {max: {field: this.fieldsFormControl.value.path, format: 'yyyy-MM-dd'}}
+                  min_date: {min: {field: this.fieldsFormControl.value.path}},
+                  max_date: {max: {field: this.fieldsFormControl.value.path}}
                 }, size: 0
               },
               indices: fork.currentIndices.map(x => x.index)
@@ -68,10 +66,8 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
       }
     })).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        // tslint:disable-next-line:no-any
-        this.minDate = moment.utc((resp as any).aggs.min_date.value);
-        // tslint:disable-next-line:no-any
-        this.maxDate = moment.utc((resp as any).aggs.max_date.value);
+        this.minDate = DateTime.fromMillis(resp.aggs.min_date.value, {zone: 'utc'});
+        this.maxDate = DateTime.fromMillis(resp.aggs.max_date.value, {zone: 'utc'});
         this.dateFromFormControl.setValue(this.minDate);
         this.dateToFormControl.setValue(this.maxDate);
         this.makeDateAggregation(this.minDate, this.maxDate);
@@ -81,35 +77,37 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
     this.relativeFrequency.emit(false);
   }
 
-  makeDateAggregation(startDate: Moment, toDate: Moment): void {
-    this.checkDateInterval(startDate.startOf('day'), toDate.endOf('day'));
-    this.dateRangeFrom.range = {[this.fieldsFormControl.value.path]: {gte: startDate.startOf('day')}};
-    this.dateRangeTo.range = {[this.fieldsFormControl.value.path]: {lte: toDate.endOf('day')}};
-    // tslint:disable-next-line:no-any
-    let returnquery: { [key: string]: any };
-    returnquery = {
-      agg_histo: {
-        filter: {bool: {must: [{bool: {must: [this.dateRangeFrom, this.dateRangeTo]}}]}},
-        aggs: {
-          agg_histo: {
-            date_histogram: {
-              field: this.fieldsFormControl.value.path,
-              interval: this.dateInterval,
-              min_doc_count: 0,
-              extended_bounds: {
-                min: startDate.startOf('day'),
-                max: toDate.endOf('day')
+  makeDateAggregation(startDate: DateTime, toDate: DateTime): void {
+    if (startDate?.isValid && toDate?.isValid) {
+      this.checkDateInterval(startDate.startOf('day'), toDate.endOf('day'));
+      this.dateRangeFrom.range = {[this.fieldsFormControl.value.path]: {...startDate ? {gte: startDate.startOf('day')} : {}}};
+      this.dateRangeTo.range = {[this.fieldsFormControl.value.path]: {...toDate ? {lte: toDate.endOf('day')} : {}}};
+      // tslint:disable-next-line:no-any
+      let returnquery: { [key: string]: any };
+      returnquery = {
+        agg_histo: {
+          filter: {bool: {must: [{bool: {must: [this.dateRangeFrom, this.dateRangeTo]}}]}},
+          aggs: {
+            agg_histo: {
+              date_histogram: {
+                field: this.fieldsFormControl.value.path,
+                calendar_interval: this.dateInterval,
+                min_doc_count: 0,
+                extended_bounds: {
+                  ...startDate ? {min: startDate.startOf('day')} : {},
+                  ...toDate ? {max: toDate.endOf('day')} : {}
+                }
               }
             }
           }
         }
-      }
-    };
+      };
 
-    this.aggregationObj.aggregation = returnquery;
+      this.aggregationObj.aggregation = returnquery;
+    }
   }
 
-  dateRangeDaysSmallerThan(goal: number, startDate: Moment, toDate: Moment): boolean {
+  dateRangeDaysSmallerThan(goal: number, startDate: DateTime, toDate: DateTime): boolean {
     toDate = toDate ? toDate : this.maxDate;
     startDate = startDate ? startDate : this.minDate;
     const differenceTime = toDate.valueOf() - startDate.valueOf();
@@ -122,7 +120,7 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  private checkDateInterval(startDate: Moment, toDate: Moment): void {
+  private checkDateInterval(startDate: DateTime, toDate: DateTime): void {
     // limit interval based on daterange
     this.dateRangeDays = this.dateRangeDaysSmallerThan(365, startDate, toDate);
     this.dateRangeWeek = this.dateRangeDaysSmallerThan(1095, startDate, toDate);

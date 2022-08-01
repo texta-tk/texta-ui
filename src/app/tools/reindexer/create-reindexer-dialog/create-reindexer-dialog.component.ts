@@ -1,6 +1,6 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {ReindexerService} from '../../../core/tools/reindexer/reindexer.service';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {LiveErrorStateMatcher} from 'src/app/shared/CustomerErrorStateMatchers';
@@ -27,20 +27,20 @@ export class CreateReindexerDialogComponent implements OnInit, OnDestroy {
   defaultQuery = '{"query": {"match_all": {}}}';
   query = this.data?.cloneElement?.query || this.defaultQuery;
 
-  reindexerForm = new FormGroup({
-    descriptionFormControl: new FormControl(this.data?.cloneElement?.description || '', [Validators.required]),
-    newNameFormControl: new FormControl(this.data?.cloneElement?.new_index || '', [Validators.required]),
-    randomSizeFormControl: new FormControl(this.data?.cloneElement?.random_size || ''),
-    fieldsFormControl: new FormControl([], [Validators.required]),
-    fieldTypesFormControl: new FormControl(''),
-    indicesFormControl: new FormControl([], [Validators.required]),
-    addFactsMappingFormControl: new FormControl(this.data?.cloneElement?.add_facts_mapping !== undefined ? this.data?.cloneElement?.add_facts_mapping : false)
+  reindexerForm = new UntypedFormGroup({
+    descriptionFormControl: new UntypedFormControl(this.data?.cloneElement?.description || '', [Validators.required]),
+    newNameFormControl: new UntypedFormControl(this.data?.cloneElement?.new_index || '', [Validators.required]),
+    randomSizeFormControl: new UntypedFormControl(this.data?.cloneElement?.random_size || ''),
+    fieldsFormControl: new UntypedFormControl([], [Validators.required]),
+    fieldTypesFormControl: new UntypedFormControl(''),
+    indicesFormControl: new UntypedFormControl([], [Validators.required]),
+    addFactsMappingFormControl: new UntypedFormControl(this.data?.cloneElement?.add_facts_mapping !== undefined ? this.data?.cloneElement?.add_facts_mapping : false)
   });
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   projectIndices: ProjectIndex[];
   projectFields: ProjectIndex[] = [];
   // tslint:disable-next-line:no-any
-  reindexerOptions: any;
+  reindexerOptions: any | undefined;
   currentProject: Project;
   destroyed$: Subject<boolean> = new Subject<boolean>();
   fieldTypesModel: FieldTypesModel[] = [];

@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {Project} from '../../../shared/types/Project';
-import {AbstractControl, FormControl, FormGroup, ValidationErrors, Validators} from '@angular/forms';
+import {AbstractControl, UntypedFormControl, UntypedFormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {MatDialogRef} from '@angular/material/dialog';
 import {ProjectService} from '../../../core/projects/project.service';
@@ -36,11 +36,11 @@ function indexNameValidator(control: AbstractControl): null | ValidationErrors {
 })
 export class CreateDatasetDialogComponent implements OnInit, OnDestroy {
   readonly maxSize = 1048576000000; // 976 gigabytes
-  importerForm = new FormGroup({
-    descriptionFormControl: new FormControl('', [Validators.required]),
-    newNameFormControl: new FormControl('', [Validators.required, indexNameValidator]),
-    separatorFormControl: new FormControl(''),
-    fileFormControl: new FormControl(undefined,
+  importerForm = new UntypedFormGroup({
+    descriptionFormControl: new UntypedFormControl('', [Validators.required]),
+    newNameFormControl: new UntypedFormControl('', [Validators.required, indexNameValidator]),
+    separatorFormControl: new UntypedFormControl(''),
+    fileFormControl: new UntypedFormControl(undefined,
       [Validators.required, maxContentSize(this.maxSize)]),
   });
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
@@ -52,7 +52,8 @@ export class CreateDatasetDialogComponent implements OnInit, OnDestroy {
   uploadedBytes = 0;
   totalBytes = 0;
 
-  dataSetImporterOptions: any;
+  // tslint:disable-next-line:no-any
+  dataSetImporterOptions: any | undefined;
 
   constructor(private dialogRef: MatDialogRef<CreateDatasetDialogComponent>,
               private projectService: ProjectService,

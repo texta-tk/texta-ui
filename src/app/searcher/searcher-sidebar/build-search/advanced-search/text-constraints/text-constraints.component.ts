@@ -9,7 +9,7 @@ import {
   ViewChild
 } from '@angular/core';
 import {ElasticsearchQuery, TextConstraint} from '../../Constraints';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {debounceTime, pairwise, startWith, takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {Lexicon} from '../../../../../shared/types/Lexicon';
@@ -30,13 +30,13 @@ export class TextConstraintsComponent implements OnInit, OnDestroy {
   // tslint:disable-next-line:no-any
   constraintQuery: any;
   // so i dont have to rename everything if i decide to refactor something
-  textAreaFormControl = new FormControl();
-  slopFormControl = new FormControl();
-  matchFormControl = new FormControl();
-  operatorFormControl = new FormControl();
-  fuzzinessFormControl = new FormControl();
-  prefixLengthFormControl = new FormControl();
-  ignoreCaseFormControl = new FormControl();
+  textAreaFormControl = new UntypedFormControl();
+  slopFormControl = new UntypedFormControl();
+  matchFormControl = new UntypedFormControl();
+  operatorFormControl = new UntypedFormControl();
+  fuzzinessFormControl = new UntypedFormControl();
+  prefixLengthFormControl = new UntypedFormControl();
+  ignoreCaseFormControl = new UntypedFormControl();
   lexicons: Lexicon[] = [];
   operatorConverter: { [key: string]: string } = {
     must: 'and',

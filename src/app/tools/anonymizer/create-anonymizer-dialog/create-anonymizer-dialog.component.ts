@@ -4,7 +4,7 @@ import {ProjectService} from '../../../core/projects/project.service';
 import {LogService} from '../../../core/util/log.service';
 import {ProjectStore} from '../../../core/projects/project.store';
 import {AnonymizerService} from '../anonymizer.service';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {Project} from '../../../shared/types/Project';
@@ -18,15 +18,15 @@ import {HttpErrorResponse} from '@angular/common/http';
   styleUrls: ['./create-anonymizer-dialog.component.scss']
 })
 export class CreateAnonymizerDialogComponent implements OnInit, OnDestroy {
-  anonymizerForm: FormGroup = new FormGroup({
-    descriptionFormControl: new FormControl('', [Validators.required]),
-    replaceMisspelledNamesFormControl: new FormControl(true),
-    replaceSingleLastNamesFormControl: new FormControl(true),
-    replaceSingleFirstNamesFormControl: new FormControl(true),
+  anonymizerForm: UntypedFormGroup = new UntypedFormGroup({
+    descriptionFormControl: new UntypedFormControl('', [Validators.required]),
+    replaceMisspelledNamesFormControl: new UntypedFormControl(true),
+    replaceSingleLastNamesFormControl: new UntypedFormControl(true),
+    replaceSingleFirstNamesFormControl: new UntypedFormControl(true),
     // mimicCasingFormControl: new FormControl(true),
-    misspellingThresholdFormControl: new FormControl(0.9, [
+    misspellingThresholdFormControl: new UntypedFormControl(0.9, [
       Validators.required, Validators.min(0), Validators.max(1)]),
-    autoAdjustThresholdFormControl: new FormControl(false),
+    autoAdjustThresholdFormControl: new UntypedFormControl(false),
   });
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   currentProject: Project;

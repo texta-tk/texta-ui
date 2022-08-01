@@ -3,7 +3,7 @@ import {MatDialogRef} from '@angular/material/dialog';
 import {of, Subject} from 'rxjs';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {filter, mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {Project, ProjectFact, ProjectIndex} from '../../../shared/types/Project';
@@ -32,14 +32,14 @@ export class CreateSearchFieldsTaggerDialogComponent implements OnInit, OnDestro
 
   defaultQuery = '{"query": {"match_all": {}}}';
   query = this.defaultQuery;
-  searchFieldsTaggerForm = new FormGroup({
-    descriptionFormControl: new FormControl('', [Validators.required]),
-    indicesFormControl: new FormControl([], [Validators.required]),
-    fieldsFormControl: new FormControl([], [Validators.required]),
-    factNameFormControl: new FormControl('', [Validators.required]),
-    breakUpCharacter: new FormControl(''),
-    bulkSizeFormControl: new FormControl(100, [Validators.required]),
-    esTimeoutFormControl: new FormControl(10),
+  searchFieldsTaggerForm = new UntypedFormGroup({
+    descriptionFormControl: new UntypedFormControl('', [Validators.required]),
+    indicesFormControl: new UntypedFormControl([], [Validators.required]),
+    fieldsFormControl: new UntypedFormControl([], [Validators.required]),
+    factNameFormControl: new UntypedFormControl('', [Validators.required]),
+    breakUpCharacter: new UntypedFormControl(''),
+    bulkSizeFormControl: new UntypedFormControl(100, [Validators.required]),
+    esTimeoutFormControl: new UntypedFormControl(10),
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();

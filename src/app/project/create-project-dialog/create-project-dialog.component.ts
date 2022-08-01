@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {MatDialogRef} from '@angular/material/dialog';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {LiveErrorStateMatcher} from '../../shared/CustomerErrorStateMatchers';
 import {ProjectService} from '../../core/projects/project.service';
 import {UserService} from '../../core/users/user.service';
@@ -31,17 +31,17 @@ interface OnSubmitParams {
 })
 export class CreateProjectDialogComponent implements OnInit, OnDestroy {
   useUAA = AppConfigService.settings.useCloudFoundryUAA;
-  projectForm = new FormGroup({
-    titleFormControl: new FormControl('', [
+  projectForm = new UntypedFormGroup({
+    titleFormControl: new UntypedFormControl('', [
       Validators.required,
     ]),
-    usersFormControl: new FormControl(),
-    administratorsFormControl: new FormControl(),
-    indicesFormControl: new FormControl(),
+    usersFormControl: new UntypedFormControl(),
+    administratorsFormControl: new UntypedFormControl(),
+    indicesFormControl: new UntypedFormControl(),
   });
 
   public filteredIndices: Subject<{ id: number, name: string }[]> = new Subject();
-  indicesFilterFormControl = new FormControl();
+  indicesFilterFormControl = new UntypedFormControl();
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   users: UserProfile[];
   currentUser: UserProfile;
@@ -59,7 +59,7 @@ export class CreateProjectDialogComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (this.useUAA) {
-      this.projectForm.addControl('scopeFormControl', new FormControl([]));
+      this.projectForm.addControl('scopeFormControl', new UntypedFormControl([]));
     }
 
     this.userService.getAllUsers().subscribe(resp => {

@@ -1,5 +1,5 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {Project} from '../../../shared/types/Project';
@@ -19,7 +19,7 @@ import {Anonymizer} from '../types/Anonymizer';
   styleUrls: ['./edit-anonymizer-dialog.component.scss']
 })
 export class EditAnonymizerDialogComponent implements OnInit, OnDestroy {
-  anonymizerForm: FormGroup;
+  anonymizerForm: UntypedFormGroup;
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
   currentProject: Project;
   destroyed$: Subject<boolean> = new Subject<boolean>();
@@ -31,15 +31,15 @@ export class EditAnonymizerDialogComponent implements OnInit, OnDestroy {
               private anonymizerService: AnonymizerService,
               private projectStore: ProjectStore) {
     if (this.data) {
-      this.anonymizerForm = new FormGroup({
-        descriptionFormControl: new FormControl(this.data.description, [Validators.required]),
-        replaceMisspelledNamesFormControl: new FormControl(this.data.replace_misspelled_names),
-        replaceSingleLastNamesFormControl: new FormControl(this.data.replace_single_last_names),
-        replaceSingleFirstNamesFormControl: new FormControl(this.data.replace_single_first_names),
+      this.anonymizerForm = new UntypedFormGroup({
+        descriptionFormControl: new UntypedFormControl(this.data.description, [Validators.required]),
+        replaceMisspelledNamesFormControl: new UntypedFormControl(this.data.replace_misspelled_names),
+        replaceSingleLastNamesFormControl: new UntypedFormControl(this.data.replace_single_last_names),
+        replaceSingleFirstNamesFormControl: new UntypedFormControl(this.data.replace_single_first_names),
         // mimicCasingFormControl: new FormControl(this.data.mimic_casing),
-        misspellingThresholdFormControl: new FormControl(this.data.misspelling_threshold, [
+        misspellingThresholdFormControl: new UntypedFormControl(this.data.misspelling_threshold, [
           Validators.required, Validators.min(0), Validators.max(1)]),
-        autoAdjustThresholdFormControl: new FormControl(this.data.auto_adjust_threshold),
+        autoAdjustThresholdFormControl: new UntypedFormControl(this.data.auto_adjust_threshold),
       });
     }
   }

@@ -1,5 +1,5 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {Subject} from 'rxjs';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {LogService} from '../../../core/util/log.service';
@@ -13,7 +13,7 @@ import {takeUntil} from 'rxjs/operators';
   styleUrls: ['./edit-stopwords-dialog.component.scss']
 })
 export class EditStopwordsDialogComponent  implements OnInit, OnDestroy {
-  stopWordsFormControl = new FormControl('');
+  stopWordsFormControl = new UntypedFormControl('');
   destroyed$ = new Subject<boolean>();
   // tslint:disable-next-line:no-any
   stopwordsOptions: any;

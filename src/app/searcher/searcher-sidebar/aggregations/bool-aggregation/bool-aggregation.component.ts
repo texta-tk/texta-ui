@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {Subject} from 'rxjs';
 import {debounceTime, startWith, takeUntil} from 'rxjs/operators';
 
@@ -11,7 +11,7 @@ import {debounceTime, startWith, takeUntil} from 'rxjs/operators';
 export class BoolAggregationComponent implements OnInit {
 // tslint:disable:no-any
   @Input() aggregationObj: { aggregation: any };
-  @Input() fieldsFormControl: FormControl;
+  @Input() fieldsFormControl: UntypedFormControl;
   aggregationType: 'terms' = 'terms';
   minDocCount = 1;
   destroy$: Subject<boolean> = new Subject();

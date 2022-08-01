@@ -15,7 +15,7 @@ import {SelectionModel} from '@angular/cdk/collections';
 import {ConfirmBulkDeleteDialogComponent} from '../../shared/shared-module/components/dialogs/confirm-bulk-delete-dialog/confirm-bulk-delete-dialog.component';
 import {MatButtonToggleChange} from '@angular/material/button-toggle';
 import {EditDialogComponent} from './edit-dialog/edit-dialog.component';
-import {FormControl} from "@angular/forms";
+import {UntypedFormControl} from "@angular/forms";
 
 
 @Component({
@@ -36,9 +36,9 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   tableFilterManager: TableFilterManager;
-  addedByFilter = new FormControl();
-  nameFilter = new FormControl();
-  domainFilter = new FormControl();
+  addedByFilter = new UntypedFormControl();
+  nameFilter = new UntypedFormControl();
+  domainFilter = new UntypedFormControl();
 
   resultsLength: number;
   filterTerm$ = new Subject<string>();
@@ -227,7 +227,7 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
 
 export class TableFilter {
 
-  constructor(public filterPropertyName: string, public filterCurrentValue: string, public filterControl?: FormControl) {
+  constructor(public filterPropertyName: string, public filterCurrentValue: string, public filterControl?: UntypedFormControl) {
 
   }
 }

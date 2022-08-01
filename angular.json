@@ -21,15 +21,11 @@
       },
       "architect": {
         "build": {
-          "builder": "@angular-builders/custom-webpack:browser",
+          "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "allowedCommonJsDependencies": [
               "linkify-it"
             ],
-            "customWebpackConfig": {
-              "path": "./custom-webpack.config.js",
-              "replaceDuplicatePlugins": true
-            },
             "outputPath": "dist/TEXTA",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -196,6 +192,5 @@
       "projectType": "application",
       "prefix": "texta-schematics"
     }
-  },
-  "defaultProject": "texta"
+  }
 }

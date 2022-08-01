@@ -8,14 +8,13 @@ import {of, Subject} from 'rxjs';
 import {MatTableDataSource} from '@angular/material/table';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Project} from '../../../shared/types/Project';
-import {MatSort, MatSortHeader} from '@angular/material/sort';
+import {ArrowViewStateTransition, MatSort, MatSortHeader} from '@angular/material/sort';
 import {MatPaginator} from '@angular/material/paginator';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatDialog} from '@angular/material/dialog';
 import {ConfirmDialogComponent} from '../../../shared/shared-module/components/dialogs/confirm-dialog/confirm-dialog.component';
 import {LogService} from '../../../core/util/log.service';
 import {LocalStorageService} from '../../../core/util/local-storage.service';
-import {ArrowViewStateTransition} from '@angular/material/sort/sort-header';
 
 interface Cluster {
   id: number;

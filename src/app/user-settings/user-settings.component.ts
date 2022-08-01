@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {UserProfile} from '../shared/types/UserProfile';
 import {UserStore} from '../core/users/user.store';
 import {Subject, Subscription} from 'rxjs';
-import {AbstractControl, FormControl, FormGroup, ValidationErrors, Validators} from '@angular/forms';
+import {AbstractControl, UntypedFormControl, UntypedFormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {UserService} from '../core/users/user.service';
 import {CrossFieldErrorMatcher, LiveErrorStateMatcher} from '../shared/CustomerErrorStateMatchers';
 import {takeUntil} from 'rxjs/operators';
@@ -26,24 +26,24 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
   userSubscription: Subscription;
   detail: string;
   destroy$: Subject<boolean> = new Subject<boolean>();
-  forgotPasswordForm = new FormGroup({
-    emailFormControl: new FormControl('', [
+  forgotPasswordForm = new UntypedFormGroup({
+    emailFormControl: new UntypedFormControl('', [
       Validators.required, Validators.email
     ]),
   });
 
-  passwordResetForm = new FormGroup({
-    passwordForm: new FormGroup({
-      passwordFormControl: new FormControl('', [
+  passwordResetForm = new UntypedFormGroup({
+    passwordForm: new UntypedFormGroup({
+      passwordFormControl: new UntypedFormControl('', [
         Validators.minLength(8), Validators.required
       ]),
-      passwordConfirmFormControl: new FormControl('')
+      passwordConfirmFormControl: new UntypedFormControl('')
     }, passwordMatchValidator),
 
   });
 
-  userProfileForm = new FormGroup({
-    email: new FormControl('', Validators.required),
+  userProfileForm = new UntypedFormGroup({
+    email: new UntypedFormControl('', Validators.required),
   });
 
   matcher = new LiveErrorStateMatcher();

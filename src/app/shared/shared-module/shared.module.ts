@@ -71,8 +71,13 @@ import {BreadcrumbComponent} from './components/breadcrumb/breadcrumb.component'
 import {ConfirmBulkDeleteDialogComponent} from './components/dialogs/confirm-bulk-delete-dialog/confirm-bulk-delete-dialog.component';
 import {InfoIconComponent} from './components/info-icon/info-icon.component';
 import {InfoIconPortalComponent} from './components/info-icon/info-icon-portal/info-icon-portal.component';
-import {MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS} from '@angular/material-moment-adapter';
-
+import {
+  LuxonDateAdapter,
+  MAT_LUXON_DATE_ADAPTER_OPTIONS,
+  MAT_LUXON_DATE_FORMATS,
+  MatLuxonDateModule
+} from '@angular/material-luxon-adapter';
+import {DateAdapter, MAT_DATE_FORMATS} from '@angular/material/core';
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
     RegistrationDialogComponent,
@@ -138,7 +143,7 @@ import {MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS} from '@angular/mat
     MatProgressBarModule,
     MatExpansionModule,
     MatDatepickerModule,
-    MatMomentDateModule,
+    MatLuxonDateModule,
     MatTooltipModule,
     MatSliderModule,
     MatTreeModule,
@@ -179,7 +184,7 @@ import {MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS} from '@angular/mat
     MatProgressBarModule,
     MatExpansionModule,
     MatDatepickerModule,
-    MatMomentDateModule,
+    MatLuxonDateModule,
     MatTooltipModule,
     MatSliderModule,
     MatTreeModule,
@@ -214,7 +219,11 @@ import {MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS} from '@angular/mat
     ByteFormatPipe,
     InfoIconComponent,
   ],
-  providers: [FocusMonitor, {provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: {useUtc: true}}]
+  providers: [FocusMonitor,
+    {provide: MAT_LUXON_DATE_ADAPTER_OPTIONS, useValue: {useUtc: true}},
+    {provide: MAT_LUXON_DATE_FORMATS, useValue: 'en-NZ'},
+    {provide: DateAdapter, useClass: LuxonDateAdapter, deps: [MAT_LUXON_DATE_FORMATS, MAT_LUXON_DATE_ADAPTER_OPTIONS]},
+  ]
 })
 export class SharedModule {
 }

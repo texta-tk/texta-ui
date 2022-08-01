@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {of, Subject} from 'rxjs';
 import {Choice, MLPOptions} from '../../../shared/types/tasks/MLPOptions';
@@ -25,9 +25,9 @@ export class MLPApplyTextDialogComponent implements OnInit, OnDestroy {
 
   analyzers: Choice[];
   destroyed$: Subject<boolean> = new Subject<boolean>();
-  MLPForm = new FormGroup({
-    textFormControl: new FormControl('', [Validators.required]),
-    analyzersFormControl: new FormControl([], [Validators.required]),
+  MLPForm = new UntypedFormGroup({
+    textFormControl: new UntypedFormControl('', [Validators.required]),
+    analyzersFormControl: new UntypedFormControl([], [Validators.required]),
   });
   currentProject: Project;
   result: any;

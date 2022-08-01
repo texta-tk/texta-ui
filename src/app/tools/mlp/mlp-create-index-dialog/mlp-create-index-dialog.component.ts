@@ -9,7 +9,7 @@ import {ErrorStateMatcher} from '@angular/material/core';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {MLPService} from '../../../core/tools/mlp/mlp.service';
 import {mergeMap, takeUntil} from 'rxjs/operators';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Choice, MLPOptions} from '../../../shared/types/tasks/MLPOptions';
@@ -24,13 +24,13 @@ export class MLPCreateIndexDialogComponent implements OnInit, OnDestroy {
   defaultQuery = '{"query": {"match_all": {}}}';
   query: unknown = this.defaultQuery;
 
-  MLPForm = new FormGroup({
-    descriptionFormControl: new FormControl('', [Validators.required]),
-    indicesFormControl: new FormControl([], [Validators.required]),
-    fieldsFormControl: new FormControl([], [Validators.required]),
-    analyzersFormControl: new FormControl([], [Validators.required]),
-    esTimeoutFormControl: new FormControl(30),
-    esScrollSizeFormControl: new FormControl(100),
+  MLPForm = new UntypedFormGroup({
+    descriptionFormControl: new UntypedFormControl('', [Validators.required]),
+    indicesFormControl: new UntypedFormControl([], [Validators.required]),
+    fieldsFormControl: new UntypedFormControl([], [Validators.required]),
+    analyzersFormControl: new UntypedFormControl([], [Validators.required]),
+    esTimeoutFormControl: new UntypedFormControl(30),
+    esScrollSizeFormControl: new UntypedFormControl(100),
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();

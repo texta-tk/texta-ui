@@ -3,7 +3,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {forkJoin, of, Subject} from 'rxjs';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {debounceTime, filter, mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
-import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {Field, Project, ProjectFact, ProjectIndex} from '../../../shared/types/Project';
@@ -39,18 +39,18 @@ export class CreateIndexSplitterDialogComponent implements OnInit, OnDestroy {
   defaultQuery = '{"query": {"match_all": {}}}';
   query = this.data?.cloneIndexSplitter?.query || this.defaultQuery;
 
-  indexSplitterForm = new FormGroup({
-    descriptionFormControl: new FormControl(this.data?.cloneIndexSplitter?.description || '', [Validators.required]),
-    indicesFormControl: new FormControl([], [Validators.required]),
-    fieldsFormControl: new FormControl([]),
-    scrollSizeFormControl: new FormControl(this.data?.cloneIndexSplitter?.scroll_size || 500, [Validators.required]),
-    trainIndexFormControl: new FormControl(this.data?.cloneIndexSplitter?.train_index || '', [Validators.required]),
-    testIndexFormControl: new FormControl(this.data?.cloneIndexSplitter?.test_index || '', [Validators.required]),
-    testSizeIndexFormControl: new FormControl(this.data?.cloneIndexSplitter?.test_size || 20, [Validators.required]),
-    factFormControl: new FormControl(''),
-    strValFormControl: new FormControl({value: '', disabled: true}),
-    distributionFormControl: new FormControl(''),
-    customDistributionFormControl: new FormControl(this.data?.cloneIndexSplitter?.custom_distribution ? JSON.stringify(this.data?.cloneIndexSplitter?.custom_distribution) : ''),
+  indexSplitterForm = new UntypedFormGroup({
+    descriptionFormControl: new UntypedFormControl(this.data?.cloneIndexSplitter?.description || '', [Validators.required]),
+    indicesFormControl: new UntypedFormControl([], [Validators.required]),
+    fieldsFormControl: new UntypedFormControl([]),
+    scrollSizeFormControl: new UntypedFormControl(this.data?.cloneIndexSplitter?.scroll_size || 500, [Validators.required]),
+    trainIndexFormControl: new UntypedFormControl(this.data?.cloneIndexSplitter?.train_index || '', [Validators.required]),
+    testIndexFormControl: new UntypedFormControl(this.data?.cloneIndexSplitter?.test_index || '', [Validators.required]),
+    testSizeIndexFormControl: new UntypedFormControl(this.data?.cloneIndexSplitter?.test_size || 20, [Validators.required]),
+    factFormControl: new UntypedFormControl(''),
+    strValFormControl: new UntypedFormControl({value: '', disabled: true}),
+    distributionFormControl: new UntypedFormControl(''),
+    customDistributionFormControl: new UntypedFormControl(this.data?.cloneIndexSplitter?.custom_distribution ? JSON.stringify(this.data?.cloneIndexSplitter?.custom_distribution) : ''),
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
@@ -60,7 +60,7 @@ export class CreateIndexSplitterDialogComponent implements OnInit, OnDestroy {
   projectIndices: ProjectIndex[] = [];
   projectFields: ProjectIndex[];
   projectFacts: Subject<{ name: string, values: string[] }[]> = new Subject();
-  indexSplitterOptions: IndexSplitterOptions;
+  indexSplitterOptions: IndexSplitterOptions | undefined;
   isLoadingOptions = false;
   factValOptions: string[] = [];
 

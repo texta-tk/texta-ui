@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {ElasticsearchQuery, FactConstraint, FactTextInputGroup} from '../../Constraints';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {debounceTime, pairwise, skip, startWith, switchMap, takeUntil} from 'rxjs/operators';
 import {Project, ProjectFact, ProjectIndex} from '../../../../../shared/types/Project';
 import {BehaviorSubject, merge, of, Subject} from 'rxjs';
@@ -26,9 +26,9 @@ export class FactConstraintsComponent implements OnInit, OnDestroy {
   @Input() indices: string[];
   @Output() constraintChanged = new EventEmitter<ElasticsearchQuery>(); // search as you type, emit changes
   destroyed$: Subject<boolean> = new Subject<boolean>();
-  factNameOperatorFormControl = new FormControl();
-  factNameFormControl = new FormControl();
-  factValueOperatorFormControl = new FormControl();
+  factNameOperatorFormControl = new UntypedFormControl();
+  factNameFormControl = new UntypedFormControl();
+  factValueOperatorFormControl = new UntypedFormControl();
   inputGroupQueryArray: unknown[] = [];
   formQueryBluePrint = {
     nested: {

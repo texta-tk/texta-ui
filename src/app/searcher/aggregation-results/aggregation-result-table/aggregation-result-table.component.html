@@ -34,7 +34,8 @@
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Key</th>
         <td *matCellDef="let element" mat-cell (click)="createConstraint(element.key)" [ngClass]="{'pointer': docPath}"
             [matTooltip]="docPath ? 'Click to add as a search constraint' : ''">
-          <a>{{element.key}}</a>
+          <a *ngIf="element.key_as_string">{{element.key_as_string}}</a>
+          <a *ngIf="!element.key_as_string">{{element.key}}</a>
           <ng-container *ngIf="element.top_reverse_nested"><br>({{element.doc_count}})</ng-container>
         </td>
         <td mat-footer-cell *matFooterCellDef> Total </td>

@@ -3,7 +3,7 @@ import {MatDialogRef} from '@angular/material/dialog';
 import {of, Subject} from 'rxjs';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {mergeMap, switchMap, takeUntil} from 'rxjs/operators';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Project, ProjectIndex} from '../../../shared/types/Project';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
@@ -35,17 +35,17 @@ export class CreateElasticAnalyzerDialogComponent implements OnInit, OnDestroy {
   defaultQuery = '{"query": {"match_all": {}}}';
   query: unknown = this.defaultQuery;
 
-  elasticAnalyzerForm = new FormGroup({
-    descriptionFormControl: new FormControl('', [Validators.required]),
-    indicesFormControl: new FormControl([], [Validators.required]),
-    fieldsFormControl: new FormControl([], [Validators.required]),
-    languageFormControl: new FormControl(''),
-    analyzersFormControl: new FormControl([], [Validators.required]),
-    tokenizerFormControl: new FormControl(),
-    detectLangFormControl: new FormControl(''),
-    stripHtmlFormControl: new FormControl(false),
-    esTimeoutFormControl: new FormControl(25),
-    bulkSizeFormControl: new FormControl(100),
+  elasticAnalyzerForm = new UntypedFormGroup({
+    descriptionFormControl: new UntypedFormControl('', [Validators.required]),
+    indicesFormControl: new UntypedFormControl([], [Validators.required]),
+    fieldsFormControl: new UntypedFormControl([], [Validators.required]),
+    languageFormControl: new UntypedFormControl(''),
+    analyzersFormControl: new UntypedFormControl([], [Validators.required]),
+    tokenizerFormControl: new UntypedFormControl(),
+    detectLangFormControl: new UntypedFormControl(''),
+    stripHtmlFormControl: new UntypedFormControl(false),
+    esTimeoutFormControl: new UntypedFormControl(25),
+    bulkSizeFormControl: new UntypedFormControl(100),
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
@@ -66,7 +66,7 @@ export class CreateElasticAnalyzerDialogComponent implements OnInit, OnDestroy {
     display_name: string;
   }[];
   // tslint:disable-next-line:no-any
-  elasticAnalyzerOptions: any;
+  elasticAnalyzerOptions: any | unknown;
   requiredValidator = Validators.required;
 
   constructor(private dialogRef: MatDialogRef<CreateElasticAnalyzerDialogComponent>,

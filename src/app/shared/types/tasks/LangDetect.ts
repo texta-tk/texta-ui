@@ -1,4 +1,3 @@
-import {Moment} from 'moment';
 
 interface Index {
   id: number;

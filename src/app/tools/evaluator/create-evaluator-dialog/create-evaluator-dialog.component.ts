@@ -3,7 +3,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {of, Subject} from 'rxjs';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {debounceTime, mergeMap, switchMap, takeUntil} from 'rxjs/operators';
-import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {Project, ProjectFact, ProjectIndex} from '../../../shared/types/Project';
@@ -42,20 +42,20 @@ export class CreateEvaluatorDialogComponent implements OnInit, OnDestroy {
   defaultQuery = '{"query": {"match_all": {}}}';
   query = this.defaultQuery;
 
-  evaluatorForm = new FormGroup({
-    descriptionFormControl: new FormControl('', [Validators.required]),
-    indicesFormControl: new FormControl([], [Validators.required]),
-    trueFactNameFormControl: new FormControl('', [Validators.required]),
-    trueFactValueFormControl: new FormControl({value: '', disabled: true}),
-    predictedFactNameFormControl: new FormControl([], [Validators.required]),
-    predictedFactValueFormControl: new FormControl({value: '', disabled: true}),
-    averageFunctionFormControl: new FormControl([]),
-    addIndividualFormControl: new FormControl(true),
-    addMisclassifiedFormControl: new FormControl(true),
-    tokenBasedFormControl: new FormControl(true),
-    fieldFormControl: new FormControl(''),
-    esTimeoutFormControl: new FormControl(10),
-    scrollSizeFormControl: new FormControl(500),
+  evaluatorForm = new UntypedFormGroup({
+    descriptionFormControl: new UntypedFormControl('', [Validators.required]),
+    indicesFormControl: new UntypedFormControl([], [Validators.required]),
+    trueFactNameFormControl: new UntypedFormControl('', [Validators.required]),
+    trueFactValueFormControl: new UntypedFormControl({value: '', disabled: true}),
+    predictedFactNameFormControl: new UntypedFormControl([], [Validators.required]),
+    predictedFactValueFormControl: new UntypedFormControl({value: '', disabled: true}),
+    averageFunctionFormControl: new UntypedFormControl([]),
+    addIndividualFormControl: new UntypedFormControl(true),
+    addMisclassifiedFormControl: new UntypedFormControl(true),
+    tokenBasedFormControl: new UntypedFormControl(true),
+    fieldFormControl: new UntypedFormControl(''),
+    esTimeoutFormControl: new UntypedFormControl(10),
+    scrollSizeFormControl: new UntypedFormControl(500),
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();

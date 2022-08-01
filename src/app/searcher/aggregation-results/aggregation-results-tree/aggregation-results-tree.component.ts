@@ -31,7 +31,7 @@ export class AggregationResultsTreeComponent implements OnDestroy {
   bucketAccessor = (x: any) => (x.buckets);
 
   openDialog(val: { key: string; }, depth: number): void {
-    if (this.bucketAccessor(val)[0].key_as_string) {
+    if (Object.keys(val).includes('agg_histo')) {
       this.dialog.open(AggregationResultsDialogComponent, {
         data: {
           docPaths: [this.docPaths[depth + 1]],

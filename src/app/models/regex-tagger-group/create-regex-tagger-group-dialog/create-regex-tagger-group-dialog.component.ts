@@ -3,7 +3,7 @@ import {MatDialogRef} from '@angular/material/dialog';
 import {Observable, of, Subject} from 'rxjs';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {mergeMap, switchMap, takeUntil} from 'rxjs/operators';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Field, Project, ProjectIndex} from '../../../shared/types/Project';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
@@ -24,9 +24,9 @@ import {ResultsWrapper} from '../../../shared/types/Generic';
 })
 export class CreateRegexTaggerGroupDialogComponent implements OnInit, OnDestroy {
 
-  regexTaggerGroupForm = new FormGroup({
-    descriptionFormControl: new FormControl('', [Validators.required]),
-    regexTaggersFormControl: new FormControl([], [Validators.required])
+  regexTaggerGroupForm = new UntypedFormGroup({
+    descriptionFormControl: new UntypedFormControl('', [Validators.required]),
+    regexTaggersFormControl: new UntypedFormControl([], [Validators.required])
   });
 
   projectRegexTaggers: ScrollableDataSource<RegexTagger>;

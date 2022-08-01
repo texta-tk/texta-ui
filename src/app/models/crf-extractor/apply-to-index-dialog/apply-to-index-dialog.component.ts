@@ -1,5 +1,5 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
 import {Field, Project, ProjectIndex} from '../../../shared/types/Project';
@@ -33,13 +33,13 @@ export class ApplyToIndexDialogComponent implements OnInit, OnDestroy {
   defaultQuery = '{"query": {"match_all": {}}}';
   query = this.defaultQuery;
 
-  applyForm = new FormGroup({
-    indicesFormControl: new FormControl([], [Validators.required]),
-    mlpFieldsFormControl: new FormControl('', [Validators.required]),
-    esTimeoutFormControl: new FormControl(10),
-    bulkSizeFormControl: new FormControl(100),
-    maxChunkSizeFormControl: new FormControl(104857600),
-    labelSuffixFormControl: new FormControl(),
+  applyForm = new UntypedFormGroup({
+    indicesFormControl: new UntypedFormControl([], [Validators.required]),
+    mlpFieldsFormControl: new UntypedFormControl('', [Validators.required]),
+    esTimeoutFormControl: new UntypedFormControl(10),
+    bulkSizeFormControl: new UntypedFormControl(100),
+    maxChunkSizeFormControl: new UntypedFormControl(104857600),
+    labelSuffixFormControl: new UntypedFormControl(),
 
   });
 

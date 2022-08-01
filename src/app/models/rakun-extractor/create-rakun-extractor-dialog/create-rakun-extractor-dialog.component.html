@@ -23,7 +23,7 @@
       </mat-error>
     </mat-form-field>
 
-    <mat-form-field *ngIf="fastTextEmbeddings.length > 0 && this.rakunExtractorForm?.get('distanceMethodFormControl')?.value?.value === 'fasttext'">
+    <mat-form-field *ngIf="fastTextEmbeddings.length > 0 && this.rakunExtractorForm.get('distanceMethodFormControl')?.value?.value === 'fasttext'">
       <mat-label>FastText Embedding</mat-label>
       <mat-select [disableOptionCentering]="true" formControlName="embeddingFormControl"
                   panelClass="select-panel-reveal-input">
@@ -96,7 +96,7 @@
           </mat-form-field>
           <mat-form-field style="margin-top: 12px" class="advanced-setting">
             <input formControlName="distanceThresholdFormControl" matInput pattern="([0-9]*|[0-9]*[.]?)\d*"
-                   placeholder="Distance threshold" [step]="this.rakunExtractorForm?.get('distanceMethodFormControl')?.value?.value === 'fasttext' ? 0.1 : 1" min="0" [max]="this.rakunExtractorForm?.get('distanceMethodFormControl')?.value?.value === 'fasttext' ? 1 : 9999"
+                   placeholder="Distance threshold" [step]="this.rakunExtractorForm.get('distanceMethodFormControl')?.value?.value === 'fasttext' ? 0.1 : 1" min="0" [max]="this.rakunExtractorForm.get('distanceMethodFormControl')?.value?.value === 'fasttext' ? 1 : 9999"
                    type="number">
             <mat-hint>{{rakunOptions?.actions?.POST?.distance_threshold?.help_text || ''}}</mat-hint>
           </mat-form-field>

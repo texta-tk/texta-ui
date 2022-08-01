@@ -15,7 +15,7 @@ import {takeUntil} from 'rxjs/operators';
 export class TagDocDialogComponent implements OnInit, OnDestroy {
   lemmatize: boolean;
   defaultDoc: string;
-  result: { result: boolean, probability: number, feedback?: { id: string }, tag: string };
+  result: { result: boolean, probability: number, feedback?: { id: string }, tag: string } | undefined;
   feedback = false;
   isLoading = false;
 

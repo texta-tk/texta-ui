@@ -93,7 +93,7 @@
 
 
     <ng-container *ngIf="annotatorForm.get('annotationTypeFormControl')?.value === 'binary'">
-      <form formGroupName="binaryFormGroup" class="max-width flex-col">
+      <div formGroupName="binaryFormGroup" class="max-width flex-col">
         <mat-form-field data-cy="appAnnotatorCreateDialogBinaryFactName">
           <input [matAutocomplete]="autoName" aria-label="Fact name"
                  formControlName="factNameFormControl"
@@ -101,7 +101,7 @@
                  placeholder="Fact name"
                  required
                  type="text">
-          <mat-autocomplete #autoName="matAutocomplete">
+          <mat-autocomplete #autoName="matAutocomplete" multiple>
             <mat-option *ngFor="let option of filteredProjectFacts | async"
                         [value]="option">
               {{option}}
@@ -130,10 +130,10 @@
           </mat-error>
           <mat-hint>{{annotatorOptions?.actions?.POST?.binary_configuration?.children?.neg_value?.help_text || ''}}</mat-hint>
         </mat-form-field>
-      </form>
+      </div>
     </ng-container>
     <ng-container *ngIf="annotatorForm.get('annotationTypeFormControl')?.value === 'multilabel'">
-      <form formGroupName="multiLabelFormGroup" class="max-width flex-col">
+      <div formGroupName="multiLabelFormGroup" class="max-width flex-col">
         <mat-form-field class="max-width" data-cy="appAnnotatorCreateDialogMultilabelSets">
           <mat-label>Labelset</mat-label>
           <app-virtual-scroll-select triggerAccessor="category" [scrollableDataSource]="projectLabelSets"
@@ -144,10 +144,10 @@
           </mat-error>
           <mat-hint>{{annotatorOptions?.actions?.POST?.multilabel_configuration?.children?.labelset?.help_text || ''}}</mat-hint>
         </mat-form-field>
-      </form>
+      </div>
     </ng-container>
     <ng-container *ngIf="annotatorForm.get('annotationTypeFormControl')?.value === 'entity'">
-      <form formGroupName="entityFormGroup" class="max-width flex-col">
+      <div formGroupName="entityFormGroup" class="max-width flex-col">
         <mat-form-field data-cy="appAnnotatorCreateDialogEntityFactName">
           <input [matAutocomplete]="autoName" aria-label="Fact name"
                  formControlName="factNameFormControl"
@@ -166,7 +166,7 @@
           </mat-error>
           <mat-hint>{{annotatorOptions?.actions?.POST?.binary_configuration?.children?.fact_name?.help_text || ''}}</mat-hint>
         </mat-form-field>
-      </form>
+      </div>
     </ng-container>
     <mat-form-field>
       <input formControlName="bulkSizeFormControl" matInput placeholder="Bulk size"

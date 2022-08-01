@@ -1,5 +1,5 @@
 import {Component, Inject} from '@angular/core';
-import {AbstractControl, FormControl, FormGroup, ValidationErrors, Validators} from '@angular/forms';
+import {AbstractControl, UntypedFormControl, UntypedFormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {CrossFieldErrorMatcher, LiveErrorStateMatcher} from '../../../../CustomerErrorStateMatchers';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {UserService} from '../../../../../core/users/user.service';
@@ -26,16 +26,16 @@ function passwordMatchValidator(g: AbstractControl): null | ValidationErrors {
 })
 export class RegistrationDialogComponent {
 
-  profileForm = new FormGroup({
-    usernameFormControl: new FormControl('', [
+  profileForm = new UntypedFormGroup({
+    usernameFormControl: new UntypedFormControl('', [
       Validators.required,
     ]),
-    emailFormControl: new FormControl('', Validators.email),
-    passwordForm: new FormGroup({
-      passwordFormControl: new FormControl('', [
+    emailFormControl: new UntypedFormControl('', Validators.email),
+    passwordForm: new UntypedFormGroup({
+      passwordFormControl: new UntypedFormControl('', [
         Validators.minLength(8), Validators.required
       ]),
-      passwordConfirmFormControl: new FormControl('', [Validators.required])
+      passwordConfirmFormControl: new UntypedFormControl('', [Validators.required])
     }, passwordMatchValidator),
 
   });

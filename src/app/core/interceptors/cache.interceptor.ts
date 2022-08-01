@@ -8,11 +8,8 @@ import {
 import {Observable, of} from 'rxjs';
 import {HttpCacheService} from '../util/http-cache.service';
 import {catchError, tap} from 'rxjs/operators';
-import {Moment} from 'moment';
+import { DateTime } from 'luxon';
 
-import * as _moment from 'moment';
-
-const moment = _moment;
 @Injectable()
 export class CacheInterceptor implements HttpInterceptor {
 
@@ -22,11 +19,11 @@ export class CacheInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     // tslint:disable-next-line:no-any
-    let cachedResponse: { response: HttpResponse<unknown>, dateCached: Moment } | undefined;
+    let cachedResponse: { response: HttpResponse<unknown>, dateCached: DateTime } | undefined;
     if (request.method === 'POST') {
       cachedResponse = this.cacheService.get(request);
     }
-    if (cachedResponse && cachedResponse.dateCached.isAfter(moment().utc().subtract(30, 'seconds'))){
+    if (cachedResponse && cachedResponse.dateCached > (DateTime.utc().minus({second: 120}))){
       return of(cachedResponse.response.clone());
     }
     return next.handle(request)

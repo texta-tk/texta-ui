@@ -7,7 +7,7 @@ import {SharedModule} from '../../../../shared/shared-module/shared.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {SearcherComponentService} from '../../../services/searcher-component.service';
 import {SearchServiceSpy} from '../../../services/searcher-component.service.spec';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 
 describe('DateAggregationComponent', () => {
   let component: DateAggregationComponent;
@@ -33,7 +33,7 @@ describe('DateAggregationComponent', () => {
     fixture = TestBed.createComponent(DateAggregationComponent);
     component = fixture.componentInstance;
     component.aggregationObj = {aggregation: {}};
-    component.fieldsFormControl = new FormControl();
+    component.fieldsFormControl = new UntypedFormControl();
     fixture.detectChanges();
   });
 

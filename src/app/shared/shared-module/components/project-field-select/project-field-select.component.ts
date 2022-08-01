@@ -12,7 +12,7 @@ import {
   ViewChild
 } from '@angular/core';
 import {MAT_FORM_FIELD, MatFormField, MatFormFieldControl} from '@angular/material/form-field';
-import {ControlValueAccessor, FormBuilder, FormControl, NgControl} from '@angular/forms';
+import {ControlValueAccessor, UntypedFormBuilder, UntypedFormControl, NgControl} from '@angular/forms';
 import {Field, Project, ProjectIndex} from '../../../types/Project';
 import {Lexicon} from '../../../types/Lexicon';
 import {Subject} from 'rxjs';
@@ -33,7 +33,7 @@ import {MatSelect, MatSelectChange} from '@angular/material/select';
 })
 export class ProjectFieldSelectComponent implements OnInit, OnDestroy, ControlValueAccessor, MatFormFieldControl<string[]> {
   static nextId = 0;
-  fieldFormControl: FormControl;
+  fieldFormControl: UntypedFormControl | undefined;
   currentProject: Project;
   lexicons: Lexicon[] = [];
   destroyed$: Subject<boolean> = new Subject();
@@ -57,7 +57,7 @@ export class ProjectFieldSelectComponent implements OnInit, OnDestroy, ControlVa
 
   constructor(private logService: LogService,
               private projectStore: ProjectStore,
-              fb: FormBuilder, public fm: FocusMonitor, private elRef: ElementRef<HTMLElement>,
+              fb: UntypedFormBuilder, public fm: FocusMonitor, private elRef: ElementRef<HTMLElement>,
               // tslint:disable-next-line:variable-name
               @Optional() @Inject(MAT_FORM_FIELD) public _formField: MatFormField,
               @Self() public ngControl: NgControl) {
@@ -70,7 +70,7 @@ export class ProjectFieldSelectComponent implements OnInit, OnDestroy, ControlVa
       }
     });
     if (this.ngControl != null) {
-      this.fieldFormControl = new FormControl([], this.ngControl.validator);
+      this.fieldFormControl = new UntypedFormControl([], this.ngControl.validator);
       this.ngControl.valueAccessor = this;
     }
 
@@ -109,16 +109,16 @@ export class ProjectFieldSelectComponent implements OnInit, OnDestroy, ControlVa
 
   @Input()
   get value(): string[]  | null {
-    return this.fieldFormControl.value;
+    return this.fieldFormControl?.value;
   }
 
   set value(fields: string[] | Field[] | null) {
-    this.fieldFormControl.setValue(fields);
+    this.fieldFormControl?.setValue(fields);
     this.stateChanges.next();
   }
 
   get empty(): boolean {
-    return !this.fieldFormControl.value || this.fieldFormControl.value.length === 0;
+    return !this.fieldFormControl?.value || this.fieldFormControl?.value.length === 0;
   }
 
   @HostBinding('class.floating')
@@ -163,7 +163,7 @@ export class ProjectFieldSelectComponent implements OnInit, OnDestroy, ControlVa
 
   set disabled(value: boolean) {
     this._disabled = coerceBooleanProperty(value);
-    this._disabled ? this.fieldFormControl.disable() : this.fieldFormControl.enable();
+    this._disabled ? this.fieldFormControl?.disable() : this.fieldFormControl?.enable();
     this.stateChanges.next();
   }
 
@@ -201,7 +201,7 @@ export class ProjectFieldSelectComponent implements OnInit, OnDestroy, ControlVa
   }
 
   ngOnInit(): void {
-    this.fieldFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(x => {
+    this.fieldFormControl?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(x => {
       this.onChange(this.value);
     });
   }

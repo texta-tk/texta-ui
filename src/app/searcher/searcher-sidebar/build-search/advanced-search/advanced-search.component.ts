@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {Field, Project, ProjectFact, ProjectIndex} from '../../../../shared/types/Project';
 import {
   BooleanConstraint,
@@ -37,7 +37,7 @@ import {SearcherComponentService} from '../../../services/searcher-component.ser
 export class AdvancedSearchComponent implements OnInit, OnDestroy {
 
   mappingNumeric = ['long', 'integer', 'short', 'byte', 'double', 'float'];
-  fieldsFormControl = new FormControl();
+  fieldsFormControl = new UntypedFormControl();
   constraintList: Constraint[] = [];
   currentUser: UserProfile;
   // building the whole search query onto this

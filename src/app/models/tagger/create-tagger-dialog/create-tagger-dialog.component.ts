@@ -1,5 +1,5 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers';
@@ -49,38 +49,38 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
   defaultQuery = '{"query": {"match_all": {}}}';
   query = this.data?.cloneTagger?.query || this.defaultQuery;
 
-  taggerForm = new FormGroup({
-    descriptionFormControl: new FormControl(this.data?.cloneTagger?.description || '', [
+  taggerForm = new UntypedFormGroup({
+    descriptionFormControl: new UntypedFormControl(this.data?.cloneTagger?.description || '', [
       Validators.required,
     ]),
-    indicesFormControl: new FormControl([], [Validators.required]),
-    factNameFormControl: new FormControl(),
-    fieldsFormControl: new FormControl([], [Validators.required]),
-    embeddingFormControl: new FormControl(),
-    snowballFormControl: new FormControl(),
-    stopWordsFormControl: new FormControl(''),
-    scoringFormControl: new FormControl(),
-    analyzerFormControl: new FormControl([Validators.required]),
-    vectorizerFormControl: new FormControl([Validators.required]),
-    classifierFormControl: new FormControl([Validators.required]),
-    sampleSizeFormControl: new FormControl(this.data?.cloneTagger?.maximum_sample_size || 10000, [Validators.required]),
-    negativeMultiplierFormControl: new FormControl(this.data?.cloneTagger?.negative_multiplier || 1.0, [Validators.required]),
-    minSampleSizeFormControl: new FormControl(this.data?.cloneTagger?.minimum_sample_size || 50),
-    ignoreNumbersFormControl: new FormControl(this.data?.cloneTagger?.ignore_numbers !== undefined ? this.data?.cloneTagger?.ignore_numbers : true),
-    detectLangFormControl: new FormControl(this.data?.cloneTagger?.detect_lang !== undefined ? this.data?.cloneTagger?.detect_lang : false),
-    balanceFormControl: new FormControl({
+    indicesFormControl: new UntypedFormControl([], [Validators.required]),
+    factNameFormControl: new UntypedFormControl(),
+    fieldsFormControl: new UntypedFormControl([], [Validators.required]),
+    embeddingFormControl: new UntypedFormControl(),
+    snowballFormControl: new UntypedFormControl(),
+    stopWordsFormControl: new UntypedFormControl(''),
+    scoringFormControl: new UntypedFormControl(),
+    analyzerFormControl: new UntypedFormControl([Validators.required]),
+    vectorizerFormControl: new UntypedFormControl([Validators.required]),
+    classifierFormControl: new UntypedFormControl([Validators.required]),
+    sampleSizeFormControl: new UntypedFormControl(this.data?.cloneTagger?.maximum_sample_size || 10000, [Validators.required]),
+    negativeMultiplierFormControl: new UntypedFormControl(this.data?.cloneTagger?.negative_multiplier || 1.0, [Validators.required]),
+    minSampleSizeFormControl: new UntypedFormControl(this.data?.cloneTagger?.minimum_sample_size || 50),
+    ignoreNumbersFormControl: new UntypedFormControl(this.data?.cloneTagger?.ignore_numbers !== undefined ? this.data?.cloneTagger?.ignore_numbers : true),
+    detectLangFormControl: new UntypedFormControl(this.data?.cloneTagger?.detect_lang !== undefined ? this.data?.cloneTagger?.detect_lang : false),
+    balanceFormControl: new UntypedFormControl({
       value: this.data?.cloneTagger?.balance !== undefined ? this.data?.cloneTagger?.balance : false,
       disabled: true
     }),
-    maxBalanceFormControl: new FormControl({
+    maxBalanceFormControl: new UntypedFormControl({
       value: this.data?.cloneTagger?.balance_to_max_limit !== undefined ? this.data?.cloneTagger?.balance_to_max_limit : false,
       disabled: true
     }),
-    posLabelFormControl: new FormControl(this.data?.cloneTagger?.pos_label || ''),
+    posLabelFormControl: new UntypedFormControl(this.data?.cloneTagger?.pos_label || ''),
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
-  taggerOptions: TaggerOptions;
+  taggerOptions: TaggerOptions | undefined;
   embeddings: Embedding[];
   projectFields: ProjectIndex[];
   currentProject: Project;

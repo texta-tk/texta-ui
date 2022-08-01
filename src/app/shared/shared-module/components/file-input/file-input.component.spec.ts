@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed, tick, fakeAsync, waitForAsync } from '@angular/core/testing';
-import { FormsModule, NG_VALUE_ACCESSOR, NgControl, ReactiveFormsModule, FormControl, FormGroupDirective, NgForm } from '@angular/forms';
+import { FormsModule, NG_VALUE_ACCESSOR, NgControl, ReactiveFormsModule, UntypedFormControl, FormGroupDirective, NgForm } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -38,7 +38,7 @@ import {FileInput} from "../../../types/file-input";
  * Used as global ErrorStateMatcher for all tests.
  */
 class FileInputSpecErrorStateMatcher implements ErrorStateMatcher {
-  public isErrorState(control: FormControl | null, _: FormGroupDirective | NgForm | null): boolean {
+  public isErrorState(control: UntypedFormControl | null, _: FormGroupDirective | NgForm | null): boolean {
     return !!(control && control.errors !== null && control.touched);
   }
 }
@@ -48,7 +48,7 @@ class FileInputSpecErrorStateMatcher implements ErrorStateMatcher {
  * Used to change the ErrorStateMatcher of a single component.
  */
 class OverrideErrorStateMatcher implements ErrorStateMatcher {
-  public isErrorState(control: FormControl | null, _: FormGroupDirective | NgForm | null): boolean {
+  public isErrorState(control: UntypedFormControl | null, _: FormGroupDirective | NgForm | null): boolean {
     return !!(control && control.errors && control.errors.length === 2);
   }
 }

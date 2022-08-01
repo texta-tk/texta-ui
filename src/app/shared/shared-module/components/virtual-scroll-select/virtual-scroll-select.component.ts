@@ -11,7 +11,7 @@ import {
   Self, ViewChild
 } from '@angular/core';
 import {ScrollableDataSource} from '../../../ScrollableDataSource';
-import {ControlValueAccessor, FormControl, NgControl} from '@angular/forms';
+import {ControlValueAccessor, UntypedFormControl, NgControl} from '@angular/forms';
 import {Observable, Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged, takeUntil} from 'rxjs/operators';
 import {MAT_FORM_FIELD, MatFormField, MatFormFieldControl} from '@angular/material/form-field';
@@ -48,7 +48,7 @@ export class VirtualScrollSelectComponent<T extends Task> implements ControlValu
     if (this.ngControl != null) {
       // Setting the value accessor directly (instead of using
       // the providers) to avoid running into a circular import.
-      this.selectFormControl = new FormControl([], this.ngControl.validator);
+      this.selectFormControl = new UntypedFormControl([], this.ngControl.validator);
       this.ngControl.valueAccessor = this;
     }
   }
@@ -123,10 +123,10 @@ export class VirtualScrollSelectComponent<T extends Task> implements ControlValu
   }
 
   static nextId = 0;
-  selectFormControl: FormControl;
+  selectFormControl: UntypedFormControl;
   stateChanges = new Subject<void>();
 
-  descriptionFilterControl: FormControl = new FormControl();
+  descriptionFilterControl: UntypedFormControl = new UntypedFormControl();
   destroyed$: Subject<boolean> = new Subject();
   @Input() scrollableDataSource: ScrollableDataSource<T>;
   readonly autofilled: boolean;

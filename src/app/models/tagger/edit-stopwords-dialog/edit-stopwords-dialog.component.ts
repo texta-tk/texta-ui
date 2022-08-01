@@ -3,7 +3,7 @@ import {LogService} from '../../../core/util/log.service';
 import {TaggerService} from '../../../core/models/taggers/tagger.service';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {HttpErrorResponse} from '@angular/common/http';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {filter, switchMap, take, takeUntil} from 'rxjs/operators';
 import {of, Subject} from 'rxjs';
 
@@ -13,8 +13,8 @@ import {of, Subject} from 'rxjs';
   styleUrls: ['./edit-stopwords-dialog.component.scss']
 })
 export class EditStopwordsDialogComponent implements OnInit, OnDestroy {
-  stopWordsFormControl = new FormControl('');
-  ignoreNumbersFormControl: FormControl;
+  stopWordsFormControl = new UntypedFormControl('');
+  ignoreNumbersFormControl: UntypedFormControl;
   destroyed$ = new Subject<boolean>();
   // tslint:disable-next-line:no-any
   stopwordsOptions: any;
@@ -23,7 +23,7 @@ export class EditStopwordsDialogComponent implements OnInit, OnDestroy {
               @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, taggerId: number; ignore_numbers: boolean | null },
               private taggerService: TaggerService,
               private logService: LogService) {
-    this.ignoreNumbersFormControl = new FormControl(!!data.ignore_numbers);
+    this.ignoreNumbersFormControl = new UntypedFormControl(!!data.ignore_numbers);
   }
 
   ngOnDestroy(): void {

@@ -1,6 +1,7 @@
 import {Search} from '../../shared/types/Search';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {
+  BooleanConstraint,
   Constraint, DateConstraint,
   ElasticsearchQuery,
   FactConstraint,
@@ -13,10 +14,7 @@ import {map, take} from 'rxjs/operators';
 import {UtilityFunctions} from '../../shared/UtilityFunctions';
 import {Project} from '../../shared/types/Project';
 import {LocalStorageService} from '../../core/util/local-storage.service';
-import * as _moment from 'moment';
-
-const moment = _moment;
-
+import {DateTime} from 'luxon';
 @Injectable()
 export class SearcherComponentService {
   public savedSearchSelection = new SelectionModel<SavedSearch>(true, []);
@@ -178,6 +176,26 @@ export class SearcherComponentService {
     });
   }
 
+  public createBooleanConstraint(docPath: string, constraintValue: number | boolean): void {
+    const constraint = new SavedSearch();
+    constraint.query_constraints = [];
+    this.getAdvancedSearchConstraints$().pipe(take(1)).subscribe(constraintList => {
+      if (typeof constraint.query_constraints !== 'string') {
+        const boolConstraint = constraintList.find(y => y instanceof BooleanConstraint && y.fields.length === 1 && y.fields[0].path === docPath);
+
+        if (boolConstraint instanceof BooleanConstraint) {
+          boolConstraint.booleanValueFormControl.setValue(!!constraintValue);
+        } else {
+          const constraintBluePrint = {fields: [{path: docPath, type: 'boolean'}], booleanValue: !!constraintValue};
+          constraint.query_constraints.push(constraintBluePrint);
+        }
+        constraint.query_constraints.push(...UtilityFunctions.convertConstraintListToJson(constraintList));
+        constraint.query_constraints = JSON.stringify(constraint.query_constraints);
+        this.nextSavedSearch(constraint);
+      }
+    });
+  }
+
   buildFactNameSearch(fact: string): void {
     const constraint = new SavedSearch();
     constraint.query_constraints = [];
@@ -217,9 +235,9 @@ export class SearcherComponentService {
       if (typeof constraint.query_constraints !== 'string') {
         const dateConstraint = constraintList.find(y => y instanceof DateConstraint && y.fields.length === 1 && y.fields[0].path === dateColPath);
         if (dateConstraint instanceof DateConstraint) {
-          dateConstraint.dateFromFormControl.setValue(moment.utc(key));
+          dateConstraint.dateFromFormControl.setValue(DateTime.fromISO(key,  {zone: 'utc'}));
         } else {
-          const constraintBluePrint = {fields: [{path: dateColPath, type: 'date'}], dateFrom: moment.utc(key)};
+          const constraintBluePrint = {fields: [{path: dateColPath, type: 'date'}], dateFrom: DateTime.fromISO(key,  {zone: 'utc'})};
           constraint.query_constraints.push(constraintBluePrint);
         }
         constraint.query_constraints.push(...UtilityFunctions.convertConstraintListToJson(constraintList));
