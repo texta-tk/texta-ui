@@ -1,0 +1,55 @@
+<h1 mat-dialog-title>Apply to text</h1>
+<div mat-dialog-content>
+  <form (ngSubmit)="onSubmit()" [formGroup]="applyForm" class="flex-col">
+    <mat-form-field class="max-width" data-cy="appLangDetectApplyDialogText">
+      <textarea [errorStateMatcher]="matcher" formControlName="text" matInput placeholder="Text" rows="6"
+                required></textarea>
+      <mat-error *ngIf="applyForm.get('text')?.hasError('required')">
+        Text is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+    <div *ngIf="result" class="m-bot-10">
+      <mat-accordion multi displayMode="flat">
+        <mat-expansion-panel *ngIf="result.text" expanded>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Text
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          {{result.text}}
+        </mat-expansion-panel>
+
+        <mat-expansion-panel *ngIf="result.language_code" expanded>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Language code
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          {{result.language_code}}
+        </mat-expansion-panel>
+
+        <mat-expansion-panel *ngIf="result.language" expanded>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Elasticsearch Snowball stemmer
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          {{result.language}}
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+    <div class="flex-col">
+      <div class="flex-row">
+        <div class="flex-item-left">
+          <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
+        </div>
+        <div class="flex-item-right">
+          <button [disabled]="!applyForm.valid" data-cy="appLangDetectApplyDialogSubmit" mat-button type="submit">
+            Apply
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

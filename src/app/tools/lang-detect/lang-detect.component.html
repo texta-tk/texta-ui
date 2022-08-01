@@ -13,6 +13,8 @@
               mat-icon-button matTooltip="Delete selected">
         <mat-icon>delete</mat-icon>
       </button>
+      <button (click)="openApplyToText()" data-cy="appToolsLangDetectApplyToTextBtn" mat-stroked-button>Apply to text
+      </button>
       <mat-paginator [length]="resultsLength" [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons>
       </mat-paginator>
     </div>

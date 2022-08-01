@@ -17,6 +17,7 @@ import {LangDetect} from '../../shared/types/tasks/LangDetect';
 import {LogService} from '../../core/util/log.service';
 import {Index} from '../../shared/types/Index';
 import {QueryDialogComponent} from '../../shared/shared-module/components/dialogs/query-dialog/query-dialog.component';
+import {ApplyToTextDialogComponent} from './apply-to-text-dialog/apply-to-text-dialog.component';
 
 @Component({
   selector: 'app-lang-detect',
@@ -183,5 +184,12 @@ export class LangDetectComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy(): void {
     this.destroyed$.next(true);
     this.destroyed$.complete();
+  }
+
+  openApplyToText(): void {
+    this.dialog.open(ApplyToTextDialogComponent, {
+      maxHeight: '80vh',
+      width: '700px',
+    });
   }
 }

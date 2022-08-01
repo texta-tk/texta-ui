@@ -123,4 +123,9 @@ export class CoreService {
       catchError(this.logService.handleError<CeleryCountTasks>('getCeleryTaskInfo')));
   }
 
+  detectLanguageMLP(text: string): Observable<{ text: string; language_code: string; language: string } | HttpErrorResponse> {
+    return this.http.post<{ text: string; language_code: string; language: string }>(`${this.apiUrl}/mlp/detect_lang/`, {text}).pipe(
+      tap(e => this.logService.logStatus(e, 'detectLanguageMLP')),
+      catchError(this.logService.handleError('detectLanguageMLP')));
+  }
 }
