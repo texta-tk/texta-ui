@@ -13,7 +13,7 @@ import {LiveErrorStateMatcher} from '../../../shared/CustomerErrorStateMatchers'
 import {EmbeddingsService} from '../../../core/models/embeddings/embeddings.service';
 import {Embedding} from '../../../shared/types/tasks/Embedding';
 import {TaggerService} from '../../../core/models/taggers/tagger.service';
-import {forkJoin, of, Subject} from 'rxjs';
+import {BehaviorSubject, forkJoin, of, Subject} from 'rxjs';
 import {TaggerGroupService} from '../../../core/models/taggers/tagger-group.service';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 import {MatSelect} from '@angular/material/select';
@@ -66,7 +66,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy {
   taggerGroupOptions: any;
   embeddings: Embedding[];
   projectFields: ProjectIndex[];
-  projectFacts: Subject<{ name: string, values: string[] }[]> = new Subject();
+  projectFacts: BehaviorSubject<{ name: string, values: string[] }[]> = new BehaviorSubject<{ name: string, values: string[] }[]>([{name: 'Loading...', values: []}]);
   currentProject: Project;
   destroyed$ = new Subject<boolean>();
   fieldsUnique: Field[] = [];

@@ -1,6 +1,6 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {forkJoin, merge, of, Subject} from 'rxjs';
+import {BehaviorSubject, forkJoin, merge, of, Subject} from 'rxjs';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {filter, mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
 import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
@@ -89,7 +89,7 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
   destroyed$: Subject<boolean> = new Subject<boolean>();
   projectIndices: ProjectIndex[] = [];
   projectFields: ProjectIndex[];
-  projectFacts: Subject<{ name: string, values: string[] }[]> = new Subject();
+  projectFacts: BehaviorSubject<{ name: string, values: string[] }[]> = new BehaviorSubject<{ name: string, values: string[] }[]>([{name: 'Loading...', values: []}]);
   bertModels: string[] = [];
   trainedModels: BertTagger[] = [];
   // tslint:disable-next-line:no-any

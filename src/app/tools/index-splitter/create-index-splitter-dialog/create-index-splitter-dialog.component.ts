@@ -1,6 +1,6 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {forkJoin, of, Subject} from 'rxjs';
+import {BehaviorSubject, forkJoin, of, Subject} from 'rxjs';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {debounceTime, filter, mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
 import {AbstractControl, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
@@ -59,7 +59,7 @@ export class CreateIndexSplitterDialogComponent implements OnInit, OnDestroy {
   fieldsUnique: Field[] = [];
   projectIndices: ProjectIndex[] = [];
   projectFields: ProjectIndex[];
-  projectFacts: Subject<{ name: string, values: string[] }[]> = new Subject();
+  projectFacts: BehaviorSubject<{ name: string, values: string[] }[]> = new BehaviorSubject<{ name: string, values: string[] }[]>([{name: 'Loading...', values: []}]);
   indexSplitterOptions: IndexSplitterOptions | undefined;
   isLoadingOptions = false;
   factValOptions: string[] = [];

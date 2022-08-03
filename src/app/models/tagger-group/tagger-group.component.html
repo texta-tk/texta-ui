@@ -188,6 +188,10 @@
                     <th class="mat-body-strong">Balance to max limit</th>
                     <td>{{element.tagger_params.balance_to_max_limit}}</td>
                   </tr>
+                  <tr *ngIf="element.tagger_params.embedding">
+                    <th class="mat-body-strong">Embedding</th>
+                    <td>{{element.tagger_params.embedding?.description}}</td>
+                  </tr>
                   <tr>
                     <th class="mat-body-strong">Analyzer</th>
                     <td>{{element.tagger_params.analyzer}}</td>

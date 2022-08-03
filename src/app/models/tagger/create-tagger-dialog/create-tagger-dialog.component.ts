@@ -86,7 +86,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
   currentProject: Project;
   destroyed$ = new Subject<boolean>();
   projectIndices: ProjectIndex[] = [];
-  projectFacts: Subject<{ name: string, values: string[] }[]> = new Subject();
+  projectFacts: BehaviorSubject<{ name: string, values: string[] }[]> = new BehaviorSubject<{ name: string, values: string[] }[]>([{name: 'Loading...', values: []}]);
   snowballLanguages: string[] = [];
 
   constructor(private dialogRef: MatDialogRef<CreateTaggerDialogComponent>,

@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
@@ -9,7 +9,7 @@ import {TorchTaggerService} from '../../../core/models/taggers/torch-tagger.serv
 import {ProjectService} from 'src/app/core/projects/project.service';
 import {ProjectStore} from 'src/app/core/projects/project.store';
 import {filter, mergeMap, switchMap, take, takeUntil} from 'rxjs/operators';
-import {forkJoin, of, Subject} from 'rxjs';
+import {BehaviorSubject, forkJoin, of, Subject} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {TorchTagger} from 'src/app/shared/types/tasks/TorchTagger';
 import {EmbeddingsService} from 'src/app/core/models/embeddings/embeddings.service';
@@ -75,7 +75,7 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
   torchTaggerOptions: any;
   embeddings: Embedding[] = [];
   projectFields: ProjectIndex[];
-  projectFacts: Subject<{ name: string, values: string[] }[]> = new Subject();
+  projectFacts: BehaviorSubject<{ name: string, values: string[] }[]> = new BehaviorSubject<{ name: string, values: string[] }[]>([{name: 'Loading...', values: []}]);
   destroyed$ = new Subject<boolean>();
   fieldsUnique: Field[] = [];
   currentProject: Project;
@@ -88,6 +88,7 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
               private logService: LogService,
               @Inject(MAT_DIALOG_DATA) public data: { cloneElement: TorchTagger },
               private embeddingService: EmbeddingsService,
+              private changeDetectorRef: ChangeDetectorRef,
               private projectStore: ProjectStore) {
   }
 

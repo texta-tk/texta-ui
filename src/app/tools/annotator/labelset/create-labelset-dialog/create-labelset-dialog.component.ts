@@ -9,7 +9,7 @@ import {MatDialogRef} from '@angular/material/dialog';
 import {ProjectStore} from '../../../../core/projects/project.store';
 import {MatMenuTrigger} from '@angular/material/menu';
 import {filter, switchMap, take, takeUntil} from 'rxjs/operators';
-import {forkJoin, of, Subject} from 'rxjs';
+import {BehaviorSubject, forkJoin, of, Subject} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Project, ProjectIndex} from '../../../../shared/types/Project';
 import {AnnotatorService} from '../../../../core/tools/annotator/annotator.service';
@@ -43,7 +43,8 @@ export class CreateLabelsetDialogComponent implements OnInit, OnDestroy {
   // tslint:disable-next-line:no-any
   labelSetOptions: any;
   projectIndices: ProjectIndex[] = [];
-  projectFacts: Subject<string[]> = new Subject();
+
+  projectFacts: BehaviorSubject<string[]> = new BehaviorSubject<string[]>(['Loading...']);
   @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
 
   constructor(private dialogRef: MatDialogRef<CreateLabelsetDialogComponent>,
