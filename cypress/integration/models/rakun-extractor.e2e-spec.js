@@ -77,11 +77,15 @@ describe('rakun-extractor should work', function () {
       cy.closeCurrentCdkOverlay();
       cy.matFormFieldShouldHaveError(fields, 'required');
       cy.wrap(fields).click();
-      cy.get('.mat-option-text:nth(1)').should('be.visible').click();
+      cy.get('.mat-option-text').contains(new RegExp(' comment_content ', '')).click();
       cy.closeCurrentCdkOverlay();
       cy.wrap(fields).find('mat-error').should('have.length', 0)
     }));
-
+    cy.get('textarea').click().then(x=>{
+      cy.fixture('sample_query').then(sampleDoc => {
+        cy.wrap(x).invoke('val', JSON.stringify(sampleDoc)).trigger('change');
+      });
+    })
     cy.get('[data-cy=appRakunExtractorApplyDialogSubmit]').click();
     cy.wait(['@postRakunExtractor',]).then(resp => {
       expect(resp.response.statusCode).to.eq(201);
@@ -90,6 +94,15 @@ describe('rakun-extractor should work', function () {
 
   }
 
+  function editStopWord(){
+    // Stop words
+    cy.get('.cdk-column-actions:nth(1)').click('left');
+    cy.get('[data-cy=appRakunExtractorMenuStopWords]').should('be.visible').click();
+    cy.get('.mat-dialog-container textarea').should('be.visible').click().clear().type('ja');
+    cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
+    cy.wait('@postRakunExtractor');
+    cy.closeCurrentCdkOverlay();
+  }
   it('should be able to create a new rakun extractor', function () {
     // create clustering
     initPage();
@@ -104,16 +117,21 @@ describe('rakun-extractor should work', function () {
     cy.wait('@postRakunExtractor').its('response.statusCode').should('eq', 201);
     cy.wait('@getRakunExtractors')
     cy.wait(1000);
-    
+    editStopWord();
     extractRandomDoc();
     extractText();
     applyToIndex();
+
+    cy.get('.cdk-column-actions:nth(1)').click('left');
+    cy.get('[data-cy=appRakunExtractorMenuDuplicate]').click();
+    cy.wait('@postRakunExtractor').its('response.statusCode').should('eq', 200);
+    cy.wait('@getRakunExtractors').its('response.body.count').should('eq', 2);
 
     cy.wait(1000);
     cy.get('.cdk-column-actions:nth(1)').click('left');
     cy.get('[data-cy=appRakunExtractorMenuDelete]').click();
     cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
-    cy.get('.cdk-column-actions').should('have.length', 1);
+    cy.get('.cdk-column-actions').should('have.length', 2);
 
   });
 });

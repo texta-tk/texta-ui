@@ -53,13 +53,26 @@ describe('Crf-extractor should work', function () {
       cy.wrap(fields).find('mat-error').should('have.length', 0)
     }));
 
+    cy.get('textarea').click().then(x=>{
+      cy.fixture('sample_query').then(sampleDoc => {
+        cy.wrap(x).invoke('val', JSON.stringify(sampleDoc)).trigger('change');
+      });
+    })
     cy.get('[data-cy=appCRFExtractorApplyDialogSubmit]').click();
     cy.wait(['@postCrfExtractor',]).then(resp => {
       expect(resp.response.statusCode).to.eq(201);
     });
 
   }
-
+  function listFeatures(){
+    // list features
+    cy.intercept('GET', '**/list_features/').as('getListFeatures');
+    cy.get('.cdk-column-actions:nth(1)').should('be.visible').click();
+    cy.get('[data-cy=appCRFExtractorMenuListFeatures]').should('be.visible').click();
+    cy.wait('@getListFeatures');
+    cy.get('.mat-list-item-content').should('have.length', 20);
+    cy.closeCurrentCdkOverlay();
+  }
   it('should be able to create a new Crf extractor', function () {
     initPage();
     cy.get('[data-cy=appCRFExtractorCreateBtn]').click();
@@ -88,7 +101,7 @@ describe('Crf-extractor should work', function () {
     }));
     cy.get('[data-cy=appCRFExtractorCreateDialogSubmit]').click();
     cy.wait('@postCrfExtractor').its('response.statusCode').should('eq', 201);
-    cy.wait(1000);
+    cy.wait('@getCrfExtractors');
     cy.get('.mat-header-row > .cdk-column-author__username').should('be.visible').then(bb => {
       cy.wrap([0, 0, 0, 0]).each(xy => { // hack to wait for task to complete
         cy.wrap(bb).click();
@@ -106,7 +119,7 @@ describe('Crf-extractor should work', function () {
     cy.wait(1000);
     extractText();
     applyToIndex();
-
+    listFeatures();
     cy.get('.cdk-column-actions:nth(1)').should('be.visible').click();
     cy.get('[data-cy=appCRFExtractorMenuEdit]').should('be.visible').click();
     cy.get('[data-cy=appCrfEditDialogDesc]').should('be.visible').click()

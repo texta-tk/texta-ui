@@ -11,6 +11,7 @@ describe('tagger groups should work', function () {
         cy.intercept('GET', '**/tagger_groups/**').as('getTaggerGroups');
         cy.intercept('DELETE', '**/tagger_groups/**').as('deleteTaggerGroups');
         cy.intercept('POST', '**/tagger_groups/').as('postTaggerGroups');
+        cy.intercept('POST', '**/apply_to_index/').as('postApplyToIndices');
         cy.intercept('PATCH', '**/tagger_groups/**').as('patchTaggerGroups');
       });
     });
@@ -46,12 +47,19 @@ describe('tagger groups should work', function () {
     cy.wait('@postTaggerGroups').then(created=>{
       expect(created.response.statusCode).to.eq(201);
     });
+    // delete
+    cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
+    cy.get('[data-cy=appTaggerGroupMenuDelete]').should('be.visible').click();
+    cy.get('[data-cy=appConfirmDialogSubmit]').should('be.visible').click();
+    cy.wait('@deleteTaggerGroups');
   });
 
   it('extra_actions should work', function () {
     cy.importTestTaggerGroup(this.projectId).then(x => {
       initTaggerGroupPage();
       cy.wait(100);
+
+      // list features
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
       cy.get('[data-cy=appTaggerGroupMenuModelList]').should('be.visible').click();
       cy.wait('@getTaggerGroups').then(x=>{
@@ -59,8 +67,40 @@ describe('tagger groups should work', function () {
       });
       cy.get('app-models-list-dialog tr').should('have.length', 4);
       cy.closeCurrentCdkOverlay();
-      // tag text
 
+      // apply to indices
+      cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
+      cy.get('[data-cy=appTaggerGroupMenuApplyToIndices]').should('be.visible').click();
+      cy.get('[data-cy=appTaggerGroupApplyDialogDesc]').then((desc => {
+        cy.wrap(desc).should('have.class', 'mat-focused').type('b').find('input').clear();
+        cy.matFormFieldShouldHaveError(desc, 'required');
+        cy.wrap(desc).type('testApply');
+      }));
+      cy.get('[data-cy=appTaggerGroupApplyDialogFields]').click().then((fields => {
+        cy.wrap(fields).should('have.class', 'mat-focused');
+        cy.closeCurrentCdkOverlay();
+        cy.matFormFieldShouldHaveError(fields, 'required');
+        cy.wrap(fields).click();
+        cy.get('.mat-option-text').contains(new RegExp(' comment_content ', '')).click();
+        cy.closeCurrentCdkOverlay();
+        cy.wrap(fields).find('mat-error').should('have.length', 0)
+      }));
+      cy.get('textarea').click().then(x=>{
+        cy.fixture('sample_query').then(sampleDoc => {
+          cy.wrap(x).invoke('val', JSON.stringify(sampleDoc)).trigger('change');
+        });
+      })
+      cy.get('[data-cy=appTaggerGroupApplyDialogFactName]').click().then((fact => {
+        cy.wrap(fact).should('have.class', 'mat-focused').type('b').find('input').clear();
+        cy.matFormFieldShouldHaveError(fact, 'required');
+        cy.wrap(fact).type('XXX');
+      }));
+      cy.get('[data-cy=appTaggerGroupApplyDialogSubmit]').should('be.visible').click();
+      cy.wait('@postApplyToIndices').then(created=>{
+        expect(created.response.statusCode).to.eq(201);
+      });
+
+      // tag text
       cy.intercept('POST', '**/tag_text/').as('tagText');
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
       cy.get('[data-cy=appTaggerGroupMenuTagText]').should('be.visible').click();

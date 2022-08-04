@@ -2,7 +2,7 @@
 <div mat-dialog-content>
   <form (ngSubmit)="onSubmit(summarizerForm.value)" [formGroup]="summarizerForm" class="flex-col">
     <mat-form-field class="max-width" data-cy="appSummarizerApplyDialogText">
-      <textarea [errorStateMatcher]="matcher" formControlName="textFormControl" matInput placeholder="Text"
+      <textarea [errorStateMatcher]="matcher" formControlName="textFormControl" matInput placeholder="Text" rows="6"
                 required></textarea>
       <mat-error *ngIf="summarizerForm.get('textFormControl')?.hasError('required')">
         Text is <strong>required</strong>

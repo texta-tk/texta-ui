@@ -161,20 +161,13 @@ export class MLPComponent implements OnInit, OnDestroy, AfterViewInit {
 
           this.mlpService.bulkDeleteMLPTasks(this.currentProject.id, body).subscribe(() => {
             this.logService.snackBarMessage(`Deleted ${this.selectedRows.selected.length} Tasks.`, 2000);
-            this.removeSelectedRows();
+            this.updateTable.next(true);
+            this.projectStore.refreshSelectedProjectResourceCounts();
+            this.selectedRows.clear();
           });
         }
       });
     }
-  }
-
-  removeSelectedRows(): void {
-    this.selectedRows.selected.forEach((selectedMLP: MLP) => {
-      const index: number = this.tableData.data.findIndex(mlp => mlp.id === selectedMLP.id);
-      this.tableData.data.splice(index, 1);
-      this.tableData.data = [...this.tableData.data];
-    });
-    this.selectedRows.clear();
   }
 
   ngOnDestroy(): void {

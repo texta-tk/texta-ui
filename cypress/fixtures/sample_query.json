@@ -1,0 +1,35 @@
+{
+  "query": {
+    "bool": {
+      "must": [],
+      "filter": [],
+      "must_not": [],
+      "should": [
+        {
+          "bool": {
+            "must": [
+              {
+                "bool": {
+                  "should": [
+                    {
+                      "multi_match": {
+                        "query": "aga",
+                        "type": "phrase_prefix",
+                        "slop": "0",
+                        "fields": [
+                          "comment_content"
+                        ]
+                      }
+                    }
+                  ],
+                  "minimum_should_match": 1
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "minimum_should_match": 1
+    }
+  }
+}

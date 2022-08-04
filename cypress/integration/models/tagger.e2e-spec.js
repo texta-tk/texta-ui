@@ -8,6 +8,7 @@ describe('taggers should work', function () {
         cy.intercept('GET', '**/user/').as('getUser');
         cy.intercept('GET', '**get_fields**').as('getProjectIndices');
         cy.intercept('PATCH', '**/taggers/**').as('patchTaggers');
+        cy.intercept('POST', '**/apply_to_index/').as('postApplyToIndices');
       });
     });
   });
@@ -25,13 +26,47 @@ describe('taggers should work', function () {
       cy.intercept('GET', '**/taggers/**').as('getTaggers');
       initTaggersPage();
       cy.wait(100);
-
+      // list features
       cy.intercept('POST', '**/taggers/**').as('postTagger');
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
       cy.get('[data-cy=appTaggerMenuListFeatures]').should('be.visible').click();
       cy.wait('@postTagger');
       cy.get('.mat-list-item-content').should('have.length', 100);
       cy.closeCurrentCdkOverlay();
+
+      // apply to indices
+      cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
+      cy.get('[data-cy=appTaggerMenuApplyToIndices]').should('be.visible').click();
+      cy.get('[data-cy=appTaggerApplyDialogDesc]').then((desc => {
+        cy.wrap(desc).should('have.class', 'mat-focused').type('b').find('input').clear();
+        cy.matFormFieldShouldHaveError(desc, 'required');
+        cy.wrap(desc).type('testApply');
+      }));
+      cy.get('[data-cy=appTaggerApplyDialogFields]').click().then((fields => {
+        cy.wrap(fields).should('have.class', 'mat-focused');
+        cy.closeCurrentCdkOverlay();
+        cy.matFormFieldShouldHaveError(fields, 'required');
+        cy.wrap(fields).click();
+        cy.get('.mat-option-text').contains(new RegExp(' comment_content ', '')).click();
+        cy.closeCurrentCdkOverlay();
+        cy.wrap(fields).find('mat-error').should('have.length', 0)
+      }));
+      cy.get('textarea').click().then(x=>{
+        cy.fixture('sample_query').then(sampleDoc => {
+          cy.wrap(x).invoke('val', JSON.stringify(sampleDoc)).trigger('change');
+        });
+      })
+      cy.get('[data-cy=appTaggerApplyDialogFactName]').click().then((fact => {
+        cy.wrap(fact).should('have.class', 'mat-focused').type('b').find('input').clear();
+        cy.matFormFieldShouldHaveError(fact, 'required');
+        cy.wrap(fact).type('XXX');
+      }));
+      cy.get('[data-cy=appTaggerApplyDialogSubmit]').should('be.visible').click();
+      cy.wait('@postApplyToIndices').then(created=>{
+        expect(created.response.statusCode).to.eq(201);
+      });
+
+
       // Stop words
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
       cy.get('[data-cy=appTaggerMenuStopWords]').should('be.visible').click();
@@ -77,6 +112,12 @@ describe('taggers should work', function () {
         cy.wrap(resp).its('response.statusCode').should('eq', 200);
         cy.get('[data-cy=TaggerTagRandomDocDialogClose]').click();
       });
+      // multitag text
+      cy.get('[data-cy=appModelsTaggerMultiTag]').should('be.visible').click();
+      cy.get('.mat-dialog-container textarea').should('be.visible').click().clear().type('ja');
+      cy.get('[data-cy=appTaggerMultiTagDialogSubmit]').should('be.visible').click();
+      cy.wait('@postTagger').its('response.statusCode').should('eq', 200);
+      cy.closeCurrentCdkOverlay();
 
       // patch tagger
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
@@ -146,5 +187,12 @@ describe('taggers should work', function () {
         });
       })
     });
+
+    // confusion matrix
+    cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
+    cy.get('[data-cy=appTaggerMenuConfusionMatrix]').should('be.visible').click();
+    cy.get('.nsewdrag').should('be.visible');
+    cy.closeCurrentCdkOverlay();
+
   });
 });

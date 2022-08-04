@@ -28,7 +28,7 @@
       <mat-hint>{{summarizerOptions?.actions?.POST?.indices?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field data-cy="appSummarizerCreateDialogFields">
       <mat-label>Select Fields</mat-label>
       <app-project-field-select [projectFields]="projectFields" [required]="true"
                                 formControlName="fieldsFormControl"></app-project-field-select>

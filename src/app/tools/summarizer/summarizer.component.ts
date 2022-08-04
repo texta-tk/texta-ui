@@ -151,20 +151,13 @@ export class SummarizerComponent implements OnInit, OnDestroy, AfterViewInit {
 
           this.summarizerService.bulkDeleteSummarizerTasks(this.currentProject.id, body).subscribe(() => {
             this.logService.snackBarMessage(`Deleted ${this.selectedRows.selected.length} Tasks.`, 2000);
-            this.removeSelectedRows();
+            this.updateTable.next(true);
+            this.projectStore.refreshSelectedProjectResourceCounts();
+            this.selectedRows.clear();
           });
         }
       });
     }
-  }
-
-  removeSelectedRows(): void {
-    this.selectedRows.selected.forEach((selected: Summarizer) => {
-      const index: number = (this.tableData.data as Summarizer[]).findIndex(summarizer => summarizer.id === selected.id);
-      this.tableData.data.splice(index, 1);
-      this.tableData.data = [...this.tableData.data];
-    });
-    this.selectedRows.clear();
   }
 
   ngOnDestroy(): void {

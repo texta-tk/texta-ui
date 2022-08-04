@@ -27,7 +27,7 @@
       <mat-hint>{{langDetectOptions?.actions?.POST?.indices?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field data-cy="appLangDetectCreateDialogFields">
       <mat-label>Select Fields</mat-label>
       <app-project-field-select [projectFields]="projectFields" [multiple]="false" [required]="true"
                                 formControlName="fieldsFormControl"></app-project-field-select>

@@ -46,7 +46,11 @@ describe('regex-tagger-group should work', function () {
       cy.closeCurrentCdkOverlay();
       cy.wrap(fields).find('mat-error').should('have.length', 0)
     }));
-
+    cy.get('textarea').click().then(x=>{
+      cy.fixture('sample_query').then(sampleDoc => {
+        cy.wrap(x).invoke('val', JSON.stringify(sampleDoc)).trigger('change');
+      });
+    })
     cy.get('[data-cy=appRegexTaggerGroupApplyTaggerDialogTaggers]').click().then((grp => {
       cy.wrap(grp).should('have.class', 'mat-focused');
       cy.closeCurrentCdkOverlay();
@@ -112,7 +116,7 @@ describe('regex-tagger-group should work', function () {
   }
 
   it('should be able to create a new regex-tagger-group', function () {
-    // create clustering
+
     initPage();
     cy.createTestRegexTagger(this.projectId);
     cy.get('[data-cy=appRegexTaggerGroupCreateBtn]').click();

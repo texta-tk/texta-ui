@@ -4,7 +4,7 @@
     <mat-form-field class="max-width" data-cy="appMLPApplyDialogText">
       <input [errorStateMatcher]="matcher" formControlName="textFormControl" matInput placeholder="Text" required>
       <mat-error *ngIf="MLPForm.get('textFormControl')?.hasError('required')">
-        Description is <strong>required</strong>
+        Text is <strong>required</strong>
       </mat-error>
     </mat-form-field>
     <mat-form-field data-cy="appMLPApplyDialogAnalyzers">
