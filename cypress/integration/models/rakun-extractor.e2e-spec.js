@@ -98,6 +98,7 @@ describe('rakun-extractor should work', function () {
     // Stop words
     cy.get('.cdk-column-actions:nth(1)').click('left');
     cy.get('[data-cy=appRakunExtractorMenuStopWords]').should('be.visible').click();
+    cy.wait('@getRakunExtractors')
     cy.get('.mat-dialog-container textarea').should('be.visible').click().clear().type('ja');
     cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
     cy.wait('@postRakunExtractor');

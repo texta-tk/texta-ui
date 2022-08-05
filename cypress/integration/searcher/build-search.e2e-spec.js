@@ -116,7 +116,7 @@ describe('searching and search related activities should be working correctly', 
     cy.get('mat-option').contains('comment_content').click();
     cy.closeCurrentCdkOverlay();
 
-    cy.get('.cdk-column-texta_facts > app-texta-facts-chips > span').should('not.exist');
+    cy.get('.cdk-column-texta_facts > app-texta-facts-chips > span').contains(/TEEMA/g).should('not.exist');
 
     cy.get('[data-cy=appSearcherSidebarBuildSearchHighlightFacts]').click();
     cy.get(':nth-child(1) > .cdk-column-comment_content > app-highlight span span').should('not.exist');
