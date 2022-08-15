@@ -103,7 +103,7 @@ describe('Crf-extractor should work', function () {
     cy.wait('@postCrfExtractor').its('response.statusCode').should('eq', 201);
     cy.wait('@getCrfExtractors');
     cy.get('.mat-header-row > .cdk-column-author__username').should('be.visible').then(bb => {
-      cy.wrap([0, 0, 0, 0]).each(xy => { // hack to wait for task to complete
+      cy.wrap([0, 0, 0, 0, 0, 0]).each(xy => { // hack to wait for task to complete
         cy.wrap(bb).click();
         cy.wait('@getCrfExtractors').then((intercepted) => {
           console.log(intercepted)
