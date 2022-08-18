@@ -1,5 +1,5 @@
 <div class="wrapper max-height" fxLayout="column">
-  <div [ngStyle]="{display: viewState !== 'table' ? 'none' : 'flex'}" class="overflow-auto max-height" fxLayout="row"
+  <div [fxHide] = "viewState !== 'table'" class="overflow-auto max-height" fxLayout="row"
        fxLayoutGap="10px"
        cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)">
     <div *ngFor="let item of dataSource" class="table-container" cdkDrag>
