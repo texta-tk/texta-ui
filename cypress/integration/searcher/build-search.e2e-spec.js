@@ -88,7 +88,7 @@ describe('searching and search related activities should be working correctly', 
     cy.get('[data-cy=appSearcherSideBarBuildSearchConstraintSelect]').click();
     cy.get('mat-option').contains('@timestamp').scrollIntoView().click();
     cy.closeCurrentCdkOverlay();
-    cy.wait(5000); // todo searchoptions debouncetime
+    cy.wait('@searcherQuery');
     cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
     cy.wait('@searcherQuery');
     cy.get('app-searcher-table .mat-cell').should('be.visible');
@@ -133,6 +133,7 @@ describe('searching and search related activities should be working correctly', 
     cy.get(':nth-child(1) > .cdk-column-texta_facts > app-texta-facts-chips > span').contains(/foo|bar|FUBAR/g).first().scrollIntoView().click()
       .then(span => {
         const text = span.text();
+        cy.wait('@searcherQuery');
         cy.get('[data-cy=appSearcherSideBarBuildSearchFactValueInputGroupOperator]').click();
         cy.get('mat-option').contains('not').click();
         cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();

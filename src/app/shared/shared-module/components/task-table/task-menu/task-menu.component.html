@@ -1,0 +1,30 @@
+<mat-form-field appearance="fill" class="max-width">
+  <mat-label>Task</mat-label>
+  <mat-select [(ngModel)]="activeTask" disableOptionCentering (ngModelChange)="selectTaskItem($event)"
+              panelClass="select-panel-reveal-input">
+    <mat-option *ngFor="let task of tasks; let i = index;" [value]="i" style="
+    line-height: 1;
+    border-bottom: 1px solid grey;
+    height: 60px;">
+      <div style="height: 50px; display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-evenly;">
+        <span *ngIf="task.status === 'completed'">{{task.time_started | date:'y-M-d H:mm:ss'}}</span>
+        <span *ngIf="task.status === 'failed'">{{task.time_started | date:'y-M-d H:mm:ss'}}</span>
+        <span *ngIf="task.status !== 'failed' && task.status !== 'completed'">{{task.time_started | date:'y-M-d H:mm:ss'}}</span>
+        <mat-progress-bar *ngIf="task.status === 'completed'" [value]="100"
+                          mode="determinate">
+        </mat-progress-bar>
+        <mat-progress-bar *ngIf="task.status === 'failed'" [value]="100"
+                          mode="determinate" color="warn">
+        </mat-progress-bar>
+        <mat-progress-bar *ngIf="task.status !== 'completed' && task.status !== 'failed'"
+                          mode="indeterminate">
+        </mat-progress-bar>
+        <span> {{task.task_type}} | {{task.status}}</span>
+
+      </div>
+    </mat-option>
+  </mat-select>
+</mat-form-field>

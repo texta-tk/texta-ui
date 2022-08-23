@@ -43,8 +43,8 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: Tagger | null;
   public tableData: MatTableDataSource<Tagger> = new MatTableDataSource();
   selectedRows = new SelectionModel<Tagger>(true, []);
-  public displayedColumns = ['select', 'is_favorited', 'id', 'author__username', 'description', 'tg__description', 'fields', 'task__time_started',
-    'task__time_completed', 'f1_score', 'precision', 'recall', 'task__status', 'Modify'];
+  public displayedColumns = ['select', 'is_favorited', 'id', 'author__username', 'description', 'tg__description', 'fields', 'tasks__time_started',
+    'tasks__time_completed', 'f1_score', 'precision', 'recall', 'tasks__status', 'Modify'];
   public isLoadingResults = true;
 
   @ViewChild(MatSort) sort: MatSort;
@@ -79,18 +79,6 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
 
-    // Check for updates after 30s every 30s
-    timer(30000, 30000).pipe(takeUntil(this.destroyed$), switchMap(_ =>
-      this.taggerService.getTaggers(this.currentProject.id,
-        `page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`)))
-      .subscribe((resp: { count: number, results: Tagger[] } | HttpErrorResponse) => {
-        if (resp && !(resp instanceof HttpErrorResponse)) {
-          this.refreshTaggersTask(resp.results);
-        } else if (resp instanceof HttpErrorResponse) {
-          this.logService.snackBarError(resp, 5000);
-          this.isLoadingResults = false;
-        }
-      });
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(resp => {
       if (resp) {
         this.currentProject = resp;
@@ -140,20 +128,6 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-
-  refreshTaggersTask(resp: Tagger[] | HttpErrorResponse): void {
-    if (resp && !(resp instanceof HttpErrorResponse)) {
-      if (resp.length > 0) {
-        resp.map(tagger => {
-          const indx = this.tableData.data.findIndex(x => x.id === tagger.id);
-          if (indx >= 0) {
-            this.tableData.data[indx].task = tagger.task;
-          }
-        });
-      }
-    }
-  }
-
   retrainTagger(value: Tagger): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
@@ -167,6 +141,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
         this.taggerService.retrainTagger(this.currentProject.id, value.id)
           .subscribe(resp => {
             if (resp && !(resp instanceof HttpErrorResponse)) {
+              this.updateTable.next();
               this.logService.snackBarMessage('Successfully started retraining', 4000);
             } else if (resp instanceof HttpErrorResponse) {
               this.logService.snackBarError(resp, 5000);

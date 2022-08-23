@@ -107,7 +107,7 @@
                   panelClass="select-panel-reveal-input" required>
         <mat-option>None</mat-option>
         <ng-container *ngFor="let item of embeddings">
-          <mat-option *ngIf="item.task.status === 'completed'" [value]="item">
+          <mat-option *ngIf="item.tasks[0].status === 'completed'" [value]="item">
             {{item.description}}
           </mat-option>
         </ng-container>

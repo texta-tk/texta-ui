@@ -1,4 +1,5 @@
 import {UserProfile} from '../UserProfile';
+import {TextaTask} from './TaskStatus';
 
 export interface Task {
   id: number;
@@ -39,7 +40,7 @@ export interface BertTagger {
   num_epochs: number;
   pos_label: string;
   plot: string;
-  task: Task;
+  tasks: TextaTask[];
   fact_name?: string;
   indices: Index[];
   bert_model: string;

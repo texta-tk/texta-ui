@@ -46,7 +46,7 @@ describe('embeddings should work', function () {
     cy.get('[data-cy=appEmbeddingCreateDialogSubmit]').should('be.visible').click();
     cy.wait('@postEmbeddings').then((interception) => {
       cy.wrap(interception).its('response.statusCode').should('eq', 201);
-      cy.wrap(interception).its('response.body.task.status').should('eq', 'created');
+      assert.equal(interception.response.body.tasks[0].status, 'created');
     })
   });
   it('extra_actions should work', function () {

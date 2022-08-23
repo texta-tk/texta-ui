@@ -75,7 +75,7 @@ describe('mlp should work', function () {
     cy.get('[data-cy=appMLPCreateDialogSubmit]').should('be.visible').click();
     cy.wait('@createMLPTask').then(created => {
       expect(created.response.statusCode).to.eq(201);
-      assert.equal(created.response.body.task.status, 'created');
+      assert.equal(created.response.body.tasks[0].status, 'created');
     });
     cy.wait(5000);
     cy.get('.mat-header-row > .cdk-column-select >').click();

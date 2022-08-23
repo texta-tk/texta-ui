@@ -37,18 +37,18 @@ describe('index-splitter should work', function () {
     cy.get('[data-cy=appIndexSplitterCreateDialogSubmit]').should('be.visible').click();
     cy.wait('@postSplitterTasks').then(created=>{
       expect(created.response.statusCode).to.eq(201);
-      assert.equal(created.response.body.task.status, 'created');
+      assert.equal(created.response.body.tasks[0].status, 'created');
     });
     cy.intercept('GET', '**/index_splitter/**').as('getSplitterTasks');
     cy.get('.mat-header-row > .cdk-column-author').should('be.visible').then(bb => {
       cy.wrap([0, 0, 0, 0, 0, 0, 0]).each(y => { // hack to wait for task to complete
         cy.wrap(bb).click();
         return cy.wait('@getSplitterTasks').then((x) => {
-          if (x?.response?.body?.results[0]?.task?.status === 'completed') {
-            assert.equal(x?.response?.body?.results[0]?.task?.status, 'completed');
+          if (x?.response?.body?.results[0]?.tasks[0]?.status === 'completed') {
+            assert.equal(x?.response?.body?.results[0]?.tasks[0]?.status, 'completed');
             return false;
-          }else if (x?.response?.body?.results[0]?.task?.status === 'failed') {
-            assert.equal(x?.response?.body?.results[0]?.task?.status, 'completed');
+          }else if (x?.response?.body?.results[0]?.tasks[0]?.status === 'failed') {
+            assert.equal(x?.response?.body?.results[0]?.tasks[0]?.status, 'completed');
             return false;
           }
           return cy.wait(5000);

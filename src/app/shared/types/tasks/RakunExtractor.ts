@@ -1,4 +1,5 @@
 import {Embedding} from './Embedding';
+import {TextaTask} from './TaskStatus';
 
 interface Index {
   id: number;
@@ -7,18 +8,6 @@ interface Index {
   name: string;
 }
 
-interface Task {
-  id: number;
-  status: string;
-  progress: number;
-  step: string;
-  errors: string;
-  time_started: string;
-  last_update: string;
-  time_completed?: string;
-  total: number;
-  num_processed: number;
-}
 
 export interface RakunExtractor  {
   id: number;
@@ -36,6 +25,6 @@ export interface RakunExtractor  {
   max_similar: number;
   max_occurrence: number;
   fasttext_embedding?: Embedding;
-  task?: Task;
+  tasks: TextaTask[];
   is_favorited: boolean;
 }

@@ -5,7 +5,8 @@
 
 .element-detail {
   padding-left: 14px;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 
 .expanded-detail {

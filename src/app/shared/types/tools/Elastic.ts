@@ -1,5 +1,5 @@
-import {TaskStatus} from '../tasks/TaskStatus';
 import {UserProfile} from '../UserProfile';
+import {TextaTask} from '../tasks/TaskStatus';
 
 export interface Reindexer {
   id: number;
@@ -10,9 +10,9 @@ export interface Reindexer {
   random_size: number;
   indices: string[];
   fields: string[];
-  task: TaskStatus;
+  tasks: TextaTask[];
   add_facts_mapping: boolean;
-  field_type: {path: string, new_path_name: string, field_type: string}[];
+  field_type: { path: string, new_path_name: string, field_type: string }[];
 }
 
 export interface DatasetImporter {
@@ -23,6 +23,6 @@ export interface DatasetImporter {
   num_documents: number;
   num_documents_success: number;
   separator: string;
-  task: TaskStatus;
+  tasks: TextaTask[];
   url: string;
 }

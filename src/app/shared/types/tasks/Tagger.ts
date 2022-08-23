@@ -1,4 +1,4 @@
-import {TaskStatus} from './TaskStatus';
+import {TextaTask} from './TaskStatus';
 import {Index} from '../Index';
 import {UserProfile} from '../UserProfile';
 
@@ -36,7 +36,7 @@ export class Tagger {
   classifier: string;
   pos_label: string;
   minimum_sample_size: number;
-  task: TaskStatus;
+  tasks: TextaTask[];
   snowball_language: string;
   detect_lang: boolean;
   balance: boolean;
@@ -119,7 +119,7 @@ export interface TaggerGroup {
   tagger_status: TaggerStatus;
   tagger_params: TaggerParams;
   tagger_statistics: TaggerStatistics;
-  task?: TaskStatus;
+  tasks: TextaTask[];
   is_favorited: boolean;
 }
 
@@ -128,7 +128,7 @@ export interface TaggerGroup {
 export class LightTagger {
   tag = '';
   url = '';
-  status: TaskStatus;
+  status: string;
   id: number;
 }
 

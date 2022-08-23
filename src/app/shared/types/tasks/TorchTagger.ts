@@ -1,4 +1,4 @@
-import {TaskStatus} from './TaskStatus';
+import {TextaTask} from './TaskStatus';
 import {UserProfile} from '../UserProfile';
 import {Index} from '../Index';
 
@@ -24,7 +24,7 @@ export class TorchTagger {
   location: string;
   pos_label: string;
   plot: string;
-  task: TaskStatus;
+  tasks: TextaTask[];
   // tslint:disable-next-line:no-any
   fact_name?: any;
   balance: boolean;

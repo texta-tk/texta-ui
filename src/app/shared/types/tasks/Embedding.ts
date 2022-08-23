@@ -1,4 +1,4 @@
-import {TaskStatus} from './TaskStatus';
+import { TextaTask} from './TaskStatus';
 
 // tslint:disable:variable-name
 export class Embedding {
@@ -13,7 +13,7 @@ export class Embedding {
   min_freq = 0;
   vocab_size = 0;
   location = null;
-  task: TaskStatus;
+  tasks: TextaTask[];
 
   static isEmbedding(object: string | unknown[] | Embedding): object is Embedding | Embedding[] {
     if (Array.isArray(object) && object.length > 0) {
@@ -38,7 +38,7 @@ export class EmbeddingCluster {
   num_dimensions = 0;
   vocab_size = 0;
   location = null;
-  task: TaskStatus;
+  tasks: TextaTask[];
 }
 
 // embedding options request type

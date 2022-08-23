@@ -57,14 +57,14 @@ describe('Elastic Analyzer should work', function () {
     cy.get('[data-cy=appElasticAnalyzerCreateDialogSubmit]').should('be.visible').click();
     cy.wait('@createElasticAnalyzerTask').then(created => {
       expect(created.response.statusCode).to.eq(201);
-      assert.equal(created.response.body.task.status, 'created');
+      assert.equal(created.response.body.tasks[0].status, 'created');
     });
     cy.get('.mat-header-row > .cdk-column-id').should('be.visible').then(bb => {
       cy.wrap([0, 0, 0, 0]).each(y => { // hack to wait for task to complete
         cy.wrap(bb).click();
         return cy.wait('@getElasticAnalyzerTasks').then((x) => {
-          if (x?.response?.body?.results[0]?.task?.status === 'completed') {
-            assert.equal(x?.response?.body?.results[0]?.task?.status, 'completed');
+          if (x?.response?.body?.results[0]?.tasks[0]?.status === 'completed') {
+            assert.equal(x?.response?.body?.results[0]?.tasks[0]?.status, 'completed');
             return false;
           }
           return cy.wait(5000);

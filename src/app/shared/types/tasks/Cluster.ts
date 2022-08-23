@@ -1,5 +1,5 @@
 import {Field} from '../Project';
-import {TaskStatus} from './TaskStatus';
+import { TextaTask} from './TaskStatus';
 import {Index} from '../Index';
 import {UserProfile} from '../UserProfile';
 
@@ -23,7 +23,7 @@ export class Cluster {
   ignored_ids: number[];
   fields: Field[];
   document_limit: number;
-  task: TaskStatus;
+  tasks: TextaTask[];
 }
 
 export class ClusterView {

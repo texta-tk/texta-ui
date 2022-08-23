@@ -79,7 +79,7 @@ export class LexiconBuilderComponent implements OnInit, OnDestroy, CanDeactivate
     })).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.embeddings = resp.results.filter((embedding: Embedding) => {
-          return embedding.task.status === 'completed';
+          return embedding.tasks[0].status === 'completed';
         });
         this.getSavedDefaultEmbedding();
 

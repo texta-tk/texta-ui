@@ -1,4 +1,4 @@
-import {TaskStatus} from './TaskStatus';
+import {TextaTask} from './TaskStatus';
 import {RegexTagger} from './RegexTagger';
 import {UserProfile} from '../UserProfile';
 
@@ -8,7 +8,8 @@ export interface RegexTaggerGroup {
   url: string;
   regex_taggers: number[];
   author: UserProfile;
-  task: TaskStatus;
+
+  tasks: TextaTask[];
   description: string;
   tagger_info: RegexTagger[];
   is_favorited: boolean;
