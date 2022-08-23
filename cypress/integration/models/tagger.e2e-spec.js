@@ -171,7 +171,7 @@ describe('taggers should work', function () {
     cy.get('[data-cy=appTaggerCreateDialogSubmit]').should('be.visible').click();
     cy.wait('@postTaggers').then(created => {
       expect(created.response.statusCode).to.eq(201);
-      assert.equal(created.response.body.task.status, 'created');
+      assert.equal(created.response.body.tasks[0].status, 'created');
     });
     cy.wait('@getTaggers');
 
@@ -179,8 +179,8 @@ describe('taggers should work', function () {
       cy.wrap([0, 0, 0, 0, 0, 0, 0, 0]).each(y => { // hack to wait for task to complete
         cy.wrap(bb).click();
         return cy.wait('@getTaggers').then((x) => {
-          if (x?.response?.body?.results[0]?.task?.status === 'completed') {
-            assert.equal(x?.response?.body?.results[0]?.task?.status, 'completed');
+          if (x?.response?.body?.results[0]?.tasks[0]?.status === 'completed') {
+            assert.equal(x?.response?.body?.results[0]?.tasks[0]?.status, 'completed');
             return false;
           }
           return cy.wait(2000);

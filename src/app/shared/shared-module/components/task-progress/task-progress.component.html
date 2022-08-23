@@ -1,0 +1,15 @@
+<ng-container *ngIf="task">
+  <mat-progress-bar *ngIf="task.status === 'completed'" [value]="100"
+                    mode="determinate">
+  </mat-progress-bar>
+  <mat-progress-bar *ngIf="task.status === 'failed'" [value]="100"
+                    mode="determinate" color="warn">
+  </mat-progress-bar>
+  <mat-progress-bar *ngIf="task.status !== 'completed' && task.status !== 'failed' && task.progress === 0"
+                    mode="indeterminate">
+  </mat-progress-bar>
+  <mat-progress-bar *ngIf="task.status !== 'completed' && task.status !== 'failed' && task.progress"
+                    mode="determinate" [value]="task.progress">
+  </mat-progress-bar>
+  <span>{{task.status}}</span>
+</ng-container>

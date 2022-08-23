@@ -213,7 +213,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy {
   getFactsForIndices(val: ProjectIndex[]): void {
     if (val.length > 0) {
       this.projectFacts.next([{name: 'Loading...', values: []}]);
-      this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat(), true, false).pipe(takeUntil(this.projectFacts)).subscribe(resp => {
+      this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat(), true, false).subscribe(resp => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
           this.projectFacts.next(resp);
         } else {

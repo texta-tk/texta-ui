@@ -42,11 +42,18 @@
         </td>
       </ng-container>
       <ng-container matColumnDef="is_favorited">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header> <div class="favorite-th-cell"><mat-icon>star_outlined</mat-icon></div></th>
-        <td *matCellDef="let element" mat-cell><button mat-icon-button (click)="toggleRowFavorite(element);$event.stopPropagation()">
-          <mat-icon *ngIf="!element.is_favorited" [ngClass]="{'star-active': element.is_favorited}">star_outlined</mat-icon>
-          <mat-icon *ngIf="element.is_favorited" class="star-icon-active">star</mat-icon>
-        </button></td>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>
+          <div class="favorite-th-cell">
+            <mat-icon>star_outlined</mat-icon>
+          </div>
+        </th>
+        <td *matCellDef="let element" mat-cell>
+          <button mat-icon-button (click)="toggleRowFavorite(element);$event.stopPropagation()">
+            <mat-icon *ngIf="!element.is_favorited" [ngClass]="{'star-active': element.is_favorited}">star_outlined
+            </mat-icon>
+            <mat-icon *ngIf="element.is_favorited" class="star-icon-active">star</mat-icon>
+          </button>
+        </td>
       </ng-container>
       <ng-container matColumnDef="id">
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Id</th>
@@ -103,15 +110,25 @@
         </td>
       </ng-container>
       <ng-container matColumnDef="task__status">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header> Task</th>
+        <th *matHeaderCellDef mat-header-cell> Task</th>
         <td *matCellDef="let element" mat-cell>
-          <mat-progress-bar *ngIf="element.task && element.task.step !== 'training'" [value]="element.task.progress"
-                            mode="determinate">
-          </mat-progress-bar>
-          <mat-progress-bar *ngIf="element.task && element.task.step === 'training' && element.task.status !== 'failed'"
-                            [value]="element.task.progress" mode="indeterminate">
-          </mat-progress-bar>
-          <mat-hint *ngIf="element.task">{{element.task.step ? element.task.step : element.task.status}}</mat-hint>
+          <ng-container *ngIf="element.tasks[0]">
+            <mat-progress-bar *ngIf="element.tasks[element.tasks.length - 1].status === 'completed'" [value]="100"
+                              mode="determinate">
+            </mat-progress-bar>
+            <mat-progress-bar *ngIf="element.tasks[element.tasks.length - 1].status === 'failed'" [value]="100"
+                              mode="determinate" color="warn">
+            </mat-progress-bar>
+            <mat-progress-bar
+              *ngIf="element.tasks[element.tasks.length - 1].status !== 'completed' && element.tasks[element.tasks.length - 1].status !== 'failed' && element.tasks[element.tasks.length - 1].progress === 0"
+              mode="indeterminate">
+            </mat-progress-bar>
+            <mat-progress-bar
+              *ngIf="element.tasks[element.tasks.length - 1].status !== 'completed' && element.tasks[element.tasks.length - 1].status !== 'failed' && element.tasks[element.tasks.length - 1].progress"
+              mode="determinate" [value]="element.tasks[element.tasks.length - 1].progress">
+            </mat-progress-bar>
+            <mat-hint>{{element.tasks[element.tasks.length - 1].step ? element.tasks[element.tasks.length - 1].step : element.tasks[element.tasks.length - 1].status}}</mat-hint>
+          </ng-container>
         </td>
       </ng-container>
 
@@ -130,7 +147,7 @@
         <td *matCellDef="let element; let i = dataIndex" [attr.colspan]="displayedColumns.length" mat-cell
             class="expanded-detail">
           <div *ngIf="expandedElements[i]" [@detailExpand] class="element-detail">
-            <div class="flex-col m-l-r-5" fxFlex="50">
+            <div class="flex-col m-l-r-5" fxFlex="40">
               <table class="simple-table">
                 <tr>
                   <th class="mat-body-strong">Lexicon Words</th>
@@ -140,7 +157,7 @@
                 </tr>
               </table>
             </div>
-            <div class="flex-col m-l-r-5" fxFlex="50">
+            <div class="flex-col m-l-r-5" fxFlex="40">
               <table class="simple-table">
                 <tr>
                   <th class="mat-body-strong">Counter Lexicon Words</th>
@@ -150,6 +167,8 @@
                 </tr>
               </table>
             </div>
+
+            <app-task-table class="flex-item-right" [textaTasks]="element.tasks"></app-task-table>
           </div>
         </td>
       </ng-container>

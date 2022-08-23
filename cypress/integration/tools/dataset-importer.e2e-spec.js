@@ -39,7 +39,7 @@ describe('dataset-importer should work', function () {
     cy.get('[data-cy=appDatasetImporterCreateDialogSubmit]').should('be.visible').click();
     cy.wait('@postDatasets').then(created => {
       expect(created.response.statusCode).to.eq(201);
-      assert.equal(created.response.body.task.status, 'created');
+      assert.equal(created.response.body.tasks[0].status, 'created');
       cy.intercept('DELETE', '**/dataset_imports/**').as('deleteDatasets');
       // delete dataset task
       cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();

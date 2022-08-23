@@ -1,5 +1,7 @@
 
 // tslint:disable:variable-name
+import {TextaTask} from './TaskStatus';
+
 export class RegexTagger {
   id: number;
   description: string;
@@ -15,4 +17,5 @@ export class RegexTagger {
   ignore_case: boolean;
   ignore_punctuation: boolean;
   is_favorited: boolean;
+  tasks: TextaTask[];
 }

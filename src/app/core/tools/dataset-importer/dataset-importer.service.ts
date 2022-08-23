@@ -5,8 +5,8 @@ import {HttpClient, HttpErrorResponse, HttpEvent, HttpRequest} from '@angular/co
 import {LogService} from '../../util/log.service';
 import {environment} from '../../../../environments/environment';
 import {ResultsWrapper} from '../../../shared/types/Generic';
-import {DatasetImport} from '../../../shared/types/tasks/DatasetImport';
 import {AppConfigService} from '../../util/app-config.service';
+import {DatasetImporter} from '../../../shared/types/tools/Elastic';
 
 @Injectable({
   providedIn: 'root'
@@ -18,10 +18,10 @@ export class DatasetImporterService {
               private logService: LogService) {
   }
 
-  getDatasetImports(projectId: number, params = ''): Observable<ResultsWrapper<DatasetImport> | HttpErrorResponse> {
-    return this.http.get<ResultsWrapper<DatasetImport>>(`${this.apiUrl}/projects/${projectId}/elastic/dataset_imports/?${params}`).pipe(
+  getDatasetImports(projectId: number, params = ''): Observable<ResultsWrapper<DatasetImporter> | HttpErrorResponse> {
+    return this.http.get<ResultsWrapper<DatasetImporter>>(`${this.apiUrl}/projects/${projectId}/elastic/dataset_imports/?${params}`).pipe(
       tap(e => this.logService.logStatus(e, 'getIndices')),
-      catchError(this.logService.handleError<ResultsWrapper<DatasetImport>>('getIndices')));
+      catchError(this.logService.handleError<ResultsWrapper<DatasetImporter>>('getIndices')));
   }
 
   createIndex(body: FormData, projectId: number): Observable<HttpEvent<unknown> | HttpErrorResponse> {

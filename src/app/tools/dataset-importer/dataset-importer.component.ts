@@ -55,22 +55,6 @@ export class DatasetImporterComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
-    // check for updates after 30s every 30s
-    timer(30000, 30000).pipe(takeUntil(this.destroyed$),
-      switchMap(_ => this.importerService.getDatasetImports(
-        this.currentProject.id,
-        `page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`
-      )))
-      .subscribe(resp => {
-        if (resp && !(resp instanceof HttpErrorResponse)) {
-          if (resp.results.length > 0) {
-            resp.results.map(dataset => {
-              const indx = this.tableData.data.findIndex(x => x.id === dataset.id);
-              this.tableData.data[indx].task = dataset.task;
-            });
-          }
-        }
-      });
 
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(
       (resp: Project | null) => {

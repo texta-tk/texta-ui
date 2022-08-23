@@ -1,0 +1,12 @@
+
+::ng-deep .task-menu .mat-option-text{
+  line-height: 1;
+  padding: 5px;
+  mat-hint{
+    font-size: 12px;
+  }
+}
+:host ::ng-deep .mat-form-field-wrapper{
+
+  margin-bottom: -1.34375em;
+}

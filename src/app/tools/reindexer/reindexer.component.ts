@@ -17,7 +17,7 @@ import {ReindexerService} from '../../core/tools/reindexer/reindexer.service';
 import {CreateReindexerDialogComponent} from './create-reindexer-dialog/create-reindexer-dialog.component';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {MatSelectChange} from '@angular/material/select';
-import {ConfirmBulkDeleteDialogComponent} from "../../shared/shared-module/components/dialogs/confirm-bulk-delete-dialog/confirm-bulk-delete-dialog.component";
+import {ConfirmBulkDeleteDialogComponent} from '../../shared/shared-module/components/dialogs/confirm-bulk-delete-dialog/confirm-bulk-delete-dialog.component';
 
 @Component({
   selector: 'app-reindexer',
@@ -61,22 +61,6 @@ export class ReindexerComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
-    // check for updates after 30s every 30s
-    timer(30000, 30000).pipe(takeUntil(this.destroyed$),
-      switchMap(_ => this.reindexerService.getReindexers(
-        this.currentProject.id,
-        `page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`
-      )))
-      .subscribe(resp => {
-        if (resp && !(resp instanceof HttpErrorResponse)) {
-          if (resp.results.length > 0) {
-            resp.results.map(reindexer => {
-              const indx = this.tableData.data.findIndex(x => x.id === reindexer.id);
-              this.tableData.data[indx].task = reindexer.task;
-            });
-          }
-        }
-      });
 
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(resp => {
       if (resp) {

@@ -63,24 +63,7 @@ export class EmbeddingComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit(): void {
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
-    // check for updates after 30s every 30s
-    timer(30000, 30000).pipe(takeUntil(this.destroyed$),
-      switchMap(_ => this.embeddingsService.getEmbeddings(
-        this.currentProject.id,
-        `page=${this.paginator.pageIndex + 1}&page_size=${this.paginator.pageSize}`
-      )))
-      .subscribe((resp: { count: number, results: Embedding[] } | HttpErrorResponse) => {
-        if (resp && !(resp instanceof HttpErrorResponse)) {
-          if (resp.results.length > 0) {
-            resp.results.map(embedding => {
-              const indx = this.tableData.data.findIndex(x => x.id === embedding.id);
-              if (indx >= 0) {
-                this.tableData.data[indx].task = embedding.task;
-              }
-            });
-          }
-        }
-      });
+
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$)).subscribe(resp => {
       if (resp) {
         this.currentProject = resp;

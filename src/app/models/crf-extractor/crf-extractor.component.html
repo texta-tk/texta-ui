@@ -71,30 +71,24 @@
         <td *matCellDef="let element" mat-cell> {{element.recall | number:'0.2-2' }}</td>
       </ng-container>
       <ng-container matColumnDef="task__time_started">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header> Time started</th>
+        <th *matHeaderCellDef mat-header-cell> Time started</th>
         <td *matCellDef="let element" mat-cell><span
-          *ngIf="element.task">{{element.task.time_started | date:'y-M-d H:mm:ss'}}</span>
+          *ngIf="element.tasks[0]">{{element.tasks[0].time_started | date:'y-M-d H:mm:ss'}}</span>
         </td>
       </ng-container>
       <ng-container matColumnDef="task__time_completed">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header> Time completed</th>
+        <th *matHeaderCellDef mat-header-cell> Time completed</th>
         <td *matCellDef="let element" mat-cell>
           <span
-            *ngIf="element.task && element.task.time_completed">{{element.task.time_completed | date:'y-M-d H:mm:ss'}}</span>
-          <span *ngIf="element.task && !element.task.time_completed">-</span>
+            *ngIf="element.tasks[0] && element.tasks[0].time_completed">{{element.tasks[0].time_completed | date:'y-M-d H:mm:ss'}}</span>
+          <span *ngIf="element.tasks[0] && !element.tasks[0].time_completed">-</span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="task__status">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header> Task</th>
+        <th *matHeaderCellDef mat-header-cell > Task</th>
         <td *matCellDef="let element" mat-cell>
-          <mat-progress-bar *ngIf="element.task && element.task.step !== 'training'" [value]="element.task.progress"
-                            mode="determinate">
-          </mat-progress-bar>
-          <mat-progress-bar *ngIf="element.task && element.task.step === 'training' && element.task.status !== 'failed'"
-                            [value]="element.task.progress" mode="indeterminate">
-          </mat-progress-bar>
-          <mat-hint *ngIf="element.task">{{element.task.status}} {{element.task.step}}</mat-hint>
+          <app-task-progress [task]="element.tasks[0]"></app-task-progress>
         </td>
       </ng-container>
 
@@ -102,38 +96,6 @@
       <ng-container matColumnDef="expandedDetail">
         <td *matCellDef="let element" [attr.colspan]="displayedColumns.length" mat-cell>
           <div *ngIf="element == expandedElement" [@detailExpand] class="element-detail">
-            <div class="flex-col m-l-r-5" fxFlex="33">
-              <table class="simple-table">
-                <tr>
-                  <th class="mat-body-strong">Resource id</th>
-                  <td>{{element.id}}</td>
-                </tr>
-                <tr>
-                  <th class="mat-body-strong">Task id</th>
-                  <td>{{element?.task?.id || ''}}</td>
-                </tr>
-                <tr>
-                  <th class="mat-body-strong">Status</th>
-                  <td>{{element?.task?.status || ''}}</td>
-                </tr>
-                <tr>
-                  <th class="mat-body-strong">Progress</th>
-                  <td>{{element?.task?.progress || ''}}</td>
-                </tr>
-                <tr>
-                  <th class="mat-body-strong">Step</th>
-                  <td>{{element?.task?.step || ''}}</td>
-                </tr>
-                <tr>
-                  <th class="mat-body-strong">Errors</th>
-                  <td>{{element?.task?.errors || ''}}</td>
-                </tr>
-                <tr>
-                  <th class="mat-body-strong">Last Update</th>
-                  <td>{{element?.task?.last_update | date:'y-M-d H:mm:ss' || ''}}</td>
-                </tr>
-              </table>
-            </div>
             <div class="flex-col m-l-r-5" fxFlex="33">
               <table class="simple-table">
                 <tr>
@@ -202,6 +164,7 @@
                 </tr>
               </table>
             </div>
+            <app-task-table class="flex-item-right" [textaTasks]="element.tasks"></app-task-table>
           </div>
         </td>
       </ng-container>
@@ -236,7 +199,7 @@
 
 <mat-menu #editMenu="matMenu">
   <ng-template let-element="element" let-i="i" matMenuContent>
-    <ng-container *ngIf="element.task && element.task.status === 'completed'">
+    <ng-container *ngIf="element.tasks[0] && element.tasks[0].status === 'completed'">
       <button (click)="applyToIndexDialog(element)" data-cy="appCRFExtractorMenuApplyToIndices" mat-menu-item>
         Apply to indices
       </button>
