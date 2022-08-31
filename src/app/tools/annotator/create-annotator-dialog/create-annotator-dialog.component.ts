@@ -158,8 +158,8 @@ export class CreateAnnotatorDialogComponent implements OnInit, OnDestroy {
         this.annotatorForm.get('entityFormGroup')?.enable();
       }
     });
-    const binaryValueChanges = this.annotatorForm?.get('binaryFormGroup')?.get('factNameFormControl')?.valueChanges ||  of(null);
-    const entityvalueChanges = this.annotatorForm?.get('entityFormGroup')?.get('factNameFormControl')?.valueChanges ||  of(null);
+    const binaryValueChanges = this.annotatorForm?.get('binaryFormGroup')?.get('factNameFormControl')?.valueChanges || of(null);
+    const entityvalueChanges = this.annotatorForm?.get('entityFormGroup')?.get('factNameFormControl')?.valueChanges || of(null);
     this.filteredProjectFacts = merge(binaryValueChanges, entityvalueChanges, this.updateFacts$)
       .pipe(takeUntil(this.destroyed$),
         startWith(''),
@@ -245,6 +245,11 @@ export class CreateAnnotatorDialogComponent implements OnInit, OnDestroy {
       this.projectFields = ProjectIndex.cleanProjectIndicesFields(indicesForm.value, ['text'], []);
       if (this.annotatorForm?.get('annotationTypeFormControl')?.value !== 'entity') {
         this.getFactsForIndices(indicesForm?.value);
+      } else if (this.annotatorForm?.get('annotationTypeFormControl')?.value === 'entity') {
+        const fieldForm = this.annotatorForm.get('fieldsEntityFormControl');
+        if (fieldForm?.value) {
+          this.getFactsForField(fieldForm?.value, this.annotatorForm.get('indicesFormControl')?.value);
+        }
       }
     }
   }
@@ -266,11 +271,11 @@ export class CreateAnnotatorDialogComponent implements OnInit, OnDestroy {
   getFactsForField(field: string, indices: ProjectIndex[]): void {
     if (field && indices.length > 0) {
       this.projectFacts = [];
-
       const body = {
         key_field: 'doc_path',
         value_field: 'fact',
         filter_by_key: field,
+        indices: indices.map((x: ProjectIndex) => [{name: x.index}]).flat()
       };
       this.projectService.elasticAggregateFacts(this.currentProject.id, body).pipe(takeUntil(this.destroyed$)).subscribe(resp => {
         if (resp && !(resp instanceof HttpErrorResponse)) {
