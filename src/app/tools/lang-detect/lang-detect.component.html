@@ -51,7 +51,7 @@
                 class="action-text mat-body-strong pointer">Show Query</span></td>
       </ng-container>
       <ng-container matColumnDef="task__time_started">
-        <th *matHeaderCellDef mat-header-cell > Time started</th>
+        <th *matHeaderCellDef mat-header-cell > Time created</th>
         <td *matCellDef="let element" mat-cell><span
           *ngIf="element.tasks[0]">{{element.tasks[0].time_started | date:'y-M-d H:mm:ss'}}</span>
         </td>
@@ -68,7 +68,7 @@
       <ng-container matColumnDef="task__status">
         <th *matHeaderCellDef mat-header-cell> Task</th>
         <td *matCellDef="let element" mat-cell>
-          <app-task-progress [task]="element.tasks[0]"></app-task-progress>
+          <app-task-progress *ngIf="element.tasks.length" [task]="element.tasks[element.tasks.length -1]"></app-task-progress>
         </td>
       </ng-container>
 

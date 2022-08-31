@@ -53,7 +53,7 @@
         <td *matCellDef="let element" mat-cell> {{element.description}}</td>
       </ng-container>
       <ng-container matColumnDef="task__time_started">
-        <th *matHeaderCellDef mat-header-cell> Time started</th>
+        <th *matHeaderCellDef mat-header-cell> Time created</th>
         <td *matCellDef="let element" mat-cell><span
           *ngIf="element.tasks[0]">{{element.tasks[0].time_started | date:'y-M-d H:mm:ss'}}</span>
         </td>
@@ -70,7 +70,7 @@
       <ng-container matColumnDef="task__status">
         <th *matHeaderCellDef mat-header-cell> Task</th>
         <td *matCellDef="let element" mat-cell>
-          <app-task-progress [task]="element.tasks[0]"></app-task-progress>
+          <app-task-progress *ngIf="element.tasks.length" [task]="element.tasks[element.tasks.length -1]"></app-task-progress>
         </td>
       </ng-container>
 
@@ -96,6 +96,17 @@
         <td *matCellDef="let element" mat-cell> {{element.recall | number:'0.2-2' }}</td>
       </ng-container>
 
+      <ng-container matColumnDef="actions">
+        <th *matHeaderCellDef class="center-header-cell" mat-header-cell>Actions</th>
+        <td (click)="$event.stopPropagation();" *matCellDef="let element; let i = dataIndex" mat-cell>
+
+          <button [matMenuTriggerData]="{element: element, i:i}" [matMenuTriggerFor]="editMenu" color="primary"
+                  mat-icon-button>
+            <mat-icon aria-label="Actions">more_vert</mat-icon>
+          </button>
+
+        </td>
+      </ng-container>
 
       <ng-container matColumnDef="expandedDetail">
         <td *matCellDef="let element" [attr.colspan]="displayedColumns.length" mat-cell>
@@ -218,17 +229,6 @@
         </td>
       </ng-container>
 
-      <ng-container matColumnDef="actions">
-        <th *matHeaderCellDef class="center-header-cell" mat-header-cell>Actions</th>
-        <td (click)="$event.stopPropagation();" *matCellDef="let element; let i = dataIndex" mat-cell>
-
-          <button [matMenuTriggerData]="{element: element, i:i}" [matMenuTriggerFor]="editMenu" color="primary"
-                  mat-icon-button>
-            <mat-icon aria-label="Actions">more_vert</mat-icon>
-          </button>
-
-        </td>
-      </ng-container>
 
       <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
       <tr (click)="expandedElement = expandedElement === element ? null : element"

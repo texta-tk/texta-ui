@@ -64,7 +64,7 @@
       </ng-container>
 
       <ng-container matColumnDef="task__time_started">
-        <th mat-header-cell *matHeaderCellDef> Time started</th>
+        <th mat-header-cell *matHeaderCellDef> Time created</th>
         <td mat-cell *matCellDef="let element"> {{element?.tasks[0]?.time_started | date:'y-M-d H:mm:ss'}}</td>
       </ng-container>
       <ng-container matColumnDef="task__time_completed">
@@ -92,7 +92,7 @@
       <ng-container matColumnDef="task__status">
         <th mat-header-cell *matHeaderCellDef> Task</th>
         <td mat-cell *matCellDef="let element">
-          <app-task-progress [task]="element.tasks[0]"></app-task-progress>
+          <app-task-progress *ngIf="element.tasks.length" [task]="element.tasks[element.tasks.length -1]"></app-task-progress>
         </td>
       </ng-container>
 
