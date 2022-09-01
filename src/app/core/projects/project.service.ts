@@ -104,6 +104,14 @@ export class ProjectService {
       catchError(this.logService.handleError<string>('exportSearch')));
   }
 
+  downloadExportedSearch(url: string): Observable<Blob | HttpErrorResponse> {
+    return this.http.get<Blob>(
+      `${url}`, {responseType: 'blob' as 'json'}
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'downloadExportedSearch')),
+      catchError(this.logService.handleError('downloadExportedSearch')));
+  }
+
   getProjectById(id: number): Observable<Project | HttpErrorResponse> {
     return this.http.get<Project>(
       `${this.apiUrl}/projects/${id}`,
