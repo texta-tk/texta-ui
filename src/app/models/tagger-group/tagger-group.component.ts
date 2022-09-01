@@ -36,7 +36,8 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: TaggerGroup | null;
   public tableData: MatTableDataSource<TaggerGroup> = new MatTableDataSource();
   selectedRows = new SelectionModel<TaggerGroup>(true, []);
-  public displayedColumns = ['select', 'is_favorited', 'id', 'author__username', 'description', 'fact_name', 'minimum_sample_size',
+  public displayedColumns = ['select', 'is_favorited', 'id', 'author__username', 'description', 'fact_name', 'minimum_sample_size','tasks__time_started',
+    'tasks__time_completed',
     'num_tags', 'f1_score', 'precision', 'recall', 'progress', 'Modify'];
   public isLoadingResults = true;
 

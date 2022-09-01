@@ -72,7 +72,19 @@
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Total Tags</th>
         <td *matCellDef="let element" mat-cell> {{element.num_tags}}</td>
       </ng-container>
-
+      <ng-container matColumnDef="tasks__time_started">
+        <th *matHeaderCellDef mat-header-cell > Time created</th>
+        <td *matCellDef="let element" mat-cell><span
+          *ngIf="element.tasks && element.tasks.length">{{element.tasks[0]?.time_started | date:'y-M-d H:mm:ss'}}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="tasks__time_completed">
+        <th *matHeaderCellDef mat-header-cell > Time completed</th>
+        <td *matCellDef="let element" mat-cell>
+          <span
+            *ngIf="element.tasks && element.tasks.length">{{element.tasks[0]?.time_completed | date:'y-M-d H:mm:ss'}}</span>
+        </td>
+      </ng-container>
       <ng-container matColumnDef="f1_score">
         <th *matHeaderCellDef mat-header-cell> Avg. f1_score</th>
         <td *matCellDef="let element" mat-cell> {{element.tagger_statistics?.avg_f1_score | number:'0.2-2'}}</td>
@@ -243,6 +255,8 @@
                   </tr>
                 </table>
               </div>
+
+              <app-task-table class="flex-item-right" [textaTasks]="element.tasks"></app-task-table>
             </div>
 
 
