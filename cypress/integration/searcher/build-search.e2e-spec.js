@@ -81,7 +81,11 @@ describe('searching and search related activities should be working correctly', 
     cy.get('app-simple-search input').click().clear().type('reisija');
     cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
     cy.wait('@searcherQuery');
-    cy.get(':nth-child(1) > .cdk-column-comment_content > app-highlight span span').should('not.have.attr', 'title', 'searcher highlight');
+    cy.get(':nth-child(1) > .cdk-column-comment_content > app-highlight span span').then(spans=>{
+      if(spans){
+        cy.wrap(spans).should('not.have.attr', 'title', 'searcher highlight')
+      }
+    });
 
     // date
     cy.get('[data-cy=appSearcherSidebarBuildSearchRadio] mat-radio-button:not(:first())').should('be.visible').click();
