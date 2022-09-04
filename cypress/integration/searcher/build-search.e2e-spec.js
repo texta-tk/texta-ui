@@ -134,7 +134,7 @@ describe('searching and search related activities should be working correctly', 
     cy.get('.cdk-column-texta_facts > app-texta-facts-chips > span').should('exist');
 
     // fact values
-    cy.get(':nth-child(1) > .cdk-column-texta_facts > app-texta-facts-chips > span').contains(/foo|bar|FUBAR/g).first().scrollIntoView().click()
+    cy.get(':nth-child(1) > .cdk-column-texta_facts > app-texta-facts-chips > span').contains(/FUBAR|bar|foo/g).first().scrollIntoView().click()
       .then(span => {
         const text = span.text();
         cy.wait('@searcherQuery');
@@ -142,6 +142,7 @@ describe('searching and search related activities should be working correctly', 
         cy.get('mat-option').contains('not').click();
         cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
         cy.wait('@searcherQuery');
+        cy.wait(1000); // texta facts are async rendered
         cy.get('.cdk-column-texta_facts > app-texta-facts-chips > span').contains(text).should('not.exist');
 
         cy.get('[data-cy=appSearcherSideBarBuildSearchFactValueInputGroupOperator]').should('be.visible').click();
