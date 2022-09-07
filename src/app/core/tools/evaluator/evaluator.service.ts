@@ -92,4 +92,12 @@ export class EvaluatorService {
       tap(e => this.logService.logStatus(e, 'deleteEvaluator')),
       catchError(this.logService.handleError<unknown>('deleteEvaluator')));
   }
+
+  addFavoriteEvaluator(projectId: number, evalId: number): Observable<unknown | HttpErrorResponse> {
+    return this.http.post<unknown>(
+      `${this.apiUrl}/projects/${projectId}/evaluators/${evalId}/add_favorite/`, {}
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'addFavoriteEvaluator')),
+      catchError(this.logService.handleError<unknown>('addFavoriteEvaluator')));
+  }
 }

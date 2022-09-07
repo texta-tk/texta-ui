@@ -37,7 +37,6 @@ describe('index-splitter should work', function () {
     cy.get('[data-cy=appIndexSplitterCreateDialogSubmit]').should('be.visible').click();
     cy.wait('@postSplitterTasks').then(created=>{
       expect(created.response.statusCode).to.eq(201);
-      assert.equal(created.response.body.tasks[0].status, 'created');
     });
     cy.intercept('GET', '**/index_splitter/**').as('getSplitterTasks');
     cy.get('.mat-header-row > .cdk-column-author').should('be.visible').then(bb => {

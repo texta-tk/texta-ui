@@ -34,7 +34,7 @@ export class EvaluatorComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElements: boolean[] = [];
   public tableData: MatTableDataSource<Evaluator> = new MatTableDataSource();
   selectedRows = new SelectionModel<Evaluator>(true, []);
-  public displayedColumns = ['select', 'id', 'author__username', 'description', 'eval_type', 'avg_func', 'task__time_started',
+  public displayedColumns = ['select', 'is_favorited', 'id', 'author__username', 'description', 'eval_type', 'avg_func', 'task__time_started',
     'task__time_completed', 'f1_score', 'precision', 'recall', 'task__status', 'Modify'];
   public isLoadingResults = true;
 
@@ -44,6 +44,7 @@ export class EvaluatorComponent implements OnInit, OnDestroy, AfterViewInit {
   destroyed$: Subject<boolean> = new Subject<boolean>();
   currentProject: Project;
   private updateTable = new Subject<boolean>();
+  patchFavoriteRowQueue: Subject<Evaluator> = new Subject();
 
   constructor(private projectStore: ProjectStore,
               private evaluatorService: EvaluatorService,
@@ -54,6 +55,12 @@ export class EvaluatorComponent implements OnInit, OnDestroy, AfterViewInit {
   getIndicesName = (x: Index) => x.name;
 
   ngOnInit(): void {
+
+    this.patchFavoriteRowQueue.pipe(takeUntil(this.destroyed$), debounceTime(50)).subscribe(row => {
+      if (this.currentProject) {
+        this.evaluatorService.addFavoriteEvaluator(this.currentProject.id, row.id).subscribe();
+      }
+    });
 
     this.tableData.sort = this.sort;
     this.tableData.paginator = this.paginator;
@@ -252,5 +259,10 @@ export class EvaluatorComponent implements OnInit, OnDestroy, AfterViewInit {
       width: '860px',
       panelClass: 'custom-flex-dialog'
     });
+  }
+
+  toggleRowFavorite(element: Evaluator): void {
+    element.is_favorited = !element.is_favorited;
+    this.patchFavoriteRowQueue.next(element);
   }
 }

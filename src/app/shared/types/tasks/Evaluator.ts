@@ -15,6 +15,7 @@ export interface Evaluator {
   description: string;
   tasks: TextaTask[];
   fields: string[];
+  is_favorited: boolean;
 }
 
 export interface IndividualResults {

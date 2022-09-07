@@ -81,9 +81,15 @@ describe('searching and search related activities should be working correctly', 
     cy.get('app-simple-search input').click().clear().type('reisija');
     cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
     cy.wait('@searcherQuery');
-    cy.get(':nth-child(1) > .cdk-column-comment_content > app-highlight span span').then(spans=>{
-      if(spans){
-        cy.wrap(spans).should('not.have.attr', 'title', 'searcher highlight')
+    cy.get(':nth-child(1) > .cdk-column-comment_content > app-highlight').then(highlight => {
+      if (highlight.find('span span').length) {
+        return 'app-highlight span span';
+      } else {
+        return '';
+      }
+    }).then(selector => {
+      if (selector) {
+        cy.get(selector).should('not.have.attr', 'title', 'searcher highlight')
       }
     });
 
@@ -169,7 +175,7 @@ describe('searching and search related activities should be working correctly', 
         cy.get('[data-cy=appSearcherBuildSearchSubmit]').click();
         cy.wait('@searcherQuery');
         let foobar = 'foo';
-        if(text === 'foo '){
+        if (text === 'foo ') {
           foobar = 'bar'
         }
         cy.intercept('POST', '**autocomplete_fact_values**', req => {
