@@ -164,7 +164,7 @@
                     [disableOptionCentering]="true"
                     [formControl]="projectIndicesControl" data-cy="appNavbarProjectFieldsSelect"
                     multiple
-                    panelClass="select-panel-reveal-input"
+                    panelClass="select-panel-reveal-input wide-mat-select"
                     placeholder="Indices">
           <app-mat-option-select-all></app-mat-option-select-all>
           <mat-option *ngFor="let item of projectFields" [title]="item.index" [value]="item">

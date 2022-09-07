@@ -48,6 +48,7 @@ export class ProjectFieldSelectComponent implements OnInit, OnDestroy, ControlVa
   autofilled?: boolean | undefined;
 
   @Input() valueOutPutType: 'object' | 'path' = 'path';
+  @Input() forceWideSelect = false;
   // tslint:disable-next-line:no-input-rename
   @Input('aria-describedby') userAriaDescribedBy: string;
   fieldsUnique: Field[] = [];

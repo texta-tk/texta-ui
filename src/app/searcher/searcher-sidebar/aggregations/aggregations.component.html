@@ -9,7 +9,7 @@
     </div>
     <mat-form-field appearance="outline" class="max-width">
       <mat-label>Select Fields</mat-label>
-      <mat-select panelClass="select-panel-reveal-input" [disableOptionCentering]="true"
+      <mat-select panelClass="select-panel-reveal-input wide-mat-select" [disableOptionCentering]="true"
                   data-cy="appSearcherSidebarAggregationsSelectField"
                   [formControl]="aggregation.formControl">
         <mat-select-trigger>{{aggregation?.formControl?.value?.path}}</mat-select-trigger>

@@ -11,6 +11,7 @@
         <app-project-field-select
           (openedChange)="onFieldSelectionChange($event)" data-cy="appSearcherTableColumnSelect"
           [formControl]="columnFormControl" [multiple]="true"
+          [forceWideSelect]="true"
           [projectFields]="projectFields"></app-project-field-select>
       </mat-form-field>
       <button (click)="drawerToggle.emit(true)" mat-stroked-button>Toggle drawer</button>
@@ -38,7 +39,9 @@
         <ng-container *ngIf="column.path === 'texta_facts'">
           <th *matHeaderCellDef mat-header-cell mat-sort-header><span [title]="column.path"
                                                                       class="column-header-text">{{column.path}}
-            </span><button matTooltip="Filter fact names" mat-icon-button (click)="filterTextaFactsCol();$event.stopPropagation();"><mat-icon>visibility</mat-icon></button>
+            </span><button data-cy="appSearcherTableFilterFactNamesBtn"
+                           matTooltip="Filter fact names" mat-icon-button
+                           (click)="filterTextaFactsCol();$event.stopPropagation();"><mat-icon>visibility</mat-icon></button>
           </th>
         </ng-container>
         <!--ROWS-->

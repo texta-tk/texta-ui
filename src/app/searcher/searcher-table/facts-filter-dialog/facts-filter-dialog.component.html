@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>Edit fact name visibility</h1>
 
 <mat-dialog-content>
-  <mat-form-field class="max-width">
+  <mat-form-field class="max-width" data-cy="appSearcherFilterFactsDialogFactNameSelect">
     <mat-label>Fact name</mat-label>
     <mat-select [disableOptionCentering]="true" [(ngModel)]="displayedFacts"
                 multiple panelClass="select-panel-reveal-input">
@@ -19,7 +19,7 @@
   </div>
 
   <div class="flex-item-right">
-    <button mat-button data-cy="appSearcherExportResultsDialogSubmit" [mat-dialog-close]="displayedFacts">Apply
+    <button mat-button data-cy="appSearcherFilterFactsDialogSubmit" [mat-dialog-close]="displayedFacts">Apply
     </button>
   </div>
 </mat-dialog-actions>

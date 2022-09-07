@@ -133,6 +133,16 @@ describe('searching and search related activities should be working correctly', 
     cy.wait(5000);
     cy.get('.cdk-column-texta_facts > app-texta-facts-chips > span').should('exist');
 
+    // filter to only show TEEMA facts
+    cy.get('[data-cy=appSearcherTableFilterFactNamesBtn]').click();
+    cy.wait(500);
+    cy.get('[data-cy=appSearcherFilterFactsDialogFactNameSelect]').click();
+    cy.get('[data-cy=matOptionSelectAll]').should('be.visible').click();
+    cy.get('.mat-option-text').contains('TEEMA').scrollIntoView().contains('TEEMA').click();
+    cy.closeCurrentCdkOverlay();
+    cy.get('[data-cy=appSearcherFilterFactsDialogSubmit]').click();
+    cy.wait(1000);
+
     // fact values
     cy.get(':nth-child(1) > .cdk-column-texta_facts > app-texta-facts-chips > span').contains(/FUBAR|bar|foo/g).first().scrollIntoView().click()
       .then(span => {

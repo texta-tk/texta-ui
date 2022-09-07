@@ -19,6 +19,9 @@ span:hover{
 h3{
   cursor: pointer;
 }
+h3:first-of-type{
+  margin-top: 0;
+}
 h3:hover{
   text-decoration: underline;
 }
