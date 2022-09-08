@@ -31,11 +31,11 @@
       </mat-hint>
     </mat-form-field>
 
-    <button style="margin-left: auto" form="paramForm" type="submit" color="primary" mat-raised-button>
+    <button style="margin-left: auto" form="paramForm" type="submit" color="primary" mat-raised-button [disabled]="isLoadingResults">
       Get results
     </button>
   </form>
-  <div style="height: 4px; background: transparent">
+  <div style="min-height: 4px; background: transparent">
     <mat-progress-bar *ngIf="isLoadingResults" mode="indeterminate"></mat-progress-bar>
   </div>
   <div class="flex-row" *ngIf="results">

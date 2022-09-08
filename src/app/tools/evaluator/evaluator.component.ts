@@ -255,7 +255,7 @@ export class EvaluatorComponent implements OnInit, OnDestroy, AfterViewInit {
   openMisclassifiedExamples(element: Evaluator): void {
     this.dialog.open(MisclassifiedExamplesDialogComponent, {
       data: {currentProjectId: this.currentProject.id, evaluatorId: element.id},
-      maxHeight: '90vh',
+      height: '80vh',
       width: '860px',
       panelClass: 'custom-flex-dialog'
     });

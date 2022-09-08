@@ -48,6 +48,9 @@ export class MisclassifiedExamplesDialogComponent {
     private dialog: MatDialog,
     private evaluatorService: EvaluatorService,
     @Inject(MAT_DIALOG_DATA) public data: { currentProjectId: number, evaluatorId: number; }) {
+    if (this.data) {
+      this.onSubmit(this.paramForm.value);
+    }
   }
 
   onSubmit(value: OnSubmitParams): void {
@@ -60,7 +63,6 @@ export class MisclassifiedExamplesDialogComponent {
     if (this.data.evaluatorId && this.data.currentProjectId) {
       this.evaluatorService.postEvaluatorMisclassifiedExamples(this.data.currentProjectId, this.data.evaluatorId, body).subscribe(x => {
         if (x && !(x instanceof HttpErrorResponse)) {
-          console.log(x);
           this.results = x;
         } else {
           this.logService.snackBarError(x);

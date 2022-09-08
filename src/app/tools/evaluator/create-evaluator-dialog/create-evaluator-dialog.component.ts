@@ -95,7 +95,9 @@ export class CreateEvaluatorDialogComponent implements OnInit, OnDestroy {
           return this.projectService.elasticAggregateFacts(this.currentProject.id, {
             key_field: 'fact',
             value_field: 'doc_path',
-            filter_by_key: val
+            filter_by_key: val,
+            indices: this.evaluatorForm.get('indicesFormControl')?.value?.map((x: ProjectIndex) => [{name: x.index}]).flat()
+
           });
         }
         return of(null);
@@ -106,11 +108,12 @@ export class CreateEvaluatorDialogComponent implements OnInit, OnDestroy {
         }
       });
       this.evaluatorForm.get('predictedFactNameFormControl')?.valueChanges.pipe(takeUntil(this.destroyed$), debounceTime(100), switchMap(val => {
-        if (this.currentProject && val) {
+        if (this.currentProject && val && this.projectIndices) {
           return this.projectService.elasticAggregateFacts(this.currentProject.id, {
             key_field: 'fact',
             value_field: 'doc_path',
-            filter_by_key: val
+            filter_by_key: val,
+            indices: this.evaluatorForm.get('indicesFormControl')?.value?.map((x: ProjectIndex) => [{name: x.index}]).flat()
           });
         }
         return of(null);
@@ -160,43 +163,45 @@ export class CreateEvaluatorDialogComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.evaluatorForm.get('trueFactValueFormControl')?.valueChanges.pipe(
-      takeUntil(this.destroyed$),
-      debounceTime(100),
-      switchMap(value => {
-        if (value || value === '' && this.currentProject.id) {
-          this.trueFactValueOptions = ['Loading...'];
-          this.isLoadingOptions = true;
-          return this.projectService.projectFactValueAutoComplete(this.currentProject.id,
-            this.evaluatorForm.get('trueFactNameFormControl')?.value, 10, value,
-            this.evaluatorForm.get('indicesFormControl')?.value.map((x: ProjectIndex) => x.index));
+    if (this.data === 'binary') {
+      this.evaluatorForm.get('trueFactValueFormControl')?.valueChanges.pipe(
+        takeUntil(this.destroyed$),
+        debounceTime(100),
+        switchMap(value => {
+          if (value || value === '' && this.currentProject.id) {
+            this.trueFactValueOptions = ['Loading...'];
+            this.isLoadingOptions = true;
+            return this.projectService.projectFactValueAutoComplete(this.currentProject.id,
+              this.evaluatorForm.get('trueFactNameFormControl')?.value, 10, value,
+              this.evaluatorForm.get('indicesFormControl')?.value.map((x: ProjectIndex) => x.index));
+          }
+          return of(null);
+        })).subscribe(val => {
+        if (val && !(val instanceof HttpErrorResponse)) {
+          this.isLoadingOptions = false;
+          this.trueFactValueOptions = val;
         }
-        return of(null);
-      })).subscribe(val => {
-      if (val && !(val instanceof HttpErrorResponse)) {
-        this.isLoadingOptions = false;
-        this.trueFactValueOptions = val;
-      }
-    });
+      });
 
-    this.evaluatorForm.get('predictedFactValueFormControl')?.valueChanges.pipe(
-      takeUntil(this.destroyed$),
-      debounceTime(100),
-      switchMap(value => {
-        if (value || value === '' && this.currentProject.id) {
-          this.predictedFactValueOptions = ['Loading...'];
-          this.isLoadingOptions = true;
-          return this.projectService.projectFactValueAutoComplete(this.currentProject.id,
-            this.evaluatorForm.get('predictedFactNameFormControl')?.value, 10, value,
-            this.evaluatorForm.get('indicesFormControl')?.value.map((x: ProjectIndex) => x.index));
+      this.evaluatorForm.get('predictedFactValueFormControl')?.valueChanges.pipe(
+        takeUntil(this.destroyed$),
+        debounceTime(100),
+        switchMap(value => {
+          if (value || value === '' && this.currentProject.id) {
+            this.predictedFactValueOptions = ['Loading...'];
+            this.isLoadingOptions = true;
+            return this.projectService.projectFactValueAutoComplete(this.currentProject.id,
+              this.evaluatorForm.get('predictedFactNameFormControl')?.value, 10, value,
+              this.evaluatorForm.get('indicesFormControl')?.value.map((x: ProjectIndex) => x.index));
+          }
+          return of(null);
+        })).subscribe(val => {
+        if (val && !(val instanceof HttpErrorResponse)) {
+          this.isLoadingOptions = false;
+          this.predictedFactValueOptions = val;
         }
-        return of(null);
-      })).subscribe(val => {
-      if (val && !(val instanceof HttpErrorResponse)) {
-        this.isLoadingOptions = false;
-        this.predictedFactValueOptions = val;
-      }
-    });
+      });
+    }
   }
 
   onSubmit(formData: OnSubmitParams): void {
@@ -235,6 +240,15 @@ export class CreateEvaluatorDialogComponent implements OnInit, OnDestroy {
   getFactsForIndices(val: ProjectIndex[]): void {
     this.trueFactValueOptions = [];
     this.predictedFactValueOptions = [];
+    this.trueFactNameDocPaths = [];
+    this.predictedFactNameDocPaths = [];
+    this.entityFieldDocPathOptions = [];
+    this.evaluatorForm.get('predictedFactNameFormControl')?.setValue('', { emitEvent: false });
+    this.evaluatorForm.get('trueFactNameFormControl')?.setValue('', { emitEvent: false });
+    if (this.data === 'binary') {
+      this.evaluatorForm.get('trueFactValueFormControl')?.setValue('', { emitEvent: false });
+      this.evaluatorForm.get('predictedFactValueFormControl')?.setValue('', { emitEvent: false });
+    }
     if (val.length > 0) {
       this.projectFacts = ['Loading...'];
       this.projectService.getProjectFacts(this.currentProject.id, val.map((x: ProjectIndex) => [{name: x.index}]).flat(), false, false).subscribe(resp => {
@@ -264,7 +278,7 @@ export class CreateEvaluatorDialogComponent implements OnInit, OnDestroy {
   }
 
   factNameSelected($event: MatSelectChange, trueFactVal: AbstractControl | null): void {
-    if (trueFactVal && $event) {
+    if (this.data === 'binary' && trueFactVal && $event) {
       trueFactVal.enable();
       trueFactVal.setValue('');
     }
@@ -283,6 +297,5 @@ export class CreateEvaluatorDialogComponent implements OnInit, OnDestroy {
     if (this.entityFieldDocPathOptions.length === 1) {
       fieldFormControl?.setValue(this.entityFieldDocPathOptions[0]);
     }
-    console.log(this.evaluatorForm);
   }
 }
