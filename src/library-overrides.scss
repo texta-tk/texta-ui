@@ -79,3 +79,9 @@ mat-chip-list.chip-list-space-evenly {
 .wide-mat-select.mat-select-panel{
   max-width: 500px;
 }
+mat-progress-bar.mat-progress-bar-warn  .mat-progress-bar-buffer{
+  background: #ffd740;
+}
+mat-progress-bar.mat-progress-bar-warn .mat-progress-bar-fill::after {
+  background-color: #ffd740;
+}

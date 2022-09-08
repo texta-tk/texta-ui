@@ -1,5 +1,6 @@
-<ng-container *ngIf="task">
+<div *ngIf="task" [matTooltip]="errorsLength ? 'Task completed with errors' : ''">
   <mat-progress-bar *ngIf="task.status === 'completed'" [value]="100"
+                    [ngClass]="{'mat-progress-bar-warn' : errorsLength}"
                     mode="determinate">
   </mat-progress-bar>
   <mat-progress-bar *ngIf="task.status === 'failed'" [value]="100"
@@ -12,4 +13,4 @@
                     mode="determinate" [value]="task.progress">
   </mat-progress-bar>
   <span>{{task.status}}</span>
-</ng-container>
+</div>

@@ -8,9 +8,20 @@ import {TextaTask} from '../../../types/tasks/TaskStatus';
 })
 export class TaskProgressComponent implements OnInit {
   @Input() task: TextaTask;
-  constructor() { }
+  errorsLength = 0;
+
+  constructor() {
+  }
 
   ngOnInit(): void {
+    if (this.task && this.task.errors) {
+      try {
+        const errors = JSON.parse(this.task.errors) as string[];
+        this.errorsLength = errors.length;
+      } catch (e) {
+        this.errorsLength = 0;
+      }
+    }
   }
 
 }
