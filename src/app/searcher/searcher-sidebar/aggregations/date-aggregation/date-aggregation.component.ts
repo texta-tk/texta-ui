@@ -91,7 +91,7 @@ export class DateAggregationComponent implements OnInit, OnDestroy {
             agg_histo: {
               date_histogram: {
                 field: this.fieldsFormControl.value.path,
-                calendar_interval: this.dateInterval,
+                interval: this.dateInterval,
                 min_doc_count: 0,
                 extended_bounds: {
                   ...startDate ? {min: startDate.startOf('day')} : {},
