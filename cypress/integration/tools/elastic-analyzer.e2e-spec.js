@@ -84,7 +84,7 @@ describe('Elastic Analyzer should work', function () {
       cy.closeCurrentCdkOverlay();
       cy.matFormFieldShouldHaveError(langs, 'required');
       cy.wrap(langs).click();
-      cy.get('.mat-option-text').contains(new RegExp(' estonian ', '')).click();
+      cy.get('.mat-option-text').contains(new RegExp(' Estonian ', '')).click();
       cy.wrap(langs).find('mat-error').should('have.length', 0)
     }));
     cy.get('[data-cy=appElasticStemmerApplyDialogSubmit]').click()
