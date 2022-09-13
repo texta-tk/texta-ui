@@ -109,7 +109,6 @@
         <td *matCellDef="let element; let i = dataIndex" [attr.colspan]="displayedColumns.length" mat-cell>
           <div *ngIf="expandedElements[i]" [@detailExpand] class="element-detail">
             <div class="flex-row element-detail-plot-fields">
-              <div *ngIf="element.plot"><img [src]="element.plot" alt="evaluator plot" class="element-plot"></div>
               <div class="flex-col m-l-r-5 m-top-5">
                 <table class="simple-table">
                   <tr>
@@ -261,12 +260,16 @@
               data-cy="appEvaluatorMenuMisclassifiedExamples" mat-menu-item>
         Misclassified examples
       </button>
+      <span  [matTooltip]="element.classes.length === 0 ? 'No classes present in the task, re-evaluating might fix this' : ''">
+      <button (click)="openConfusionMatrix(element)" data-cy="appEvaluatorMenuConfusionMatrix" mat-menu-item [disabled]="element?.classes?.length === 0">
+        Confusion matrix
+      </button></span>
     </ng-container>
     <button (click)="onEdit(element)" data-cy="appEvaluatorMenuEdit" mat-menu-item>
       Edit
     </button>
     <button (click)="retrainEvaluator(element)" mat-menu-item>
-      Reevaluate
+      Re-evaluate
     </button>
     <mat-divider></mat-divider>
     <button (click)="onDelete(element, i)" data-cy="appEvaluatorMenuDelete" mat-menu-item>

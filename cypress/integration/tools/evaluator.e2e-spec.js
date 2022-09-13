@@ -80,6 +80,12 @@ describe('Evaluator should work', function () {
     cy.get('[data-cy=appEvaluatorMenuIndividualResults]').click();
     cy.wait('@postEvaluator').its('response.statusCode').should('eq', 200);
     cy.closeCurrentCdkOverlay();
+    // confusion matrix
+    cy.get('.cdk-column-Modify:nth(1)').should('be.visible').click();
+    cy.get('[data-cy=appEvaluatorMenuConfusionMatrix]').should('be.visible').click();
+    cy.get('.nsewdrag').should('be.visible');
+    cy.closeCurrentCdkOverlay();
+
     //edit
     cy.get('.cdk-column-Modify:nth(1)').click();
     cy.get('[data-cy=appEvaluatorMenuEdit]').click();

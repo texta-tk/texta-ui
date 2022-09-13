@@ -21,6 +21,7 @@ import {IndividualResultsDialogComponent} from './individual-results-dialog/indi
 import {FilteredAverageDialogComponent} from './filtered-average-dialog/filtered-average-dialog.component';
 import {EditEvaluatorDialogComponent} from './edit-evaluator-dialog/edit-evaluator-dialog.component';
 import {MisclassifiedExamplesDialogComponent} from './misclassified-examples-dialog/misclassified-examples-dialog.component';
+import {ConfusionMatrixDialogComponent} from '../../shared/plotly-module/confusion-matrix-dialog/confusion-matrix-dialog.component';
 
 @Component({
   selector: 'app-evaluator',
@@ -230,6 +231,7 @@ export class EvaluatorComponent implements OnInit, OnDestroy, AfterViewInit {
           .subscribe(resp => {
             if (resp && !(resp instanceof HttpErrorResponse)) {
               this.logService.snackBarMessage('Successfully started reevaluating', 4000);
+              this.updateTable.next()
             } else if (resp instanceof HttpErrorResponse) {
               this.logService.snackBarError(resp, 5000);
             }
@@ -264,5 +266,18 @@ export class EvaluatorComponent implements OnInit, OnDestroy, AfterViewInit {
   toggleRowFavorite(element: Evaluator): void {
     element.is_favorited = !element.is_favorited;
     this.patchFavoriteRowQueue.next(element);
+  }
+
+  openConfusionMatrix(element: Evaluator): void {
+    const parsed = JSON.parse(element.confusion_matrix);
+    if (parsed && parsed.length > 0) {
+      this.dialog.open(ConfusionMatrixDialogComponent, {
+        height: parsed[0].length > 2 ? '90vh' : '800px',
+        width: parsed[0].length > 2 ? '90vw' : '800px',
+        data: element,
+      });
+    } else {
+      this.logService.snackBarMessage('Confusion matrix is empty!', 2000);
+    }
   }
 }
