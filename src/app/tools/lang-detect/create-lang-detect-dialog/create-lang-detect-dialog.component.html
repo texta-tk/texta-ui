@@ -1,8 +1,11 @@
-<h1 mat-dialog-title>New Language Detector task</h1>
+<div class="flex-row">
+  <h1 mat-dialog-title>New Language Detector Task</h1>
+  <app-docs-button style="margin-left: auto" documentationArea="languageDetectorCreate"></app-docs-button>
+</div>
 <mat-dialog-content>
   <form (ngSubmit)="onSubmit(langDetectForm.value)" [formGroup]="langDetectForm" class="flex-col" id="langDetectForm">
     <mat-form-field data-cy="appLangDetectCreateDialogDesc">
-      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
+      <input [errorStateMatcher]="matcher" autocomplete="off" cdkFocusInitial formControlName="descriptionFormControl" matInput
              placeholder="Description" required>
 
       <mat-error *ngIf="langDetectForm.get('descriptionFormControl')?.hasError('required')">

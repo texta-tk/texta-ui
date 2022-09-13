@@ -1,8 +1,11 @@
-<h1 mat-dialog-title>New Anonymizer</h1>
+<div class="flex-row">
+  <h1 mat-dialog-title>New Anonymizer</h1>
+  <app-docs-button style="margin-left: auto" documentationArea="anonymizerCreate"></app-docs-button>
+</div>
 <div mat-dialog-content>
   <form (ngSubmit)="onSubmit(anonymizerForm.value)" [formGroup]="anonymizerForm" fxLayout="column" >
     <mat-form-field data-cy="appAnonymizerCreateDialogDesc">
-      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
+      <input [errorStateMatcher]="matcher" autocomplete="off" cdkFocusInitial formControlName="descriptionFormControl" matInput
              placeholder="Description" required>
 
       <mat-error *ngIf="anonymizerForm.get('descriptionFormControl')?.hasError('required')">

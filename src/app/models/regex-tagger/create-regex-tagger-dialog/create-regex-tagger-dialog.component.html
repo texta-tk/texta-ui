@@ -1,8 +1,11 @@
-<h1 mat-dialog-title>New Regex Tagger</h1>
+<div class="flex-row">
+  <h1 mat-dialog-title>New Regex Tagger</h1>
+  <app-docs-button style="margin-left: auto" documentationArea="regexTaggerCreate"></app-docs-button>
+</div>
 <mat-dialog-content>
   <form (ngSubmit)="onSubmit(regexTaggerForm.value)" [formGroup]="regexTaggerForm" class="flex-col" id="regexForm">
     <mat-form-field data-cy="appRegexTaggerCreateDialogDesc">
-      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
+      <input [errorStateMatcher]="matcher" autocomplete="off" cdkFocusInitial formControlName="descriptionFormControl" matInput
              placeholder="Description" required>
 
       <mat-error *ngIf="regexTaggerForm.get('descriptionFormControl')?.hasError('required')">

@@ -1,8 +1,11 @@
-<h1 mat-dialog-title>New {{this.data | titlecase}} Evaluator</h1>
+<div class="flex-row">
+  <h1 mat-dialog-title>New {{this.data | titlecase}} Evaluator</h1>
+  <app-docs-button style="margin-left: auto" documentationArea="evaluatorCreate"></app-docs-button>
+</div>
 <mat-dialog-content>
   <form (ngSubmit)="onSubmit(evaluatorForm.value)" [formGroup]="evaluatorForm" id="createForm" class="flex-col">
     <mat-form-field data-cy="appEvaluatorCreateDialogDesc">
-      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
+      <input [errorStateMatcher]="matcher" autocomplete="off" cdkFocusInitial formControlName="descriptionFormControl" matInput
              placeholder="Description" required>
 
       <mat-error *ngIf="evaluatorForm.get('descriptionFormControl')?.hasError('required')">

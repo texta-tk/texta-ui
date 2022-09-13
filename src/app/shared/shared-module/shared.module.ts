@@ -81,6 +81,7 @@ import {DateAdapter, MAT_DATE_FORMATS} from '@angular/material/core';
 import { TaskMenuComponent } from './components/task-table/task-menu/task-menu.component';
 import { TaskTableComponent } from './components/task-table/task-table.component';
 import { TaskProgressComponent } from './components/task-progress/task-progress.component';
+import { DocsButtonComponent } from './components/docs-button/docs-button.component';
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
     RegistrationDialogComponent,
@@ -118,6 +119,7 @@ import { TaskProgressComponent } from './components/task-progress/task-progress.
     TaskMenuComponent,
     TaskTableComponent,
     TaskProgressComponent,
+    DocsButtonComponent,
   ],
   imports: [
     RouterModule,
@@ -227,6 +229,7 @@ import { TaskProgressComponent } from './components/task-progress/task-progress.
     TaskMenuComponent,
     TaskTableComponent,
     TaskProgressComponent,
+    DocsButtonComponent,
   ],
   providers: [FocusMonitor,
     {provide: MAT_LUXON_DATE_ADAPTER_OPTIONS, useValue: {useUtc: true}},

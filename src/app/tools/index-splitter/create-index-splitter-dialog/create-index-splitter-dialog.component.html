@@ -1,8 +1,11 @@
-<h1 mat-dialog-title>New Index Splitter</h1>
+<div class="flex-row">
+  <h1 mat-dialog-title>New Index Splitter</h1>
+  <app-docs-button style="margin-left: auto" documentationArea="indexSplitterCreate"></app-docs-button>
+</div>
 <mat-dialog-content>
   <form (ngSubmit)="onSubmit(indexSplitterForm.value)" [formGroup]="indexSplitterForm" class="flex-col" id="createForm">
     <mat-form-field data-cy="appIndexSplitterCreateDialogDesc">
-      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
+      <input [errorStateMatcher]="matcher" autocomplete="off" cdkFocusInitial formControlName="descriptionFormControl" matInput
              placeholder="Description" required>
 
       <mat-error *ngIf="indexSplitterForm.get('descriptionFormControl')?.hasError('required')">

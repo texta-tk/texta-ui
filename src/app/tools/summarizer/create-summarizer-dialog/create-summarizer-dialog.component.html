@@ -1,8 +1,12 @@
-<h1 mat-dialog-title>New Summarizer task</h1>
+<div class="flex-row">
+  <h1 mat-dialog-title>New Summarizer Task</h1>
+  <app-docs-button style="margin-left: auto" documentationArea="summarizerCreate"></app-docs-button>
+</div>
 <mat-dialog-content>
   <form (ngSubmit)="onSubmit(summarizerForm.value)" [formGroup]="summarizerForm" class="flex-col" id="summarizerForm">
     <mat-form-field data-cy="appSummarizerCreateDialogDesc">
-      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
+      <input [errorStateMatcher]="matcher" autocomplete="off" cdkFocusInitial formControlName="descriptionFormControl"
+             matInput
              placeholder="Description" required>
 
       <mat-error *ngIf="summarizerForm.get('descriptionFormControl')?.hasError('required')">

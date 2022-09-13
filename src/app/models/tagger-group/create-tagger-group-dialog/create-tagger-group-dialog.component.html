@@ -1,8 +1,11 @@
-<h1 mat-dialog-title>New Tagger Group</h1>
+<div class="flex-row">
+  <h1 mat-dialog-title>New Tagger Group</h1>
+  <app-docs-button style="margin-left: auto" documentationArea="taggerGroupCreate"></app-docs-button>
+</div>
 <mat-dialog-content>
   <form (ngSubmit)="onSubmit()" [formGroup]="taggerGroupForm" class="flex-col" id="taggerForm">
     <mat-form-field data-cy="appTaggerGroupCreateDialogDesc">
-      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
+      <input [errorStateMatcher]="matcher" autocomplete="off" cdkFocusInitial formControlName="descriptionFormControl" matInput
              placeholder="Description" required>
 
       <mat-error *ngIf="taggerGroupForm.get('descriptionFormControl')?.hasError('required')">
