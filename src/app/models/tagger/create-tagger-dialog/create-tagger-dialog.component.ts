@@ -174,7 +174,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
         }
       }
       if (resp?.snowBallLanguages && !(resp.snowBallLanguages instanceof HttpErrorResponse)) {
-        this.snowballLanguages = resp.snowBallLanguages;
+        this.snowballLanguages = resp.snowBallLanguages.sort();
         if (this.data?.cloneTagger?.snowball_language) {
           this.taggerForm.get('snowballFormControl')?.setValue(this.data?.cloneTagger?.snowball_language);
         }

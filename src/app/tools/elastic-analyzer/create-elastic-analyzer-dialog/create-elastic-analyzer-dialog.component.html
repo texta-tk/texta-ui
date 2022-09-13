@@ -77,9 +77,10 @@
       <mat-select [disableOptionCentering]="true" formControlName="languageFormControl"
                   panelClass="select-panel-reveal-input"
                   [required]="!!elasticAnalyzerForm.get('languageFormControl')?.hasValidator(requiredValidator)">
+        <mat-option>None</mat-option>
         <ng-container *ngIf="stemmerLangs">
           <mat-option *ngFor="let item of stemmerLangs" [value]="item.value">
-            {{item.display_name ? item.display_name : 'None'}}
+            {{(item.display_name ? item.display_name : 'None') | titlecase}}
           </mat-option>
         </ng-container>
       </mat-select>

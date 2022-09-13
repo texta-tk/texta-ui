@@ -101,8 +101,9 @@
       <mat-label>Snowball Language</mat-label>
       <mat-select [disableOptionCentering]="true" formControlName="snowballFormControl"
                   panelClass="select-panel-reveal-input">
+        <mat-option>None</mat-option>
         <mat-option *ngFor="let item of snowballLanguages" [value]="item">
-          {{item ? item : 'None'}}
+          {{(item ? item : 'None') | titlecase}}
         </mat-option>
       </mat-select>
       <mat-hint>{{taggerOptions?.actions?.POST?.snowball_language?.help_text || ''}}</mat-hint>
