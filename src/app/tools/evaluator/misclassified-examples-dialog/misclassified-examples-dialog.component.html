@@ -31,7 +31,8 @@
       </mat-hint>
     </mat-form-field>
 
-    <button style="margin-left: auto" form="paramForm" type="submit" color="primary" mat-raised-button [disabled]="isLoadingResults">
+    <button style="margin-left: auto" form="paramForm" type="submit" color="primary" mat-raised-button
+            [disabled]="isLoadingResults">
       Get results
     </button>
   </form>
@@ -62,6 +63,10 @@
     </mat-button-toggle-group>
   </div>
   <div class="flex-col results-wrapper" *ngIf="results">
+    <button (click)="openLexiconDialog(results[featureType].values)"
+            color="primary" style="display: flex;align-self: start; margin-bottom: 5px; margin-top: 5px"
+            mat-raised-button>Add to lexicon
+    </button>
     <mat-list dense *ngIf="viewType === 'list'">
       <mat-list-item *ngFor="let  val of results[featureType].values">
         <div *ngIf="val.value | isObject">
@@ -101,3 +106,4 @@
       </table>
     </div>
   </div>
+</div>
