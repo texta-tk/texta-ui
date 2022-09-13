@@ -20,8 +20,7 @@
 
 <div [appScrollTop]="tableData" class="tasks-table overflow-auto">
   <table [dataSource]="tableData" mat-table
-         matSort matSortDirection="asc"
-         multiTemplateDataRows>
+         matSort matSortDirection="asc">
     <ng-container matColumnDef="select">
       <th *matHeaderCellDef mat-header-cell>
         <mat-checkbox (change)="$event ? masterToggle() : null"
@@ -40,28 +39,15 @@
       <td *matCellDef="let element" mat-cell> {{element.category}}</td>
     </ng-container>
 
-
-    <ng-container matColumnDef="expandedDetail">
-      <td *matCellDef="let element" [attr.colspan]="displayedColumns.length" mat-cell>
-        <div *ngIf="element == expandedElement" [@detailExpand] class="element-detail">
-          <div class="flex-col m-l-r-5" fxFlex="50">
-            <table class="simple-table">
-
-            </table>
-          </div>
-        </div>
-      </td>
+    <ng-container matColumnDef="values">
+      <th *matHeaderCellDef mat-header-cell> Values</th>
+      <td *matCellDef="let element" mat-cell [title]="element.values | join:'\n'"> {{element.values | join: ', '}}</td>
     </ng-container>
 
-
     <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
-    <tr (click)="expandedElement = expandedElement === element ? null : element"
-        *matRowDef="let element; columns: displayedColumns;"
-        [class.expanded-row]="expandedElement === element"
+    <tr *matRowDef="let element; columns: displayedColumns;"
         class="element-row"
         mat-row></tr>
-    <tr *matRowDef="let row; columns: ['expandedDetail']" class="detail-row" mat-row></tr>
-
   </table>
 
 </div>
