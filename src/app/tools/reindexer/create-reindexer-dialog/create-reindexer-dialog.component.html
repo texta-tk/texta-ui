@@ -1,8 +1,11 @@
-<h1 mat-dialog-title>New Reindexer</h1>
+<div class="flex-row">
+  <h1 mat-dialog-title>New Reindexer</h1>
+  <app-docs-button style="margin-left: auto" documentationArea="reindexerCreate"></app-docs-button>
+</div>
 <mat-dialog-content>
   <form class="flex-col" [formGroup]="reindexerForm" (ngSubmit)="onSubmit(reindexerForm.value)" id="reindexerForm">
     <mat-form-field data-cy="appReindexerCreateDialogDesc">
-      <input matInput placeholder="Description" autocomplete="off" formControlName="descriptionFormControl"
+      <input matInput placeholder="Description" autocomplete="off" cdkFocusInitial formControlName="descriptionFormControl"
              [errorStateMatcher]="matcher" required>
 
       <mat-error *ngIf="reindexerForm.get('descriptionFormControl')?.hasError('required')">

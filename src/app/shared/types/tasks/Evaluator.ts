@@ -16,6 +16,8 @@ export interface Evaluator {
   tasks: TextaTask[];
   fields: string[];
   is_favorited: boolean;
+  confusion_matrix: string;
+  classes: string[];
 }
 
 export interface IndividualResults {

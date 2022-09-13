@@ -125,7 +125,7 @@ export class CreateElasticAnalyzerDialogComponent implements OnInit, OnDestroy {
     })).subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
         this.elasticAnalyzerOptions = resp;
-        this.stemmerLangs = resp.actions.POST.stemmer_lang.choices;
+        this.stemmerLangs = resp.actions.POST.stemmer_lang.choices.sort((a, b) => a.value.localeCompare(b.value));
         this.analyzers = resp.actions.POST.analyzers.choices;
         this.tokenizers = resp.actions.POST.tokenizer.choices;
       } else if (resp instanceof HttpErrorResponse) {

@@ -1,9 +1,12 @@
-<h1 mat-dialog-title>New Search Query Tagger Task</h1>
+<div class="flex-row">
+  <h1 mat-dialog-title>New Search Query Tagger Task</h1>
+  <app-docs-button style="margin-left: auto" documentationArea="searchQueryTaggerCreate"></app-docs-button>
+</div>
 <mat-dialog-content>
   <form (ngSubmit)="onSubmit(searchTaggerForm.value)" [formGroup]="searchTaggerForm" class="flex-col"
         id="searchTaggerForm">
     <mat-form-field data-cy="appSearchTaggerCreateDialogDesc">
-      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
+      <input [errorStateMatcher]="matcher" autocomplete="off" cdkFocusInitial formControlName="descriptionFormControl" matInput
              placeholder="Description" required>
 
       <mat-error *ngIf="searchTaggerForm.get('descriptionFormControl')?.hasError('required')">

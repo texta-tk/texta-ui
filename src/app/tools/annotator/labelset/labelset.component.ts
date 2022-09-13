@@ -30,7 +30,7 @@ export class LabelsetComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: LabelSet | null;
   public tableData: MatTableDataSource<LabelSet> = new MatTableDataSource();
   selectedRows = new SelectionModel<LabelSet>(true, []);
-  public displayedColumns = ['select', 'category'];
+  public displayedColumns = ['select', 'category', 'values'];
   public isLoadingResults = true;
 
   @ViewChild(MatSort) sort: MatSort;

@@ -1,8 +1,11 @@
-<h1 mat-dialog-title>New Dataset</h1>
+<div class="flex-row">
+  <h1 mat-dialog-title>New Dataset Importer Task</h1>
+  <app-docs-button style="margin-left: auto" documentationArea="datasetImporterCreate"></app-docs-button>
+</div>
 <div mat-dialog-content>
   <form class="flex-col" [formGroup]="importerForm" (ngSubmit)="onSubmit(importerForm.value)">
     <mat-form-field data-cy="appDatasetImporterCreateDialogDesc">
-      <input matInput placeholder="Task description" autocomplete="off" formControlName="descriptionFormControl"
+      <input matInput placeholder="Task description" autocomplete="off" cdkFocusInitial formControlName="descriptionFormControl"
              [errorStateMatcher]="matcher" required>
 
       <mat-error *ngIf="importerForm.get('descriptionFormControl')?.hasError('required')">

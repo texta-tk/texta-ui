@@ -14,7 +14,7 @@
                   panelClass="select-panel-reveal-input">
         <ng-container *ngIf="languages">
           <mat-option *ngFor="let item of languages" [value]="item">
-            {{item}}
+            {{item | titlecase}}
           </mat-option>
         </ng-container>
       </mat-select>

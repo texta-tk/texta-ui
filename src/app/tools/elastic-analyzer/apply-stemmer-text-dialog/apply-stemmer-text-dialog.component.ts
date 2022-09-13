@@ -26,7 +26,7 @@ export class ApplyStemmerTextDialogComponent implements OnInit {
   ngOnInit(): void {
     this.coreService.getSnowballLanguages().subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.languages = resp.filter(x => !!x);
+        this.languages = resp.filter(x => !!x).sort();
       } else {
         this.logService.snackBarError(resp);
       }

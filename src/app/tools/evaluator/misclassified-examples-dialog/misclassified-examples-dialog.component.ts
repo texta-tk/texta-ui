@@ -9,6 +9,7 @@ import {UntypedFormBuilder} from '@angular/forms';
 import {HttpErrorResponse} from '@angular/common/http';
 import {debounceTime, switchMap} from 'rxjs/operators';
 import {ConfusionMatrixDialogComponent} from '../../../shared/plotly-module/confusion-matrix-dialog/confusion-matrix-dialog.component';
+import {AddLexiconDialogComponent} from '../../../shared/shared-module/components/dialogs/add-lexicon-dialog/add-lexicon-dialog.component';
 
 interface OnSubmitParams {
   minCount: number;
@@ -68,6 +69,23 @@ export class MisclassifiedExamplesDialogComponent {
           this.logService.snackBarError(x);
         }
         this.isLoadingResults = false;
+      });
+    }
+  }
+
+  // tslint:disable-next-line:no-any
+  openLexiconDialog(selected: any[]): void {
+    if (selected) {
+      this.dialog.open(AddLexiconDialogComponent, {
+        maxHeight: '90vh',
+        width: '800px',
+        disableClose: true,
+        data: selected.map(x => {
+          if (typeof x.value === 'object') {
+            return x.value.pred;
+          }
+          return x.value;
+        })
       });
     }
   }

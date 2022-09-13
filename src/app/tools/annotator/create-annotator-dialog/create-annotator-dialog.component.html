@@ -1,8 +1,11 @@
-<h1 mat-dialog-title>New Annotator task</h1>
+<div class="flex-row">
+  <h1 mat-dialog-title>New Annotator Task</h1>
+  <app-docs-button style="margin-left: auto" documentationArea="annotatorCreate"></app-docs-button>
+</div>
 <mat-dialog-content>
   <form (ngSubmit)="onSubmit(annotatorForm.value)" [formGroup]="annotatorForm" class="flex-col" id="annotatorForm">
     <mat-form-field data-cy="appAnnotatorCreateDialogDesc">
-      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
+      <input [errorStateMatcher]="matcher" autocomplete="off" cdkFocusInitial formControlName="descriptionFormControl" matInput
              placeholder="Description" required>
 
       <mat-error *ngIf="annotatorForm.get('descriptionFormControl')?.hasError('required')">

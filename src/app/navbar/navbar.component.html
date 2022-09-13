@@ -67,6 +67,36 @@
     </a>
 
     <mat-menu #models="matMenu">
+      <a [routerLink]="['bert-taggers']" data-cy="appNavbarModelMenuBertTaggers" mat-menu-item
+         routerLinkActive="is-active-menu">BERT Taggers <span *ngIf="projectResourceCounts?.num_bert_taggers">
+        ({{projectResourceCounts.num_bert_taggers}})</span></a>
+      <a [routerLink]="['crf-extractors']" data-cy="appNavbarModelMenuCRF" mat-menu-item
+         routerLinkActive="is-active-menu">CRF Extractors <span
+        *ngIf="projectResourceCounts?.num_crf_extractors">
+        ({{projectResourceCounts.num_crf_extractors}})</span></a>
+      <a [routerLink]="['embeddings']" data-cy="appNavbarModelMenuEmbeddings" mat-menu-item
+         routerLinkActive="is-active-menu">Embeddings <span *ngIf="projectResourceCounts?.num_embeddings">
+        ({{projectResourceCounts.num_embeddings}})</span></a>
+      <a [routerLink]="['rakun-extractors']" data-cy="appNavbarModelMenuRakun" mat-menu-item
+         routerLinkActive="is-active-menu">Rakun Extractors <span
+        *ngIf="projectResourceCounts?.num_rakun_keyword_extractors">
+        ({{projectResourceCounts.num_rakun_keyword_extractors}})</span></a>
+      <a [routerLink]="['regex-taggers']" data-cy="appNavbarModelMenuRegexTagger" mat-menu-item
+         routerLinkActive="is-active-menu">Regex Taggers <span
+        *ngIf="projectResourceCounts?.num_regex_taggers"> ({{projectResourceCounts.num_regex_taggers}})</span></a>
+      <a [routerLink]="['regex-tagger-groups']" data-cy="appNavbarModelMenuRegexTaggerGroups" mat-menu-item
+         routerLinkActive="is-active-menu">Regex Tagger Groups<span
+        *ngIf="projectResourceCounts?.num_regex_tagger_groups">
+          ({{projectResourceCounts.num_regex_tagger_groups}})
+        </span></a>
+      <a [routerLink]="['search-fields-taggers']" data-cy="appNavbarModelMenuSearchFieldsTagger" mat-menu-item
+         routerLinkActive="is-active-menu">Search Fields Taggers <span
+        *ngIf="projectResourceCounts?.num_search_fields_taggers">
+        ({{projectResourceCounts.num_search_fields_taggers}})</span></a>
+      <a [routerLink]="['search-query-taggers']" data-cy="appNavbarModelMenuSearchQueryTagger" mat-menu-item
+         routerLinkActive="is-active-menu">Search Query Taggers <span
+        *ngIf="projectResourceCounts?.num_search_query_taggers">
+        ({{projectResourceCounts.num_search_query_taggers}})</span></a>
       <a [routerLink]="['taggers']" data-cy="appNavbarModelMenuTaggers" mat-menu-item
          routerLinkActive="is-active-menu">Taggers <span
         *ngIf="projectResourceCounts?.num_taggers"> ({{projectResourceCounts.num_taggers}})</span></a>
@@ -76,78 +106,47 @@
       <a [routerLink]="['torch-taggers']" data-cy="appNavbarModelMenuTorchTaggers" mat-menu-item
          routerLinkActive="is-active-menu">Torch Taggers <span
         *ngIf="projectResourceCounts?.num_torchtaggers"> ({{projectResourceCounts.num_torchtaggers}})</span></a>
-      <a [routerLink]="['regex-taggers']" data-cy="appNavbarModelMenuRegexTagger" mat-menu-item
-         routerLinkActive="is-active-menu">Regex Taggers <span
-        *ngIf="projectResourceCounts?.num_regex_taggers"> ({{projectResourceCounts.num_regex_taggers}})</span></a>
-      <a [routerLink]="['regex-tagger-groups']" data-cy="appNavbarModelMenuRegexTaggerGroups" mat-menu-item
-         routerLinkActive="is-active-menu">Regex Tagger Groups <span
-        *ngIf="projectResourceCounts?.num_regex_tagger_groups">({{projectResourceCounts.num_regex_tagger_groups}}
-        )</span></a>
-      <a [routerLink]="['search-query-taggers']" data-cy="appNavbarModelMenuSearchQueryTagger" mat-menu-item
-         routerLinkActive="is-active-menu">Search Query Taggers <span
-        *ngIf="projectResourceCounts?.num_search_query_taggers"> ({{projectResourceCounts.num_search_query_taggers}}
-        )</span></a>
-      <a [routerLink]="['search-fields-taggers']" data-cy="appNavbarModelMenuSearchFieldsTagger" mat-menu-item
-         routerLinkActive="is-active-menu">Search Fields Taggers <span
-        *ngIf="projectResourceCounts?.num_search_fields_taggers"> ({{projectResourceCounts.num_search_fields_taggers}}
-        )</span></a>
-      <a [routerLink]="['bert-taggers']" data-cy="appNavbarModelMenuBertTaggers" mat-menu-item
-         routerLinkActive="is-active-menu">BERT Taggers <span
-        *ngIf="projectResourceCounts?.num_bert_taggers">({{projectResourceCounts.num_bert_taggers}})</span></a>
-      <a [routerLink]="['embeddings']" data-cy="appNavbarModelMenuEmbeddings" mat-menu-item
-         routerLinkActive="is-active-menu">Embeddings <span
-        *ngIf="projectResourceCounts?.num_embeddings">({{projectResourceCounts.num_embeddings}})</span></a>
-      <a [routerLink]="['rakun-extractors']" data-cy="appNavbarModelMenuRakun" mat-menu-item
-         routerLinkActive="is-active-menu">Rakun Extractors <span
-        *ngIf="projectResourceCounts?.num_rakun_keyword_extractors">({{projectResourceCounts.num_rakun_keyword_extractors}}
-        )</span></a>
-      <a [routerLink]="['crf-extractors']" data-cy="appNavbarModelMenuCRF" mat-menu-item
-         routerLinkActive="is-active-menu">CRF Extractors <span
-        *ngIf="projectResourceCounts?.num_crf_extractors">({{projectResourceCounts.num_crf_extractors}})</span></a>
     </mat-menu>
 
     <mat-menu #tools="matMenu">
-      <a [routerLink]="['reindexer']" mat-menu-item routerLinkActive="is-active-menu">Reindexer <span
-        *ngIf="projectResourceCounts?.num_reindexers">({{projectResourceCounts.num_reindexers}})</span>
+      <a [routerLink]="['/annotator']" mat-menu-item
+         routerLinkActive="is-active-menu"> Annotator <span
+        *ngIf="projectResourceCounts?.num_annotators">({{projectResourceCounts.num_annotators}})</span>
       </a>
-      <a [routerLink]="['index-splitter']" mat-menu-item routerLinkActive="is-active-menu">Index Splitter <span
-        *ngIf="projectResourceCounts?.num_index_splitters">({{projectResourceCounts.num_index_splitters}})</span>
-      </a>
-      <a [routerLink]="['dataset-importer']" mat-menu-item routerLinkActive="is-active-menu">Dataset Importer <span
-        *ngIf="projectResourceCounts?.num_dataset_importers">({{projectResourceCounts.num_dataset_importers}})</span>
-      </a>
-
-      <a [routerLink]="['mlp']" mat-menu-item routerLinkActive="is-active-menu">MLP <span
-        *ngIf="projectResourceCounts?.num_mlp_workers">({{projectResourceCounts.num_mlp_workers}})</span>
-      </a>
-
       <a [routerLink]="['anonymizers']" mat-menu-item routerLinkActive="is-active-menu">Anonymizer <span
         *ngIf="projectResourceCounts?.num_anonymizers">({{projectResourceCounts.num_anonymizers}})</span>
       </a>
-
-      <a [routerLink]="['topic-analyzer']" mat-menu-item
-         routerLinkActive="is-active-menu">Topic Analyzer <span
-        *ngIf="projectResourceCounts?.num_clusterings">({{projectResourceCounts.num_clusterings}})</span>
-      </a>
-      <a [routerLink]="['evaluators']" mat-menu-item
-         routerLinkActive="is-active-menu">Evaluator <span
-        *ngIf="projectResourceCounts?.num_evaluators">({{projectResourceCounts.num_evaluators}})</span>
-      </a>
-      <a [routerLink]="['summarizers']" mat-menu-item
-         routerLinkActive="is-active-menu">Summarizer <span
-        *ngIf="projectResourceCounts?.num_summarizers">({{projectResourceCounts.num_summarizers}})</span>
-      </a>
-      <a [routerLink]="['lang-detect']" mat-menu-item
-         routerLinkActive="is-active-menu">Language Detector <span
-        *ngIf="projectResourceCounts?.num_lang_detectors">({{projectResourceCounts.num_lang_detectors}})</span>
+      <a [routerLink]="['dataset-importer']" mat-menu-item routerLinkActive="is-active-menu">Dataset Importer <span
+        *ngIf="projectResourceCounts?.num_dataset_importers">({{projectResourceCounts.num_dataset_importers}})</span>
       </a>
       <a [routerLink]="['/elastic-analyzer']" mat-menu-item
          routerLinkActive="is-active-menu"> ES Analyzer <span
         *ngIf="projectResourceCounts?.num_elastic_analyzers">({{projectResourceCounts.num_elastic_analyzers}})</span>
       </a>
-      <a [routerLink]="['/annotator']" mat-menu-item
-         routerLinkActive="is-active-menu"> Annotator <span
-        *ngIf="projectResourceCounts?.num_annotators">({{projectResourceCounts.num_annotators}})</span>
+      <a [routerLink]="['evaluators']" mat-menu-item
+         routerLinkActive="is-active-menu">Evaluator <span
+        *ngIf="projectResourceCounts?.num_evaluators">({{projectResourceCounts.num_evaluators}})</span>
+      </a>
+      <a [routerLink]="['index-splitter']" mat-menu-item routerLinkActive="is-active-menu">Index Splitter <span
+        *ngIf="projectResourceCounts?.num_index_splitters">({{projectResourceCounts.num_index_splitters}})</span>
+      </a>
+      <a [routerLink]="['lang-detect']" mat-menu-item
+         routerLinkActive="is-active-menu">Language Detector <span
+        *ngIf="projectResourceCounts?.num_lang_detectors">({{projectResourceCounts.num_lang_detectors}})</span>
+      </a>
+      <a [routerLink]="['mlp']" mat-menu-item routerLinkActive="is-active-menu">MLP <span
+        *ngIf="projectResourceCounts?.num_mlp_workers">({{projectResourceCounts.num_mlp_workers}})</span>
+      </a>
+      <a [routerLink]="['reindexer']" mat-menu-item routerLinkActive="is-active-menu">Reindexer <span
+        *ngIf="projectResourceCounts?.num_reindexers">({{projectResourceCounts.num_reindexers}})</span>
+      </a>
+      <a [routerLink]="['summarizers']" mat-menu-item
+         routerLinkActive="is-active-menu">Summarizer <span
+        *ngIf="projectResourceCounts?.num_summarizers">({{projectResourceCounts.num_summarizers}})</span>
+      </a>
+      <a [routerLink]="['topic-analyzer']" mat-menu-item
+         routerLinkActive="is-active-menu">Topic Analyzer <span
+        *ngIf="projectResourceCounts?.num_clusterings">({{projectResourceCounts.num_clusterings}})</span>
       </a>
     </mat-menu>
 
@@ -204,11 +203,7 @@
             <span>Log out</span> </a>
         </mat-menu>
       </div>
-
-      <a mat-icon-button aria-label="Docs" href="https://docs.texta.ee/" target="_blank"
-         matTooltip="Open documentation">
-        <mat-icon>description</mat-icon>
-      </a>
+      <app-docs-button></app-docs-button>
 
     </div>
 

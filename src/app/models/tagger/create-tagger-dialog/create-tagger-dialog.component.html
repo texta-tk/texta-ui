@@ -1,8 +1,11 @@
-<h1 mat-dialog-title>New Tagger</h1>
+<div class="flex-row">
+  <h1 mat-dialog-title>New Tagger</h1>
+  <app-docs-button style="margin-left: auto" documentationArea="taggerCreate"></app-docs-button>
+</div>
 <mat-dialog-content>
   <form (ngSubmit)="onSubmit(taggerForm.value)" [formGroup]="taggerForm" class="flex-col" id="taggerForm">
     <mat-form-field data-cy="appTaggerCreateDialogDesc">
-      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
+      <input [errorStateMatcher]="matcher" autocomplete="off" cdkFocusInitial formControlName="descriptionFormControl" matInput
              placeholder="Description" required>
 
       <mat-error *ngIf="taggerForm.get('descriptionFormControl')?.hasError('required')">
@@ -101,8 +104,9 @@
       <mat-label>Snowball Language</mat-label>
       <mat-select [disableOptionCentering]="true" formControlName="snowballFormControl"
                   panelClass="select-panel-reveal-input">
+        <mat-option>None</mat-option>
         <mat-option *ngFor="let item of snowballLanguages" [value]="item">
-          {{item ? item : 'None'}}
+          {{(item ? item : 'None') | titlecase}}
         </mat-option>
       </mat-select>
       <mat-hint>{{taggerOptions?.actions?.POST?.snowball_language?.help_text || ''}}</mat-hint>

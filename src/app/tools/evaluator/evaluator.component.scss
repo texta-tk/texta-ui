@@ -31,14 +31,6 @@ tr.element-row:not(.expanded-row):active {
 
 }
 
-.element-plot {
-  object-fit: cover;
-  border: 2px solid black;
-  padding: 8px;
-  margin: 8px 0;
-  max-width: 750px;
-}
-
 .element-detail-plot-fields {
   flex-wrap: wrap;
 }

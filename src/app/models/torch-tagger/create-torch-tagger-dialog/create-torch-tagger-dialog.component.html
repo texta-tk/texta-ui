@@ -1,9 +1,12 @@
-<h1 mat-dialog-title>New Torch Tagger</h1>
+<div class="flex-row">
+  <h1 mat-dialog-title>New Torch Tagger</h1>
+  <app-docs-button style="margin-left: auto" documentationArea="torchTaggerCreate"></app-docs-button>
+</div>
 <div mat-dialog-content>
   <form (ngSubmit)="onSubmit({formData : torchTaggerForm.value})" [formGroup]="torchTaggerForm" fxLayout="column"
         id="torchTaggerForm">
     <mat-form-field data-cy="appTorchTaggerCreateDialogDesc">
-      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl"
+      <input [errorStateMatcher]="matcher" autocomplete="off" cdkFocusInitial formControlName="descriptionFormControl"
              matInput placeholder="Description" required>
 
       <mat-error *ngIf="torchTaggerForm.get('descriptionFormControl')?.hasError('required')">

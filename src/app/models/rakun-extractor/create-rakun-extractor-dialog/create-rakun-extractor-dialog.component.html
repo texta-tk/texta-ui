@@ -1,8 +1,11 @@
-<h1 mat-dialog-title>New Rakun Extractor</h1>
+<div class="flex-row">
+  <h1 mat-dialog-title>New Rakun Extractor</h1>
+  <app-docs-button style="margin-left: auto" documentationArea="rakunCreate"></app-docs-button>
+</div>
 <mat-dialog-content>
   <form (ngSubmit)="onSubmit(rakunExtractorForm.value)" [formGroup]="rakunExtractorForm" id="rakunExtractorForm" class="flex-col">
     <mat-form-field data-cy="appRakunExtractorCreateDialogDesc">
-      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
+      <input [errorStateMatcher]="matcher" autocomplete="off" cdkFocusInitial formControlName="descriptionFormControl" matInput
              placeholder="Description" required>
 
       <mat-error *ngIf="rakunExtractorForm.get('descriptionFormControl')?.hasError('required')">

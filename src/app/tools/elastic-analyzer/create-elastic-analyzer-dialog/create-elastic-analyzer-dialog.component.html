@@ -1,9 +1,12 @@
-<h1 mat-dialog-title>Apply Elastic Analyzer to Index</h1>
+<div class="flex-row">
+  <h1 mat-dialog-title>Apply Elastic Analyzer to Index</h1>
+  <app-docs-button style="margin-left: auto" documentationArea="esAnalyzerCreate"></app-docs-button>
+</div>
 <mat-dialog-content>
   <form (ngSubmit)="onSubmit(elasticAnalyzerForm.value)" [formGroup]="elasticAnalyzerForm" class="flex-col"
         id="ElasticAnalyzer">
     <mat-form-field data-cy="appElasticAnalyzerCreateDialogDesc">
-      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl" matInput
+      <input [errorStateMatcher]="matcher" autocomplete="off" cdkFocusInitial formControlName="descriptionFormControl" matInput
              placeholder="Description" required>
 
       <mat-error *ngIf="elasticAnalyzerForm.get('descriptionFormControl')?.hasError('required')">
@@ -77,9 +80,10 @@
       <mat-select [disableOptionCentering]="true" formControlName="languageFormControl"
                   panelClass="select-panel-reveal-input"
                   [required]="!!elasticAnalyzerForm.get('languageFormControl')?.hasValidator(requiredValidator)">
+        <mat-option>None</mat-option>
         <ng-container *ngIf="stemmerLangs">
           <mat-option *ngFor="let item of stemmerLangs" [value]="item.value">
-            {{item.display_name ? item.display_name : 'None'}}
+            {{(item.display_name ? item.display_name : 'None') | titlecase}}
           </mat-option>
         </ng-container>
       </mat-select>
