@@ -35,6 +35,7 @@ export class CreateLangDetectDialogComponent implements OnInit, OnDestroy {
   projectFields: ProjectIndex[];
   // tslint:disable-next-line:no-any
   langDetectOptions: any;
+  createRequestInProgress = false;
 
   constructor(private dialogRef: MatDialogRef<CreateLangDetectDialogComponent>,
               private projectService: ProjectService,
@@ -76,6 +77,7 @@ export class CreateLangDetectDialogComponent implements OnInit, OnDestroy {
     descriptionFormControl: string;
     indicesFormControl: ProjectIndex[]; fieldsFormControl: string[];
   }): void {
+    this.createRequestInProgress = true;
     const body = {
       description: formData.descriptionFormControl,
       ...this.query ? {query: this.query} : {},
@@ -90,6 +92,7 @@ export class CreateLangDetectDialogComponent implements OnInit, OnDestroy {
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       }
+      this.createRequestInProgress = false;
     });
   }
 

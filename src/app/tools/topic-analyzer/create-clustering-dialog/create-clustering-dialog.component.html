@@ -137,7 +137,7 @@
       <button (click)="closeDialog()" class="flex-item-left" mat-button type="button">Close</button>
     </div>
     <div class="flex-item-right">
-      <button form="clusterForm" [disabled]="!clusterForm.valid" data-cy="appClusterCreateDialogSubmit" mat-button
+      <button form="clusterForm" [disabled]="!clusterForm.valid || createRequestInProgress" data-cy="appClusterCreateDialogSubmit" mat-button
               type="submit">
         Create
       </button>

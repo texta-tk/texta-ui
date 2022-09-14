@@ -17,6 +17,7 @@ import {HttpErrorResponse} from "@angular/common/http";
 export class CreateLexiconDialogComponentComponent {
   description: string;
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
+  createRequestInProgress = false;
 
   constructor(private dialogRef: MatDialogRef<CreateLexiconDialogComponentComponent>,
               private lexiconService: LexiconService,
@@ -26,6 +27,7 @@ export class CreateLexiconDialogComponentComponent {
 
 
   onSubmit(): void {
+    this.createRequestInProgress = true;
     this.projectStore.getCurrentProject().pipe(take(1), mergeMap(project => {
       if (project) {
         return this.lexiconService.createLexicon({description: this.description}, project.id);
@@ -37,6 +39,7 @@ export class CreateLexiconDialogComponentComponent {
       } else {
         this.dialogRef.close(resp);
       }
+      this.createRequestInProgress = false;
     });
   }
 

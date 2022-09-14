@@ -63,6 +63,7 @@ export class CreateIndexSplitterDialogComponent implements OnInit, OnDestroy {
   indexSplitterOptions: IndexSplitterOptions | undefined;
   isLoadingOptions = false;
   factValOptions: string[] = [];
+  createRequestInProgress = false;
 
   constructor(private dialogRef: MatDialogRef<CreateIndexSplitterDialogComponent>,
               private projectService: ProjectService,
@@ -162,7 +163,7 @@ export class CreateIndexSplitterDialogComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(formData: OnSubmitParams): void {
-    console.log(formData.fieldsFormControl);
+    this.createRequestInProgress = true;
     const body = {
       description: formData.descriptionFormControl,
       indices: formData.indicesFormControl.map(x => [{name: x.index}]).flat(),
@@ -191,6 +192,7 @@ export class CreateIndexSplitterDialogComponent implements OnInit, OnDestroy {
           this.logService.snackBarError(resp);
         }
       }
+      this.createRequestInProgress = false;
     });
   }
 

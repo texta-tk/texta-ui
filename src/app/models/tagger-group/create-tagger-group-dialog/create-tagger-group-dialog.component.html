@@ -200,7 +200,7 @@
       <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
     </div>
     <div class="flex-item-right">
-      <button [disabled]="!taggerGroupForm.valid" data-cy="appTaggerGroupCreateDialogSubmit" form="taggerForm"
+      <button [disabled]="!taggerGroupForm.valid || createRequestInProgress" data-cy="appTaggerGroupCreateDialogSubmit" form="taggerForm"
               mat-button type="submit">Create
       </button>
     </div>

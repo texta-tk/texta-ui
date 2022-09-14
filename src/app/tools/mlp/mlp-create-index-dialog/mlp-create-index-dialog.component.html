@@ -90,7 +90,7 @@
       <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
     </div>
     <div class="flex-item-right">
-      <button [disabled]="!MLPForm.valid" data-cy="appMLPCreateDialogSubmit" form="mlpForm" mat-button type="submit">
+      <button [disabled]="!MLPForm.valid || createRequestInProgress" data-cy="appMLPCreateDialogSubmit" form="mlpForm" mat-button type="submit">
         Create
       </button>
     </div>

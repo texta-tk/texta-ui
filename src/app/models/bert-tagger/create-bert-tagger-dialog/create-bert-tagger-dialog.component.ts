@@ -94,6 +94,7 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
   trainedModels: BertTagger[] = [];
   // tslint:disable-next-line:no-any
   bertOptions: any;
+  createRequestInProgress = false;
 
   constructor(private dialogRef: MatDialogRef<CreateBertTaggerDialogComponent>,
               private projectService: ProjectService,
@@ -226,6 +227,7 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(formData: OnSubmitParams): void {
+    this.createRequestInProgress = true;
     const body = {
       description: formData.descriptionFormControl,
       fields: formData.fieldsFormControl,
@@ -260,6 +262,7 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       }
+      this.createRequestInProgress = false;
     });
   }
 

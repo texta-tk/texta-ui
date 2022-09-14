@@ -46,6 +46,7 @@ export class CreateLabelsetDialogComponent implements OnInit, OnDestroy {
 
   projectFacts: BehaviorSubject<string[]> = new BehaviorSubject<string[]>(['Loading...']);
   @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
+  createRequestInProgress = false;
 
   constructor(private dialogRef: MatDialogRef<CreateLabelsetDialogComponent>,
               private logService: LogService,
@@ -119,6 +120,7 @@ export class CreateLabelsetDialogComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(formData: OnSubmitParams): void {
+    this.createRequestInProgress = true;
     const body = {
       category: formData.categoryFormControl,
       value_limit: formData.valueLimitFormControl,
@@ -136,6 +138,7 @@ export class CreateLabelsetDialogComponent implements OnInit, OnDestroy {
           this.logService.snackBarError(x);
         }
       }
+      this.createRequestInProgress = false;
     });
   }
 

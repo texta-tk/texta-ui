@@ -89,6 +89,7 @@ export class CreateAnnotatorDialogComponent implements OnInit, OnDestroy {
   users: UserProfile[];
   currentUser: UserProfile;
   updateFacts$ = new Subject<''>();
+  createRequestInProgress = false;
 
   constructor(private dialogRef: MatDialogRef<CreateAnnotatorDialogComponent>,
               private projectService: ProjectService,
@@ -174,6 +175,7 @@ export class CreateAnnotatorDialogComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(formData: OnSubmitParams): void {
+    this.createRequestInProgress = true;
     const body = {
       description: formData.descriptionFormControl,
       indices: formData.indicesFormControl.map(x => [{name: x.index}]).flat(),
@@ -209,6 +211,7 @@ export class CreateAnnotatorDialogComponent implements OnInit, OnDestroy {
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       }
+      this.createRequestInProgress = false;
     });
   }
 

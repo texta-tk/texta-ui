@@ -52,6 +52,7 @@ export class CreateClusteringDialogComponent implements OnInit, OnDestroy {
   destroyed$ = new Subject<boolean>();
   projectIndices: ProjectIndex[] = [];
   embeddings: Embedding[];
+  createRequestInProgress = false;
 
   constructor(private dialogRef: MatDialogRef<CreateClusteringDialogComponent>,
               private clusterService: TopicAnalyzerService,
@@ -116,6 +117,7 @@ export class CreateClusteringDialogComponent implements OnInit, OnDestroy {
 
   // tslint:disable-next-line:no-any
   onSubmit(formData: any): void {
+    this.createRequestInProgress = true;
     const body = {
       description: formData.descriptionFormControl,
       indices: formData.indicesFormControl.map((x: ProjectIndex) => [{name: x.index}]).flat(),
@@ -139,6 +141,7 @@ export class CreateClusteringDialogComponent implements OnInit, OnDestroy {
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp);
       }
+      this.createRequestInProgress = false;
     });
   }
 

@@ -53,6 +53,7 @@ export class CreateSearchTaggerDialogComponent implements OnInit, OnDestroy {
   factValueOptions: string[] = [];
   // tslint:disable-next-line:no-any
   searchTaggerOptions: any;
+  createRequestInProgress = false;
 
   constructor(private dialogRef: MatDialogRef<CreateSearchTaggerDialogComponent>,
               private projectService: ProjectService,
@@ -89,6 +90,7 @@ export class CreateSearchTaggerDialogComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(formData: OnSubmitParams): void {
+    this.createRequestInProgress = true;
     const body = {
       description: formData.descriptionFormControl,
       indices: formData.indicesFormControl.map(x => [{name: x.index}]).flat(),
@@ -107,6 +109,7 @@ export class CreateSearchTaggerDialogComponent implements OnInit, OnDestroy {
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       }
+      this.createRequestInProgress = false;
     });
   }
 

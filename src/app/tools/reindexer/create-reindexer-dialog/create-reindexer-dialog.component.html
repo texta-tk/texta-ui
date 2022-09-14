@@ -104,7 +104,7 @@
       <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Close</button>
     </div>
     <div class="flex-item-right">
-      <button type="submit" form="reindexerForm" [disabled]="!reindexerForm.valid" mat-button
+      <button type="submit" form="reindexerForm" [disabled]="!reindexerForm.valid || createRequestInProgress" mat-button
               data-cy="appReindexerCreateDialogSubmit">
         Create
       </button>

@@ -81,6 +81,7 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
   currentProject: Project;
   projectIndices: ProjectIndex[] = [];
   @ViewChild('indicesSelect') indicesSelect: MatSelect;
+  createRequestInProgress = false;
 
   constructor(private dialogRef: MatDialogRef<CreateTorchTaggerDialogComponent>,
               private torchTaggerService: TorchTaggerService,
@@ -227,6 +228,7 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
   }
 
   onSubmit({formData}: OnSubmitParams): void {
+    this.createRequestInProgress = true;
     if (this.currentProject.id) {
       const body = {
         description: formData.descriptionFormControl,
@@ -251,6 +253,7 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
         } else if (resp instanceof HttpErrorResponse) {
           this.logService.snackBarError(resp);
         }
+        this.createRequestInProgress = false;
       });
     }
   }

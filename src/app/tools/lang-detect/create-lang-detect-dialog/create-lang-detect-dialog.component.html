@@ -50,7 +50,7 @@
       <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
     </div>
     <div class="flex-item-right">
-      <button [disabled]="!langDetectForm.valid" form="langDetectForm" data-cy="appLangDetectCreateDialogSubmit"
+      <button [disabled]="!langDetectForm.valid || createRequestInProgress" form="langDetectForm" data-cy="appLangDetectCreateDialogSubmit"
               mat-button type="submit">
         Create
       </button>

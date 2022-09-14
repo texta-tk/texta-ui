@@ -141,7 +141,7 @@
   <div fxLayout="row">
     <button mat-button mat-dialog-close type="button">Close</button>
     <div class="flex-item-right">
-      <button [disabled]="!torchTaggerForm.valid" data-cy="appTorchTaggerCreateDialogSubmit" form="torchTaggerForm"
+      <button [disabled]="!torchTaggerForm.valid || createRequestInProgress" data-cy="appTorchTaggerCreateDialogSubmit" form="torchTaggerForm"
               mat-button type="submit">
         Create
       </button>

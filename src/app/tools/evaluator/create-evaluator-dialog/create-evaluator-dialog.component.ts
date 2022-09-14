@@ -74,6 +74,7 @@ export class CreateEvaluatorDialogComponent implements OnInit, OnDestroy {
   trueFactNameDocPaths: string[] = [];
   predictedFactNameDocPaths: string[] = [];
   entityFieldDocPathOptions: string[] = [];
+  createRequestInProgress = false;
 
   constructor(private dialogRef: MatDialogRef<CreateEvaluatorDialogComponent>,
               private projectService: ProjectService,
@@ -205,6 +206,7 @@ export class CreateEvaluatorDialogComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(formData: OnSubmitParams): void {
+    this.createRequestInProgress = true;
     const body = {
       description: formData.descriptionFormControl,
       indices: formData.indicesFormControl.map((x: ProjectIndex) => [{name: x.index}]).flat(),
@@ -230,6 +232,7 @@ export class CreateEvaluatorDialogComponent implements OnInit, OnDestroy {
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       }
+      this.createRequestInProgress = false;
     });
   }
 

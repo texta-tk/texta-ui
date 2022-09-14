@@ -126,7 +126,7 @@
       <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
     </div>
     <div class="flex-item-right">
-      <button [disabled]="!rakunExtractorForm.valid" form="rakunExtractorForm" data-cy="appRakunExtractorCreateDialogSubmit" mat-button
+      <button [disabled]="!rakunExtractorForm.valid || createRequestInProgress" form="rakunExtractorForm" data-cy="appRakunExtractorCreateDialogSubmit" mat-button
               type="submit">
         Create
       </button>

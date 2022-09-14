@@ -60,6 +60,7 @@ export class CreateRakunExtractorDialogComponent implements OnInit, OnDestroy {
   fastTextEmbeddings: Embedding[] = [];
   embeddings: Embedding[];
   distanceMethods: Choice[] = [];
+  createRequestInProgress = false;
 
   constructor(private dialogRef: MatDialogRef<CreateRakunExtractorDialogComponent>,
               private projectService: ProjectService,
@@ -118,6 +119,7 @@ export class CreateRakunExtractorDialogComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(formData: OnSubmitParams): void {
+    this.createRequestInProgress = true;
     const body = {
       description: formData.descriptionFormControl,
       distance_method: formData.distanceMethodFormControl.value,
@@ -140,6 +142,7 @@ export class CreateRakunExtractorDialogComponent implements OnInit, OnDestroy {
       } else {
         this.logService.snackBarError(resp, 5000);
       }
+      this.createRequestInProgress = false;
     });
   }
 

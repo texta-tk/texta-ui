@@ -42,6 +42,7 @@ export class MLPCreateIndexDialogComponent implements OnInit, OnDestroy {
   analyzers: Choice[] = [];
   // tslint:disable-next-line:no-any
   mlpOptions: any;
+  createRequestInProgress = false;
 
   constructor(private dialogRef: MatDialogRef<MLPCreateIndexDialogComponent>,
               private projectService: ProjectService,
@@ -85,6 +86,7 @@ export class MLPCreateIndexDialogComponent implements OnInit, OnDestroy {
     descriptionFormControl: string;
     indicesFormControl: ProjectIndex[]; fieldsFormControl: string[]; analyzersFormControl: string[]; esTimeoutFormControl: number; esScrollSizeFormControl: number;
   }): void {
+    this.createRequestInProgress = true;
     const body = {
       description: formData.descriptionFormControl,
       indices: formData.indicesFormControl.map(x => [{name: x.index}]).flat(),
@@ -102,6 +104,7 @@ export class MLPCreateIndexDialogComponent implements OnInit, OnDestroy {
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       }
+      this.createRequestInProgress = false;
     });
   }
 

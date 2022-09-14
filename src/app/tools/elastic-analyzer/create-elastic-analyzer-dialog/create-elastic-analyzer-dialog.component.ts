@@ -68,6 +68,7 @@ export class CreateElasticAnalyzerDialogComponent implements OnInit, OnDestroy {
   // tslint:disable-next-line:no-any
   elasticAnalyzerOptions: any | unknown;
   requiredValidator = Validators.required;
+  createRequestInProgress = false;
 
   constructor(private dialogRef: MatDialogRef<CreateElasticAnalyzerDialogComponent>,
               private projectService: ProjectService,
@@ -135,6 +136,7 @@ export class CreateElasticAnalyzerDialogComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(formData: OnSubmitParams): void {
+    this.createRequestInProgress = true;
     const body = {
       description: formData.descriptionFormControl,
       indices: formData.indicesFormControl.map(x => [{name: x.index}]).flat(),
@@ -157,6 +159,7 @@ export class CreateElasticAnalyzerDialogComponent implements OnInit, OnDestroy {
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       }
+      this.createRequestInProgress = false;
     });
   }
 

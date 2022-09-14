@@ -88,6 +88,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
   projectIndices: ProjectIndex[] = [];
   projectFacts: BehaviorSubject<{ name: string, values: string[] }[]> = new BehaviorSubject<{ name: string, values: string[] }[]>([{name: 'Loading...', values: []}]);
   snowballLanguages: string[] = [];
+  createRequestInProgress = false;
 
   constructor(private dialogRef: MatDialogRef<CreateTaggerDialogComponent>,
               private taggerService: TaggerService,
@@ -247,6 +248,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(formData: OnSubmitParams): void {
+    this.createRequestInProgress = true;
     const body = {
       description: formData.descriptionFormControl,
       indices: formData.indicesFormControl.map(x => [{name: x.index}]).flat(),
@@ -282,6 +284,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp);
       }
+      this.createRequestInProgress = false;
     });
   }
 

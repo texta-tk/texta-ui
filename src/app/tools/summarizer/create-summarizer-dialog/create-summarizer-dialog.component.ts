@@ -39,6 +39,7 @@ export class CreateSummarizerDialogComponent implements OnInit, OnDestroy {
   }[];
   // tslint:disable-next-line:no-any
   summarizerOptions: any;
+  createRequestInProgress = false;
 
   constructor(private dialogRef: MatDialogRef<CreateSummarizerDialogComponent>,
               private projectService: ProjectService,
@@ -84,6 +85,7 @@ export class CreateSummarizerDialogComponent implements OnInit, OnDestroy {
     descriptionFormControl: string;
     indicesFormControl: ProjectIndex[]; fieldsFormControl: string[]; ratioFormControl: number; algorithmsFormControl: string[]
   }): void {
+    this.createRequestInProgress = true;
     const body = {
       description: formData.descriptionFormControl,
       indices: formData.indicesFormControl.map(x => [{name: x.index}]).flat(),
@@ -98,6 +100,7 @@ export class CreateSummarizerDialogComponent implements OnInit, OnDestroy {
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       }
+      this.createRequestInProgress = false;
     });
   }
 

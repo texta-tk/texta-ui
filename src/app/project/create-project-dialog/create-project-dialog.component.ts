@@ -48,6 +48,7 @@ export class CreateProjectDialogComponent implements OnInit, OnDestroy {
   indices: { id: number, name: string }[] = [];
 
   destroyed$: Subject<boolean> = new Subject<boolean>();
+  createRequestInProgress = false;
 
   constructor(private dialogRef: MatDialogRef<CreateProjectDialogComponent>,
               private projectService: ProjectService,
@@ -94,6 +95,7 @@ export class CreateProjectDialogComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(formData: OnSubmitParams): void {
+    this.createRequestInProgress = true;
     let body;
     if (this.currentUser.is_superuser) {
       body = {
@@ -118,6 +120,7 @@ export class CreateProjectDialogComponent implements OnInit, OnDestroy {
       } else if (resp instanceof HttpErrorResponse) {
         this.dialogRef.close(resp);
       }
+      this.createRequestInProgress = false;
     });
   }
 

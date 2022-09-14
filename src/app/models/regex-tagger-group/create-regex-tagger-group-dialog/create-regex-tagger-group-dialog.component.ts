@@ -35,6 +35,7 @@ export class CreateRegexTaggerGroupDialogComponent implements OnInit, OnDestroy 
   destroyed$: Subject<boolean> = new Subject<boolean>();
   // tslint:disable-next-line:no-any
   regexTaggerGroupOptions: any;
+  createRequestInProgress = false;
 
   constructor(private dialogRef: MatDialogRef<CreateRegexTaggerGroupDialogComponent>,
               private projectService: ProjectService,
@@ -71,6 +72,7 @@ export class CreateRegexTaggerGroupDialogComponent implements OnInit, OnDestroy 
     descriptionFormControl: string;
     regexTaggersFormControl: RegexTagger[];
   }): void {
+    this.createRequestInProgress = true;
     const body = {
       description: formData.descriptionFormControl,
       regex_taggers: formData.regexTaggersFormControl.map(x => [x.id]).flat()
@@ -87,6 +89,7 @@ export class CreateRegexTaggerGroupDialogComponent implements OnInit, OnDestroy 
           this.logService.snackBarError(resp);
         }
       }
+      this.createRequestInProgress = false;
     });
   }
 

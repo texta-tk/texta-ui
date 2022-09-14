@@ -72,6 +72,7 @@ export class CreateCRFExtractorDialogComponent implements OnInit, OnDestroy {
   // tslint:disable-next-line:no-any
   CRFOptions: any;
   embeddings: Embedding[];
+  createRequestInProgress = false;
 
   constructor(private dialogRef: MatDialogRef<CreateCRFExtractorDialogComponent>,
               private projectService: ProjectService,
@@ -136,6 +137,7 @@ export class CreateCRFExtractorDialogComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(formData: OnSubmitParams): void {
+    this.createRequestInProgress = true;
     const body = {
       description: formData.descriptionFormControl,
       indices: formData.indicesFormControl.map(x => [{name: x.index}]).flat(),
@@ -162,6 +164,7 @@ export class CreateCRFExtractorDialogComponent implements OnInit, OnDestroy {
       } else {
         this.logService.snackBarError(resp, 5000);
       }
+      this.createRequestInProgress = false;
     });
   }
 

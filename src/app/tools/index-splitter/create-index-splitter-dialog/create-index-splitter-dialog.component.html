@@ -130,7 +130,7 @@
       <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
     </div>
     <div class="flex-item-right">
-      <button [disabled]="!indexSplitterForm.valid" data-cy="appIndexSplitterCreateDialogSubmit" form="createForm"
+      <button [disabled]="!indexSplitterForm.valid || createRequestInProgress" data-cy="appIndexSplitterCreateDialogSubmit" form="createForm"
               mat-button
               type="submit">
         Create

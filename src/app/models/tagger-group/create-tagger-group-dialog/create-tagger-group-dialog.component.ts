@@ -73,6 +73,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy {
   projectIndices: ProjectIndex[] = [];
   snowballLanguages: string[] = [];
   @ViewChild('indicesSelect') indicesSelect: MatSelect;
+  createRequestInProgress = false;
 
   constructor(private dialogRef: MatDialogRef<CreateTaggerGroupDialogComponent>,
               private taggerGroupService: TaggerGroupService,
@@ -227,6 +228,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy {
 
 
   onSubmit(): void {
+    this.createRequestInProgress = true;
     const formData = this.taggerGroupForm.value;
     const taggerBody = {
       fields: formData.taggerForm.fieldsFormControl,
@@ -259,6 +261,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy {
         } else if (resp) {
           this.dialogRef.close(resp);
         }
+        this.createRequestInProgress = false;
       });
     }
   }
