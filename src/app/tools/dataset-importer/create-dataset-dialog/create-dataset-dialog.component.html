@@ -2,10 +2,11 @@
   <h1 mat-dialog-title>New Dataset Importer Task</h1>
   <app-docs-button style="margin-left: auto" documentationArea="datasetImporterCreate"></app-docs-button>
 </div>
-<div mat-dialog-content>
-  <form class="flex-col" [formGroup]="importerForm" (ngSubmit)="onSubmit(importerForm.value)">
+<mat-dialog-content>
+  <form class="flex-col" [formGroup]="importerForm" (ngSubmit)="onSubmit(importerForm.value)" id="importerForm">
     <mat-form-field data-cy="appDatasetImporterCreateDialogDesc">
-      <input matInput placeholder="Task description" autocomplete="off" cdkFocusInitial formControlName="descriptionFormControl"
+      <input matInput placeholder="Task description" autocomplete="off" cdkFocusInitial
+             formControlName="descriptionFormControl"
              [errorStateMatcher]="matcher" required>
 
       <mat-error *ngIf="importerForm.get('descriptionFormControl')?.hasError('required')">
@@ -32,17 +33,11 @@
       <mat-hint>{{dataSetImporterOptions?.actions?.POST?.index?.help_text || ''}}</mat-hint>
     </mat-form-field>
 
-    <mat-form-field>
-      <input matInput placeholder="Separator" autocomplete="off" formControlName="separatorFormControl">
-      <mat-hint>CSV only
-      </mat-hint>
-    </mat-form-field>
-
-    <mat-form-field>
+    <mat-form-field style="margin-top: 1em">
       <app-file-input formControlName="fileFormControl" placeholder="File" valuePlaceholder="No file selected"
-                          data-cy="appDatasetImporterCreateDialogFile"
-                          [accept]="'.xls,.xlsx,.csv,.jsonl,.jl,.jsonline'"
-                          [required]="true"></app-file-input>
+                      data-cy="appDatasetImporterCreateDialogFile"
+                      [accept]="'.xls,.xlsx,.csv,.jsonl,.jl,.jsonline'"
+                      [required]="true"></app-file-input>
       <mat-icon matSuffix>folder</mat-icon>
       <mat-error *ngIf="importerForm.get('fileFormControl')?.hasError('required')">
         Please select a file
@@ -56,23 +51,29 @@
         Supported file types: CSV, JSON-LINES, EXCEL
       </mat-hint>
     </mat-form-field>
+
+    <mat-form-field *ngIf="isCSVFile">
+      <input matInput placeholder="Separator" autocomplete="off" formControlName="separatorFormControl">
+      <mat-hint>CSV separator
+      </mat-hint>
+    </mat-form-field>
     <div class="flex-col">
       <div *ngIf="uploadProgress > 0" class="m-top-5">
         <mat-progress-bar mode="determinate" [value]="uploadProgress"></mat-progress-bar>
         <small>{{uploadedBytes | byteFormat}} of {{totalBytes | byteFormat}}</small>
       </div>
-      <div class="flex-row">
-        <div class="flex-item-left">
-          <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Cancel</button>
-        </div>
-        <div class="flex-item-right">
-          <button type="submit" [disabled]="!importerForm.valid || uploadedBytes !== totalBytes" mat-button
-                  data-cy="appDatasetImporterCreateDialogSubmit">{{uploadedBytes !== totalBytes ? 'Uploading...' : 'Create'}}
-          </button>
-        </div>
-      </div>
     </div>
 
 
   </form>
-</div>
+</mat-dialog-content>
+<mat-dialog-actions class="flex-row">
+  <div class="flex-item-left">
+    <button type="button" class="flex-item-left" mat-button (click)="closeDialog()">Cancel</button>
+  </div>
+  <div class="flex-item-right">
+    <button type="submit" [disabled]="!importerForm.valid || uploadedBytes !== totalBytes" mat-button form="importerForm"
+            data-cy="appDatasetImporterCreateDialogSubmit">{{uploadedBytes !== totalBytes ? 'Uploading...' : 'Create'}}
+    </button>
+  </div>
+</mat-dialog-actions>

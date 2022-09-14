@@ -127,7 +127,6 @@ describe('taggers should work', function () {
         .type('newName');
       cy.get('.mat-dialog-container [type="submit"]').should('be.visible').click();
       cy.wait('@patchTaggers');
-      cy.closeCurrentCdkOverlay();
       cy.server(); // intercept doesnt work here?? todo
 
       cy.route('DELETE', '**/taggers/**').as('deleteTaggers');

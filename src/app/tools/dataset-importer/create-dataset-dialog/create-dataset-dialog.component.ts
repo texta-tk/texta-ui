@@ -19,10 +19,10 @@ function indexNameValidator(control: AbstractControl): null | ValidationErrors {
     if (controlValue.toLowerCase() !== controlValue) {
       return {notLowerCase: true};
     }
-    if (controlValue.includes('*')){
+    if (controlValue.includes('*')) {
       return {wildCard: true};
     }
-    if (controlValue.includes(':')){
+    if (controlValue.includes(':')) {
       return {colon: true};
     }
   }
@@ -54,6 +54,7 @@ export class CreateDatasetDialogComponent implements OnInit, OnDestroy {
 
   // tslint:disable-next-line:no-any
   dataSetImporterOptions: any | undefined;
+  isCSVFile = false;
 
   constructor(private dialogRef: MatDialogRef<CreateDatasetDialogComponent>,
               private projectService: ProjectService,
@@ -79,6 +80,9 @@ export class CreateDatasetDialogComponent implements OnInit, OnDestroy {
           this.logService.snackBarError(resp, 2000);
         }
       }
+    });
+    this.importerForm.controls.fileFormControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(resp => {
+      this.isCSVFile = !!(resp.files && resp.files[0] && resp.files[0].name.split('.').pop() === 'csv');
     });
     this.uploadProgressQueue.pipe(takeUntil(this.destroyed$), auditTime(240)).subscribe(x => this.uploadProgress = x);
   }
