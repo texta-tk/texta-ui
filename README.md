@@ -2,6 +2,32 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.3.8.
 
+## Configuration
+
+### Configuration properties
+| Name | Description |
+| ------ | ------ |
+| apiHost | texta-rest API Host (ex: `http://localhost:8000`) |
+| apiBasePath |  Base URL to which the endpoint paths are appended (ex: `/api/v2`)|
+| annotatorUrl | URL for the annotator-client, when set, a button linking to the URL is displayed under Annotator|
+| logging |  Whether the API requests should be logged into the browser console (ex: `true`)|
+| fileFieldReplace | Used in the Searcher table view: Elasticsearch field name, where the contents are displayed as a file link: apiHost/field_content|
+| useCloudFoundryUAA | If enabled allows logging in via UAA|
+| uaaConf | Variables for the uaa deploy, more info [here](https://docs.texta.ee/authentication.html#third-party-authentication)|
+
+### Configuration in Production
+Frontend makes a get request to /assets/config/config.json to retrieve the configuration file.
+
+### Configuration in Development
+Configuration template files are located under /src/configurations/
+
+Currently there are 3 different types of configuration templates:
+1. Cypress - Only used in gitlab ci
+2. Dev - Used when you run the development server locally (`ng serve`)
+3. Prod - Example configuration file to copy into the /dist/assets/config/ directory upon building the project (`ng build`) **This file is named config.json.example to avoid overwriting an already existing configuration file in a production environment so you need to make the config.json file yourself**
+
+The Configuration template file is chosen based on the build flags and then copied over to the /dist/assets/config/ folder. This allows for changing the configuration variables even after we've built our project.
+
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
