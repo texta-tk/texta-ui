@@ -13,7 +13,7 @@
         <button (click)="closeDialog()" class="flex-item-left" mat-button type="button">Close</button>
       </div>
       <div class="flex-item-right">
-        <button [disabled]="description == ''" mat-button type="submit" (click)="onSubmit()">Create</button>
+        <button [disabled]="description == '' || createRequestInProgress" mat-button type="submit" (click)="onSubmit()">Create</button>
       </div>
     </div>
 

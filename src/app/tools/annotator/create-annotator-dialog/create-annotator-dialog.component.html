@@ -189,7 +189,7 @@
       <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
     </div>
     <div class="flex-item-right">
-      <button [disabled]="!annotatorForm.valid" form="annotatorForm" data-cy="appAnnotatorCreateDialogSubmit" mat-button
+      <button [disabled]="!annotatorForm.valid || createRequestInProgress" form="annotatorForm" data-cy="appAnnotatorCreateDialogSubmit" mat-button
               type="submit">
         Create
       </button>

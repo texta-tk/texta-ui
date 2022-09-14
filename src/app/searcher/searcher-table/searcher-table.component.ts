@@ -81,7 +81,7 @@ export class SearcherTableComponent implements OnInit, OnDestroy {
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroy$), filter(x => !!x), distinctUntilChanged(),
       switchMap(projField => {
         if (projField) {
-          this.projectFields = ProjectIndex.cleanProjectIndicesFields(projField, ['text', 'long', 'fact', 'date', 'boolean', 'float'], []);
+          this.projectFields = ProjectIndex.filterFields(projField, ['text', 'long', 'fact', 'date', 'boolean', 'float'], [], true);
           // combine all fields of all indexes into one unique array to make columns
           this.displayedColumns = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(x => x.fields).flat(), (x => x.path));
           this.setColumnsToDisplay();

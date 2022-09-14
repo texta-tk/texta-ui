@@ -33,6 +33,7 @@ export class CreateAnonymizerDialogComponent implements OnInit, OnDestroy {
   destroyed$: Subject<boolean> = new Subject<boolean>();
   // tslint:disable-next-line:no-any
   analyzerOptions: any;
+  createRequestInProgress = false;
   constructor(private dialogRef: MatDialogRef<CreateAnonymizerDialogComponent>,
               private projectService: ProjectService,
               private logService: LogService,
@@ -57,6 +58,7 @@ export class CreateAnonymizerDialogComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(formData: { [key: string]: unknown }): void {
+    this.createRequestInProgress = true;
     // mimic_casing: formData.mimicCasingFormControl,
     const body = {
       description: formData.descriptionFormControl,
@@ -72,6 +74,7 @@ export class CreateAnonymizerDialogComponent implements OnInit, OnDestroy {
       } else {
         this.dialogRef.close(resp);
       }
+      this.createRequestInProgress = false;
     });
   }
 

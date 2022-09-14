@@ -89,6 +89,7 @@ export class CreateAnnotatorDialogComponent implements OnInit, OnDestroy {
   users: UserProfile[];
   currentUser: UserProfile;
   updateFacts$ = new Subject<''>();
+  createRequestInProgress = false;
 
   constructor(private dialogRef: MatDialogRef<CreateAnnotatorDialogComponent>,
               private projectService: ProjectService,
@@ -119,7 +120,7 @@ export class CreateAnnotatorDialogComponent implements OnInit, OnDestroy {
       if (resp?.selectedIndices && !(resp.selectedIndices instanceof HttpErrorResponse)) {
         const indicesForm = this.annotatorForm.get('indicesFormControl');
         indicesForm?.setValue(resp.selectedIndices);
-        this.projectFields = ProjectIndex.cleanProjectIndicesFields(resp.selectedIndices, ['text'], []);
+        this.projectFields = ProjectIndex.filterFields(resp.selectedIndices, ['text'], []);
         this.getFactsForIndices(indicesForm?.value);
       }
       UtilityFunctions.logForkJoinErrors(resp, HttpErrorResponse, this.logService.snackBarError.bind(this.logService));
@@ -174,6 +175,7 @@ export class CreateAnnotatorDialogComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(formData: OnSubmitParams): void {
+    this.createRequestInProgress = true;
     const body = {
       description: formData.descriptionFormControl,
       indices: formData.indicesFormControl.map(x => [{name: x.index}]).flat(),
@@ -209,6 +211,7 @@ export class CreateAnnotatorDialogComponent implements OnInit, OnDestroy {
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       }
+      this.createRequestInProgress = false;
     });
   }
 
@@ -242,7 +245,7 @@ export class CreateAnnotatorDialogComponent implements OnInit, OnDestroy {
     const indicesForm = this.annotatorForm.get('indicesFormControl');
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && indicesForm?.value && !UtilityFunctions.arrayValuesEqual(indicesForm?.value, this.projectFields, (x => x.index))) {
-      this.projectFields = ProjectIndex.cleanProjectIndicesFields(indicesForm.value, ['text'], []);
+      this.projectFields = ProjectIndex.filterFields(indicesForm.value, ['text'], []);
       if (this.annotatorForm?.get('annotationTypeFormControl')?.value !== 'entity') {
         this.getFactsForIndices(indicesForm?.value);
       } else if (this.annotatorForm?.get('annotationTypeFormControl')?.value === 'entity') {

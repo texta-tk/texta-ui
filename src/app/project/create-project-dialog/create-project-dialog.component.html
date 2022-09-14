@@ -78,7 +78,7 @@
           <button (click)="closeDialog()" class="flex-item-left" mat-button type="button">Close</button>
         </div>
         <div class="flex-item-right">
-          <button [disabled]="!projectForm.valid" data-cy="appProjectCreateDialogSubmit" mat-button type="submit">Create
+          <button [disabled]="!projectForm.valid || createRequestInProgress" data-cy="appProjectCreateDialogSubmit" mat-button type="submit">Create
             Project
           </button>
         </div>

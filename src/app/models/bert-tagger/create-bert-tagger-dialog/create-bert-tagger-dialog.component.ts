@@ -94,6 +94,7 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
   trainedModels: BertTagger[] = [];
   // tslint:disable-next-line:no-any
   bertOptions: any;
+  createRequestInProgress = false;
 
   constructor(private dialogRef: MatDialogRef<CreateBertTaggerDialogComponent>,
               private projectService: ProjectService,
@@ -206,7 +207,7 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
       if (this.currentProject?.id && currentProjIndices && !this.data.cloneElement) {
         const indicesForm = this.bertTaggerForm.get('indicesFormControl');
         indicesForm?.setValue(currentProjIndices);
-        this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
+        this.projectFields = ProjectIndex.filterFields(currentProjIndices, ['text'], []);
         this.projectFacts.next([{name: 'Loading...', values: []}]);
         return this.projectService.getProjectFacts(this.currentProject.id, currentProjIndices.map(x => [{name: x.index}]).flat(), true, false);
       } else {
@@ -226,6 +227,7 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(formData: OnSubmitParams): void {
+    this.createRequestInProgress = true;
     const body = {
       description: formData.descriptionFormControl,
       fields: formData.fieldsFormControl,
@@ -260,6 +262,7 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       }
+      this.createRequestInProgress = false;
     });
   }
 
@@ -268,7 +271,7 @@ export class CreateBertTaggerDialogComponent implements OnInit, OnDestroy {
     const indicesForm = this.bertTaggerForm.get('indicesFormControl');
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && indicesForm?.value && !UtilityFunctions.arrayValuesEqual(indicesForm?.value, this.projectFields, (x => x.index))) {
-      this.projectFields = ProjectIndex.cleanProjectIndicesFields(indicesForm.value, ['text'], []);
+      this.projectFields = ProjectIndex.filterFields(indicesForm.value, ['text'], []);
       this.getFactsForIndices(indicesForm?.value);
     }
   }

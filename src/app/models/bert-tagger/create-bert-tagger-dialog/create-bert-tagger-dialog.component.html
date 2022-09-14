@@ -197,7 +197,7 @@
       <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
     </div>
     <div class="flex-item-right">
-      <button [disabled]="!bertTaggerForm.valid" data-cy="appBertTaggerCreateDialogSubmit" form="bertForm" mat-button
+      <button [disabled]="!bertTaggerForm.valid || createRequestInProgress" data-cy="appBertTaggerCreateDialogSubmit" form="bertForm" mat-button
               type="submit">
         Create
       </button>

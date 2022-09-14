@@ -59,7 +59,13 @@ export interface Field {
 export class ProjectIndex {
   index: string;
   fields: Field[];
-  static cleanProjectIndicesFields(fields: ProjectIndex[], whiteList: string[], blackList: string[], whiteListAll?: boolean): ProjectIndex[] {
+
+  /**
+   * whiteList - list of elasticsearch field types to keep
+   * blackList - list of elasticsearch field types to filter out, if whiteList is empty all other field types except the ones in blacklist will be returned
+   * filterOutMLPMeta - filters out MLP Meta fields
+   */
+  static filterFields(fields: ProjectIndex[], whiteList: string[], blackList: string[], filterOutMLPMeta?: boolean): ProjectIndex[] {
     fields = JSON.parse(JSON.stringify(fields)); // deep clone, dont want to change original
     const filteredField: ProjectIndex[] = [];
     const whiteListTypes = whiteList && whiteList.length > 0 ? whiteList : null;
@@ -67,13 +73,13 @@ export class ProjectIndex {
     for (const index of fields) {
       index.fields = index.fields.filter(element => {
           if (whiteListTypes && whiteListTypes.includes(element.type)) {
-            return true;
+            return filterOutMLPMeta ? !element.path.startsWith('_mlp_meta') : true;
           }
           if (blackListTypes && blackListTypes.includes(element.type)) {
             return false;
           }
-          if (whiteListAll) {
-            return true;
+          if (!whiteListTypes) {
+            return filterOutMLPMeta ? !element.path.startsWith('_mlp_meta') : true;
           }
         }
       );
@@ -149,7 +155,7 @@ export interface ProjectState {
   searcher: {
     itemsPerPage: number;
     selectedFields: string[];
-    sidePanelsState: {buildSearch: boolean, savedSearch: boolean, aggregations: boolean}
+    sidePanelsState: { buildSearch: boolean, savedSearch: boolean, aggregations: boolean }
     searcherType: 1 | 2;
     showShortVersion: boolean;
   };

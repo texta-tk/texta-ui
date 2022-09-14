@@ -45,6 +45,7 @@ export class CreateReindexerDialogComponent implements OnInit, OnDestroy {
   destroyed$: Subject<boolean> = new Subject<boolean>();
   fieldTypesModel: FieldTypesModel[] = [];
   supportedElasticTypes: string[] = ['boolean', 'date', 'fact', 'float', 'long', 'text', 'mlp'];
+  createRequestInProgress = false;
 
   constructor(private dialogRef: MatDialogRef<CreateReindexerDialogComponent>,
               private projectService: ProjectService,
@@ -118,6 +119,7 @@ export class CreateReindexerDialogComponent implements OnInit, OnDestroy {
     newNameFormControl: string; fieldTypesFormControl: string; indicesFormControl: { index: string }[]; randomSizeFormControl: number;
     addFactsMappingFormControl: boolean;
   }): void {
+    this.createRequestInProgress = true;
     const fieldsToSend = formData.fieldsFormControl.map(x => x.path);
     const body = {
       description: formData.descriptionFormControl,
@@ -140,6 +142,7 @@ export class CreateReindexerDialogComponent implements OnInit, OnDestroy {
           this.logService.snackBarError(resp);
         }
       }
+      this.createRequestInProgress = false;
     });
   }
 

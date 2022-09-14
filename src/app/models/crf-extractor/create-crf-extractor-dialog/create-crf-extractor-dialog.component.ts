@@ -72,6 +72,7 @@ export class CreateCRFExtractorDialogComponent implements OnInit, OnDestroy {
   // tslint:disable-next-line:no-any
   CRFOptions: any;
   embeddings: Embedding[];
+  createRequestInProgress = false;
 
   constructor(private dialogRef: MatDialogRef<CreateCRFExtractorDialogComponent>,
               private projectService: ProjectService,
@@ -130,12 +131,13 @@ export class CreateCRFExtractorDialogComponent implements OnInit, OnDestroy {
       if (this.currentProject?.id && currentProjIndices && !this.data.cloneElement) {
         const indicesForm = this.CRFExtractorForm.get('indicesFormControl');
         indicesForm?.setValue(currentProjIndices);
-        this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['mlp'], []);
+        this.projectFields = ProjectIndex.filterFields(currentProjIndices, ['mlp'], []);
       }
     });
   }
 
   onSubmit(formData: OnSubmitParams): void {
+    this.createRequestInProgress = true;
     const body = {
       description: formData.descriptionFormControl,
       indices: formData.indicesFormControl.map(x => [{name: x.index}]).flat(),
@@ -162,6 +164,7 @@ export class CreateCRFExtractorDialogComponent implements OnInit, OnDestroy {
       } else {
         this.logService.snackBarError(resp, 5000);
       }
+      this.createRequestInProgress = false;
     });
   }
 
@@ -169,7 +172,7 @@ export class CreateCRFExtractorDialogComponent implements OnInit, OnDestroy {
     const indicesForm = this.CRFExtractorForm.get('indicesFormControl');
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && indicesForm?.value && !UtilityFunctions.arrayValuesEqual(indicesForm?.value, this.projectFields, (x => x.index))) {
-      this.projectFields = ProjectIndex.cleanProjectIndicesFields(indicesForm.value, ['mlp'], []);
+      this.projectFields = ProjectIndex.filterFields(indicesForm.value, ['mlp'], []);
       this.CRFExtractorForm.get('mlpFieldsFormControl')?.reset();
       this.projectFacts = [];
     }

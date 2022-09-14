@@ -83,7 +83,7 @@ export class ApplyToIndexDialogComponent implements OnInit, OnDestroy {
       if (currentProjIndices) {
         const indicesForm = this.applyForm.get('indicesFormControl');
         indicesForm?.setValue(currentProjIndices);
-        this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['mlp'], []);
+        this.projectFields = ProjectIndex.filterFields(currentProjIndices, ['mlp'], []);
       }
     });
   }
@@ -92,7 +92,7 @@ export class ApplyToIndexDialogComponent implements OnInit, OnDestroy {
     const indicesForm = this.applyForm.get('indicesFormControl');
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && indicesForm?.value && !UtilityFunctions.arrayValuesEqual(indicesForm?.value, this.projectFields, (x => x.index))) {
-      this.projectFields = ProjectIndex.cleanProjectIndicesFields(indicesForm?.value, ['mlp'], []);
+      this.projectFields = ProjectIndex.filterFields(indicesForm?.value, ['mlp'], []);
     }
   }
 

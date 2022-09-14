@@ -73,6 +73,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy {
   projectIndices: ProjectIndex[] = [];
   snowballLanguages: string[] = [];
   @ViewChild('indicesSelect') indicesSelect: MatSelect;
+  createRequestInProgress = false;
 
   constructor(private dialogRef: MatDialogRef<CreateTaggerGroupDialogComponent>,
               private taggerGroupService: TaggerGroupService,
@@ -185,7 +186,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy {
       if (this.currentProject?.id && currentProjIndices && !this.data.cloneTagger) {
         const indicesForm = this.taggerGroupForm.get('taggerForm')?.get('indicesFormControl');
         indicesForm?.setValue(currentProjIndices);
-        this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
+        this.projectFields = ProjectIndex.filterFields(currentProjIndices, ['text'], []);
         this.projectFacts.next([{name: 'Loading...', values: []}]);
         return this.projectService.getProjectFacts(this.currentProject.id, currentProjIndices.map(x => [{name: x.index}]).flat(), true, false);
       } else {
@@ -205,7 +206,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy {
     const indicesForm = this.taggerGroupForm.get('taggerForm')?.get('indicesFormControl');
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && indicesForm?.value && !UtilityFunctions.arrayValuesEqual(indicesForm?.value, this.projectFields, (x => x.index))) {
-      this.projectFields = ProjectIndex.cleanProjectIndicesFields(indicesForm.value, ['text'], []);
+      this.projectFields = ProjectIndex.filterFields(indicesForm.value, ['text'], []);
       this.getFactsForIndices(indicesForm?.value);
     }
   }
@@ -227,6 +228,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy {
 
 
   onSubmit(): void {
+    this.createRequestInProgress = true;
     const formData = this.taggerGroupForm.value;
     const taggerBody = {
       fields: formData.taggerForm.fieldsFormControl,
@@ -259,6 +261,7 @@ export class CreateTaggerGroupDialogComponent implements OnInit, OnDestroy {
         } else if (resp) {
           this.dialogRef.close(resp);
         }
+        this.createRequestInProgress = false;
       });
     }
   }

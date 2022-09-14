@@ -28,7 +28,7 @@
           <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
         </div>
         <div class="flex-item-right">
-          <button [disabled]="!regexTaggerGroupForm.valid" data-cy="appRegexTaggerGroupCreateDialogSubmit" mat-button
+          <button [disabled]="!regexTaggerGroupForm.valid || createRequestInProgress" data-cy="appRegexTaggerGroupCreateDialogSubmit" mat-button
                   type="submit">
             Create
           </button>

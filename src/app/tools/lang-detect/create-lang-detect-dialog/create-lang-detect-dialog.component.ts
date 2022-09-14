@@ -35,6 +35,7 @@ export class CreateLangDetectDialogComponent implements OnInit, OnDestroy {
   projectFields: ProjectIndex[];
   // tslint:disable-next-line:no-any
   langDetectOptions: any;
+  createRequestInProgress = false;
 
   constructor(private dialogRef: MatDialogRef<CreateLangDetectDialogComponent>,
               private projectService: ProjectService,
@@ -48,7 +49,7 @@ export class CreateLangDetectDialogComponent implements OnInit, OnDestroy {
       if (currentProjIndices) {
         const indicesForm = this.langDetectForm.get('indicesFormControl');
         indicesForm?.setValue(currentProjIndices);
-        this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
+        this.projectFields = ProjectIndex.filterFields(currentProjIndices, ['text'], []);
       }
     });
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), mergeMap(currentProject => {
@@ -76,6 +77,7 @@ export class CreateLangDetectDialogComponent implements OnInit, OnDestroy {
     descriptionFormControl: string;
     indicesFormControl: ProjectIndex[]; fieldsFormControl: string[];
   }): void {
+    this.createRequestInProgress = true;
     const body = {
       description: formData.descriptionFormControl,
       ...this.query ? {query: this.query} : {},
@@ -90,6 +92,7 @@ export class CreateLangDetectDialogComponent implements OnInit, OnDestroy {
       } else if (resp instanceof HttpErrorResponse) {
         this.logService.snackBarError(resp, 5000);
       }
+      this.createRequestInProgress = false;
     });
   }
 
@@ -97,7 +100,7 @@ export class CreateLangDetectDialogComponent implements OnInit, OnDestroy {
     const indicesForm = this.langDetectForm.get('indicesFormControl');
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && indicesForm?.value && !UtilityFunctions.arrayValuesEqual(indicesForm?.value, this.projectFields, (x => x.index))) {
-      this.projectFields = ProjectIndex.cleanProjectIndicesFields(indicesForm.value, ['text'], []);
+      this.projectFields = ProjectIndex.filterFields(indicesForm.value, ['text'], []);
     }
   }
 

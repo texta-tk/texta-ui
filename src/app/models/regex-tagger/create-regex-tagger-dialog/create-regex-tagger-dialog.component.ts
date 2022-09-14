@@ -61,6 +61,7 @@ export class CreateRegexTaggerDialogComponent implements OnInit, OnDestroy {
   // tslint:disable-next-line:no-any
   regexTaggerOptions: any;
   @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
+  createRequestInProgress = false;
 
   constructor(private dialogRef: MatDialogRef<CreateRegexTaggerDialogComponent>,
               private regexTaggerService: RegexTaggerService,
@@ -128,6 +129,7 @@ export class CreateRegexTaggerDialogComponent implements OnInit, OnDestroy {
 
   // @ts-ignore
   onSubmit(formData): void {
+    this.createRequestInProgress = true;
     const body = {
       description: formData.descriptionFormControl,
       lexicon: formData.lexiconFormControl.length > 0 ? formData.lexiconFormControl.split('\n').filter((x: unknown) => x) : [],
@@ -153,6 +155,7 @@ export class CreateRegexTaggerDialogComponent implements OnInit, OnDestroy {
           this.logService.snackBarError(x);
         }
       }
+      this.createRequestInProgress = false;
     });
   }
 

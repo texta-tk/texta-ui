@@ -86,7 +86,7 @@
       <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
     </div>
     <div class="flex-item-right">
-      <button [disabled]="!searchFieldsTaggerForm.valid" data-cy="appSearchFieldsTaggerCreateDialogSubmit"
+      <button [disabled]="!searchFieldsTaggerForm.valid || createRequestInProgress" data-cy="appSearchFieldsTaggerCreateDialogSubmit"
               form="searchFieldsTaggerForm" mat-button
               type="submit">
         Create
