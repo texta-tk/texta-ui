@@ -49,7 +49,7 @@ export class TaggerGroupTagRandomDocDialogComponent implements OnInit {
       if (x && this.model.indices.length === 0) {
         this.model.indices = x;
         if (this.model.fields.length === 0) {
-          this.projectFields = ProjectIndex.cleanProjectIndicesFields(this.model.indices, [], ['fact'], true);
+          this.projectFields = ProjectIndex.filterFields(this.model.indices, [], ['fact']);
         }
       }
     });
@@ -58,7 +58,7 @@ export class TaggerGroupTagRandomDocDialogComponent implements OnInit {
   public indicesOpenedChange(opened: boolean): void {
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && this.model.indices && !UtilityFunctions.arrayValuesEqual(this.model.indices, this.projectFields, (x => x.index))) {
-      this.projectFields = ProjectIndex.cleanProjectIndicesFields(this.model.indices, [], ['fact'], true);
+      this.projectFields = ProjectIndex.filterFields(this.model.indices, [], ['fact']);
     }
   }
 

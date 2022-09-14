@@ -49,7 +49,7 @@ export class CreateLangDetectDialogComponent implements OnInit, OnDestroy {
       if (currentProjIndices) {
         const indicesForm = this.langDetectForm.get('indicesFormControl');
         indicesForm?.setValue(currentProjIndices);
-        this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
+        this.projectFields = ProjectIndex.filterFields(currentProjIndices, ['text'], []);
       }
     });
     this.projectStore.getCurrentProject().pipe(takeUntil(this.destroyed$), mergeMap(currentProject => {
@@ -100,7 +100,7 @@ export class CreateLangDetectDialogComponent implements OnInit, OnDestroy {
     const indicesForm = this.langDetectForm.get('indicesFormControl');
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && indicesForm?.value && !UtilityFunctions.arrayValuesEqual(indicesForm?.value, this.projectFields, (x => x.index))) {
-      this.projectFields = ProjectIndex.cleanProjectIndicesFields(indicesForm.value, ['text'], []);
+      this.projectFields = ProjectIndex.filterFields(indicesForm.value, ['text'], []);
     }
   }
 

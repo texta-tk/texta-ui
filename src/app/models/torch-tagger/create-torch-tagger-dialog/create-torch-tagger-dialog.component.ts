@@ -183,7 +183,7 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
       if (this.currentProject?.id && currentProjIndices && !this.data.cloneElement) {
         const indicesForm = this.torchTaggerForm.get('indicesFormControl');
         indicesForm?.setValue(currentProjIndices);
-        this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
+        this.projectFields = ProjectIndex.filterFields(currentProjIndices, ['text'], []);
         this.projectFacts.next([{name: 'Loading...', values: []}]);
         return this.projectService.getProjectFacts(this.currentProject.id, currentProjIndices.map(x => [{name: x.index}]).flat(), true, false);
       } else {
@@ -223,7 +223,7 @@ export class CreateTorchTaggerDialogComponent implements OnInit, OnDestroy {
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && indicesForm?.value && !UtilityFunctions.arrayValuesEqual(indicesForm?.value, this.projectFields, (x => x.index))) {
       this.getFactsForIndices(indicesForm?.value);
-      this.projectFields = ProjectIndex.cleanProjectIndicesFields(indicesForm.value, ['text'], []);
+      this.projectFields = ProjectIndex.filterFields(indicesForm.value, ['text'], []);
     }
   }
 

@@ -69,7 +69,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
     });
     this.projectStore.getSelectedProjectIndices().pipe(takeUntil(this.destroy$)).subscribe(projectFields => {
       if (projectFields) {
-        this.projectFields = ProjectIndex.cleanProjectIndicesFields(projectFields, ['fact', 'text', 'date', 'long', 'float', 'boolean'], []);
+        this.projectFields = ProjectIndex.filterFields(projectFields, ['fact', 'text', 'date', 'long', 'float', 'boolean'], [], true);
         this.fieldIndexMap = ProjectIndex.getFieldToIndexMap(projectFields);
         const distinct = UtilityFunctions.getDistinctByProperty<Field>(this.projectFields.map(x => x.fields).flat(), (x => x.path));
         const textaFactIndex = distinct.findIndex(item => item.type === 'fact');
@@ -215,7 +215,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
         if (firstLevelAgg === 'aggs') {
           aggInner = aggregation.aggs;
           return this.getInnerMostAggs(aggInner);
-        } else if(!aggregation[firstLevelAgg].hasOwnProperty('bucket_selector')) {
+        } else if (!aggregation[firstLevelAgg].hasOwnProperty('bucket_selector')) {
           inCaseNoAggsFound = firstLevelAgg;
         }
       }
@@ -244,7 +244,7 @@ export class AggregationsComponent implements OnInit, OnDestroy {
   fieldTypeDate(val: Field): boolean {
     return (val && (val.type === 'date'));
   }
-  
+
   fieldTypeBool(val: Field): boolean {
     return (val && (val.type === 'boolean'));
   }

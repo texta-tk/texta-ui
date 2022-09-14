@@ -150,7 +150,7 @@ export class CreateEvaluatorDialogComponent implements OnInit, OnDestroy {
       if (this.currentProject?.id && currentProjIndices) {
         const indicesForm = this.evaluatorForm.get('indicesFormControl');
         indicesForm?.setValue(currentProjIndices);
-        this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
+        this.projectFields = ProjectIndex.filterFields(currentProjIndices, ['text'], []);
         this.projectFacts = ['Loading...'];
         return this.projectService.getProjectFacts(this.currentProject.id, currentProjIndices.map(x => [{name: x.index}]).flat(), false, false);
       } else {
@@ -271,7 +271,7 @@ export class CreateEvaluatorDialogComponent implements OnInit, OnDestroy {
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && indicesForm?.value && !UtilityFunctions.arrayValuesEqual(indicesForm?.value, this.projectFields, (x => x.index))) {
       this.getFactsForIndices(indicesForm?.value);
-      this.projectFields = ProjectIndex.cleanProjectIndicesFields(indicesForm.value, ['text'], []);
+      this.projectFields = ProjectIndex.filterFields(indicesForm.value, ['text'], []);
     }
   }
 

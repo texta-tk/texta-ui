@@ -203,7 +203,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
       if (this.currentProject?.id && currentProjIndices && !this.data.cloneTagger) {// in case of cloning we set it already
         const indicesForm = this.taggerForm.get('indicesFormControl');
         indicesForm?.setValue(currentProjIndices);
-        this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
+        this.projectFields = ProjectIndex.filterFields(currentProjIndices, ['text'], []);
         this.projectFacts.next([{name: 'Loading...', values: []}]);
         return this.projectService.getProjectFacts(this.currentProject.id, currentProjIndices.map(x => [{name: x.index}]).flat(), true, false);
       } else {
@@ -238,7 +238,7 @@ export class CreateTaggerDialogComponent implements OnInit, OnDestroy {
     const indicesForm = this.taggerForm.get('indicesFormControl');
     // true is opened, false is closed, when selecting something and then deselecting it the formcontrol returns empty array
     if (!opened && indicesForm?.value && !UtilityFunctions.arrayValuesEqual(indicesForm?.value, this.projectFields, (x => x.index))) {
-      this.projectFields = ProjectIndex.cleanProjectIndicesFields(indicesForm.value, ['text'], []);
+      this.projectFields = ProjectIndex.filterFields(indicesForm.value, ['text'], []);
       this.getFactsForIndices(indicesForm?.value);
     }
   }

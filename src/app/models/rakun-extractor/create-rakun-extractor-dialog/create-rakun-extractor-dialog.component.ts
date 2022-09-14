@@ -75,7 +75,7 @@ export class CreateRakunExtractorDialogComponent implements OnInit, OnDestroy {
       if (currentProjIndices) {
         const indicesForm = this.rakunExtractorForm.get('indicesFormControl');
         indicesForm?.setValue(currentProjIndices);
-        this.projectFields = ProjectIndex.cleanProjectIndicesFields(currentProjIndices, ['text'], []);
+        this.projectFields = ProjectIndex.filterFields(currentProjIndices, ['text'], []);
       }
     });
     this.rakunExtractorForm.get('distanceMethodFormControl')?.valueChanges.pipe(skip(1), takeUntil(this.destroyed$)).subscribe(val => {

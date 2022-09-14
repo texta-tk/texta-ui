@@ -69,7 +69,6 @@ export class DateConstraintsComponent implements OnInit, OnDestroy {
       // when we change project component doesnt get destroyed before it fires request, so check it here
       const stopConditions$ = merge(this.destroyed$, this.projectStore.getCurrentProject().pipe(skip(1)));
       this.projectStore.getSelectedProjectIndices().pipe(takeUntil(stopConditions$), switchMap(selectedIndices => {
-        console.log(selectedIndices);
         if (selectedIndices) {
           const queryMinMax = {
             query: {
