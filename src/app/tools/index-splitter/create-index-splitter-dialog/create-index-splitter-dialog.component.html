@@ -2,10 +2,11 @@
   <h1 mat-dialog-title>New Index Splitter</h1>
   <app-docs-button style="margin-left: auto" documentationArea="indexSplitterCreate"></app-docs-button>
 </div>
-<mat-dialog-content>
+<mat-dialog-content #content>
   <form (ngSubmit)="onSubmit(indexSplitterForm.value)" [formGroup]="indexSplitterForm" class="flex-col" id="createForm">
     <mat-form-field data-cy="appIndexSplitterCreateDialogDesc">
-      <input [errorStateMatcher]="matcher" autocomplete="off" cdkFocusInitial formControlName="descriptionFormControl" matInput
+      <input [errorStateMatcher]="matcher" autocomplete="off" cdkFocusInitial formControlName="descriptionFormControl"
+             matInput
              placeholder="Description" required>
 
       <mat-error *ngIf="indexSplitterForm.get('descriptionFormControl')?.hasError('required')">
@@ -116,12 +117,30 @@
       </mat-select>
       <mat-hint>{{indexSplitterOptions?.actions?.POST?.distribution?.help_text || ''}}</mat-hint>
     </mat-form-field>
-    <mat-form-field *ngIf="indexSplitterForm?.get('distributionFormControl')?.value?.display_name === 'custom'">
-      <mat-label>Custom distribution</mat-label>
-      <input autocomplete="off" formControlName="customDistributionFormControl" matInput
-             placeholder='{"Label": 2, "Label2" : 5}'>
-      <mat-hint>{{indexSplitterOptions?.actions?.POST?.custom_distribution?.help_text || ''}}</mat-hint>
-    </mat-form-field>
+    <table class="simple-table m-top-10"
+           *ngIf="indexSplitterForm?.get('distributionFormControl')?.value?.display_name === 'custom'">
+      <tr>
+        <th class="mat-body-strong">Label</th>
+        <th class="mat-body-strong">Quantity</th>
+      </tr>
+      <tr *ngFor="let distribution of customDistributionList; let last=last;">
+        <td><input class="max-width" style="box-sizing: border-box" [(ngModel)]="distribution.key"
+                   [ngModelOptions]="{standalone: true}"></td>
+        <td><input class="max-width" style="box-sizing: border-box" [(ngModel)]="distribution.value" type="number" min="0"
+                   [ngModelOptions]="{standalone: true}"></td>
+        <td *ngIf="last" style="
+    padding: 0;
+    min-width: unset;
+    border: 0;
+    text-align: center;">
+          <button (click)="addItemToCustomDistribution()" class="small-icon-button" mat-icon-button
+                  color="primary" aria-label="Add new row" type="button">
+            <mat-icon>add</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
+
   </form>
 </mat-dialog-content>
 <mat-dialog-actions>
@@ -130,7 +149,8 @@
       <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
     </div>
     <div class="flex-item-right">
-      <button [disabled]="!indexSplitterForm.valid || createRequestInProgress" data-cy="appIndexSplitterCreateDialogSubmit" form="createForm"
+      <button [disabled]="!indexSplitterForm.valid || createRequestInProgress"
+              data-cy="appIndexSplitterCreateDialogSubmit" form="createForm"
               mat-button
               type="submit">
         Create

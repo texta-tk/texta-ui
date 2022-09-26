@@ -1,4 +1,4 @@
-import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
+import {Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {BehaviorSubject, forkJoin, of, Subject} from 'rxjs';
 import {ErrorStateMatcher} from '@angular/material/core';
@@ -14,7 +14,6 @@ import {ProjectStore} from '../../../core/projects/project.store';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 import {IndexSplitter, IndexSplitterOptions} from '../../../shared/types/tasks/IndexSplitter';
 import {MatSelectChange} from '@angular/material/select';
-import {Tagger} from '../../../shared/types/tasks/Tagger';
 
 interface OnSubmitParams {
   descriptionFormControl: string;
@@ -27,7 +26,6 @@ interface OnSubmitParams {
   factFormControl: { name: string; values: string[] };
   strValFormControl: string;
   distributionFormControl: { value: string, display_name: string };
-  customDistributionFormControl: string;
 }
 
 @Component({
@@ -36,6 +34,7 @@ interface OnSubmitParams {
   styleUrls: ['./create-index-splitter-dialog.component.scss']
 })
 export class CreateIndexSplitterDialogComponent implements OnInit, OnDestroy {
+  @ViewChild('content') content: ElementRef;
   defaultQuery = '{"query": {"match_all": {}}}';
   query = this.data?.cloneIndexSplitter?.query || this.defaultQuery;
 
@@ -50,7 +49,6 @@ export class CreateIndexSplitterDialogComponent implements OnInit, OnDestroy {
     factFormControl: new UntypedFormControl(''),
     strValFormControl: new UntypedFormControl({value: '', disabled: true}),
     distributionFormControl: new UntypedFormControl(''),
-    customDistributionFormControl: new UntypedFormControl(this.data?.cloneIndexSplitter?.custom_distribution ? JSON.stringify(this.data?.cloneIndexSplitter?.custom_distribution) : ''),
   });
 
   matcher: ErrorStateMatcher = new LiveErrorStateMatcher();
@@ -59,11 +57,23 @@ export class CreateIndexSplitterDialogComponent implements OnInit, OnDestroy {
   fieldsUnique: Field[] = [];
   projectIndices: ProjectIndex[] = [];
   projectFields: ProjectIndex[];
-  projectFacts: BehaviorSubject<{ name: string, values: string[] }[]> = new BehaviorSubject<{ name: string, values: string[] }[]>([{name: 'Loading...', values: []}]);
+  projectFacts: BehaviorSubject<{ name: string, values: string[] }[]> = new BehaviorSubject<{ name: string, values: string[] }[]>([{
+    name: 'Loading...',
+    values: []
+  }]);
   indexSplitterOptions: IndexSplitterOptions | undefined;
   isLoadingOptions = false;
   factValOptions: string[] = [];
   createRequestInProgress = false;
+
+  customDistributionList: { key: string, value: number | string }[] = this.initCustomDistribution(this.data.cloneIndexSplitter);
+
+  private initCustomDistribution(data: IndexSplitter): { key: string, value: number | string }[] {
+    if (data) {
+      return Object.keys(data.custom_distribution).map(x => ({key: x, value: data.custom_distribution[x]}));
+    }
+    return [{key: 'Label1', value: 5}];
+  }
 
   constructor(private dialogRef: MatDialogRef<CreateIndexSplitterDialogComponent>,
               private projectService: ProjectService,
@@ -175,7 +185,18 @@ export class CreateIndexSplitterDialogComponent implements OnInit, OnDestroy {
       ...formData.factFormControl ? {fact: formData.factFormControl.name} : {},
       ...formData.strValFormControl ? {str_val: formData.strValFormControl} : {},
       distribution: formData.distributionFormControl.value,
-      ...formData.customDistributionFormControl ? {custom_distribution: formData.customDistributionFormControl} : {},
+      ...formData.distributionFormControl.value === 'custom' ? {
+        // tslint:disable-next-line:no-any
+        custom_distribution: JSON.stringify(this.customDistributionList.reduce((r: any, {
+          key,
+          value
+        }) => {
+          if (key) {
+            return (r[key] = value, r);
+          }
+          return r;
+        }, {}))
+      } : {},
       ...this.query ? {query: this.query} : {},
     };
 
@@ -235,5 +256,15 @@ export class CreateIndexSplitterDialogComponent implements OnInit, OnDestroy {
       trueFactVal.enable();
       trueFactVal.setValue('');
     }
+  }
+
+  addItemToCustomDistribution(): void {
+    this.customDistributionList.push({key: '', value: ''});
+    setTimeout(() => {
+      if (this.content?.nativeElement) {
+        this.content.nativeElement.scrollTop = this.content.nativeElement.scrollHeight;
+      }
+    }, 0);
+
   }
 }

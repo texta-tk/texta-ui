@@ -1,4 +1,4 @@
-<div *ngIf="task" [matTooltip]="errorsLength ? 'Task completed with errors' : ''">
+<div *ngIf="task" [matTooltip]="errorsLength ? 'Task '+ task.status +' with errors' : ''">
   <mat-progress-bar *ngIf="task.status === 'completed'" [value]="100"
                     [ngClass]="{'mat-progress-bar-warn' : errorsLength}"
                     mode="determinate">
