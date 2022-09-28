@@ -36,7 +36,7 @@ export class CreateLabelsetDialogComponent implements OnInit, OnDestroy {
     categoryFormControl: new UntypedFormControl('', [Validators.required]),
     factNameFormControl: new UntypedFormControl(),
     valueLimitFormControl: new UntypedFormControl(500, [Validators.required, Validators.max(10000), Validators.min(0)]),
-    valuesFormControl: new UntypedFormControl('', [Validators.required]),
+    valuesFormControl: new UntypedFormControl(''),
   });
   currentProject: Project;
   destroyed$: Subject<boolean> = new Subject();

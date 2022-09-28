@@ -43,11 +43,8 @@
       <mat-hint>{{labelSetOptions?.actions?.POST?.category?.help_text || ''}}</mat-hint>
     </mat-form-field>
     <mat-form-field data-cy="appLabelSetCreateDialogValues">
-      <app-textarea-lexicon formControlName="valuesFormControl" [required]="true"
+      <app-textarea-lexicon formControlName="valuesFormControl" [required]="false"
                             placeholder="Values (newline separated)"></app-textarea-lexicon>
-      <mat-error *ngIf="labelSetForm.get('valuesFormControl')?.hasError('required')">
-        Value is <strong>required</strong>
-      </mat-error>
       <mat-hint>{{labelSetOptions?.actions?.POST?.values?.help_text || ''}}</mat-hint>
 
     </mat-form-field>
