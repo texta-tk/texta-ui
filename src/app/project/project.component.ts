@@ -5,7 +5,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
-import {from, Observable, Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {LogService} from '../core/util/log.service';
 import {CreateProjectDialogComponent} from './create-project-dialog/create-project-dialog.component';
 import {ProjectStore} from '../core/projects/project.store';
@@ -17,7 +17,6 @@ import {ConfirmDialogComponent} from '../shared/shared-module/components/dialogs
 import {ProjectService} from '../core/projects/project.service';
 import {UserStore} from '../core/users/user.store';
 import {UntypedFormControl} from '@angular/forms';
-import {MatOption} from '@angular/material/core';
 import {KeyValue} from '@angular/common';
 import {AppConfigService} from '../core/util/app-config.service';
 import {UtilityFunctions} from '../shared/UtilityFunctions';
@@ -35,12 +34,12 @@ export class ProjectComponent implements OnInit, OnDestroy {
   filteredUsers: Observable<UserProfile[]>;
   // tslint:disable-next-line:no-any
   public projectCounts$: Observable<any>; // strict template and async pipe with keyvalue has buggy types for some reason
-  public tableData: MatTableDataSource<Project> = new MatTableDataSource<Project>([]);
+  public tableData: MatTableDataSource<Project> = new MatTableDataSource();
   public displayedColumns = ['id', 'title', 'author', 'indices_count', 'resource_count', 'users_count', 'Modify'];
   public isLoadingResults = true;
   public currentUser: UserProfile;
-  @ViewChild(MatSort, {static: true}) sort: MatSort;
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   public authorFilterControl = new UntypedFormControl();
   public titleFilterControl = new UntypedFormControl();
   private currentProject: Project;
@@ -57,7 +56,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
   valueAscOrder = (a: KeyValue<string, number>, b: KeyValue<string, number>): number => {
     return b.value > a.value ? 1 : (a.value > b.value ? -1 : 0);
-  }
+  };
+
   urlAccessor = (x: UserProfile) => x.url;
 
   ngOnInit(): void {
@@ -68,6 +68,30 @@ export class ProjectComponent implements OnInit, OnDestroy {
         return true;
       }
       return data.author.id === +element;
+    };
+    this.tableData.sortingDataAccessor = (data, sortHeaderID) => {
+      switch (sortHeaderID) {
+        case 'users_count': {
+          return data.users.length;
+        }
+        case 'resource_count': {
+          return data.resource_count;
+        }
+        case 'indices_count': {
+          return data.indices.length;
+        }
+        case 'author': {
+          return data?.author?.display_name;
+        }
+        default: {
+          if (data.hasOwnProperty(sortHeaderID)) {
+            // @ts-ignore
+            return data[sortHeaderID];
+          } else {
+            return data;
+          }
+        }
+      }
     };
     this.filteredUsers = this.userService.getAllUsers().pipe(filter(x => !(x instanceof HttpErrorResponse))) as Observable<UserProfile[]>;
 
@@ -88,6 +112,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
           this.titleFilterControl.setValue(this.titleFilterControl.value);
         } else {
           this.tableData.data = projects;
+          this.tableData.sort = this.sort;
+          this.tableData.paginator = this.paginator;
           this.isLoadingResults = false;
         }
         this.changeDetectorRef.markForCheck();
