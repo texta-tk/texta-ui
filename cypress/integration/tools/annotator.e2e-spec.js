@@ -138,11 +138,7 @@ describe('Annotator should work', function () {
       cy.matFormFieldShouldHaveError(desc, 'required');
       cy.wrap(desc).type('testLabelset');
     }));
-    cy.get('[data-cy=appLabelSetCreateDialogValues]').click().then((desc => {
-      cy.wrap(desc).should('have.class', 'mat-focused').type('b').find('textarea').clear().blur();
-      cy.matFormFieldShouldHaveError(desc, 'required');
-      cy.wrap(desc).type('testLabelset');
-    }));
+    cy.get('[data-cy=appLabelSetCreateDialogValues]').type('b');
     cy.get('[data-cy=appLabelSetCreateDialogSubmit]').should('be.visible').click();
     cy.wait('@postLabelset').then(created => {
       expect(created.response.statusCode).to.eq(201);
