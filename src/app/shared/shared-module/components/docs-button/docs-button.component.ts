@@ -25,6 +25,8 @@ const docLinkMap = {
   reindexerCreate: 'https://docs.texta.ee/reindexer.html#parameters',
   summarizerCreate: 'https://docs.texta.ee/summarizer.html',
   topicAnalyzerCreate: 'https://docs.texta.ee/topic_analyzer.html',
+  // core
+  elasticIndexCreate: 'https://docs.texta.ee/index_creation.html#create-indices'
 };
 
 @Component({

@@ -1,20 +1,20 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {CreateAnonymizerDialogComponent} from './create-anonymizer-dialog.component';
+import { CreateDialogComponent } from './create-dialog.component';
 import {SharedModule} from '../../../shared/shared-module/shared.module';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatDialogRef} from '@angular/material/dialog';
 
-describe('CreateAnonymizerDialogComponent', () => {
-  let component: CreateAnonymizerDialogComponent;
-  let fixture: ComponentFixture<CreateAnonymizerDialogComponent>;
+describe('CreateDialogComponent', () => {
+  let component: CreateDialogComponent;
+  let fixture: ComponentFixture<CreateDialogComponent>;
   const mockDialogRef = {
     close: jasmine.createSpy('close')
   };
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [
         SharedModule, HttpClientTestingModule, RouterTestingModule, BrowserAnimationsModule
       ],
@@ -23,12 +23,11 @@ describe('CreateAnonymizerDialogComponent', () => {
           provide: MatDialogRef,
           useValue: mockDialogRef
         }],
-      declarations: [CreateAnonymizerDialogComponent]
-    }).compileComponents();
-  }));
+      declarations: [ CreateDialogComponent ]
+    })
+    .compileComponents();
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(CreateAnonymizerDialogComponent);
+    fixture = TestBed.createComponent(CreateDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,0 +1,95 @@
+<div class="flex-row">
+  <h1 mat-dialog-title>Create Index</h1>
+  <app-docs-button style="margin-left: auto" documentationArea="elasticIndexCreate"></app-docs-button>
+</div>
+<div mat-dialog-content>
+  <form (ngSubmit)="onSubmit()" [formGroup]="createIndexForm" class="flex-col">
+    <mat-form-field data-cy="appElasticIndexCreateDialogName">
+      <input [errorStateMatcher]="matcher" autocomplete="off" cdkFocusInitial formControlName="nameFormControl" matInput
+             placeholder="Name" required>
+
+      <mat-error *ngIf="createIndexForm.get('nameFormControl')?.hasError('required')">
+        Name is <strong>required</strong>
+      </mat-error>
+      <mat-error *ngIf="createIndexForm.get('nameFormControl')?.hasError('notLowerCase')">
+        Uppercase characters are not allowed
+      </mat-error>
+      <mat-error *ngIf="createIndexForm.get('nameFormControl')?.hasError('wildCard')">
+        Wildcards are not allowed in Index operations
+      </mat-error>
+      <mat-error *ngIf="createIndexForm.get('nameFormControl')?.hasError('colon')">
+        ':' symbols are not allowed in Index names
+      </mat-error>
+      <mat-hint>{{indexOptions?.actions?.POST?.name?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field data-cy="appElasticIndexCreateDialogDesc">
+      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="descriptionFormControl"
+             matInput
+             placeholder="Description">
+      <mat-hint>{{indexOptions?.actions?.POST?.description?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="addedByFormControl"
+             matInput
+             placeholder="Added by">
+      <mat-hint>{{indexOptions?.actions?.POST?.added_by?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+    <mat-form-field>
+      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="sourceFormControl"
+             matInput
+             placeholder="Source">
+      <mat-hint>{{indexOptions?.actions?.POST?.source?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+    <mat-form-field>
+      <input [errorStateMatcher]="matcher" autocomplete="off" formControlName="clientFormControl"
+             matInput
+             placeholder="Client">
+      <mat-hint>{{indexOptions?.actions?.POST?.client?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+    <mat-form-field >
+      <mat-label>Domain</mat-label>
+      <mat-select [disableOptionCentering]="true" formControlName="domainFormControl"
+                  panelClass="select-panel-reveal-input"  >
+        <ng-container *ngIf="domains">
+          <mat-option *ngFor="let item of domains" [value]="item.value">
+            {{item.display_name ? item.display_name : 'None'}}
+          </mat-option>
+        </ng-container>
+      </mat-select>
+      <mat-hint>{{indexOptions?.actions?.POST?.domain?.help_text || ''}}</mat-hint>
+    </mat-form-field>
+    <div class="checkbox-info-row">
+      <mat-checkbox formControlName="isTestFormControl">Is test
+      </mat-checkbox>
+      <app-info-icon [textTemplate]="IsTestTemplate" textTitle="Is Test">
+        <ng-template #IsTestTemplate>
+          <p>{{indexOptions?.actions?.POST?.test?.help_text || ''}}</p>
+        </ng-template>
+      </app-info-icon>
+    </div>
+    <div class="checkbox-info-row">
+      <mat-checkbox formControlName="isOpenFormControl">Is open
+      </mat-checkbox>
+      <app-info-icon [textTemplate]="IsOpenTemplate" textTitle="Is Open" *ngIf="indexOptions?.actions?.POST?.is_open?.help_text">
+        <ng-template #IsOpenTemplate>
+          <p>{{indexOptions?.actions?.POST?.is_open?.help_text || ''}}</p>
+        </ng-template>
+      </app-info-icon>
+    </div>
+    <div class="flex-col m-top-10">
+      <div class="flex-row">
+        <div class="flex-item-left">
+          <button class="flex-item-left" mat-button mat-dialog-close type="button">Close</button>
+        </div>
+        <div class="flex-item-right">
+          <button [disabled]="!createIndexForm.valid || createRequestInProgress"
+                  data-cy="appElasticIndexCreateDialogSubmit" mat-button type="submit">
+            Create
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

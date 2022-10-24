@@ -7,11 +7,12 @@ import {IndicesComponent} from './indices/indices.component';
 import {CoreVariablesComponent} from './core-variables/core-variables.component';
 import {EditDialogComponent} from './indices/edit-dialog/edit-dialog.component';
 import {CeleryComponent} from './celery/celery.component';
+import { CreateDialogComponent } from './indices/create-dialog/create-dialog.component';
 
 
 @NgModule({
   declarations: [ManagementComponent,
-    UsersComponent, IndicesComponent, CoreVariablesComponent, EditDialogComponent, CeleryComponent],
+    UsersComponent, IndicesComponent, CoreVariablesComponent, EditDialogComponent, CeleryComponent, CreateDialogComponent],
   imports: [
     SharedModule,
     ManagementRoutingModule,

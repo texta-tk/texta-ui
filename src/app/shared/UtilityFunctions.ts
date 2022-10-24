@@ -10,6 +10,7 @@ import {UserProfile} from './types/UserProfile';
 import {Project} from './types/Project';
 import {AppConfigService} from '../core/util/app-config.service';
 import {coerceBooleanProperty} from '@angular/cdk/coercion';
+import {AbstractControl, ValidationErrors} from '@angular/forms';
 
 export interface LegibleColor {
   backgroundColor: string;
@@ -178,5 +179,20 @@ export class UtilityFunctions {
       }
     });
     return UtilityFunctions.colors;
+  }
+  static indexNameValidator(control: AbstractControl): null | ValidationErrors {
+    if (typeof control.value === 'string') {
+      const controlValue = control.value;
+      if (controlValue.toLowerCase() !== controlValue) {
+        return {notLowerCase: true};
+      }
+      if (controlValue.includes('*')) {
+        return {wildCard: true};
+      }
+      if (controlValue.includes(':')) {
+        return {colon: true};
+      }
+    }
+    return null;
   }
 }

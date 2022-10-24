@@ -12,22 +12,7 @@ import {of, Subject} from 'rxjs';
 import {DatasetImporterService} from '../../../core/tools/dataset-importer/dataset-importer.service';
 import {HttpErrorResponse, HttpEventType, HttpResponse} from '@angular/common/http';
 import {maxContentSize} from '../../../shared/types/file-input';
-
-function indexNameValidator(control: AbstractControl): null | ValidationErrors {
-  if (typeof control.value === 'string') {
-    const controlValue = control.value;
-    if (controlValue.toLowerCase() !== controlValue) {
-      return {notLowerCase: true};
-    }
-    if (controlValue.includes('*')) {
-      return {wildCard: true};
-    }
-    if (controlValue.includes(':')) {
-      return {colon: true};
-    }
-  }
-  return null;
-}
+import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 
 @Component({
   selector: 'app-create-dataset-dialog',
@@ -38,7 +23,7 @@ export class CreateDatasetDialogComponent implements OnInit, OnDestroy {
   readonly maxSize = 1048576000000; // 976 gigabytes
   importerForm = new UntypedFormGroup({
     descriptionFormControl: new UntypedFormControl('', [Validators.required]),
-    newNameFormControl: new UntypedFormControl('', [Validators.required, indexNameValidator]),
+    newNameFormControl: new UntypedFormControl('', [Validators.required, UtilityFunctions.indexNameValidator]),
     separatorFormControl: new UntypedFormControl(''),
     fileFormControl: new UntypedFormControl(undefined,
       [Validators.required, maxContentSize(this.maxSize)]),

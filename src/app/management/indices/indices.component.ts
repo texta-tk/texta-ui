@@ -12,10 +12,13 @@ import {ConfirmDialogComponent} from '../../shared/shared-module/components/dial
 import {Index} from '../../shared/types/Index';
 import {CoreService} from '../../core/core.service';
 import {SelectionModel} from '@angular/cdk/collections';
-import {ConfirmBulkDeleteDialogComponent} from '../../shared/shared-module/components/dialogs/confirm-bulk-delete-dialog/confirm-bulk-delete-dialog.component';
+import {
+  ConfirmBulkDeleteDialogComponent
+} from '../../shared/shared-module/components/dialogs/confirm-bulk-delete-dialog/confirm-bulk-delete-dialog.component';
 import {MatButtonToggleChange} from '@angular/material/button-toggle';
 import {EditDialogComponent} from './edit-dialog/edit-dialog.component';
-import {UntypedFormControl} from "@angular/forms";
+import {UntypedFormControl} from '@angular/forms';
+import {CreateDialogComponent} from './create-dialog/create-dialog.component';
 
 
 @Component({
@@ -136,7 +139,6 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
           // @ts-ignore
           const search = data[key].trim().toLowerCase().indexOf(searchString[key].trim().toLowerCase()) !== -1;
           if (search) {
-            console.log(search);
           }
           if (!search) {
             return false;
@@ -223,6 +225,24 @@ export class IndicesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  openCreateDialog(): void {
+    this.dialog.open(CreateDialogComponent, {
+      maxHeight: '90vh',
+      width: '700px',
+      disableClose: true,
+    }).afterClosed().subscribe(dialogResp => {
+      if (dialogResp) {
+        this.isLoadingResults = true;
+        this.coreService.getElasticIndices().pipe(takeUntil(this.destroyed$)).subscribe(resp => {
+          if (resp && !(resp instanceof HttpErrorResponse)) {
+            this.resultsLength = resp.length;
+            this.tableData.data = resp;
+            this.isLoadingResults = false;
+          }
+        });
+      }
+    });
+  }
 }
 
 export class TableFilter {

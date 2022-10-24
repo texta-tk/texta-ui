@@ -26,11 +26,6 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
   userSubscription: Subscription;
   detail: string;
   destroy$: Subject<boolean> = new Subject<boolean>();
-  forgotPasswordForm = new UntypedFormGroup({
-    emailFormControl: new UntypedFormControl('', [
-      Validators.required, Validators.email
-    ]),
-  });
 
   passwordResetForm = new UntypedFormGroup({
     passwordForm: new UntypedFormGroup({
@@ -40,10 +35,6 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
       passwordConfirmFormControl: new UntypedFormControl('')
     }, passwordMatchValidator),
 
-  });
-
-  userProfileForm = new UntypedFormGroup({
-    email: new UntypedFormControl('', Validators.required),
   });
 
   matcher = new LiveErrorStateMatcher();
@@ -74,16 +65,6 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
         } else {
           this.logService.snackBarError(resp, 2000);
         }
-      }
-    });
-  }
-
-  public onForgotPasswordFormSubmit(formData: { emailFormControl: string; }): void {
-    this.userService.resetPassword(formData.emailFormControl).subscribe(resp => {
-      if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.detail = resp.detail;
-      } else if (resp instanceof HttpErrorResponse) {
-        this.logService.snackBarError(resp, 4000);
       }
     });
   }

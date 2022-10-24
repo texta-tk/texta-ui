@@ -5,7 +5,10 @@
     </div>
 
     <div class="paginator-row">
-
+      <button (click)="openCreateDialog()" class="paginator-margin-left"
+              color="primary" data-cy="appIndicesCreateBtn" mat-raised-button>
+        CREATE
+      </button>
       <button (click)="onDeleteAllSelected()" [disabled]="selectedRows.selected.length < 1" class="new-resource-btn"
               color="warn" data-cy="appIndicesDeleteBtn" style="margin-left: 12px"
               mat-icon-button matTooltip="Delete selected">

@@ -5,7 +5,7 @@ import {LogService} from './util/log.service';
 import {Observable} from 'rxjs';
 import {Health} from '../shared/types/Project';
 import {catchError, tap} from 'rxjs/operators';
-import {Index} from '../shared/types/Index';
+import {Index, ElasticIndexOptionsResponse} from '../shared/types/Index';
 import {ResultsWrapper} from '../shared/types/Generic';
 import {CoreVariables} from '../shared/types/CoreVariables';
 import {AppConfigService} from './util/app-config.service';
@@ -58,10 +58,16 @@ export class CoreService {
       catchError(this.logService.handleError<Index[]>('getElasticIndices')));
   }
 
-  getElasticIndicesOptions(): Observable<unknown | HttpErrorResponse> {
-    return this.http.options<Index[]>(`${this.apiUrl}/elastic/index/`).pipe(
+  createElasticIndex(body: unknown): Observable<Index | HttpErrorResponse> {
+    return this.http.post<Index>(`${this.apiUrl}/elastic/index/`, body).pipe(
+      tap(e => this.logService.logStatus(e, 'createElasticIndex')),
+      catchError(this.logService.handleError<Index>('createElasticIndex')));
+  }
+
+  getElasticIndicesOptions(): Observable<ElasticIndexOptionsResponse | HttpErrorResponse> {
+    return this.http.options<ElasticIndexOptionsResponse>(`${this.apiUrl}/elastic/index/`).pipe(
       tap(e => this.logService.logStatus(e, 'getElasticIndicesOptions')),
-      catchError(this.logService.handleError<Index[]>('getElasticIndicesOptions')));
+      catchError(this.logService.handleError<ElasticIndexOptionsResponse>('getElasticIndicesOptions')));
   }
 
   deleteElasticIndex(indexId: number): Observable<ResultsWrapper<Index> | HttpErrorResponse> {
