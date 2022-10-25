@@ -49,12 +49,12 @@ variables:
     TEXTA_UAA_CLIENT_SECRET: loginsecret
 
 stages:
-  - e2e-test
   - unit-test
+  - e2e-test
   - build
 
 Karma:
-  image: zenika/alpine-chrome:89-with-node-14
+  image: zenika/alpine-chrome:102-with-node
   script:
     - npm ci
     - npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
