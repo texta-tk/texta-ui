@@ -57,7 +57,7 @@ Karma:
   image: zenika/alpine-chrome:102-with-node
   script:
     - npm ci
-    - npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
+    - npm run test -- --source-map=false --no-watch --no-progress --browsers=ChromeHeadlessCI
   stage: unit-test
   tags:
   - ci-test
