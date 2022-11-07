@@ -15,7 +15,8 @@ import {ConfirmDialogComponent} from '../../shared/shared-module/components/dial
 import {expandRowAnimation} from '../../shared/animations';
 import {ProjectStore} from '../../core/projects/project.store';
 import {LogService} from '../../core/util/log.service';
-import {QueryDialogComponent} from "../../shared/shared-module/components/dialogs/query-dialog/query-dialog.component";
+import {QueryDialogComponent} from '../../shared/shared-module/components/dialogs/query-dialog/query-dialog.component';
+import {Index} from '../../shared/types/Index';
 
 @Component({
   selector: 'app-search-tagger',
@@ -38,7 +39,7 @@ export class SearchQueryTaggerComponent implements OnInit, OnDestroy, AfterViewI
   destroyed$: Subject<boolean> = new Subject<boolean>();
   currentProject: Project;
   private updateTable = new Subject<boolean>();
-
+  getIndicesName = (x: Index) => x.name;
   constructor(private projectStore: ProjectStore,
               private searchTaggerService: SearchTaggerService,
               public dialog: MatDialog,

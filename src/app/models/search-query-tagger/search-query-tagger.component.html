@@ -99,6 +99,10 @@
                   <th class="mat-body-strong">Query</th>
                   <td><span (click)="openQueryDialog(element.query)" class="action-text mat-body-strong pointer">Show Query</span>
                 </tr>
+                <tr>
+                  <th class="mat-body-strong">Indices</th>
+                  <td>{{element.indices | getPropertyList: getIndicesName | join: ', '}}</td>
+                </tr>
               </table>
             </div>
 

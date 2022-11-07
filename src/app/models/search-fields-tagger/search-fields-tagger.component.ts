@@ -16,6 +16,7 @@ import {LogService} from '../../core/util/log.service';
 import {SearchFieldsTagger} from '../../shared/types/tasks/SearchFieldsTagger';
 import {SearchTaggerService} from '../../core/models/taggers/search-tagger/search-tagger.service';
 import {QueryDialogComponent} from '../../shared/shared-module/components/dialogs/query-dialog/query-dialog.component';
+import {Index} from '../../shared/types/Index';
 
 @Component({
   selector: 'app-search-fields-tagger',
@@ -38,6 +39,7 @@ export class SearchFieldsTaggerComponent implements OnInit, OnDestroy, AfterView
   destroyed$: Subject<boolean> = new Subject<boolean>();
   currentProject: Project;
   private updateTable = new Subject<boolean>();
+  getIndicesName = (x: Index) => x.name;
 
   constructor(private projectStore: ProjectStore,
               private searchTaggerService: SearchTaggerService,
