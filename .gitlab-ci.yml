@@ -1,7 +1,7 @@
 services:
     - name: docker.texta.ee/texta/texta-rest/test:latest
       alias: texta-rest
-    - name: redis:latest
+    - name: redis:6
     - name: mariadb:10.3.28
       alias: texta-mariadb
     - name: docker.texta.ee/texta/texta-uaa:latest
