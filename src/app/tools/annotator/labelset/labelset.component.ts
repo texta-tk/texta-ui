@@ -14,9 +14,9 @@ import {debounceTime, startWith, switchMap, takeUntil} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LabelSet} from '../../../shared/types/tasks/LabelSet';
 import {ConfirmDialogComponent} from '../../../shared/shared-module/components/dialogs/confirm-dialog/confirm-dialog.component';
-import {CreateAnnotatorDialogComponent} from '../create-annotator-dialog/create-annotator-dialog.component';
 import {CreateLabelsetDialogComponent} from './create-labelset-dialog/create-labelset-dialog.component';
 import {expandRowAnimation} from '../../../shared/animations';
+import {EditLabelsetDialogComponent} from './edit-labelset-dialog/edit-labelset-dialog.component';
 
 @Component({
   selector: 'app-labelset',
@@ -30,7 +30,7 @@ export class LabelsetComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: LabelSet | null;
   public tableData: MatTableDataSource<LabelSet> = new MatTableDataSource();
   selectedRows = new SelectionModel<LabelSet>(true, []);
-  public displayedColumns = ['select', 'category', 'values'];
+  public displayedColumns = ['select', 'category', 'values', 'actions'];
   public isLoadingResults = true;
 
   @ViewChild(MatSort) sort: MatSort;
@@ -154,5 +154,32 @@ export class LabelsetComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy(): void {
     this.destroyed$.next(true);
     this.destroyed$.complete();
+  }
+  onDelete(element: LabelSet): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {confirmText: 'Delete', mainText: 'Are you sure you want to delete this label set?'}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.annotatorService.deleteLabelSet(this.currentProject.id, element.id).subscribe(() => {
+          this.logService.snackBarMessage(`Deleted label set: ${element.category}`, 2000);
+          this.updateTable.next(true);
+        });
+      }
+    });
+  }
+
+  edit(element: LabelSet): void {
+    this.dialog.open(EditLabelsetDialogComponent, {
+      width: '750px',
+      data: element
+    }).afterClosed().subscribe((x: LabelSet | HttpErrorResponse) => {
+      if (x && !(x instanceof HttpErrorResponse)) {
+        this.updateTable.next(true);
+      } else if (x) {
+        this.logService.snackBarError(x, 3000);
+      }
+    });
   }
 }

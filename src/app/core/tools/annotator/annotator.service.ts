@@ -12,6 +12,7 @@ import {LabelSet} from '../../../shared/types/tasks/LabelSet';
   providedIn: 'root'
 })
 export class AnnotatorService {
+
   apiUrl = AppConfigService.settings.apiHost + AppConfigService.settings.apiBasePath;
 
   constructor(private http: HttpClient,
@@ -99,4 +100,20 @@ export class AnnotatorService {
       catchError(this.logService.handleError<{ category: string; values: string[] }>('createLabelSet')));
   }
 
+  deleteLabelSet(projectId: number, labelSetId: number): Observable<{ message: string } | HttpErrorResponse> {
+    return this.http.delete<{ message: string }>(
+      `${this.apiUrl}/projects/${projectId}/labelset/${labelSetId}/`
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'deleteLabelSet')),
+      catchError(this.logService.handleError<{ message: string }>('deleteLabelSet')));
+  }
+
+  patchLabelSet(projectId: number, labelSetId: number, body: unknown): Observable<LabelSet | HttpErrorResponse> {
+    return this.http.patch<LabelSet>(
+      `${this.apiUrl}/projects/${projectId}/labelset/${labelSetId}/`,
+      body
+    ).pipe(
+      tap(e => this.logService.logStatus(e, 'patchAnnotator')),
+      catchError(this.logService.handleError<LabelSet>('patchAnnotator')));
+  }
 }
