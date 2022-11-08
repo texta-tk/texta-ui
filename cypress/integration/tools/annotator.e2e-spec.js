@@ -130,7 +130,7 @@ describe('Annotator should work', function () {
   });
 
   function createLabelset() {
-    cy.get('.mat-tab-label').contains('Labelset').click();
+    cy.get('.mat-tab-label').contains('Label Set').click();
     cy.get('[data-cy=appLabelSetCreateBtn]').click();
     cy.wait(1000);
     cy.get('[data-cy=appLabelSetCreateDialogCategory]').click().then((desc => {
