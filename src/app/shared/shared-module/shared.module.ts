@@ -64,7 +64,6 @@ import {TextaFactsChipsComponent} from './components/texta-facts-chips/texta-fac
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {AddLexiconDialogComponent} from './components/dialogs/add-lexicon-dialog/add-lexicon-dialog.component';
 import {TagRandomDocResultComponent} from './components/dialogs/tag-random-doc-result/tag-random-doc-result.component';
-import {VirtualScrollSelectComponent} from './components/virtual-scroll-select/virtual-scroll-select.component';
 import {FileInputComponent} from './components/file-input/file-input.component';
 import {ByteFormatPipe} from './pipes/byte-format.pipe';
 import {BreadcrumbComponent} from './components/breadcrumb/breadcrumb.component';
@@ -82,6 +81,7 @@ import { TaskMenuComponent } from './components/task-table/task-menu/task-menu.c
 import { TaskTableComponent } from './components/task-table/task-table.component';
 import { TaskProgressComponent } from './components/task-progress/task-progress.component';
 import { DocsButtonComponent } from './components/docs-button/docs-button.component';
+import {NgxVirtualScrollMatSelectModule} from '@texta/ngx-virtual-scroll-mat-select';
 @NgModule({
   declarations: [LoginDialogComponent, GenericTableComponent,
     RegistrationDialogComponent,
@@ -110,7 +110,6 @@ import { DocsButtonComponent } from './components/docs-button/docs-button.compon
     ProjectFieldSelectComponent,
     TextaFactsChipsComponent,
     TagRandomDocResultComponent,
-    VirtualScrollSelectComponent,
     FileInputComponent,
     ByteFormatPipe,
     ConfirmBulkDeleteDialogComponent,
@@ -161,6 +160,7 @@ import { DocsButtonComponent } from './components/docs-button/docs-button.compon
     OverlayModule,
     A11yModule,
     NgxMatSelectSearchModule,
+    NgxVirtualScrollMatSelectModule,
   ],
   exports: [
     CommonModule,
@@ -205,6 +205,7 @@ import { DocsButtonComponent } from './components/docs-button/docs-button.compon
     BarChartModule,
     GroupSameValuesPipe,
     NgxMatSelectSearchModule,
+    NgxVirtualScrollMatSelectModule,
     GetPropertyListPipe,
     JoinPipe,
     BreadcrumbComponent,
@@ -222,7 +223,6 @@ import { DocsButtonComponent } from './components/docs-button/docs-button.compon
     ParseJsonPipe,
     TextaFactsChipsComponent,
     TagRandomDocResultComponent,
-    VirtualScrollSelectComponent,
     FileInputComponent,
     ByteFormatPipe,
     InfoIconComponent,
@@ -230,6 +230,7 @@ import { DocsButtonComponent } from './components/docs-button/docs-button.compon
     TaskTableComponent,
     TaskProgressComponent,
     DocsButtonComponent,
+
   ],
   providers: [FocusMonitor,
     {provide: MAT_LUXON_DATE_ADAPTER_OPTIONS, useValue: {useUtc: true}},

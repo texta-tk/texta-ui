@@ -9,8 +9,8 @@
 
     <mat-form-field class="max-width" data-cy="appRegexTaggerGroupMultiTagDialogTaggers">
       <mat-label>Regex Tagger Groups</mat-label>
-      <app-virtual-scroll-select [scrollableDataSource]="taggers" [(ngModel)]="selectedTaggers"
-                                 [ngModelOptions]="{standalone: true}"></app-virtual-scroll-select>
+      <ngx-virtual-scroll-mat-select [scrollableDataSource]="taggers" [(ngModel)]="selectedTaggers"
+                                 [ngModelOptions]="{standalone: true}"></ngx-virtual-scroll-mat-select>
 
       <mat-hint>Uses all Regex Tagger Groups by default</mat-hint>
     </mat-form-field>

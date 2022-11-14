@@ -8,7 +8,7 @@
     </mat-form-field>
     <mat-form-field class="max-width" data-cy="appTaggerMultiTagDialogTaggers">
       <mat-label>Taggers</mat-label>
-      <app-virtual-scroll-select [scrollableDataSource]="taggers" [formControl]="taggerSelectionFormControl"></app-virtual-scroll-select>
+      <ngx-virtual-scroll-mat-select [scrollableDataSource]="taggers" [formControl]="taggerSelectionFormControl"></ngx-virtual-scroll-mat-select>
       <mat-hint>{{taggerOptions?.actions?.POST?.taggers?.help_text || ''}}</mat-hint>
     </mat-form-field>
     <div class="checkbox-info-row m-bot-10">

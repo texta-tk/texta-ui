@@ -15,7 +15,7 @@
 
     <mat-form-field class="max-width" data-cy="appRegexTaggerGroupCreateDialogRegexTaggerGroups">
       <mat-label>Regex Taggers</mat-label>
-      <app-virtual-scroll-select [scrollableDataSource]="projectRegexTaggers" formControlName="regexTaggersFormControl" required></app-virtual-scroll-select>
+      <ngx-virtual-scroll-mat-select [scrollableDataSource]="projectRegexTaggers" formControlName="regexTaggersFormControl" required></ngx-virtual-scroll-mat-select>
       <mat-error>
         Regex Tagger is <strong>required</strong>
       </mat-error>
