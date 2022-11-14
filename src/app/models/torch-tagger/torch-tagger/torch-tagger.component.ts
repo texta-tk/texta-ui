@@ -40,7 +40,7 @@ export class TorchTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  filteredSubject = new Subject();
+  filteredSubject: Subject<void> = new Subject();
   // For custom filtering, such as text search in description
   inputFilterQuery = '';
   filteringValues: { [key: string]: string } = {};

@@ -69,7 +69,7 @@ export class MatOptionSelectAllComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.destroyed.next();
+    this.destroyed.next(true);
     this.destroyed.complete();
   }
 

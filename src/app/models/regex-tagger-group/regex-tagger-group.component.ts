@@ -41,7 +41,7 @@ export class RegexTaggerGroupComponent implements OnInit, OnDestroy, AfterViewIn
   destroyed$: Subject<boolean> = new Subject<boolean>();
   currentProject: Project;
   resultsLength: number;
-  filteredSubject = new Subject();
+  filteredSubject: Subject<void> = new Subject();
   // For custom filtering, such as text search in description
   inputFilterQuery = '';
   filteringValues: { [key: string]: string } = {};

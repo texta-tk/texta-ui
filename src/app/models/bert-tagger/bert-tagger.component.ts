@@ -46,7 +46,7 @@ export class BertTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   resultsLength: number;
   destroyed$: Subject<boolean> = new Subject<boolean>();
   currentProject: Project;
-  private updateTable = new Subject<boolean>();
+  private updateTable: Subject<void> = new Subject();
   patchFavoriteRowQueue: Subject<BertTagger> = new Subject();
 
   constructor(private projectStore: ProjectStore,

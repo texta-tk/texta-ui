@@ -42,7 +42,7 @@ export class ReindexerComponent implements OnInit, OnDestroy {
 
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-  filteredSubject = new Subject();
+  filteredSubject: Subject<void> = new Subject();
   // For custom filtering, such as text search in description
   inputFilterQuery = '';
   filteringValues: { [key: string]: string } = {};

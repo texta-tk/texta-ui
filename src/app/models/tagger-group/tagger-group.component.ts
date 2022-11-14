@@ -36,14 +36,14 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
   expandedElement: TaggerGroup | null;
   public tableData: MatTableDataSource<TaggerGroup> = new MatTableDataSource();
   selectedRows = new SelectionModel<TaggerGroup>(true, []);
-  public displayedColumns = ['select', 'is_favorited', 'id', 'author__username', 'description', 'fact_name', 'minimum_sample_size','tasks__time_started',
+  public displayedColumns = ['select', 'is_favorited', 'id', 'author__username', 'description', 'fact_name', 'minimum_sample_size', 'tasks__time_started',
     'tasks__time_completed',
     'num_tags', 'f1_score', 'precision', 'recall', 'progress', 'Modify'];
   public isLoadingResults = true;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  filteredSubject = new Subject();
+  filteredSubject: Subject<void> = new Subject();
   // For custom filtering, such as text search in description
   inputFilterQuery = '';
   filteringValues: { [key: string]: string } = {};
@@ -51,7 +51,7 @@ export class TaggerGroupComponent implements OnInit, OnDestroy, AfterViewInit {
   currentProject: Project;
   destroyed$ = new Subject<boolean>();
   resultsLength: number;
-  private updateTable = new Subject<boolean>();
+  private updateTable: Subject<void> = new Subject();
   patchFavoriteRowQueue: Subject<TaggerGroup> = new Subject();
 
   constructor(public dialog: MatDialog,
