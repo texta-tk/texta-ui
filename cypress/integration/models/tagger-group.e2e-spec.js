@@ -18,6 +18,7 @@ describe('tagger groups should work', function () {
   });
   function initTaggerGroupPage() {
     cy.visit('/tagger-groups');
+    cy.wait('@getUser');
     cy.wait('@getProjectIndices');
     cy.wait('@getTaggerGroups');
   }
