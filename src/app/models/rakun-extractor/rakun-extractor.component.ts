@@ -41,7 +41,7 @@ export class RakunExtractorComponent implements OnInit, OnDestroy, AfterViewInit
   resultsLength: number;
   destroyed$: Subject<boolean> = new Subject<boolean>();
   currentProject: Project;
-  private updateTable = new Subject<boolean>();
+  private updateTable: Subject<void> = new Subject();
   patchFavoriteRowQueue: Subject<RakunExtractor> = new Subject();
 
   constructor(private projectStore: ProjectStore,
@@ -110,7 +110,7 @@ export class RakunExtractorComponent implements OnInit, OnDestroy, AfterViewInit
     });
     dialogRef.afterClosed().subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.updateTable.next(true);
+        this.updateTable.next();
         this.projectStore.refreshSelectedProjectResourceCounts();
       }
     });
@@ -178,7 +178,7 @@ export class RakunExtractorComponent implements OnInit, OnDestroy, AfterViewInit
       width: '700px',
     }).afterClosed().subscribe(x => {
       if (x?.message) {
-        this.updateTable.next(true);
+        this.updateTable.next();
       }
     });
   }
@@ -211,7 +211,7 @@ export class RakunExtractorComponent implements OnInit, OnDestroy, AfterViewInit
     this.rakunExtractorService.duplicateRakun(this.currentProject.id, element.id, element).subscribe(x => {
       if (x && !(x instanceof HttpErrorResponse)) {
         this.logService.snackBarMessage(x.message, 4000);
-        this.updateTable.next(true);
+        this.updateTable.next();
       } else if (x) {
         this.logService.snackBarError(x);
       }

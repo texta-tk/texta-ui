@@ -43,7 +43,7 @@ export class RegexTaggerComponent implements OnInit, OnDestroy, AfterViewInit {
   patchRowQueue: Subject<RegexTagger> = new Subject();
   patchFavoriteRowQueue: Subject<RegexTagger> = new Subject();
   resultsLength: number;
-  filteredSubject = new Subject();
+  filteredSubject: Subject<void> = new Subject();
   // For custom filtering, such as text search in description
   inputFilterQuery = '';
   filteringValues: { [key: string]: string } = {};

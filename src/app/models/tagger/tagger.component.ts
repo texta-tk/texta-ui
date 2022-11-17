@@ -49,7 +49,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  filteredSubject = new Subject();
+  filteredSubject: Subject<void> = new Subject();
   // For custom filtering, such as text search in description
   inputFilterQuery = '';
   filteringValues: { [key: string]: string } = {};
@@ -57,7 +57,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   currentProject: Project;
   destroyed$ = new Subject<boolean>();
-  private updateTable = new Subject<boolean>();
+  private updateTable: Subject<void> = new Subject();
   patchFavoriteRowQueue: Subject<Tagger> = new Subject();
 
   constructor(private projectStore: ProjectStore,
@@ -231,7 +231,7 @@ export class TaggerComponent implements OnInit, OnDestroy, AfterViewInit {
       if (result) {
         this.taggerService.deleteTagger(this.currentProject.id, tagger.id).subscribe(() => {
           this.logService.snackBarMessage(`Deleted tagger ${tagger.description}`, 2000);
-          this.updateTable.next(true);
+          this.updateTable.next();
           this.projectStore.refreshSelectedProjectResourceCounts();
         });
       }

@@ -44,7 +44,7 @@ export class EvaluatorComponent implements OnInit, OnDestroy, AfterViewInit {
   resultsLength: number;
   destroyed$: Subject<boolean> = new Subject<boolean>();
   currentProject: Project;
-  private updateTable = new Subject<boolean>();
+  private updateTable: Subject<void> = new Subject<void>();
   patchFavoriteRowQueue: Subject<Evaluator> = new Subject();
 
   constructor(private projectStore: ProjectStore,
@@ -118,7 +118,7 @@ export class EvaluatorComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     dialogRef.afterClosed().subscribe(resp => {
       if (resp && !(resp instanceof HttpErrorResponse)) {
-        this.updateTable.next(true);
+        this.updateTable.next();
         this.projectStore.refreshSelectedProjectResourceCounts();
       }
     });
@@ -231,7 +231,7 @@ export class EvaluatorComponent implements OnInit, OnDestroy, AfterViewInit {
           .subscribe(resp => {
             if (resp && !(resp instanceof HttpErrorResponse)) {
               this.logService.snackBarMessage('Successfully started reevaluating', 4000);
-              this.updateTable.next()
+              this.updateTable.next();
             } else if (resp instanceof HttpErrorResponse) {
               this.logService.snackBarError(resp, 5000);
             }

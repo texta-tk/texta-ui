@@ -9,8 +9,8 @@ import {Tagger} from '../../../shared/types/tasks/Tagger';
 import {Project} from '../../../shared/types/Project';
 import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 import {ResultsWrapper} from '../../../shared/types/Generic';
-import {ScrollableDataSource} from '../../../shared/ScrollableDataSource';
 import {UntypedFormControl} from '@angular/forms';
+import {ScrollableDataSource} from '@texta/ngx-virtual-scroll-mat-select';
 
 interface FormModel {
   text: string;

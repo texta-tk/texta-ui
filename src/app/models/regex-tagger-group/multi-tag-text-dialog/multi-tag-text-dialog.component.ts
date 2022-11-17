@@ -13,10 +13,10 @@ import {
   RegexTaggerGroupMultiTagTextResult
 } from '../../../shared/types/tasks/RegexTaggerGroup';
 import {RegexTaggerGroupService} from '../../../core/models/taggers/regex-tagger-group/regex-tagger-group.service';
-import {ScrollableDataSource} from '../../../shared/ScrollableDataSource';
 import {ResultsWrapper} from '../../../shared/types/Generic';
 import {HighlightSettings} from '../../../shared/SettingVars';
 import {LegibleColor} from '../../../shared/UtilityFunctions';
+import {ScrollableDataSource} from '@texta/ngx-virtual-scroll-mat-select';
 
 type CustomMatch = {
   spans: string;
