@@ -63,7 +63,7 @@ Karma:
   - ci-test
 
 Cypress:
-  image: cypress/base:14.17.0
+  image: cypress/base:16.18.0
   stage: e2e-test
   tags:
     - ci-test
@@ -85,7 +85,7 @@ Cypress:
     expire_in: 1 day
 
 build:
-  image: node:14.15-stretch
+  image: node:16.18
   stage: build
   only:
   - master
