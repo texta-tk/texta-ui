@@ -27,7 +27,7 @@ export class ScrollTopDirective<T> implements OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy(): void {
-    this.destroy$.next();
+    this.destroy$.next(true);
     this.destroy$.complete();
   }
 }

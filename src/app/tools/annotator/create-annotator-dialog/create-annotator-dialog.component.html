@@ -139,9 +139,9 @@
       <div formGroupName="multiLabelFormGroup" class="max-width flex-col">
         <mat-form-field class="max-width" data-cy="appAnnotatorCreateDialogMultilabelSets">
           <mat-label>Labelset</mat-label>
-          <app-virtual-scroll-select triggerAccessor="category" [scrollableDataSource]="projectLabelSets"
+          <ngx-virtual-scroll-mat-select triggerAccessor="category" [scrollableDataSource]="projectLabelSets"
                                      formControlName="labelSetFormControl" [multiple]="false"
-                                     required></app-virtual-scroll-select>
+                                     required></ngx-virtual-scroll-mat-select>
           <mat-error>
             Labelset is <strong>required</strong>
           </mat-error>

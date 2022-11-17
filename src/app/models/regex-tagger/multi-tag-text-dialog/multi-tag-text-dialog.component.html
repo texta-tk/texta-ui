@@ -9,8 +9,8 @@
     </mat-form-field>
     <mat-form-field class="max-width" data-cy="appRegexTaggerMultiTagDialogTaggers">
       <mat-label>Regex Taggers</mat-label>
-      <app-virtual-scroll-select [scrollableDataSource]="taggers"
-                                 [formControl]="taggerSelectionFormControl"></app-virtual-scroll-select>
+      <ngx-virtual-scroll-mat-select [scrollableDataSource]="taggers"
+                                 [formControl]="taggerSelectionFormControl"></ngx-virtual-scroll-mat-select>
       <mat-hint>{{regexTaggerOptions?.actions?.POST?.taggers?.help_text || ''}}</mat-hint>
     </mat-form-field>
     <div class="loading-div">

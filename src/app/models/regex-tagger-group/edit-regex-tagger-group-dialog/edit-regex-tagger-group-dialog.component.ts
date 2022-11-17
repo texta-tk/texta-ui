@@ -14,8 +14,8 @@ import {ProjectStore} from '../../../core/projects/project.store';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
 import {RegexTaggerGroup} from '../../../shared/types/tasks/RegexTaggerGroup';
-import {ScrollableDataSource} from '../../../shared/ScrollableDataSource';
 import {ResultsWrapper} from '../../../shared/types/Generic';
+import {ScrollableDataSource} from '@texta/ngx-virtual-scroll-mat-select';
 
 @Component({
   selector: 'app-edit-regex-tagger-group-dialog',

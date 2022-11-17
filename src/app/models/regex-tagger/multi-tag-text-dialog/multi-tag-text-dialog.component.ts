@@ -10,11 +10,11 @@ import {Project} from '../../../shared/types/Project';
 import {forkJoin, Observable, of, Subject} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {LegibleColor, UtilityFunctions} from '../../../shared/UtilityFunctions';
-import {ScrollableDataSource} from '../../../shared/ScrollableDataSource';
 import {ResultsWrapper} from '../../../shared/types/Generic';
 import {UntypedFormControl} from '@angular/forms';
 import {HighlightSettings} from "../../../shared/SettingVars";
 import {RegexTaggerGroupMultiTagTextResult, Tag} from "../../../shared/types/tasks/RegexTaggerGroup";
+import {ScrollableDataSource} from '@texta/ngx-virtual-scroll-mat-select';
 
 type CustomMatch = {
   spans: string;

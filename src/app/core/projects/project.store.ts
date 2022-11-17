@@ -86,7 +86,7 @@ export class ProjectStore {
   }
 
   refreshProjects(refreshSelection?: boolean): void {
-    this.refreshProjectsQueue$.next(refreshSelection);
+    this.refreshProjectsQueue$.next(!!refreshSelection);
   }
 
   refreshSelectedProjectResourceCounts(): void {

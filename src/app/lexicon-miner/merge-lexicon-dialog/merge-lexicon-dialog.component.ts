@@ -4,7 +4,6 @@ import {LogService} from '../../core/util/log.service';
 import {ProjectStore} from '../../core/projects/project.store';
 import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {LexiconService} from '../../core/lexicon/lexicon.service';
-import {ScrollableDataSource} from '../../shared/ScrollableDataSource';
 import {Lexicon} from '../../shared/types/Lexicon';
 import {switchMap, take} from 'rxjs/operators';
 import {UtilityFunctions} from '../../shared/UtilityFunctions';
@@ -14,6 +13,7 @@ import {Project, ProjectIndex} from '../../shared/types/Project';
 import {UserProfile} from '../../shared/types/UserProfile';
 import {ResultsWrapper} from '../../shared/types/Generic';
 import {LabelSet} from '../../shared/types/tasks/LabelSet';
+import {ScrollableDataSource} from '@texta/ngx-virtual-scroll-mat-select';
 
 interface OnSubmitParams {
   targetFormControl: Lexicon;

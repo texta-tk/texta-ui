@@ -15,10 +15,10 @@ import {UtilityFunctions} from '../../../shared/UtilityFunctions';
 import {Choice} from '../../../shared/types/tasks/Embedding';
 import {LabelSet} from '../../../shared/types/tasks/LabelSet';
 import {ResultsWrapper} from '../../../shared/types/Generic';
-import {ScrollableDataSource} from '../../../shared/ScrollableDataSource';
 import {UserStore} from '../../../core/users/user.store';
 import {UserProfile} from '../../../shared/types/UserProfile';
 import {UserService} from '../../../core/users/user.service';
+import {ScrollableDataSource} from '@texta/ngx-virtual-scroll-mat-select';
 
 interface OnSubmitParams {
   descriptionFormControl: string;
